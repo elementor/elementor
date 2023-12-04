@@ -142,7 +142,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -178,7 +178,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-flex-direction: {{VALUE}};',
+					'{{WRAPPER}}' => '--e-cards-flex-direction: {{VALUE}};',
 				],
 			]
 		);
@@ -216,7 +216,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-flex-justify-content: {{VALUE}};',
+					'{{WRAPPER}}' => '--e-cards-flex-justify-content: {{VALUE}};',
 				],
 			]
 		);
@@ -245,7 +245,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-flex-align-items: {{VALUE}};',
+					'{{WRAPPER}}' => '--e-cards-flex-align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -269,7 +269,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-row-gap: {{ROW}}{{UNIT}}; --e-cards-col-gap: {{COLUMN}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-cards-row-gap: {{ROW}}{{UNIT}}; --e-cards-col-gap: {{COLUMN}}{{UNIT}};',
 				],
 			]
 		);
@@ -289,7 +289,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -329,7 +329,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -340,7 +340,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Background ', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-background-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-card-background-color: {{VALUE}}',
 				],
 				'default' => '#ffffff',
 			]
@@ -372,7 +372,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::FONT,
 				'default' => "'Open Sans', sans-serif",
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-font-family: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-card-font-family: {{VALUE}}',
 				],
 			]
 		);
@@ -399,7 +399,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -424,7 +424,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					'bold'  => esc_html__( 'Bold', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-font-weight: {{VALUE}};',
+					'{{WRAPPER}}' => '--e-card-font-weight: {{VALUE}};',
 				],
 			]
 		);
@@ -463,7 +463,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-suit-font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-suit-font-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -481,7 +481,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Diamond ', 'elementor' ) . self::SUIT_MAP_CHAR['diamond'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-diamond-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-card-diamond-color: {{VALUE}}',
 				],
 				'default' => '#ff0000',
 			]
@@ -493,7 +493,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Heart ', 'elementor' ) . self::SUIT_MAP_CHAR['heart'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-heart-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-card-heart-color: {{VALUE}}',
 				],
 				'default' => '#ff0000',
 			]
@@ -505,7 +505,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Club ', 'elementor' ) . self::SUIT_MAP_CHAR['club'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-club-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-card-club-color: {{VALUE}}',
 				],
 				'default' => '#000000',
 			]
@@ -517,7 +517,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Spade ', 'elementor' ) . self::SUIT_MAP_CHAR['spade'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-spade-color: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-card-spade-color: {{VALUE}}',
 				],
 				'default' => '#000000',
 			]
@@ -559,7 +559,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-royal-suit-offset-h: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-royal-suit-offset-h: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -590,7 +590,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-royal-suit-offset-v: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-card-royal-suit-offset-v: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -613,7 +613,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$class = __( 'e-card-content', 'elementor' );
 		?>
 		<div class="<?php echo esc_html( 'e-card-backside' ); ?>">
-			<div class="image"></div>
+			<div class="e-card-backside-image"></div>
 		</div>
 		<div class="<?php echo esc_html( 'e-card-frontside' ); ?>">
 			<span class="<?php echo esc_html( $class ); ?> value row_1 col_1"><?php echo esc_html( $text ); ?></span>
@@ -704,8 +704,6 @@ class Widget_Playing_Cards extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$cards = $settings['list'];
 		?>
-		<div class="e-playing-cards-container">
-
 			<?php
 			foreach ( $cards as $card ) {
 				$_id = $card['_id'];
@@ -729,9 +727,5 @@ class Widget_Playing_Cards extends Widget_Base {
 				</article>
 				<?php
 			}
-			?>
-
-		</div>
-		<?php
 	}
 }

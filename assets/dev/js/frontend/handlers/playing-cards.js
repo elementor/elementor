@@ -28,7 +28,7 @@ export default class PlayingCards extends Base {
 
 	onCardClick( event ) {
 		event.preventDefault();
-		event.target.classList.toggle( 'flipped' );
+		event.target.classList.toggle( 'e-playing-cards-item-flipped' );
 	}
 
 	onInit( ...args ) {
