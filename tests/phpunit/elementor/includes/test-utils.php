@@ -29,7 +29,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$edit_link = $document->get_edit_url();
 		$this->assertStringContainsString( '/post.php?post=', $edit_link );
-		$this->assertContains( '&action=elementor', $edit_link );
+		$this->assertStringContainsString( '&action=elementor', $edit_link );
 	}
 
 	/**
