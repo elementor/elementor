@@ -16,16 +16,8 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	templateHelpers() {
-		const elementData = elementor.getElementData( this.model );
-
-		if ( 'container' === elementData.elType ) {
-			elementData.help_url = 'grid' === elementor.getContainer( this.model.id ).settings.get( 'container_type' )
-				? 'https://go.elementor.com/widget-container-grid'
-				: elementData.help_url;
-		}
-
 		return {
-			elementData,
+			elementData: elementor.getElementData( this.model ),
 		};
 	},
 
