@@ -2,17 +2,19 @@ import { test, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 import { execSync } from 'child_process';
 import wpAdminPage from '../pages/wp-admin-page';
-import { error, warning } from '@actions/core';
+import github from '@actions/core';
 
 const cmd = ( command: string ) => {
 	const logs = execSync( command, { encoding: 'utf-8' } );
 	// eslint-disable-next-line no-console
 	console.log( '\x1b[36m%s\x1b[0m', logs );
-	if ( logs.includes( 'Warning' ) && process.env.CI ) {
-		warning( logs );
-	}
-	if ( logs.includes( 'Error' ) && process.env.CI ) {
-		error( logs );
+	if ( process.env.CI ) {
+		if ( logs.includes( 'Warning' ) ) {
+			github.warning( logs );
+		}
+		if ( logs.includes( 'Error' ) ) {
+			github.error( logs );
+		}
 	}
 };
 
