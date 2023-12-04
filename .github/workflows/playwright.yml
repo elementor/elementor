@@ -78,7 +78,10 @@ jobs:
           'nested-accordion', 
           'styleguide_image_link', 
           'rating',
-          'pluginTester'
+          'pluginTester1_containers',
+          'pluginTester2_containers',
+          'pluginTester1_sections',
+          'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code
