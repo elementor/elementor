@@ -662,7 +662,9 @@ test.describe( 'Container Grid tests @container', () => {
 		await editor.selectElement( containerId );
 		await editor.setSelectControlValue( 'container_type', 'grid' );
 
-		let linkElement = frame.locator( '#elementor-panel__editor__help__link' )
+		let linkElement = await page.locator( '#elementor-panel__editor__help__link' );
+		await linkElement.highlight();
+		page.pause();
 		// expect( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' )
 		await editor.selectElement( containerId );
 		expect( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' )
