@@ -40,20 +40,22 @@ export const Thumbnail = ( props ) => {
 	}, [ previewRef.current ] );
 
 	return (
-		<Box sx={ {
-			border: '1px solid',
-			borderColor: 'grey.300',
-			position: 'relative',
-			cursor: 'default',
-			overflow: 'hidden',
-			borderRadius: 1,
-			opacity: props.disabled ? 0.5 : 1,
-			'& img': {
-				width: '100%',
-				height: '100%',
-				objectFit: 'cover',
-			},
-		} }
+		<Box
+			dir="ltr"
+			sx={ {
+				border: '1px solid',
+				borderColor: 'grey.300',
+				position: 'relative',
+				cursor: 'default',
+				overflow: 'hidden',
+				borderRadius: 1,
+				opacity: props.disabled ? 0.5 : 1,
+				'& img': {
+					width: '100%',
+					height: '100%',
+					objectFit: 'cover',
+				},
+			} }
 		>
 			<Box
 				ref={ previewRef }
