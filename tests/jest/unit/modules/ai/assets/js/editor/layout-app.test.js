@@ -49,7 +49,6 @@ describe( 'LayoutApp', () => {
 		ajaxResponses.ai_generate_layout = [];
 	} );
 
-	// Test react component
 	test( 'Should generate unique ids', async () => {
 		const wrapper = await screen.getByTestId( 'root' );
 
