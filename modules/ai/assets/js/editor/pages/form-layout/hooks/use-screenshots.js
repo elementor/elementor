@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import useScreenshot from './use-screenshot';
 import { useConfig } from '../context/config';
-import { getUniqueId } from '../../../utils/genereate-ids';
+import { getUniqueId } from '../../../utils/generate-ids';
 
 const PENDING_VALUE = { isPending: true };
 
@@ -9,7 +9,7 @@ const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
 	const { currentContext, sessionId } = useConfig();
 	const generateIdRef = useRef( '' );
-	const groupId = `group-${ getUniqueId() }`;
+	const batchId = `batch-${ getUniqueId() }`;
 
 	const screenshotsData = [
 		useScreenshot( 0, onData ),
@@ -65,7 +65,7 @@ const useScreenshots = ( { onData } ) => {
 				ids: {
 					sessionId,
 					generateId: generateIdRef.current,
-					groupId,
+					batchId,
 					requestId: `request-${ getUniqueId() }`,
 				},
 				attachments: attachments.map( ( { type, content, label } ) => {

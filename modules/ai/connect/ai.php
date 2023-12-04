@@ -511,6 +511,7 @@ class Ai extends Library {
 		$body = [
 			'prompt' => $data['prompt'],
 			'variationType' => (int) $data['variationType'],
+			'ids' => $data['ids'],
 		];
 
 		if ( ! empty( $data['prevGeneratedIds'] ) ) {
