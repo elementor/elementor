@@ -24,7 +24,8 @@ test.describe( 'Playing cards tests', () => {
 
 	test( 'Add playing cards to editor', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			playingCardId = await editor.addWidget( 'playing-cards', container );
 		const elPlayingCards = await editor.getPreviewFrame().locator( `.elementor-element-${ playingCardId }` );
@@ -51,19 +52,20 @@ test.describe( 'Playing cards tests', () => {
 		}
 
 		// Assert
-		await page.waitForTimeout( 2500 );
-		expect( await elPlayingCards.screenshot( {
+		await frame.waitForSelector( '.e-card-content.suit.row_3-double.col_4' );
+		expect.soft( await elPlayingCards.screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'playing-cards-data.png' );
 	} );
 
 	test( 'Playing cards styling', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			playingCardId = await editor.addWidget( 'playing-cards', container );
 
-		editor.getPreviewFrame().locator( `.elementor-element-${ playingCardId }` );
+		frame.locator( `.elementor-element-${ playingCardId }` );
 		new Content( page, testInfo );
 
 		// Arrange
@@ -86,7 +88,7 @@ test.describe( 'Playing cards tests', () => {
 			await cardControl.locator( 'select' ).nth( 1 ).selectOption( cardData.suit );
 		}
 
-		await page.waitForTimeout( 2500 );
+		await frame.waitForSelector( '.e-card-content.suit.row_3-double.col_4' );
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-suit_section' ).click();
 		await page.locator( '.pcr-button' ).first().click();
@@ -102,6 +104,5 @@ test.describe( 'Playing cards tests', () => {
 		const secondCard = await page.getByRole( 'article' ).filter( { hasText: 'K K ♥ ♥' } ).locator( '.e-card-content' ).first();
 		expect.soft( secondCard ).toHaveCSS( 'color', 'rgb(0, 92, 255)' );
 		expect.soft( thirdCard ).toHaveCSS( 'color', 'rgb(0, 92, 255)' );
-		await page.waitForTimeout( 1000 );
 	} );
 } );
