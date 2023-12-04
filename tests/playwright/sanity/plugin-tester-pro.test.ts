@@ -4,8 +4,6 @@ import { execSync } from 'child_process';
 import wpAdminPage from '../pages/wp-admin-page';
 import { error, warning } from '@actions/core';
 
-const pluginList: Array<string> = [];
-
 const cmd = ( command: string ) => {
 	const logs = execSync( command, { encoding: 'utf-8' } );
 	// eslint-disable-next-line no-console
@@ -55,32 +53,6 @@ const pluginList2 = [
 	'tutor-lms-elementor-addons',
 	'code-block-for-elementor',
 ];
-
-// If ( '@pluginTester1_containers' === process.env.TEST_SUITE ) {
-// 	process.env.CONTAINERS = 'true';
-// 	pluginList = pluginList1;
-// }
-
-// if ( '@pluginTester2_containers' === process.env.TEST_SUITE ) {
-// 	process.env.CONTAINERS = 'true';
-// 	pluginList = pluginList2;
-// }
-
-// if ( '@pluginTester1_sections' === process.env.TEST_SUITE ) {
-// 	pluginList = pluginList1;
-// }
-
-// if ( '@pluginTester2_sections' === process.env.TEST_SUITE ) {
-// 	pluginList = pluginList2;
-// }
-
-// if ( ! process.env.CI ) {
-// 	pluginList = pluginList1.concat( pluginList2 );
-// 	process.env.CONTAINERS = 'true';
-// }
-// if ( ! process.env.TEST_SUITE || ! process.env.TEST_SUITE.includes( '@pluginTester' ) ) {
-// 	process.env.TEST_SUITE = '';
-// }
 
 test.describe( `Plugin tester tests: containers`, () => {
 	for ( const plugin of pluginList1 ) {
@@ -142,65 +114,65 @@ test.describe( `Plugin tester tests: containers`, () => {
 	}
 } );
 
-// Test.describe( 'Plugin tester tests: sections', () => {
-// 	test.beforeAll( async () => {
-// 		cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
-// 	} );
-// 	for ( const plugin of pluginList1 ) {
-// 		test( `"${ plugin }" plugin: @pluginTester1_sections`, async ( { page }, testInfo ) => {
-// 			const editorPage = new EditorPage( page, testInfo );
-// 			const wpAdmin = new wpAdminPage( page, testInfo );
-// 			const adminBar = 'wpadminbar';
+test.describe( 'Plugin tester tests: sections', () => {
+	test.beforeAll( async () => {
+		cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
+	} );
+	for ( const plugin of pluginList1 ) {
+		test( `"${ plugin }" plugin: @pluginTester1_sections`, async ( { page }, testInfo ) => {
+			const editorPage = new EditorPage( page, testInfo );
+			const wpAdmin = new wpAdminPage( page, testInfo );
+			const adminBar = 'wpadminbar';
 
-// 			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-// 			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
+			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
-// 			await page.goto( '/law-firm-about/' );
-// 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
-// 			await page.evaluate( ( selector ) => {
-// 				const admin = document.getElementById( selector );
-// 				admin.remove();
-// 			}, adminBar );
-// 			await editorPage.removeClasses( 'elementor-motion-effects-element' );
-// 			await editorPage.scrollPage();
-// 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
+			await page.goto( '/law-firm-about/' );
+			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+			await page.evaluate( ( selector ) => {
+				const admin = document.getElementById( selector );
+				admin.remove();
+			}, adminBar );
+			await editorPage.removeClasses( 'elementor-motion-effects-element' );
+			await editorPage.scrollPage();
+			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-// 			await page.goto( '/law-firm-about/?elementor' );
-// 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
-// 			await wpAdmin.closeAnnouncementsIfVisible();
-// 			await editorPage.closeNavigatorIfOpen();
+			await page.goto( '/law-firm-about/?elementor' );
+			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+			await wpAdmin.closeAnnouncementsIfVisible();
+			await editorPage.closeNavigatorIfOpen();
 
-// 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-// 			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
-// 		} );
-// 	}
+			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
+			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+		} );
+	}
 
-// 	for ( const plugin of pluginList2 ) {
-// 		test( `"${ plugin }" plugin: @pluginTester2_sections`, async ( { page }, testInfo ) => {
-// 			const editorPage = new EditorPage( page, testInfo );
-// 			const wpAdmin = new wpAdminPage( page, testInfo );
-// 			const adminBar = 'wpadminbar';
+	for ( const plugin of pluginList2 ) {
+		test( `"${ plugin }" plugin: @pluginTester2_sections`, async ( { page }, testInfo ) => {
+			const editorPage = new EditorPage( page, testInfo );
+			const wpAdmin = new wpAdminPage( page, testInfo );
+			const adminBar = 'wpadminbar';
 
-// 			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-// 			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
+			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
-// 			await page.goto( '/law-firm-about/' );
-// 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
-// 			await page.evaluate( ( selector ) => {
-// 				const admin = document.getElementById( selector );
-// 				admin.remove();
-// 			}, adminBar );
-// 			await editorPage.removeClasses( 'elementor-motion-effects-element' );
-// 			await editorPage.scrollPage();
-// 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
+			await page.goto( '/law-firm-about/' );
+			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+			await page.evaluate( ( selector ) => {
+				const admin = document.getElementById( selector );
+				admin.remove();
+			}, adminBar );
+			await editorPage.removeClasses( 'elementor-motion-effects-element' );
+			await editorPage.scrollPage();
+			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-// 			await page.goto( '/law-firm-about/?elementor' );
-// 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
-// 			await wpAdmin.closeAnnouncementsIfVisible();
-// 			await editorPage.closeNavigatorIfOpen();
+			await page.goto( '/law-firm-about/?elementor' );
+			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+			await wpAdmin.closeAnnouncementsIfVisible();
+			await editorPage.closeNavigatorIfOpen();
 
-// 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-// 			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
-// 		} );
-// 	}
-// } );
+			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
+			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+		} );
+	}
+} );
