@@ -651,6 +651,21 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
 	} );
+
+	test.only( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await page.pause();
+		await editor.selectElement( containerId );
+		await editor.setSelectControlValue( 'container_type', 'grid' );
+
+		let linkElement = page.locator( '#elementor-panel__editor__help__link' )
+		// expect( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' )
+		await editor.selectElement( containerId );
+		expect( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' )
+	} );
 } );
 
 function hasWhiteSpace( s ) {
