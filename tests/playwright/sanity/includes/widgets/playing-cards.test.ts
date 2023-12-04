@@ -58,7 +58,7 @@ test.describe( 'Playing cards tests', () => {
 		} ) ).toMatchSnapshot( 'playing-cards-data.png' );
 	} );
 
-	test.only( 'Playing cards styling', async ( { page }, testInfo ) => {
+	test( 'Playing cards styling', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
