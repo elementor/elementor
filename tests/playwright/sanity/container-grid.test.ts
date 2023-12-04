@@ -652,7 +652,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test.only( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
+	test( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.openNewPage(),
