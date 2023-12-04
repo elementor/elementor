@@ -58,7 +58,7 @@ test.describe( 'Playing cards tests', () => {
 		} ) ).toMatchSnapshot( 'playing-cards-data.png' );
 	} );
 
-	test( 'Playing cards styling', async ( { page }, testInfo ) => {
+	test.only( 'Playing cards styling', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
@@ -88,7 +88,6 @@ test.describe( 'Playing cards tests', () => {
 			await cardControl.locator( 'select' ).nth( 1 ).selectOption( cardData.suit );
 		}
 
-		await frame.waitForSelector( '.e-card-content.suit.row_3-double.col_4' );
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-suit_section' ).click();
 		await page.locator( '.pcr-button' ).first().click();
@@ -104,5 +103,6 @@ test.describe( 'Playing cards tests', () => {
 		const secondCard = await page.getByRole( 'article' ).filter( { hasText: 'K K ♥ ♥' } ).locator( '.e-card-content' ).first();
 		expect.soft( secondCard ).toHaveCSS( 'color', 'rgb(0, 92, 255)' );
 		expect.soft( thirdCard ).toHaveCSS( 'color', 'rgb(0, 92, 255)' );
+		await page.waitForSelector( '.e-card-content.suit.row_3-double.col_4' );
 	} );
 } );
