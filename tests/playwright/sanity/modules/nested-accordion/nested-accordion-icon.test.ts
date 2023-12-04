@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, setTitleHorizontalAlignment } from './helper';
+import { expectScreenshotToMatchLocator } from './helper';
 
-test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
+test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		const page = await browser.newPage();
+		const context = await browser.newContext();
+		const page = await context.newPage();
 		const wpAdmin = await new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
@@ -27,14 +28,31 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await page.close();
 	} );
 
-	test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser }, testInfo ) => {
+	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser }, testInfo ) => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
-			frame = editor.getPreviewFrame(),
-			nestedAccordionWidgetId = '48f02ad',
-			nestedAccordionTitle = frame.locator( '.e-n-accordion-item-title' ).first();
+			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+		let nestedAccordionID,
+			nestedAccordion;
 
-		await editor.closeNavigatorIfOpen();
+		await test.step( 'Set horizontal icon & style size to 70', async () => {
+			// Act
+			await editor.closeNavigatorIfOpen();
+			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordion = await editor.selectElement( nestedAccordionID );
+			await editor.activatePanelTab( 'content' );
+			await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
+			await page.locator( '#elementor-icons-manager__search > input' ).fill( 'address card' );
+			await page.locator( '#elementor-icons-manager__tab__content > div.elementor-icons-manager__tab__item' ).first().click();
+			await page.locator( '.dialog-insert_icon' ).click();
+			await editor.activatePanelTab( 'style' );
+			await editor.openSection( 'section_header_style' );
+			await editor.setSliderControlValue( 'icon_size', '70' );
+
+			// Assert
+			await expectScreenshotToMatchLocator( 'header-style-editor.png', nestedAccordion );
+		} );
+	} );
+} );
