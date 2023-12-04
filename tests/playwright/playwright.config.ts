@@ -15,7 +15,10 @@ function getGrepInvert() {
 			/@onBoarding/,
 			/@video/,
 			/@rating/,
-			/@pluginTester/,
+			/@pluginTester1_containers/,
+			/@pluginTester2_containers/,
+			/@pluginTester1_sections/,
+			/@pluginTester2_sections/,
 		];
 	}
 	return [];
