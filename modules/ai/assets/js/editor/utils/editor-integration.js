@@ -121,6 +121,7 @@ export const renderLayoutApp = ( options = {
 				previewContainer.setContent( template );
 			} }
 			onInsert={ options.onInsert }
+			hasPro={ elementor.helpers.hasPro() }
 		/>,
 		rootElement,
 	);

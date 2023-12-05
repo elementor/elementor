@@ -17,6 +17,9 @@ const TextInput = forwardRef( ( props, ref ) => (
 		InputProps={ {
 			...props.InputProps,
 			type: 'search',
+			sx: {
+				pt: 0,
+			},
 		} }
 	/>
 ) );
@@ -28,6 +31,7 @@ TextInput.propTypes = {
 const PaperComponent = function( props ) {
 	return (
 		<Paper { ...props }
+			elevation={ 8 }
 			sx={ {
 				borderRadius: 2,
 			} }

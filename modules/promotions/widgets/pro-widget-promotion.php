@@ -55,14 +55,14 @@ class Pro_Widget_Promotion extends Widget_Base {
 				<img src="<?php echo esc_url( $this->get_promotion_image_url() ); ?>" loading="lazy" alt="Go Pro">
 				<?php
 					echo sprintf(
-						esc_html__( 'This result includes the Elementor Pro %s widget that\'s not available in your plan. Upgrade to use all the widgets in this result.', 'elementor' ),
+						esc_html__( 'This result includes the Elementor Pro %s widget. Upgrade now to unlock it and grow your web creation toolkit.', 'elementor' ),
 						esc_html( $this->widget_data['widget_title'] )
 					);
 				?>
 			</p>
 			<div class="e-actions">
-				<a href="#" class="e-btn e-btn-txt e-promotion-delete"><?php echo esc_html__( 'Delete', 'elementor' ); ?></a>
-				<a href="https://go.elementor.com/go-pro-element-pro/" target="_blank" class="e-btn go-pro elementor-clickable"><?php echo esc_html__( 'Upgrade', 'elementor' ); ?></a>
+				<a href="#" class="e-btn e-btn-txt e-promotion-delete"><?php echo esc_html__( 'Remove', 'elementor' ); ?></a>
+				<a href="https://go.elementor.com/go-pro-element-pro/" rel="noreferrer" target="_blank" class="e-btn go-pro elementor-clickable e-promotion-go-pro"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div>
 		<?php
