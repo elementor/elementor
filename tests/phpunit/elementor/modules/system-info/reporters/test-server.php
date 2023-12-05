@@ -14,7 +14,7 @@ class Test_Server extends Elementor_Test_Base {
 		mkdir( static::DIR_PATH );
 	}
 
-	public static function  tearDownAfterClass(): void {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 
 		chmod( static::DIR_PATH, 0777 );

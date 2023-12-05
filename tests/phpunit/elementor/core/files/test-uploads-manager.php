@@ -90,7 +90,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		file_put_contents( self::$temp_directory . self::$template_json_file_name, $template_json );
 	}
 
-	public static function  tearDownAfterClass(): void {
+	public static function tearDownAfterClass(): void {
 		if ( is_dir( self::$temp_directory ) ) {
 			// Remove all temporary files in the temporary directory
 			array_map('unlink', glob(self::$temp_directory . '*.*' ) );
