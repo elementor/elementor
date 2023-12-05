@@ -13,6 +13,8 @@ import {
 	styled,
 	withDirection,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import UndoIcon from '../../../../icons/undo-icon';
 import RedoIcon from '../../../../icons/redo-icon';

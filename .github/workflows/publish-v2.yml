@@ -101,6 +101,7 @@ jobs:
           files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
+          target_commitish: ${{ env.CLEAN_REF }}
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:

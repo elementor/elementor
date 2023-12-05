@@ -1,4 +1,5 @@
 import { Dialog, DialogContent } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import DialogHeader from './dialog-header';
 
 const WizardDialog = ( props ) => {

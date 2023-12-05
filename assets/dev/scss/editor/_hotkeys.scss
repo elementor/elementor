@@ -11,8 +11,9 @@
 
 	&__content {
 		display: flex;
+		justify-content: space-between;
 		gap: 70px;
-		padding: 10px 30px;
+		padding: 20px 30px;
 		width: 100%;
 		overflow: hidden;
 
@@ -27,35 +28,14 @@
 .elementor-hotkeys {
 
 	&__col {
-		width: 50%;
-
-		@media (max-width: $editor-screen-md-max) {
-			width: 100%;
-		}
-	}
-
-	&__header,
-	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 		width: 100%;
 	}
 
 	&__header{
-		padding: 10px 0;
 		font-weight: 500;
-	}
-
-	&__list {
-		background-color: var(--e-a-bg-default);
-		height: calc(100% - 42px);
-		padding: 10px 0;
-
-		@media (max-width: $editor-screen-xs-max) {
-			padding: 0;
-		}
-
-		@media (max-width: $editor-screen-md-max) {
-			height: auto;
-		}
 	}
 
 	&__item {
@@ -76,40 +56,36 @@
 		&--shortcut {
 			flex-grow: 0;
 			display: flex;
+			gap: 27px;
 
-			@if $direction == rtl {
-				flex-direction: row-reverse;
+			@media (max-width: $editor-screen-md-max) {
+				gap: 23px;
 			}
 
-			span {
+			kbd {
 				position: relative;
+				font-family: unset;
 				background-color: var(--e-a-bg-active);
 				padding: 5px 12px;
-				margin-inline-end: 27px;
-				border-radius: 3px;
+				border-radius: var(--e-a-border-radius);
 
-				@media (max-width: $editor-screen-xs-max) {
+				@media (max-width: $editor-screen-md-max) {
 					padding: 4px 9px;
-					margin-inline-end: 23px;
 				}
 
-				&:after {
-					content: ' + ';
-					position: absolute;
-					right: -18px;
-					width: 9px;
-					text-align: center;
+				&:not(:last-of-type) {
 
-					@media (max-width: $editor-screen-xs-max) {
-						right: -16px;
-					}
-				}
+					&::after {
+						content: "+";
+						position: absolute;
+						@include end(0);
+						width: 9px;
+						text-align: center;
+						margin-inline-end: -18px;
 
-				&:last-child {
-					margin-inline-end: 0;
-
-					&:after {
-						display: none;
+						@media (max-width: $editor-screen-md-max) {
+							margin-inline-end: -16px;
+						}
 					}
 				}
 			}

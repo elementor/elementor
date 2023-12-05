@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
 import Loader from '../../components/loader';
@@ -9,7 +11,6 @@ import GenerateButton from '../../components/generate-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
-import PromptCredits from '../../components/prompt-credits';
 import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
@@ -30,7 +31,7 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 	},
 } ) );
 
-const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, usagePercentage } ) => {
+const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, children } ) => {
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
@@ -75,6 +76,8 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 		<>
 			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 2.5 } } /> }
 
+			{ children }
+
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
 					<Box sx={ { pb: 1.5 } }>
@@ -90,8 +93,6 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } /> }
 
 					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
-						<PromptCredits usagePercentage={ usagePercentage } />
-
 						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>
 							<GenerateButton>
 								{ __( 'Generate code', 'elementor' ) }
@@ -110,8 +111,6 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					</ReactMarkdown>
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
-						<PromptCredits usagePercentage={ usagePercentage } />
-
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
@@ -135,7 +134,7 @@ FormCode.propTypes = {
 		initialCredits: PropTypes.number,
 	} ),
 	credits: PropTypes.number,
-	usagePercentage: PropTypes.number,
+	children: PropTypes.node,
 };
 
 export default FormCode;

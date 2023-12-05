@@ -20,6 +20,10 @@ export const takeScreenshot = async ( template ) => {
 	// Wait for the container to render.
 	await waitForContainer( container.id );
 
+	if ( template.elements.length ) {
+		await Promise.all( template.elements.map( ( child ) => waitForContainer( child.id ) ) );
+	}
+
 	let screenshot;
 
 	try {

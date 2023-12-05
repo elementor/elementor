@@ -1,4 +1,5 @@
 import { Button } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 const NewPromptButton = ( props ) => {
 	return (

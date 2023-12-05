@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { daysDiff, MONTH_DECEMBER_INDEX, MONTH_JANUARY_INDEX, translateDate } from '../../../helpers/date-helpers';
 import PromptHistoryPeriod from '../parts/modal-period';
 

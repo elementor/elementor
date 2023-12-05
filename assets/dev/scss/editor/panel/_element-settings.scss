@@ -140,8 +140,8 @@
 				width: 13px;
 				top: 3px;
 				bottom: 0;
-				#{$start}: 8px;
-				#{$end}: 0;
+				@include start(8px);
+				@include end(0);
 				border-radius: 50%;
 				z-index: -1;
 			}

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 export default class AiPromotionBehavior extends Marionette.Behavior {
 	initialize() {
 		this.promotionLabel = __( 'Coming soon', 'elementor' );

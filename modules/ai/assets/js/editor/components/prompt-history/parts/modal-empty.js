@@ -1,23 +1,19 @@
 import { Stack, Typography } from '@elementor/ui';
-import { HISTORY_TYPES, TRANSLATED_HISTORY_TYPES, TRANSLATED_HISTORY_TYPES_FALLBACK } from '../history-types';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
+import { HISTORY_TYPES, getTranslatedPromptHistoryType } from '../history-types';
 
-const getTranslatedPromptType = ( promptType ) => {
-	if ( TRANSLATED_HISTORY_TYPES[ promptType ] ) {
-		return TRANSLATED_HISTORY_TYPES[ promptType ];
-	}
-
-	return TRANSLATED_HISTORY_TYPES_FALLBACK;
-};
-
-const PromptHistoryEmpty = ( { promptType } ) => {
+const PromptHistoryEmpty = ( { historyType } ) => {
 	return (
 		<Stack justifyContent="center" sx={ { height: '100%', textAlign: 'center' } } data-testid="e-ph-empty">
 			<Typography variant="h6">{ __( 'Prepare to be amazed', 'elementor' ) }</Typography>
 			<Typography variant="body1">
-				{ sprintf(
-					// Translators: %s: History type.
-					__( 'This is where you\'ll find all the %s you\'ve generated using Elementor AI.', 'elementor' ),
-					getTranslatedPromptType( promptType ) )
+				{
+					sprintf(
+						// Translators: %s: History type.
+						__( 'This is where you\'ll find all the %s you\'ve generated using Elementor AI.', 'elementor' ),
+						getTranslatedPromptHistoryType( historyType ),
+					)
 				}
 			</Typography>
 		</Stack>
@@ -25,7 +21,7 @@ const PromptHistoryEmpty = ( { promptType } ) => {
 };
 
 PromptHistoryEmpty.propTypes = {
-	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
+	historyType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
 };
 
 export default PromptHistoryEmpty;

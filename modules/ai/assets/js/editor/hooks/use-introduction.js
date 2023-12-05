@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
 export default function useIntroduction( key ) {
-	const [ isViewed, setIsViewed ] = useState( !! window.elementor?.config?.user?.introduction?.[ key ] );
+	const globalConfig = window.elementor ? window.elementor.config?.user : window.elementorAdmin?.config?.user;
+	const [ isViewed, setIsViewed ] = useState( !! globalConfig?.introduction?.[ key ] );
 
 	function markAsViewed() {
 		if ( ! key ) {
@@ -25,8 +26,8 @@ export default function useIntroduction( key ) {
 				success: () => {
 					setIsViewed( true );
 
-					if ( window.elementor?.config?.user?.introduction ) {
-						window.elementor.config.user.introduction[ key ] = true;
+					if ( globalConfig?.introduction ) {
+						globalConfig.introduction[ key ] = true;
 					}
 
 					resolve();

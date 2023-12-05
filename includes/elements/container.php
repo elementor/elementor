@@ -26,6 +26,8 @@ class Container extends Element_Base {
 	 * @var \Elementor\Core\Kits\Documents\Kit
 	 */
 	private $active_kit;
+	private $logical_dimensions_inline_start;
+	private $logical_dimensions_inline_end;
 
 	/**
 	 * Container constructor.
@@ -340,7 +342,7 @@ class Container extends Element_Base {
 			'selector' => '{{WRAPPER}}',
 			'fields_options' => [
 				'gap' => [
-					'label' => esc_html_x( 'Gaps', 'Flex Container Control', 'elementor' ),
+					'label' => esc_html__( 'Gaps', 'elementor' ),
 					'device_args' => [
 						Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 							// Use the default gap from the kit as a placeholder.
@@ -1461,7 +1463,7 @@ class Container extends Element_Base {
 					],
 				],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
@@ -1500,7 +1502,7 @@ class Container extends Element_Base {
 					],
 				],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
@@ -1564,7 +1566,7 @@ class Container extends Element_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
@@ -1602,7 +1604,7 @@ class Container extends Element_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
