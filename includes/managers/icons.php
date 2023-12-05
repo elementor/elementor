@@ -433,7 +433,7 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function get_mapping_files() {
-		if ( ! empty ( $mapping_files ) ) {
+		if ( ! empty( $mapping_files ) ) {
 			return $mapping_files;
 		}
 
