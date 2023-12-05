@@ -345,10 +345,11 @@ class Editor {
 
 		// Remove polyfill script
 		// See: https://github.com/elementor/elementor/issues/24260
-		$wp_scripts->remove( 'wp-polyfill' );
-		$wp_scripts->add( 'wp-polyfill', '' );
+        $suffix = Utils::is_script_debug() ? '' : '.min';
+        $wp_scripts->remove( 'wp-polyfill' );
+        $wp_scripts->add( 'wp-polyfill', ELEMENTOR_PATH . 'assets/lib/core-js/core-js' . $suffix . '.js' );
 
-		/**
+        /**
 		 * Before editor enqueue scripts.
 		 *
 		 * Fires before Elementor editor scripts are enqueued.
