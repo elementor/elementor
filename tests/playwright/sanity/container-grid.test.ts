@@ -696,7 +696,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await frame.locator( '.e-con-select-preset-grid__list .e-con-choose-grid-preset' ).first().click();
 
 			// Assert
-			let linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
 			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
 		} );
 
