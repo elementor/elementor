@@ -22,6 +22,7 @@ export const ConfigProvider = ( props ) => {
 				onSelect: props.onSelect,
 				onGenerate: props.onGenerate,
 				currentContext: props.currentContext,
+				hasPro: props.hasPro,
 			} }
 		>
 			{ props.children }
@@ -40,6 +41,7 @@ ConfigProvider.propTypes = {
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
 	currentContext: PropTypes.object,
+	hasPro: PropTypes.bool,
 };
 
 export default ConfigContext;
