@@ -27,7 +27,7 @@ class Test_DB extends Elementor_Test_Base {
 		];
 	}
 
-	public static function setUpBeforeClass() : void {
+	public static function setUpBeforeClass(): void {
 		global $wpdb;
 
 		/** @var DB db_manager */
