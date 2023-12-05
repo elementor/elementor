@@ -13,7 +13,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	protected static $manager;
 	private $fake_post_id = '123';
 
-	public static function  setUpBeforeClass(): void {
+	public static function setUpBeforeClass(): void {
 		self::$manager = self::elementor()->templates_manager;
 	}
 
