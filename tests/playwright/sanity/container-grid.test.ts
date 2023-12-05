@@ -655,7 +655,7 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-		const editor = await wpAdmin.openNewPage(),
+		editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.selectElement( containerId );
