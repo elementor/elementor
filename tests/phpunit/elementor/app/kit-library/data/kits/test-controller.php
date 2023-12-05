@@ -20,7 +20,7 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	private $app_mock;
 
-	public function setUp(  ) {
+	public function setUp(): void {
 		$this->traitSetUP();
 
 		$this->app_mock = $this->getMockBuilder( Kit_Library::class )
