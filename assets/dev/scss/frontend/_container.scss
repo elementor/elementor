@@ -1,10 +1,10 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
-	--border-block-start-width: 0px;
-	--border-inline-end-width: 0px;
-	--border-block-end-width: 0px;
-	--border-inline-start-width: 0px;
+	--border-top-width: 0px;
+	--border-right-width: 0px;
+	--border-bottom-width: 0px;
+	--border-left-width: 0px;
 	--border-style: initial;
 	--border-color: initial;
 	--container-widget-width: 100%;
@@ -58,6 +58,10 @@
 		--padding-inline-end: var(--padding-right);
 		--padding-block-start: var(--padding-top);
 		--padding-block-end: var(--padding-bottom);
+		--border-block-start-width: var(--border-top-width);
+		--border-block-end-width: var(--border-bottom-width);
+		--border-inline-start-width: var(--border-left-width);
+		--border-inline-end-width: var(--border-right-width);
 	}
 
 	body.rtl &,
@@ -66,6 +70,8 @@
 		--padding-inline-end: var(--padding-left);
 		--margin-inline-start: var(--margin-right);
 		--margin-inline-end: var(--margin-left);
+		--border-inline-start-width: var(--border-right-width);
+		--border-inline-end-width: var(--border-left-width);
 	}
 
 	margin-block-start: var(--margin-block-start);
@@ -190,10 +196,10 @@
 		border-inline-end-width: var(--border-inline-end-width);
 		border-block-end-width: var(--border-block-end-width);
 		border-inline-start-width: var(--border-inline-start-width);
-		top: calc(0px - var(--border-block-start-width));
-		left: calc(0px - var(--border-inline-start-width));
-		width: max(calc(100% + var(--border-inline-end-width) + var(--border-inline-start-width)), 100%);
-		height: max(calc(100% + var(--border-block-start-width) + var(--border-block-end-width)), 100%);
+		top: calc(0px - var(--border-top-width));
+		left: calc(0px - var(--border-left-width));
+		width: max(calc(100% + var(--border-left-width) + var(--border-right-width)), 100%);
+		height: max(calc(100% + var(--border-top-width) + var(--border-bottom-width)), 100%);
 	}
 
 	// Background overlay.
