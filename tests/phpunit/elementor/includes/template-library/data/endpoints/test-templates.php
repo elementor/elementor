@@ -17,7 +17,7 @@ class Test_Templates extends Elementor_Test_Base {
 		$this->manager = Manager::instance();
 	}
 
-	public function tearDown():void {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->manager->kill_server();

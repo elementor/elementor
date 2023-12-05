@@ -10,7 +10,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as 
 
 class Test_Manager extends Data_Test_Base {
 
-	public function setUp():void {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager->kill_server();

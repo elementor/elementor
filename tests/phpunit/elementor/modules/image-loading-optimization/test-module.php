@@ -44,7 +44,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		parent::tear_down_after_class();
 	}
 
-	public function setUp():void {
+	public function setUp(): void {
 		parent::setUp();
 
 		set_current_screen( 'front' );

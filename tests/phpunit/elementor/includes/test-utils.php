@@ -9,7 +9,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
-	public function tearDown():void {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$_REQUEST  = [];

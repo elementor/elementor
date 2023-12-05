@@ -19,13 +19,13 @@ class Test_Widget_Base extends Elementor_Test_Base {
 	 */
 	protected $default_render_mode;
 
-	public function setUp():void {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->default_render_mode = Plugin::$instance->frontend->render_mode_manager;
 	}
 
-	public function tearDown():void {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->frontend->render_mode_manager = $this->default_render_mode;

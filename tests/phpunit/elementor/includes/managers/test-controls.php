@@ -19,7 +19,7 @@ class Test_Controls extends Elementor_Test_Base {
 		],
 	];
 
-	public function setUp():void {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Force controls cache to reset.

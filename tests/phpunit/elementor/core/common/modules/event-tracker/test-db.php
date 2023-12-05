@@ -16,7 +16,7 @@ class Test_DB extends Elementor_Test_Base {
 	private static $event_mock;
 	private static $timestamp;
 
-	public function setUp():void {
+	public function setUp(): void {
 		parent::setUp();
 
 		self::$timestamp = current_time( \DateTime::ATOM );
@@ -37,7 +37,7 @@ class Test_DB extends Elementor_Test_Base {
 		DB::reset_table();
 	}
 
-	public function tearDown():void {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		// Cleanup

@@ -10,7 +10,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	 */
 	private $module;
 
-	public function setUp():void {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->module = new Module();
