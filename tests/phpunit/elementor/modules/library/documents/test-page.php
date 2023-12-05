@@ -9,7 +9,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	/** @var Page */
 	private static $page;
 
-	public function setUp(): void  {
+	public function setUp():void {
 		parent::setUp();
 		self::$page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
 	}

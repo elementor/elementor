@@ -9,7 +9,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
-	public function  tearDown():void  {
+	public function tearDown():void {
 		parent::tearDown();
 
 		$_REQUEST  = [];
@@ -134,7 +134,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this-> assertMatchesRegularExpression( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
+		$this->assertMatchesRegularExpression( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
 	}
 
 	public function test_should_get_post_auto_save() {

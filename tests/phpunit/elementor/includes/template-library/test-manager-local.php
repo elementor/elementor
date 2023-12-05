@@ -17,7 +17,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		self::$manager = self::elementor()->templates_manager;
 	}
 
-	public function setUp():void  {
+	public function setUp():void {
 		parent::setUp();
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 	}

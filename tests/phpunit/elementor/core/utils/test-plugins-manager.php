@@ -32,7 +32,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 	 */
 	private $plugin_upgrader_mock;
 
-	public function setUp():void  {
+	public function setUp():void {
 		parent::setUp();
 
 		$this->original_wp_api = Plugin::$instance->wp;
@@ -49,7 +49,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 
 	}
 
-	public function  tearDown():void  {
+	public function tearDown():void {
 		parent::tearDown();
 
 		Plugin::$instance->wp = $this->original_wp_api;

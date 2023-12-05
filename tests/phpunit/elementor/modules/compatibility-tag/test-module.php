@@ -65,12 +65,12 @@ class Test_Module extends Elementor_Test_Base {
 		$result = ob_get_clean();
 
 		// Assert
-		$this-> assertMatchesRegularExpression( '/old version plugin/', $result );
-		$this-> assertMatchesRegularExpression( '/invalid version plugin/', $result );
+		$this->assertMatchesRegularExpression( '/old version plugin/', $result );
+		$this->assertMatchesRegularExpression( '/invalid version plugin/', $result );
 		$this->assertNotRegExp( '/patch version plugin/', $result );
 		$this->assertNotRegExp( '/tested version plugin/', $result );
 		$this->assertNotRegExp( '/header not exists plugin/', $result );
-		$this-> assertMatchesRegularExpression( '/extends elementor/', $result );
+		$this->assertMatchesRegularExpression( '/extends elementor/', $result );
 		$this->assertNotRegExp( '/regular plugins/', $result );
 		$this->assertNotRegExp( '/elementor core/', $result );
 		$this->assertNotRegExp( '/elementor beta/', $result );
