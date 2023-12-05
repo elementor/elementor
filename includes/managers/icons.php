@@ -433,10 +433,16 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function get_mapping_files() {
-		$current_version = self::get_current_fa_version();
-		$mapping_files = [];
+		if ( ! empty ( $mapping_files ) ) {
+			return $mapping_files;
+		}
 
-		for ( $i = $current_version - 1; $i >= 1; $i-- ) {
+		static $mapping_files = [];
+
+		$current_version = self::get_current_fa_version();
+		$oldest_legacy_version = 4;
+
+		for ( $i = $oldest_legacy_version; $i <= $current_version; $i++ ) {
 			$mapping_by_version = sprintf( 'mapping-v%s-to-v%s', $i, $i + 1 );
 			$mapping_file = ELEMENTOR_ASSETS_PATH . "/lib/font-awesome/migration/$mapping_by_version.js";
 
@@ -445,7 +451,7 @@ class Icons_Manager {
 			}
 		}
 
-		return array_reverse( $mapping_files );
+		return $mapping_files;
 	}
 
 	/**
