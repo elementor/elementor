@@ -78,6 +78,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 				vector.push( charCode - 96 );
 			} else if ( charCode >= 65 && charCode <= 90 ) {
 				vector.push( charCode - 64 );
+			} else {
+				vector.push( charCode );
 			}
 		}
 
@@ -108,8 +110,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	},
 
 	initVectorCollection() {
-		this.widgetVectors = Object.keys( elementor.widgetsCache ).reduce( ( acc, id ) => {
-			acc[ id ] = this.word2vec( id );
+		this.widgetVectors = Object.values( elementor.widgetsCache ).reduce( ( acc, config ) => {
+			acc[ config.name ] = this.word2vec( config.title );
 			return acc;
 		}, {} );
 	},
