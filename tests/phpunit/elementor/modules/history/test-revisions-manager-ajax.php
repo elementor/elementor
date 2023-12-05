@@ -8,7 +8,7 @@ class Elementor_Test_Revisions_Manager_Ajax extends Elementor_Test_AJAX {
 
 	private $revisions_manager;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		if ( ! $this->revisions_manager ) {
 			$this->define_doing_ajax();

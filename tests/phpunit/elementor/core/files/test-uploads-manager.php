@@ -75,7 +75,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		"type" => "page",
 	];
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		// In case tests get interrupted and the tearDown method doesn't run, we reset the files.
 		self::$temp_directory = getcwd() . '/temp/';
 
@@ -90,7 +90,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		file_put_contents( self::$temp_directory . self::$template_json_file_name, $template_json );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		if ( is_dir( self::$temp_directory ) ) {
 			// Remove all temporary files in the temporary directory
 			array_map('unlink', glob(self::$temp_directory . '*.*' ) );

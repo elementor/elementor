@@ -9,7 +9,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$_REQUEST  = [];
@@ -28,8 +28,8 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$document = Plugin::$instance->documents->get( $post_id );
 		$edit_link = $document->get_edit_url();
-		$this->assertContains( '/post.php?post=', $edit_link );
-		$this->assertContains( '&action=elementor', $edit_link );
+		$this->assertStringContainsString( '/post.php?post=', $edit_link );
+		$this->assertStringContainsString( '&action=elementor', $edit_link );
 	}
 
 	/**
@@ -50,17 +50,17 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	public function test_should_get_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$preview_url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
-		$this->assertContains( '/?p=', $preview_url );
-		$this->assertContains( '&elementor-preview=', $preview_url );
-		$this->assertContains( '&ver=', $preview_url );
+		$this->assertStringContainsString( '/?p=', $preview_url );
+		$this->assertStringContainsString( '&elementor-preview=', $preview_url );
+		$this->assertStringContainsString( '&ver=', $preview_url );
 	}
 
 	public function test_should_get_wordpress_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
-		$this->assertContains( '/?p=', $wp_preview_url );
-		$this->assertContains( '&preview_nonce=', $wp_preview_url );
-		$this->assertContains( '&preview=', $wp_preview_url );
+		$this->assertStringContainsString( '/?p=', $wp_preview_url );
+		$this->assertStringContainsString( '&preview_nonce=', $wp_preview_url );
+		$this->assertStringContainsString( '&preview=', $wp_preview_url );
 	}
 
 	/**
@@ -70,23 +70,13 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertSame( '0 database rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );
 	}
 
-	/**
-	 * @expectedExceptionMessage Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.
-	 * @expectedException        \Exception
-	 * @throws                   \Exception
-	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
+		$this->expectExceptionMessage( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
-	/**
-	 * @expectedExceptionMessage Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.
-	 * @expectedException        \Exception
-	 * @throws                   \Exception
-	 */
 	public function test_should_throw_error_because_urls_are_invalid() {
-		//$this->expectExceptionMessage( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
+		$this->expectExceptionMessage( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
 
@@ -144,7 +134,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
+		$this->assertMatchesRegularExpression( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
 	}
 
 	public function test_should_get_post_auto_save() {
