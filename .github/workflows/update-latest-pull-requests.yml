@@ -1,0 +1,26 @@
+name: Update Latest Pull Requests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-pull-requests:
+    runs-on: ubuntu-latest
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Update Pull Requests
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          DAYS_TO_UPDATE: 3
+        run: |
+          node .github/scripts/update-latest-pull-requests.js

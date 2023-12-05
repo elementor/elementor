@@ -1,4 +1,6 @@
 import { Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const PromptCredits = ( props ) => {
 	if ( props.usagePercentage < 80 ) {

@@ -1,3 +1,4 @@
+import environment from 'elementor-common/utils/environment';
 import AddSectionBase from 'elementor-views/add-section/base';
 
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
@@ -31,6 +32,8 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	initContextMenu() {
+		const controlSign = environment.mac ? '&#8984;' : '^';
+
 		var contextMenuGroups = this.getOption( 'groups' ),
 			deleteGroup = _.findWhere( contextMenuGroups, { name: 'delete' } ),
 			afterGroupIndex = contextMenuGroups.indexOf( deleteGroup );
@@ -49,6 +52,7 @@ module.exports = Marionette.Behavior.extend( {
 						title: elementorCommon.config.experimentalFeatures.editor_v2
 							? __( 'Structure', 'elementor' )
 							: __( 'Navigator', 'elementor' ),
+						shortcut: controlSign + '+I',
 						callback: () => $e.route( 'navigator', {
 							reOpen: true,
 							model: this.view.model,

@@ -147,6 +147,36 @@ const EditorSelectors = {
 	googleMaps: {
 		location: '[data-setting="address"]',
 	},
+	ai: {
+		aiButton: '.e-ai-button',
+		aiDialogCloseButton: '.MuiDialog-container button[aria-label="close"]',
+		promptInput: 'input[name="prompt"]',
+		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
+
+		image: {
+			promptTextarea: '[data-testid="e-image-prompt"] textarea',
+			typeInput: '#image-type + input',
+			styleInput: '#style + input',
+			aspectRationInput: '#aspect-ratio + input',
+			generatedImage: '[data-testid="e-gallery-image"] img',
+		},
+
+		promptHistory: {
+			button: 'button[aria-label="Show prompt history"]',
+			modal: '#prompt-history-modal',
+			closeButton: 'button[aria-label="Hide prompt history"]',
+			upgradeMessageFullTestId: 'e-ph-upgrade-full',
+			upgradeMessageSmallTestId: 'e-ph-upgrade-small',
+			noDataMessageTestId: 'e-ph-empty',
+			periodTestId: 'e-ph-p',
+			itemTestId: 'e-ph-i',
+			fallbackIconTestId: 'e-ph-fi',
+			removeButton: 'button[aria-label="Remove item"]',
+			reuseButton: 'button[aria-label="Reuse prompt"]',
+			restoreButton: 'button[aria-label="Restore"]',
+			editButton: 'button[aria-label="Edit result"]',
+		},
+	},
 };
 
 export default EditorSelectors;

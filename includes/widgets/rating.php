@@ -140,7 +140,7 @@ class Widget_Rating extends Widget_Base {
 				],
 				'step' => 1,
 				'default' => [
-					'size' => '5',
+					'size' => 5,
 				],
 			]
 		);

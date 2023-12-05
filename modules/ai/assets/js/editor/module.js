@@ -1,4 +1,5 @@
 import AiBehavior from './ai-behavior';
+import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
 
 export default class Module extends elementorModules.editor.utils.Module {

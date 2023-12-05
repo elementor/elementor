@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom/extend-expect';
-
 global.PropTypes = require( 'prop-types' );
 global.React = require( 'react' );
 global.ReactDOM = require( 'react-dom' );

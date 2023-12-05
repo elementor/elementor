@@ -801,7 +801,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			$this->add_render_attribute( $item_summary_key, [
 				'class' => [ 'e-n-accordion-item-title' ],
-				'role' => 'button',
 				'data-accordion-index' => $accordion_count,
 				'tabindex' => 0 === $index ? 0 : -1,
 				'aria-expanded' => $aria_expanded ? 'true' : 'false',
@@ -893,7 +892,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
-				itemTitleText = 'item-title-text-' + elementUid,
 				defaultState = settings.default_state,
 				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
@@ -904,6 +902,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				<# _.each( settings['items'], function( item, index ) {
 				const itemCount = index + 1,
 					itemUid = elementUid + index,
+					itemTitleTextKey = 'item-title-text-' + itemUid,
 					itemWrapperKey = itemUid,
 					itemTitleKey = 'item-' + itemUid,
 					ariaExpanded = 'expanded' === defaultState && 0 === index ? 'true' : 'false';
@@ -931,10 +930,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'tabindex': 0 === index ? 0 : -1,
 						'aria-expanded': ariaExpanded,
 						'aria-controls': itemId,
-						'role': 'button',
 					});
 
-					view.addRenderAttribute( itemTitleText, {
+					view.addRenderAttribute( itemTitleTextKey, {
 						'class': ['e-n-accordion-item-title-text'],
 						'data-binding-type': 'repeater-item',
 						'data-binding-repeater-name': 'items',
@@ -946,7 +944,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
 					<span class="e-n-accordion-item-title-header">
-						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleText ) }}}>
+						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleTextKey ) }}}>
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
 					</span>

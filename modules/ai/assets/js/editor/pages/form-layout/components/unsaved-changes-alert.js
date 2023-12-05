@@ -1,4 +1,6 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const UnsavedChangesAlert = ( { onClose, onCancel, title, text, ...props } ) => {
 	return (

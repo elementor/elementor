@@ -1,10 +1,19 @@
 name: Build
 
 on:
+  workflow_dispatch:
+  pull_request:
+  merge_group:
   push:
     branches:
       - 'main'
       - '3.*'
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   run:
     runs-on: ubuntu-22.04
@@ -15,7 +24,7 @@ jobs:
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x    
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -33,14 +42,15 @@ jobs:
             | awk -F: '{ print $2 }' \
             | sed 's/[",]//g' \
             | tr -d '[[:space:]]')
-          export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}.zip"
+          export PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}"
+          export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
           grunt build
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
-          echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+          echo "PLUGIN_FOLDER_FILENAME=${PLUGIN_FOLDER_FILENAME}" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.PLUGIN_ZIP_FILENAME }}
-          path: elementor-*.zip
+          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+          path: elementor

@@ -1,6 +1,10 @@
 // Create missing IDs for the elements.
+const getUniqueId = () => {
+	return Math.random().toString( 16 ).substr( 2, 7 );
+};
+
 export function generateIds( template ) {
-	template.id = elementorCommon.helpers.getUniqueId().toString();
+	template.id = getUniqueId().toString();
 
 	if ( template.elements?.length ) {
 		template.elements.map( ( child ) => generateIds( child ) );

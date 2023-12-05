@@ -101,7 +101,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				width: videoSize.width,
 				autoplay: true,
 				loop: ! elementSettings.background_play_once,
-				transparent: false,
+				transparent: true,
 				background: true,
 				muted: true,
 			};

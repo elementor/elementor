@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Stack, Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import ImageStrengthSlider from '../../components/image-strength-slider';

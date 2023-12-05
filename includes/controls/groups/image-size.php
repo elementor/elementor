@@ -287,7 +287,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$fields = [];
 
 		$fields['size'] = [
-			'label' => esc_html__( 'Image Size', 'elementor' ),
+			'label' => esc_html__( 'Image Resolution', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 		];
 

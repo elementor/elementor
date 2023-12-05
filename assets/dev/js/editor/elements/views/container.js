@@ -434,6 +434,7 @@ const ContainerView = BaseElementView.extend( {
 			}
 
 			this.droppableInitialize( this.container.settings );
+			this.updateNeedHelpLink();
 		} );
 	},
 
@@ -483,6 +484,8 @@ const ContainerView = BaseElementView.extend( {
 
 		/* Translators: %s: Element name. */
 		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
+
+		this.updateNeedHelpLink();
 	},
 
 	getPanelTitle() {
@@ -632,16 +635,15 @@ const ContainerView = BaseElementView.extend( {
 		}
 	},
 
-	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-	getPro316VersionClass() {
-		const activeProVersion = elementorFrontend?.config?.version_pro;
+	updateNeedHelpLink() {
+		const $linkElement = jQuery( '#elementor-panel__editor__help__link' );
+		const href = this.isGridContainer()
+			? 'https://go.elementor.com/widget-container-grid'
+			: 'https://go.elementor.com/widget-container';
 
-		if ( !! activeProVersion && activeProVersion.includes( '3.16' ) ) {
-			return 'e-con-pro316';
+		if ( $linkElement ) {
+			$linkElement.attr( 'href', href );
 		}
-
-		return '';
 	},
 } );
 

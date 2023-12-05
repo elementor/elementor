@@ -1,5 +1,7 @@
 import { useRef } from 'react';
 import { Box, Button } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import Textarea from '../../components/textarea';
 
 const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props } ) => {

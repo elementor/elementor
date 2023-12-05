@@ -1,4 +1,6 @@
 import { Box, Typography, Stack, Chip } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const PromptSuggestions = ( props ) => {
 	return (

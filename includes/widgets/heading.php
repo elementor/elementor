@@ -89,6 +89,13 @@ class Widget_Heading extends Widget_Base {
 		return [ 'heading', 'title', 'text' ];
 	}
 
+	protected function get_upsale_data() {
+		return [
+			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
+		];
+	}
+
 	/**
 	 * Register heading widget controls.
 	 *
@@ -344,7 +351,7 @@ class Widget_Heading extends Widget_Base {
 		var title = settings.title;
 
 		if ( '' !== settings.link.url ) {
-			title = '<a href="' + settings.link.url + '">' + title + '</a>';
+			title = '<a href="' + _.escape( settings.link.url ) + '">' + title + '</a>';
 		}
 
 		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title', 'elementor-size-' + settings.size ] );

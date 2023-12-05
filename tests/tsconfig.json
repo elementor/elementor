@@ -22,6 +22,7 @@
       "noUncheckedIndexedAccess": true,
       "noUnusedLocals": true,
       "noUnusedParameters": true,
-      "checkJs": false
+      "checkJs": false,
+      "resolveJsonModule": true
     }
   }

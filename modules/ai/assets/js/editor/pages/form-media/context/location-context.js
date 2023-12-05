@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { createContext, useReducer, useContext, useEffect } from 'react';
 
 export const RoutesContext = createContext( null );

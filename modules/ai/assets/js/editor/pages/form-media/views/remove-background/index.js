@@ -1,4 +1,5 @@
 import { Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import GenerateSubmit from '../../components/generate-submit';
 import ImageForm from '../../components/image-form';

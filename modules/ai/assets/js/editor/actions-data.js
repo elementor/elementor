@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 export const textAutocomplete = [
 	__( 'Craft a catchy slogan for', 'elementor' ),
 	__( 'Write a strong section header for', 'elementor' ),

@@ -57,7 +57,7 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
-					'size' => '1140',
+					'size' => 1140,
 				],
 				'tablet_default' => [
 					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
