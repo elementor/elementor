@@ -1,22 +1,7 @@
 import { test, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
-import { execSync } from 'child_process';
 import wpAdminPage from '../pages/wp-admin-page';
-import github from '@actions/core';
-
-const cmd = ( command: string ) => {
-	const logs = execSync( command, { encoding: 'utf-8' } );
-	// eslint-disable-next-line no-console
-	console.log( logs );
-	if ( process.env.CI ) {
-		if ( logs.includes( 'Warning' ) ) {
-			github.warning( logs );
-		}
-		if ( logs.includes( 'Error' ) ) {
-			github.error( logs );
-		}
-	}
-};
+import WpEnvCli from '../assets/wp-env-cli';
 
 const pluginList1 = [
 	'addon-elements-for-elementor-page-builder',
@@ -61,10 +46,11 @@ test.describe( `Plugin tester tests: containers`, () => {
 		test( `"${ plugin }" plugin: @pluginTester1_containers`, async ( { page }, testInfo ) => {
 			const editorPage = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -82,7 +68,7 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editorPage.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 
@@ -90,10 +76,11 @@ test.describe( `Plugin tester tests: containers`, () => {
 		test( `"${ plugin }" plugin: @pluginTester2_containers`, async ( { page }, testInfo ) => {
 			const editorPage = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -111,23 +98,25 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editorPage.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 } );
 
 test.describe( 'Plugin tester tests: sections', () => {
 	test.beforeAll( async () => {
-		cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
+		const wpEnvCli = new WpEnvCli();
+		wpEnvCli.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
 	} );
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_sections`, async ( { page }, testInfo ) => {
 			const editorPage = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -145,7 +134,7 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await editorPage.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 
@@ -153,10 +142,11 @@ test.describe( 'Plugin tester tests: sections', () => {
 		test( `"${ plugin }" plugin: @pluginTester2_sections`, async ( { page }, testInfo ) => {
 			const editorPage = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -174,7 +164,7 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await editorPage.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 } );
