@@ -655,7 +655,7 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage(),
+			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.selectElement( containerId );
@@ -665,7 +665,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSelectControlValue( 'container_type', 'flex' );
 
 			// Assert
-			let linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
 			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
 		} );
 
