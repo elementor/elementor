@@ -275,6 +275,12 @@ class Uploads_Manager extends Base_Object {
 	 * @return string|\WP_Error
 	 */
 	public function create_temp_file( $file_content, $file_name ) {
+		$file_name = str_replace( ' ', '', sanitize_file_name( $file_name ) );
+
+		if ( empty( $file_name ) ) {
+			return new \WP_Error( 'invalid_file_name', 'Invalid file name.' );
+		}
+
 		$temp_filename = $this->create_unique_dir() . $file_name;
 
 		/**
