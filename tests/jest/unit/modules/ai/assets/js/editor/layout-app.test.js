@@ -4,15 +4,32 @@ import TestThemeProvider from './mock/test-theme-provider';
 import { elementorCommon, ajaxResponses } from './mock/elementor-common';
 import { SCREENSHOT_LIGHT_1 } from './mock/data';
 
+const REQUESTS_PER_BATCH = 3;
 const onGenerate = jest.fn();
 const onData = () => {
 	return SCREENSHOT_LIGHT_1;
 };
 const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+const defaultExpectedUniqueIds = {
+	editorSessionId: 1,
+	sessionId: 1,
+	generateId: 1,
+	batchId: 1,
+	requestId: REQUESTS_PER_BATCH,
+};
+
+const assertUniqueIds = ( expected ) => {
+	for ( const [ id, expectedUnique ] of Object.entries( expected ) ) {
+		const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
+		const uniqueIds = new Set( ids );
+
+		// Assert
+		expect( ids.length ).toEqual( expected.requestId );
+		expect( uniqueIds.size ).toEqual( expectedUnique );
+	}
+};
 
 describe( 'LayoutApp', () => {
-	const REQUESTS_COUNT = 3;
-
 	beforeEach( async () => {
 		global.elementorCommon = elementorCommon;
 
@@ -33,10 +50,10 @@ describe( 'LayoutApp', () => {
 					onInsert={ () => {} }
 					onSelect={ () => {} }
 					onGenerate={ onGenerate }
-					hasPro={ true }
-					sessionId={ 'SESSION_ID' }
 					mode={ 'layout' }
 					attachmentsTypes={ {} }
+					hasPro={ true }
+					editorSessionId={ 'EDITOR_SESSION_ID' }
 				/>
 			</TestThemeProvider>,
 		);
@@ -69,7 +86,8 @@ describe( 'LayoutApp', () => {
 				generateId: expect.stringMatching( /^generate-[a-z0-9]{7}$/ ),
 				batchId: expect.stringMatching( /^batch-[a-z0-9]{7}$/ ),
 				requestId: expect.stringMatching( /^request-[a-z0-9]{7}$/ ),
-				sessionId: 'SESSION_ID',
+				sessionId: expect.stringMatching( /^session-[a-z0-9]{7}$/ ),
+				editorSessionId: 'EDITOR_SESSION_ID',
 			},
 			prevGeneratedIds: [],
 			prompt: 'test',
@@ -89,34 +107,7 @@ describe( 'LayoutApp', () => {
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
 		// Assert
-		const expected = [
-			{
-				id: 'sessionId',
-				expectedUnique: 1,
-			},
-			{
-				id: 'generateId',
-				expectedUnique: 1,
-			},
-			{
-				id: 'batchId',
-				expectedUnique: 1,
-			},
-			{
-				id: 'requestId',
-				expectedUnique: REQUESTS_COUNT,
-			},
-		];
-
-		for ( let i = 0; i < expected.length; i++ ) {
-			const { id, expectedUnique } = expected[ i ];
-			const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-			const uniqueIds = new Set( ids );
-
-			// Assert
-			expect( ids.length ).toEqual( REQUESTS_COUNT );
-			expect( uniqueIds.size ).toEqual( expectedUnique );
-		}
+		assertUniqueIds( defaultExpectedUniqueIds );
 	} );
 
 	it( 'Should keep the same sessionId and generateID on regenerate, but discard other ids', async () => {
@@ -138,33 +129,13 @@ describe( 'LayoutApp', () => {
 		await waitFor( () => Promise.resolve() );
 
 		// Assert
-		const expected = [
-			{
-				id: 'sessionId',
-				expectedUnique: 1,
-			},
-			{
-				id: 'generateId',
-				expectedUnique: 1,
-			},
-			{
-				id: 'batchId',
-				expectedUnique: 2,
-			},
-			{
-				id: 'requestId',
-				expectedUnique: REQUESTS_COUNT * 2,
-			},
-		];
+		const expected = {
+			... defaultExpectedUniqueIds,
+			batchId: 2,
+			requestId: REQUESTS_PER_BATCH * 2,
+		};
 
-		for ( let i = 0; i < expected.length; i++ ) {
-			const { id, expectedUnique } = expected[ i ];
-			const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-			const uniqueIds = new Set( ids );
-
-			expect( ids.length ).toEqual( REQUESTS_COUNT * 2 );
-			expect( uniqueIds.size ).toEqual( expectedUnique );
-		}
+		assertUniqueIds( expected );
 
 		// Arrange - another generate with a new prompt
 		const editButton = wrapper.querySelector( '[aria-label="Edit prompt"] button' );
@@ -181,32 +152,13 @@ describe( 'LayoutApp', () => {
 		await waitFor( () => Promise.resolve() );
 
 		// Assert
-		const expected2 = [
-			{
-				id: 'sessionId',
-				expectedUnique: 1,
-			},
-			{
-				id: 'generateId',
-				expectedUnique: 2,
-			},
-			{
-				id: 'batchId',
-				expectedUnique: 3,
-			},
-			{
-				id: 'requestId',
-				expectedUnique: REQUESTS_COUNT * 3,
-			},
-		];
+		const expected2 = {
+			... defaultExpectedUniqueIds,
+			generateId: 2,
+			batchId: 3,
+			requestId: REQUESTS_PER_BATCH * 3,
+		};
 
-		for ( let i = 0; i < expected2.length; i++ ) {
-			const { id, expectedUnique } = expected2[ i ];
-			const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-			const uniqueIds = new Set( ids );
-
-			expect( ids.length ).toEqual( REQUESTS_COUNT * 3 );
-			expect( uniqueIds.size ).toEqual( expectedUnique );
-		}
+		assertUniqueIds( expected2 );
 	} );
 } );

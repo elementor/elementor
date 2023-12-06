@@ -10,13 +10,14 @@ const useScreenshots = ( { onData } ) => {
 
 	/**
 	 * The ids for each request are:
-	 * - sessionId: a unique id for each session. (open the editor)
+	 * - editorSessionId: a unique id for each editor. (open the editor)
+	 * - sessionId: a unique id for each session. (open the AI builder)
 	 * - generateId: a unique id for each generate request. (prompt change)
 	 * - batchId: a unique id for each batch of generate requests. (generate, regenerate)
 	 * - requestId: a unique id for each generate request.
 	 */
 
-	const { currentContext, sessionId } = useConfig();
+	const { currentContext, sessionId, editorSessionId } = useConfig();
 	const generateIdRef = useRef( '' );
 	const batchId = `batch-${ getUniqueId() }`;
 
@@ -72,6 +73,7 @@ const useScreenshots = ( { onData } ) => {
 				prevGeneratedIds,
 				currentContext,
 				ids: {
+					editorSessionId,
 					sessionId,
 					generateId: generateIdRef.current,
 					batchId,

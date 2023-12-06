@@ -45,7 +45,7 @@ const VARIATIONS_PROMPTS = [
 ];
 
 const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
-const SESSION_ID = `session-${ getUniqueId() }`;
+const EDITOR_SESSION_ID = `editor-session-${ getUniqueId() }`;
 
 export const renderLayoutApp = ( options = {
 	mode: '',
@@ -126,7 +126,7 @@ export const renderLayoutApp = ( options = {
 				} }
 				onInsert={ options.onInsert }
 				hasPro={ elementor.helpers.hasPro() }
-				sessionId={ SESSION_ID }
+				editorSessionId={ EDITOR_SESSION_ID }
 			/>
 		</LayoutAppWrapper>,
 		rootElement,
