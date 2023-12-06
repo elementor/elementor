@@ -386,9 +386,7 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function fa_icon_value_migration( $value ) {
-		static $migration_dictionary = [];
-
-		$mapping_files = self::get_mapping_files();
+		$migration_dictionary = self::get_migration_dictionary();
 
 		if ( is_string( $value ) ) {
 			if ( '' === $value ) {
@@ -404,13 +402,9 @@ class Icons_Manager {
 			];
 		}
 
-		foreach ( $mapping_files as $mapping_file ) {
-			if ( ! isset( $migration_dictionary[ $mapping_file ] ) ) {
-				$migration_dictionary[ $mapping_file ] = json_decode( Utils::file_get_contents( $mapping_file ), true );
-			}
-
-			if ( isset( $migration_dictionary[ $mapping_file ][ $value['value'] ] ) ) {
-				$value = $migration_dictionary[ $mapping_file ][ $value ];
+		foreach ( $migration_dictionary as $mapping_by_version ) {
+			if ( isset( $mapping_by_version[ $value['value'] ] ) ) {
+				$value = $mapping_by_version[ $value ];
 			}
 		}
 
@@ -426,19 +420,21 @@ class Icons_Manager {
 	}
 
 	/**
-	 * Get the mapping files for the migration.
+	 * Get the migration dictionary by versions.
 	 *
 	 * @return array
 	 */
-	public static function get_mapping_files() {
-		if ( ! empty( $mapping_files ) ) {
-			return $mapping_files;
+	public static function get_migration_dictionary() {
+		if ( ! empty( $migration_dictionary ) ) {
+			return $migration_dictionary;
 		}
 
-		static $mapping_files = [];
+		static $migration_dictionary = [];
 
 		$current_version = self::get_current_fa_version();
 		$oldest_legacy_version = 4;
+
+		$mapping_files = [];
 
 		for ( $i = $oldest_legacy_version; $i <= $current_version; $i++ ) {
 			$mapping_by_version = sprintf( 'mapping-v%s-to-v%s', $i, $i + 1 );
@@ -449,7 +445,11 @@ class Icons_Manager {
 			}
 		}
 
-		return $mapping_files;
+		foreach ( $mapping_files as $mapping_file ) {
+			$migration_dictionary[] = json_decode( Utils::file_get_contents( $mapping_file ), true );
+		}
+
+		return $migration_dictionary;
 	}
 
 	/**
