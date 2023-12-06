@@ -244,6 +244,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.18.1 - 2023-12-06 =
+
+* Fix: Improved code security enforcement in File Upload mechanism
+* Fix: Error appears on front when using various 3rd party plugins and Themes
+* Fix: Reverted Elementor Editor is slow when using Safari 17 and Firefox on macOS
+
 = 3.18.0 - 2023-12-04 =
 
 * New: Introducing Element Manager - Overview of all installed widgets on your site, allowing the deactivation of unused widgets for a personalized widget panel ([#9647](https://github.com/elementor/elementor/issues/9647))
