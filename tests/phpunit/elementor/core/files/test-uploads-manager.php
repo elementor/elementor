@@ -294,7 +294,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		rmdir( $temp_dir );
 	}
 
-	private function file_names_provider() {
+	public function file_names_provider() {
 		return [
 			[ '../../../test/file.php' ],
 			[ '..\..\..\test\file.php' ],
