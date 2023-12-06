@@ -272,6 +272,41 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		rmdir( $temp_dir );
 	}
 
+	/**
+	 * @dataProvider file_names_provider
+	 */
+	public function test_create_invalid_filename_temp_file( $file_name ) {
+		// Arrange.
+		$temp_dir = Plugin::$instance->uploads_manager->get_temp_dir();
+		$assert_path = '#' . preg_quote( $temp_dir, '#' ) . '[a-z0-9]+/testfile.php#';
+		$template = json_encode( self::$mock_template );
+
+		// Act.
+		$temp_file_path = Plugin::$instance->uploads_manager->create_temp_file( $template, $file_name );
+
+		// Assert.
+		$this->assertRegExp( $assert_path, $temp_file_path, "Failed for file name: { $file_name }" );
+
+		// Clean up.
+		$temp_dir = dirname( $temp_file_path );
+
+		unlink( $temp_file_path );
+		rmdir( $temp_dir );
+	}
+
+	public function file_names_provider() {
+		return [
+			[ '../../../test/file.php' ],
+			[ '..\..\..\test\file.php' ],
+			[ 'test<file.php' ],
+			[ 'test>file.php' ],
+			[ 'test;file.php' ],
+			[ 'test/file.php' ],
+			[ 'test\\file.php' ],
+			[ 'test%file.php' ],
+		];
+	}
+
 	public function test_get_temp_dir() {
 		$wp_upload_dir = wp_upload_dir();
 
