@@ -76,7 +76,7 @@ export default class Helpers {
 	}
 
 	cloneObject( object ) {
-		return JSON.parse( JSON.stringify( object ) );
+		return structuredClone( object );
 	}
 
 	upperCaseWords( string ) {
