@@ -34,15 +34,18 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
+		let nestedAccordionID,
+			nestedAccordion;
+
+		await test.step( 'Set horizontal icon & style size to 70', async () => {
 			// Act
-			// Set horizontal icon & style size to 70'
 			await editor.closeNavigatorIfOpen();
-			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
-			const nestedAccordion = await editor.selectElement( nestedAccordionID );
+			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await editor.activatePanelTab( 'content' );
 			await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
-			await page.locator( '#elementor-icons-manager__search  input' ).fill( 'address card' );
-			await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
+			await page.locator( '#elementor-icons-manager__search > input' ).fill( 'address card' );
+			await page.locator( '#elementor-icons-manager__tab__content > div.elementor-icons-manager__tab__item' ).first().click();
 			await page.locator( '.dialog-insert_icon' ).click();
 			await editor.activatePanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );
@@ -51,4 +54,5 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-editor.png', nestedAccordion );
 		} );
+	} );
 } );
