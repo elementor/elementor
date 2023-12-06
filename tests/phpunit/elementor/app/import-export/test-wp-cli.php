@@ -17,12 +17,12 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 	private $mock_import_export_module;
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		// TODO: find a better way.
 		Plugin::$instance->app->add_component( 'import-export', new Module() );
 	}
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->mock_import_export_module = $this->getMockBuilder( Module::class )
