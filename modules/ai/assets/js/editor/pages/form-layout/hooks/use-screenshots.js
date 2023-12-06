@@ -10,7 +10,7 @@ const useScreenshots = ( { onData } ) => {
 
 	/**
 	 * The ids for each request are:
-	 * - editorSessionId: a unique id for each editor. (open the editor)
+	 * - editorSessionId: a unique id for each editor opening
 	 * - sessionId: a unique id for each session. (open the AI builder)
 	 * - generateId: a unique id for each generate request. (prompt change)
 	 * - batchId: a unique id for each batch of generate requests. (generate, regenerate)
