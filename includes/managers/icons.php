@@ -389,7 +389,6 @@ class Icons_Manager {
 		static $migration_dictionary = [];
 
 		$mapping_files = self::get_mapping_files();
-		$found_in_mapping = false;
 
 		if ( is_string( $value ) ) {
 			if ( '' === $value ) {
@@ -411,13 +410,12 @@ class Icons_Manager {
 			}
 
 			if ( isset( $migration_dictionary[ $mapping_file ][ $value['value'] ] ) ) {
-				$value = $migration_dictionary[ $mapping_file ][ $value ]['value'];
-				$found_in_mapping = true;
+				$value = $migration_dictionary[ $mapping_file ][ $value ];
 			}
 		}
 
 		// Make sure there's no value in the old 'fa ' format, even if no replacement found.
-		if ( ! $found_in_mapping && '' === $value['library'] ) {
+		if ( '' === $value['library'] ) {
 			$value = [
 				'value'   => 'fas ' . str_replace( 'fa ', '', $value ),
 				'library' => 'fa-solid',
