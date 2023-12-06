@@ -31,4 +31,4 @@ const deepClone = ( object ) => {
 	return JSON.parse( JSON.stringify( object ) );
 };
 
-window.structuredClone = window.structuredClone ?? deepClone;
+window.structuredClone = deepClone;
