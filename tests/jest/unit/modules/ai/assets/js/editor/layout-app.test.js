@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LayoutApp from '../../../../../../../../modules/ai/assets/js/editor/layout-app';
-import TestProvider from './mock/TestProvider';
-import { elementorCommon, ajaxResponses } from './mock/elementorCommon';
+import TestThemeProvider from './mock/test-theme-provider';
+import { elementorCommon, ajaxResponses } from './mock/elementor-common';
 import { SCREENSHOT_LIGHT_1 } from './mock/data';
 
 const onGenerate = jest.fn();
@@ -25,7 +25,7 @@ describe( 'LayoutApp', () => {
 			} ) );
 
 		render(
-			<TestProvider>
+			<TestThemeProvider>
 				<LayoutApp
 					onClose={ () => {} }
 					onConnect={ () => {} }
@@ -38,7 +38,7 @@ describe( 'LayoutApp', () => {
 					mode={ 'layout' }
 					attachmentsTypes={ {} }
 				/>
-			</TestProvider>,
+			</TestThemeProvider>,
 		);
 
 		await sleep( 1000 );
@@ -49,15 +49,18 @@ describe( 'LayoutApp', () => {
 		ajaxResponses.ai_generate_layout = [];
 	} );
 
-	test( 'Should generate unique ids', async () => {
+	test( 'Should add unique ids to the request', async () => {
+		// Arrange
 		const wrapper = await screen.getByTestId( 'root' );
 
+		// Act
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
 			target: { value: 'test' },
 		} );
 
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
+		// Assert
 		expect( onGenerate ).toHaveBeenCalled();
 
 		expect( ajaxResponses.ai_generate_layout[ 0 ].request.data ).toMatchObject( {
@@ -74,15 +77,18 @@ describe( 'LayoutApp', () => {
 		} );
 	} );
 
-	it( 'Should have unique session id on first generate', async () => {
+	it( 'Should have unique ids on first generate', async () => {
+		// Arrange
 		const wrapper = await screen.getByTestId( 'root' );
 
+		// Act
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
 			target: { value: 'test' },
 		} );
 
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
+		// Assert
 		const expected = [
 			{
 				id: 'sessionId',
@@ -105,13 +111,16 @@ describe( 'LayoutApp', () => {
 		for ( let i = 0; i < expected.length; i++ ) {
 			const { id, expectedUnique } = expected[ i ];
 			const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-			expect( ids.length ).toEqual( REQUESTS_COUNT );
 			const uniqueIds = new Set( ids );
+
+			// Assert
+			expect( ids.length ).toEqual( REQUESTS_COUNT );
 			expect( uniqueIds.size ).toEqual( expectedUnique );
 		}
 	} );
 
-	it( 'Should have unique same sessionId, generateID, but different batchId on regenerate', async () => {
+	it( 'Should keep the same sessionId and generateID on regenerate, but discard other ids', async () => {
+		// Arrange
 		const wrapper = await screen.getByTestId( 'root' );
 
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
@@ -121,12 +130,14 @@ describe( 'LayoutApp', () => {
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
 		// Wait for next tick
-		await sleep( 10 );
+		await waitFor( () => Promise.resolve() );
 
+		// Act
 		fireEvent.click( screen.getByText( /^regenerate/i ) );
 
-		await sleep( 10 );
+		await waitFor( () => Promise.resolve() );
 
+		// Assert
 		const expected = [
 			{
 				id: 'sessionId',
@@ -149,15 +160,17 @@ describe( 'LayoutApp', () => {
 		for ( let i = 0; i < expected.length; i++ ) {
 			const { id, expectedUnique } = expected[ i ];
 			const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-			expect( ids.length ).toEqual( REQUESTS_COUNT * 2 );
 			const uniqueIds = new Set( ids );
-			await expect( uniqueIds.size ).toEqual( expectedUnique );
+
+			expect( ids.length ).toEqual( REQUESTS_COUNT * 2 );
+			expect( uniqueIds.size ).toEqual( expectedUnique );
 		}
 
+		// Arrange - another generate with a new prompt
 		const editButton = wrapper.querySelector( '[aria-label="Edit prompt"] button' );
 		fireEvent.click( editButton );
 
-		// Should have unique same sessionId, but different generateID, batchId on a new prompt.
+		// Act - Should keep only the sessionId, on a new prompt.
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
 			target: { value: 'test2' },
 		} );
@@ -165,8 +178,9 @@ describe( 'LayoutApp', () => {
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
 		// Wait for next tick
-		await sleep( 10 );
+		await waitFor( () => Promise.resolve() );
 
+		// Assert
 		const expected2 = [
 			{
 				id: 'sessionId',
@@ -189,8 +203,9 @@ describe( 'LayoutApp', () => {
 		for ( let i = 0; i < expected2.length; i++ ) {
 			const { id, expectedUnique } = expected2[ i ];
 			const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-			expect( ids.length ).toEqual( REQUESTS_COUNT * 3 );
 			const uniqueIds = new Set( ids );
+
+			expect( ids.length ).toEqual( REQUESTS_COUNT * 3 );
 			expect( uniqueIds.size ).toEqual( expectedUnique );
 		}
 	} );

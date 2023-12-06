@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import LayoutAppWrapper from '../../../../../../../../modules/ai/assets/js/editor/layout-app-wrapper';
+import LayoutAppWrapper from 'elementor/modules/ai/assets/js/editor/layout-app-wrapper';
 import { useTheme } from '@elementor/ui';
 
 const Test = () => {

@@ -2,17 +2,16 @@ import * as React from 'react';
 import { createTheme } from '@elementor/ui';
 import { StyledEngineProvider } from '@elementor/ui/styles';
 import { ThemeProvider } from '@mui/material/styles';
-import {} from '@mui/material';
 
 import PropTypes from 'prop-types';
 
+// Disable Transitions when running tests
 // https://stackoverflow.com/a/77460953	- Thanks.
-export default class TestProvider extends React.Component {
+export default class TestThemeProvider extends React.Component {
 	disableTransitions = {
 		defaultProps: {
 			disablePortal: true,
 			hideBackdrop: true,
-			TransitionComponent: ( { children } ) => children,
 		},
 	};
 
@@ -26,7 +25,6 @@ export default class TestProvider extends React.Component {
 					contrastText: '#242105',
 				},
 			},
-			// Disable Transitions when running tests
 			components: {
 				MuiDialog: this.disableTransitions,
 				MuiModal: this.disableTransitions,
@@ -44,6 +42,6 @@ export default class TestProvider extends React.Component {
 	}
 }
 
-TestProvider.propTypes = {
+TestThemeProvider.propTypes = {
 	children: PropTypes.node.isRequired,
 };
