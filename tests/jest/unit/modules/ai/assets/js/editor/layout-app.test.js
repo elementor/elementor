@@ -3,13 +3,16 @@ import LayoutApp from '../../../../../../../../modules/ai/assets/js/editor/layou
 import TestThemeProvider from './mock/test-theme-provider';
 import { elementorCommon, ajaxResponses } from './mock/elementor-common';
 import { SCREENSHOT_LIGHT_1 } from './mock/data';
+import { addPromptAndGenerate, assertUniqueIds, clickEditPromptButton, sleep } from './test-utils';
 
 const REQUESTS_PER_BATCH = 3;
+
 const onGenerate = jest.fn();
+
 const onData = () => {
 	return SCREENSHOT_LIGHT_1;
 };
-const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+
 const defaultExpectedUniqueIds = {
 	editorSessionId: 1,
 	sessionId: 1,
@@ -18,18 +21,25 @@ const defaultExpectedUniqueIds = {
 	requestId: REQUESTS_PER_BATCH,
 };
 
-const assertUniqueIds = ( expected ) => {
-	for ( const [ id, expectedUnique ] of Object.entries( expected ) ) {
-		const ids = ajaxResponses.ai_generate_layout.map( ( { request } ) => request.data.ids[ id ] );
-		const uniqueIds = new Set( ids );
-
-		// Assert
-		expect( ids.length ).toEqual( expected.requestId );
-		expect( uniqueIds.size ).toEqual( expectedUnique );
-	}
-};
+const App = () => (
+	<TestThemeProvider>
+		<LayoutApp
+			onClose={ () => {} }
+			onConnect={ () => {} }
+			onData={ onData }
+			onInsert={ () => {} }
+			onSelect={ () => {} }
+			onGenerate={ onGenerate }
+			mode={ 'layout' }
+			attachmentsTypes={ {} }
+			hasPro={ true }
+			editorSessionId={ 'EDITOR_SESSION_ID' }
+		/>
+	</TestThemeProvider>
+);
 
 describe( 'LayoutApp', () => {
+	let rerender;
 	beforeEach( async () => {
 		global.elementorCommon = elementorCommon;
 
@@ -41,41 +51,22 @@ describe( 'LayoutApp', () => {
 				unobserve: jest.fn(),
 			} ) );
 
-		render(
-			<TestThemeProvider>
-				<LayoutApp
-					onClose={ () => {} }
-					onConnect={ () => {} }
-					onData={ onData }
-					onInsert={ () => {} }
-					onSelect={ () => {} }
-					onGenerate={ onGenerate }
-					mode={ 'layout' }
-					attachmentsTypes={ {} }
-					hasPro={ true }
-					editorSessionId={ 'EDITOR_SESSION_ID' }
-				/>
-			</TestThemeProvider>,
-		);
+		const result = render( <App /> );
+
+		rerender = result.rerender;
 
 		await sleep( 1000 );
 	} );
 
 	afterEach( () => {
-		global.elementorCommon = undefined;
 		ajaxResponses.ai_generate_layout = [];
+		global.elementorCommon = undefined;
+		rerender = undefined;
 	} );
 
-	test( 'Should add unique ids to the request', async () => {
-		// Arrange
-		const wrapper = await screen.getByTestId( 'root' );
-
+	it( 'Should add unique ids to the request', async () => {
 		// Act
-		fireEvent.change( wrapper.querySelector( 'textarea' ), {
-			target: { value: 'test' },
-		} );
-
-		fireEvent.click( screen.getByText( /^generate/i ) );
+		await addPromptAndGenerate( 'test' );
 
 		// Assert
 		expect( onGenerate ).toHaveBeenCalled();
@@ -93,32 +84,13 @@ describe( 'LayoutApp', () => {
 			prompt: 'test',
 			variationType: 0,
 		} );
-	} );
 
-	it( 'Should have unique ids on first generate', async () => {
-		// Arrange
-		const wrapper = await screen.getByTestId( 'root' );
-
-		// Act
-		fireEvent.change( wrapper.querySelector( 'textarea' ), {
-			target: { value: 'test' },
-		} );
-
-		fireEvent.click( screen.getByText( /^generate/i ) );
-
-		// Assert
 		assertUniqueIds( defaultExpectedUniqueIds );
 	} );
 
 	it( 'Should keep the same sessionId and generateID on regenerate, but discard other ids', async () => {
 		// Arrange
-		const wrapper = await screen.getByTestId( 'root' );
-
-		fireEvent.change( wrapper.querySelector( 'textarea' ), {
-			target: { value: 'test' },
-		} );
-
-		fireEvent.click( screen.getByText( /^generate/i ) );
+		await addPromptAndGenerate( 'test' );
 
 		// Wait for next tick
 		await waitFor( () => Promise.resolve() );
@@ -129,36 +101,51 @@ describe( 'LayoutApp', () => {
 		await waitFor( () => Promise.resolve() );
 
 		// Assert
-		const expected = {
+		assertUniqueIds( {
 			... defaultExpectedUniqueIds,
 			batchId: 2,
 			requestId: REQUESTS_PER_BATCH * 2,
-		};
-
-		assertUniqueIds( expected );
-
-		// Arrange - another generate with a new prompt
-		const editButton = wrapper.querySelector( '[aria-label="Edit prompt"] button' );
-		fireEvent.click( editButton );
-
-		// Act - Should keep only the sessionId, on a new prompt.
-		fireEvent.change( wrapper.querySelector( 'textarea' ), {
-			target: { value: 'test2' },
 		} );
 
-		fireEvent.click( screen.getByText( /^generate/i ) );
+		// Arrange - another generate with a new prompt
+		await clickEditPromptButton();
+
+		// Act - Should keep only the sessionId, on a new prompt.
+		await addPromptAndGenerate( 'test2' );
 
 		// Wait for next tick
 		await waitFor( () => Promise.resolve() );
 
 		// Assert
-		const expected2 = {
+		assertUniqueIds( {
 			... defaultExpectedUniqueIds,
 			generateId: 2,
 			batchId: 3,
 			requestId: REQUESTS_PER_BATCH * 3,
-		};
+		} );
+	} );
 
-		assertUniqueIds( expected2 );
+	it( 'Should create a new sessionId on rerender component', async () => {
+		// Arrange
+		await addPromptAndGenerate( 'test' );
+
+		// Act - rerender and generate again
+		rerender( <App /> );
+
+		await sleep( 1000 );
+
+		// Arrange - another generate with a new prompt
+		await clickEditPromptButton();
+
+		await addPromptAndGenerate( 'test' );
+
+		// Assert
+		assertUniqueIds( {
+			... defaultExpectedUniqueIds,
+			sessionId: 2,
+			generateId: 2,
+			batchId: 2,
+			requestId: REQUESTS_PER_BATCH * 2,
+		} );
 	} );
 } );
