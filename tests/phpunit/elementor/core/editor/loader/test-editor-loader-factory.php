@@ -16,14 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Editor_Loader_Factory extends Elementor_Test_Base {
 	private $original_experiment_default_state;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Editor::EDITOR_V2_EXPERIMENT_NAME )['default'];
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->experiments

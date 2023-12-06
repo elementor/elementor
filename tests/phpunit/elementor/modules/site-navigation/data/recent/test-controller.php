@@ -24,7 +24,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->module = new Module();
@@ -39,7 +39,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->experiments->set_feature_default_state(
