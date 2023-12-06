@@ -3,6 +3,7 @@ namespace Elementor\Modules\Ai\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Modules\Ai\Module;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -541,6 +542,12 @@ class Ai extends Library {
 		}
 
 		$context['currentContext'] = $data['currentContext'];
+
+		if ( ElementorUtils::has_pro() ) {
+			$context['features'] = [
+				'subscriptions' => [ 'Pro' ],
+			];
+		}
 
 		$metadata = [
 			'context' => $context,
