@@ -1,5 +1,5 @@
 // Create missing IDs for the elements.
-const getUniqueId = () => {
+export const getUniqueId = () => {
 	return Math.random().toString( 16 ).substr( 2, 7 );
 };
 
