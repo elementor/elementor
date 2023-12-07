@@ -27,10 +27,12 @@ jobs:
           # Everything: **/*
           # Everything in directories starting with a period: .*/**/*
           # Not readme.txt: !readme.txt
+          # Not changelog.txt: !changelog.txt
           PATTERNS: |
             **/*
             .*/**/*
             !readme.txt
+            !changelog.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -76,7 +78,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      
+
       - name: Restore NPM from cache
         if: matrix.wpCoreVersion != 'master'
         uses: actions/cache/restore@v3
