@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.18.2 - 2023-12-08 =
+
+* Security Fix: Addressed security weaknesses in template upload mechanism
+
 = 3.18.1 - 2023-12-06 =
 
 * Fix: Improved code security enforcement in File Upload mechanism
