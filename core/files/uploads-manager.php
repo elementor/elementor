@@ -497,7 +497,7 @@ class Uploads_Manager extends Base_Object {
 		$file_extension = pathinfo( $file['fileName'], PATHINFO_EXTENSION );
 		$is_file_type_allowed = $this->is_file_type_allowed( $file_extension, $allowed_file_extensions );
 
-		if ( is_wp_error( $is_file_type_allowed ) ) {
+		if ( ! $is_file_type_allowed || is_wp_error( $is_file_type_allowed ) ) {
 			return $is_file_type_allowed;
 		}
 
