@@ -244,26 +244,8 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.18.0 - 2023-12-04 =
+= 3.18.2 - 2023-12-08 =
 
-* New: Introducing Element Manager - Overview of all installed widgets on your site, allowing the deactivation of unused widgets for a personalized widget panel ([#9647](https://github.com/elementor/elementor/issues/9647))
-* New: Introducing Elementor AI for Text-Based Container Generation – Effortlessly generate uniquely designed containers by simply providing a single textual prompt
-* New: Introducing Elementor AI for Elementor-Based Container Variations – Customize your existing Elementor layouts by editing container content, images, fonts, colors, and icons
-* Tweak: Added support for Elementor AI Web-Based Container generation – Create containers by providing a specified URL to generate Elementor-compatible layouts
-* Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
-* Tweak: Implemented accessibility improvements in Progress Bar widget
-* Tweak: Added responsive control and size units to navigation size in Image Carousel widget
-* Tweak: Promoted Global Style Guide feature to a Stable status
-* Tweak: Activated Optimize Image Loading experiment by default for all sites
-* Tweak: Activated Optimized Gutenberg Loading experiment by default for all sites
-* Tweak: Activated Inline Font Icons experiment by default for new sites
-* Tweak: Renamed the 'Image Size' control into 'Image Resolution'
-* Tweak: Updated `eicons` library to v5.25.0
-* Tweak: Updated context menu UI
-* Fix: Elementor Editor is slow when using Safari 17 and Firefox on macOS ([#24260](https://github.com/elementor/elementor/issues/24260))
-* Fix: Locale with "comma" as decimal separator brakes generated CSS styles for decimal values ([#10992](https://github.com/elementor/elementor/issues/10992))
-* Fix: Changed Vimeo Background video player to transparent background player ([#16336](https://github.com/elementor/elementor/issues/16336))
-* Fix: Dynamic property creation is deprecated in container layout with PHP 8.2 ([#23830](https://github.com/elementor/elementor/issues/23830))
-* Fix: Ensure that the tab elements open correctly with a click in Tabs widget
+* Security Fix: Addressed security weaknesses in template upload mechanism
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
