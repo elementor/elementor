@@ -48,6 +48,7 @@ const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the change
 const EDITOR_SESSION_ID = `editor-session-${ getUniqueId() }`;
 
 export const renderLayoutApp = ( options = {
+	parentContainer: null,
 	mode: '',
 	at: null,
 	onClose: null,
@@ -59,7 +60,7 @@ export const renderLayoutApp = ( options = {
 } ) => {
 	closePanel();
 
-	const previewContainer = createPreviewContainer( {
+	const previewContainer = createPreviewContainer( options.parentContainer, {
 		// Create the container at the "drag widget here" area position.
 		at: options.at,
 	} );
@@ -136,6 +137,7 @@ export const renderLayoutApp = ( options = {
 };
 
 export const importToEditor = ( {
+	parentContainer,
 	at,
 	template,
 	historyTitle,
@@ -148,12 +150,12 @@ export const importToEditor = ( {
 
 	if ( replace ) {
 		$e.run( 'document/elements/delete', {
-			container: elementor.getPreviewContainer().children.at( at ),
+			container: parentContainer.children.at( at ),
 		} );
 	}
 
 	$e.run( 'document/elements/create', {
-		container: elementor.getPreviewContainer(),
+		container: parentContainer,
 		model: generateIds( template ),
 		options: {
 			at,
