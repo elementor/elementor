@@ -470,48 +470,6 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
-	 * Save Base64 as File
-	 *
-	 * Saves a Base64 string as a .tmp file in Elementor's temporary files directory.
-	 *
-	 * @since 3.3.0
-	 * @access private
-	 *
-	 * @param $file
-	 * @param array|null $allowed_file_extensions
-	 *
-	 * @return array|\WP_Error
-	 */
-	private function save_base64_to_tmp_file( $file, $allowed_file_extensions = null ) {
-		$file_extension = pathinfo( $file['fileName'], PATHINFO_EXTENSION );
-		$is_file_type_allowed = $this->is_file_type_allowed( $file_extension, $allowed_file_extensions );
-
-		if ( ! $is_file_type_allowed || is_wp_error( $is_file_type_allowed ) ) {
-			return $is_file_type_allowed;
-		}
-
-		$file_content = base64_decode( $file['fileData'] ); // phpcs:ignore
-
-		// If the decode fails
-		if ( ! $file_content ) {
-			return new \WP_Error( 'file_error', self::INVALID_FILE_CONTENT );
-		}
-
-		$temp_filename = $this->create_temp_file( $file_content, $file['fileName'] );
-
-		if ( is_wp_error( $temp_filename ) ) {
-			return $temp_filename;
-		}
-
-		return [
-			// the original uploaded file name
-			'name' => $file['fileName'],
-			// The path to the temporary file
-			'tmp_name' => $temp_filename,
-		];
-	}
-
-	/**
 	 * Validate File
 	 *
 	 * @since 3.3.0
