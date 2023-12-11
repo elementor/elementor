@@ -57,8 +57,6 @@ const ContainerView = BaseElementView.extend( {
 			directionSettingKey = this.getDirectionSettingKey() + deviceSuffix,
 			currentDirection = this.container.settings.get( directionSettingKey );
 
-		this.updateNeedHelpLink();
-
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
@@ -433,7 +431,6 @@ const ContainerView = BaseElementView.extend( {
 			}
 
 			this.droppableInitialize( this.container.settings );
-			this.updateNeedHelpLink();
 		} );
 	},
 
