@@ -19,6 +19,7 @@ export const ThumbnailUrl = ( props ) => {
 				borderRadius: 1,
 				overflow: 'hidden',
 				minWidth: THUMBNAIL_SIZE,
+				maxHeight: THUMBNAIL_SIZE,
 
 				'&:hover::before': {
 					content: '""',

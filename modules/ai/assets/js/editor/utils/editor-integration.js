@@ -3,7 +3,8 @@ import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
 import { startHistoryLog } from './history';
 import { __ } from '@wordpress/i18n';
-import { generateIds } from './genereate-ids';
+import { generateIds, getUniqueId } from './generate-ids';
+import LayoutAppWrapper from '../layout-app-wrapper';
 
 export const closePanel = () => {
 	$e.run( 'panel/close' );
@@ -35,7 +36,7 @@ const VARIATIONS_PROMPTS = [
 	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
 	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
 	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
-	{ text: __( 'Futuristic layout with neon accents around', 'elementor' ) },
+	{ text: __( 'Futuristic design with neon accents about', 'elementor' ) },
 	{ text: __( 'Professional look with clean lines for', 'elementor' ) },
 	{ text: __( 'Earthy tones and organic shapes featuring', 'elementor' ) },
 	{ text: __( 'Luxurious theme with rich colors discussing', 'elementor' ) },
@@ -43,7 +44,11 @@ const VARIATIONS_PROMPTS = [
 	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
 ];
 
+const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
+const EDITOR_SESSION_ID = `editor-session-${ getUniqueId() }`;
+
 export const renderLayoutApp = ( options = {
+	parentContainer: null,
 	mode: '',
 	at: null,
 	onClose: null,
@@ -55,7 +60,7 @@ export const renderLayoutApp = ( options = {
 } ) => {
 	closePanel();
 
-	const previewContainer = createPreviewContainer( {
+	const previewContainer = createPreviewContainer( options.parentContainer, {
 		// Create the container at the "drag widget here" area position.
 		at: options.at,
 	} );
@@ -65,51 +70,66 @@ export const renderLayoutApp = ( options = {
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
 
+	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
+
 	ReactDOM.render(
-		<LayoutApp
-			mode={ options.mode }
+		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
-			attachmentsTypes={ {
-				json: {
-					promptSuggestions: VARIATIONS_PROMPTS,
-					previewGenerator: async ( json ) => {
-						const screenshot = await takeScreenshot( json );
-						return `<img src="${ screenshot }" />`;
+		>
+			<LayoutApp
+				mode={ options.mode }
+				currentContext={ {
+					body: {
+						backgroundColor: bodyStyle.backgroundColor,
+						backgroundImage: bodyStyle.backgroundImage,
 					},
-				},
-				url: {
-					promptSuggestions: VARIATIONS_PROMPTS,
-				},
-			} }
-			attachments={ options.attachments || [] }
-			onClose={ () => {
-				previewContainer.destroy();
-				options.onClose?.();
+				} }
+				attachmentsTypes={ {
+					json: {
+						promptSuggestions: VARIATIONS_PROMPTS,
+						promptPlaceholder: PROMPT_PLACEHOLDER,
+						previewGenerator: async ( json ) => {
+							const screenshot = await takeScreenshot( json );
+							return `<img src="${ screenshot }" />`;
+						},
+					},
+					url: {
+						promptPlaceholder: PROMPT_PLACEHOLDER,
+						promptSuggestions: VARIATIONS_PROMPTS,
+					},
+				} }
+				attachments={ options.attachments || [] }
+				onClose={ () => {
+					previewContainer.destroy();
+					options.onClose?.();
 
-				ReactDOM.unmountComponentAtNode( rootElement );
-				rootElement.remove();
+					ReactDOM.unmountComponentAtNode( rootElement );
+					rootElement.remove();
 
-				openPanel();
-			} }
-			onConnect={ onConnect }
-			onGenerate={ () => {
-				options.onGenerate?.( { previewContainer } );
-			} }
-			onData={ async ( template ) => {
-				const screenshot = await takeScreenshot( template );
+					openPanel();
+				} }
+				onConnect={ onConnect }
+				onGenerate={ () => {
+					options.onGenerate?.( { previewContainer } );
+				} }
+				onData={ async ( template ) => {
+					const screenshot = await takeScreenshot( template );
 
-				return {
-					screenshot,
-					template,
-				};
-			} }
-			onSelect={ ( template ) => {
-				options.onSelect?.();
-				previewContainer.setContent( template );
-			} }
-			onInsert={ options.onInsert }
-		/>,
+					return {
+						screenshot,
+						template,
+					};
+				} }
+				onSelect={ ( template ) => {
+					options.onSelect?.();
+					previewContainer.setContent( template );
+				} }
+				onInsert={ options.onInsert }
+				hasPro={ elementor.helpers.hasPro() }
+				editorSessionId={ EDITOR_SESSION_ID }
+			/>
+		</LayoutAppWrapper>,
 		rootElement,
 	);
 
@@ -117,6 +137,7 @@ export const renderLayoutApp = ( options = {
 };
 
 export const importToEditor = ( {
+	parentContainer,
 	at,
 	template,
 	historyTitle,
@@ -129,12 +150,12 @@ export const importToEditor = ( {
 
 	if ( replace ) {
 		$e.run( 'document/elements/delete', {
-			container: elementor.getPreviewContainer().children.at( at ),
+			container: parentContainer.children.at( at ),
 		} );
 	}
 
 	$e.run( 'document/elements/create', {
-		container: elementor.getPreviewContainer(),
+		container: parentContainer,
 		model: generateIds( template ),
 		options: {
 			at,

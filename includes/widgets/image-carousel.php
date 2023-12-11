@@ -75,7 +75,7 @@ class Widget_Image_Carousel extends Widget_Base {
 
 	protected function get_upsale_data() {
 		return [
-			'description' => esc_html__( 'Gain complete freedom to design every slide with Elementor\'s Pro Carousel.', 'elementor' ),
+			'description' => esc_html__( 'Gain complete freedom to design every slide with Elementor"s Pro Carousel.', 'elementor' ),
 			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
 		];
 	}

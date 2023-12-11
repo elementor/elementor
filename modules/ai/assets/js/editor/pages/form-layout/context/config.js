@@ -21,6 +21,10 @@ export const ConfigProvider = ( props ) => {
 				onInsert: props.onInsert,
 				onSelect: props.onSelect,
 				onGenerate: props.onGenerate,
+				currentContext: props.currentContext,
+				hasPro: props.hasPro,
+				sessionId: props.sessionId,
+				editorSessionId: props.editorSessionId,
 			} }
 		>
 			{ props.children }
@@ -38,6 +42,10 @@ ConfigProvider.propTypes = {
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
+	currentContext: PropTypes.object,
+	hasPro: PropTypes.bool,
+	sessionId: PropTypes.string,
+	editorSessionId: PropTypes.string,
 };
 
 export default ConfigContext;

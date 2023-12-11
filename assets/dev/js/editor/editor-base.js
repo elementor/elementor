@@ -27,6 +27,7 @@ import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
+import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -413,6 +414,8 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
+
+		this.modules.promotionModule = new PromotionModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
