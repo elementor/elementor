@@ -700,6 +700,15 @@ test.describe( 'Container Grid tests @container', () => {
 			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
 		} );
 
+		await test.step( 'Select existing grid container', async () => {
+			// Act
+			await editor.selectElement( containerId );
+
+			// Assert
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+		} );
+
 		await page.waitForSelector( '#elementor-panel__editor__help__link' );
 	} );
 } );
