@@ -244,10 +244,8 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.18.1 - 2023-12-06 =
+= 3.18.2 - 2023-12-08 =
 
-* Fix: Improved code security enforcement in File Upload mechanism
-* Fix: Error appears on front when using various 3rd party plugins and Themes
-* Fix: Reverted Elementor Editor is slow when using Safari 17 and Firefox on macOS
+* Security Fix: Addressed security weaknesses in template upload mechanism
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
