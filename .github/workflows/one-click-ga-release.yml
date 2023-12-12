@@ -67,5 +67,5 @@ jobs:
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - uses: actions/upload-artifact@v3
         with:
-          name: elementor-${{env.PLUGIN_ZIP_FILENAME}}.zip
-          path: ./
+          name: ${{env.PLUGIN_ZIP_FILENAME}}
+          path: ./${{env.PLUGIN_ZIP_FILENAME}}
