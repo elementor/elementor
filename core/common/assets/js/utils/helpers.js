@@ -75,8 +75,8 @@ export default class Helpers {
 		elementorDevTools.deprecation.deprecated( 'elementorCommon.helpers.deprecatedMethod()', '2.8.0', 'elementorDevTools.deprecation.deprecated()' );
 	}
 
-	cloneObject( object ) {
-		return structuredClone( object );
+	cloneObject( item ) {
+		return JSON.parse( JSON.stringify( item ) );
 	}
 
 	upperCaseWords( string ) {

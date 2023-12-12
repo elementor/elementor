@@ -293,7 +293,7 @@ export default class EditorBase extends Marionette.Application {
 			return false;
 		}
 
-		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
+		const elementConfig = structuredClone( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
 			elementConfig.title = __( 'Inner Section', 'elementor' );
@@ -1432,7 +1432,7 @@ export default class EditorBase extends Marionette.Application {
 			const devicesArrayToDuplicate = controlDevices || devices;
 
 			devicesArrayToDuplicate.forEach( ( device, index ) => {
-				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
+				let controlArgs = structuredClone( controlConfig );
 
 				if ( controlArgs.device_args ) {
 					if ( controlArgs.device_args[ device ] ) {
