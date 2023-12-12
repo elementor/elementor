@@ -148,11 +148,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
 			'description' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.17.0',
-			],
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'generator_tag' => true,
 		] );

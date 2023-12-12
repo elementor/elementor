@@ -27,6 +27,10 @@
 			tbody td:first-child {
 				width: 300px;
 			}
+
+			td {
+				white-space: break-spaces;
+			}
 		}
 	}
 

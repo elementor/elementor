@@ -3,6 +3,7 @@
 namespace Elementor\Core\Common\Modules\Finder\Categories;
 
 use Elementor\Core\Common\Modules\Finder\Base_Category;
+use Elementor\Modules\ElementManager\Module as ElementManagerModule;
 use Elementor\Settings as ElementorSettings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,6 +61,11 @@ class Settings extends Base_Category {
 				'title' => esc_html__( 'Experiments', 'elementor' ),
 				'url' => $settings_url . '#tab-experiments',
 				'keywords' => [ 'settings', 'elementor', 'experiments' ],
+			],
+			'element-manager' => [
+				'title' => esc_html__( 'Element Manager', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=' . ElementManagerModule::PAGE_ID ),
+				'keywords' => [ 'settings', 'elements', 'widgets', 'manager' ],
 			],
 		];
 	}

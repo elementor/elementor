@@ -73,6 +73,13 @@ class Widget_Testimonial extends Widget_Base {
 		return [ 'testimonial', 'blockquote' ];
 	}
 
+	protected function get_upsale_data() {
+		return [
+			'description' => esc_html__( 'Use interesting masonry layouts and other overlay features with Elementor\'s Pro Gallery widget.', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-testimonial-widget/',
+		];
+	}
+
 	/**
 	 * Register testimonial widget controls.
 	 *

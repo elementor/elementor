@@ -822,12 +822,24 @@ class Utils {
 		}
 
 		if ( $_FILES === $super_global ) {
-			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
-
-			return $super_global[ $key ];
+			return isset( $super_global[ $key ]['name'] ) ?
+				self::sanitize_file_name( $super_global[ $key ] ) :
+				self::sanitize_multi_upload( $super_global[ $key ] );
 		}
 
 		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
+	private static function sanitize_multi_upload( $fields ) {
+		return array_map( function( $field ) {
+			return array_map( 'self::sanitize_file_name', $field );
+		}, $fields );
+	}
+
+	private static function sanitize_file_name( $file ) {
+		$file['name'] = sanitize_file_name( $file['name'] );
+
+		return $file;
 	}
 
 	/**

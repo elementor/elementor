@@ -3,6 +3,7 @@ import {
 	importToEditor,
 	renderLayoutApp,
 } from './utils/editor-integration';
+import { MODE_LAYOUT } from './pages/form-layout/context/config';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	previewContainer = null;
@@ -24,8 +25,16 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		e.stopPropagation();
 
 		renderLayoutApp( {
+			parentContainer: elementor.getPreviewContainer(),
+			mode: MODE_LAYOUT,
 			at: this.view.getOption( 'at' ),
 			onInsert: this.onInsert.bind( this ),
+			onRenderApp: ( args ) => {
+				args.previewContainer.init();
+			},
+			onGenerate: ( args ) => {
+				args.previewContainer.reset();
+			},
 		} );
 	}
 
@@ -37,6 +46,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.hideDropArea();
 
 		importToEditor( {
+			parentContainer: elementor.getPreviewContainer(),
 			at: this.view.getOption( 'at' ),
 			template,
 			historyTitle: __( 'AI Layout', 'elementor' ),

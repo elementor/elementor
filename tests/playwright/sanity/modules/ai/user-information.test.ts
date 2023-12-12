@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import {
 	userInformationMock,
-	userInformationExceededQuotaMock,
+	freeUserInformationExceededQuota80Mock,
+	freeUserInformationExceededQuota95Mock,
+	paidUserInformationExceededQuota80Mock,
+	paidUserInformationExceededQuota95Mock,
 	userInformationNoConnectedMock,
 	userInformationConnectedNoGetStartedMock,
 } from './user-information.mock';
@@ -32,7 +35,7 @@ test.describe( 'AI @ai', () => {
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
-		await test.step( 'Exceeded the quota', async () => {
+		await test.step( 'Free user has exceeded the quota with 80% usage', async () => {
 			await page.click( '.e-ai-button' );
 
 			await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
@@ -40,12 +43,66 @@ test.describe( 'AI @ai', () => {
 
 				if ( requestPostData.includes( 'ai_get_user_information' ) ) {
 					await route.fulfill( {
-						json: userInformationExceededQuotaMock,
+						json: freeUserInformationExceededQuota80Mock,
 					} );
 				}
 			} );
 
-			await expect( page.getByText( 'You\'ve used 100% of your Elementor AI plan' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You’ve used over 80% of the free trial.' ) ).toHaveCount( 1 );
+
+			await page.locator( 'button[aria-label="close"]' ).click();
+		} );
+
+		await test.step( 'Free user has exceeded the quota with 95% usage', async () => {
+			await page.click( '.e-ai-button' );
+
+			await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
+				const requestPostData = route.request().postData();
+
+				if ( requestPostData.includes( 'ai_get_user_information' ) ) {
+					await route.fulfill( {
+						json: freeUserInformationExceededQuota95Mock,
+					} );
+				}
+			} );
+
+			await expect( page.getByText( 'You’ve used over 95% of the free trial.' ) ).toHaveCount( 1 );
+
+			await page.locator( 'button[aria-label="close"]' ).click();
+		} );
+
+		await test.step( 'Paid user has exceeded the quota with 80% usage', async () => {
+			await page.click( '.e-ai-button' );
+
+			await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
+				const requestPostData = route.request().postData();
+
+				if ( requestPostData.includes( 'ai_get_user_information' ) ) {
+					await route.fulfill( {
+						json: paidUserInformationExceededQuota80Mock,
+					} );
+				}
+			} );
+
+			await expect( page.getByText( 'You’ve used over 80% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+
+			await page.locator( 'button[aria-label="close"]' ).click();
+		} );
+
+		await test.step( 'Paid user has exceeded the quota with 95% usage', async () => {
+			await page.click( '.e-ai-button' );
+
+			await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
+				const requestPostData = route.request().postData();
+
+				if ( requestPostData.includes( 'ai_get_user_information' ) ) {
+					await route.fulfill( {
+						json: paidUserInformationExceededQuota95Mock,
+					} );
+				}
+			} );
+
+			await expect( page.getByText( 'You’ve used over 95% of your Elementor AI plan.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
