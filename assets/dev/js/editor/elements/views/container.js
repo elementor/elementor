@@ -480,6 +480,8 @@ const ContainerView = BaseElementView.extend( {
 
 		/* Translators: %s: Element name. */
 		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
+
+		this.updateNeedHelpLink();
 	},
 
 	getPanelTitle() {
@@ -626,6 +628,17 @@ const ContainerView = BaseElementView.extend( {
 			delete this._showingEmptyView; // Marionette property that needs to be falsy for showEmptyView() to fully execute.
 			this.showEmptyView(); // Marionette function.
 			this.handleGridEmptyView();
+		}
+	},
+
+	updateNeedHelpLink() {
+		const $linkElement = jQuery( '#elementor-panel__editor__help__link' );
+		const href = this.isGridContainer()
+			? 'https://go.elementor.com/widget-container-grid'
+			: 'https://go.elementor.com/widget-container';
+
+		if ( $linkElement ) {
+			$linkElement.attr( 'href', href );
 		}
 	},
 } );

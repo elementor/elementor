@@ -25,6 +25,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		e.stopPropagation();
 
 		renderLayoutApp( {
+			parentContainer: elementor.getPreviewContainer(),
 			mode: MODE_LAYOUT,
 			at: this.view.getOption( 'at' ),
 			onInsert: this.onInsert.bind( this ),
@@ -45,6 +46,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.hideDropArea();
 
 		importToEditor( {
+			parentContainer: elementor.getPreviewContainer(),
 			at: this.view.getOption( 'at' ),
 			template,
 			historyTitle: __( 'AI Layout', 'elementor' ),

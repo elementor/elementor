@@ -7,7 +7,7 @@ use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Modules\KitElementsDefaults\ImportExport\Runners\Export;
 
 class Test_Export extends Elementor_Test_Base {
-	public function setUp() {
+	public function setUp(): void {
 		require_once __DIR__ . '/mock/mock-widget-kits-defaults.php';
 		require_once __DIR__ . '/mock/mock-control-kits-defaults.php';
 
@@ -19,7 +19,7 @@ class Test_Export extends Elementor_Test_Base {
 		parent::setUp();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->widgets_manager->unregister( Mock_Widget_Kits_Defaults::NAME );

@@ -244,8 +244,8 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.18.0 - 2023-11-08 =
+= 3.18.2 - 2023-12-08 =
 
-*
+* Security Fix: Addressed security weaknesses in template upload mechanism
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
