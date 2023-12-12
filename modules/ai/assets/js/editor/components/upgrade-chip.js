@@ -14,7 +14,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { UpgradeIcon, CheckedCircleIcon } from '@elementor/icons';
+import { UpgradeIcon, CheckedCircleIcon, AIIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
@@ -62,6 +62,7 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
+	__( 'Let AI build your container layouts and content with ease and radically transform the way you create websites.', 'elementor' ),
 	__( 'Generate your website\'s text or create custom code without having to write a single line yourself.', 'elementor' ),
 	__( 'Effortlessly create or enhance stunning images and bring your ideas to life.', 'elementor' ),
 	__( 'Access 30-days of AI History with the AI Starter plan and 90-days with the Power plan.', 'elementor' ),
@@ -105,7 +106,7 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } size="small" />
+			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -123,7 +124,7 @@ const UpgradeChip = ( {
 					<StyledArrow ref={ arrowEl } />
 
 					<Typography variant="h5" color="text.primary">
-						{ __( 'Maximum access to Elementor AI', 'elementor' ) }
+						{ __( 'Maximize Your Access to Elementor AI', 'elementor' ) }
 					</Typography>
 
 					<List sx={ { mb: 1 } }>
@@ -147,7 +148,7 @@ const UpgradeChip = ( {
 						size="small"
 						href={ actionUrl }
 						target="_blank"
-						startIcon={ <UpgradeIcon /> }
+						startIcon={ <AIIcon /> }
 						sx={ {
 							'&:hover': {
 								color: 'accent.contrastText',
