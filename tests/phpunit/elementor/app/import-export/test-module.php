@@ -12,14 +12,14 @@ class Test_Module extends Elementor_Test_Base {
 	private $elementor_upload_dir;
 	private $elementor_upload_dir_permission;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->elementor_upload_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 		$this->elementor_upload_dir_permission = fileperms( $this->elementor_upload_dir );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		// Cleanup

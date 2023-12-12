@@ -343,11 +343,6 @@ class Editor {
 
 		$this->get_loader()->register_scripts();
 
-		// Remove polyfill script
-		// See: https://github.com/elementor/elementor/issues/24260
-		$wp_scripts->remove( 'wp-polyfill' );
-		$wp_scripts->add( 'wp-polyfill', '' );
-
 		/**
 		 * Before editor enqueue scripts.
 		 *
