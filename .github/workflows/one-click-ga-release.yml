@@ -79,3 +79,11 @@ jobs:
         with:
           name: ${{env.PLUGIN_ZIP_FILENAME}}
           path: ./${{env.PLUGIN_ZIP_FILENAME}}
+      - name: Generate changelog
+        uses: ./.github/workflows/generate-changelog
+        with:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: ${{ github.ref }}
+          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
+          GENERATE_EMPTY_CHANGELOG: true
