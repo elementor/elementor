@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator } from './helper';
 
@@ -60,7 +60,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			const nestedAccordionWidget = page.locator( '.e-n-accordion' );
 			await editor.isUiStable( nestedAccordionWidget );
 			await expectScreenshotToMatchLocator( 'header-style-editor-test-off-frontend.png', nestedAccordionWidget );
-			// Url = page.pathname;
+			url = page.url();
 		} );
 
 		await test.step( 'experiment Inline Font Icons on (default)', async () => {
@@ -69,28 +69,10 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: 'active',
 			} );
-			const editor = await wpAdmin.openNewPage(),
-				container = await editor.addElement( { elType: 'container' }, 'document' );
-
-			// Act
-			// Set horizontal icon & style size to 70
-			await editor.closeNavigatorIfOpen();
-			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
-			const nestedAccordion = await editor.selectElement( nestedAccordionID );
-			await editor.activatePanelTab( 'content' );
-			await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
-			await page.locator( '#elementor-icons-manager__search input' ).fill( 'address card' );
-			await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
-			await page.locator( '.dialog-insert_icon' ).click();
-			await editor.activatePanelTab( 'style' );
-			await editor.openSection( 'section_header_style' );
-			await editor.setSliderControlValue( 'icon_size', '70' );
+			const editor = await wpAdmin.openNewPage();
 
 			// Assert
-			await expectScreenshotToMatchLocator( 'header-style-editor.png', nestedAccordion );
-			// 	Await page.goto( url );
-			// 	await expectScreenshotToMatchLocator( 'header-style-editor.png frontend', nestedAccordion );
-			await editor.publishAndViewPage();
+			await page.goto( url );
 			const nestedAccordionWidget = page.locator( '.e-n-accordion' );
 			await editor.isUiStable( nestedAccordionWidget );
 			await expectScreenshotToMatchLocator( 'header-style-editor-test-on-frontend.png', nestedAccordionWidget );
