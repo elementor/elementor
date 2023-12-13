@@ -89,8 +89,8 @@
 
 						& > svg {
 							fill: var(--n-accordion-icon-normal-color);
-						  	width: var(--n-accordion-icon-size);
-						  	height: auto;
+							height: auto;
+							width: inherit;
 						}
 					}
 				}
