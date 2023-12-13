@@ -87,3 +87,13 @@ jobs:
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          target_commitish: ${{ env.CLEAN_REF }}
+          files: |
+            elementor-*.zip
+            ${{ env.CHANGELOG_FILE }}
+          prerelease: ${{ github.event.inputs.pre_release }}
+          body_path: ${{ env.CHANGELOG_FILE }}
