@@ -867,7 +867,7 @@ class Frontend extends App {
 	}
 
 	private function maybe_enqueue_icon_font( $icon_font_type ) {
-		if ( ! Icons_Manager::is_migration_allowed() ) {
+		if ( Icons_Manager::is_migration_required() ) {
 			return;
 		}
 
@@ -883,7 +883,7 @@ class Frontend extends App {
 	}
 
 	private function enqueue_icon_fonts() {
-		if ( empty( $this->icon_fonts_to_enqueue ) || ! Icons_Manager::is_migration_allowed() ) {
+		if ( empty( $this->icon_fonts_to_enqueue ) || Icons_Manager::is_migration_required() ) {
 			return;
 		}
 

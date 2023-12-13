@@ -568,18 +568,18 @@ class Widget_Social_Icons extends Widget_Base {
 			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}
 
-		$migration_allowed = Icons_Manager::is_migration_allowed();
+		$migration_required = Icons_Manager::is_migration_required();
 
 		?>
 		<div class="elementor-social-icons-wrapper elementor-grid">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] ) && $migration_allowed;
+				$is_new = empty( $item['social'] ) && ! $migration_required;
 				$social = '';
 
 				// add old default
-				if ( empty( $item['social'] ) && ! $migration_allowed ) {
+				if ( empty( $item['social'] ) && $migration_required ) {
 					$item['social'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-wordpress';
 				}
 

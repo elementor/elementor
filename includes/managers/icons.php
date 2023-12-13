@@ -17,13 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Icons_Manager {
 
-	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
-
 	const FONT_ICON_SVG_CLASS_NAME = 'e-font-icon-svg';
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
 
-	const ELEMENTOR_ICONS_VERSION = '6.4.2';
+	const ELEMENTOR_ICONS_VERSION = '6.5.1';
+
+	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
+
+	const LATEST_MIGRATION_OPTION = 'icon_manager_latest_migration';
+
+	const LATEST_MIGRATION_REQUIRED_VERSION = '6.5.1';
 
 	/**
 	 * Tabs.
@@ -474,7 +478,7 @@ class Icons_Manager {
 		];
 
 		// Case when old value needs migration
-		if ( ! empty( $element['settings'][ $old_control ] ) && ! self::is_migration_allowed() ) {
+		if ( ! empty( $element['settings'][ $old_control ] ) && self::is_migration_required() ) {
 			$new_value = self::fa_icon_value_migration( $element['settings'][ $old_control ] );
 		}
 
@@ -490,11 +494,11 @@ class Icons_Manager {
 
 	/**
 	 * is_migration_allowed
+	 * @deprecated 3.19.0 Use 'is_migration_required' method instead.
 	 * @return bool
 	 */
 	public static function is_migration_allowed() {
 		static $migration_allowed = false;
-
 		if ( false === $migration_allowed ) {
 			$migration_allowed = null === self::get_needs_upgrade_option();
 
@@ -502,14 +506,42 @@ class Icons_Manager {
 			 * Is icon migration allowed.
 			 *
 			 * Filters whether the icons migration allowed.
+			 * @deprecated 3.19.0 Use `elementor/icons_manager/migration_required` hook Instead.
 			 *
 			 * @param bool $migration_allowed Is icon migration is allowed.
 			 */
 			$migration_allowed = apply_filters( 'elementor/icons_manager/migration_allowed', $migration_allowed );
 		}
-
 		return $migration_allowed;
 	}
+
+	/**
+	 * Is an icon migration required in the site content.
+	 *
+	 * @since 3.19.0
+	 * @return bool
+	 */
+	public static function is_migration_required() {
+		static $migration_required = false;
+
+		if ( false === $migration_required ) {
+			$needs_upgrade = self::get_needs_upgrade_option();
+			$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
+
+			// Check if migration is required based on get_needs_upgrade_option() or version comparison
+			$migration_required = null !== $needs_upgrade || ( $latest_migration_version && version_compare( $latest_migration_version, self::LATEST_MIGRATION_REQUIRED_VERSION, '<' ) );
+
+			/**
+			 * Is icon migration required.
+			 * @since 3.19.0
+			 * @param bool $migration_required
+			 */
+			$migration_required = apply_filters( 'elementor/icons_manager/migration_required', $migration_required );
+		}
+
+		return $migration_required;
+	}
+
 
 	/**
 	 * Register_Admin Settings
@@ -611,6 +643,7 @@ class Icons_Manager {
 		}
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
+		update_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 
 		$success_msg = sprintf(
 			/* translators: %s: Version number. */
@@ -633,7 +666,7 @@ class Icons_Manager {
 	}
 
 	public function enqueue_fontawesome_css() {
-		if ( ! self::is_migration_allowed() ) {
+		if ( self::is_migration_required() ) {
 			wp_enqueue_style( 'font-awesome' );
 		} else {
 			$current_filter = current_filter();
@@ -671,7 +704,7 @@ class Icons_Manager {
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
-		if ( ! self::is_migration_allowed() ) {
+		if ( self::is_migration_required() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
 			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_settings' ], 100 );
 

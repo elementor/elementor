@@ -429,7 +429,7 @@ class Widget_Icon extends Widget_Base {
 			$icon_tag = 'a';
 		}
 
-		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+		if ( empty( $settings['icon'] ) && Icons_Manager::is_migration_required() ) {
 			// add old default
 			$settings['icon'] = 'fa fa-star';
 		}
@@ -440,7 +440,7 @@ class Widget_Icon extends Widget_Base {
 		}
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = empty( $settings['icon'] ) && ! Icons_Manager::is_migration_required();
 
 		?>
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
