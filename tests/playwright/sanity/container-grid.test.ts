@@ -117,6 +117,31 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 		} );
 
+		await test.step( 'Assert justify align and content start on full width', async () => {
+			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
+			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			await expect( container ).toHaveCSS( 'justify-content', 'start' );
+			await expect( container ).toHaveCSS( 'align-content', 'start' );
+		} );
+
+		await test.step( 'Assert justify align and content middle on full width', async () => {
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
+			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			await expect( container ).toHaveCSS( 'justify-content', 'center' );
+			await expect( container ).toHaveCSS( 'align-content', 'center' );
+		} );
+
+		await test.step( 'Assert justify align and content end on full width', async () => {
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
+			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			await expect( container ).toHaveCSS( 'justify-content', 'end' );
+			await expect( container ).toHaveCSS( 'align-content', 'end' );
+		} );
+
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame()
@@ -625,6 +650,66 @@ test.describe( 'Container Grid tests @container', () => {
 			await columnsRowControlTablet.locator( '.elementor-slider-input input' ).fill( '4' );
 			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
+	} );
+
+	test( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.selectElement( containerId );
+
+		await test.step( 'Changing layout to flex', async () => {
+			// Act
+			await editor.setSelectControlValue( 'container_type', 'flex' );
+
+			// Assert
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
+		} );
+
+		await test.step( 'Changing layout to grid', async () => {
+			// Act
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+
+			// Assert
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+		} );
+
+		await test.step( 'Add a flex container', async () => {
+			// Act
+			await frame.locator( '.elementor-add-section-area-button' ).first().click();
+			await frame.locator( '.e-con-select-type__icons__icon.flex-preset-button' ).click();
+			await frame.locator( '.e-con-select-preset__list .e-con-preset' ).first().click();
+
+			// Assert
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
+		} );
+
+		await test.step( 'Add a grid container', async () => {
+			// Act
+			await frame.locator( '.elementor-add-section-area-button' ).first().click();
+			await frame.locator( '.e-con-select-type__icons__icon.grid-preset-button' ).click();
+			await frame.locator( '.e-con-select-preset-grid__list .e-con-choose-grid-preset' ).first().click();
+
+			// Assert
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+		} );
+
+		await test.step( 'Select existing grid container', async () => {
+			// Act
+			await editor.selectElement( containerId );
+
+			// Assert
+			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
+			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+		} );
+
+		await page.waitForSelector( '#elementor-panel__editor__help__link' );
 	} );
 } );
 
