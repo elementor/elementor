@@ -108,7 +108,7 @@ export async function addIcon( editor, page, iconName ) {
 	await page.locator( '.dialog-insert_icon' ).click();
 }
 
-export async function setIconSize( editor, sizeInPx:string = '10' ) {
+export async function setIconSize( editor: Editorage, sizeInPx:string = '10' ) {
 	await editor.activatePanelTab( 'style' );
 	await editor.openSection( 'section_header_style' );
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
