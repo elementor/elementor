@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expectScreenshotToMatchLocator } from './helper';
+import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -30,7 +30,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 	} );
 
 	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser }, testInfo ) => {
-		const url;
+		let url;
 		await test.step( 'experiment Inline Font Icons off', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo );
@@ -45,14 +45,8 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			await editor.closeNavigatorIfOpen();
 			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
-			await editor.activatePanelTab( 'content' );
-			await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
-			await page.locator( '#elementor-icons-manager__search input' ).fill( 'address card' );
-			await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
-			await page.locator( '.dialog-insert_icon' ).click();
-			await editor.activatePanelTab( 'style' );
-			await editor.openSection( 'section_header_style' );
-			await editor.setSliderControlValue( 'icon_size', '70' );
+			await addIcon( editor, page, 'address card' );
+			await setIconSize( editor, '70' );
 
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-editor-test-off.png', nestedAccordion );
