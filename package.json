@@ -9,6 +9,8 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
+		"wp-env": "wp-env",
+		"test:linux": "node ./run-on-linux.js",
 		"setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
 		"start-local-server": "npm run setup-templates && wp-env start",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
@@ -35,6 +37,7 @@
 		"npm": ">=8.3.0"
 	},
 	"devDependencies": {
+		"@actions/core": "^1.10.1",
 		"@axe-core/playwright": "^4.8.1",
 		"@babel/core": "~7.18.6",
 		"@babel/eslint-parser": "^7.22.15",
@@ -52,6 +55,7 @@
 		"@elementor/generate-wordpress-asset-file-webpack-plugin": "0.3.0",
 		"@playwright/test": "^1.34.3",
 		"@testing-library/dom": "^9.3.3",
+		"@testing-library/react": "^14.1.2",
 		"@wordpress/babel-plugin-import-jsx-pragma": "~3.2.0",
 		"@wordpress/babel-preset-default": "^3.0.2",
 		"@wordpress/env": "^8.11.0",
