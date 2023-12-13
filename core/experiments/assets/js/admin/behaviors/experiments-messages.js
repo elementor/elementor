@@ -171,6 +171,7 @@ export default class ExperimentsMessages {
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
+			
 			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
