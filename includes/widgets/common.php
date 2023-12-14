@@ -597,7 +597,29 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'e_dc',
+			array(
+				'type'      => Controls_Manager::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $this->get_display_conditions_control_template(),
+			)
+		);
+
 		$this->end_controls_section();
+	}
+
+	private function get_display_conditions_control_template() {
+		ob_start();
+		?>
+		<div class="e-control-display-conditions__wrapper promotion-testing-ololo">
+			<span class="e-control-display-conditions__desc">
+				<?php echo esc_html__( 'Display Conditions', 'elementor-pro' ); ?>
+			</span>
+			<i class="eicon-flow e-control-display-conditions"></i>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
