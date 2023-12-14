@@ -1,4 +1,5 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
+import EditorPage from '../../../pages/editor-page';
 
 /**
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
@@ -100,7 +101,7 @@ export async function setIconColor( editor, state, color, context ) {
 	}
 }
 
-export async function addIcon( editor, page, iconName ) {
+export async function addIcon( editor: EditorPage, page: Page, iconName: string ) {
 	await editor.activatePanelTab( 'content' );
 	await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
 	await page.locator( '#elementor-icons-manager__search input' ).fill( iconName );
@@ -108,7 +109,7 @@ export async function addIcon( editor, page, iconName ) {
 	await page.locator( '.dialog-insert_icon' ).click();
 }
 
-export async function setIconSize( editor: Editorage, sizeInPx:string = '10' ) {
+export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' ) {
 	await editor.activatePanelTab( 'style' );
 	await editor.openSection( 'section_header_style' );
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
