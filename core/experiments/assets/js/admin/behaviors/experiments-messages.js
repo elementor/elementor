@@ -149,10 +149,29 @@ export default class ExperimentsMessages {
 		} ).show();
 	}
 
+	joinDependenciesNames( array, glue = '', finalGlue = '' ) {
+		if ( '' === finalGlue ) {
+			return array.join( glue );
+		}
+
+		if ( ! array.length ) {
+			return '';
+		}
+
+		if ( 1 === array.length ) {
+			return array[ 0 ];
+		}
+
+		const clone = [ ...array ],
+			lastItem = clone.pop();
+
+		return clone.join( glue ) + finalGlue + lastItem;
+	}
+
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dialogMessage = new Intl.ListFormat( 'en' ).format( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
+			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ), ' ' );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
