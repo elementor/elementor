@@ -85,6 +85,7 @@ jobs:
           GENERATE_EMPTY_CHANGELOG: true
       - name: Unzip Release zip file
         run: |
+          ls -al
           unzip -q ${{env.PLUGIN_ZIP_FILENAME}} -d $GITHUB_WORKSPACE
       - name: Update Readme.txt
         if: env.CHANNEL != 'cloud'
