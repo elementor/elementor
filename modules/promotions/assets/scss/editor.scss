@@ -4,10 +4,30 @@
 	&__wrapper {
 		display: flex;
 		justify-content: space-between;
+
+		&:hover {
+			//background-color: green;
+
+			.eicon-lock.e-control-display-conditions-promotion {
+				color: var(--e-a-color-accent)
+			}
+		}
 	}
 
 	&__desc {
+		display: flex;
 		align-self: center;
+	}
+
+	&__text {
+		display: inline-block;
+	}
+
+	&__lock_wrapper {
+		width: 2.5rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	&.eicon-flow {
