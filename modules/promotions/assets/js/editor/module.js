@@ -1,3 +1,5 @@
+import PromotionBehavior from './behavior';
+
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		if ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) {
@@ -14,5 +16,24 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 			return DefaultView;
 		} );
+
+		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
+	}
+
+	registerControlBehavior( behaviors, view ) {
+		// @TODO verify this
+		if ( 'e_dc' !== view.options.model.get( 'name' ) ) {
+			return behaviors;
+		}
+
+		if ( ! behaviors ) {
+			behaviors = {};
+		}
+
+		behaviors.promotions = {
+			behaviorClass: PromotionBehavior,
+		};
+
+		return behaviors;
 	}
 }
