@@ -1,7 +1,7 @@
 export default class PromotionBehavior extends Marionette.Behavior {
 	ui() {
 		return {
-			displayConditionsButton: '.eicon-flow.e-control-display-conditions',
+			displayConditionsButton: '.eicon-flow.e-control-display-conditions-promotion',
 		};
 	}
 

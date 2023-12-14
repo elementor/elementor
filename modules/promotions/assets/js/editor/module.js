@@ -21,8 +21,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerControlBehavior( behaviors, view ) {
-		// @TODO verify this
-		if ( 'e_dc' !== view.options.model.get( 'name' ) ) {
+		if ( 'e_display_conditions_promotion' !== view.options.model.get( 'name' ) ) {
 			return behaviors;
 		}
 
