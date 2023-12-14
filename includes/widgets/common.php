@@ -613,9 +613,14 @@ class Widget_Common extends Widget_Base {
 		ob_start();
 		?>
 		<div class="e-control-display-conditions-promotion__wrapper">
-			<span class="e-control-display-conditions-promotion__desc">
-				<?php echo esc_html__( 'Display Conditions', 'elementor-pro' ); ?>
-			</span>
+			<div class="e-control-display-conditions-promotion__desc">
+				<span class="e-control-display-conditions-promotion__text">
+					<?php echo esc_html__('Display Conditions', 'elementor-pro'); ?>
+				</span>
+				<span class="e-control-display-conditions-promotion__lock_wrapper">
+					<i class="eicon-lock e-control-display-conditions-promotion"></i>
+				</span>
+			</div>
 			<i class="eicon-flow e-control-display-conditions-promotion"></i>
 		</div>
 		<?php
