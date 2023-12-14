@@ -607,7 +607,7 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
-			'e_dc',
+			'e_display_conditions_promotion',
 			array(
 				'type'      => Controls_Manager::RAW_HTML,
 				'separator' => 'before',
@@ -621,11 +621,11 @@ class Widget_Common extends Widget_Base {
 	private function get_display_conditions_control_template() {
 		ob_start();
 		?>
-		<div class="e-control-display-conditions__wrapper promotion-testing-ololo">
-			<span class="e-control-display-conditions__desc">
+		<div class="e-control-display-conditions-promotion__wrapper">
+			<span class="e-control-display-conditions-promotion__desc">
 				<?php echo esc_html__( 'Display Conditions', 'elementor-pro' ); ?>
 			</span>
-			<i class="eicon-flow e-control-display-conditions"></i>
+			<i class="eicon-flow e-control-display-conditions-promotion"></i>
 		</div>
 		<?php
 		return ob_get_clean();
