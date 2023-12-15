@@ -9,7 +9,7 @@ inputs:
     required: true
     description: 'The package version to get the version from.'
   README_TXT_PATH:
-    required:
+    required: true
     description: 'Path to  Readme.txt'
 
 runs:
