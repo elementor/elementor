@@ -81,10 +81,12 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+      - name: Debug!!!
+        run: ls -al
       - name: Get Release Name
         uses : ./.github/workflows/get-release-name
         with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          BUILD_ZIP_FILE_PATH: /${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
       - name: Generate changelog
         uses: ./.github/workflows/generate-changelog
