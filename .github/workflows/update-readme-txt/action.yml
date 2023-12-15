@@ -19,7 +19,7 @@ runs:
         shell: bash
         run: |
         ${{ inputs.CHANNEL }}
-              README_TXT_PATH=${{inputs.README_TXT_PATH}}
+              README_TXT_PATH="${{inputs.README_TXT_PATH}}"
               if [[ "${{ inputs.CHANNEL }}" == "cloud" || "${{ inputs.CHANNEL }}" == "beta" || "${{ inputs.CHANNEL }}" == "dev" ]]; then
 
                 # git ls-remote --tags: This command lists all the tags in the remote repository along with their corresponding commit hash.
