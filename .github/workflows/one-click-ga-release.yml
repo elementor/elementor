@@ -72,7 +72,7 @@ jobs:
         if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
-          README_TXT_PATH: $GITHUB_WORKSPACE/readme.txt
+          README_TXT_PATH: "$GITHUB_WORKSPACE/readme.txt"
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Install Dependencies
