@@ -81,8 +81,6 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-      - name: Debug!!!
-        run: ls -al
       - name: Get Release Name
         uses : ./.github/workflows/get-release-name
         with:
