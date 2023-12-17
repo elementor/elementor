@@ -149,8 +149,12 @@ export default class ExperimentsMessages {
 		} ).show();
 	}
 
-	joinDependenciesNames( array, glue = '', finalGlue = '' ) {
-		return new Intl.ListFormat( 'en' ).format( array );
+	joinDependenciesNames( array ) {
+		if( ! Array.isArray( array ) ) {
+			return '';
+		} else {
+			return new Intl.ListFormat('en').format(array);
+		}
 	}
 
 	showDependenciesDialog( experimentId ) {
