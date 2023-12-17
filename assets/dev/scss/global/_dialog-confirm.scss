@@ -32,6 +32,14 @@ $e-dialog-confirm-space: 20px;
 
 	.dialog-message {
 		min-height: 50px;
+
+		ul {
+			margin-inline-start: 1em;
+		}
+
+		li {
+			list-style: disc;
+		}
 	}
 
 	.dialog-buttons-wrapper {

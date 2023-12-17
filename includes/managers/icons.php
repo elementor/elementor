@@ -570,35 +570,39 @@ class Icons_Manager {
 	}
 
 	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome_migration', [ 'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ) ] );
+		$settings->add_tab( 'fontawesome_migration', [ 'label' => esc_html__( 'Font Awesome', 'elementor' ) ] );
 
-		// TODO: Update wording to FA6
 		$settings->add_section( 'fontawesome_migration', 'fontawesome_migration', [
 			'callback' => function() {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' . // PHPCS - Plain Text
-				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				esc_html__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				/* translators: %s: Version number. */
+				sprintf( esc_html__( 'Access 1,700+ amazing icons, faster performance, and design flexibility with Font Awesome v%s.', 'elementor' ), self::get_current_fa_version() ) .
+				'<br>' .
+				esc_html__( 'We’ll automatically convert existing icons on your site to the new versions anytime you edit a page that already contains icons, so some may appear different.', 'elementor' ) . '<br>' .
 				'</p><p><strong>' .
-				esc_html__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				'</strong></p><p>' .
-				esc_html__( 'The upgrade process includes a database update', 'elementor' ) . ' - ' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				esc_html__( 'We highly recommend backing up your database before performing this upgrade.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				'</p>' .
-				esc_html__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				'</p>';
+				esc_html__( 'Keep in mind:', 'elementor' ) .
+				'</strong></p><ul class="ul-disc"><li>' .
+				sprintf(
+					/* translators: %s: WordPress backups documentation. */
+					__( 'To ensure a smooth transition, <a target="_blank" href="%s">create a backup</a> of your site first.', 'elementor' ),
+					'https://go.elementor.com/wordpress-backups/'
+				) .
+				'</li><li>' .
+				esc_html__( 'This update can’t be undone, even if you roll back your site to a previous version.', 'elementor' ) .
+				'</li></ul>';
 			},
 			'fields' => [
 				[
-					'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
+					/* translators: %s: Version number. */
+					'label' => sprintf( esc_html__( 'Font Awesome v%s:', 'elementor' ), self::get_current_fa_version() ),
 					'field_args' => [
 						'type' => 'raw_html',
 						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
 							esc_url( $this->get_upgrade_redirect_url() ),
-							/* translators: %s: Version number. */
-							sprintf( esc_html__( 'Upgrade To Font Awesome %s', 'elementor' ), self::get_current_fa_version() )
+							sprintf( esc_html__( 'Update now', 'elementor' ), self::get_current_fa_version() )
 						),
 					],
 				],
@@ -703,6 +707,8 @@ class Icons_Manager {
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+
+		update_option( 'elementor_' . self::NEEDS_UPDATE_OPTION, 'yes' );
 
 		if ( self::is_migration_required() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );

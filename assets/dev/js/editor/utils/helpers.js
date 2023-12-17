@@ -430,13 +430,20 @@ module.exports = {
 						'&_wpnonce=' + elementor.config.tools_page_nonce +
 						'#tab-fontawesome_migration';
 				};
+
+				const migrationDialogMessage = __( 'Font Awesome v6 includes new, updated icons and faster loading.', 'elementor' ) + '<br><br>' +
+					'<strong>' + __( 'Keep in mind:', 'elementor' ) + '</strong> ' +
+					'<ul><li>' + __( 'To ensure a smooth transition, create a backup of your site before updating.', 'elementor' ) + '</li>' +
+					'<li>' + __( 'This update can’t be undone.', 'elementor' ) + '</li></ul>';
+
 				elementor.helpers.getSimpleDialog(
-					'elementor-enable-fa5-dialog',
-					__( 'Elementor\'s New Icon Library', 'elementor' ),
-					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
+					'elementor-fa-migration-dialog',
+					__( 'Ready for the new icon library?', 'elementor' ),
+					migrationDialogMessage,
 					__( 'Update', 'elementor' ),
 					onConfirm,
 				).show();
+
 				return true;
 			}
 		}
