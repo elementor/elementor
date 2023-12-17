@@ -150,11 +150,8 @@ export default class ExperimentsMessages {
 	}
 
 	joinDependenciesNames( array ) {
-		if( ! Array.isArray( array ) ) {
-			return '';
-		} else {
-			return new Intl.ListFormat('en').format(array);
-		}
+		array = array.filter( (name) => typeof name === 'string' )
+		return new Intl.ListFormat('en').format(array);
 	}
 
 	showDependenciesDialog( experimentId ) {
