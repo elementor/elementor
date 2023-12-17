@@ -150,22 +150,7 @@ export default class ExperimentsMessages {
 	}
 
 	joinDependenciesNames( array, glue = '', finalGlue = '' ) {
-		if ( '' === finalGlue ) {
-			return array.join( glue );
-		}
-
-		if ( ! array.length ) {
-			return '';
-		}
-
-		if ( 1 === array.length ) {
-			return array[ 0 ];
-		}
-
-		const clone = [ ...array ],
-			lastItem = clone.pop();
-
-		return clone.join( glue ) + finalGlue + lastItem;
+		return new Intl.ListFormat( 'en' ).format( array );
 	}
 
 	showDependenciesDialog( experimentId ) {
