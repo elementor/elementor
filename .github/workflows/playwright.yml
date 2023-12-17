@@ -27,10 +27,12 @@ jobs:
           # Everything: **/*
           # Everything in directories starting with a period: .*/**/*
           # Not readme.txt: !readme.txt
+          # Not changelog.txt: !changelog.txt
           PATTERNS: |
             **/*
             .*/**/*
             !readme.txt
+            !changelog.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -70,14 +72,18 @@ jobs:
           'ai',
           'onBoarding',
           'video',
-          'elements-regression', 
-          'default', 
-          'nested-tabs', 
-          'reverse-columns', 
-          'container', 
-          'nested-accordion', 
-          'styleguide_image_link', 
-          'rating'
+          'elements-regression',
+          'default',
+          'nested-tabs',
+          'reverse-columns',
+          'container',
+          'nested-accordion',
+          'styleguide_image_link',
+          'rating',
+          'pluginTester1_containers',
+          'pluginTester2_containers',
+          'pluginTester1_sections',
+          'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code
@@ -121,7 +127,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{matrix.testSuite !='elements-regression'}}
-        env: 
+        env:
           TEST_SUITE: "@${{matrix.testSuite}}"
         run: npm run test:playwright
       - name: Run element regression tests

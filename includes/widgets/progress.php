@@ -131,13 +131,16 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => esc_html__( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '',
 				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
 					'info' => esc_html__( 'Info', 'elementor' ),
 					'success' => esc_html__( 'Success', 'elementor' ),
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
+				],
+				'default' => '',
+				'condition' => [
+					'progress_type!' => '', // a workaround to hide the control, unless it's in use (not default).
 				],
 				'separator' => 'before',
 			]

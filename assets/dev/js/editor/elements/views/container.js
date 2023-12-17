@@ -431,7 +431,6 @@ const ContainerView = BaseElementView.extend( {
 			}
 
 			this.droppableInitialize( this.container.settings );
-			this.updateNeedHelpLink();
 		} );
 	},
 
