@@ -230,13 +230,19 @@ class Icons_Manager {
 		);
 	}
 
-	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
+	private static function is_test_mode() {
 		static $is_test_mode = null;
+
 		if ( null === $is_test_mode ) {
 			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
 		}
+
+		return $is_test_mode;
+	}
+
+	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/' . $filename;
-		if ( ! $is_test_mode && $add_suffix ) {
+		if ( ! self::is_test_mode() && $add_suffix ) {
 			$url .= '.min';
 		}
 
@@ -665,7 +671,10 @@ class Icons_Manager {
 	 * @return array;
 	 */
 	public function add_update_needed_flag( $settings ) {
-		$settings['icons_update_needed'] = true;
+		if ( ! self::is_test_mode() ) {
+			$settings['icons_update_needed'] = true;
+		}
+
 		return $settings;
 	}
 
