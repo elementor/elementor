@@ -110,12 +110,12 @@ class Manager extends CSS_Manager {
 			$post->post_title = $data['post_title'];
 		}
 
-		if ( isset( $data['post_excerpt'] ) && post_type_supports( $post->post_type, 'excerpt' ) ) {
-			$post->post_excerpt = $data['post_excerpt'];
-		}
-
 		if ( isset( $data['post_name'] ) ) {
 			$post->post_name = $data['post_name'];
+		}
+
+		if ( isset( $data['post_excerpt'] ) && post_type_supports( $post->post_type, 'excerpt' ) ) {
+			$post->post_excerpt = $data['post_excerpt'];
 		}
 
 		if ( isset( $data['menu_order'] ) && is_post_type_hierarchical( $post->post_type ) ) {
@@ -318,10 +318,10 @@ class Manager extends CSS_Manager {
 			'id',
 			'post_title',
 			'post_status',
+			'post_name',
 			'template',
 			'post_excerpt',
 			'post_featured_image',
-			'post_name',
 			'menu_order',
 			'comment_status',
 		];
