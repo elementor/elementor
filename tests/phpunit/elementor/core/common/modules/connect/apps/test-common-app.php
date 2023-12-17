@@ -25,7 +25,7 @@ class Test_Common_App extends Elementor_Test_Base {
 	 */
 	private $app_stub_multiple_urls;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		require_once __DIR__ . '/mock/mock-app.php';

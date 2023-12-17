@@ -143,8 +143,8 @@ class Group_Control_Typography extends Group_Control_Base {
 				'800' => '800 ' . esc_html_x( '(Extra Bold)', 'Typography Control', 'elementor' ),
 				'900' => '900 ' . esc_html_x( '(Black)', 'Typography Control', 'elementor' ),
 				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
-				'bold' => esc_html_x( 'Bold', 'Typography Control', 'elementor' ),
+				'normal' => esc_html__( 'Normal', 'elementor' ),
+				'bold' => esc_html__( 'Bold', 'elementor' ),
 			],
 		];
 
@@ -157,7 +157,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'uppercase' => esc_html_x( 'Uppercase', 'Typography Control', 'elementor' ),
 				'lowercase' => esc_html_x( 'Lowercase', 'Typography Control', 'elementor' ),
 				'capitalize' => esc_html_x( 'Capitalize', 'Typography Control', 'elementor' ),
-				'none' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'none' => esc_html__( 'Normal', 'elementor' ),
 			],
 		];
 
@@ -167,7 +167,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'normal' => esc_html__( 'Normal', 'elementor' ),
 				'italic' => esc_html_x( 'Italic', 'Typography Control', 'elementor' ),
 				'oblique' => esc_html_x( 'Oblique', 'Typography Control', 'elementor' ),
 			],
@@ -182,7 +182,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'underline' => esc_html_x( 'Underline', 'Typography Control', 'elementor' ),
 				'overline' => esc_html_x( 'Overline', 'Typography Control', 'elementor' ),
 				'line-through' => esc_html_x( 'Line Through', 'Typography Control', 'elementor' ),
-				'none' => esc_html_x( 'None', 'Typography Control', 'elementor' ),
+				'none' => esc_html__( 'None', 'elementor' ),
 			],
 		];
 

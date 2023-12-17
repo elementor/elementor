@@ -92,6 +92,8 @@
 		justify-content: var(--grid-justify-content);
 		align-content: var(--grid-align-content);
 		grid-auto-flow: var(--grid-auto-flow);
+		justify-items: var(--justify-items);
+		align-items: var(--align-items);
 	}
 
 	// Set default values to the outer div of the boxed container.

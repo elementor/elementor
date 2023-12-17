@@ -8,6 +8,9 @@ import GenerateSubmit from '../../form-media/components/generate-submit';
 import ArrowLeftIcon from '../../../icons/arrow-left-icon';
 import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
+import Attachments from './attachments';
+import { useConfig } from '../context/config';
+import { AttachmentPropType } from '../../../types/attachment';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -63,12 +66,30 @@ const GenerateButton = ( props ) => (
 	</GenerateSubmit>
 );
 
-const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit }, ref ) => {
+const PromptForm = forwardRef( ( {
+	attachments,
+	isActive,
+	isLoading,
+	showActions = false,
+	onAttach,
+	onDetach,
+	onSubmit,
+	onBack,
+	onEdit,
+}, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
+	const { attachmentsTypes } = useConfig();
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || '' === prompt;
+	const isInputDisabled = isLoading || isEnhancing || ! isActive;
+	const isInputEmpty = '' === prompt && ! attachments.length;
+	const isGenerateDisabled = isInputDisabled || isInputEmpty;
+
+	const attachmentsType = attachments[ 0 ]?.type || '';
+	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
+	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
+	const promptPlaceholder = attachmentsConfig?.promptPlaceholder || __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' );
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -81,15 +102,15 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 	};
 
 	return (
-		<Box
+		<Stack
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
-			sx={ { p: 2 } }
-			display="flex"
-			alignItems="center"
+			direction="row"
+			sx={ { p: 3 } }
+			alignItems="start"
 			gap={ 1 }
 		>
-			<Stack direction="row" flexGrow={ 1 } spacing={ 1 }>
+			<Stack direction="row" alignItems="start" flexGrow={ 1 } spacing={ 2 }>
 				{
 					showActions && (
 						isActive ? (
@@ -100,19 +121,25 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 					)
 				}
 
+				<Attachments
+					attachments={ attachments }
+					onAttach={ onAttach }
+					onDetach={ onDetach }
+					disabled={ isInputDisabled }
+				/>
+
 				<PromptAutocomplete
 					value={ prompt }
-					disabled={ isLoading || ! isActive || isEnhancing }
+					disabled={ isInputDisabled }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
-					options={ PROMPT_SUGGESTIONS }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+					options={ promptSuggestions }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput
 							{ ...params }
 							ref={ ref }
 							onChange={ ( e ) => setPrompt( e.target.value ) }
-							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+							placeholder={ promptPlaceholder }
 						/>
 					) }
 				/>
@@ -120,23 +147,26 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 
 			<EnhanceButton
 				size="small"
-				disabled={ isInteractionsDisabled }
+				disabled={ isGenerateDisabled || '' === prompt }
 				isLoading={ isEnhancing }
 				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
 
-			<GenerateButton disabled={ isInteractionsDisabled } />
-		</Box>
+			<GenerateButton disabled={ isGenerateDisabled } />
+		</Stack>
 	);
 } );
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
+	onAttach: PropTypes.func,
+	onDetach: PropTypes.func,
 	isLoading: PropTypes.bool,
 	showActions: PropTypes.bool,
 	onSubmit: PropTypes.func.isRequired,
 	onBack: PropTypes.func.isRequired,
 	onEdit: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default PromptForm;

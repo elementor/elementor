@@ -131,13 +131,16 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => esc_html__( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '',
 				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
 					'info' => esc_html__( 'Info', 'elementor' ),
 					'success' => esc_html__( 'Success', 'elementor' ),
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
+				],
+				'default' => '',
+				'condition' => [
+					'progress_type!' => '', // a workaround to hide the control, unless it's in use (not default).
 				],
 				'separator' => 'before',
 			]
@@ -347,15 +350,26 @@ class Widget_Progress extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$progressbar_id = 'elementor-progress-bar-' . $this->get_id();
 
 		$progress_percentage = is_numeric( $settings['percent']['size'] ) ? $settings['percent']['size'] : '0';
 		if ( 100 < $progress_percentage ) {
 			$progress_percentage = 100;
 		}
 
-		$this->add_render_attribute( 'title', 'class', 'elementor-title' );
+		if ( ! Utils::is_empty( $settings['title'] ) ) {
+			$this->add_render_attribute(
+				'title',
+				[
+					'class' => 'elementor-title',
+					'id' => $progressbar_id,
+				]
+			);
 
-		$this->add_inline_editing_attributes( 'title' );
+			$this->add_inline_editing_attributes( 'title' );
+
+			$this->add_render_attribute( 'wrapper', 'aria-labelledby', $progressbar_id );
+		}
 
 		$this->add_render_attribute(
 			'wrapper',
@@ -417,15 +431,26 @@ class Widget_Progress extends Widget_Base {
 		?>
 		<#
 		const title_tag = elementor.helpers.validateHTMLTag( settings.title_tag );
+		const progressbar_id = 'elementor-progress-bar-<?php echo esc_attr( $this->get_id() ); ?>';
 
 		let progress_percentage = 0;
 		if ( ! isNaN( settings.percent.size ) ) {
 			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
 		}
 
-		view.addRenderAttribute( 'title', 'class', 'elementor-title' );
+		if ( settings.title ) {
+			view.addRenderAttribute(
+				'title',
+				{
+					'class': 'elementor-title',
+					'id': progressbar_id,
+				}
+			);
 
-		view.addInlineEditingAttributes( 'title' );
+			view.addInlineEditingAttributes( 'title' );
+
+			view.addRenderAttribute( 'wrapper', 'aria-labelledby', progressbar_id );
+		}
 
 		view.addRenderAttribute(
 			'progressWrapper',

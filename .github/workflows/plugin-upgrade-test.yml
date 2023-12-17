@@ -1,6 +1,7 @@
 name: Upgrade Elementor test
 
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       version:

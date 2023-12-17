@@ -1,5 +1,7 @@
 import { resolve } from 'path';
 
+process.env.DEBUG_PORT = '9222';
+
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
 		return [
@@ -13,6 +15,10 @@ function getGrepInvert() {
 			/@onBoarding/,
 			/@video/,
 			/@rating/,
+			/@pluginTester1_containers/,
+			/@pluginTester2_containers/,
+			/@pluginTester1_sections/,
+			/@pluginTester2_sections/,
 		];
 	}
 	return [];
@@ -38,6 +44,7 @@ export default {
 	expect: {
 		timeout: 5_000,
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
+		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
@@ -45,6 +52,9 @@ export default {
 	fullyParallel: false,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
+		launchOptions: {
+			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+		},
 		headless: process.env.CI ? true : false,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
