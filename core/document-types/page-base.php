@@ -189,7 +189,7 @@ abstract class PageBase extends Document {
 				'type' => Controls_Manager::TEXT,
 				'default' => $document->post->post_name,
 				'ai' => false,
-				]
+			]
 		);
 
 		if ( post_type_supports( $document->post->post_type, 'excerpt' ) ) {
