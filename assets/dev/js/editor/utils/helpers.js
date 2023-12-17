@@ -423,6 +423,7 @@ module.exports = {
 
 		if ( widgetData ) {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
+
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
 					window.location.href = elementor.config.tools_page_link +
