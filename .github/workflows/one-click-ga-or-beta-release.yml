@@ -74,7 +74,7 @@ jobs:
       - name: Get Release Name
         uses : ./.github/workflows/get-release-name
         with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_VERSION }}.zip
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
       - name: Generate changelog
         uses: ./.github/workflows/generate-changelog
