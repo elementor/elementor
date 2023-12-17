@@ -83,33 +83,6 @@ jobs:
       - name: Run Lint
         run: |
           vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
-      - name: Setup PHP 7.1 # not included in ubuntu 22.04
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.1'
-      - name: Run PHP Syntax Lint 7.1
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      - name: Setup PHP 7.2 # not included in ubuntu 22.04
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.2'
-      - name: Run PHP Syntax Lint 7.2
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      - name: Setup PHP 7.3 # not included in ubuntu 22.04
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.3'
-      - name: Run PHP Syntax Lint 7.3
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
       - name: Setup PHP 7.4 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
         with:

@@ -22,6 +22,8 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 
 export const getUserInformation = () => request( 'ai_get_user_information' );
 
+export const getRemoteConfig = () => request( 'ai_get_remote_config' );
+
 export const getCompletionText = ( prompt ) => request( 'ai_get_completion_text', { prompt } );
 
 export const getEditText = ( input, instruction ) => request( 'ai_get_edit_text', { input, instruction } );

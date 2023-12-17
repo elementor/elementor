@@ -9,6 +9,7 @@ export const AttachmentPropType = PropTypes.shape( {
 
 export const AttachmentsTypesPropType = PropTypes.shape( {
 	type: PropTypes.shape( {
+		promptPlaceholder: PropTypes.string,
 		promptSuggestions: PropTypes.arrayOf( PropTypes.shape( {
 			text: PropTypes.string.isRequired,
 		} ) ),

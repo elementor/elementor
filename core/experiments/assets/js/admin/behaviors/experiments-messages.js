@@ -171,7 +171,7 @@ export default class ExperimentsMessages {
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
+			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ), ', ' );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
@@ -203,7 +203,7 @@ export default class ExperimentsMessages {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
 			strings: {
 				confirm: __( 'Deactivate', 'elementor' ),
-				cancel: __( 'Dismiss', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			onConfirm: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );

@@ -10,13 +10,13 @@ abstract class Data_Test_Base extends Elementor_Test_Base {
 	 */
 	protected $manager;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->set_manager();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->manager->kill_server();
