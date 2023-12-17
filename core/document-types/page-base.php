@@ -182,6 +182,16 @@ abstract class PageBase extends Document {
 			],
 		] );
 
+		$document->add_control(
+			'post_name',
+			[
+				'label' => esc_html__( 'Slug', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $document->post->post_name,
+				'ai' => false,
+				]
+		);
+
 		if ( post_type_supports( $document->post->post_type, 'excerpt' ) ) {
 			$document->add_control(
 				'post_excerpt',
@@ -208,16 +218,6 @@ abstract class PageBase extends Document {
 				]
 			);
 		}
-
-		$document->add_control(
-			'post_name',
-			[
-				'label' => esc_html__( 'Slug', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $document->post->post_name,
-				'separator' => 'before',
-			]
-		);
 
 		if ( is_post_type_hierarchical( $document->post->post_type ) ) {
 			$document->add_control(
