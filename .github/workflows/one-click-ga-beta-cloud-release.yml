@@ -1,20 +1,16 @@
-name: One Click GA Release
+name: One Click GA, Beta or Cloud Release
 
 on:
   workflow_dispatch:
     inputs:
-      pre_release:
-        type: boolean
-        description: "Pre-release?"
-        default: true
-        required: false
       channel:
         required: true
         type: choice
-        description: Select a channel
+        description: Select a channel. For cloud, use main branch only!
         options:
           - ga
           - beta
+          - cloud
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -48,25 +44,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - name: Set POSTFIX value
-        id: set_postfix_value
-        uses: ./.github/workflows/set-postfix-value
-        with:
-          PRERELEASE: ${{ github.event.inputs.pre_release }}
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
+          POSTFIX: ''
       - name: Bump Channel Version
         id: bump_channel_version
         uses: ./.github/workflows/bump-channel-version
         with:
           CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
           CHANNEL: ${{ env.CHANNEL }}
-          POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
+          POSTFIX: ''
           OVERRIDE_PACKAGE_VERSION: true
       - name: Update Readme.txt
         if: env.CHANNEL != 'cloud'
@@ -83,9 +74,10 @@ jobs:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Get Release Name
+        if: env.CHANNEL != 'cloud'
         uses : ./.github/workflows/get-release-name
         with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_VERSION }}.zip
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
       - name: Generate changelog
         uses: ./.github/workflows/generate-changelog
@@ -128,7 +120,6 @@ jobs:
           PRE_RELEASE: ${{ github.event.inputs.pre_release }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       - name: Post To Slack Created Release
-        if: github.event.inputs.pre_release == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
