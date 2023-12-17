@@ -1,13 +1,8 @@
-name: One Click GA Release
+name: One Click GA or Beta Release
 
 on:
   workflow_dispatch:
     inputs:
-      pre_release:
-        type: boolean
-        description: "Pre-release?"
-        default: true
-        required: false
       channel:
         required: true
         type: choice
@@ -48,28 +43,22 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - name: Set POSTFIX value
-        id: set_postfix_value
-        uses: ./.github/workflows/set-postfix-value
-        with:
-          PRERELEASE: ${{ github.event.inputs.pre_release }}
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
+          POSTFIX: ''
       - name: Bump Channel Version
         id: bump_channel_version
         uses: ./.github/workflows/bump-channel-version
         with:
           CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
           CHANNEL: ${{ env.CHANNEL }}
-          POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
+          POSTFIX: ''
           OVERRIDE_PACKAGE_VERSION: true
       - name: Update Readme.txt
-        if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
           README_TXT_PATH: $GITHUB_WORKSPACE/readme.txt
@@ -106,7 +95,7 @@ jobs:
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
       # - name: Publish to WordPress.org SVN
-      #   if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+      #   if: github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
       #   env:
       #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
       #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
