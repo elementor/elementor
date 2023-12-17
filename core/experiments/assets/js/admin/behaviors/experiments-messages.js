@@ -149,15 +149,10 @@ export default class ExperimentsMessages {
 		} ).show();
 	}
 
-	joinDependenciesNames( array ) {
-		array = array.filter( ( name ) => 'string' === typeof name );
-		return new Intl.ListFormat( 'en' ).format( array );
-	}
-
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ), ', ' );
+			dialogMessage = new Intl.ListFormat( 'en' ).format( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
