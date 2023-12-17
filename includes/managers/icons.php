@@ -583,7 +583,7 @@ class Icons_Manager {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' . // PHPCS - Plain Text
 				/* translators: %s: Version number. */
-				sprintf( esc_html__( 'Access 1,700+ amazing icons, faster performance, and design flexibility with Font Awesome v%s.', 'elementor' ), self::get_current_fa_version() ) .  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				sprintf( esc_html__( 'Access 1,700+ amazing icons, faster performance, and design flexibility with Font Awesome v%s.', 'elementor' ), self::get_current_fa_version() ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'<br>' .
 				esc_html__( 'We’ll automatically convert existing icons on your site to the new versions anytime you edit a page that already contains icons, so some may appear different.', 'elementor' ) . '<br>' .
 				'</p><p><strong>' .
