@@ -121,7 +121,8 @@ jobs:
           npx wp-env run cli wp --info
       - name: Define Elementor test mode
         run: |
-          echo -e "\ndefine( 'ELEMENTOR_TESTS', true );" >> "$(npm run wp-env:path)/wp-config.php"
+          WP_PATH=$(npx wp-env run cli wp config path --type=path)
+          echo -e "\ndefine( 'ELEMENTOR_TESTS', true );" >> "$WP_PATH/wp-config.php"
       - name: Activate performance experiments
         run: |
           npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints,e_image_loading_optimization
