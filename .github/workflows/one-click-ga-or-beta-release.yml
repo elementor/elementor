@@ -1,4 +1,4 @@
-name: One Click GA or Beta Release
+name: One Click GA, Beta or Cloud Release
 
 on:
   workflow_dispatch:
@@ -6,10 +6,11 @@ on:
       channel:
         required: true
         type: choice
-        description: Select a channel
+        description: Select a channel. For cloud, use main branch only!
         options:
           - ga
           - beta
+          - cloud
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -59,6 +60,7 @@ jobs:
           POSTFIX: ''
           OVERRIDE_PACKAGE_VERSION: true
       - name: Update Readme.txt
+        if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
           README_TXT_PATH: $GITHUB_WORKSPACE/readme.txt
@@ -72,6 +74,7 @@ jobs:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Get Release Name
+        if: env.CHANNEL != 'cloud'
         uses : ./.github/workflows/get-release-name
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
@@ -95,7 +98,7 @@ jobs:
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
       # - name: Publish to WordPress.org SVN
-      #   if: github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+      #   if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
       #   env:
       #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
       #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -117,7 +120,6 @@ jobs:
       #     PRE_RELEASE: ${{ github.event.inputs.pre_release }}
       #     PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       # - name: Post To Slack Created Release
-      #   if: github.event.inputs.pre_release == 'false'
       #   uses : ./.github/workflows/post-to-slack
       #   with:
       #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
