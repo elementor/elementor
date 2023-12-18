@@ -11,6 +11,10 @@ on:
           - ga
           - beta
           - cloud
+      pre_release:
+        type: boolean
+        description: 'Pre-release?'
+        required: false
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -120,6 +124,7 @@ jobs:
           PRE_RELEASE: ${{ github.event.inputs.pre_release }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       - name: Post To Slack Created Release
+        if: github.event.inputs.pre_release == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
