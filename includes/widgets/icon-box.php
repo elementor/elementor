@@ -236,7 +236,7 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'content_vertical_alignment',
 			[
 				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
