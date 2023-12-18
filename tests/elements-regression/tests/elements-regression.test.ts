@@ -64,6 +64,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const editorPage = new EditorPage( page, testInfo );
 			const helper = new ElementRegressionHelper( page, testInfo );
 			await wpAdminPage.openNewPage();
+			await editorPage.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );

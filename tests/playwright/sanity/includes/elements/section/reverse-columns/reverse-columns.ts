@@ -41,6 +41,7 @@ export default class ReverseColumns {
 			container: false,
 		} );
 		await this.wpAdminPage.openNewPage();
+		await this.editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
 		if ( isExperimentBreakpoints ) {
 			const pageUrl = new URL( this.page.url() );
 			const searchParams = pageUrl.searchParams;
