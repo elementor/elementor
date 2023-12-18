@@ -388,19 +388,6 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return bool True if control added, False otherwise.
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
-		$should_optimize_controls = $this->should_optimize_controls();
-
-		$ui_controls = [
-			Controls_Manager::RAW_HTML,
-			Controls_Manager::DIVIDER,
-			Controls_Manager::HEADING,
-			Controls_Manager::BUTTON,
-		];
-
-		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], $ui_controls ) ) {
-			return false;
-		}
-
 		$default_options = [
 			'overwrite' => false,
 			'position' => null,
@@ -444,7 +431,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
-		if ( $should_optimize_controls ) {
+		if ( $this->should_optimize_controls() ) {
 			unset(
 				$args['label_block'],
 				$args['label'],
