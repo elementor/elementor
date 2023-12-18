@@ -15,7 +15,7 @@ test.describe( 'Editor v2', () => {
 
 		await wpAdminPage.setExperiments( { editor_v2: true } );
 
-		editor = await wpAdminPage.openNewPage();
+		editor = await wpAdminPage.openNewPage( 'editor_v2' );
 	} );
 
 	test.afterAll( async () => {

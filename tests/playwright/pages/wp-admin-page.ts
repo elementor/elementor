@@ -28,7 +28,7 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage() {
+	async openNewPage( editorType: string = '' ) {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
@@ -38,20 +38,29 @@ export default class WpAdminPage extends BasePage {
 		await this.waitForPanel();
 
 		await this.closeAnnouncementsIfVisible();
-		await this.setPageName();
+		await this.setPageName( editorType );
 
 		return new EditorPage( this.page, this.testInfo );
 	}
 
-	async setPageName() {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+	async setPageName( editorType: string ) {
+		const selector = 'editor_v2' === editorType
+			? 'button[aria-label="Post Settings"]'
+			: '#elementor-panel-footer-settings';
+
+		await this.page.locator( selector ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
 		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
 
-		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
-		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
-		await this.page.locator( '#elementor-panel-header-add-button' ).click();
+		if ( 'editor_v2' === editorType ) {
+			await this.page.locator( 'button[aria-label="Save Options"]' ).click();
+			await this.page.locator( '#document-save-options' ).click( 'span:has-text( "Save Draft" )' );
+		} else {
+			await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
+			await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+			await this.page.locator( '#elementor-panel-header-add-button' ).click();
+		}
 	}
 
 	async convertFromGutenberg() {
