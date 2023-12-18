@@ -91,6 +91,8 @@ class NestedTabs extends Widget_Nested_Base {
 			'label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
 
+		// Test commit.
+
 		$repeater = new Repeater();
 
 		$repeater->add_control( 'tab_title', [
