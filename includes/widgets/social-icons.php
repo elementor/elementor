@@ -418,7 +418,6 @@ class Widget_Social_Icons extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
 					],
 					'em' => [
@@ -441,7 +440,6 @@ class Widget_Social_Icons extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 					'em' => [

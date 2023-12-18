@@ -378,11 +378,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Space between Items', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'default' => [
@@ -399,11 +404,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Distance from content', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'default' => [
@@ -583,14 +593,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'em' => [
-						'min' => 0,
 						'max' => 10,
-						'step' => 0.1,
 					],
 					'rem' => [
-						'min' => 0,
 						'max' => 10,
-						'step' => 0.1,
 					],
 				],
 				'default' => [
@@ -611,11 +617,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 400,
 					],
 					'vw' => [
-						'min' => 0,
 						'max' => 50,
 						'step' => 0.1,
 					],

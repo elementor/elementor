@@ -163,7 +163,9 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 					'em' => [
 						'max' => 10,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [

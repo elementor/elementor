@@ -459,14 +459,6 @@ class Container extends Element_Base {
 					'min' => 500,
 					'max' => 1600,
 				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
-				],
 			],
 			'default' => [
 				'unit' => '%',
@@ -544,12 +536,7 @@ class Container extends Element_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'description' => sprintf(
@@ -754,6 +741,7 @@ class Container extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -975,6 +963,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1127,6 +1116,7 @@ class Container extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1461,7 +1451,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1500,7 +1489,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 0.1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1563,7 +1551,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1601,7 +1588,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,

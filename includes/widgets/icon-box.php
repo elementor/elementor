@@ -408,8 +408,13 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -559,7 +564,6 @@ class Widget_Icon_Box extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 					'em' => [

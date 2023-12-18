@@ -332,6 +332,7 @@ class Element_Column extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -500,6 +501,7 @@ class Element_Column extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -608,6 +610,7 @@ class Element_Column extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],

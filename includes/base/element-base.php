@@ -910,7 +910,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 1000,
 						],
 					],
@@ -1023,7 +1022,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1046,7 +1044,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1069,7 +1066,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1192,6 +1188,7 @@ abstract class Element_Base extends Controls_Stack {
 						'device_args' => $default_unit_values_ms,
 						'range' => [
 							'px' => [
+								'min' => 0,
 								'max' => 10000,
 								'step' => 100,
 							],

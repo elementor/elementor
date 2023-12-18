@@ -304,7 +304,6 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 				],
@@ -419,6 +418,7 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -494,7 +494,6 @@ class Widget_Image_Box extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 					'em' => [

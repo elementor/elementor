@@ -171,10 +171,6 @@ class Widget_Google_Maps extends Widget_Base {
 						'min' => 40,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
@@ -241,6 +237,7 @@ class Widget_Google_Maps extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],

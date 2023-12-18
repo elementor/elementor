@@ -588,7 +588,6 @@ class Widget_Icon_List extends Widget_Base {
 					'em' => [
 						'min' => -1,
 						'max' => 1,
-						'step' => 0.1,
 					],
 				],
 				'selectors' => [

@@ -242,7 +242,6 @@ class TextPath extends Widget_Base {
 						'step' => 10,
 					],
 					'px' => [
-						'min' => 0,
 						'max' => 800,
 						'step' => 50,
 					],
@@ -336,12 +335,14 @@ class TextPath extends Widget_Base {
 					'px' => [
 						'min' => -20,
 						'max' => 20,
-						'step' => 1,
 					],
 					'em' => [
 						'min' => -1,
 						'max' => 1,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => -1,
+						'max' => 1,
 					],
 				],
 				'default' => [

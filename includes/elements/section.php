@@ -299,20 +299,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 500,
-					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
@@ -351,16 +338,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'vw', 'custom' ],
@@ -400,7 +378,6 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
 					],
 				],
@@ -610,6 +587,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -805,6 +783,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -912,6 +891,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],

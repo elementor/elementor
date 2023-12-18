@@ -271,7 +271,6 @@ class Widget_Star_Rating extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
 					],
 					'em' => [
@@ -308,7 +307,6 @@ class Widget_Star_Rating extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 					'em' => [
@@ -334,7 +332,6 @@ class Widget_Star_Rating extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
 					],
 					'em' => [
