@@ -28,7 +28,7 @@ export default class ElementRegressionHelper {
 				animation = 'allow';
 			}
 			await expect( widget )
-				.toHaveScreenshot( `${ args.widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: animation } );
+				.toHaveScreenshot( `test-${ args.widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: animation } );
 		}
 	}
 
@@ -42,7 +42,7 @@ export default class ElementRegressionHelper {
 			}
 		} else {
 			await expect( this.page.locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ args.widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
+				.toHaveScreenshot( `test-${ args.widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}
 
@@ -68,7 +68,7 @@ export default class ElementRegressionHelper {
 			await page.setViewportSize( deviceParams[ args.device ] );
 			label = '_published';
 			await expect( page.locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+				.toHaveScreenshot( `test-${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
 			page = this.editorPage.getPreviewFrame();
 			await this.setResponsiveMode( args.device );
@@ -77,7 +77,7 @@ export default class ElementRegressionHelper {
 				iframe.style.height = '2000px';
 			} );
 			await expect( page.locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+				.toHaveScreenshot( `test-${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}
 }
