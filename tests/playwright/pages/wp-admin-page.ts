@@ -38,8 +38,20 @@ export default class WpAdminPage extends BasePage {
 		await this.waitForPanel();
 
 		await this.closeAnnouncementsIfVisible();
+		await this.setPageName();
 
 		return new EditorPage( this.page, this.testInfo );
+	}
+
+	async setPageName() {
+		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+
+		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
+		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
+
+		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
+		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
 	async convertFromGutenberg() {
