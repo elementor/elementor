@@ -28,8 +28,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.openNewPage(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).last().click( { button: 'right' } );
+
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
