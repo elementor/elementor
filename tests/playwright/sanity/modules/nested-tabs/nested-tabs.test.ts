@@ -31,7 +31,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Add widgets. WIP
+		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
