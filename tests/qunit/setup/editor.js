@@ -26,9 +26,3 @@ Marionette.CompositeView.prototype.getChildViewContainer = ( containerView ) => 
 	);
 	return containerView.$childViewContainer;
 };
-
-const deepClone = ( object ) => {
-	return JSON.parse( JSON.stringify( object ) );
-};
-
-window.structuredClone = window.structuredClone ?? deepClone;
