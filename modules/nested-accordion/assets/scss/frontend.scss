@@ -80,7 +80,7 @@
 
 					span {
 						height: var(--n-accordion-icon-size);
-						width: var(--n-accordion-icon-size);
+						width: fit-content;
 						font-size: var(--n-accordion-icon-size);
 
 						& > i {
@@ -89,6 +89,8 @@
 
 						& > svg {
 							fill: var(--n-accordion-icon-normal-color);
+							height: auto;
+							width: inherit;
 						}
 					}
 				}
