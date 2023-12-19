@@ -149,15 +149,26 @@ export default class ExperimentsMessages {
 		} ).show();
 	}
 
+	getSiteLanguageCode() {
+		const languageCode = document.querySelector( 'html' ).getAttribute( 'lang' );
+		return languageCode ?? 'en'; // Fallback to English if no language code found.
+	}
+
+	formatDependenciesList( dependencies ) {
+		const dependenciesTitles = dependencies.map( ( d ) => d.title );
+		const languageCode = this.getSiteLanguageCode();
+		return new Intl.ListFormat( languageCode ).format( dependenciesTitles );
+	}
+
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dialogMessage = new Intl.ListFormat( 'en' ).format( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
+			dependenciesList = this.formatDependenciesList( this.getExperimentDependencies( experimentId ) );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
 			.replace( '%1$s', `<strong>${ experimentName }</strong>` )
-			.replace( '%2$s', dialogMessage );
+			.replace( '%2$s', dependenciesList );
 
 		this.showDialog( {
 			message,
