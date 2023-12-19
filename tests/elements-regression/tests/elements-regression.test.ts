@@ -64,7 +64,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const editorPage = new EditorPage( page, testInfo );
 			const helper = new ElementRegressionHelper( page, testInfo );
 			await wpAdminPage.openNewPage();
-			await editorPage.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
 			await editorPage.closeNavigatorIfOpen();
 
 			await editorPage.loadTemplate( filePath, true );
@@ -76,6 +75,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.publishAndViewPage();
 
 			await editorPage.waitForIframeToLoaded( widgetType, true );
+			await editorPage.removeWpAdminBar();
 			await helper.doScreenshotPublished( { widgetType, hoverSelector } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
