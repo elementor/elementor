@@ -31,16 +31,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 1000,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
 				],
 			],
 			'default' => [
