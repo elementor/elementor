@@ -28,7 +28,7 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage( editorType: string = '' ) {
+	async openNewPage( editorType: string = '', setPageName: boolean = true ) {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
@@ -38,7 +38,9 @@ export default class WpAdminPage extends BasePage {
 		await this.waitForPanel();
 
 		await this.closeAnnouncementsIfVisible();
-		await this.setPageName( editorType );
+		if ( setPageName !== false ) {
+			await this.setPageName( editorType );
+		}
 
 		return new EditorPage( this.page, this.testInfo );
 	}
@@ -55,7 +57,7 @@ export default class WpAdminPage extends BasePage {
 
 		if ( 'editor_v2' === editorType ) {
 			await this.page.locator( 'button[aria-label="Save Options"]' ).click();
-			await this.page.locator( '#document-save-options' ).click( 'span:has-text( "Save Draft" )' );
+			await this.page.locator( '#document-save-options' ).locator( 'span', { hasText: 'Save Draft' } ).click();
 		} else {
 			await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
 			await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
