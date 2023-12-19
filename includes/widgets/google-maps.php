@@ -137,6 +137,9 @@ class Widget_Google_Maps extends Widget_Base {
 						TagsModule::POST_META_CATEGORY,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'placeholder' => $default_address,
 				'default' => $default_address,
 				'label_block' => true,
