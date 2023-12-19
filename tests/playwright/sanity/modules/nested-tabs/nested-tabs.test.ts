@@ -298,8 +298,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
 
 		// Set controls values.
-		await page.locator( '.elementor-control-tabs_title_spacing_mobile input' ).fill( '50' );
-		await page.locator( '.elementor-control-tabs_title_space_between_mobile input' ).fill( '25' );
+		await page.locator( '.elementor-control-tabs_title_spacing_mobile .elementor-slider-input input' ).fill( '50' );
+		await page.locator( '.elementor-control-tabs_title_space_between_mobile .elementor-slider-input input' ).fill( '25' );
 
 		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ),
 			lastTab = editor.getPreviewFrame().locator( '.e-n-tab-title' ).last();
