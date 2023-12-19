@@ -135,6 +135,9 @@ class Widget_Counter extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => '',
 				'placeholder' => 1,
 			]
@@ -147,6 +150,9 @@ class Widget_Counter extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => '',
 				'placeholder' => esc_html__( 'Plus', 'elementor' ),
