@@ -47,7 +47,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'social_icons_hover',
 		'text_path_hover',
 	];
-√
+
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
@@ -66,12 +66,11 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await wpAdminPage.openNewPage();
 
 			await editorPage.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
+			await editorPage.closeNavigatorIfOpen();
 			await editorPage.addElement( { elType: 'container' }, 'document' );
 
-			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
-
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: false, widgetType } );
 			await helper.doScreenshotComparison( { widgetType, hoverSelector } );
