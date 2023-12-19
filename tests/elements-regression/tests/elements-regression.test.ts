@@ -67,7 +67,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 			await editorPage.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
 			await editorPage.closeNavigatorIfOpen();
-			await editorPage.addElement( { elType: 'container' }, 'document' );
+			const helpContainer = await editorPage.addElement( { elType: 'container' }, 'document' );
+			await editorPage.removeElement( helpContainer );
 
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
