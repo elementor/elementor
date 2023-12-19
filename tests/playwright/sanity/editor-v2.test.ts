@@ -31,6 +31,7 @@ test.describe( 'Editor v2', () => {
 		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
 
 		await wrapper.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
+		await editor.page.waitForTimeout( 2000 );
 
 		// Assert
 		await expect( await wrapper.screenshot( {
