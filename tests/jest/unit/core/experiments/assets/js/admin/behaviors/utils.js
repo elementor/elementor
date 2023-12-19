@@ -68,6 +68,7 @@ export function mockExperimentsConfig() {
 				messages: {
 					on_deactivate: 'Active dependency is active',
 				},
+				title: 'Active Dependency',
 			},
 			inactive_dependency: {
 				name: 'inactive_dependency',
@@ -75,6 +76,7 @@ export function mockExperimentsConfig() {
 				default: 'inactive',
 				dependencies: [],
 				messages: [],
+				title: 'Inactive Dependency',
 			},
 			depends_on_active: {
 				name: 'depends_on_active',
@@ -84,6 +86,7 @@ export function mockExperimentsConfig() {
 					'active_dependency',
 				],
 				messages: [],
+				title: 'Depends on Active',
 			},
 			depends_on_inactive: {
 				name: 'depends_on_inactive',
@@ -93,6 +96,7 @@ export function mockExperimentsConfig() {
 					'inactive_dependency',
 				],
 				messages: [],
+				title: 'Depends on Inactive',
 			},
 			default_active: {
 				name: 'default_active',
@@ -102,6 +106,7 @@ export function mockExperimentsConfig() {
 				messages: {
 					on_deactivate: 'Active dependency is active',
 				},
+				title: 'Default Active',
 			},
 			depends_on_default_active: {
 				name: 'depends_on_default_active',
@@ -111,6 +116,7 @@ export function mockExperimentsConfig() {
 					'default_active',
 				],
 				messages: [],
+				title: 'Depends on Default Active',
 			},
 		},
 	};
