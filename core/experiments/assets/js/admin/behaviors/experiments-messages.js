@@ -151,6 +151,7 @@ export default class ExperimentsMessages {
 
 	getSiteLanguageCode() {
 		const languageCode = document.querySelector( 'html' ).getAttribute( 'lang' );
+
 		return languageCode ?? 'en'; // Fallback to English if no language code found.
 	}
 
