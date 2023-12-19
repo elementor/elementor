@@ -110,7 +110,7 @@ class Widget_Shortcode extends Widget_Base {
 				],
 				'ai' => [
 					'active' => false,
-				],	
+				],
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
 			]
