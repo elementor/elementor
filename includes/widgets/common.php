@@ -239,7 +239,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[
-				'label' => esc_html__( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Custom Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'unit' => '%',
