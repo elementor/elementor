@@ -1,6 +1,7 @@
 import { Alert, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import useIntroduction from '../../../../hooks/use-introduction';
+import PromptLibraryLink from '../../../../components/prompt-library-link';
 
 export const PromptPowerNotice = () => {
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-attachments-power' );

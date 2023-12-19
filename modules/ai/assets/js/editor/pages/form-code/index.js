@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Box, Button, Stack, styled } from '@elementor/ui';
+import { Box, Button, Link, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
@@ -15,6 +15,7 @@ import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
+import PromptLibraryLink from '../../components/prompt-library-link';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -49,6 +50,8 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const lastRun = useRef( () => {} );
 
 	const autocompleteItems = 'css' === additionalOptions?.codeLanguage ? codeCssAutocomplete : codeHtmlAutocomplete;
+
+	const promptLibraryLink = 'css' === additionalOptions?.codeLanguage ? 'https://go.elementor.com/ai-prompt-library-css/' : 'https://go.elementor.com/ai-prompt-library-html/';
 
 	const showSuggestions = ! prompt;
 
@@ -90,7 +93,9 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						/>
 					</Box>
 
-					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } /> }
+					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } >
+						<PromptLibraryLink libraryLink={ promptLibraryLink } />
+					</PromptSuggestions> }
 
 					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
 						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>

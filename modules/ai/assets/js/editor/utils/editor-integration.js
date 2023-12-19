@@ -73,11 +73,11 @@ export const renderLayoutApp = ( options = {
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
 	ReactDOM.render(
-		<LayoutAppWrapper
+		<LayoutAppWrapper data-id-="wrapper-dennis"
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
 		>
-			<LayoutApp
+			<LayoutApp data-id-="app-dennis"
 				mode={ options.mode }
 				currentContext={ {
 					body: {
@@ -129,6 +129,7 @@ export const renderLayoutApp = ( options = {
 				hasPro={ elementor.helpers.hasPro() }
 				editorSessionId={ EDITOR_SESSION_ID }
 			/>
+
 		</LayoutAppWrapper>,
 		rootElement,
 	);
