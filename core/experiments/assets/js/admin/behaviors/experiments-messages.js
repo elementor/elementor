@@ -158,6 +158,7 @@ export default class ExperimentsMessages {
 	formatDependenciesList( dependencies ) {
 		const dependenciesTitles = dependencies.map( ( d ) => d.title );
 		const languageCode = this.getSiteLanguageCode();
+
 		return new Intl.ListFormat( languageCode ).format( dependenciesTitles );
 	}
 
