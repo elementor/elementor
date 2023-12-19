@@ -163,7 +163,7 @@
 			var effect = settings.effects[intent],
 				$widget = elements.widget;
 
-			if ($.isFunction(effect)) {
+			if ( 'function' === typeof effect ) {
 				effect.apply($widget, params);
 			} else {
 
