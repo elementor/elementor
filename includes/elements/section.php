@@ -299,20 +299,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 500,
-					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
@@ -351,16 +338,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'vw', 'custom' ],
@@ -400,7 +378,6 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
 					],
 				],
@@ -603,13 +580,14 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -798,13 +776,14 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -904,7 +883,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -912,6 +891,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1004,7 +984,7 @@ class Element_Section extends Element_Base {
 			$this->add_responsive_control(
 				$base_control_key . '_width',
 				[
-					'label' => esc_html__( 'Width', 'elementor' ),
+					'label' => esc_html__( 'Width', 'elementor' ) . ' (%)',
 					'type' => Controls_Manager::SLIDER,
 					'default' => [
 						'unit' => '%',
