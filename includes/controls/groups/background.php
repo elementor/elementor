@@ -498,6 +498,9 @@ class Group_Control_Background extends Group_Control_Base {
 					TagsModule::URL_CATEGORY,
 				],
 			],
+			'ai' => [
+				'active' => false,
+			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],
