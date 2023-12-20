@@ -11,7 +11,7 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
 
-	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
+	const exit = page.locator( '.elementor-panel-menu-item-exit a' );
 	let exitHref = '';
 
 	// Select dashboard
@@ -40,4 +40,5 @@ const setExitUserPreference = async ( page: Page, option: string ) => {
 	await page.click( '.elementor-panel-menu-item-editor-preferences' );
 	await page.selectOption( '.elementor-control-exit_to >> select', option );
 	await page.click( '#elementor-panel-header-menu-button' );
+	await page.waitForSelector( '.elementor-panel-menu-item-exit' );
 };
