@@ -30,7 +30,7 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage( usePlaywrightTitle: boolean = true ) {
+	async openNewPage( setPageName: boolean = true ) {
 		const request: APIRequestContext = this.page.context().request,
 			postDataInitial = {
 				title: 'Playwright Test Page - Uninitialized',
@@ -38,7 +38,7 @@ export default class WpAdminPage extends BasePage {
 			},
 			pageId = await create( request, 'pages', postDataInitial ),
 			postDataUpdated = {
-				title: usePlaywrightTitle ? `Playwright Test Page #${ pageId }` : `Elementor #${ pageId }`,
+				title: setPageName ? `Playwright Test Page #${ pageId }` : `Elementor #${ pageId }`,
 			};
 
 		await create( request, `pages/${ pageId }`, postDataUpdated );
