@@ -1,4 +1,4 @@
-name: One Click GA, Beta or Cloud Release
+name: One Click Release
 
 on:
   workflow_dispatch:
