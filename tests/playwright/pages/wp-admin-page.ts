@@ -1,6 +1,8 @@
+import { type APIRequestContext } from '@playwright/test';
 import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
+import { create } from '../assets/api-requests';
 
 /**
  * This post is used for any tests that need a post, with empty elements.
@@ -29,11 +31,18 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async openNewPage( editorType: string = '', setPageName: boolean = true ) {
-		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
-			await this.gotoDashboard();
-		}
+		const request: APIRequestContext = this.page.context().request,
+			postData = {
+				title: 'Playwright Test Page - Uninitialized',
+				content: '',
+			},
+			pageId = await create( request, 'pages', postData ),
+			postDataUpdate = {
+				title: `Playwright Test Page #${ pageId }`,
+			};
 
-		await this.page.click( '.e-overview__create > a' );
+		await create( request, `pages/${ pageId }`, postDataUpdate );
+		await this.page.goto( `/wp-admin/post.php?post=${ pageId }&action=elementor` );
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 

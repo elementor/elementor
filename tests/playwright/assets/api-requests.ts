@@ -1,7 +1,7 @@
 import fs from 'fs';
 import _path from 'path';
 import { APIRequest, type APIRequestContext } from '@playwright/test';
-import { Image, StorageState, WpPage } from '../types/types';
+import { Image, StorageState, WpPage, Post } from '../types/types';
 const headers = {
 	'X-WP-Nonce': process.env.WP_REST_NONCE,
 };
@@ -73,6 +73,24 @@ export async function createApiContext( request: APIRequest,
 	} );
 
 	return context;
+}
+
+export async function create( request: APIRequestContext, entity: string, data: Post ) {
+	const response = await request.post( '/index.php', {
+		params: { rest_route: `/wp/v2/${ entity }` },
+		headers,
+		multipart: data,
+	} );
+
+	if ( ! response.ok() ) {
+		throw new Error( `
+			Failed to create a ${ entity }: ${ response.status() }.
+			${ await response.text() }
+		` );
+	}
+	const { id } = await response.json();
+
+	return id;
 }
 
 async function _delete( request: APIRequestContext, entity: string, id: string ) {
