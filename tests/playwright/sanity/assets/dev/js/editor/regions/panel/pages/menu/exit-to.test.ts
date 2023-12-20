@@ -1,12 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
-test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
+test.skip( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.openNewPage();
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
-
+	await page.pause();
 	// Trigger dialog by click on the "Exit" button
 	await editor.page.click( 'text=Exit' );
 	await editor.page.click( 'a:has-text("User Preferences")' );

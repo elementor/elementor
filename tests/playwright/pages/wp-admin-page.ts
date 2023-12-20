@@ -30,19 +30,13 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage( setPageName: boolean = true ) {
-		const request: APIRequestContext = this.page.context().request,
-			postDataInitial = {
-				title: 'Playwright Test Page - Uninitialized',
-				content: '',
-			},
-			postId = await create( request, 'posts', postDataInitial ),
-			postDataUpdated = {
-				title: setPageName ? `Playwright Test Page #${ postId }` : `Elementor #${ postId }`,
-			};
+	async openNewPage( setWithApi : boolean = true ) {
+		if ( setWithApi ) {
+			await this.createNewPostWithAPI();
+		} else {
+			await this.createNewPostFromDashboard();
+		}
 
-		await create( request, `posts/${ postId }`, postDataUpdated );
-		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 		await this.closeAnnouncementsIfVisible();
@@ -50,17 +44,27 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
-	async openNewPageFromDashboard() {
+	async createNewPostWithAPI() {
+		const request: APIRequestContext = this.page.context().request,
+			postDataInitial = {
+				title: 'Playwright Test Page - Uninitialized',
+				content: '',
+			},
+			postId = await create( request, 'posts', postDataInitial ),
+			postDataUpdated = {
+				title: `Playwright Test Page #${ postId }`,
+			};
+
+		await create( request, `posts/${ postId }`, postDataUpdated );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+	}
+
+	async createNewPostFromDashboard() {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
-		await this.waitForPanel();
-		await this.closeAnnouncementsIfVisible();
-
-		return new EditorPage( this.page, this.testInfo );
 	}
 
 	async convertFromGutenberg() {
