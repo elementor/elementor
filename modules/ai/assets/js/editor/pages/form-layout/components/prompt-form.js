@@ -151,6 +151,7 @@ const PromptForm = forwardRef( ( {
 				isLoading={ isEnhancing }
 				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
+
 			<GenerateButton disabled={ isGenerateDisabled } />
 		</Stack>
 	);

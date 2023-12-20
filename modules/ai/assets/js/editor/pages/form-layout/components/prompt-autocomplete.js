@@ -34,7 +34,6 @@ const PaperComponent = function( props ) {
 	const { mode } = useConfig();
 	const libraryLink = MODE_VARIATION === mode ? 'https://go.elementor.com/ai-prompt-library-variations/' : 'https://go.elementor.com/ai-prompt-library-containers/';
 	return (
-
 		<Paper { ...props }
 			elevation={ 8 }
 			sx={ {
