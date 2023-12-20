@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Box, Button, Link, Stack, styled, Typography } from '@elementor/ui';
+import { Box, Button, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
