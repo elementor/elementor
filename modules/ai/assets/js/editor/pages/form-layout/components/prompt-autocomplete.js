@@ -55,7 +55,6 @@ const PaperComponent = function( props ) {
 			<Stack sx={ { m: 2 } }>
 				<PromptLibraryLink libraryLink={ libraryLink } />
 			</Stack>
-
 		</Paper>
 	);
 };
@@ -95,7 +94,7 @@ const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 			disableClearable
 			open={ showSuggestions }
 			onClose={ () => setShowSuggestions( false ) }
-			OnKeyDown={ ( e ) => {
+			onKeyDown={ ( e ) => {
 				if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
 					onSubmit( e );
 				} else if ( '/' === e.key && '' === e.target.value ) {

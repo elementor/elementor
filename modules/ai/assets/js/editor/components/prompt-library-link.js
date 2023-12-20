@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 const PromptLibraryLink = ( props ) => {
 	return (
 		<Typography variant="body2" color="text.secondary">
-			{ __( 'For more inspiration, try experimenting with proven prompts from our ' ) }
+			{ __( 'For more inspiration, try experimenting with proven prompts from our' ) }
 			<Link href={ props.libraryLink } className="elementor-clickable">
-				{ __( 'prompt library' ) }
+				{ ' ' }{ __( 'prompt library' ) }
 			</Link>
 		</Typography>
 	);
