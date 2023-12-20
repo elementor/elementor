@@ -25,8 +25,8 @@ test.describe( 'Editor v2', () => {
 	test( 'check that app-bar exists', async () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
-
-		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
+		await editor.page.pause();
+		await wrapper.getByRole( 'button', { name: 'Page Settings' } ).click();
 
 		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
 
