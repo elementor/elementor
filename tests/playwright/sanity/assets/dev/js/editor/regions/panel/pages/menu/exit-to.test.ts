@@ -17,7 +17,7 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	// Select dashboard
 	await setExitUserPreference( page, 'dashboard' );
 
-	exitHref = await exit.getAttribute( 'href' );
+	exitHref = await exit.evaluate( ( element ) => element.getAttribute( 'href' ) );
 
 	expect( exitHref ).toContain( '/wp-admin/' );
 
