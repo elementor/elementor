@@ -32,16 +32,16 @@ export default class WpAdminPage extends BasePage {
 
 	async openNewPage() {
 		const request: APIRequestContext = this.page.context().request,
-			postData = {
+			postDataInitial = {
 				title: 'Playwright Test Page - Uninitialized',
 				content: '',
 			},
-			pageId = await create( request, 'pages', postData ),
-			postDataUpdate = {
+			pageId = await create( request, 'pages', postDataInitial ),
+			postDataUpdated = {
 				title: `Playwright Test Page #${ pageId }`,
 			};
 
-		await create( request, `pages/${ pageId }`, postDataUpdate );
+		await create( request, `pages/${ pageId }`, postDataUpdated );
 		await this.page.goto( `/wp-admin/post.php?post=${ pageId }&action=elementor` );
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
