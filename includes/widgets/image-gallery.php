@@ -218,12 +218,18 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'image_spacing_custom',
 			[
-				'label' => esc_html__( 'Image Spacing', 'elementor' ),
+				'label' => esc_html__( 'Custom Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'show_label' => false,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'default' => [

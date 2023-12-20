@@ -179,6 +179,7 @@ class Embed {
 		$default_frame_attributes = [
 			'class' => 'elementor-video-iframe',
 			'allowfullscreen',
+			'allow' => 'clipboard-write',
 			'title' => sprintf(
 				/* translators: %s: Video provider */
 				__( '%s Video Player', 'elementor' ),
