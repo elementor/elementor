@@ -63,7 +63,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
 			const helper = new ElementRegressionHelper( page, testInfo );
-			await wpAdminPage.openNewPage();
+			await wpAdminPage.openNewPage( false );
 			await editorPage.closeNavigatorIfOpen();
 
 			await editorPage.loadTemplate( filePath, true );
