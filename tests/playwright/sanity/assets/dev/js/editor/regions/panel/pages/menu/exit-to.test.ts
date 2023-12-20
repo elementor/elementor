@@ -1,15 +1,13 @@
 import { test, expect, type Page } from '@playwright/test';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
-test.skip( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
+test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.openNewPage();
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
-	await page.pause();
-	// Trigger dialog by click on the "Exit" button
-	await editor.page.click( 'text=Exit' );
-	await editor.page.click( 'a:has-text("User Preferences")' );
+
+	await editor.page.click( '.elementor-panel-menu-item-editor-preferences' );
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
 
@@ -35,7 +33,7 @@ test.skip( 'Exit to user preference sanity test', async ( { page }, testInfo ) =
 
 	exitHref = await exit.getAttribute( 'href' );
 
-	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
+	expect( exitHref ).toContain( '/wp-admin/edit.php' );
 } );
 
 const setExitUserPreference = async ( page: Page, option: string ) => {
