@@ -1025,39 +1025,6 @@ export default class EditorBase extends Marionette.Application {
 		return elementorCommon.translate( stringKey, null, templateArgs, i18nStack );
 	}
 
-	logSite() {
-		let text = '',
-			style = '';
-
-		if ( environment.firefox ) {
-			const asciiText = [
-				' ;;;;;;;;;;;;;;; ',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				' ;;;;;;;;;;;;;;; ',
-			];
-
-			text += '%c' + asciiText.join( '\n' ) + '\n';
-
-			style = 'color: #C42961';
-		} else {
-			text += '%c00';
-
-			style = 'font-size: 22px; background-image: url("' + elementorCommon.config.urls.assets + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
-		}
-
-		setTimeout( console.log.bind( console, text, style ) ); // eslint-disable-line
-
-		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/elementor/elementor';
-
-		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
-	}
-
 	requestWidgetsConfig() {
 		const excludeWidgets = {};
 
@@ -1160,8 +1127,6 @@ export default class EditorBase extends Marionette.Application {
 				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
-
-		this.logSite();
 	}
 
 	onPreviewLoaded() {
