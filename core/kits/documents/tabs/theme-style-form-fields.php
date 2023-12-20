@@ -143,6 +143,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
 				],
 			]
