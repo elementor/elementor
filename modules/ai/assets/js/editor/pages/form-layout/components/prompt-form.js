@@ -1,5 +1,5 @@
 import { useState, useRef, forwardRef } from 'react';
-import { Box, Stack, IconButton, Tooltip, Link } from '@elementor/ui';
+import { Box, Stack, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import PromptAutocomplete from './prompt-autocomplete';

@@ -65,7 +65,7 @@ PaperComponent.propTypes = {
 };
 
 const PromptAutocomplete = ( { onSubmit, ...props } ) => {
-	const [ showSuggestions, setShowSuggestions ] = useState( true );
+	const [ showSuggestions, setShowSuggestions ] = useState( false );
 	const theme = useTheme();
 	const itemHeight = parseInt( theme.spacing( 4 ) );
 	const maxItems = 5;
@@ -94,15 +94,15 @@ const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 			fullWidth
 			disableClearable
 			open={ showSuggestions }
-			onClose={ () => setShowSuggestions( true ) }
-			// OnKeyDown={ ( e ) => {
-			// 	if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
-			// 		onSubmit( e );
-			// 	} else if ( '/' === e.key && '' === e.target.value ) {
-			// 		e.preventDefault();
-			// 		setShowSuggestions( true );
-			// 	}
-			// } }
+			onClose={ () => setShowSuggestions( false ) }
+			OnKeyDown={ ( e ) => {
+				if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
+					onSubmit( e );
+				} else if ( '/' === e.key && '' === e.target.value ) {
+					e.preventDefault();
+					setShowSuggestions( true );
+				}
+			} }
 			{ ...props }
 		/>
 	);
