@@ -30,19 +30,18 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage( setPageName: boolean = true, usePage: boolean = true ) {
+	async openNewPage( setPageName: boolean = true ) {
 		const request: APIRequestContext = this.page.context().request,
-			contentType = usePage ? 'pages' : 'posts',
 			postDataInitial = {
 				title: 'Playwright Test Page - Uninitialized',
 				content: '',
 			},
-			postId = await create( request, contentType, postDataInitial ),
+			postId = await create( request, 'posts', postDataInitial ),
 			postDataUpdated = {
 				title: setPageName ? `Playwright Test Page #${ postId }` : `Elementor #${ postId }`,
 			};
 
-		await create( request, `${ contentType }/${ postId }`, postDataUpdated );
+		await create( request, `posts/${ postId }`, postDataUpdated );
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
