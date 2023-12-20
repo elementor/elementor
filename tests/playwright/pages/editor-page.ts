@@ -902,4 +902,13 @@ export default class EditorPage extends BasePage {
 			} );
 		} );
 	}
+
+	async removeWpAdminBar() {
+		const adminBar = 'wpadminbar';
+		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+		await this.page.evaluate( ( selector ) => {
+			const admin = document.getElementById( selector );
+			admin.remove();
+		}, adminBar );
+	}
 }
