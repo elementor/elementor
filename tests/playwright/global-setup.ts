@@ -1,5 +1,5 @@
 import { chromium, request, type FullConfig } from '@playwright/test';
-import { createApiContext, createDefaultMedia, deleteDefaultMedia } from './assets/api-requests';
+import { cleanUpTestPages, createApiContext, createDefaultMedia, deleteDefaultMedia } from './assets/api-requests';
 
 module.exports = async ( config: FullConfig ) => {
 	const { baseURL, headless } = config.projects[ 0 ].use;
@@ -48,5 +48,6 @@ module.exports = async ( config: FullConfig ) => {
 	// Teardown function.
 	return async () => {
 		await deleteDefaultMedia( apiContext, imageIds );
+		await cleanUpTestPages( apiContext );
 	};
 };
