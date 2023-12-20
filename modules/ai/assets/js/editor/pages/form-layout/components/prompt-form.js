@@ -11,7 +11,6 @@ import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 import Attachments from './attachments';
 import { useConfig } from '../context/config';
 import { AttachmentPropType } from '../../../types/attachment';
-import PromptLibraryLink from '../../../components/prompt-library-link';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -25,10 +24,6 @@ const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'Statistics display in a 3-column layout, with numbers and icons about', 'elementor' ) },
 	{ text: __( 'Pricing table section with highlighted option for', 'elementor' ) },
 	{ text: __( 'About us section, combining company history and values about', 'elementor' ) },
-	{ text: __( 'For more inspiration, try experimenting with our ', 'elementor' ) +
-		<Link href="https://go.elementor.com/ai-prompt-library-containers/">
-			{ __( 'prompt library' ) }
-		</Link> },
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
@@ -148,8 +143,6 @@ const PromptForm = forwardRef( ( {
 						/>
 					) }
 				/>
-				<PromptLibraryLink libraryLink="https://go.elementor.com/ai-prompt-library-variations/" />
-
 			</Stack>
 
 			<EnhanceButton

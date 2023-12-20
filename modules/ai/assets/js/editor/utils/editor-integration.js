@@ -73,11 +73,11 @@ export const renderLayoutApp = ( options = {
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
 	ReactDOM.render(
-		<LayoutAppWrapper data-id-="wrapper-dennis"
+		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
 		>
-			<LayoutApp data-id-="app-dennis"
+			<LayoutApp
 				mode={ options.mode }
 				currentContext={ {
 					body: {

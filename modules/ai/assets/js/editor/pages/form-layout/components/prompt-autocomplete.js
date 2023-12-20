@@ -1,7 +1,9 @@
 import { useState, forwardRef } from 'react';
-import { Autocomplete, Box, Divider, Paper, TextField, Typography, useTheme } from '@elementor/ui';
+import { Autocomplete, Box, Divider, Paper, Stack, TextField, Typography, useTheme } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
+import PromptLibraryLink from '../../../components/prompt-library-link';
+import { MODE_VARIATION, useConfig } from '../context/config';
 
 const TextInput = forwardRef( ( props, ref ) => (
 	<TextField
@@ -29,7 +31,10 @@ TextInput.propTypes = {
 };
 
 const PaperComponent = function( props ) {
+	const { mode } = useConfig();
+	const libraryLink = MODE_VARIATION === mode ? 'https://go.elementor.com/ai-prompt-library-variations/' : 'https://go.elementor.com/ai-prompt-library-containers/';
 	return (
+
 		<Paper { ...props }
 			elevation={ 8 }
 			sx={ {
@@ -47,6 +52,10 @@ const PaperComponent = function( props ) {
 			</Typography>
 			<Divider />
 			{ props.children }
+			<Stack sx={ { m: 2 } }>
+				<PromptLibraryLink libraryLink={ libraryLink } />
+			</Stack>
+
 		</Paper>
 	);
 };
@@ -56,7 +65,7 @@ PaperComponent.propTypes = {
 };
 
 const PromptAutocomplete = ( { onSubmit, ...props } ) => {
-	const [ showSuggestions, setShowSuggestions ] = useState( false );
+	const [ showSuggestions, setShowSuggestions ] = useState( true );
 	const theme = useTheme();
 	const itemHeight = parseInt( theme.spacing( 4 ) );
 	const maxItems = 5;
@@ -85,15 +94,15 @@ const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 			fullWidth
 			disableClearable
 			open={ showSuggestions }
-			onClose={ () => setShowSuggestions( false ) }
-			onKeyDown={ ( e ) => {
-				if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
-					onSubmit( e );
-				} else if ( '/' === e.key && '' === e.target.value ) {
-					e.preventDefault();
-					setShowSuggestions( true );
-				}
-			} }
+			onClose={ () => setShowSuggestions( true ) }
+			// OnKeyDown={ ( e ) => {
+			// 	if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
+			// 		onSubmit( e );
+			// 	} else if ( '/' === e.key && '' === e.target.value ) {
+			// 		e.preventDefault();
+			// 		setShowSuggestions( true );
+			// 	}
+			// } }
 			{ ...props }
 		/>
 	);
