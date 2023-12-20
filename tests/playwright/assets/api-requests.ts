@@ -49,8 +49,8 @@ export async function deleteDefaultMedia( request: APIRequestContext, ids: strin
 }
 
 export async function cleanUpTestPages( request: APIRequestContext ) {
-	const pagesPublished = await getPages( request ),
-		pagesDraft = await getPages( request, 'draft' ),
+	const pagesPublished = await getPosts( request ),
+		pagesDraft = await getPosts( request, 'draft' ),
 		pages = [ ...pagesPublished, ...pagesDraft ];
 
 	const ids = pages
@@ -58,7 +58,7 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 		.map( ( page: WpPage ) => page.id );
 
 	for ( const id of ids ) {
-		await deletePage( request, id );
+		await deletePost( request, id );
 	}
 }
 
@@ -140,10 +140,6 @@ async function get( request: APIRequestContext, entity: string, status: string =
 	return data;
 }
 
-export async function getPages( request: APIRequestContext, status: string = 'publish' ) {
-	return await get( request, 'pages', status );
-}
-
-export async function deletePage( request: APIRequestContext, id: string ) {
-	await _delete( request, 'pages', id );
+export async function getPosts( request: APIRequestContext, status: string = 'publish' ) {
+	return await get( request, 'posts', status );
 }

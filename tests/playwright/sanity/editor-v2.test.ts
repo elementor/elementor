@@ -26,7 +26,7 @@ test.describe( 'Editor v2', () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 		await editor.page.pause();
-		await wrapper.getByRole( 'button', { name: 'Page Settings' } ).click();
+		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
 
 		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
 

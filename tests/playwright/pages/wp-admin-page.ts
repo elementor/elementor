@@ -36,12 +36,12 @@ export default class WpAdminPage extends BasePage {
 				title: 'Playwright Test Page - Uninitialized',
 				content: '',
 			},
-			pageId = await create( request, 'pages', postDataInitial ),
+			pageId = await create( request, 'posts', postDataInitial ),
 			postDataUpdated = {
 				title: setPageName ? `Playwright Test Page #${ pageId }` : `Elementor #${ pageId }`,
 			};
 
-		await create( request, `pages/${ pageId }`, postDataUpdated );
+		await create( request, `posts/${ pageId }`, postDataUpdated );
 		await this.page.goto( `/wp-admin/post.php?post=${ pageId }&action=elementor` );
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
