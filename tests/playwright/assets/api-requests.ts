@@ -1,7 +1,7 @@
 import fs from 'fs';
 import _path from 'path';
 import { APIRequest, type APIRequestContext } from '@playwright/test';
-import { Image, StorageState, WpPage, Post } from '../types/types';
+import { Image, StorageState, Post } from '../types/types';
 const headers = {
 	'X-WP-Nonce': process.env.WP_REST_NONCE,
 };
@@ -49,13 +49,13 @@ export async function deleteDefaultMedia( request: APIRequestContext, ids: strin
 }
 
 export async function cleanUpTestPages( request: APIRequestContext ) {
-	const pagesPublished = await getPosts( request ),
-		pagesDraft = await getPosts( request, 'draft' ),
-		pages = [ ...pagesPublished, ...pagesDraft ];
+	const postsPublished = await getPosts( request ),
+		postsDraft = await getPosts( request, 'draft' ),
+		posts = [ ...postsPublished, ...postsDraft ];
 
-	const ids = pages
-		.filter( ( page: WpPage ) => page.title?.rendered?.includes( 'Playwright Test Page' ) )
-		.map( ( page: WpPage ) => page.id );
+	const ids = posts
+		.filter( ( post: Post ) => post.title?.rendered?.includes( 'Playwright Test Page' ) )
+		.map( ( post: Post ) => post.id );
 
 	for ( const id of ids ) {
 		await deletePost( request, id );
