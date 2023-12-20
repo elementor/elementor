@@ -51,6 +51,19 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
+	async openNewPageFromDashboard() {
+		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
+			await this.gotoDashboard();
+		}
+
+		await this.page.click( '.e-overview__create > a' );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( this.page, this.testInfo );
+	}
+
 	async convertFromGutenberg() {
 		await Promise.all( [
 			this.page.waitForResponse( async ( response ) => await this.blockUrlResponse( response ) ),
