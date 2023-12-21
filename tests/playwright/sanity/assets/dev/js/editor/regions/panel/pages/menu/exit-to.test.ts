@@ -1,44 +1,45 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
-import EditorPage from '../../../../../../../../../pages/editor-page';
 
-test.skip( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
+test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+		editor = await wpAdmin.openNewPage( false, false );
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
 
-	await editor.page.click( '.elementor-panel-menu-item-editor-preferences' );
+	// Trigger dialog by click on the "Exit" button
+	await editor.page.click( 'text=Exit' );
+	await editor.page.click( 'a:has-text("User Preferences")' );
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
 
+	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
 	let exitHref = '';
 
 	// Select dashboard
-	await setExitUserPreference( editor, 'dashboard' );
-	exitHref = await getExitHref( editor );
-	expect.soft( exitHref ).toContain( '/wp-admin/' );
+	await setExitUserPreference( page, 'dashboard' );
+
+	exitHref = await exit.getAttribute( 'href' );
+
+	expect( exitHref ).toContain( '/wp-admin/' );
 
 	// Select wp_post_type
-	await setExitUserPreference( editor, 'this_post' );
-	exitHref = await getExitHref( editor );
-	expect.soft( exitHref ).toContain( '/wp-admin/post.php?post=' );
+	await setExitUserPreference( page, 'this_post' );
+
+	exitHref = await exit.getAttribute( 'href' );
+
+	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
 
 	// Select all_posts
-	await setExitUserPreference( editor, 'all_posts' );
-	exitHref = await getExitHref( editor );
-	expect.soft( exitHref ).toContain( '/wp-admin/edit.php' );
+	await setExitUserPreference( page, 'all_posts' );
+
+	exitHref = await exit.getAttribute( 'href' );
+
+	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
 } );
 
-const setExitUserPreference = async ( editor: EditorPage, option: string ) => {
-	await editor.page.click( '.elementor-panel-menu-item-editor-preferences' );
-	await editor.page.selectOption( '.elementor-control-exit_to >> select', option );
-	await editor.page.click( '#elementor-panel-header-menu-button' );
-	await editor.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
-	await editor.page.click( '#elementor-panel-header-menu-button' );
+const setExitUserPreference = async ( page: Page, option: string ) => {
+	await page.click( '.elementor-panel-menu-item-editor-preferences' );
+	await page.selectOption( '.elementor-control-exit_to >> select', option );
+	await page.click( '#elementor-panel-header-menu-button' );
 };
-
-async function getExitHref( editor: EditorPage ) {
-	await editor.page.waitForTimeout( 3000 );
-	return await editor.page.locator( '.elementor-panel-menu-item' ).last().locator( 'a' ).evaluate( ( element ) => element.getAttribute( 'href' ) );
-}
