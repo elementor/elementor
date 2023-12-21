@@ -50,7 +50,7 @@ export default class ImageCarousel extends Content {
 
 	async verifyCaption( expectedData: string[], captionCount = 3 ) {
 		for ( let i = 0; i < captionCount; i++ ) {
-			await expect( this.editorPage.getPreviewFrame()
+			await expect.soft( this.editorPage.getPreviewFrame()
 				.locator( EditorSelectors.imageCarousel.imgCaption ).nth( i ) ).toHaveText( expectedData[ i ] );
 		}
 	}

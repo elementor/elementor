@@ -26,10 +26,10 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo )
 		const src = await image.getAttribute( 'src' );
 
 		if ( src ) {
-			expect( src ).toContain( '.png' );
+			expect.soft( src ).toContain( '.png' );
 		} else {
 			const dataSrc = await image.getAttribute( 'data-src' );
-			expect( dataSrc ).toContain( '.png' );
+			expect.soft( dataSrc ).toContain( '.png' );
 		}
 	}
 } );

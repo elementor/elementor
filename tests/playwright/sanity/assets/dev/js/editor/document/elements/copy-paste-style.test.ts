@@ -27,19 +27,19 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 
 	// Assert.
-	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
+	await expect.soft( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
 
 	const publishButton = page.locator( '#elementor-panel-saver-button-publish' );
 
 	// Check that the panel footer save button is enabled.
-	await expect( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );
+	await expect.soft( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );
 
 	// Act.
 	await publishButton.click();
 	await page.waitForLoadState( 'networkidle' );
 
 	// Assert.
-	await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, {
+	await expect.soft( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, {
 		timeout: 10000,
 	} );
 } );

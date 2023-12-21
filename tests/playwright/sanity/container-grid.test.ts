@@ -42,7 +42,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await page.locator( '.elementor-control-grid_gaps .elementor-link-gaps' ).first().click();
 			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
 			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
-			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
+			await expect.soft( container ).toHaveCSS( 'gap', '20px 10px' );
 		} );
 
 		await test.step( 'Mobile rows unit are on FR', async () => {
@@ -52,7 +52,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
 
 			const rowsMobileUnitLabel = await page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
-			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
+			expect.soft( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
 			// Reset desktop view
 			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
@@ -64,14 +64,14 @@ test.describe( 'Container Grid tests @container', () => {
 			const alignContentControl = await page.locator( '.elementor-control-grid_align_content' );
 
 			// Assert - Check the controls initial state
-			await expect( alignContentControl ).not.toBeVisible();
+			await expect.soft( alignContentControl ).not.toBeVisible();
 
 			// Act - Set Grid Rows to custom unit
 			await gridRowsControl.locator( '.e-units-switcher' ).click();
 			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
 
 			// Assert - Align content control is visible
-			await expect( alignContentControl ).toBeVisible();
+			await expect.soft( alignContentControl ).toBeVisible();
 		} );
 
 		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
@@ -79,42 +79,42 @@ test.describe( 'Container Grid tests @container', () => {
 			const justifyContentControl = await page.locator( '.elementor-control-grid_justify_content' );
 
 			// Assert - Check the controls initial state
-			await expect( justifyContentControl ).not.toBeVisible();
+			await expect.soft( justifyContentControl ).not.toBeVisible();
 
 			// Act - Set Grid Columns to custom unit
 			await gridColumnsControl.locator( '.e-units-switcher' ).click();
 			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
 
 			// Assert - Justify content control should be visible
-			await expect( justifyContentControl ).toBeVisible();
+			await expect.soft( justifyContentControl ).toBeVisible();
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
-			await expect( container ).toHaveCSS( 'justify-content', 'start' );
-			await expect( container ).toHaveCSS( 'align-content', 'start' );
+			await expect.soft( container ).toHaveCSS( 'justify-content', 'start' );
+			await expect.soft( container ).toHaveCSS( 'align-content', 'start' );
 		} );
 
 		await test.step( 'Assert justify align and content middle', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
-			await expect( container ).toHaveCSS( 'justify-content', 'center' );
-			await expect( container ).toHaveCSS( 'align-content', 'center' );
+			await expect.soft( container ).toHaveCSS( 'justify-content', 'center' );
+			await expect.soft( container ).toHaveCSS( 'align-content', 'center' );
 		} );
 
 		await test.step( 'Assert justify align and content end', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
-			await expect( container ).toHaveCSS( 'justify-content', 'end' );
-			await expect( container ).toHaveCSS( 'align-content', 'end' );
+			await expect.soft( container ).toHaveCSS( 'justify-content', 'end' );
+			await expect.soft( container ).toHaveCSS( 'align-content', 'end' );
 		} );
 
 		await test.step( 'Assert grid auto flow', async () => {
 			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+			await expect.soft( container ).toHaveCSS( 'grid-auto-flow', 'row' );
 			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+			await expect.soft( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 		} );
 
 		await test.step( 'Assert justify align and content start on full width', async () => {
@@ -122,24 +122,24 @@ test.describe( 'Container Grid tests @container', () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
 			const container = await frame.locator( `.elementor-element-${ containerId }` );
-			await expect( container ).toHaveCSS( 'justify-content', 'start' );
-			await expect( container ).toHaveCSS( 'align-content', 'start' );
+			await expect.soft( container ).toHaveCSS( 'justify-content', 'start' );
+			await expect.soft( container ).toHaveCSS( 'align-content', 'start' );
 		} );
 
 		await test.step( 'Assert justify align and content middle on full width', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
 			const container = await frame.locator( `.elementor-element-${ containerId }` );
-			await expect( container ).toHaveCSS( 'justify-content', 'center' );
-			await expect( container ).toHaveCSS( 'align-content', 'center' );
+			await expect.soft( container ).toHaveCSS( 'justify-content', 'center' );
+			await expect.soft( container ).toHaveCSS( 'align-content', 'center' );
 		} );
 
 		await test.step( 'Assert justify align and content end on full width', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
 			const container = await frame.locator( `.elementor-element-${ containerId }` );
-			await expect( container ).toHaveCSS( 'justify-content', 'end' );
-			await expect( container ).toHaveCSS( 'align-content', 'end' );
+			await expect.soft( container ).toHaveCSS( 'justify-content', 'end' );
+			await expect.soft( container ).toHaveCSS( 'align-content', 'end' );
 		} );
 
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
@@ -149,7 +149,7 @@ test.describe( 'Container Grid tests @container', () => {
 				.evaluate( ( element: HTMLElement ) => {
 					return 99 < element.offsetWidth; // The min-width is 100px.
 				} );
-			expect( dragAreaIsVisible ).toBeTruthy();
+			expect.soft( dragAreaIsVisible ).toBeTruthy();
 		} );
 
 		await test.step( 'Assert boxed width content alignment', async () => {
@@ -166,7 +166,7 @@ test.describe( 'Container Grid tests @container', () => {
 				flexDragAreaOffsetLeft = await editor.getPreviewFrame()
 					.locator( '.e-flex .elementor-empty-view' )
 					.evaluate( ( flexContent: HTMLElement ) => flexContent.offsetLeft );
-			expect( gridDragAreaOffsetLeft ).toEqual( flexDragAreaOffsetLeft );
+			expect.soft( gridDragAreaOffsetLeft ).toEqual( flexDragAreaOffsetLeft );
 
 			// Add heading.
 			await editor.addWidget( 'heading', flexContainerId );
@@ -176,7 +176,7 @@ test.describe( 'Container Grid tests @container', () => {
 			const headingOffsetLeft = await editor.getPreviewFrame()
 				.locator( '.elementor-widget-heading' )
 				.evaluate( ( heading: HTMLElement ) => heading.offsetLeft );
-			expect( gridDragAreaOffsetLeft ).toEqual( headingOffsetLeft );
+			expect.soft( gridDragAreaOffsetLeft ).toEqual( headingOffsetLeft );
 
 			// Remove flex container.
 			await editor.removeElement( flexContainerId );
@@ -184,7 +184,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert correct positioning of the grid preset container when using the Add Container functionality', async () => {
 			// Assert that the first container has data-id = containerId.
-			await expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
+			await expect.soft( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.openAddElementSection( containerId );
 			await frame.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
@@ -193,30 +193,30 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// First container should be the new container.
 			const newContainerId = await frame.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
-			await expect( newContainerId ).not.toEqual( containerId );
+			await expect.soft( newContainerId ).not.toEqual( containerId );
 			// The second container should be the existing container.
-			await expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
+			await expect.soft( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.removeElement( newContainerId );
 		} );
 
 		await test.step( 'Assert correct icons for Justify Items and Align Items', async () => {
 			await editor.selectElement( containerId );
-			await expect( page
+			await expect.soft( page
 				.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' )
 				.locator( 'i' ) )
 				.toHaveClass( /eicon-align-start-h/ );
-			await expect( page
+			await expect.soft( page
 				.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' )
 				.locator( 'i' ) )
 				.toHaveClass( /eicon-align-start-v/ );
 
 			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
-			await expect( page
+			await expect.soft( page
 				.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' )
 				.locator( 'i' ) )
 				.not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
-			await expect( page
+			await expect.soft( page
 				.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' )
 				.locator( 'i' ) )
 				.not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
@@ -235,7 +235,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
 
-			expect( isOneColumn ).toBeTruthy();
+			expect.soft( isOneColumn ).toBeTruthy();
 
 			// Reset desktop view
 			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
@@ -249,8 +249,8 @@ test.describe( 'Container Grid tests @container', () => {
 				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
-			await expect( buttonHandle ).not.toBeVisible();
-			await expect( buttonHandle ).toHaveCount( 0 );
+			await expect.soft( buttonHandle ).not.toBeVisible();
+			await expect.soft( buttonHandle ).toHaveCount( 0 );
 
 			// Clean up
 			await editor.removeElement( buttonID );
@@ -264,8 +264,8 @@ test.describe( 'Container Grid tests @container', () => {
 				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
-			await expect( buttonHandle ).toBeVisible();
-			await expect( buttonHandle ).toHaveCount( 1 );
+			await expect.soft( buttonHandle ).toBeVisible();
+			await expect.soft( buttonHandle ).toHaveCount( 1 );
 
 			// Clean up
 			await editor.removeElement( flexContainerId );
@@ -320,18 +320,18 @@ test.describe( 'Container Grid tests @container', () => {
 		let gridOutlineChildrenInitialValue = 6;
 
 		await test.step( 'Assert default outline', async () => {
-			await expect( gridOutline ).toBeVisible();
-			await expect( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
+			await expect.soft( gridOutline ).toBeVisible();
+			await expect.soft( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
 		} );
 
 		await test.step( 'Assert turn off the grid outline control', async () => {
 			await editor.setSwitcherControlValue( 'grid_outline', false );
-			await expect( gridOutline ).not.toBeVisible();
+			await expect.soft( gridOutline ).not.toBeVisible();
 		} );
 
 		await test.step( 'Assert outline turn on', async () => {
 			await editor.setSwitcherControlValue( 'grid_outline', true );
-			await expect( gridOutline ).toBeVisible();
+			await expect.soft( gridOutline ).toBeVisible();
 		} );
 
 		await test.step( 'Assert number of child elements when there are less items than grid cells', async () => {
@@ -343,7 +343,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSliderControlValue( 'grid_rows_grid', '3' );
 
 			// Assert.
-			await expect( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
+			await expect.soft( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
 		} );
 
 		await test.step( 'Assert outline matches responsive grid', async () => {
@@ -355,11 +355,11 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSliderControlValue( 'grid_columns_grid_tablet', '2' );
 			await editor.setSliderControlValue( 'grid_rows_grid_tablet', '2' );
 
-			await expect( gridOutline.first() ).toBeVisible();
+			await expect.soft( gridOutline.first() ).toBeVisible();
 
 			await editor.setSelectControlValue( 'content_width', 'full' );
 
-			await expect( firstGridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
+			await expect.soft( firstGridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
 
 			await editor.removeElement( parentContainer );
 			await editor.changeResponsiveView( 'desktop' );
@@ -382,7 +382,7 @@ test.describe( 'Container Grid tests @container', () => {
 			}
 
 			// Assert.
-			await expect( gridOutlineChildren ).toHaveCount( expectedNumberOfChildren );
+			await expect.soft( gridOutlineChildren ).toHaveCount( expectedNumberOfChildren );
 		} );
 	} );
 
@@ -403,7 +403,7 @@ test.describe( 'Container Grid tests @container', () => {
 			const desiredGapValue = '30px 30px';
 			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap >> nth=0' ).locator( 'input' ).fill( '30' );
 
-			await expect( gridOutline ).toHaveCSS( 'grid-gap', desiredGapValue );
+			await expect.soft( gridOutline ).toHaveCSS( 'grid-gap', desiredGapValue );
 		} );
 
 		await test.step( 'Check that Custom control is set to grid outline', async () => {
@@ -414,7 +414,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
 			await gridColumnsControl.locator( '.elementor-slider-input input' ).fill( '50px 150px repeat(2, 100px)' );
 
-			await expect( gridOutline ).toHaveCSS( 'grid-template-columns', desiredCustomValue );
+			await expect.soft( gridOutline ).toHaveCSS( 'grid-template-columns', desiredCustomValue );
 		} );
 	} );
 
@@ -444,7 +444,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
 
 			// Assert.
-			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+			await expect.soft( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 
 		await test.step( 'Empty view min-height should be 100px when grid-rows custom control has no value', async () => {
@@ -458,7 +458,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
 
 			// Assert.
-			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+			await expect.soft( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 
 		await test.step( 'Empty view min-height should be 100px when grid-rows custom control has number value', async () => {
@@ -472,7 +472,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
 
 			// Assert.
-			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+			await expect.soft( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 
 		await test.step( 'Empty view min-height should be 100px when grid-rows unit is set to fr ', async () => {
@@ -486,7 +486,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredNumberOfRows );
 
 			// Assert.
-			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+			await expect.soft( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 	} );
 
@@ -499,19 +499,19 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert back arrow in flex presets', async () => {
 			await frame.locator( '.flex-preset-button' ).click();
 			const backArrow = await frame.locator( '.elementor-add-section-back' );
-			await expect( backArrow ).toBeVisible();
+			await expect.soft( backArrow ).toBeVisible();
 			await backArrow.click();
 			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
-			await expect( selectTypeView ).toBeVisible();
+			await expect.soft( selectTypeView ).toBeVisible();
 		} );
 
 		await test.step( 'Assert back arrow in grid presets', async () => {
 			await frame.locator( '.grid-preset-button' ).click();
 			const backArrow = await frame.locator( '.elementor-add-section-back' );
-			await expect( backArrow ).toBeVisible();
+			await expect.soft( backArrow ).toBeVisible();
 			await backArrow.click();
 			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
-			await expect( selectTypeView ).toBeVisible();
+			await expect.soft( selectTypeView ).toBeVisible();
 		} );
 
 		await test.step( 'Assert back arrow in not visible when clicked on plus button', async () => {
@@ -519,7 +519,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await frame.locator( '[data-structure="2-2"]' ).click();
 			await frame.locator( '.elementor-editor-element-add' ).click();
 			const backArrow = await frame.locator( '.elementor-add-section-back' ).first();
-			await expect( backArrow ).not.toBeVisible();
+			await expect.soft( backArrow ).not.toBeVisible();
 		} );
 	} );
 
@@ -559,13 +559,13 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'After a widget is added', async () => {
-			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'On initial page load when container is not empty', async () => {
 			await editor.saveAndReloadPage();
 			await wpAdmin.waitForPanel();
-			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );
 
@@ -593,12 +593,12 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Empty item should not be presented', async () => {
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Add one more item to see empty item', async () => {
 			const latestAddedWidgetId = await editor.addWidget( 'heading', containerId );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 
 			await editor.removeElement( latestAddedWidgetId );
 		} );
@@ -606,7 +606,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Increase number of rows to see empty item', async () => {
 			await editor.selectElement( containerId );
 			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( '3' );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
 	} );
 
@@ -632,12 +632,12 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Empty item should not be presented', async () => {
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
 		//
 		await test.step( 'Empty item should not be present in tablet', async () => {
 			await editor.changeResponsiveView( 'tablet' );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Change number of rows and columns to see empty item', async () => {
@@ -648,7 +648,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			await gridRowsControlTablet.locator( '.elementor-slider-input input' ).fill( '2' );
 			await columnsRowControlTablet.locator( '.elementor-slider-input input' ).fill( '4' );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+			await expect.soft( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
 	} );
 
@@ -739,8 +739,8 @@ async function testPreset( frame, editor, rows, cols ) {
 		el.style.setProperty( 'grid-template-columns', `repeat(${ colsCount }, 1fr)` );
 	}, rows, cols );
 
-	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
-	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );
+	await expect.soft( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
+	await expect.soft( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );
 	await editor.cleanContent();
 }
 
@@ -748,7 +748,7 @@ async function testAutoFlowByDevice( editor, container, device ) {
 	await editor.changeResponsiveView( device );
 	const controlName = 'desktop' === device ? 'grid_auto_flow' : 'grid_auto_flow_' + device;
 	await editor.setSelectControlValue( controlName, 'row' );
-	await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+	await expect.soft( container ).toHaveCSS( 'grid-auto-flow', 'row' );
 	await editor.setSelectControlValue( controlName, 'column' );
-	await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+	await expect.soft( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 }

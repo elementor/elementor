@@ -18,9 +18,9 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	} );
 
 	// Assert - Ensure the tabs are duplicated.
-	await expect( editor.getPreviewFrame().locator( '.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active' ) ).toBeVisible();
+	await expect.soft( editor.getPreviewFrame().locator( '.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active' ) ).toBeVisible();
 	const tabCount = await editor.getPreviewFrame().locator( '.elementor-tab-title' ).count();
 
 	// It will be duplicated since, the same widget tabs gonna be inside the first tab content.
-	expect( tabCount ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
+	expect.soft( tabCount ).toBe( 8 ); // 8 Since there is hidden titles for the mobile version.
 } );

@@ -58,11 +58,11 @@ export default class Content {
 	 */
 	async verifyLink( element: Locator,
 		options: { target:string, href: string, rel: string, customAttributes: {key: string, value: string}, widget: string } ) {
-		await expect( element ).toHaveAttribute( 'target', options.target );
-		await expect( element ).toHaveAttribute( 'href', options.href );
-		await expect( element ).toHaveAttribute( 'rel', options.rel );
+		await expect.soft( element ).toHaveAttribute( 'target', options.target );
+		await expect.soft( element ).toHaveAttribute( 'href', options.href );
+		await expect.soft( element ).toHaveAttribute( 'rel', options.rel );
 		if ( options.widget !== 'text-path' ) {
-			await expect( element ).toHaveAttribute( options.customAttributes.key, options.customAttributes.value );
+			await expect.soft( element ).toHaveAttribute( options.customAttributes.key, options.customAttributes.value );
 		}
 	}
 
@@ -86,7 +86,7 @@ export default class Content {
 		const attribute = args.isVideo ? 'style' : 'src';
 		const src = await image.getAttribute( attribute );
 		const regex = new RegExp( args.imageTitle );
-		expect( regex.test( src ) ).toEqual( true );
+		expect.soft( regex.test( src ) ).toEqual( true );
 	}
 
 	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ) {
@@ -169,7 +169,7 @@ export default class Content {
 			videoOptions.start = src.split( '#' )[ 1 ];
 		}
 		for ( const key in expectedValues ) {
-			expect( videoOptions[ key ], { message: `Parameter is ${ key }` } ).toEqual( String( expectedValues[ key ] ) );
+			expect.soft( videoOptions[ key ], { message: `Parameter is ${ key }` } ).toEqual( String( expectedValues[ key ] ) );
 		}
 	}
 }

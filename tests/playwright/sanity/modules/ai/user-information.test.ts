@@ -30,7 +30,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.locator( 'input[name="prompt"]' ) ).toHaveCount( 1 );
+			await expect.soft( page.locator( 'input[name="prompt"]' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -48,7 +48,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 80% of the free trial.' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'You’ve used over 80% of the free trial.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -66,7 +66,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 95% of the free trial.' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'You’ve used over 95% of the free trial.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -84,7 +84,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 80% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'You’ve used over 80% of your Elementor AI plan.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -102,7 +102,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 95% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'You’ve used over 95% of your Elementor AI plan.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -120,7 +120,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'By clicking "Connect", I approve the' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'By clicking "Connect", I approve the' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -138,11 +138,11 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'This includes consenting to the collection and use of data to improve user experience.' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'This includes consenting to the collection and use of data to improve user experience.' ) ).toHaveCount( 1 );
 
 			await page.locator( '#e-ai-terms-approval' ).click();
 
-			await expect( page.getByText( 'Get Started' ) ).toBeEnabled();
+			await expect.soft( page.getByText( 'Get Started' ) ).toBeEnabled();
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );

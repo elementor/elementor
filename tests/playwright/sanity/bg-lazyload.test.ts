@@ -45,7 +45,7 @@ test.describe( 'Background Lazy Load', () => {
 		const beforeURL = await previewPage.$eval( lazyloadSelector, ( el ) => {
 			return window.getComputedStyle( el ).getPropertyValue( 'background-image' );
 		} );
-		expect( beforeURL ).toContain( 'none' );
+		expect.soft( beforeURL ).toContain( 'none' );
 
 		await previewPage.evaluate( ( lazyloadSelectorScrollTo ) => {
 			const lazyloadElement = document.querySelector( lazyloadSelectorScrollTo );
@@ -58,11 +58,11 @@ test.describe( 'Background Lazy Load', () => {
 		const hasClass = await previewPage.$eval( '[bg-test-element]', ( el ) => {
 			return el.classList.contains( 'lazyloaded' );
 		} );
-		expect( hasClass ).toBe( true );
+		expect.soft( hasClass ).toBe( true );
 
 		const cssVariable = await previewPage.$eval( '[bg-test-element]', ( el ) => {
 			return window.getComputedStyle( el ).getPropertyValue( '--e-bg-lazyload' );
 		} );
-		expect( cssVariable ).toContain( 'Quote-About-Copy-1.png' );
+		expect.soft( cssVariable ).toContain( 'Quote-About-Copy-1.png' );
 	} );
 } );

@@ -28,7 +28,7 @@ test.describe( 'Widget tests', () => {
 
 		// Assert.
 		// Check rotate and scale value.
-		await expect( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-rotateZ', '2deg' );
-		await expect( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-scale', '2' );
+		await expect.soft( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-rotateZ', '2deg' );
+		await expect.soft( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-scale', '2' );
 	} );
 } );

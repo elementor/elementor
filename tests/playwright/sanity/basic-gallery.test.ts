@@ -16,7 +16,7 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	await imageCarousel.addImageGallery();
 
 	await editor.togglePreviewMode();
-	expect( await editor.getPreviewFrame()
+	expect.soft( await editor.getPreviewFrame()
 		.locator( 'div#gallery-1' )
 		.screenshot( { type: 'jpeg', quality: 90 } ) )
 		.toMatchSnapshot( 'gallery.jpeg' );
@@ -72,5 +72,5 @@ async function testBasicSwiperGallery( editor, page, imageCarousel ) {
 	await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ).first().click();
 	await page.waitForTimeout( 500 );
 
-	expect( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper.jpeg' );
+	expect.soft( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper.jpeg' );
 }

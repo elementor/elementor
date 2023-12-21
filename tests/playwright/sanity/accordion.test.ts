@@ -11,7 +11,7 @@ test( 'Accordion', async ( { page }, testInfo ) => {
 
 	// Assert
 	await editor.togglePreviewMode();
-	expect( await editor.getPreviewFrame()
+	expect.soft( await editor.getPreviewFrame()
 		.locator( '.elementor-widget-wrap > .elementor-background-overlay' )
 		.screenshot( { type: 'jpeg', quality: 90 } ) )
 		.toMatchSnapshot( 'accordion.jpeg' );

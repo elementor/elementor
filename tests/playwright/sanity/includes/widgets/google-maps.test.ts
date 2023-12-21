@@ -24,7 +24,7 @@ test( 'Verify Google maps controls', async ( { page }, testInfo ) => {
 		iwloc: 'near',
 	};
 	let currentHeight = await googleMapsWidget.getHeight();
-	expect( String( currentHeight ) ).toEqual( height );
+	expect.soft( String( currentHeight ) ).toEqual( height );
 	googleMapsWidget.verifySrcParams( src, expectedValues, 'google-maps' );
 
 	await editor.publishAndViewPage();
@@ -32,6 +32,6 @@ test( 'Verify Google maps controls', async ( { page }, testInfo ) => {
 	src = await googleMapsWidget.getSrc( true );
 	googleMapsWidget.verifySrcParams( src, expectedValues, 'google-maps' );
 	currentHeight = await googleMapsWidget.getHeight( true );
-	expect( String( currentHeight ) ).toEqual( height );
+	expect.soft( String( currentHeight ) ).toEqual( height );
 } );
 

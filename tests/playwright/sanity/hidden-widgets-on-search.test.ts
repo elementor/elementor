@@ -13,7 +13,7 @@ test( 'Spacer widget should be shown in search result', async ( { page }, testIn
 
 	const widgetsInSearchResult = await page.$$( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
 
-	expect( widgetsInSearchResult.length ).toEqual( 1 );
+	expect.soft( widgetsInSearchResult.length ).toEqual( 1 );
 } );
 
 // When searching for a widget that is hidden on search, the widget should not be shown in search result.
@@ -31,5 +31,5 @@ test( 'Wordpress widget should not be shown in search result', async ( { page },
 
 	const widgetsInSearchResult = await page.$$( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
 
-	expect( widgetsInSearchResult.length ).toEqual( 0 );
+	expect.soft( widgetsInSearchResult.length ).toEqual( 0 );
 } );

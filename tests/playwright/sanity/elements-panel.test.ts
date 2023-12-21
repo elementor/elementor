@@ -30,7 +30,7 @@ test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 			.join( ',' );
 	} );
 
-	expect( orderedWidgets ).toBe( 'heading,icon,button' );
+	expect.soft( orderedWidgets ).toBe( 'heading,icon,button' );
 } );
 
 test( 'block adding from panel an inner section inside an inner section', async ( { page }, testInfo ) => {
@@ -43,7 +43,7 @@ test( 'block adding from panel an inner section inside an inner section', async 
 	const secondInnerSection = await editor.addElement( { elType: 'inner-section' }, firstInnerSection );
 
 	// Assert.
-	expect( secondInnerSection ).not.toBeDefined();
+	expect.soft( secondInnerSection ).not.toBeDefined();
 } );
 
 async function addWidgetByClick( editor: EditorPage, widgetType: string ) {

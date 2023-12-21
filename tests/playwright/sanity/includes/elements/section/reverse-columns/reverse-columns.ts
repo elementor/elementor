@@ -58,18 +58,18 @@ export default class ReverseColumns {
 
 		await this.page.click( `#e-responsive-bar-switcher__option-${ testDevice }` );
 		const firstColumn = this.getFirstColumn();
-		await expect( firstColumn ).toHaveCSS( 'order', '0' );
+		await expect.soft( firstColumn ).toHaveCSS( 'order', '0' );
 
 		await this.toggle( testDevice );
 
-		await expect( firstColumn ).toHaveCSS( 'order', '10' );
+		await expect.soft( firstColumn ).toHaveCSS( 'order', '10' );
 
 		const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic(),
 			filteredBreakpoints = breakpoints.filter( ( value ) => testDevice !== value );
 
 		for ( const breakpoint of filteredBreakpoints ) {
 			await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
-			await expect( firstColumn ).toHaveCSS( 'order', '0' );
+			await expect.soft( firstColumn ).toHaveCSS( 'order', '0' );
 		}
 	}
 
@@ -82,11 +82,11 @@ export default class ReverseColumns {
 			await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
 			const firstColumn = this.getFirstColumn();
 			if ( 'desktop' === breakpoint ) {
-				await expect( firstColumn ).toHaveCSS( 'order', '0' );
+				await expect.soft( firstColumn ).toHaveCSS( 'order', '0' );
 				continue;
 			}
 			await this.toggle( breakpoint );
-			await expect( firstColumn ).toHaveCSS( 'order', '10' );
+			await expect.soft( firstColumn ).toHaveCSS( 'order', '10' );
 		}
 	}
 }

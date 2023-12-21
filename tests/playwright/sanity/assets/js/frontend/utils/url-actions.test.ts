@@ -50,7 +50,7 @@ test.describe( 'URL Actions', () => {
 		const src = await mountainImg.getAttribute( 'src' );
 
 		// Test that the image has been successfully inserted into the page.
-		await expect( src ).toContain( 'mountain-image' );
+		await expect.soft( src ).toContain( 'mountain-image' );
 
 		// Click on the image to open the lightbox.
 		await mountainImg.click();
@@ -58,7 +58,7 @@ test.describe( 'URL Actions', () => {
 		const singlelightboxImage = editor.getPreviewFrame().locator( '.elementor-lightbox-image' );
 
 		// Test that the lightbox appeared.
-		await expect( singlelightboxImage ).toBeVisible();
+		await expect.soft( singlelightboxImage ).toBeVisible();
 
 		// Remove the previous wp media frame so it doesn't interfere with the next one to be opened for the gallery.
 		/**
@@ -118,7 +118,7 @@ test.describe( 'URL Actions', () => {
 		const galleryItems = editor.getPreviewFrame().locator( '.elementor-image-gallery figure.gallery-item' );
 
 		// Check that a gallery with two images has been added to the page.
-		await expect( galleryItems ).toHaveCount( 2 );
+		await expect.soft( galleryItems ).toHaveCount( 2 );
 
 		// Open the gallery's slideshow in a lightbox.
 		galleryItems.first().click();
@@ -126,7 +126,7 @@ test.describe( 'URL Actions', () => {
 		const slideshowLightboxImage = editor.getPreviewFrame().locator( 'img[alt="mountain-image"].elementor-lightbox-image, img[alt="field-image"].elementor-lightbox-image' );
 
 		// Test that the lightbox appeared.
-		await expect( slideshowLightboxImage.first() ).toBeVisible();
+		await expect.soft( slideshowLightboxImage.first() ).toBeVisible();
 
 		// Save the page so we can run the front end tests.
 		await page.evaluate( () => $e.run( 'document/save/default' ) );
@@ -156,7 +156,7 @@ test.describe( 'URL Actions', () => {
 		const frontendSinglelightboxImage = page.locator( '.elementor-lightbox-image' );
 
 		// Test that the lightbox was successfully loaded.
-		await expect( frontendSinglelightboxImage ).toBeVisible();
+		await expect.soft( frontendSinglelightboxImage ).toBeVisible();
 
 		/**
 		 * Test that a bad hash doesn't run
@@ -174,7 +174,7 @@ test.describe( 'URL Actions', () => {
 		// Reload so the hash will be parsed.
 		await page.reload();
 		// Test that the lightbox was NOT OPENED on this page.
-		await expect( frontendSinglelightboxImage ).not.toBeVisible();
+		await expect.soft( frontendSinglelightboxImage ).not.toBeVisible();
 
 		/**
 		 * Cleanup - change the page back to draft.

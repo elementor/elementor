@@ -110,14 +110,14 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await contentTab.setCaption( 'attachment' );
 		await contentTab.selectLinkSource( 'file' );
 		await contentTab.setLightBox( 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
+		expect.soft( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
 			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
-		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
+		await expect.soft( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 
 		const title = editor.getPreviewFrame().locator( '.elementor-slideshow__title' );
 		const description = editor.getPreviewFrame().locator( '.elementor-slideshow__description' );
-		await expect( title ).toHaveCSS( 'text-align', 'center' );
-		await expect( description ).toHaveCSS( 'text-align', 'center' );
+		await expect.soft( title ).toHaveCSS( 'text-align', 'center' );
+		await expect.soft( description ).toHaveCSS( 'text-align', 'center' );
 	} );
 } );

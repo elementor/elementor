@@ -21,7 +21,7 @@ test.describe( 'Global font introduction tests', () => {
 		const tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
 
 		// Assert.
-		expect( tooltipDialogCounter ).toBe( 1 );
+		expect.soft( tooltipDialogCounter ).toBe( 1 );
 	} );
 
 	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page }, testInfo ) => {
@@ -43,6 +43,6 @@ test.describe( 'Global font introduction tests', () => {
 		const tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
 
 		// Assert.
-		expect( tooltipDialogCounter ).toBe( 0 );
+		expect.soft( tooltipDialogCounter ).toBe( 0 );
 	} );
 } );

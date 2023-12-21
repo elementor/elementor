@@ -28,7 +28,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 
 		await test.step( 'Fit Aspect hidden for Icons', async () => {
 			await page.getByRole( 'button', { name: 'Style' } ).click();
-			await expect( page.locator( '.elementor-control-fit_to_size .elementor-switch-label' ) ).toBeHidden();
+			await expect.soft( page.locator( '.elementor-control-fit_to_size .elementor-switch-label' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Act', async () => {
@@ -44,7 +44,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 			const iconSVG = editor.getPreviewFrame().locator( iconSelector ),
 				iconDimensions = await iconSVG.boundingBox();
 
-			expect( iconDimensions.height !== iconDimensions.width ).toBeTruthy(); // Not 1-1 proportion
+			expect.soft( iconDimensions.height !== iconDimensions.width ).toBeTruthy(); // Not 1-1 proportion
 			await editor.togglePreviewMode();
 		} );
 
@@ -56,7 +56,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 			const iconSVG = page.locator( iconSelector ),
 				iconDimensions = await iconSVG.boundingBox();
 
-			expect( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
+			expect.soft( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
 		} );
 	} );
 
@@ -68,8 +68,8 @@ test.describe( 'Icon and social icon widget tests', () => {
 		await editor.addWidget( 'social-icons' );
 		await page.locator( EditorSelectors.item ).first().click();
 		await contentTab.uploadSVG();
-		await expect( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
+		await expect.soft( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 		await editor.publishAndViewPage();
-		await expect( page.locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
+		await expect.soft( page.locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 	} );
 } );

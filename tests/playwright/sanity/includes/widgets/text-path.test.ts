@@ -14,7 +14,7 @@ test( 'Custom path type', async ( { page }, testInfo ) => {
 	await editor.addWidget( 'text-path' );
 	await page.getByRole( 'combobox', { name: 'Path Type' } ).selectOption( 'custom' );
 	await contentTab.uploadSVG( { widget: 'text-path' } );
-	await expect( editor.getPreviewFrame().locator( EditorSelectors.textPath.svgIcon ) ).toBeVisible();
+	await expect.soft( editor.getPreviewFrame().locator( EditorSelectors.textPath.svgIcon ) ).toBeVisible();
 	await editor.publishAndViewPage();
-	await expect( page.locator( EditorSelectors.textPath.svgIcon ) ).toBeVisible();
+	await expect.soft( page.locator( EditorSelectors.textPath.svgIcon ) ).toBeVisible();
 } );

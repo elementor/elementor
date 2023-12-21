@@ -4,7 +4,7 @@ import { expect, Page } from '@playwright/test';
 export const findPromptHistoryButton = async ( page: Page ) => {
 	await page.locator( EditorSelectors.ai.aiButton ).first().click( { force: true } );
 
-	await expect( page.locator( EditorSelectors.ai.promptHistory.button ) ).toHaveCount( 1 );
+	await expect.soft( page.locator( EditorSelectors.ai.promptHistory.button ) ).toHaveCount( 1 );
 };
 
 export const closeAIDialog = async ( page: Page ) => {

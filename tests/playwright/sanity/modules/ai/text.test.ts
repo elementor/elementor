@@ -45,40 +45,40 @@ test.describe( 'AI @ai', () => {
 
 			const generateTextButton = page.getByText( 'Generate text' );
 
-			await expect( generateTextButton ).toHaveCount( 1 );
-			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 1 );
+			await expect.soft( generateTextButton ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 1 );
 
 			await page.locator( 'input[name="prompt"]' ).fill( 'Some prompt' );
 
-			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
+			await expect.soft( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
 
 			await generateTextButton.click();
 
 			const useTextButton = page.getByText( 'Use text' );
 
-			await expect( useTextButton ).toHaveCount( 1 );
-			await expect( page.getByText( 'Response Prompt' ) ).toHaveCount( 1 );
+			await expect.soft( useTextButton ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'Response Prompt' ) ).toHaveCount( 1 );
 
 			const newPromptButton = page.getByText( 'New prompt' );
-			await expect( newPromptButton ).toHaveCount( 1 );
+			await expect.soft( newPromptButton ).toHaveCount( 1 );
 
 			await newPromptButton.click();
 
-			await expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
-			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
+			await expect.soft( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
+			await expect.soft( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
 			await generateTextButton.click();
 
-			await expect( useTextButton ).toHaveCount( 1 );
-			await expect( page.getByText( 'Response Prompt' ) ).toHaveCount( 1 );
+			await expect.soft( useTextButton ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'Response Prompt' ) ).toHaveCount( 1 );
 
 			await page.getByText( 'Make it shorter' ).click();
 
-			await expect( page.getByText( 'Response Prompt Shorter' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'Response Prompt Shorter' ) ).toHaveCount( 1 );
 
 			await useTextButton.click();
 
 			const inputControl = page.locator( '.elementor-control-title.elementor-control-type-textarea textarea' );
-			expect( await inputControl.inputValue() ).toBe( 'Response Prompt Shorter' );
+			expect.soft( await inputControl.inputValue() ).toBe( 'Response Prompt Shorter' );
 		} );
 
 		await test.step( 'Open the modal with non-default value from the control', async () => {
@@ -89,8 +89,8 @@ test.describe( 'AI @ai', () => {
 
 			await mockRoute( page );
 
-			await expect( page.getByText( 'Use text' ) ).toHaveCount( 1 );
-			await expect( page.getByText( 'Hello World' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'Use text' ) ).toHaveCount( 1 );
+			await expect.soft( page.getByText( 'Hello World' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );

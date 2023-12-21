@@ -15,7 +15,7 @@ test.describe( 'Favorite widgets', () => {
 		await favoriteWidgets.add( favoriteToAdd );
 
 		const expectFavoriteVisible = async () => {
-			await expect( page.locator( `#elementor-panel-category-favorites >> text="${ favoriteToAdd }"` ) )
+			await expect.soft( page.locator( `#elementor-panel-category-favorites >> text="${ favoriteToAdd }"` ) )
 				.toBeVisible();
 		};
 

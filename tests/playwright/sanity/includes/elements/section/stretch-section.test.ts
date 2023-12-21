@@ -47,7 +47,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	 * Test in Editor
 	 */
 	// Assert (Not Stretched).
-	expect( await sectionElement.screenshot( {
+	expect.soft( await sectionElement.screenshot( {
 		type: 'jpeg',
 		quality: 90,
 	} ) ).toMatchSnapshot( `section-NOT-stretched${ directionSuffix }.jpeg` );
@@ -57,7 +57,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	await page.locator( '.elementor-control-stretch_section .elementor-switch' ).click();
 
 	// Assert (Stretched).
-	expect( await sectionElement.screenshot( {
+	expect.soft( await sectionElement.screenshot( {
 		type: 'jpeg',
 		quality: 90,
 	} ) ).toMatchSnapshot( `section-stretched${ directionSuffix }.jpeg` );
@@ -71,7 +71,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 			return sectionBoundingBox.left === scrollbarWidth && sectionBoundingBox.right === window.innerWidth;
 		}, { selector: sectionID } );
 
-		expect( isSectionConsideringScrollbar ).toBe( true );
+		expect.soft( isSectionConsideringScrollbar ).toBe( true );
 	}
 
 	/**
@@ -93,7 +93,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	const sectionElementFE = await page.locator( `.elementor-element-${ sectionID }` );
 
 	// Assert (Stretched).
-	expect( await sectionElementFE.screenshot( {
+	expect.soft( await sectionElementFE.screenshot( {
 		type: 'jpeg',
 		quality: 90,
 	} ) ).toMatchSnapshot( `section-stretched-FE${ directionSuffix }.jpeg` );

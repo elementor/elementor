@@ -28,6 +28,6 @@ test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page }, testInf
 	const value = await editor.page.inputValue( '.elementor-wp-editor' );
 
 	// Assert.
-	expect( value ).toContain( '&lt;hr&gt;' );
-	expect( value ).toContain( '<hr />' ); // It's seperated because of inconsistent output . Sometimes the widget return a text with a <p> element and sometimes not.
+	expect.soft( value ).toContain( '&lt;hr&gt;' );
+	expect.soft( value ).toContain( '<hr />' ); // It's seperated because of inconsistent output . Sometimes the widget return a text with a <p> element and sometimes not.
 } );

@@ -20,5 +20,5 @@ test( 'renderDataBindings() sanity test', async ( { page }, testInfo ) => {
 	} );
 
 	// Assert.
-	expect( isTestimonialImageConnected ).toBeTruthy();
+	expect.soft( isTestimonialImageConnected ).toBeTruthy();
 } );

@@ -10,7 +10,7 @@ export default class ButtonWidget extends Content {
 
 	async setButtonId( buttonId: string, buttonName: string ) {
 		await this.page.locator( EditorSelectors.button.id ).type( buttonId );
-		await expect( this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ) ).toHaveAttribute( 'id', buttonId );
+		await expect.soft( this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ) ).toHaveAttribute( 'id', buttonId );
 	}
 
 	async getButtonId( buttonName: string, isPublished = true ) {

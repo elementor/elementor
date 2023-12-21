@@ -857,22 +857,22 @@ test.describe( 'Container tests @container', () => {
 
 		await test.step( 'Check the control initial placeholder', async () => {
 			const gapControlPlaceholder = await desktopGapControlColumnInput.getAttribute( 'placeholder' );
-			await expect( gapControlPlaceholder ).toBe( '20' );
-			await expect( gapControlPlaceholder ).not.toBe( '[object, object]' );
+			await expect.soft( gapControlPlaceholder ).toBe( '20' );
+			await expect.soft( gapControlPlaceholder ).not.toBe( '[object, object]' );
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from desktop to tablet after value change', async () => {
 			desktopGapControlColumnInput.fill( '50' );
 			await editor.changeResponsiveView( 'tablet' );
 			const gapControlPlaceholder = await tabletGapControlColumnInput.getAttribute( 'placeholder' );
-			await expect( gapControlPlaceholder ).toBe( '50' );
+			await expect.soft( gapControlPlaceholder ).toBe( '50' );
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from tablet to mobile after value change', async () => {
 			tabletGapControlColumnInput.fill( '40' );
 			await editor.changeResponsiveView( 'mobile' );
 			const gapControlPlaceholder = await mobileGapControlColumnInput.getAttribute( 'placeholder' );
-			await expect( gapControlPlaceholder ).toBe( '40' );
+			await expect.soft( gapControlPlaceholder ).toBe( '40' );
 		} );
 	} );
 

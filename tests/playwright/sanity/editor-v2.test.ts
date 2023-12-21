@@ -33,7 +33,7 @@ test.describe( 'Editor v2', () => {
 		await wrapper.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
 
 		// Assert
-		await expect( await wrapper.screenshot( {
+		await expect.soft( await wrapper.screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
@@ -44,7 +44,7 @@ test.describe( 'Editor v2', () => {
 		await editor.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
 
 		// Assert
-		await expect( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+		await expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'panel.jpg', { maxDiffPixels: 100 } );

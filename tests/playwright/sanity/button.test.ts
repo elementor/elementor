@@ -16,7 +16,7 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	const button = await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	// Assert.
-	expect( await button.innerText() ).toBe( 'Click here' );
+	expect.soft( await button.innerText() ).toBe( 'Click here' );
 } );
 
 test( 'Button controls should return to default', async ( { page }, testInfo ) => {
@@ -36,13 +36,13 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 	await editor.page.click( controlSelector );
 
 	// Assert
-	await expect( widget ).toHaveClass( alignCenterClassRegex );
+	await expect.soft( widget ).toHaveClass( alignCenterClassRegex );
 
 	// Act
 	await editor.page.click( controlSelector );
 
 	// Assert
-	await expect( widget ).not.toHaveClass( alignCenterClassRegex );
+	await expect.soft( widget ).not.toHaveClass( alignCenterClassRegex );
 } );
 
 test( 'Verify button Id control', async ( { page }, testInfo ) => {
@@ -53,5 +53,5 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	await buttonWidget.addWidget( defaultBtnName );
 	await buttonWidget.setButtonId( buttonId, defaultBtnName );
 	await editor.publishAndViewPage();
-	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
+	expect.soft( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );

@@ -30,7 +30,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const goProPopover = await page.locator( '.e-app__popover.e-onboarding__go-pro' );
 
-		await expect( goProPopover ).toBeVisible();
+		await expect.soft( goProPopover ).toBeVisible();
 	} );
 
 	/**
@@ -42,7 +42,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-		await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		await expect.soft( await ctaButton.innerText() ).toBe( 'Create my account' );
 
 		const [ popup ] = await Promise.all( [
 			// It is important to call waitForEvent before click to set up waiting.
@@ -53,12 +53,12 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await popup.waitForLoadState( 'domcontentloaded' );
 
-		await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
+		await expect.soft( await popup.url() ).toContain( 'my.elementor.com/signup' );
 
 		const signupForm = await popup.locator( 'form#signup-form' );
 
 		// Check that the popup opens the Elementor Connect screen.
-		await expect( signupForm ).toBeVisible();
+		await expect.soft( signupForm ).toBeVisible();
 
 		popup.close();
 	} );
@@ -78,7 +78,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 			pageTitleText = await PageTitle.innerText();
 
 		// Check that the screen changed to the Hello page.
-		expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
+		expect.soft( pageTitleText ).toBe( 'Every site starts with a theme.' );
 	} );
 
 	/**
@@ -95,11 +95,11 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const nextButton = await page.locator( 'text=Next' );
 
-		await expect( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
+		await expect.soft( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
 
 		await page.fill( 'input[type="text"]', 'Test' );
 
-		await expect( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
+		await expect.soft( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
 
 		const skipButton = await page.waitForSelector( 'text=Skip' );
 
@@ -108,7 +108,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
 			pageTitleText = await pageTitle.innerText();
 
-		expect( pageTitleText ).toBe( 'Have a logo? Add it here.' );
+		expect.soft( pageTitleText ).toBe( 'Have a logo? Add it here.' );
 	} );
 
 	/**
@@ -128,7 +128,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		if ( siteLogoId ) {
 			// If there is a logo already in the test website - make sure the "Next" button is active (not disabled).
-			await expect( nextButton ).toHaveClass( activeButtonClasses );
+			await expect.soft( nextButton ).toHaveClass( activeButtonClasses );
 
 			const removeButton = await page.locator( '.e-onboarding__logo-remove' );
 
@@ -136,7 +136,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		}
 
 		// Make sure the "Next" button is disabled when there is no site logo.
-		await expect( nextButton ).toHaveClass( disabledButtonClasses );
+		await expect.soft( nextButton ).toHaveClass( disabledButtonClasses );
 
 		const skipButton = await page.waitForSelector( '.e-onboarding__button-skip' );
 
@@ -146,7 +146,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 			pageTitleText = await pageTitle.innerText();
 
 		// Test that the "Skip" button leads the user to the "Good to Go" screen.
-		expect( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
+		expect.soft( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
 	} );
 
 	/**
@@ -161,6 +161,6 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const kitLibraryTitle = page.locator( 'text=Kit Library' );
 
-		await expect( kitLibraryTitle ).toBeVisible();
+		await expect.soft( kitLibraryTitle ).toBeVisible();
 	} );
 } );

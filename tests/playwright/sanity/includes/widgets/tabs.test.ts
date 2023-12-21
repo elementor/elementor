@@ -17,7 +17,7 @@ test.describe( 'Tabs widget tests', () => {
 		await editor.addWidget( 'tabs' );
 
 		// Assert.
-		await expect( editor.page.locator( '.elementor-control-raw-html.elementor-panel-alert.elementor-panel-alert-info' ) )
+		await expect.soft( editor.page.locator( '.elementor-control-raw-html.elementor-panel-alert.elementor-panel-alert-info' ) )
 			.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
 
 		await wpAdmin.setExperiments( {
@@ -40,13 +40,13 @@ test.describe( 'Tabs widget tests', () => {
 		await contentTab.addNewTab( newTabTitle, tabText );
 		await editor.getPreviewFrame().getByRole( 'tab', { name: 'Tab #1' } ).click();
 		await editor.getPreviewFrame().getByRole( 'tab', { name: 'Tab #1' } ).click();
-		await expect( editor.getPreviewFrame().getByText( defaultText ).first() ).toBeVisible();
+		await expect.soft( editor.getPreviewFrame().getByText( defaultText ).first() ).toBeVisible();
 		await editor.getPreviewFrame().getByRole( 'tab', { name: newTabTitle } ).click();
-		await expect( editor.getPreviewFrame().getByText( 'Super tab content test' ) ).toBeVisible();
+		await expect.soft( editor.getPreviewFrame().getByText( 'Super tab content test' ) ).toBeVisible();
 		await editor.publishAndViewPage();
 		await page.getByRole( 'tab', { name: 'Tab #1' } ).click();
-		await expect( page.getByText( defaultText ).first() ).toBeVisible();
+		await expect.soft( page.getByText( defaultText ).first() ).toBeVisible();
 		await page.getByRole( 'tab', { name: newTabTitle } ).click();
-		await expect( page.getByText( 'Super tab content test' ) ).toBeVisible();
+		await expect.soft( page.getByText( 'Super tab content test' ) ).toBeVisible();
 	} );
 } );

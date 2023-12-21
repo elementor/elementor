@@ -23,7 +23,7 @@ test.describe( 'Image carousel tests', () => {
 		await imageCarousel.setAutoplay();
 
 		await test.step( 'Verify image population', async () => {
-			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
+			expect.soft( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
 				type: 'jpeg',
 				quality: 90,
 			} ) ).toMatchSnapshot( 'carousel.jpeg' );
@@ -46,7 +46,7 @@ test.describe( 'Image carousel tests', () => {
 			await page.selectOption( '.elementor-control-arrows_position >> select', 'outside' );
 
 			// Assert
-			expect( await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel div.elementor-widget-container' ).screenshot( {
+			expect.soft( await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel div.elementor-widget-container' ).screenshot( {
 				type: 'jpeg',
 				quality: 100,
 			} ) ).toMatchSnapshot( 'carousel-arrows-position.jpeg' );
@@ -55,7 +55,7 @@ test.describe( 'Image carousel tests', () => {
 		await test.step( 'Verify custom select control width', async () => {
 			await editor.selectElement( widgetId );
 			await editor.activatePanelTab( 'content' );
-			await expect( page.locator( '.elementor-control-slides_to_show .elementor-control-input-wrapper' ) ).toHaveCSS( 'max-width', '80px' );
+			await expect.soft( page.locator( '.elementor-control-slides_to_show .elementor-control-input-wrapper' ) ).toHaveCSS( 'max-width', '80px' );
 		} );
 
 		// Reset the Default template.
@@ -83,21 +83,21 @@ test.describe( 'Image carousel tests', () => {
 		// Test Desktop
 		await page.fill( '.elementor-control-image_spacing_custom input[type="number"]', '100' );
 		await editor.togglePreviewMode();
-		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
+		await expect.soft( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
 		// Test Tablet Extra
 		await editor.togglePreviewMode();
 		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers__holder' ).click();
 		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers [data-device="tablet_extra"]' ).click();
 		await page.fill( '.elementor-control-image_spacing_custom_tablet_extra input[type="number"]', '50' );
 		await editor.togglePreviewMode();
-		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
+		await expect.soft( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
 		// Test Tablet
 		await editor.togglePreviewMode();
 		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers__holder' ).click();
 		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers [data-device="tablet"]' ).click();
 		await page.fill( '.elementor-control-image_spacing_custom_tablet input[type="number"]', '10' );
 		await editor.togglePreviewMode();
-		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
+		await expect.soft( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: 'inactive',
 		} );

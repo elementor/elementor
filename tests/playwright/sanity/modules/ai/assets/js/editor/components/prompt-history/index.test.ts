@@ -51,11 +51,11 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeVisible();
+			await expect.soft( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 
-			await expect( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeHidden();
+			await expect.soft( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeHidden();
 		} );
 
 		await test.step( 'Shows a message when there is a free plan', async () => {
@@ -65,7 +65,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageFullTestId ).first() ).toBeVisible();
+			await expect.soft( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageFullTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 		} );
@@ -77,7 +77,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.noDataMessageTestId ).first() ).toBeVisible();
+			await expect.soft( page.getByTestId( EditorSelectors.ai.promptHistory.noDataMessageTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 		} );
@@ -89,9 +89,9 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.periodTestId ) ).toHaveCount( 2 );
+			await expect.soft( page.getByTestId( EditorSelectors.ai.promptHistory.periodTestId ) ).toHaveCount( 2 );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ) ).toHaveCount( 2 );
+			await expect.soft( page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ) ).toHaveCount( 2 );
 
 			await closePromptHistory( page );
 		} );
@@ -103,7 +103,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageSmallTestId ).first() ).toBeVisible();
+			await expect.soft( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageSmallTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 		} );
@@ -115,7 +115,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.fallbackIconTestId ) ).toHaveCount( 1 );
+			await expect.soft( page.getByTestId( EditorSelectors.ai.promptHistory.fallbackIconTestId ) ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
 		} );
@@ -132,13 +132,13 @@ test.describe( 'AI @ai', () => {
 
 			const items = page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId );
 
-			await expect( items ).toHaveCount( 2 );
+			await expect.soft( items ).toHaveCount( 2 );
 
 			await items.first().hover();
 
 			await items.first().locator( EditorSelectors.ai.promptHistory.removeButton ).click();
 
-			await expect( items ).toHaveCount( 1 );
+			await expect.soft( items ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
 		} );
@@ -164,7 +164,7 @@ test.describe( 'AI @ai', () => {
 				.include( EditorSelectors.ai.promptHistory.modal )
 				.analyze();
 
-			expect( accessibilityScanResults.violations ).toEqual( [] );
+			expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 
 			await closePromptHistory( page );
 			await closeAIDialog( page );
@@ -185,7 +185,7 @@ test.describe( 'AI @ai', () => {
 				.include( EditorSelectors.ai.promptHistory.modal )
 				.analyze();
 
-			expect( accessibilityScanResults.violations ).toEqual( [] );
+			expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 
 			await closePromptHistory( page );
 			await closeAIDialog( page );
@@ -214,9 +214,9 @@ test.describe( 'AI @ai', () => {
 
 			const input = page.locator( EditorSelectors.ai.promptInput ).first();
 
-			await expect( input ).toBeVisible();
+			await expect.soft( input ).toBeVisible();
 
-			expect( await input.inputValue() ).toBe( 'Test prompt' );
+			expect.soft( await input.inputValue() ).toBe( 'Test prompt' );
 		} );
 
 		await test.step( 'Edit button edits result', async () => {
@@ -236,9 +236,9 @@ test.describe( 'AI @ai', () => {
 
 			const textarea = page.locator( EditorSelectors.ai.resultTextarea ).first();
 
-			await expect( textarea ).toBeVisible();
+			await expect.soft( textarea ).toBeVisible();
 
-			expect( await textarea.inputValue() ).toBe( 'Test result' );
+			expect.soft( await textarea.inputValue() ).toBe( 'Test result' );
 		} );
 	} );
 
@@ -264,9 +264,9 @@ test.describe( 'AI @ai', () => {
 
 			const input = page.locator( EditorSelectors.ai.promptInput ).first();
 
-			await expect( input ).toBeVisible();
+			await expect.soft( input ).toBeVisible();
 
-			expect( await input.inputValue() ).toBe( 'Test prompt' );
+			expect.soft( await input.inputValue() ).toBe( 'Test prompt' );
 		} );
 	} );
 
@@ -295,39 +295,39 @@ test.describe( 'AI @ai', () => {
 			// Check prompt
 			const promptTextarea = page.locator( image.promptTextarea ).first();
 
-			await expect( promptTextarea ).toBeVisible();
+			await expect.soft( promptTextarea ).toBeVisible();
 
-			expect( await promptTextarea.inputValue() ).toBe( 'Test prompt' );
+			expect.soft( await promptTextarea.inputValue() ).toBe( 'Test prompt' );
 
 			// Check image type
 			const imageTypeInput = page.locator( image.typeInput ).first();
 
-			await expect( imageTypeInput ).toBeVisible();
+			await expect.soft( imageTypeInput ).toBeVisible();
 
-			expect( await imageTypeInput.inputValue() ).toBe( 'photographic' );
+			expect.soft( await imageTypeInput.inputValue() ).toBe( 'photographic' );
 
 			// Check image style
 			const imageStyleInput = page.locator( image.styleInput ).first();
 
-			await expect( imageStyleInput ).toBeVisible();
+			await expect.soft( imageStyleInput ).toBeVisible();
 
-			expect( await imageStyleInput.inputValue() ).toBe( 'portrait' );
+			expect.soft( await imageStyleInput.inputValue() ).toBe( 'portrait' );
 
 			// Check image ratio
 			const imageRatioInput = page.locator( image.aspectRationInput ).first();
 
-			await expect( imageRatioInput ).toBeVisible();
+			await expect.soft( imageRatioInput ).toBeVisible();
 
-			expect( await imageRatioInput.inputValue() ).toBe( '16:9' );
+			expect.soft( await imageRatioInput.inputValue() ).toBe( '16:9' );
 
 			// Check restored images
 			const images = page.locator( image.generatedImage );
 
 			await images.first().waitFor( { state: 'visible' } );
 
-			expect( await images.count() ).toEqual( 2 );
+			expect.soft( await images.count() ).toEqual( 2 );
 
-			expect( await images.first().getAttribute( 'src' ) ).toEqual( 'https://example.com/img1.jpg' );
+			expect.soft( await images.first().getAttribute( 'src' ) ).toEqual( 'https://example.com/img1.jpg' );
 		} );
 	} );
 } );

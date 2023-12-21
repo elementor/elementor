@@ -17,7 +17,7 @@ test( 'navigator empty placeholder should be in dark mode', async ( { page }, te
 	await navigator.locator( '.elementor-navigator__element__list-toggle' ).click();
 
 	// Assert
-	expect( await navigator.screenshot( {
+	expect.soft( await navigator.screenshot( {
 		type: 'jpeg',
 		quality: 70,
 	} ) ).toMatchSnapshot( 'navigator-empty-dark-mode.jpg' );

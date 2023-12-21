@@ -17,6 +17,6 @@ test.describe( 'Device mode', () => {
 
 		const isInDesktopMode = 'desktop' === deviceMode;
 
-		expect( isInDesktopMode ).toEqual( true );
+		expect.soft( isInDesktopMode ).toEqual( true );
 	} );
 } );

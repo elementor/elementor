@@ -51,7 +51,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
-		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
+		expect.soft( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 
 	const videos = require( _path.resolve( __dirname, `../testData/video.json` ) );
@@ -181,6 +181,6 @@ test.describe( 'Video tests inside a section', () => {
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
-		expect( columnHeight.height ).toEqual( videoIframeHeight.height );
+		expect.soft( columnHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 } );

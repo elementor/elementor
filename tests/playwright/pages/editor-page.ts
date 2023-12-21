@@ -537,7 +537,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async editCurrentPage() {
 		const postId = await this.getPageIdFromFrontEnd();
-		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
+		await expect.soft( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
 		await this.gotoPostId( postId );
 	}
 
@@ -763,9 +763,9 @@ export default class EditorPage extends BasePage {
 	async verifyClassInElement( args: { selector: string, className: string, isPublished: boolean } ) {
 		const regex = new RegExp( args.className );
 		if ( args.isPublished ) {
-			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
+			await expect.soft( this.page.locator( args.selector ) ).toHaveClass( regex );
 		} else {
-			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
+			await expect.soft( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
 		}
 	}
 
@@ -773,8 +773,8 @@ export default class EditorPage extends BasePage {
 		const imageSize = args.isPublished
 			? await this.page.locator( args.selector ).boundingBox()
 			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
-		expect( imageSize.width ).toEqual( args.width );
-		expect( imageSize.height ).toEqual( args.height );
+		expect.soft( imageSize.width ).toEqual( args.width );
+		expect.soft( imageSize.height ).toEqual( args.height );
 	}
 
 	async setTypography( selector: string, fontsize: string ) {

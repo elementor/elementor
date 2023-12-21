@@ -15,7 +15,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().evaluate( () => document.querySelectorAll( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).length );
 
 		// Assert.
-		expect( emptyViewPlaceholderCount ).toBe( 1 );
+		expect.soft( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
 	test( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page }, testInfo ) => {
@@ -32,7 +32,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-sidebar .elementor-widget-empty-icon' ).count();
 
 		// Assert.
-		expect( emptyViewPlaceholderCount ).toBe( 1 );
+		expect.soft( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
 	test( 'Check if the empty placeholder is displayed inside the Image Box widget', async ( { page }, testInfo ) => {
@@ -53,7 +53,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-box > .elementor-widget-empty-icon.eicon-image-box' ).count();
 
 		// Assert.
-		expect( emptyViewPlaceholderCount ).toBe( 1 );
+		expect.soft( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
 	test( 'Check if the empty placeholder is displayed inside the Basic Gallery widget', async ( { page }, testInfo ) => {
@@ -69,7 +69,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().evaluate( () => document.querySelectorAll( '.elementor-widget-image-gallery .elementor-widget-empty-icon' ).length );
 
 		// Assert.
-		expect( emptyViewPlaceholderCount ).toBe( 1 );
+		expect.soft( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
 	test( 'Check if the empty placeholder is displayed inside the Video widget', async ( { page }, testInfo ) => {
@@ -86,7 +86,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-video .elementor-widget-empty-icon' ).count();
 
 		// Assert.
-		expect( emptyViewPlaceholderCount ).toBe( 1 );
+		expect.soft( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
 	test.skip( 'Check if the empty placeholder is displayed inside the Google Maps widget', async ( { page }, testInfo ) => {
@@ -104,6 +104,6 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-google_maps .elementor-widget-empty-icon' ).count();
 
 		// Assert.
-		expect( emptyViewPlaceholderCount ).toBe( 1 );
+		expect.soft( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 } );
