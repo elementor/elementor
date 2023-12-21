@@ -3,7 +3,7 @@ import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage( false, false );
+		editor = await wpAdmin.openNewPage( false );
 
 	await editor.page.click( '#elementor-panel-header-menu-button' );
 
