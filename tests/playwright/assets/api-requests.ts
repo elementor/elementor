@@ -87,24 +87,6 @@ export async function createApiContext( request: APIRequest,
 	return context;
 }
 
-export async function create( request: APIRequestContext, entity: string, data: Post ) {
-	const response = await request.post( '/index.php', {
-		params: { rest_route: `/wp/v2/${ entity }` },
-		headers,
-		multipart: data,
-	} );
-
-	if ( ! response.ok() ) {
-		throw new Error( `
-			Failed to create a ${ entity }: ${ response.status() }.
-			${ await response.text() }
-		` );
-	}
-	const { id } = await response.json();
-
-	return id;
-}
-
 async function _delete( request: APIRequestContext, entity: string, id: string ) {
 	const response = await request.delete( '/index.php', {
 		params: { rest_route: `/wp/v2/${ entity }/${ id }` },
@@ -144,6 +126,24 @@ async function get( request: APIRequestContext, entity: string, status: string =
 	}
 	const data = await response.json();
 	return data;
+}
+
+export async function create( request: APIRequestContext, entity: string, data: Post ) {
+	const response = await request.post( '/index.php', {
+		params: { rest_route: `/wp/v2/${ entity }` },
+		headers,
+		multipart: data,
+	} );
+
+	if ( ! response.ok() ) {
+		throw new Error( `
+			Failed to create a ${ entity }: ${ response.status() }.
+			${ await response.text() }
+		` );
+	}
+	const { id } = await response.json();
+
+	return id;
 }
 
 export async function getPosts( request: APIRequestContext, status: string = 'publish' ) {
