@@ -1,7 +1,7 @@
 import fs from 'fs';
 import _path from 'path';
 import { APIRequest, type APIRequestContext } from '@playwright/test';
-import { Image, StorageState, Post } from '../types/types';
+import { Image, StorageState, Post, WpPage } from '../types/types';
 const headers = {
 	'X-WP-Nonce': process.env.WP_REST_NONCE,
 };
@@ -60,6 +60,18 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 	for ( const id of ids ) {
 		await deletePost( request, id );
 	}
+
+	const pagesPublished = await getPages( request ),
+		pagesDraft = await getPages( request, 'draft' ),
+		pages = [ ...pagesPublished, ...pagesDraft ];
+
+	const pageIds = pages
+		.filter( ( page: WpPage ) => page.title?.rendered?.includes( 'Playwright Test Page' ) )
+		.map( ( page: WpPage ) => page.id );
+
+	for ( const id of pageIds ) {
+		await deletePage( request, id );
+	}
 }
 
 export async function createApiContext( request: APIRequest,
@@ -108,17 +120,11 @@ async function _delete( request: APIRequestContext, entity: string, id: string )
 }
 
 export async function deletePost( request: APIRequestContext, postId: string ) {
-	const response = await request.delete( '/index.php', {
-		params: { rest_route: `/wp/v2/posts/${ postId }` },
-		headers,
-	} );
+	await _delete( request, 'posts', postId );
+}
 
-	if ( ! response.ok() ) {
-		throw new Error( `
-			Failed to delete a post: ${ response.status() }.
-			${ await response.text() }
-		` );
-	}
+export async function deletePage( request: APIRequestContext, pageId: string ) {
+	await _delete( request, 'pages', pageId );
 }
 
 async function get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
@@ -142,4 +148,8 @@ async function get( request: APIRequestContext, entity: string, status: string =
 
 export async function getPosts( request: APIRequestContext, status: string = 'publish' ) {
 	return await get( request, 'posts', status );
+}
+
+export async function getPages( request: APIRequestContext, status: string = 'publish' ) {
+	return await get( request, 'pages', status );
 }

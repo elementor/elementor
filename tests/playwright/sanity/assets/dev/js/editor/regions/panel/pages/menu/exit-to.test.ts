@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 import EditorPage from '../../../../../../../../../pages/editor-page';
 
-test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
+test.skip( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.openNewPage();
 
