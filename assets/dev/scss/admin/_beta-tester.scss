@@ -1,15 +1,16 @@
 #elementor-beta-tester-modal {
+	color: var(--e-a-color-txt);
 
 	.elementor-templates-modal__header__items-area {
 
-		color: $editor-lighter;
+		color: var(--e-a-color-txt);
 		cursor: pointer;
 
 		&:hover {
 
 			.elementor-beta-tester-do-not-show-again,
 			.elementor-templates-modal__header__item > i {
-				color: $editor-dark;
+				color: var(--e-a-color-txt-hover)
 			}
 		}
 
@@ -21,7 +22,7 @@
 			text-transform: uppercase;
 			font-weight: bold;
 			font-size: 12px;
-			transition: $transition-hover;
+			transition: var(--e-a-transition-hover);
 		}
 
 	}
@@ -34,7 +35,7 @@
 	.dialog-lightbox-message{
 		padding: 40px;
 		height: 300px;
-		background-color: #fff;
+		background-color: var(--e-a-bg-default);
 	}
 }
 
@@ -43,37 +44,41 @@
 	&__caption {
 		font-weight: bold;
 		font-size: 20px;
-		color: $editor-darkest;
 	}
 
 	&__description {
 		font-size: 15px;
-		color: $editor-dark;
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 
 	&__input-wrapper{
 		display:flex;
-		margin-top: 30px;
+		margin-block-start: 30px;
 
 		.elementor-button {
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			border-start-start-radius: 0;
+			border-start-end-radius: 3px;
+			border-end-start-radius: 0;
+			border-end-end-radius: 3px;
 		}
 	}
 
 	&__email {
 		flex-grow: 1;
-		border: $editor-lightest 1px solid;
-		@include border-end(0);
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		border: var(--e-a-border);
+		border-inline-end: 0;
+		border-start-start-radius: 3px;
+		border-start-end-radius: 0;
+		border-end-start-radius: 3px;
+		border-end-end-radius: 0;
 		margin: 0;
 		padding: 10px;
 		height: 50px;
 	}
 
 	&__terms {
-		margin-top: 40px;
+		margin-block-start: 40px;
 		font-size: 11px;
-		color: $editor-light;
+		color: var(--e-a-color-txt-muted);
 	}
 }

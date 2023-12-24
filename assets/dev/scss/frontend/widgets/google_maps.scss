@@ -8,6 +8,10 @@
 		overflow: hidden; // Allow border-radius
 	}
 
+	.elementor-custom-embed {
+		line-height: 0; // Remove space
+	}
+
 	iframe {
 		height: 300px;
 	}

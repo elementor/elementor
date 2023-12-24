@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../../../container/container')} Container
  */
- export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
+export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -42,7 +42,11 @@
 		const { containers = [ args.container ], storageKey = 'clipboard' } = args,
 			storageData = elementorCommon.storage.get( storageKey );
 
-		this.applyPasteStyleData( containers, storageData );
+		if ( ! storageData || ! storageData?.elements?.length || 'elementor' !== storageData?.type ) {
+			return false;
+		}
+
+		this.applyPasteStyleData( containers, storageData.elements );
 	}
 
 	applyPasteStyleData( containers, data ) {

@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -582,6 +583,44 @@ class Module extends BaseModule {
 		}
 	}
 
+	public static function get_settings_usage() {
+		$usage = [];
+
+		$settings_tab = Plugin::$instance->settings->get_tabs();
+		$settings = array_merge(
+			$settings_tab[ Settings::TAB_GENERAL ]['sections'],
+			$settings_tab[ Settings::TAB_ADVANCED ]['sections']
+		);
+
+		foreach ( $settings as $setting_data ) {
+			foreach ( $setting_data['fields'] as $field_name => $field_data ) {
+				$is_hidden_field = ( empty( $field_data['field_args']['type'] ) || 'hidden' === $field_data['field_args']['type'] );
+
+				if ( $is_hidden_field ) {
+					continue;
+				}
+
+				$setting_value = get_option( 'elementor_' . $field_name );
+
+				if ( empty( $setting_value ) ) {
+					continue;
+				}
+
+				$is_default_value = ( ! empty( $field_data['field_args']['std'] ) && $setting_value === $field_data['field_args']['std'] );
+
+				if ( $is_default_value ) {
+					continue;
+				}
+
+				$usage[ $field_name ] = $setting_value;
+			}
+		}
+
+		$usage = apply_filters( 'elementor/system-info/usage/settings', $usage );
+
+		return $usage;
+	}
+
 	/**
 	 * Add system info report.
 	 */
@@ -589,6 +628,11 @@ class Module extends BaseModule {
 		System_Info::add_report( 'usage', [
 			'file_name' => __DIR__ . '/usage-reporter.php',
 			'class_name' => __NAMESPACE__ . '\Usage_Reporter',
+		] );
+
+		System_Info::add_report( 'settings', [
+			'file_name' => __DIR__ . '/settings-reporter.php',
+			'class_name' => __NAMESPACE__ . '\Settings_Reporter',
 		] );
 	}
 

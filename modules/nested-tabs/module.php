@@ -2,7 +2,7 @@
 namespace Elementor\Modules\NestedTabs;
 
 use Elementor\Plugin;
-use  Elementor\Modules\NestedElements\Module as NestedElementsModule;
+use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -16,10 +16,6 @@ class Module extends \Elementor\Core\Base\Module {
 
 	public function get_name() {
 		return 'nested-tabs';
-	}
-
-	protected function get_widgets() {
-		return [ 'NestedTabs' ];
 	}
 
 	public function __construct() {

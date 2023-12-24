@@ -17,7 +17,14 @@ class Str {
 	 */
 	public static function encode_idn_url( $url ) {
 		return preg_replace_callback( '/(https?:\/\/)(.+)/', function ( $matches ) {
-			return $matches[1] . \Requests_IDNAEncoder::encode( $matches[2] );
+			// WP >= 6.2-alpha
+			if ( class_exists( '\WpOrg\Requests\IdnaEncoder' ) ) {
+				$class = \WpOrg\Requests\IdnaEncoder::class;
+			} else {
+				$class = \Requests_IDNAEncoder::class;
+			}
+
+			return $matches[1] . $class::encode( $matches[2] );
 		}, $url );
 	}
 

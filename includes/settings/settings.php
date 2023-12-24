@@ -202,7 +202,7 @@ class Settings extends Settings_Page {
 	 *
 	 * @since 1.7.5
 	 * @access public
-	 * @deprecated 3.0.0
+	 * @deprecated 3.0.0 Use `Plugin::$instance->files_manager->clear_cache()` method instead.
 	 */
 	public function update_css_print_method() {
 		Plugin::$instance->files_manager->clear_cache();
@@ -334,6 +334,22 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . esc_html__( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . esc_html__( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
+							'google_font' => [
+								'label' => esc_html__( 'Google Fonts', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => sprintf(
+										esc_html__( 'Disable this option if you want to prevent Google Fonts from being loaded. This setting is recommended when loading fonts from a different source (plugin, theme or %1$scustom fonts%2$s).', 'elementor' ),
+										'<a href="' . admin_url( 'admin.php?page=elementor_custom_fonts' ) . '">',
+										'</a>'
+									),
+								],
+							],
 							'font_display' => [
 								'label' => esc_html__( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
@@ -381,12 +397,14 @@ class Settings extends Settings_Page {
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',
+			'elementor-system-info',
+			'e-form-submissions',
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
-			'e-form-submissions',
-			'elementor_custom_custom_code',
+			'elementor_custom_code',
 			'popup_templates',
+			'elementor-apps',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
@@ -394,6 +412,19 @@ class Settings extends Settings_Page {
 		}
 
 		remove_all_actions( 'admin_notices' );
+	}
+
+	public function add_generator_tag_settings( $settings ) {
+		$css_print_method = get_option( 'elementor_css_print_method', 'external' );
+		$settings[] = 'css_print_method-' . $css_print_method;
+
+		$google_font = Fonts::is_google_fonts_enabled() ? 'enabled' : 'disabled';
+		$settings[] = 'google_font-' . $google_font;
+
+		$font_display = Fonts::get_font_display_setting();
+		$settings[] = 'font_display-' . $font_display;
+
+		return $settings;
 	}
 
 	/**
@@ -408,6 +439,7 @@ class Settings extends Settings_Page {
 		parent::__construct();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
+		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );

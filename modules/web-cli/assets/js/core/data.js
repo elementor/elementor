@@ -448,13 +448,11 @@ export default class Data extends Commands {
 		const args = { query };
 
 		this.cache.set( {
-				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
-				component,
-				command,
-				args,
-			},
-			data,
-		);
+			endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
+			component,
+			command,
+			args,
+		}, data );
 	}
 
 	/**
@@ -490,12 +488,11 @@ export default class Data extends Commands {
 		const args = { query };
 
 		this.cache.delete( {
-				endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
-				component,
-				command,
-				args,
-			},
-		);
+			endpoint: this.commandToEndpoint( command, args, this.commandFormats[ command ] ),
+			component,
+			command,
+			args,
+		} );
 	}
 
 	/**

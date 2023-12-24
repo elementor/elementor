@@ -35,11 +35,11 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 	public function test_registerNUnregisterControl() {
 		$control_class = '\Elementor\Control_Text';
 
-		$control_id = 'text';
-
 		$control_instance = new $control_class();
 
-		$this->elementor()->controls_manager->register( new $control_instance(), $control_id );
+		$control_id = $control_instance->get_type();
+
+		$this->elementor()->controls_manager->register( new $control_instance() );
 
 		$control = $this->elementor()->controls_manager->get_control( $control_id );
 
@@ -49,7 +49,7 @@ class Elementor_Test_Controls extends Elementor_Test_Base {
 		$this->assertFalse( $this->elementor()->controls_manager->unregister( $control_id ) );
 
 		// Return the control for next tests..
-		$this->elementor()->controls_manager->register( $control_instance, $control_id );
+		$this->elementor()->controls_manager->register( $control_instance );
 	}
 
 	public function test_groupControlsGetTypes() {

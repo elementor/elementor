@@ -21,13 +21,21 @@ export default class Manager {
 		} );
 	}
 
+	/**
+	 * @deprecated since 2.9.0, use `elementor.documents.getCurrent().history` instead.
+	 */
 	get history() {
 		elementorDevTools.deprecation.deprecated( 'elementor.history.history', '2.9.0', 'elementor.documents.getCurrent().history' );
+
 		return elementor.documents.getCurrent().history;
 	}
 
+	/**
+	 * @deprecated since 2.9.0, use `elementor.documents.getCurrent().revisions` instead.
+	 */
 	get revisions() {
 		elementorDevTools.deprecation.deprecated( 'elementor.history.revisions', '2.9.0', 'elementor.documents.getCurrent().revisions' );
+
 		return elementor.documents.getCurrent().revisions;
 	}
 }

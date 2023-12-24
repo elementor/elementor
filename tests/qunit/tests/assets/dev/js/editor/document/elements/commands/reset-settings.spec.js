@@ -6,9 +6,9 @@ export const ResetSettings = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eButtonStyled = ElementsHelper.createWrappedButton( null, {
-						text: 'createAutoButtonStyled',
-						background_color: '#000000',
-					} );
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 				// Ensure editor saver.
 				$e.internal( 'document/save/set-is-modified', { status: false } );
@@ -24,9 +24,9 @@ export const ResetSettings = () => {
 
 			QUnit.test( 'Specific properties', ( assert ) => {
 				const eButtonStyled = ElementsHelper.createWrappedButton( null, {
-						text: 'createAutoButtonStyled',
-						background_color: '#000000',
-					} );
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 				ElementsHelper.resetSettings( eButtonStyled, [ 'text' ] );
 

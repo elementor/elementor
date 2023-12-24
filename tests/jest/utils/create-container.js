@@ -5,7 +5,7 @@ export default function createContainer( {
 	isInner = false,
 	settings = {},
 	controls = {},
- } = {} ) {
+} = {} ) {
 	return {
 		id,
 		settings: {

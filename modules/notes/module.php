@@ -27,6 +27,8 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-notes', 'elementor' );
 	}
 
 	/**

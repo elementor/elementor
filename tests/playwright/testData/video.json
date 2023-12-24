@@ -1,0 +1,64 @@
+{
+    "youtube": {
+        "controls": [
+            "autoplayInp",
+            "playOnMobileInp",
+            "muteInp",
+            "loopInp",
+            "modestbrandingInp",
+            "privacyInp",
+            "lazyLoadInp"
+        ],
+        "source": "youtube",
+        "expected": {
+            "autoplay": "1",
+            "controls": "1",
+            "start": 10,
+            "end": 20,
+            "modestbranding": "1",
+            "playsinline": "1"
+        },
+        "link": "https://youtu.be/6KNISw9RPTc"
+    },
+    "vimeo": {
+        "controls": [
+            "autoplayInp",
+            "playOnMobileInp",
+            "muteInp",
+            "loopInp",
+            "privacyInp"
+        ],
+        "source": "vimeo",
+        "expected": {
+            "autoplay": "1",
+            "autopause": "0",
+            "loop": "1",
+            "muted": "1",
+            "title": "1",
+            "portrait": "1",
+            "byline": "1#t",
+            "start": "t=00h00m10s",
+            "playsinline": "1"
+        },
+        "link": "https://vimeo.com/347119375"
+    },
+    "dailymotion": {
+        "controls": [
+            "autoplayInp",
+            "playOnMobileInp",
+            "muteInp"
+        ],
+        "source": "vimeo",
+        "expected": {
+            "autoplay": "1",
+            "endscreen-enable": "0",
+            "mute": "1",
+            "start": "10",
+            "playsinline": "1",
+            "controls": "1",
+            "ui-start-screen-info": "1",
+            "ui-logo": "1"
+        },
+        "link": "https://www.dailymotion.com/video/x8lmstg"
+    }
+}

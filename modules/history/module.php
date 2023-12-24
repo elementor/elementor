@@ -40,8 +40,8 @@ class Module extends BaseModule {
 	 * Fired by `elementor/editor/localize_settings` filter.
 	 *
 	 * @since 1.7.0
-	 * @access public
 	 * @deprecated 3.1.0
+	 * @access public
 	 *
 	 * @return array Localized settings.
 	 */

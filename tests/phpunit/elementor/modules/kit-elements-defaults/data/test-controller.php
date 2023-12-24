@@ -10,7 +10,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	private $kit;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -127,41 +127,6 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'settings', $response->get_data()['data']['params'] );
 	}
 
-	public function test_update_item__sanitizes_globals_and_dynamics() {
-		// Arrange.
-		$this->act_as_admin();
-
-		// Act.
-		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
-			'settings' => [
-				'button_type' => 'info',
-				'__globals__' => [
-					'border_color' => 'globals/colors?id=secondary',
-					'invalid_control1' => 'invalid',
-				],
-				'__dynamic__' => [
-					'link' => "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
-					'invalid_control2' => 'invalid',
-				],
-			],
-		] );
-
-		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
-
-		$this->assertEquals( [
-			'button' => [
-				'button_type' => 'info',
-				'__globals__' => [
-					'border_color' => 'globals/colors?id=secondary',
-				],
-				'__dynamic__' => [
-					'link' => "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
-				],
-			],
-		], $this->kit->get_json_meta( Module::META_KEY ) );
-	}
-
 	public function test_update_item__sanitizes_invalid_html_elements() {
 		// Arrange.
 		$this->act_as_admin();
@@ -170,15 +135,21 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
 			'settings' => [
 				'text' => 'Text before <script>alert("error")</script> Some text after',
+				'__globals__' => [
+					'button_text_color' => '<script>globals/colors?id=secondary</script>',
+				],
 			],
 		] );
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$this->assertEquals( [
+		$this->assertSame( [
 			'button' => [
 				'text' => 'Text before alert("error") Some text after',
+				'__globals__' => [
+					'button_text_color' => 'globals/colors?id=secondary',
+				]
 			],
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
@@ -257,17 +228,49 @@ class Test_Controller extends Elementor_Test_Base {
 			'settings' => [
 				'heading_color' => 'red',
 				'color_text' => '#FFF',
+				'text_align' => 'center',
+				'text_align_tablet' => 'right',
+				'text_align_mobile' => 'left',
+				'text_align_widescreen' => 'left',
 				'invalid_control' => 'that_should_be_removed',
+				"content_width" => [
+					"size" => 50,
+					"unit" => "px",
+				],
+				'__globals__' => [
+					'color_link' => 'globals/colors?id=secondary',
+					'color_link_mobile' => 'globals/colors?id=primary',
+					'invalid_control1' => 'invalid',
+				],
+				'__dynamic__' => [
+					'_element_id' => "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
+					'invalid_control2' => 'invalid',
+				],
 			],
 		] );
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$this->assertEquals( [
+		$this->assertSame( [
 			'section' => [
 				'heading_color' => 'red',
 				'color_text' => '#FFF',
+				'text_align' => 'center',
+				'text_align_tablet' => 'right',
+				'text_align_mobile' => 'left',
+				'text_align_widescreen' => 'left',
+				'content_width' => [
+					'size' => 50,
+					'unit' => 'px',
+				],
+				'__globals__' => [
+					'color_link' => 'globals/colors?id=secondary',
+					'color_link_mobile' => 'globals/colors?id=primary',
+				],
+				'__dynamic__' => [
+					'_element_id' => "[elementor-tag id=\"4f74e2e\" name=\"post-url'\" settings=\"%7B%7D\"]",
+				],
 			],
 			'column' => [
 				'width' => [

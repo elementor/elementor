@@ -129,7 +129,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'you are not allowed to perform this action', 'elementor' ),
+				'error_message' => esc_html__( 'You do not have permissions to perform this action.', 'elementor' ),
 			],
 		];
 	}
@@ -147,7 +147,7 @@ class Module extends BaseModule {
 		$problem_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site name', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site name.', 'elementor' ),
 			],
 		];
 
@@ -204,7 +204,7 @@ class Module extends BaseModule {
 		$data_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site logo', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site logo.', 'elementor' ),
 			],
 		];
 
@@ -254,7 +254,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_upload_logo_image() {
-		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
 
@@ -339,9 +339,9 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload', [] );
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -458,15 +458,17 @@ class Module extends BaseModule {
 				wp_enqueue_script( 'updates' );
 				// Needed for uploading Logo from WP Media Library.
 				wp_enqueue_media();
-
-				Plugin::$instance->app->set_settings( 'disable_dark_theme', true );
 			}
 		}, 12 );
 
 		// Needed for uploading Logo from WP Media Library. The 'admin_menu' hook is used because it runs before
 		// 'admin_init', and the App triggers printing footer scripts on 'admin_init' at priority 0.
-		add_action( 'admin_menu', function() {
-			add_action( 'wp_print_footer_scripts', 'wp_print_media_templates' );
+		add_action( 'admin_menu', function () {
+			add_action( 'wp_print_footer_scripts', function () {
+				if ( function_exists( 'wp_print_media_templates' ) ) {
+					wp_print_media_templates();
+				}
+			} );
 		} );
 
 		add_action( 'admin_init', function() {

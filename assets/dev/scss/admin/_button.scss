@@ -1,6 +1,6 @@
 :root {
-	--e-button-padding-y: #{pxToRem(7px)};
-	--e-button-padding-x: #{pxToRem(12px)};
+	--e-button-padding-block: #{pxToRem(7px)};
+	--e-button-padding-inline: #{pxToRem(12px)};
 	--e-button-font-size: #{pxToRem(13px)};
 	--e-button-font-weight: 500;
 	--e-button-line-height: #{pxToRem(15px)};
@@ -21,7 +21,7 @@
 	border: 0;
 	text-decoration: none;
 	background: var(--e-button-context-color);
-	padding: var(--e-button-padding-y) var(--e-button-padding-x);
+	padding: var(--e-button-padding-block) var(--e-button-padding-inline);
 	font-size: var(--e-button-font-size);
 	line-height: var(--e-button-line-height);
 	border-radius: var(--e-button-border-radius);

@@ -28,7 +28,7 @@ class Module extends BaseModule {
 		return false;
 	}
 
-	private function performance_lab_get_webp_src( $attachment_id, $size = 'full', $url ) {
+	private function performance_lab_get_webp_src( $attachment_id, $size, $url ) {
 		$image_object = wp_get_attachment_image_src( $attachment_id, $size );
 		$image_src = call_user_func( self::PERFORMANCE_LAB_FUNCTION_NAME, $image_object[0], 'webp', $attachment_id );
 		if ( ! empty( $image_src ) ) {

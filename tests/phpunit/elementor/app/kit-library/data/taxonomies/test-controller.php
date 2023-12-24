@@ -23,7 +23,7 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	private $app_mock;
 
-	public function setUp(  ) {
+	public function setUp(): void {
 		$this->traitSetUP();
 
 		$this->app_mock = $this->getMockBuilder( Kit_Library::class )
@@ -63,11 +63,23 @@ class Test_Controller extends Elementor_Test_Base {
 		$subscription_plans = Plugin::$instance->common->get_component( 'connect' )->get_subscription_plans();
 
 		$this->assertArrayHasKey( 'data', $result );
-		$this->assertCount( 8, $result['data'] );
+		$this->assertCount( 10, $result['data'] );
 		$this->assertEqualSets( [
+			[
+				'text' => $subscription_plans[Module::ACCESS_TIER_ADVANCED]['label'],
+				'type' => 'subscription_plans'
+			],
+			[
+				'text' => $subscription_plans[Module::ACCESS_TIER_AGENCY]['label'],
+				'type' => 'subscription_plans'
+			],
 			[
 				'text' => 'Creative',
 				'type' => 'categories',
+			],
+			[
+				'text' => $subscription_plans[Module::ACCESS_TIER_EXPERT]['label'],
+				'type' => 'subscription_plans'
 			],
 			[
 				'text' => 'Sport',
@@ -85,18 +97,13 @@ class Test_Controller extends Elementor_Test_Base {
 				'text' => 'Creative',
 				'type' => 'tags',
 			],
-
 			// Subscription plans added as taxonomies locally and not from server
 			[
 				'text' => Repository::SUBSCRIPTION_PLAN_FREE_TAG,
 				'type' => 'subscription_plans'
 			],
 			[
-				'text' => $subscription_plans[Module::ACCESS_LEVEL_PRO]['label'],
-				'type' => 'subscription_plans'
-			],
-			[
-				'text' => $subscription_plans[Module::ACCESS_LEVEL_EXPERT]['label'],
+				'text' => $subscription_plans[Module::ACCESS_TIER_ESSENTIAL]['label'],
 				'type' => 'subscription_plans'
 			],
 		], $result['data'] );

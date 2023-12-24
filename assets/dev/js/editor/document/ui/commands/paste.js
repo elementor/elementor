@@ -1,12 +1,25 @@
 export class Paste extends $e.modules.CommandBase {
-	initialize( args ) {
+	getPasteData( { storageType = 'localstorage', data = '' } ) {
+		if ( 'localstorage' === storageType ) {
+			return elementorCommon.storage.get( 'clipboard' ) || {};
+		}
+
+		try {
+			return JSON.parse( data ) || {};
+		} catch ( e ) {
+			return {};
+		}
+	}
+
+	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		super.initialize( args );
+		this.storage = this.getPasteData( args );
+		if ( ! this.storage || ! this.storage?.elements?.length || 'elementor' !== this.storage?.type ) {
+			return false;
+		}
 
-		this.storage = elementorCommon.storage.get( 'clipboard' ) || [];
-
-		this.storage = this.storage.map( ( model ) =>
+		this.storage.elements = this.storage.elements.map( ( model ) =>
 			new Backbone.Model( model ),
 		);
 
@@ -16,10 +29,8 @@ export class Paste extends $e.modules.CommandBase {
 		} else {
 			this.target = containers;
 		}
-	}
 
-	apply( args ) {
-		if ( ! this.target || 0 === this.storage.length ) {
+		if ( ! this.target || 0 === this.storage.elements.length ) {
 			return false;
 		}
 
@@ -27,7 +38,7 @@ export class Paste extends $e.modules.CommandBase {
 
 		this.target.forEach( ( /* Container */ container ) => {
 			const { options = {} } = args,
-				pasteOptions = $e.components.get( 'document/elements' ).utils.getPasteOptions( this.storage[ 0 ], container );
+				pasteOptions = $e.components.get( 'document/elements' ).utils.getPasteOptions( this.storage.elements[ 0 ], container );
 
 			if ( ! pasteOptions.isValidChild ) {
 				if ( pasteOptions.isSameElement ) {
@@ -49,6 +60,12 @@ export class Paste extends $e.modules.CommandBase {
 
 				if ( undefined !== options.at ) {
 					commandArgs.at = options.at;
+				}
+
+				commandArgs.storageType = args.storageType || 'localstorage';
+
+				if ( undefined !== args.data ) {
+					commandArgs.data = args.data;
 				}
 
 				result.push( $e.run( 'document/elements/paste', commandArgs ) );

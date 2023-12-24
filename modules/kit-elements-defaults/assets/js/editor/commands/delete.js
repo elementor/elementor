@@ -15,7 +15,7 @@ export default class Delete extends $e.modules.CommandBase {
 				message: __( 'An error occurred.', 'elementor' ),
 			} );
 
-			throw error;
+			throw e;
 		} finally {
 			$e.internal( 'panel/state-ready' );
 		}

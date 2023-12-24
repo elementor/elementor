@@ -137,6 +137,9 @@ class Widget_Google_Maps extends Widget_Base {
 						TagsModule::POST_META_CATEGORY,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'placeholder' => $default_address,
 				'default' => $default_address,
 				'label_block' => true,
@@ -171,12 +174,8 @@ class Widget_Google_Maps extends Widget_Base {
 						'min' => 40,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
-				'size_units' => [ 'px', 'vh' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],
@@ -237,10 +236,11 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -294,7 +294,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		?>
 		<div class="elementor-custom-embed">
-			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+			<iframe loading="lazy"
 					src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
 					title="<?php echo esc_attr( $settings['address'] ); ?>"
 					aria-label="<?php echo esc_attr( $settings['address'] ); ?>"

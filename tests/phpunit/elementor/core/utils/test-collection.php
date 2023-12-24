@@ -9,6 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Collection extends Elementor_Test_Base {
+	public function test_make() {
+		// Act
+		$collection = Collection::make( [ 1, 2, 3 ] );
+
+		// Assert
+		$this->assertEquals( [ 1, 2, 3 ], $collection->all() );
+	}
+
 	public function test_all() {
 		// Arrange
 		$collection = new Collection( $array = [ 'a' => 'a', 'b' => 'b' ] );
@@ -288,6 +296,19 @@ class Test_Collection extends Elementor_Test_Base {
 		], $collection->all() );
 	}
 
+	public function test_prepend() {
+		// Arrange
+		$collection = new Collection( [ '1', '2', '3' ] );
+
+		// Act
+		$collection->prepend( '4', '5', '6' );
+
+		// Assert
+		$this->assertEqualSets( [
+			'4', '5', '6', '1', '2', '3'
+		], $collection->all() );
+	}
+
 	public function test_get() {
 		// Arrange
 		$collection = new Collection( ['a' => 1, 'b' => 2] );
@@ -447,5 +468,37 @@ class Test_Collection extends Elementor_Test_Base {
 
 		// Act
 		$collection->each( [ $mock, 'each_callback' ] );
+	}
+
+	public function test_find() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result = $collection->find( function( $item ) {
+			return strpos( $item, '3' ) !== false;
+		} );
+
+		// Assert.
+		$this->assertEquals( 'c3', $result );
+	}
+
+	public function test_contains() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result1 = $collection->contains( 'b2' );
+
+		$result2 = $collection->contains( function ( $item ) {
+			return 'd4' === $item;
+		} );
+
+		$result3 = $collection->contains( 'b3' );
+
+		// Assert.
+		$this->assertTrue( $result1 );
+		$this->assertTrue( $result2 );
+		$this->assertFalse( $result3 );
 	}
 }

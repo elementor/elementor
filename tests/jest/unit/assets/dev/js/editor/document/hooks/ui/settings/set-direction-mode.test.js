@@ -19,8 +19,6 @@ describe( 'set-direction-mode--document/elements/settings', () => {
 			$previewContents: [ document ],
 		};
 
-		global.CustomEvent = class {};
-
 		const { SetDirectionMode } = await import( 'elementor-document/hooks/ui/settings/set-direction-mode' );
 		const { DirectionMode } = await import( 'elementor-document/ui-states/direction-mode' );
 

@@ -13,6 +13,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Elementor\App\ImportExport\Test_Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Import extends Elementor_Test_Base {
@@ -23,6 +24,7 @@ class Test_Import extends Elementor_Test_Base {
 	// Elementor content, WP content ( including CPTs - tests, sectests ).
 	public function test_run__import_all() {
 		// Arrange
+		$this->act_as_admin();
 		register_post_type( 'tests' );
 		register_post_type( 'sectests' );
 		register_taxonomy( 'tests_tax', [ 'tests' ], [] );
@@ -66,7 +68,14 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins']);
+
 		$this->assertTrue( $result['site-settings'] );
+
+		// Assert that site settings imported without changes.
+		$site_settings = $this->get_site_settings();
+		$expected_settings = $this->get_mock_site_settings();
+		$this->assert_array_included_in_array( $expected_settings, $site_settings );
+
 		$this->assert_valid_taxonomies( $result );
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
@@ -77,6 +86,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		$this->assert_valid_terms_with_elementor_content( $result, $manifest );
 		$this->assert_valid_terms_with_wp_content( $result );
+		Test_Module::assert_valid_import_session( $this, $import->get_session_id() );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -87,7 +97,7 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Please specify import runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 
 		// Arrange
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, [] );
@@ -449,7 +459,7 @@ class Test_Import extends Elementor_Test_Base {
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
-		$this->expectExceptionMessage( 'session-does-not-exits-error' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because the import session does not exist.' );
 
 		// Act
 		$import = new Import( $elementor_tmp_directory . 'session-not-exits', [] );
@@ -471,6 +481,95 @@ class Test_Import extends Elementor_Test_Base {
 		foreach ( $manifest['templates'] as $template ) {
 			$this->assertFalse( $template['thumbnail'] );
 		}
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_manifest() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	public function test_init_import_session__get_empty_kit_thumbnail() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_api() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$cleanup = $this->mock_get_kit();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'api-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_api_wp_error() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$cleanup = $this->mock_get_kit_wp_error();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
+	}
+
+	private function mock_get_kit() {
+		$filter = function() {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( [
+					'thumbnail' => 'api-thumbnail'
+				] ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
+	}
+
+	private function mock_get_kit_wp_error() {
+		$filter = function() {
+			return [
+				'body' => new \WP_Error( 500, 'No Response' ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
 	}
 
 	private function assert_valid_taxonomies( $result ) {
@@ -551,5 +650,142 @@ class Test_Import extends Elementor_Test_Base {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Assert that every key in the first array is also in the second array and has the same values.
+	 *
+	 * @param array $array
+	 * @param array $array_with_extra_keys
+	 *
+	 * @return void
+	 */
+	private function assert_array_included_in_array( array $array, array $array_with_extra_keys ) {
+		$array_with_extra_keys = $this->normalize_array( $array, $array_with_extra_keys );
+
+		$this->assertSameSetsWithIndex( $array, $array_with_extra_keys );
+	}
+
+	/**
+	 * Remove keys from the second array that are not in the first array.
+	 *
+	 * @param array $array
+	 * @param array $array_with_extra_keys
+	 *
+	 * @return array
+	 */
+	private function normalize_array( array $array, array $array_with_extra_keys ): array {
+		foreach ( $array_with_extra_keys as $key => $value ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				unset( $array_with_extra_keys[ $key ] );
+			} else if ( is_array( $value ) ) {
+				$array_with_extra_keys[ $key ] = $this->normalize_array( $array[ $key ], $value );
+			}
+		}
+
+		return $array_with_extra_keys;
+	}
+
+	private function get_mock_site_settings(): array {
+		// Site settings from ../mock/example-kit.zip
+
+		return [
+			"template" => "default",
+			"system_colors" => [
+				[
+					"_id" => "primary",
+					"title" => "Primary",
+					"color" => "#6EC1E4",
+				],
+				[
+					"_id" => "secondary",
+					"title" => "Secondary",
+					"color" => "#54595F",
+				],
+				[
+					"_id" => "text",
+					"title" => "Text",
+					"color" => "#7A7A7A",
+				],
+				[
+					"_id" => "accent",
+					"title" => "Accent",
+					"color" => "#61CE70",
+				],
+			],
+			"custom_colors" => [
+				[
+					"_id" => "1d3dc5d",
+					"title" => "test",
+					"color" => "#FFFFFF",
+				],
+			],
+			"system_typography" => [
+				[
+					"_id" => "primary",
+					"title" => "Primary",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto",
+					"typography_font_weight" => "600",
+				],
+				[
+					"_id" => "secondary",
+					"title" => "Secondary",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto Slab",
+					"typography_font_weight" => "400",
+				],
+				[
+					"_id" => "text",
+					"title" => "Text",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto",
+					"typography_font_weight" => "400",
+				],
+				[
+					"_id" => "accent",
+					"title" => "Accent",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto",
+					"typography_font_weight" => "500",
+				],
+			],
+			"custom_typography" => [
+				[
+					"_id" => "e993289",
+					"title" => "test",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Arial",
+				],
+			],
+			"default_generic_fonts" => "Sans-serif",
+			"page_title_selector" => "h1.entry-title",
+			"hello_footer_copyright_text" => "All rights reserved",
+			"activeItemIndex" => 1,
+			"viewport_md" => 768,
+			"viewport_lg" => 1025,
+		];
+	}
+
+	/**
+	 * Get site settings from active kit.
+	 *
+	 * @return array
+	 */
+	private function get_site_settings(): array {
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		if ( ! $kit ) {
+			return [];
+		}
+
+		$site_settings = $kit->get_settings();
+
+		if (! $site_settings) {
+			return [];
+		}
+
+		return $site_settings;
 	}
 }

@@ -1,61 +1,142 @@
 name: "🐞 Bug Report"
-description: "Report a bug if something isn't working as expected in Elementor"
+description: "Did you find a bug in the source code of Elementor, and can reproduce it consistently after troubleshooting it? Report it here."
 labels: ["status/awaiting_triage"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        ## BEFORE POSTING YOUR ISSUE
+    - type: markdown
+      attributes:
+          value: |
+              **👋 Hello, welcome to the Elementor Bug Reports!**
+              # ⚠️ BEFORE POSTING READ THIS CAREFULLY
+              ## 🐞 Please only use this form to report validated Elementor Bugs.
+              ### 🛟 Need Help, Guidance, Assistance, or Support? <br>[Click here to get support](https://elemn.to/support-ticket).
+              ### 🔧 Before submitting your issue, troubleshoot and validate it. <br>[Click here to start troubleshooting](https://elemn.to/help-troubleshooting).
 
-        - Please create GitHub issues only for Elementor bugs. GitHub issues ARE NOT FOR SUPPORT.
+              **ℹ️ For more information please read our [Contribution Guidelines](https://elemn.to/gh-contributing).**
+              <br>
 
-        - To avoide duplicates, please search this repository for the issue.
+              ### 😉 Follow these best practices to help save time
+              - ✒️ **Write a Clear and Concise Title** <br>Summarize your title in a short sentence that can help identify your issue at a glance without needing to read the description.
+              - ☝️ **One Bug per Thread** <br>If you are experiencing more than one bug, submit only **<ins>ONE BUG PER ISSUE</ins>**. <br>Issues with more than one reported bug may be closed without action.
+              <br>
 
-        - If the issue can't be recreated on other sites, it's not an Elementor bug. In that case use the support links above.
 
-        - Make sure you are using the most updated versions of Elementor, WordPress & your theme.
+              ### ✳️ All fields are required!
+              - ❌ Issues lacking detail or submitted for any other reason than to report Elementor-specific bugs may be closed without action.
+              - 🧩 We do not provide solutions for 3rd-party add-ons, extensions, and other plugins or themes that Elementor does not offer official integration.
+              <br>
 
-        - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
+              ## THE ISSUE
+              ### 📋 Prerequisites
+              - 🔍 **Search Before Posting** <br>Please **[search for similar issues](https://elemn.to/gh-issues)** (both open and closed) to prevent creating duplicates. <br>Use **[GitHub Labels](https://elemn.to/gh-labels)** to refine your serach.
+              - 🆕 **Stay Up-to-date** <br>Ensure you are using the **[most recent and stable versions](https://elemn.to/changelog)** of Elementor (and Elementor Pro), as well as all installed plugins, themes, and WordPress.
+    - type: checkboxes
+      id: prerequisites
+      attributes:
+          label: "Prerequisites"
+          options:
+              - label: "I have searched for similar issues in open and closed tickets and cannot find a duplicate."
+                required: true
+              - label: "I have troubleshooted my issue, and it still exists against the latest stable version of Elementor."
+                required: true
+    - type: markdown
+      attributes:
+          value: |
+              <br>
 
-        - Change your WordPress theme to [Hello theme](https://wordpress.org/themes/hello-elementor/).
-
-        ## THE ISSUE
-  - type: checkboxes
-    id: prerequisites
-    attributes:
-      label: "Prerequisites"
-      options:
-        - label: "I have searched for similar issues in both open and closed tickets and cannot find a duplicate."
+              ### 💬 Provide a Detailed Description
+              Please describe the problem in detail, provide examples, screenshots, and related links.
+    - type: textarea
+      id: description
+      validations:
           required: true
-        - label: "The issue still exists against the latest stable version of Elementor."
+      attributes:
+          label: "Description"
+          description: "Please help us understand in detail what problems you are experiencing."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 👣 Steps to Reproduce
+              Enumerate all the steps needed to reproduce the issue in detail so we can replicate it in our environment. 
+              - Be thorough. We will only be able to reproduce your issue if you thoroughly explain all the steps to replicate it. 
+              - Please **share a screen recording**. It helps a lot!
+    - type: textarea
+      id: steps_to_reproduce
+      validations:
           required: true
-  - type: textarea
-    id: description
-    validations:
-      required: true
-    attributes:
-      label: "Description"
-      description: "Describe the problem. What caused the issue? What did you expect to happen and what actual happen? Please be as descriptive as possible. Attach screenshots and related links."
-  - type: textarea
-    id: steps_to_reproduce
-    validations:
-      required: true
-    attributes:
-      label: "Steps to reproduce"
-      description: "List all the steps needed to reproduce the issue, so we can replicate it ourselves."
-      placeholder: "1) ... 2) ... 3) ..."
-  - type: checkboxes
-    id: isolating_the_problem
-    attributes:
-      label: "Isolating the problem"
-      options:
-        - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
-        - label: "This bug happens with a Blank WordPress theme active ([Hello theme](https://wordpress.org/themes/hello-elementor/))."
-        - label: "I can reproduce this bug consistently using the steps above."
-  - type: textarea
-    id: system_info
-    validations:
-      required: true
-    attributes:
-      label: "System Info"
-      description: "For faster debugging copy your system environment from `Elementor` => `System info`, and paste it here or in https://pastebin.com/"
+      attributes:
+          label: "Steps to reproduce"
+          description: "Provide steps that we can recreate on our own."
+          placeholder: "1. ... \n2. ... \n3. ..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 🧐 Expected Behavior
+              Describe the expected behavior to help identify the root of the issue.
+    - type: textarea
+      id: expected_behavior
+      validations:
+          required: true
+      attributes:
+          label: "Expected behavior"
+          description: "Please help us understand what you are expecting to happen."
+          placeholder: "1. ... \n2. ... \n3. ..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 🕵️ Isolate the problem and Validate your issue
+              - Deactivate all plugins _**except Elementor (and Elementor Pro)**_, and temporarily change the theme to the **[Hello Elementor theme](https://wordpress.org/themes/hello-elementor/)**.
+              - Verify if your problem happens when only the Elementor (and Elementor Pro) plugins are active while also using the Hello Elementor theme.
+              - If the issue can't be recreated consistently or reproduced following the steps above, it's likely **not an Elementor bug**. <br>In that case, use the **[support link](https://elemn.to/support-ticket)** at the top of this form, or **[troubleshoot your issue again](https://elemn.to/help-troubleshooting)**.
+    - type: checkboxes
+      id: isolating_the_problem
+      attributes:
+          label: "Isolating the problem"
+          options:
+              - label: "This bug happens when only the Elementor (and Elementor Pro) plugins are active."
+              - label: "This bug happens with the Hello Elementor theme active."
+              - label: "I can reproduce this bug consistently by following the steps I described above."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 💾 Elementor System Info
+              **⚠️ <ins>This field is REQUIRED</ins>**
+              - Please copy and paste the **<ins>full Elementor System Info</ins>** report from your WordPress **`Dashboard`** > **`Elementor`** > **`System Info`** page (available at the bottom of the page). <br>**We won't accept issues without it. [Learn how to copy it here](https://elemn.to/help-system-info).**
+    - type: textarea
+      id: system_info
+      validations:
+          required: true
+      attributes:
+          label: "Elementor System Info"
+          description: "Redact or remove sensitive information (admin email, website links, or root paths) if necessary. Keep other details, as these are vital for understanding your problem and recreating it correctly."
+          placeholder: "== Server Environment == \n== WordPress Environment == \n== Theme == \n== User == \n== Active Plugins == \n== Elements Usage == \n== Settings == \n== Features == \n== Integrations == \n== Elementor Experiments == \n== Log == \n== Elementor - Compatibility Tag == \n== Elementor Pro - Compatibility Tag =="
+          render: txt
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 📃 Agreement
+              ⚠️ **Please follow all the instructions above** and fill in all the required fields with valid information. 
+              ⛔ **As a gentle reminder, we may close issues that do not comply with these guidelines without action.**
+    - type: checkboxes
+      id: final_agreement
+      attributes:
+          label: "Agreement"
+          options:
+              - label: "I agree that my issue may be closed without action if it doesn't meet all the requirements."
+                required: true
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ---
+              ### 🙏 Thank you for contributing and helping make Elementor better.

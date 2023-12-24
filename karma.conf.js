@@ -107,7 +107,7 @@ module.exports = function( config ) {
 		customLaunchers: {
 			ChromeHeadlessCustom: {
 				base: 'ChromeHeadless',
-					flags: [ '--no-sandbox', '--single-process' ],
+				flags: [ '--no-sandbox', '--single-process' ],
 			},
 		},
 		browserDisconnectTimeout: 6000,

@@ -5,4 +5,3 @@ export default class Module {
 		elementor.elementsManager.registerElementType( new NestedTabs() );
 	}
 }
-

@@ -24,7 +24,7 @@ export default function ImportProcess() {
 		[ plugins, setPlugins ] = useState( [] ),
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
+		{ id, referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes, currentPage } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
@@ -32,9 +32,10 @@ export default function ImportProcess() {
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
+			importContext.dispatch( { type: 'SET_ID', payload: id } );
 			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
+			kitActions.upload( { kitId: id, file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
 		importKit = () => {
 			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
@@ -44,7 +45,7 @@ export default function ImportProcess() {
 			}
 		},
 		applyAllSetCpt = () => {
-		const cpt = kitState.data?.manifest[ 'custom-post-type-title' ] || importContext.data?.uploadedData?.manifest[ 'custom-post-type-title' ];
+			const cpt = kitState.data?.manifest[ 'custom-post-type-title' ] || importContext.data?.uploadedData?.manifest[ 'custom-post-type-title' ];
 			if ( cpt ) {
 				const cptArray = Object.keys( cpt );
 				sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: cptArray } );
@@ -104,6 +105,7 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( startImport ) {
 			kitActions.import( {
+				id: importContext.data.id,
 				session: uploadedData.session,
 				include: includes,
 				overrideConditions,

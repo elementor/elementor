@@ -16,7 +16,7 @@
 
 	&::after {
 		display: inline-block;
-		margin-bottom: calc(#{$eps-checkbox-indicator-scale-unit} / 2 * 100%);
+		margin-block-end: calc(#{$eps-checkbox-indicator-scale-unit} / 2 * 100%);
 		content: " ";
 		width: $eps-checkbox-indicator-size-unit;
 		height: (2 * $eps-checkbox-indicator-size-unit);
@@ -63,12 +63,12 @@
 	&--indeterminate {
 		&::after {
 			display: inline-block;
-			margin-bottom: 0;
+			margin-block-end: 0;
 			content: " ";
 			width: $eps-checkbox-indeterminate-indicator-size-unit;
 			height: 0;
 			transform: rotate(0deg);
-			border-top: $eps-checkbox-indicator-border-width solid $eps-checkbox-indicator-color;
+			border-block-start: $eps-checkbox-indicator-border-width solid $eps-checkbox-indicator-color;
 		}
 
 		--checkbox-background-color: var(--checkbox-checked-background-color);
@@ -80,7 +80,7 @@
 		&::before,
 		&::after {
 			display: inline-block;
-			margin-bottom: 0;
+			margin-block-end: 0;
 			content: " ";
 			width: $eps-checkbox-indeterminate-indicator-size-unit;
 			height: 0;

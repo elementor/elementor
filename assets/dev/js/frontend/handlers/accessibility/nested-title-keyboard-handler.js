@@ -1,0 +1,212 @@
+import Base from '../base';
+
+export default class NestedTitleKeyboardHandler extends Base {
+	__construct( settings ) {
+		super.__construct( settings );
+
+		this.directionNext = 'next';
+		this.directionPrevious = 'previous';
+		this.focusableElementSelector = 'audio, button, canvas, details, iframe, input, select, summary, textarea, video, [accesskey], [contenteditable], [href], [tabindex]:not([tabindex="-1"])';
+	}
+
+	getDefaultSettings() {
+		return {
+			selectors: {
+				itemTitle: '.e-n-tab-title',
+				itemContainer: '.e-n-tabs-content > .e-con',
+			},
+			ariaAttributes: {
+				titleStateAttribute: 'aria-selected',
+				activeTitleSelector: '[aria-selected="true"]',
+			},
+			datasets: {
+				titleIndex: 'data-tab-index',
+			},
+			keyDirection: {
+				ArrowLeft: elementorFrontendConfig.is_rtl ? this.directionNext : this.directionPrevious,
+				ArrowUp: this.directionPrevious,
+				ArrowRight: elementorFrontendConfig.is_rtl ? this.directionPrevious : this.directionNext,
+				ArrowDown: this.directionNext,
+			},
+		};
+	}
+
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
+
+		return {
+			$itemTitles: this.findElement( selectors.itemTitle ),
+			$itemContainers: this.findElement( selectors.itemContainer ),
+			$focusableContainerElements: this.getFocusableElements( this.findElement( selectors.itemContainer ) ),
+		};
+	}
+
+	getFocusableElements( $elements ) {
+		return $elements
+			.find( this.focusableElementSelector )
+			.not( '[disabled], [inert]' );
+	}
+
+	getKeyDirectionValue( event ) {
+		const direction = this.getSettings( 'keyDirection' )[ event.key ];
+		return this.directionNext === direction ? 1 : -1;
+	}
+
+	/**
+	 * @param {HTMLElement} itemTitleElement
+	 *
+	 * @return {string}
+	 */
+	getTitleIndex( itemTitleElement ) {
+		const { titleIndex: indexAttribute } = this.getSettings( 'datasets' );
+		return itemTitleElement.getAttribute( indexAttribute );
+	}
+
+	/**
+	 * @param {string|number} titleIndex
+	 *
+	 * @return {string}
+	 */
+	getTitleFilterSelector( titleIndex ) {
+		const { titleIndex: indexAttribute } = this.getSettings( 'datasets' );
+		return `[${ indexAttribute }="${ titleIndex }"]`;
+	}
+
+	getActiveTitleElement() {
+		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector;
+		return this.elements.$itemTitles.filter( activeTitleFilter );
+	}
+
+	onInit( ...args ) {
+		super.onInit( ...args );
+	}
+
+	bindEvents() {
+		this.elements.$itemTitles.on( this.getTitleEvents() );
+		this.elements.$focusableContainerElements.on( this.getContentElementEvents() );
+	}
+
+	unbindEvents() {
+		this.elements.$itemTitles.off();
+		this.elements.$itemContainers.children().off();
+	}
+
+	getTitleEvents() {
+		return {
+			keydown: this.handleTitleKeyboardNavigation.bind( this ),
+		};
+	}
+
+	getContentElementEvents() {
+		return {
+			keydown: this.handleContentElementKeyboardNavigation.bind( this ),
+		};
+	}
+
+	isDirectionKey( event ) {
+		const directionKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End' ];
+		return directionKeys.includes( event.key );
+	}
+
+	isActivationKey( event ) {
+		const activationKeys = [ 'Enter', ' ' ];
+		return activationKeys.includes( event.key );
+	}
+
+	handleTitleKeyboardNavigation( event ) {
+		if ( this.isDirectionKey( event ) ) {
+			event.preventDefault();
+
+			const currentTitleIndex = parseInt( this.getTitleIndex( event.currentTarget ) ) || 1,
+				numberOfTitles = this.elements.$itemTitles.length,
+				titleIndexUpdated = this.getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles );
+
+			this.changeTitleFocus( titleIndexUpdated );
+			event.stopPropagation();
+		} else if ( this.isActivationKey( event ) ) {
+			event.preventDefault();
+
+			if ( this.handeTitleLinkEnterOrSpaceEvent( event ) ) {
+				return;
+			}
+
+			const titleIndex = this.getTitleIndex( event.currentTarget );
+
+			elementorFrontend.elements.$window.trigger( 'elementor/nested-elements/activate-by-keyboard', { widgetId: this.getID(), titleIndex } );
+		} else if ( 'Escape' === event.key ) {
+			this.handleTitleEscapeKeyEvents( event );
+		}
+	}
+
+	handeTitleLinkEnterOrSpaceEvent( event ) {
+		const isLinkElement = 'a' === event?.currentTarget?.tagName?.toLowerCase();
+
+		if ( ! elementorFrontend.isEditMode() && isLinkElement ) {
+			event?.currentTarget?.click();
+			event.stopPropagation();
+		}
+
+		return isLinkElement;
+	}
+
+	getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles ) {
+		let titleIndexUpdated = 0;
+
+		switch ( event.key ) {
+			case 'Home':
+				titleIndexUpdated = 1;
+				break;
+			case 'End':
+				titleIndexUpdated = numberOfTitles;
+				break;
+			default:
+				const directionValue = this.getKeyDirectionValue( event ),
+					isEndReached = numberOfTitles < currentTitleIndex + directionValue,
+					isStartReached = 0 === currentTitleIndex + directionValue;
+
+				if ( isEndReached ) {
+					titleIndexUpdated = 1;
+				} else if ( isStartReached ) {
+					titleIndexUpdated = numberOfTitles;
+				} else {
+					titleIndexUpdated = currentTitleIndex + directionValue;
+				}
+		}
+
+		return titleIndexUpdated;
+	}
+
+	changeTitleFocus( titleIndexUpdated ) {
+		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
+
+		this.setTitleTabindex( titleIndexUpdated );
+
+		$newTitle.trigger( 'focus' );
+	}
+
+	setTitleTabindex( titleIndex ) {
+		this.elements.$itemTitles.attr( 'tabindex', '-1' );
+
+		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndex ) );
+
+		$newTitle.attr( 'tabindex', '0' );
+	}
+
+	handleTitleEscapeKeyEvents() {}
+
+	handleContentElementKeyboardNavigation( event ) {
+		if ( 'Tab' === event.key && ! event.shiftKey ) {
+			this.handleContentElementTabEvents( event );
+		} else if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.handleContentElementEscapeEvents( event );
+		}
+	}
+
+	handleContentElementEscapeEvents() {
+		this.getActiveTitleElement().trigger( 'focus' );
+	}
+
+	handleContentElementTabEvents() {}
+}

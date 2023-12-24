@@ -2,6 +2,7 @@ name: PR Linter
 on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -19,6 +20,8 @@ jobs:
         with:
           node-version: 18.x
       - name: Install Dependencies
+        if: ${{ github.event.pull_request.title != null }}
         run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
+        if: ${{ github.event.pull_request.title != null }}
         run: echo "${{ github.event.pull_request.title }}" | npx commitlint

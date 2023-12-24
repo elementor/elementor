@@ -11,29 +11,32 @@ const KIT_STATUS_MAP = Object.freeze( {
 	} ),
 	UPLOAD_KIT_KEY = 'elementor_upload_kit',
 	IMPORT_KIT_KEY = 'elementor_import_kit',
-	EXPORT_KIT_KEY = 'elementor_export_kit';
+	EXPORT_KIT_KEY = 'elementor_export_kit',
+	RUN_RUNNER_KEY = 'elementor_import_kit__runner';
 
 export default function useKit() {
-	const { ajaxState, setAjax, ajaxActions } = useAjax(),
+	const { ajaxState, setAjax, ajaxActions, runRequest } = useAjax(),
 		kitStateInitialState = {
 			status: KIT_STATUS_MAP.INITIAL,
 			data: null,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
-		uploadKit = ( { file, kitLibraryNonce } ) => {
+		uploadKit = ( { kitId, file, kitLibraryNonce } ) => {
 			setAjax( {
 				data: {
 					action: UPLOAD_KIT_KEY,
 					e_import_file: file,
+					kit_id: kitId,
 					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
 			} );
 		},
-		importKit = ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+		initImportProcess = async ( { id, session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
 			const ajaxConfig = {
 				data: {
 					action: IMPORT_KIT_KEY,
 					data: {
+						id,
 						session,
 						include,
 						overrideConditions,
@@ -51,7 +54,72 @@ export default function useKit() {
 
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
-			setAjax( ajaxConfig );
+			return runRequest( ajaxConfig ).catch( ( error ) => {
+				const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
+				setKitState( ( prevState ) => ( {
+					...prevState,
+					status: KIT_STATUS_MAP.ERROR,
+					data: response || {},
+				} ) );
+			} );
+		},
+		runImportRunners = async ( session, runners ) => {
+			let stopIterations = false;
+
+			for ( const [ iteration, runner ] of runners.entries() ) {
+				if ( stopIterations ) {
+					break;
+				}
+
+				const ajaxConfig = {
+					data: {
+						action: RUN_RUNNER_KEY,
+						data: {
+							session,
+							runner,
+						},
+					},
+				};
+
+				ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
+
+				// The last runner should run using the setAjax method, so it will trigger the useEffect and update the kitState.
+				const isLastIteration = iteration === runners.length - 1;
+				if ( ! isLastIteration ) {
+					await runRequest( ajaxConfig )
+						.catch( ( error ) => {
+							stopIterations = true;
+
+							const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
+							setKitState( ( prevState ) => ( { ...prevState, ...{
+								status: KIT_STATUS_MAP.ERROR,
+								data: response || {},
+							} } ) );
+						} );
+				} else {
+					setAjax( ajaxConfig );
+				}
+			}
+		},
+		importKit = async ( { id, session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+			ajaxActions.reset();
+
+			const importSession = await initImportProcess( {
+				id,
+				session,
+				include,
+				overrideConditions,
+				referrer,
+				selectedCustomPostTypes,
+			} );
+
+			if ( ! importSession ) {
+				return;
+			}
+
+			await runImportRunners( importSession.data.session, importSession.data.runners );
 		},
 		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
 			setAjax( {

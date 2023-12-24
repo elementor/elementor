@@ -27,7 +27,7 @@ class Notice_Bar extends Base_Object {
 	}
 
 	final public function get_notice() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! $this->has_access_to_notice() ) {
 			return null;
 		}
 
@@ -72,11 +72,11 @@ class Notice_Bar extends Base_Object {
 		}
 
 		?>
-		<div class="e-notice-bar__message <?php echo esc_attr( "e-notice-bar__${type}_message" ); ?>">
+		<div class="e-notice-bar__message <?php echo esc_attr( "e-notice-bar__{$type}_message" ); ?>">
 			<?php Utils::print_unescaped_internal_string( sprintf( $settings[ $action_message ], $settings[ $action_url ] ) ); ?>
 		</div>
 
-		<div class="e-notice-bar__action <?php echo esc_attr( "e-notice-bar__${type}_action" ); ?>">
+		<div class="e-notice-bar__action <?php echo esc_attr( "e-notice-bar__{$type}_action" ); ?>">
 			<a href="<?php Utils::print_unescaped_internal_string( $settings[ $action_url ] ); ?>"
 				target="<?php echo empty( $settings[ $action_target ] ) ? '_blank' : esc_attr( $settings[ $action_target ] ); ?>"
 			>
@@ -112,10 +112,18 @@ class Notice_Bar extends Base_Object {
 	}
 
 	public function set_notice_dismissed() {
+		if ( ! $this->has_access_to_notice() ) {
+			throw new \Exception( 'Access denied' );
+		}
+
 		update_option( $this->get_settings( 'option_key' ), time() );
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'notice_bar_dismiss', [ $this, 'set_notice_dismissed' ] );
+	}
+
+	private function has_access_to_notice() {
+		return current_user_can( 'manage_options' );
 	}
 }

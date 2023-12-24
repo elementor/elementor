@@ -38,11 +38,13 @@ export default class EmptyView extends Marionette.ItemView {
 		ReactDOM.render( defaultElement, this.el );
 	}
 
-	attachElContent() {
+	onRender() {
 		this.$el.addClass( this.className );
 
-		setTimeout( () => {
-			this.renderReactDefaultElement( this.ownerView.container );
-		} );
+		this.renderReactDefaultElement( this.ownerView.container );
+	}
+
+	onDestroy() {
+		ReactDOM.unmountComponentAtNode( this.el );
 	}
 }
