@@ -2,6 +2,8 @@
 namespace Elementor\Modules\Ai\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Modules\Ai\Module;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,6 +32,30 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'status/check',
+			[
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function get_cached_usage() {
+		$cache_key = 'elementor_ai_usage';
+		$cache_time = 24 * HOUR_IN_SECONDS;
+		$usage = get_site_transient( $cache_key );
+
+		if ( ! $usage ) {
+			$usage = $this->get_usage();
+			set_site_transient( $cache_key, $usage, $cache_time );
+		}
+
+		return $usage;
+	}
+
+	public function get_remote_config() {
+		return $this->ai_request(
+			'GET',
+			'remote-config/config',
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
@@ -92,7 +118,7 @@ class Ai extends Library {
 		return $payload;
 	}
 
-	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '' ) {
+	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '', $format = 'default' ) {
 		$headers = [
 			'x-elementor-ai-version' => '2',
 		];
@@ -102,15 +128,19 @@ class Ai extends Library {
 			$body = $this->get_upload_request_body( $body, $file, $boundary, $file_name );
 			// add content type header
 			$headers['Content-Type'] = 'multipart/form-data; boundary=' . $boundary;
+		} elseif ( 'json' === $format ) {
+			$headers['Content-Type'] = 'application/json';
+			$body = wp_json_encode( $body );
 		}
 
 		return $this->http_request(
 			$method,
 			$endpoint,
 			[
-				'timeout' => 50,
+				'timeout' => 100,
 				'headers' => $headers,
 				'body' => $body,
+
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
@@ -474,6 +504,131 @@ class Ai extends Library {
 		);
 
 		return $result;
+	}
+
+	public function generate_layout( $data, $context ) {
+		$endpoint = 'generate/layout';
+
+		$body = [
+			'prompt' => $data['prompt'],
+			'variationType' => (int) $data['variationType'],
+			'ids' => $data['ids'],
+		];
+
+		if ( ! empty( $data['prevGeneratedIds'] ) ) {
+			$body['generatedBaseTemplatesIds'] = $data['prevGeneratedIds'];
+		}
+
+		if ( ! empty( $data['attachments'] ) ) {
+			$attachment = $data['attachments'][0];
+
+			switch ( $attachment['type'] ) {
+				case 'json':
+					$endpoint = 'generate/generate-json-variation';
+
+					$body['json'] = [
+						'type' => 'elementor',
+						'elements' => [ $attachment['content'] ],
+					];
+					break;
+				case 'url':
+					$endpoint = 'generate/html-to-elementor';
+
+					$html = wp_json_encode( $attachment['content'] );
+
+					$body['html'] = $html;
+
+					break;
+			}
+		}
+
+		$context['currentContext'] = $data['currentContext'];
+
+		if ( ElementorUtils::has_pro() ) {
+			$context['features'] = [
+				'subscriptions' => [ 'Pro' ],
+			];
+		}
+
+		$metadata = [
+			'context' => $context,
+			'api_version' => ELEMENTOR_VERSION,
+			'site_lang' => get_bloginfo( 'language' ),
+			'config' => [
+				'generate' => [
+					'all' => true,
+				],
+			],
+		];
+
+		$body = array_merge( $body, $metadata );
+
+		// Temp hack for platforms that filters the http_request_args, and it breaks JSON requests.
+		remove_all_filters( 'http_request_args' );
+
+		return $this->ai_request(
+			'POST',
+			$endpoint,
+			$body,
+			false,
+			'',
+			'json'
+		);
+	}
+
+	public function get_layout_prompt_enhanced( $prompt, $enhance_type, $context ) {
+		return $this->ai_request(
+			'POST',
+			'generate/enhance-prompt',
+			[
+				'prompt' => $prompt,
+				'enhance_type' => $enhance_type,
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function get_history_by_type( $type, $page, $limit, $context = [] ) {
+		$endpoint = Module::HISTORY_TYPE_ALL === $type
+			? 'history'
+			: add_query_arg( [
+				'page' => $page,
+				'limit' => $limit,
+			], "history/{$type}" );
+
+		return $this->ai_request(
+			'POST',
+			$endpoint,
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function delete_history_item( $id, $context = [] ) {
+		return $this->ai_request(
+			'DELETE', 'history/' . $id,
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function toggle_favorite_history_item( $id, $context = [] ) {
+		return $this->ai_request(
+			'POST', sprintf( 'history/%s/favorite', $id ),
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
 	}
 
 	protected function init() {}

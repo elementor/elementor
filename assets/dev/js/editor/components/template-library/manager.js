@@ -218,7 +218,7 @@ TemplateLibraryManager = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementorCommon.dialogsManager.createWidget( 'alert', {
 				id: 'elementor-template-library-error-dialog',
-				headerMessage: __( 'An error occurred', 'elementor' ),
+				headerMessage: __( 'An error occurred.', 'elementor' ),
 			} );
 		}
 

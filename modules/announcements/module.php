@@ -88,14 +88,15 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		return [
+		$raw_announcements = [
 			[
-				'title' => 'Picture perfect: Introducing the AI image generator',
-				'description' => '<p>Generate new images or edit existing ones with text to image prompts.</p>
+				'title' => 'Unlock the Power of Elementor AI',
+				'description' => '<p>Design professional websites with natively integrated AI tools.</p>
 				<ul>
-					<li>Use generative fill to edit, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
-					<li>Choose from twenty-nine preset styles that will supercharge your prompts and check out the image-prompt gallery for inspiration. </li>
-					<li>Create custom code, write content, and generate images with Elementor’s comprehensive AI toolbox.</li>
+					<li>Boost creativity & productivity with AI-generated containers. Build layouts from scratch or existing Elementor containers. Coming soon: Generate containers from any layout you reference from the web!</li>
+					<li>Let AI write or edit your text, adjust its length and tone of voice. Also generate custom code that seamlessly integrates into your website.</li>
+					<li>Create one-of-a kind images, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Access and repurpose previously-generated text, code or image prompts with Elementor’s AI History Panel to work efficiently and ensure consistency.</li>
 				</ul>',
 				'media' => [
 					'type' => 'image',
@@ -119,33 +120,10 @@ class Module extends BaseApp {
 					],
 				],
 			],
-			[
-				'title' => 'Activate Containers for Brilliant Layouts',
-				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
-				'media' => [
-					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/containers-announcement.png',
-				],
-				'cta' => [
-					[
-						'label' => 'Activate Container',
-						'variant' => 'primary',
-						'target' => '_blank',
-						'url' => ElementorSettings::get_url() . '#tab-experiments',
-					],
-					[
-						'label' => 'Try It First',
-						'target' => '_blank',
-						'url' => 'https://go.elementor.com/whats-new-popup/',
-					],
-				],
-				'triggers' => [
-					[
-						'action' => 'isFlexContainerInactive',
-					],
-				],
-			],
 		];
+
+		// DO NOT USE THIS FILTER
+		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 
 	/**
@@ -179,10 +157,15 @@ class Module extends BaseApp {
 	}
 
 	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+	}
+
+	public function on_elementor_init() {
 		if ( empty( $this->get_active_announcements() ) ) {
 			return;
 		}
-		parent::__construct();
 
 		add_action( 'elementor/editor/footer', function () {
 			$this->render_app_wrapper();

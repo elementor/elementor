@@ -34,7 +34,6 @@
 	}
 
 	.elementor-deactivate-feedback-dialog-input {
-		float: $start;
 		margin-block: 0;
 		margin-inline: 0 15px;
 		box-shadow: none;
@@ -125,11 +124,13 @@
 
 	&-form-body {
 		padding-block-start: 30px;
+		padding-block-end: 15px;
 	}
 }
 
 .elementor-deactivate-feedback-dialog-input-wrapper {
-	line-height: 1;
+	display: flex;
+	align-items: center;
+	line-height: 2;
 	overflow: hidden;
-	margin-block-end: 15px;
 }

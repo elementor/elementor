@@ -1,4 +1,5 @@
 import { Box, Typography, Slider, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import GenerateSubmit from '../../components/generate-submit';
 import ImageForm from '../../components/image-form';
@@ -39,7 +40,7 @@ const Resize = () => {
 				{ error && <View.ErrorMessage error={ error } onRetry={ handleSubmit } /> }
 
 				<ImageForm onSubmit={ handleSubmit }>
-					<Stack spacing={ 2 }>
+					<Stack spacing={ 0.2 }>
 						<Box display="flex" justifyContent="space-between" alignItems="center">
 							<Typography variant="caption">512px</Typography>
 

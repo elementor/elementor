@@ -41,13 +41,12 @@ class Control_Gaps extends Control_Dimensions {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array_merge(
-			parent::get_default_value(), [
-				'column' => '',
-				'row' => '',
-				'isLinked' => true,
-			]
-		);
+		return [
+			'column' => '',
+			'row' => '',
+			'isLinked' => true,
+			'unit' => 'px',
+		];
 	}
 
 	public function get_singular_name() {
@@ -59,5 +58,21 @@ class Control_Gaps extends Control_Dimensions {
 			'column' => esc_html__( 'Column', 'elementor' ),
 			'row' => esc_html__( 'Row', 'elementor' ),
 		];
+	}
+
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
+
+		// BC for any old Slider control values.
+		if ( $this->should_update_gaps_values( $value ) ) {
+			$value['column'] = strval( $value['size'] );
+			$value['row'] = strval( $value['size'] );
+		}
+
+		return $value;
+	}
+
+	private function should_update_gaps_values( $value ) {
+		return isset( $value['size'] ) && '' !== $value['size'] && '' === $value['column'];
 	}
 }

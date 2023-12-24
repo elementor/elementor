@@ -18,10 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-categories">
 	<div id="elementor-panel-categories"></div>
 
+	<?php
+	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
+		'link' => 'https://go.elementor.com/pro-widgets/',
+		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
+		'button_text' => __( 'Upgrade Now', 'elementor' ),
+	] );
+	?>
+
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" />
-		<div class="elementor-nerd-box-message"><?php echo esc_html__( 'Get more with Elementor Pro', 'elementor' ); ?></div>
-		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-widgets/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
+		<div class="elementor-nerd-box-message"><?php echo esc_html( $get_pro_details['message'] ); ?></div>
+		<a class="elementor-button go-pro" target="_blank" href="<?php echo esc_url( $get_pro_details['link'] ); ?>"><?php echo esc_html( $get_pro_details['button_text'] ); ?></a>
 	</div>
 </script>
 
@@ -36,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-notice">
-	<div class="elementor-panel-notice">	
+	<div class="elementor-panel-notice">
 	</div>
 </script>
 

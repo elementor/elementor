@@ -7,9 +7,11 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
+use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\App\Modules\ImportExport\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -833,6 +835,59 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_16_0_container_updates( $updater ) {
+		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
+
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = self::iterate_containers( $data );
+
+			self::save_updated_document( $post_id, $data );
+		}
+	}
+
+	public static function _v_3_17_0_site_settings_updates() {
+		$options = [ 'elementor_active_kit', 'elementor_previous_kit' ];
+
+		foreach ( $options as $option_name ) {
+			self::maybe_add_gap_control_data( $option_name );
+		}
+	}
+
+	private static function maybe_add_gap_control_data( $option_name ) {
+		$kit_id = get_option( $option_name );
+
+		if ( ! $kit_id ) {
+			return;
+		}
+
+		$kit_data_array = get_post_meta( (int) $kit_id, '_elementor_page_settings', true );
+
+		$setting_not_exist = ! isset( $kit_data_array['space_between_widgets'] );
+		$already_processed = isset( $kit_data_array['space_between_widgets']['column'] );
+
+		if ( $setting_not_exist || $already_processed ) {
+			return;
+		}
+
+		$kit_data_array['space_between_widgets'] = Utils::update_space_between_widgets_values( $kit_data_array['space_between_widgets'] );
+
+		update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 
@@ -884,5 +939,85 @@ class Upgrades {
 	private static function notice( $message ) {
 		$logger = Plugin::$instance->logger->get_logger();
 		$logger->notice( $message );
+	}
+
+	/**
+	 * @param \wpdb $wpdb
+	 * @param string $element_type
+	 *
+	 * @return array
+	 */
+	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
+		global $wpdb;
+
+		return $updater->query_col(
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data"
+					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
+		);
+	}
+	/**
+	 * @param $data
+	 *
+	 * @return array|mixed
+	 */
+	private static function iterate_containers( $data ) {
+		return Plugin::$instance->db->iterate_data(
+			$data, function ( $element ) {
+
+				if ( 'container' !== $element['elType'] || ! isset( $element['elements'] ) ) {
+					return $element;
+				}
+
+				$element = self::maybe_convert_to_inner_container( $element );
+				$element = self::maybe_convert_to_grid_container( $element );
+				return Container::slider_to_gaps_converter( $element );
+			}
+		);
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function maybe_convert_to_inner_container( $element ) {
+		foreach ( $element['elements'] as &$inner_element ) {
+			if ( 'container' === $inner_element['elType'] && ! $inner_element['isInner'] ) {
+				$inner_element['isInner'] = true;
+			}
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function maybe_convert_to_grid_container( $element ) {
+		$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
+		if ( 'container' !== $element['elType'] || empty( $element['settings'] ) || ! $is_grid_container ) {
+			return $element;
+		}
+
+		$element['settings']['presetTitle'] = 'Grid';
+		$element['settings']['presetIcon'] = 'eicon-container-grid';
+
+		return $element;
+	}
+
+	/**
+	 * @param $post_id
+	 * @param $data
+	 *
+	 * @return void
+	 */
+	private static function save_updated_document( $post_id, $data ) {
+		$json_value = wp_slash( wp_json_encode( $data ) );
+
+		update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 	}
 }

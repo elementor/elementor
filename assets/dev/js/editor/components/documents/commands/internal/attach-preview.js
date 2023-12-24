@@ -63,10 +63,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 
-			$e.internal( 'document/elements/populate', {
-				document,
-				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
-			} );
+			elementor.initElements();
 
 			elementor.initPreviewView( document );
 

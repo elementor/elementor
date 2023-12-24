@@ -3,7 +3,11 @@
 	&.e-control-global {
 
 		.pickr {
-			border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+			border-start-start-radius: 0;
+			border-start-end-radius: var(--e-a-border-radius);
+			border-end-start-radius: 0;
+			border-end-end-radius: var(--e-a-border-radius);
+
 			flex-shrink: 0;
 			border-color: var(--e-a-border-color-bold);
 			transition: var(--e-a-transition-hover);

@@ -79,7 +79,7 @@
 
 			+ .elementor-control-type-tabs,
 			&:not(.elementor-hidden-control) {
-				+ .elementor-control-separator-default {
+				~ .elementor-control-separator-default {
 					padding-block-start: 15px;
 				}
 			}
@@ -87,10 +87,10 @@
 	}
 
 	&.elementor-control-deprecated {
-		color: $editor-warning;
+		color: var(--e-a-color-warning);
 
 		.elementor-control-field-description {
-			color: $editor-warning;
+			color:var(--e-a-color-warning);
 		}
 	}
 
@@ -316,7 +316,6 @@
 
 .elementor-update-preview-button {
 	padding: 8px 15px;
-	text-transform: uppercase;
 }
 
 // = Set direction control by class

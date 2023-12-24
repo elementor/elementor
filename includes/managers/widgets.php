@@ -91,6 +91,7 @@ class Widgets_Manager {
 			'menu-anchor',
 			'sidebar',
 			'read-more',
+			'rating',
 		];
 
 		$this->_widget_types = [];
@@ -233,14 +234,27 @@ class Widgets_Manager {
 	 *
 	 * @param \Elementor\Widget_Base $widget_instance Elementor Widget.
 	 *
-	 * @return true True if the widget was registered.
+	 * @return bool True if the widget was registered.
 	 * @since 3.5.0
 	 * @access public
-	 *
 	 */
 	public function register( Widget_Base $widget_instance ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->init_widgets();
+		}
+
+		/**
+		 * Should widget be registered.
+		 *
+		 * @since 3.18.0
+		 *
+		 * @param bool $should_register Should widget be registered. Default is `true`.
+		 * @param \Elementor\Widget_Base $widget_instance Widget instance.
+		 */
+		$should_register = apply_filters( 'elementor/widgets/is_widget_enabled', true, $widget_instance );
+
+		if ( ! $should_register ) {
+			return false;
 		}
 
 		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;
@@ -248,10 +262,10 @@ class Widgets_Manager {
 		return true;
 	}
 
-	/** register promoted widgets
+	/** Register promoted widgets
 	 *
 	 * Since we cannot allow widgets to place themselves is a specific
-	 * location on our widgets panel we need to use an hard coded solution fort his
+	 * location on our widgets panel we need to use a hard coded solution for this.
 	 *
 	 * @return void
 	 */

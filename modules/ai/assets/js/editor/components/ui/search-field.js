@@ -1,19 +1,25 @@
 import { forwardRef } from 'react';
 import { TextField, InputAdornment, styled } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import { SearchIcon } from '@elementor/icons';
 
-const StyledTextField = styled( TextField )( ( { theme } ) => ( {
-	// Overwriting the admin global CSS.
-	'& .MuiInputBase-input, & .MuiInputBase-input:focus': {
-		backgroundColor: theme.palette.background.default,
-		border: 'none',
+// Customization for the WP admin global CSS.
+const StyledTextField = styled( TextField )( () => ( {
+	'.wp-admin & .MuiInputBase-input, & .MuiInputBase-input:focus': {
+		backgroundColor: 'initial',
 		boxShadow: 'none',
-		color: theme.palette.text.primary,
-		padding: theme.spacing( 0, 3 ),
-		outline: 'none',
-	},
-	'& .MuiInputAdornment-root': {
-		color: theme.palette.text.tertiary,
+		border: 0,
+		color: 'inherit',
+		outline: 0,
+		/**
+		 * TODO:
+		 * Find a better solution to get the component padding value dynamically or fix the global CSS override.
+		 * These values are taken from Material UI's source code (the left padding reset was added to match the component style).
+		 */
+		padding: '16.5px 14px 16.5px 0',
+		'&.MuiInputBase-inputSizeSmall': {
+			padding: '8.5px 14px 8.5px 0',
+		},
 	},
 } ) );
 
@@ -24,6 +30,7 @@ const SearchField = forwardRef( ( props, ref ) => {
 			autoFocus
 			fullWidth
 			required
+			size="small"
 			color="secondary"
 			InputProps={ {
 				autoComplete: 'off',
@@ -38,7 +45,7 @@ const SearchField = forwardRef( ( props, ref ) => {
 			value={ props.value }
 			onChange={ props.onChange }
 			{ ...props }
-			ref={ ref }
+			inputRef={ ref }
 		/>
 	);
 } );

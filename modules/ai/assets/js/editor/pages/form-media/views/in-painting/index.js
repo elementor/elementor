@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import PromptField from '../../components/prompt-field';
@@ -59,7 +60,7 @@ const InPainting = () => {
 
 					{
 						data?.result ? (
-							<Stack gap={ 5 } sx={ { my: 6 } }>
+							<Stack gap={ 2 } sx={ { my: 2.5 } }>
 								<GenerateAgainSubmit disabled={ isLoading } />
 
 								<NewPromptButton disabled={ isLoading } onClick={ () => {

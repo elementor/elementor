@@ -62,7 +62,7 @@
 			&-badge {
 				margin: 0 10px;
 			  	background: var(--e-a-color-white);
-			  	border-radius: 3px;
+			  	border-radius: var(--e-a-border-radius);
 			}
 
 			> span {

@@ -1,19 +1,36 @@
 import { useMemo } from 'react';
 import { useSettingsContext } from '../context/settings-context';
+import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 
 export const TYPE_CONNECT = 'connect';
 export const TYPE_PROMOTION = 'promotion';
 export const TYPE_APPLY = 'apply';
 
-export default function useKitCallToAction( kitAccessLevel ) {
+export default function useKitCallToAction( kitAccessTier ) {
 	const { settings } = useSettingsContext();
 
+	// BC: When user has old Pro version which doesn't override the `free` access_tier.
+	let userAccessTier = settings.access_tier;
+	const hasActiveProLicense = settings.is_pro && settings.is_library_connected;
+	const shouldFallbackToLegacy = hasActiveProLicense && userAccessTier === TIERS.free;
+
+	// Fallback to the last access_tier before the new tiers were introduced.
+	// TODO: Remove when Pro with the new tiers is stable.
+	if ( shouldFallbackToLegacy ) {
+		userAccessTier = TIERS[ 'essential-oct2023' ];
+	}
+
 	// SubscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)
-	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessLevel ], [ settings, kitAccessLevel ] );
+	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessTier ], [ settings, kitAccessTier ] );
+
+	// Free user should see a generic "Pro" badge.
+	const badgeLabel = userAccessTier === TIERS.free
+		? settings.subscription_plans?.essential.label
+		: subscriptionPlan?.label;
 
 	const type = useMemo( () => {
 		// The user can apply this kit (the user access level is equal or greater then the kit access level).
-		const isAuthorizeToApplyKit = settings.access_level >= kitAccessLevel;
+		const isAuthorizeToApplyKit = isTierAtLeast( userAccessTier, kitAccessTier );
 
 		// The user in not connected and has pro plugin or the kit is a free kit.
 		if ( ! settings.is_library_connected && ( settings.is_pro || isAuthorizeToApplyKit ) ) {
@@ -27,7 +44,7 @@ export default function useKitCallToAction( kitAccessLevel ) {
 
 		// The user is connected and can access the kit.
 		return TYPE_APPLY;
-	}, [ settings, kitAccessLevel ] );
+	}, [ settings, kitAccessTier ] );
 
-	return [ type, { subscriptionPlan } ];
+	return [ type, { subscriptionPlan, badgeLabel } ];
 }

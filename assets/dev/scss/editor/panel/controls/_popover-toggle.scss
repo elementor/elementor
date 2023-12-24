@@ -66,7 +66,10 @@
 .e-control-global {
 
 	.elementor-control-popover-toggle-toggle-label {
-		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+		border-start-start-radius: 0;
+		border-start-end-radius: var(--e-a-border-radius);
+		border-end-start-radius: 0;
+		border-end-end-radius: var(--e-a-border-radius);
 		flex-shrink: 0;
 	}
 }

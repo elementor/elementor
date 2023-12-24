@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
-	const EXCLUDE_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 
 	private $plain_notices = [
 		'api_notice',
@@ -26,6 +26,7 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
+		'design_not_appearing',
 	];
 
 	private $elementor_pages_count = null;
@@ -271,8 +272,7 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'title' => esc_html__( 'Congrats!', 'elementor' ),
-			'description' => esc_html__( 'You created over 10 pages with Elementor. Great job! If you can spare a minute,
-				please help us by leaving a five star review on WordPress.org.', 'elementor' ),
+			'description' => esc_html__( 'You created over 10 pages with Elementor. Great job! If you can spare a minute, please help us by leaving a five star review on WordPress.org.', 'elementor' ),
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Happy To Help', 'elementor' ),
@@ -377,10 +377,56 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	public function print_admin_notice( array $options ) {
+	private function notice_design_not_appearing() {
+		$installs_history = get_option( 'elementor_install_history', [] );
+		$is_first_install = 1 === count( $installs_history );
+
+		if ( $is_first_install || ! current_user_can( 'update_plugins' ) ) {
+			return false;
+		}
+
+		$notice_id          = 'design_not_appearing';
+		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
+		$notice_version     = $notice['meta']['version'] ?? null;
+		$is_version_changed = $this->get_elementor_version() !== $notice_version;
+
+		if ( $is_version_changed ) {
+			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
+		}
+
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard', 'update-core', 'plugins' ], true ) ) {
+			return false;
+		}
+
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'The version was updated successfully!', 'elementor' ),
+			'description' => sprintf(
+				esc_html__( 'Encountering issues after updating the version? Don’t worry - we’ve collected all the fixes for troubleshooting common issues. %1$sFind a solution%2$s', 'elementor' ),
+				'<a href="https://go.elementor.com/wp-dash-changes-do-not-appear-online/" target="_blank">',
+				'</a>'
+			),
+			'id' => $notice_id,
+		];
+
+		$excluded_pages = [];
+		$this->print_admin_notice( $options, $excluded_pages );
+
+		return true;
+	}
+
+	// For testing purposes
+	public function get_elementor_version() {
+		return ELEMENTOR_VERSION;
+	}
+
+	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDED_PAGES ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, self::EXCLUDE_PAGES ) ) {
+		if ( in_array( $pagenow, $exclude_pages, true ) ) {
 			return;
 		}
 

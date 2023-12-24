@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { __ } from '@wordpress/i18n';
 import SearchField from './ui/search-field';
 
 const PromptSearch = forwardRef( ( props, ref ) => {

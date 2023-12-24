@@ -96,11 +96,14 @@ class Control_URL extends Control_Base_Multiple {
 				<input id="<?php $this->print_control_uid(); ?>" class="elementor-control-tag-area elementor-input" data-setting="url" placeholder="{{ view.getControlPlaceholder() }}" />
 				<?php // PHPCS - Nonces don't require escaping. ?>
 				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+				<# if ( !! data.options ) { #>
 				<button class="elementor-control-url-more tooltip-target elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Link Options', 'elementor' ); ?>">
 					<i class="eicon-cog" aria-hidden="true"></i>
 					<span class="elementor-screen-only"><?php echo esc_html__( 'Link Options', 'elementor' ); ?></span>
 				</button>
+				<# } #>
 			</div>
+			<# if ( !! data.options ) { #>
 			<div class="elementor-control-url-more-options">
 				<div class="elementor-control-url-option">
 					<input id="<?php $this->print_control_uid( 'is_external' ); ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
@@ -118,6 +121,7 @@ class Control_URL extends Control_Base_Multiple {
 				<div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
 				<# } #>
 			</div>
+			<# } #>
 		</div>
 		<# if ( data.description ) { #>
 		<div class="elementor-control-field-description">{{{ data.description }}}</div>

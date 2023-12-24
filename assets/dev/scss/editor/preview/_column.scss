@@ -75,7 +75,10 @@
 .elementor-editor-column-settings {
 	top: -1px;
 	@include start(-1px);
-	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+	border-end-start-radius: 0;
+	border-end-end-radius: 3px;
 	overflow: hidden;
 
 	.elementor-editor-element-setting {

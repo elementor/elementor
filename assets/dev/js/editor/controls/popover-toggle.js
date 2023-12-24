@@ -99,11 +99,11 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			}
 
 			if ( 'font_size' === property ) {
-				// Set max size for Typography previews in the select popover so it isn't too big.
-				if ( value.size > 40 ) {
-					value.size = 40;
-				}
-				cssObject.fontSize = value.size + value.unit;
+				const fontSize = 'custom' === value.unit
+					? value.size
+					: `${ value.size }${ value.unit }`;
+
+				cssObject.fontSize = `min(${ fontSize }, 28px)`;
 			} else {
 				// Convert the snake case property names into camel case to match their corresponding CSS property names.
 				if ( property.includes( '_' ) ) {
@@ -118,7 +118,11 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	createGlobalItemMarkup( globalData ) {
-		const $typographyPreview = jQuery( '<div>', { class: 'e-global__preview-item e-global__typography', 'data-global-id': globalData.id } );
+		const $typographyPreview = jQuery( '<div>', {
+			class: 'e-global__preview-item e-global__typography',
+			'data-global-id': globalData.id,
+			title: globalData.title,
+		} );
 
 		$typographyPreview
 			.html( globalData.title )

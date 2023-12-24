@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 export const LOCATIONS = {
 	RESIZE: 'resize',
 	GENERATE: 'generate',

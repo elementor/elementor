@@ -95,7 +95,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		$fields['gaps'] = [
 			'label' => esc_html__( 'Gaps', 'elementor' ),
 			'type' => Controls_Manager::GAPS,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'default' => [
 				'unit' => 'px',
 			],
@@ -104,6 +104,11 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
 			'responsive' => true,
+			'validators' => [
+				'Number' => [
+					'min' => 0,
+				],
+			],
 		];
 
 		$fields['auto_flow'] = [
@@ -119,26 +124,27 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
 			],
 			'responsive' => true,
-		];
+			'frontend_available' => true,
+		] + $this->get_responsive_autoflow_defaults();
 
 		$fields['justify_items'] = [
-			'label' => esc_html_x( 'Justify Items', 'Grid Container Control', 'elementor' ),
+			'label' => esc_html__( 'Justify Items', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
-					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-align-' . $icon_start . '-h',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Center', 'elementor' ),
 					'icon' => 'eicon-align-center-h',
 				],
 				'end' => [
-					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-align-' . $icon_end . '-h',
 				],
 				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Stretch', 'elementor' ),
 					'icon' => 'eicon-align-stretch-h',
 				],
 			],
@@ -150,23 +156,23 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		$fields['align_items'] = [
-			'label' => esc_html_x( 'Align Items', 'Grid Container Control', 'elementor' ),
+			'label' => esc_html__( 'Align Items', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
-					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-align-start-v',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Center', 'elementor' ),
 					'icon' => 'eicon-align-center-v',
 				],
 				'end' => [
-					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-align-end-v',
 				],
 				'stretch' => [
-					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Stretch', 'elementor' ),
 					'icon' => 'eicon-align-stretch-v',
 				],
 			],
@@ -177,33 +183,33 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		$fields['justify_content'] = [
-			'label' => esc_html_x( 'Justify Content', 'Grid Container Control', 'elementor' ),
+			'label' => esc_html__( 'Justify Content', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'label_block' => true,
 			'default' => '',
 			'options' => [
 				'start' => [
-					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-justify-start-h',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Middle', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Middle', 'elementor' ),
 					'icon' => 'eicon-justify-center-h',
 				],
 				'end' => [
-					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-justify-end-h',
 				],
 				'space-between' => [
-					'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Space Between', 'elementor' ),
 					'icon' => 'eicon-justify-space-between-h',
 				],
 				'space-around' => [
-					'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Space Around', 'elementor' ),
 					'icon' => 'eicon-justify-space-around-h',
 				],
 				'space-evenly' => [
-					'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Space Evenly', 'elementor' ),
 					'icon' => 'eicon-justify-space-evenly-h',
 				],
 			],
@@ -217,33 +223,33 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		$fields['align_content'] = [
-			'label' => esc_html_x( 'Align Content', 'Grid Container Control', 'elementor' ),
+			'label' => esc_html__( 'Align Content', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'label_block' => true,
 			'default' => '',
 			'options' => [
 				'start' => [
-					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-justify-start-v',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Middle', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Middle', 'elementor' ),
 					'icon' => 'eicon-justify-center-v',
 				],
 				'end' => [
-					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-justify-end-v',
 				],
 				'space-between' => [
-					'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Space Between', 'elementor' ),
 					'icon' => 'eicon-justify-space-between-v',
 				],
 				'space-around' => [
-					'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Space Around', 'elementor' ),
 					'icon' => 'eicon-justify-space-around-v',
 				],
 				'space-evenly' => [
-					'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
+					'title' => esc_html__( 'Space Evenly', 'elementor' ),
 					'icon' => 'eicon-justify-space-evenly-v',
 				],
 			],
@@ -293,6 +299,17 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		}
 
 		return $responsive_unit_defaults;
+	}
+
+	protected function get_responsive_autoflow_defaults() {
+		$responsive_autoflow_defaults = [];
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$responsive_autoflow_defaults[ $breakpoint_name . '_default' ] = 'row';
+		}
+
+		return $responsive_autoflow_defaults;
 	}
 
 	protected function get_default_options() {

@@ -83,7 +83,6 @@
 	font-size: 12px;
 	font-weight: 500;
 	line-height: 1.2;
-	text-transform: uppercase;
 	padding: 8px 16px;
 	outline: none;
 	border: none;
@@ -236,6 +235,13 @@
 	&::-webkit-scrollbar-thumb {
 		background-color: $color;
 		border-radius: $border-radius;
+	}
+}
+
+@mixin button-focus-outline() {
+
+	&:focus-visible {
+		outline: 5px auto -webkit-focus-ring-color;
 	}
 }
 //End

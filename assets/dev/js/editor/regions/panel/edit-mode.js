@@ -63,7 +63,7 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChanged( activeMode ) {
-		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
+		const ctrlLabel = environment.mac ? '\u2318' : 'Ctrl';
 
 		let text = 'preview' === activeMode ? __( 'Show Panel', 'elementor' ) : __( 'Hide Panel', 'elementor' );
 		text += ` (${ ctrlLabel } + P)`;

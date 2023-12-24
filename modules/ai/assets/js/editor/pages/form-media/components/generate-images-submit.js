@@ -1,4 +1,5 @@
 import GenerateButton from '../../../components/generate-button';
+import { __ } from '@wordpress/i18n';
 
 const GenerateImagesSubmit = ( props ) => {
 	return (
