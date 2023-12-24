@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport;
 use Elementor\App\Modules\ImportExport\Module;
 use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Modules\System_Info\Reporters\Server;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
@@ -13,14 +12,14 @@ class Test_Module extends Elementor_Test_Base {
 	private $elementor_upload_dir;
 	private $elementor_upload_dir_permission;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->elementor_upload_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
 		$this->elementor_upload_dir_permission = fileperms( $this->elementor_upload_dir );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		// Cleanup
@@ -30,7 +29,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_export_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
 		// Expect
 		$this->expectException( \Error::class );
-		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
+		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY );
 
 		// Arrange
 		$elementor_uploads_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
@@ -46,7 +45,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_upload_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
 		// Expect
 		$this->expectException( \Error::class );
-		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
+		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY );
 
 		// Arrange
 		$elementor_uploads_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
@@ -62,7 +61,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_import_kit__fails_when_elementor_uploads_has_no_writing_permissions() {
 		// Expect
 		$this->expectException( \Error::class );
-		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
+		$this->expectExceptionMessage( Module::NO_WRITE_PERMISSIONS_KEY );
 
 		// Arrange
 		$elementor_uploads_dir = ( new Server() )->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
@@ -268,5 +267,27 @@ class Test_Module extends Elementor_Test_Base {
 		$instance->assert_array_have_keys( $import_session_keys, $import_sessions[0] );
 
 		$instance->assertEquals( $session_id, $import_sessions[0]['session_id'] );
+	}
+
+	public function test_is_third_party_class__returns_false_on_native_class() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$is_third_party_class = $import_export_module->is_third_party_class( Module::class );
+
+		// Assert
+		$this->assertFalse( $is_third_party_class );
+	}
+
+	public function test_is_third_party_class__returns_true_on_third_party() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$is_third_party_class = $import_export_module->is_third_party_class( 'ThirdParty\Test' );
+
+		// Assert
+		$this->assertTrue( $is_third_party_class );
 	}
 }

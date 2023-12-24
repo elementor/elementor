@@ -74,6 +74,18 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	/**
+	 * Hide widget from panel.
+	 *
+	 * Hide the star rating widget from the panel.
+	 *
+	 * @since 3.17.0
+	 * @return bool
+	 */
+	public function show_in_panel(): bool {
+		return false;
+	}
+
+	/**
 	 * Register star rating widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -88,6 +100,17 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => esc_html__( 'Rating', 'elementor' ),
 			]
 		);
+
+		if ( Plugin::$instance->widgets_manager->get_widget_types( 'rating' ) ) {
+			$this->add_deprecation_message(
+				'3.17.0',
+				esc_html__(
+					'You are currently editing a Star Rating widget in its old version. Drag a new Rating widget onto your page to use a newer version, providing better capabilities.',
+					'elementor'
+				),
+				'rating'
+			);
+		}
 
 		$this->add_control(
 			'rating_scale',
@@ -245,10 +268,18 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -273,10 +304,18 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -290,10 +329,18 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 5,
 					],
 				],
 				'selectors' => [

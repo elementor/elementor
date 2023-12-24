@@ -1,0 +1,36 @@
+name: Get New Release Name
+description: Get the new release name from inputs.PLUGIN_NAME. php (sets by 'Create Rc Tag' action) and set it as an environment variable.
+
+inputs:
+  BUILD_ZIP_FILE_PATH:
+    description: 'The path to the zip file.'
+    required: true
+  PLUGIN_NAME:
+    description: 'The name of the plugin.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            OUTPUT_PATH=/tmp/
+            unzip ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
+            RELEASE_NAME=$(grep "Version:" $OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php | awk '{print $3}')
+
+            if [ -z "$RELEASE_NAME" ]; then
+              echo "RELEASE_NAME is empty"
+              exit 1
+            fi
+
+            RELEASE_FILENAME=$RELEASE_NAME
+
+            # e.g. elementor-3.11.0-cloud20 => v3.11.0-cloud20
+            RELEASE_NAME=${RELEASE_NAME/${{ inputs.PLUGIN_NAME }}-/v}
+
+            # e.g. v3.11.0 => 3.11.0
+            RELEASE_NAME=${RELEASE_NAME/v/}
+
+
+            echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
+            echo "RELEASE_FILENAME=${RELEASE_FILENAME}" >> $GITHUB_ENV

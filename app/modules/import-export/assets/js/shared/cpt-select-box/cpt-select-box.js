@@ -6,8 +6,8 @@ import TextField from 'elementor-app/ui/atoms/text-field';
 
 export default function CptSelectBox() {
 	const sharedContext = useContext( SharedContext ),
-	{ customPostTypes } = sharedContext.data || [],
-	[ selected, setSelected ] = useState( [] );
+		{ customPostTypes } = sharedContext.data || [],
+		[ selected, setSelected ] = useState( [] );
 
 	useEffect( () => {
 		setSelected( arrayValueIterator( customPostTypes ) );

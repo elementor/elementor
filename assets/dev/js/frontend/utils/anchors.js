@@ -77,7 +77,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}, this.getSettings( 'scrollDuration' ), 'linear', () => {
 			// On scroll animation complete: add scroll-snap back.
 			if ( isScrollSnapActive() ) {
-					elementorFrontend.elements.$body.css( 'scroll-snap-type', '' );
+				elementorFrontend.elements.$body.css( 'scroll-snap-type', '' );
 			}
 		} );
 	},

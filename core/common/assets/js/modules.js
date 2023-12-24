@@ -5,6 +5,9 @@ import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import HookBreak from 'elementor-api/modules/hook-break';
 
 elementorModules.common = {
+	/**
+	 * @deprecated since 2.9.0, use `$e.modules.ComponentBase` instead.
+	 */
 	get Component() {
 		// `elementorCommon` isn't available during it self initialize.
 		setTimeout( () => {
@@ -14,6 +17,9 @@ elementorModules.common = {
 		return ComponentBase;
 	},
 
+	/**
+	 * @deprecated since 2.9.0, use `$e.modules.ComponentModalBase` instead.
+	 */
 	get ComponentModal() {
 		// `elementorCommon` isn't available during it self initialize.
 		setTimeout( () => {
@@ -23,6 +29,9 @@ elementorModules.common = {
 		return ComponentModalBase;
 	},
 
+	/**
+	 * @deprecated since 2.9.0, use `$e.modules.HookBreak` instead.
+	 */
 	get HookBreak() {
 		// `elementorCommon` isn't available during it self initialize.
 		setTimeout( () => {

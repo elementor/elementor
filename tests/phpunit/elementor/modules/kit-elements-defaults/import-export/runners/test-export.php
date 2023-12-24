@@ -7,7 +7,7 @@ use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Modules\KitElementsDefaults\ImportExport\Runners\Export;
 
 class Test_Export extends Elementor_Test_Base {
-	public function setUp() {
+	public function setUp(): void {
 		require_once __DIR__ . '/mock/mock-widget-kits-defaults.php';
 		require_once __DIR__ . '/mock/mock-control-kits-defaults.php';
 
@@ -16,11 +16,10 @@ class Test_Export extends Elementor_Test_Base {
 		Plugin::$instance->controls_manager->register( new Mock_Control_Kits_Defaults() );
 		Plugin::$instance->widgets_manager->register( new Mock_Widget_Kits_Defaults() );
 
-
 		parent::setUp();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->widgets_manager->unregister( Mock_Widget_Kits_Defaults::NAME );
@@ -34,6 +33,10 @@ class Test_Export extends Elementor_Test_Base {
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Module::META_KEY, [
 			Mock_Widget_Kits_Defaults::NAME => [
 				'text' => 'value <script>Test</script> value',
+				'slider' => [
+					'size' => 10,
+					'unit' => 'px',
+				],
 				'remove_because_has_export_false' => 'some value',
 				'invalid_control' => 'some value',
 				'removed_on_import_and_on_export_method' => 'some value',
@@ -53,12 +56,16 @@ class Test_Export extends Elementor_Test_Base {
 		$result = $runner->export( [] );
 
 		// Assert
-		$this->assertEquals( [
+		$this->assertSame( [
 			'files' => [
 				'path' => 'kit-elements-defaults',
 				'data' => [
 					Mock_Widget_Kits_Defaults::NAME => [
 						'text' => 'value Test value',
+						'slider' => [
+							'size' => 10,
+							'unit' => 'px',
+						],
 						'mock-control-1' => 'value changed on export',
 						'__globals__' => [
 							'color' => 'global-color',

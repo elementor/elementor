@@ -5,12 +5,15 @@ import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-act
 import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-
+import { useSettingsContext } from '../context/settings-context';
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
-	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
+	const [ type, { subscriptionPlan, badgeLabel } ] = useKitCallToAction( props.model.accessTier );
+	const { settings } = useSettingsContext();
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
+	const ctaText = settings.is_pro ? 'Upgrade' : `Go ${ subscriptionPlan?.label || '' }`;
+	const showPromotion = TYPE_PROMOTION === type;
 
 	const eventTracking = ( command ) => {
 		appsEventTrackingDispatch(
@@ -47,14 +50,15 @@ const KitListItem = ( props ) => {
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					{
-						! elementorAppConfig.hasPro && subscriptionPlan?.label &&
+						showPromotion && (
 							<Badge
 								variant="sm"
 								className="e-kit-library__kit-item-subscription-plan-badge"
-								style={ { backgroundColor: subscriptionPlan.color } }
+								style={ { '--e-a-color-brand': subscriptionPlan.color } }
 							>
-								{ subscriptionPlan.label }
+								{ badgeLabel }
 							</Badge>
+						)
 					}
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-overlay">
@@ -66,13 +70,15 @@ const KitListItem = ( props ) => {
 								onClick={ () => eventTracking( 'kit-library/check-out-kit' ) }
 							/>
 							{
-								type === TYPE_PROMOTION && subscriptionPlan?.label && <Button
-									className="e-kit-library__kit-item-overlay-promotion-button"
-									text={ `Go ${ subscriptionPlan.label }` }
-									icon="eicon-external-link-square"
-									url={ promotionUrl }
-									target="_blank"
-								/>
+								showPromotion && (
+									<Button
+										className="e-kit-library__kit-item-overlay-promotion-button"
+										text={ ctaText }
+										icon="eicon-external-link-square"
+										url={ promotionUrl }
+										target="_blank"
+									/>
+								)
 							}
 						</Grid>
 					</CardOverlay>

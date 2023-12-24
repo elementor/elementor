@@ -147,7 +147,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'section': {
 				let searchTarget = target;
@@ -164,12 +164,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'container': {
 				passed = !! findChildrenContainer( target, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'column': {
 				let searchTarget = target;
@@ -180,12 +180,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'widget': {
 				passed = !! findChildrenContainer( target.parent, copiedContainer );
 			}
-			break;
+				break;
 		}
 	}
 

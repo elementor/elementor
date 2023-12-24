@@ -7,6 +7,7 @@ use Elementor\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExport\Runners\Import\Elementor_Content;
@@ -22,7 +23,9 @@ use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
-	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
+	const ZIP_FILE_ERROR_KEY = 'invalid-zip-file';
+
+	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
 	/**
 	 * @var Import_Runner_Base[]
@@ -52,11 +55,11 @@ class Import {
 	private $adapters;
 
 	/**
-	 * Document's elements that imported during the process.
+	 * Document's data (elements and settings) that was imported during the process.
 	 *
-	 * @var array
+	 * @var array { [document_id] => { "elements": array , "settings": array } }
 	 */
-	private $documents_elements = [];
+	private $documents_data = [];
 
 	/**
 	 * Path to the extracted kit files.
@@ -176,6 +179,10 @@ class Import {
 
 			$this->set_default_settings();
 		}
+
+		add_filter( 'wp_php_error_args', function ( $args, $error ) {
+			return $this->filter_php_error_args( $args, $error );
+		}, 10, 2 );
 	}
 
 	/**
@@ -203,7 +210,7 @@ class Import {
 		$this->settings_selected_custom_post_types = $instance_data['settings_selected_custom_post_types'];
 		$this->settings_selected_plugins = $instance_data['settings_selected_plugins'];
 
-		$this->documents_elements = $instance_data['documents_elements'];
+		$this->documents_data = $instance_data['documents_data'];
 		$this->imported_data = $instance_data['imported_data'];
 		$this->runners_import_metadata = $instance_data['runners_import_metadata'];
 	}
@@ -217,7 +224,7 @@ class Import {
 	 * @throws \Exception
 	 */
 	public static function from_session( string $session_id ): Import {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions = Utils::get_import_sessions();
 
 		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
 			throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
@@ -390,7 +397,7 @@ class Import {
 	 * @return void
 	 */
 	public function init_import_session( $save_instance_data = false ) {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions = Utils::get_import_sessions( true );
 
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
@@ -418,7 +425,7 @@ class Import {
 				'settings_selected_custom_post_types' => $this->settings_selected_custom_post_types,
 				'settings_selected_plugins' => $this->settings_selected_plugins,
 
-				'documents_elements' => $this->documents_elements,
+				'documents_data' => $this->documents_data,
 				'imported_data' => $this->imported_data,
 				'runners_import_metadata' => $this->runners_import_metadata,
 			];
@@ -570,9 +577,14 @@ class Import {
 	 */
 	public function prevent_saving_elements_on_post_creation( array $data, Document $document ) {
 		if ( isset( $data['elements'] ) ) {
-			$this->documents_elements[ $document->get_main_id() ] = $data['elements'];
+			$this->documents_data[ $document->get_main_id() ] = [ 'elements' => $data['elements'] ];
 
 			$data['elements'] = [];
+		}
+
+		if ( isset( $data['settings'] ) ) {
+			$this->documents_data[ $document->get_main_id() ]['settings'] = $data['settings'];
+
 		}
 
 		return $data;
@@ -588,6 +600,10 @@ class Import {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
 
 		if ( is_wp_error( $extraction_result ) ) {
+			if ( isset( $extraction_result->errors['zip_error'] ) ) {
+				throw new \Error( static::ZIP_ARCHIVE_ERROR_KEY );
+			}
+
 			throw new \Error( static::ZIP_FILE_ERROR_KEY );
 		}
 
@@ -603,7 +619,8 @@ class Import {
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );
 
 		if ( ! $manifest ) {
-			throw new \Error( static::MANIFEST_ERROR_KEY );
+			Plugin::$instance->logger->get_logger()->error( static::MANIFEST_ERROR_KEY );
+			throw new \Error( static::ZIP_FILE_ERROR_KEY );
 		}
 
 		$this->init_adapters( $manifest );
@@ -724,25 +741,45 @@ class Import {
 	 * Handle the replacement of all the dynamic content of the elements that probably have been changed during the import.
 	 */
 	private function save_elements_of_imported_posts() {
-		foreach ( $this->documents_elements as $new_id => $document_elements ) {
+		$imported_data_replacements = $this->get_imported_data_replacements();
+
+		foreach ( $this->documents_data as $new_id => $data ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$updated_elements = $document->on_import_update_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
-			$document->save( [ 'elements' => $updated_elements ] );
+
+			if ( isset( $data['elements'] ) ) {
+				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
+			}
+
+			if ( isset( $data['settings'] ) ) {
+
+				if ( $document instanceof Kit ) {
+					// Without post_status certain tabs in the Kit will not save properly.
+					$data['settings']['post_status'] = get_post_status( $new_id );
+				}
+
+				$data['settings'] = $document->on_import_update_settings( $data['settings'], $imported_data_replacements );
+			}
+
+			$document->save( $data );
 		}
 	}
 
 	private function update_instance_data_in_import_session_option() {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions = Utils::get_import_sessions();
 
-		$import_sessions[ $this->session_id ]['instance_data']['documents_elements'] = $this->documents_elements;
+		$import_sessions[ $this->session_id ]['instance_data']['documents_data'] = $this->documents_data;
 		$import_sessions[ $this->session_id ]['instance_data']['imported_data'] = $this->imported_data;
 		$import_sessions[ $this->session_id ]['instance_data']['runners_import_metadata'] = $this->runners_import_metadata;
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
-	private function finalize_import_session_option() {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+	public function finalize_import_session_option() {
+		$import_sessions = Utils::get_import_sessions();
+
+		if ( ! isset( $import_sessions[ $this->session_id ] ) ) {
+			return;
+		}
 
 		unset( $import_sessions[ $this->session_id ]['instance_data'] );
 
@@ -750,5 +787,20 @@ class Import {
 		$import_sessions[ $this->session_id ]['runners'] = $this->runners_import_metadata;
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
+	/**
+	 * Filter the php error args and return 408 status code if the error is a timeout.
+	 *
+	 * @param array $args
+	 * @param array $error
+	 * @return array
+	 */
+	private function filter_php_error_args( $args, $error ) {
+		if ( strpos( $error['message'], 'Maximum execution time' ) !== false ) {
+			$args['response'] = 408;
+		}
+
+		return $args;
 	}
 }

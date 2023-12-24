@@ -167,6 +167,10 @@ class Feedback extends Module {
 			wp_send_json_error();
 		}
 
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		$reason_key = Utils::get_super_global_value( $_POST, 'reason_key' ) ?? '';
 		$reason_text = Utils::get_super_global_value( $_POST, "reason_{$reason_key}" ) ?? '';
 

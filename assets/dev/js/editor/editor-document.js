@@ -15,6 +15,9 @@ $e.modules.editor = {
 
 // TODO: Remove, BC.
 $e.modules.document = {
+	/**
+	 * @deprecated since 3.7.0, use `$e.modules.editor.document.CommandHistoryBase` instead.
+	 */
 	get CommandHistory() {
 		elementorDevTools.deprecation.deprecated(
 			'$e.modules.document.CommandHistory',
@@ -25,6 +28,9 @@ $e.modules.document = {
 		return $e.modules.editor.document.CommandHistoryBase;
 	},
 
+	/**
+	 * @deprecated since 3.7.0, use `$e.modules.editor.document.CommandHistoryDebounceBase` instead.
+	 */
 	get CommandHistoryDebounce() {
 		elementorDevTools.deprecation.deprecated(
 			'$e.modules.CommandHistoryDebounce',

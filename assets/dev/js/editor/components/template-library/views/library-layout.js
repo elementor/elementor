@@ -26,18 +26,20 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getTemplateActionButton( templateData ) {
 		const subscriptionPlans = elementor.config.library_connect.subscription_plans,
-			baseAccessLevel = elementor.config.library_connect.base_access_level;
+			baseAccessTier = elementor.config.library_connect.base_access_tier,
+			templateAccessTier = templateData.accessTier,
+			shouldUpgrade = baseAccessTier !== templateAccessTier;
 
-		let viewId = '#tmpl-elementor-template-library-' + ( baseAccessLevel !== templateData.accessLevel ? 'upgrade-plan-button' : 'insert-button' );
+		let viewId = '#tmpl-elementor-template-library-' + ( shouldUpgrade ? 'upgrade-plan-button' : 'insert-button' );
 
 		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
 		const template = Marionette.TemplateCache.get( viewId );
-
-		const subscriptionPlan = subscriptionPlans[ templateData.accessLevel ] ?? subscriptionPlans[ 1 ]; // 1 is Pro plan.
+		const subscriptionPlan = subscriptionPlans[ templateAccessTier ];
+		const promotionText = elementorAppConfig.hasPro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`;
 
 		return Marionette.Renderer.render( template, {
-			promotionText: `Go ${ subscriptionPlan.label }`,
+			promotionText,
 			promotionLink: subscriptionPlan.promotion_url,
 		} );
 	},

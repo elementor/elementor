@@ -112,7 +112,7 @@ ksort( $types );
 				<input type="text" placeholder="<?php echo esc_attr__( 'Enter template name (optional)', 'elementor' ); ?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
 			</div>
 		</div>
-		<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
-		<a id="elementor-new-template__form__lock_button" class="elementor-button elementor-button-brand e-hidden" target="_blank"><?php // Will be filled from js. ?></a>
+		<button id="elementor-new-template__form__submit" class="elementor-button e-primary"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
+		<a id="elementor-new-template__form__lock_button" class="elementor-button e-accent e-hidden" target="_blank"><?php // Will be filled from js. ?></a>
 	</form>
 </script>

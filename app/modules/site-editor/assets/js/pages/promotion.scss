@@ -16,6 +16,6 @@ $promotion-overlay-icon-color: theme-colors(light);
 	&__icon {
 		font-size: $promotion-overlay-icon-size;
 		color: $promotion-overlay-icon-color;
-		margin-bottom: $promotion-overlay-icon-spacing;
+		margin-block-end: $promotion-overlay-icon-spacing;
 	}
 }

@@ -8,13 +8,13 @@ export const SharedContext = React.createContext();
 
 export default function SharedContextProvider( props ) {
 	const initialState = {
-		includes: kitContentData.map( ( item ) => item.type ),
-		referrer: null,
-		customPostTypes: [],
-		selectedCustomPostTypes: null,
-		currentPage: null,
-	},
-	[ data, dispatch ] = useReducer( reducer, initialState );
+			includes: kitContentData.map( ( item ) => item.type ),
+			referrer: null,
+			customPostTypes: [],
+			selectedCustomPostTypes: null,
+			currentPage: null,
+		},
+		[ data, dispatch ] = useReducer( reducer, initialState );
 
 	return (
 		<SharedContext.Provider value={ { data, dispatch } }>

@@ -234,7 +234,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'%' => [
 						'min' => 0,
@@ -242,21 +242,17 @@ class TextPath extends Widget_Base {
 						'step' => 10,
 					],
 					'px' => [
-						'min' => 0,
 						'max' => 800,
 						'step' => 50,
 					],
 				],
 				'default' => [
-					'unit' => 'px',
 					'size' => 500,
 				],
 				'tablet_default' => [
-					'unit' => 'px',
 					'size' => 500,
 				],
 				'mobile_default' => [
-					'unit' => 'px',
 					'size' => 500,
 				],
 				'selectors' => [
@@ -270,7 +266,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+				'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
 				'default' => [
 					'unit' => 'deg',
 				],
@@ -334,29 +330,28 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Word Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => -20,
 						'max' => 20,
-						'step' => 1,
 					],
 					'em' => [
 						'min' => -1,
 						'max' => 1,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => -1,
+						'max' => 1,
 					],
 				],
 				'default' => [
-					'unit' => 'px',
 					'size' => '',
 				],
 				'tablet_default' => [
-					'unit' => 'px',
 					'size' => '',
 				],
 				'mobile_default' => [
-					'unit' => 'px',
 					'size' => '',
 				],
 				'selectors' => [
@@ -368,7 +363,7 @@ class TextPath extends Widget_Base {
 		$this->add_control(
 			'start_point',
 			[
-				'label' => esc_html__( 'Starting Point', 'elementor' ),
+				'label' => esc_html__( 'Starting Point', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%' ],
 				'range' => [
@@ -448,7 +443,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
+				'size_units' => [ 's', 'ms', 'custom' ],
 				'default' => [
 					'unit' => 's',
 					'size' => 0.3,
@@ -528,15 +523,20 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 1,
-					'unit' => 'px',
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => 1,
 						'max' => 20,
-						'step' => 1,
+					],
+					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
+						'max' => 2,
 					],
 				],
 				'selectors' => [
@@ -594,15 +594,20 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => '',
-					'unit' => 'px',
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => 1,
 						'max' => 20,
-						'step' => 1,
+					],
+					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
+						'max' => 2,
 					],
 				],
 				'selectors' => [
@@ -616,7 +621,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
+				'size_units' => [ 's', 'ms', 'custom' ],
 				'default' => [
 					'unit' => 's',
 					'size' => 0.3,
@@ -667,8 +672,9 @@ class TextPath extends Widget_Base {
 		// Add Text Path attributes.
 		$this->add_render_attribute( 'text_path', [
 			'class' => 'e-text-path',
-			'data-text' => esc_attr( $settings['text'] ),
+			'data-text' => htmlentities( esc_attr( $settings['text'] ) ),
 			'data-url' => esc_url( $path_url ),
+			'data-link-url' => esc_url( $settings['link']['url'] ?? '' ),
 		] );
 
 		// Add hover animation.

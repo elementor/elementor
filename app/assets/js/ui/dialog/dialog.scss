@@ -5,9 +5,9 @@
 	&__close-button {
 		position: absolute;
 		top: spacing(44) * -1;
-		right: spacing(44) * -1;
-		margin-top: spacing(10);
-		margin-right: spacing(10);
+		@include end(spacing(44) * -1);
+		margin-block-start: spacing(10);
+		margin-inline-end: spacing(10);
 		z-index: $eps-zindex-modal;
 		font-size: type(size, "20");
 		color: theme-colors(light);
@@ -28,7 +28,7 @@
 
 	&__button {
 		flex: 1;
-		border-top: 1px solid var(--hr-color);
+		border-block-start: 1px solid var(--hr-color);
 		line-height: spacing(44);
 		text-align: center;
 		justify-content: center;

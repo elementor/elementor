@@ -11,14 +11,14 @@ $root: e-kit-library__tags-filter;
 }
 
 .e-kit-library__tags-filter {
-	margin-top: spacing(44);
+	margin-block-start: spacing(44);
 
 	&-list {
-		margin-bottom: spacing(44);
+		margin-block-end: spacing(44);
 
 		.eps-collapse__title {
-			padding-right: spacing(30);
-			padding-left: spacing(30);
+			padding-inline-end: spacing(30);
+			padding-inline-start: spacing(30);
 			text-transform: uppercase;
 		}
 
@@ -33,7 +33,7 @@ $root: e-kit-library__tags-filter;
 	}
 
 	&-list-search {
-		margin-bottom: spacing(10);
+		margin-block-end: spacing(10);
 
 		.eps-search-input {
 			background: var(--e-kit-library-tags-filter-list-search-background-color);
@@ -47,7 +47,7 @@ $root: e-kit-library__tags-filter;
 		font-weight: 500;
 
 		input {
-			@include margin-end(spacing(5))
+			margin-inline-end: spacing(5);
 		}
 	}
 }

@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -75,6 +76,31 @@ class Admin extends App {
 		exit;
 	}
 
+	private function register_packages() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		Collection::make( [ 'ui', 'icons' ] )
+			->each( function( $package ) use ( $assets_config_provider ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$config = $assets_config_provider->load( $package )->get( $package );
+
+				if ( ! $config ) {
+					return;
+				}
+
+				wp_register_script(
+					$config['handle'],
+					ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$suffix}.js",
+					$config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -94,6 +120,21 @@ class Admin extends App {
 			true
 		);
 
+		$this->register_packages();
+
+		// Temporary solution for the admin.
+		wp_register_script(
+			'elementor-ai-admin',
+			$this->get_js_assets_url( 'ai-admin' ),
+			[
+				'elementor-common',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
 		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
@@ -106,6 +147,8 @@ class Admin extends App {
 		);
 
 		wp_enqueue_script( 'elementor-admin' );
+
+		wp_set_script_translations( 'elementor-admin', 'elementor' );
 
 		$this->print_config();
 	}
@@ -573,17 +616,23 @@ class Admin extends App {
 			],
 		];
 
-		$additions_actions = [
-			'go-pro' => [
-				'title' => esc_html__( 'Upgrade', 'elementor' ),
-				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
-			],
-		];
+		$additions_actions = [];
 
-		// Visible to all core users when Elementor Pro is not installed.
-		$additions_actions['find_an_expert'] = [
-			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
+		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
+			$additions_actions['ai-library'] = [
+				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
+			];
+		} else {
+			$additions_actions['ai'] = [
+				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-widget-ai/',
+			];
+		}
+
+		$additions_actions['go-pro'] = [
+			'title' => esc_html__( 'Upgrade', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 		];
 
 		/**
@@ -695,6 +744,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-new-template', 'elementor' );
 	}
 
 	/**
@@ -718,6 +769,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
 	}
 
 	/**
@@ -883,6 +936,7 @@ class Admin extends App {
 					'state' => $experiment_data['state'],
 					'default' => $experiment_data['default'],
 					'dependencies' => $dependencies,
+					'messages' => $experiment_data['messages'] ?? [],
 				];
 			} )->all();
 	}

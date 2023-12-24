@@ -16,7 +16,7 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'core/editor/assets/scss',
+				cwd: 'core/editor/loader/v2/scss',
 				src: '*.scss',
 				dest: 'assets/css',
 				ext: '.css'
@@ -48,7 +48,35 @@ const sass = {
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',
 				ext: '.css',
-			}
+			},
+			{
+				expand: true,
+				cwd: 'modules/announcements/assets/scss',
+				src: 'announcements.scss',
+				dest: 'assets/css/modules/announcements',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/styleguide/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/styleguide',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/ai/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/ai',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/apps/assets/scss',
+				src: 'admin.scss',
+				dest: 'assets/css/modules/apps',
+				ext: '.css',
+			},
 		]
 	}
 };

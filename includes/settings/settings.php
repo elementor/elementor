@@ -202,7 +202,7 @@ class Settings extends Settings_Page {
 	 *
 	 * @since 1.7.5
 	 * @access public
-	 * @deprecated 3.0.0
+	 * @deprecated 3.0.0 Use `Plugin::$instance->files_manager->clear_cache()` method instead.
 	 */
 	public function update_css_print_method() {
 		Plugin::$instance->files_manager->clear_cache();
@@ -397,11 +397,14 @@ class Settings extends Settings_Page {
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',
+			'elementor-system-info',
+			'e-form-submissions',
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
-			'elementor_custom_custom_code',
+			'elementor_custom_code',
 			'popup_templates',
+			'elementor-apps',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {

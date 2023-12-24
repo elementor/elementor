@@ -6,13 +6,14 @@
 	align-items: center;
 	height: 40px;
 	color: #fff;
-	background-color: $editor-accent;
+	background-color: var(--e-a-color-accent);
 	padding: 0 25px;
 
 	&__message {
+
 		a {
 			text-decoration: underline;
-			color: #fff;
+			color: var(--e-a-color-txt-invert);
 
 			&:hover {
 				color: $editor-lightest;
@@ -22,7 +23,6 @@
 
 	&__primary_action {
 		margin-inline: 12px;
-		text-transform: uppercase;
 
 		a {
 			background: $white;
@@ -76,7 +76,7 @@
 
 	a,
 	i {
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 	}
 }
 

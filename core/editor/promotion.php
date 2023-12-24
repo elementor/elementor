@@ -23,7 +23,7 @@ class Promotion {
 			'action_button' => [
 				'text' => $has_pro ?
 					__( 'Connect & Activate', 'elementor' ) :
-					__( 'Upgrade', 'elementor' ),
+					__( 'Upgrade Now', 'elementor' ),
 				'url' => $has_pro ?
 					admin_url( 'admin.php?page=elementor-license' ) :
 					'https://go.elementor.com/go-pro-%s',
