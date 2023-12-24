@@ -456,16 +456,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 1000,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
 				],
 			],
 			'default' => [
@@ -497,6 +488,9 @@ class Group_Control_Background extends Group_Control_Base {
 					TagsModule::POST_META_CATEGORY,
 					TagsModule::URL_CATEGORY,
 				],
+			],
+			'ai' => [
+				'active' => false,
 			],
 			'condition' => [
 				'background' => [ 'video' ],
