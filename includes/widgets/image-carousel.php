@@ -833,7 +833,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 12,
 				],
 				'range' => [
@@ -841,13 +840,9 @@ class Widget_Image_Carousel extends Widget_Base {
 						'min' => 0,
 						'max' => 100,
 					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-carousel-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

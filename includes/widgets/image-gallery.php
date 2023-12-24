@@ -359,7 +359,6 @@ class Widget_Image_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 12,
 				],
 				'range' => [
@@ -367,13 +366,9 @@ class Widget_Image_Gallery extends Widget_Base {
 						'min' => 0,
 						'max' => 100,
 					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'gallery_display_caption' => '',
