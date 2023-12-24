@@ -70,6 +70,7 @@ module.exports = function( config ) {
 			// Editor.
 			'assets/js/editor-modules.min.js',
 			'assets/js/editor-document.min.js',
+			'assets/js/editor-v2.js',
 
 			// Tests.
 			'assets/js/qunit-tests.min.js',
@@ -106,7 +107,7 @@ module.exports = function( config ) {
 		customLaunchers: {
 			ChromeHeadlessCustom: {
 				base: 'ChromeHeadless',
-					flags: [ '--no-sandbox', '--single-process' ],
+				flags: [ '--no-sandbox', '--single-process' ],
 			},
 		},
 		browserDisconnectTimeout: 6000,

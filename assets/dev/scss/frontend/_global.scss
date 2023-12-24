@@ -10,9 +10,6 @@
 		}
 	}
 
-	// Reset Style for some themes and browsers
-	hyphens: manual;
-
 	a {
 		box-shadow: none;
 		text-decoration: none;
@@ -52,10 +49,6 @@
 		margin: 0;
 		line-height: 1;
 		border: none;
-	}
-
-	.elementor-custom-embed {
-		line-height: 0; //for google maps margin bottom
 	}
 
 	// Background Video
@@ -399,4 +392,3 @@
 .eicon-animation-spin {
 	animation: eicon-spin 2s infinite linear;
 }
-

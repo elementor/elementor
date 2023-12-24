@@ -5,7 +5,7 @@ import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section'
 /**
  * @typedef {import('../../../../../../container/container')} Container
  */
- export class InnerSectionColumns extends After {
+export class InnerSectionColumns extends After {
 	getCommand() {
 		return 'document/elements/create';
 	}

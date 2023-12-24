@@ -16,7 +16,7 @@
 
 		.e-logo-wrapper {
 			font-size: 10px;
-			@include margin-end(10px);
+			margin-inline-end: 10px;
 		}
 	}
 
@@ -29,7 +29,7 @@
 	}
 
 	&__skip {
-		@include border-start(1px solid #eee);
+		border-inline-start: 1px solid #eee;
 		font-size: 16px;
 		color: inherit;
 
@@ -43,7 +43,7 @@
 
 		h2 {
 			font-size: 2em;
-			margin-top: 0;
+			margin-block-start: 0;
 		}
 	}
 
@@ -63,7 +63,7 @@
 	&__actions {
 
 		.button-primary {
-			@include margin-end(20px);
+			margin-inline-end: 20px;
 		}
 	}
 }

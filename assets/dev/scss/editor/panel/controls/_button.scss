@@ -1,10 +1,14 @@
 .elementor-control-type-button {
 	.elementor-control-input-wrapper {
-		text-align: $end;
+		text-align: end;
 	}
 
 	.elementor-button {
 		width: auto;
-		height: 26px;
+
+		&.elementor-button-center {
+			display: block;
+			margin: 0 auto;
+		}
 	}
 }

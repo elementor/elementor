@@ -1,68 +1,26 @@
 //Hotkyes modal (Keyboard shortcuts)
 #elementor-hotkeys {
-	text-align: $start;
+	text-align: start;
+
+	&__modal {
+
+		.dialog-buttons-wrapper {
+			display: none;
+		}
+	}
 
 	&__content {
 		display: flex;
+		justify-content: space-between;
+		gap: 70px;
+		padding: 20px 30px;
 		width: 100%;
 		overflow: hidden;
-		margin-bottom: 30px;
 
 		@media (max-width: $editor-screen-md-max) {
 			flex-direction: column;
-		}
-	}
-
-	&__actions {
-
-		.elementor-hotkeys__list {
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 3px;
-			}
-		}
-
-		.elementor-hotkeys__header,
-		.elementor-hotkeys__list {
-			@media (min-width: $editor-screen-lg-min) {
-				@include padding-end(25px);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include padding-end(50px);
-			}
-		}
-	}
-
-	&__navigation {
-
-		.elementor-hotkeys__list {
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 3px;
-			}
-		}
-
-		.elementor-hotkeys__header {
-			@media (min-width: $editor-screen-lg-min) {
-				@include padding-start(25px);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include padding-start(50px);
-			}
-		}
-
-		.elementor-hotkeys__list {
-			@media (min-width: $editor-screen-lg-min) {
-				@include padding-start(15px);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include padding-start(40px);
-			}
+			gap: 20px;
+			padding: 20px;
 		}
 	}
 }
@@ -70,58 +28,23 @@
 .elementor-hotkeys {
 
 	&__col {
-		width: 50%;
-
-		@media (max-width: $editor-screen-md-max) {
-			width: 100%;
-		}
-	}
-
-	&__header,
-	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 		width: 100%;
 	}
 
 	&__header{
-		padding: 10px 30px;
 		font-weight: 500;
-
-		@media (max-width: $editor-screen-xs-max) {
-			padding-right: 10px;
-			padding-left: 10px;
-		}
-	}
-
-	&__list {
-		background-color: #ffffff;
-		height: calc(100% - 42px);
-		padding: 10px 20px;
-
-		@media (max-width: $editor-screen-xs-max) {
-			padding: 0;
-		}
-
-		@media (max-width: $editor-screen-md-max) {
-			margin-bottom: 30px;
-		}
-
-		@media (max-width: $editor-screen-md-max) {
-			height: auto;
-		}
 	}
 
 	&__item {
 		display: flex;
 		align-items: center;
 		padding: 20px 10px;
-		border-bottom: 1px solid $gray-lighter;
 
-		&:last-child {
-			margin-bottom: 30px;
-
-			@media (max-width: $editor-screen-xs-max) {
-				margin-bottom: 0;
-			}
+		&:not(:last-child) {
+			border-block-end: var(--e-a-border);
 		}
 
 		&--label {
@@ -133,40 +56,36 @@
 		&--shortcut {
 			flex-grow: 0;
 			display: flex;
+			gap: 27px;
 
-			@if $direction == rtl {
-				flex-direction: row-reverse;
+			@media (max-width: $editor-screen-md-max) {
+				gap: 23px;
 			}
 
-			span {
+			kbd {
 				position: relative;
-				background-color: $gray-lighter;
+				font-family: unset;
+				background-color: var(--e-a-bg-active);
 				padding: 5px 12px;
-				margin-right: 27px;
-				border-radius: 3px;
+				border-radius: var(--e-a-border-radius);
 
-				@media (max-width: $editor-screen-xs-max) {
+				@media (max-width: $editor-screen-md-max) {
 					padding: 4px 9px;
-					margin-right: 23px;
 				}
 
-				&:after {
-					content: '+';
-					position: absolute;
-					right: -18px;
-					width: 9px;
-					text-align: center;
+				&:not(:last-of-type) {
 
-					@media (max-width: $editor-screen-xs-max) {
-						right: -16px;
-					}
-				}
+					&::after {
+						content: "+";
+						position: absolute;
+						@include end(0);
+						width: 9px;
+						text-align: center;
+						margin-inline-end: -18px;
 
-				&:last-child {
-					margin-right: 0;
-
-					&:after {
-						display: none;
+						@media (max-width: $editor-screen-md-max) {
+							margin-inline-end: -16px;
+						}
 					}
 				}
 			}

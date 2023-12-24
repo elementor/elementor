@@ -17,6 +17,8 @@ class Test_Module extends Elementor_Test_Base {
 	 */
 	public function test_ajax_get_category_items() {
 		// Arrange
+		$this->act_as_admin();
+
 		$mock = new Mock_Category();
 
 		add_action( 'elementor/finder/register', function ( Categories_Manager $categories_manager ) use ( $mock ) {
@@ -26,7 +28,7 @@ class Test_Module extends Elementor_Test_Base {
 		$module = new Finder_Module();
 
 		// Act
-		$category_items = $module->ajax_get_category_items( [ 'category' => 'mock' ] );
+		$category_items = $module->ajax_get_category_items( [ 'category' => 'mock_id' ] );
 
 		// Assert
 		$mock_items = $mock->get_category_items();

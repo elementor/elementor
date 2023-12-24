@@ -29,6 +29,14 @@ module.exports = elementorModules.ViewModule.extend( {
 		return true;
 	},
 
+	isElementInTheCurrentDocument() {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return false;
+		}
+
+		return elementor.documents.currentDocument.id.toString() === this.$element[ 0 ].closest( '.elementor' ).dataset.elementorId;
+	},
+
 	findElement( selector ) {
 		var $mainElement = this.$element;
 

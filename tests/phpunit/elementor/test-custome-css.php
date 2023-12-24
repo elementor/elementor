@@ -11,7 +11,7 @@ class Elementor_Test_Document_Types extends Elementor_Test_Base {
 	public function test_getInstance() {
 		$document_types = $this->elementor()->documents->get_document_types();
 		$missing_custom_css = [];
-		$exclude = [ 'container', 'section', 'not-supported' ];
+		$exclude = [ 'container', 'section', 'not-supported', 'test-document' ];
 		foreach ( $document_types as $type => $class_name ) {
 			$document = $this->elementor()->documents->create( $type );
 			// TODO                                           remove this ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ when section will have "custom_css_pro"

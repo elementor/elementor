@@ -21,7 +21,7 @@ export default function ExportInfoModal( props ) {
 					<>
 						{ __( 'To turn your site into a Website Kit, select the templates, content, settings and plugins you want to include. Once it’s ready, you’ll get a .zip file that you can import to other sites.', 'elementor' ) }
 						<br /><br />
-						<InlineLink url="http://go.elementor.com/app-export-kit">{ __( 'Learn More', 'elementor' ) }</InlineLink>
+						<InlineLink url="https://go.elementor.com/app-export-kit">{ __( 'Learn More', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
 			</InfoModal.Section>

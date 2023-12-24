@@ -57,7 +57,7 @@ class AdminBar extends elementorModules.ViewModule {
 		if ( this.elements.$editMenuItem.length ) {
 			// This is the normal case, when user visit a preview page of single post.
 			this.elements.$editMenuItem.after( $items );
-		} else if ( this.elements.$newMenuItem ) {
+		} else if ( this.elements.$newMenuItem.length ) {
 			// This is another case, when user visit a preview page that cannot be edited e.g: archive page.
 			this.elements.$newMenuItem.after( $items );
 		} else {

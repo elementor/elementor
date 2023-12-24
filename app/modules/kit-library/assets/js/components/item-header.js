@@ -1,4 +1,4 @@
-import ApplyKitDialog from './apply-kit-dialog';
+import KitDialog from './kit-dialog';
 import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
@@ -10,6 +10,7 @@ import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 
 import './item-header.scss';
 
@@ -25,8 +26,9 @@ import './item-header.scss';
  * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
-	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
+	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, model.id, model.title );
+	const { settings } = useSettingsContext();
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -48,8 +50,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
 			return {
 				id: 'promotion',
-				// Translators: %s is the subscription plan name.
-				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
+				text: settings.is_pro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`,
 				hideText: false,
 				variant: 'contained',
 				color: 'cta',
@@ -99,10 +100,12 @@ export default function ItemHeader( props ) {
 				if ( 401 === errorResponse.code ) {
 					elementorCommon.config.library_connect.is_connected = false;
 					elementorCommon.config.library_connect.current_access_level = 0;
+					elementorCommon.config.library_connect.current_access_tier = TIERS.free;
 
 					updateSettings( {
 						is_library_connected: false,
 						access_level: 0,
+						access_tier: TIERS.free,
 					} );
 
 					setIsConnectDialogOpen( true );
@@ -143,10 +146,10 @@ export default function ItemHeader( props ) {
 				error && (
 					<Dialog
 						title={ error.message }
-						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
-						approveButtonText={ __( 'Learn More', 'elementor' ) }
-						approveButtonColor="link"
-						approveButtonUrl="http://go.elementor.com/app-kit-library-error/"
+						text={ __( 'Go to the pages screen to make sure your kit pages have been imported successfully. If not, try again.', 'elementor' ) }
+						approveButtonText={ __( 'Go to pages', 'elementor' ) }
+						approveButtonColor="primary"
+						approveButtonUrl={ elementorAppConfig.admin_url + 'edit.php?post_type=page' }
 						approveButtonOnClick={ () => setError( false ) }
 						dismissButtonText={ __( 'Got it', 'elementor' ) }
 						dismissButtonOnClick={ () => setError( false ) }
@@ -155,9 +158,9 @@ export default function ItemHeader( props ) {
 				)
 			}
 			{
-				downloadLinkData && <ApplyKitDialog
-					downloadLink={ downloadLinkData.data.download_link }
-					nonce={ downloadLinkData.meta.nonce }
+				downloadLinkData && <KitDialog
+					id={ props.model.id }
+					downloadLinkData={ downloadLinkData }
 					onClose={ () => setDownloadLinkData( null ) }
 				/>
 			}
@@ -167,16 +170,23 @@ export default function ItemHeader( props ) {
 					onClose={ () => setIsConnectDialogOpen( false ) }
 					onSuccess={ ( data ) => {
 						const accessLevel = data.kits_access_level || data.access_level || 0;
+						const accessTier = data.access_tier;
 
 						elementorCommon.config.library_connect.is_connected = true;
 						elementorCommon.config.library_connect.current_access_level = accessLevel;
+						elementorCommon.config.library_connect.current_access_tier = accessTier;
 
 						updateSettings( {
 							is_library_connected: true,
 							access_level: accessLevel, // BC: Check for 'access_level' prop
+							access_tier: accessTier,
 						} );
 
 						if ( data.access_level < props.model.accessLevel ) {
+							return;
+						}
+
+						if ( ! isTierAtLeast( accessTier, props.model.accessTier ) ) {
 							return;
 						}
 

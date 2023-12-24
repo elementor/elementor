@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -207,7 +208,7 @@ class Compatibility {
 		// Fix Preview URL for https://github.com/wpmudev/domain-mapping plugin
 		if ( class_exists( 'domain_map' ) ) {
 			add_filter( 'elementor/document/urls/preview', function( $preview_url ) {
-				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== $_SERVER['HTTP_HOST'] ) {
+				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== Utils::get_super_global_value( $_SERVER, 'HTTP_HOST' ) ) {
 					$preview_url = \domain_map::utils()->unswap_url( $preview_url );
 					$preview_url = add_query_arg( [
 						'dm' => \Domainmap_Module_Mapping::BYPASS,

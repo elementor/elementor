@@ -121,7 +121,13 @@ class Settings_Sanitizer {
 			return $this;
 		}
 
-		$this->pending_settings = wp_kses_post_deep( $this->pending_settings );
+		$this->pending_settings = map_deep( $this->pending_settings, function( $value ) {
+			if ( ! is_string( $value ) ) {
+				return $value;
+			}
+
+			return wp_kses_post( $value );
+		} );
 
 		return $this;
 	}

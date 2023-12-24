@@ -163,7 +163,7 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 		return [
 			'popover' => [
 				'starter_name' => 'css_filter',
-				'starter_title' => esc_html_x( 'CSS Filters', 'Filter Control', 'elementor' ),
+				'starter_title' => esc_html__( 'CSS Filters', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
 				],

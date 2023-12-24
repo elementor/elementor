@@ -20,6 +20,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
 			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick',
+			'keyup @ui.galleryThumbnails': 'onGalleryThumbnailsKeyPress',
 		} );
 	},
 
@@ -175,7 +176,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.$el.remove();
 	},
 
-	resetGallery() {
+	clearGallery() {
 		this.setValue( [] );
 
 		this.applySavedValue();
@@ -187,14 +188,14 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
 				removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-					message: __( 'Are you sure you want to reset this gallery?', 'elementor' ),
-					headerMessage: __( 'Reset Gallery', 'elementor' ),
+					message: __( 'Are you sure you want to clear this gallery?', 'elementor' ),
+					headerMessage: __( 'Clear gallery', 'elementor' ),
 					strings: {
-						confirm: __( 'Delete', 'elementor' ),
+						confirm: __( 'Clear', 'elementor' ),
 						cancel: __( 'Cancel', 'elementor' ),
 					},
 					defaultOption: 'confirm',
-					onConfirm: this.resetGallery.bind( this ),
+					onConfirm: this.clearGallery.bind( this ),
 				} );
 			}
 
@@ -212,6 +213,15 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 	onGalleryThumbnailsClick() {
 		this.openFrame( 'edit' );
+	},
+
+	onGalleryThumbnailsKeyPress( event ) {
+		const ENTER_KEY = 13,
+			SPACE_KEY = 32;
+
+		if ( ENTER_KEY === event.which || SPACE_KEY === event.which ) {
+			this.onGalleryThumbnailsClick( event );
+		}
 	},
 } );
 

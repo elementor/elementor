@@ -1,0 +1,104 @@
+labels: ["request"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              **👋 Hello, welcome to Elementor Feature Requests!**
+              # ⚠️ BEFORE POSTING READ THIS CAREFULLY
+              ## 🚀 Please only use this form to request an Elementor feature or enhancement.
+              **🚩 Check our [Roadmap](https://elemn.to/gh-to-roadmap) to learn what's in the pipeline.**
+              ### 🛟 Need Help, Guidance, Assistance, or Support? <br>[Click here to get support](https://elemn.to/support-ticket).
+              ### 🐞 Need to Report an Elementor Bug? <br>[Click here to report a bug](https://elemn.to/gh-new-bug-report).
+
+              **ℹ️ For more information, please read our [Contribution Guidelines](https://elemn.to/gh-contributing).**
+              <br>
+
+              ### 😉 Follow these best practices to help save time
+              - ✒️ **Write a Clear and Concise Title** <br>Summarize your title in a short sentence that can help identify your request at a glance without needing to read the description.
+              - ☝️ **One Request Per Thread** <br>If you have multiple requests, please submit only **<ins>ONE REQUEST PER THREAD</ins>**. <br>Requests with more than one subject may be closed without action.
+              <br>
+
+
+              ### ✳️ Fill-in all required fields!
+              - ❌ Requests lacking detail or submitted for any other reason than to suggest new ideas, features, or enhancements for the Elementor plugin may be closed without action.
+              <br>
+
+              ---
+              <br>
+
+              ## THE REQUEST
+              ### 📋 Prerequisites
+              - 🔍 **Search Before Posting** <br>Before creating a new Feature Request, please [search for similar requests](https://elemn.to/gh-feature-requests) to prevent creating duplicates. 
+              - ✔️ **Confirm Before Posting** <br>Please check the [Elementor Features page](https://elemn.to/features) before posting to avoid requesting an existing feature.
+    - type: checkboxes
+      id: prerequisites
+      attributes:
+          label: "Prerequisites"
+          options:
+              - label: "I have searched for similar feature requests in both open and closed discussions and cannot find an existing request."
+                required: true
+              - label: "I have verified that the feature is still missing from the latest stable versions of Elementor or Elementor Pro."
+                required: true
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 💬 Provide a Detailed Description
+              - Please explain in detail what problem your idea is going to solve. (Required)
+              - Describe how you'd like a solution to be implemented. (Required)
+              - Give examples of alternative solutions you've considered.
+              - Add context to your suggestion by providing examples, screenshots, screen recordings, related links, and additional information.
+    - type: textarea
+      id: the_problem
+      validations:
+          required: true
+      attributes:
+          label: "What problem is your feature request going to solve? Please describe.."
+          description: "Help everyone understand in detail what problems you are trying to solve."
+          placeholder: "I'm always frustrated when ..."
+    - type: textarea
+      id: the_solution
+      validations:
+          required: true
+      attributes:
+          label: "Describe the solution you'd like."
+          description: "Help everyone understand in a clear and concise description what you want to happen."
+          placeholder: "It would be nice if ..."
+    - type: textarea
+      id: alternatives
+      attributes:
+          label: "Describe alternatives you've considered."
+          description: "Give examples of any alternative solutions or features you've considered."
+          placeholder: "It can also be solved by ..."
+    - type: textarea
+      id: additional_context
+      attributes:
+          label: "Additional context"
+          description: "Add any other context, references, or illustrations about the feature request here."
+          placeholder: "Here's an example of ..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ### 📃 Agreement
+              - ⚠️ Please follow all the instructions above and fill in all the required fields with valid information. <br>We reserve the right to close requests that do not comply with these guidelines without any action.
+    - type: checkboxes
+      id: final_agreement
+      attributes:
+          label: "Agreement"
+          options:
+              - label: "I agree that my request may be closed without action if it doesn't meet all the requirements."
+                required: true
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+
+              ---
+              ### Thank you for contributing and helping shape the future of Elementor! 🙏
+
+              We are thrilled to receive your request, and we will consider adding it to our [Roadmap](https://elemn.to/gh-to-roadmap) if we see enough demand from other users.
+
+              _Please understand that due to the high volume of requests we receive and our commitment to continuous improvement, we can't guarantee that every suggestion will be implemented. We will, however, continue to monitor every submission. <br>Thank you for understanding!_

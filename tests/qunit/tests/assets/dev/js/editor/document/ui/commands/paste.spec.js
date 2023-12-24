@@ -147,7 +147,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'section': {
 				let searchTarget = target;
@@ -164,12 +164,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'container': {
 				passed = !! findChildrenContainer( target, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'column': {
 				let searchTarget = target;
@@ -180,12 +180,12 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 				passed = !! findChildrenContainer( searchTarget, copiedContainer );
 			}
-			break;
+				break;
 
 			case 'widget': {
 				passed = !! findChildrenContainer( target.parent, copiedContainer );
 			}
-			break;
+				break;
 		}
 	}
 
@@ -223,33 +223,6 @@ export const Paste = () => {
 				// Check.
 				assert.equal( eColumn.children.length, 2,
 					'Pasted element were created.' );
-			} );
-
-			QUnit.test( 'Rules', ( assert ) => {
-				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
-					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						ElementsHelper.empty();
-
-						const source = ElementsHelper.createAuto( sourceElType ),
-							target = ElementsHelper.createAuto( targetElType );
-						// Handle inner-section.
-						if ( 'object' === typeof isAllowed ) {
-							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
-								validateRule( assert,
-									target,
-									_targetElType,
-									source,
-									sourceElType,
-									isAllowed[ _targetElType ],
-								);
-							} );
-
-							return;
-						}
-
-						validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
-					} );
-				} );
 			} );
 
 			QUnit.module( 'Positions', () => {

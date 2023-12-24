@@ -3,7 +3,7 @@ var SortableBehavior;
 /**
  * @typedef {import('../../../container/container')} Container
  */
- SortableBehavior = Marionette.Behavior.extend( {
+SortableBehavior = Marionette.Behavior.extend( {
 	defaults: {
 		elChildType: 'widget',
 	},
@@ -160,7 +160,7 @@ var SortableBehavior;
 			cid: $item.data( 'model-cid' ),
 		} );
 
-		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="elementor-element-title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
+		return '<div style="height: 84px; width: 125px;" class="elementor-sortable-helper elementor-sortable-helper-' + model.get( 'elType' ) + '"><div class="icon"><i class="' + model.getIcon() + '"></i></div><div class="title-wrapper"><div class="title">' + model.getTitle() + '</div></div></div>';
 	},
 
 	getChildViewContainer() {

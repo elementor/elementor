@@ -21,7 +21,7 @@ $root: e-app-collapse;
 			font-size: type(size, "14");
 			position: absolute;
 			top: 50%;
-			right: var(--e-app-collapse-toggle-icon-spacing);
+			@include end(var(--e-app-collapse-toggle-icon-spacing));
 			transform: translateY(-50%);
 
 			&:before {
@@ -53,8 +53,8 @@ $root: e-app-collapse;
 	.#{$root} {
 		&-toggle {
 			&__icon {
-				right: initial;
-				left: var(--e-app-collapse-toggle-icon-spacing);
+				@include end(initial);
+				@include start(var(--e-app-collapse-toggle-icon-spacing));
 			}
 		}
 	}

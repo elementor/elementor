@@ -8,7 +8,7 @@ $e-kit-library-sticky-search-z-index: 2;
 		flex-direction: column;
 	}
 
-	&__index-layout-top-area {
+	&__index-layout-heading {
 		padding: spacing(30) spacing(44);
 		position: sticky;
 		top: -1px;
@@ -27,8 +27,8 @@ $e-kit-library-sticky-search-z-index: 2;
 	}
 
 	&__index-layout-main {
-		padding-top: spacing(0);
-		padding-bottom: spacing(24);
+		padding-block-start: spacing(0);
+		padding-block-end: spacing(24);
 		overflow-y: hidden;
 		height: auto;
 		flex: 1 0 auto;

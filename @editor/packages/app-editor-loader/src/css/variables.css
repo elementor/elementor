@@ -1,0 +1,250 @@
+.editor-app {
+	/* Primary Colors */
+	--white: #ffffff;
+	--black: #000000;
+
+	--gray-darkest: #2C2C2C;
+	--gray-darker: #373a3c;
+	--gray-dark: #55595c;
+	--gray: #818a91;
+	--gray-light: #D4D4D4;
+	--gray-lighter: #eceeef;
+	--gray-lightest: #f7f7f7;
+	--gray-mouse: #CCD6DF;
+	--gray-bg: #e6e9ec;
+
+	--blue: #0275d8;
+	--blue-flat: #1b607f;
+	--blue-light: #5bc0de;
+	--green: #5cb85c;
+	--green-light: #2ecc71;
+	--orange: #f0ad4e;
+	--red: #d9534f;
+	--purple: #9C7AC1;
+
+	/* Platform */
+	--platform-primary: #040080;
+	--platform-secondary: #6A727C;
+	--platform-text: #46F2B6;
+	--platform-accent: #871A40;
+	--platform-darkest-gray: #0C0D0E;
+	--platform-darker-gray: #3A3F45;
+	--platform-dark-gray: #525861;
+	--platform-mid-gray: #69727D;
+	--platform-gray-light: #9EA5AD;
+	--platform-gray-lighter: #C2C7CC;
+	--platform-gray-lightest: #D5D8DC;
+	--platform-bg-light: #F9FAFA;
+	--platform-danger-bg: #FDE8EC;
+	--platform-danger-text: #B92136;
+	--platform-success-bg: #ECF9F2;
+	--platform-success-text: #117740;
+
+	/* Info Alert */
+	--info: #5bc0de;
+	--info-text: #31708f;
+	--info-bg: #d9edf7;
+	/*--info-border: darken(--info-bg, 7%);*/
+	--info-wc-bg: #F6F9FB;
+	--info-wc-primary-text: #3f84b9;
+
+	/* Success Alert */
+	--success: #5cb85c;
+	--success-text: #3c763d;
+	--success-bg: #dff0d8;
+	/*--success-border: darken(--success-bg, 7%);*/
+	--success-wc-bg: #FAFBF5;
+
+	/* Warning Alert */
+	--warning: #f0ad4e;
+	--warning-text: #8a6d3b;
+	--warning-bg: #fcf8e3;
+	/*--warning-border: darken(--warning-bg, 7%);*/
+
+	/* Danger Alert */
+	--danger: #d9534f;
+	--danger-text: #a94442;
+	--danger-bg: #f2dede;
+	/*--danger-border: darken(--danger-bg, 7%);*/
+	--danger-wc-bg: #F9F2F5;
+
+	/* Progress Bar */
+	--progress-bg: #eeeeee;
+	--progress-text: #ffffff;
+
+	/* Official Social / Sharing Colors */
+	--android: #A4C639;
+	--apple: #999999;
+	--behance: #1769ff;
+	--bitbucket: #205081;
+	--codepen: #000000;
+	--delicious: #3399ff;
+	--deviantart: #05cc47;
+	--digg: #005be2;
+	--dribbble: #ea4c89;
+	--elementor: #D30C5C;
+	--envelope: #ea4335;
+	--facebook: #3b5998;
+	--flickr: #0063dc;
+	--foursquare: #2d5be3;
+	--freecodecamp: #006400;
+	--github: #333333;
+	--gitlab: #e24329;
+	--google-plus: #dd4b39;
+	--houzz: #7ac142;
+	--instagram: #262626;
+	--jsfiddle: #487AA2;
+	--linkedin: #0077b5;
+	--medium: #00ab6b;
+	--meetup: #ec1c40;
+	--mix: #f3782b;
+	--mixcloud: #273a4b;
+	--odnoklassniki: #F4731C;
+	--pinterest: #bd081c;
+	--pocket: #EF3F56;
+	--print: #aaaaaa;
+	--product-hunt: #da552f;
+	--reddit: #ff4500;
+	--rss: #f26522;
+	--shopping-cart: #4CAF50;
+	--skype: #00AFF0;
+	--slideshare: #0077b5;
+	--snapchat: #fffc00;
+	--soundcloud: #ff8800;
+	--spotify: #2ebd59;
+	--stack-overflow: #fe7a15;
+	--steam: #00adee;
+	--stumbleupon: #EB4924;
+	--telegram: #2CA5E0;
+	--thumbtack: #1aa1d8;
+	--tripadvisor: #589442;
+	--tumblr: #35465c;
+	--twitch: #6441A5;
+	--twitter: #1DA1F2;
+	--viber: #665cac;
+	--vimeo: #1ab7ea;
+	--vk: #45668e;
+	--weibo: #DD2430;
+	--weixin: #31A918;
+	--whatsapp: #25d366;
+	--wordpress: #21759b;
+	--xing: #026466;
+	--yelp: #af0606;
+	--youtube: #cd201f;
+	--five-h-px: #0099e5;
+
+	/* WordPress Admin */
+	--wp-primary: #0085ba;
+	--admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+
+
+	/* Brand Colors */
+	--brand-color-dark-pink: #93003c;
+	--brand-color-royal-blue: #010150;
+	--brand-color-dark: #434363;
+	--brand-color-light: #93003c;
+
+
+	/* Editor colors */
+	--editor-darkest: #495157;
+	--editor-darker: #556068;
+	--editor-dark: #6d7882;
+
+	--editor-light: #a4afb7;
+	--editor-lighter: #c2cbd2;
+	--editor-lightest: #d5dadf;
+
+	--editor-accent: --brand-color-dark-pink;
+	--editor-background: --gray-bg;
+	--editor-background-light: #f1f3f5;
+	--editor-background-lighter: #fcfcfc;
+
+	--editor-orange: #fcb92c;
+	--editor-red: #d72b3f;
+
+	--editor-danger: --editor-red;
+	--editor-warning: #b01b1b;
+	--editor-success: #39b54a;
+	--editor-info: #71d7f7;
+
+	/* Container element primary color. */
+	/* TODO: Need a final color from the Design. */
+	--editor-container-primary: #0098c7;
+
+	--editor-kit-accent: #4ab7f4;
+
+	/* Panel Alert */
+	--editor-alert-danger: var(--editor-danger);
+	--editor-alert-warning: var(--editor-orange);
+	--editor-alert-info: var(--editor-info);
+	--editor-alert-success: var(--editor-success);
+
+	--editor-alert-danger-bg: #fefbfc;
+	--editor-alert-warning-bg: #fcfcfc;
+	--editor-alert-info-bg: #f3fcff;
+	--editor-alert-success-bg: #fcfffc;
+
+	/* WordPress colors */
+	--wp-warning: #ffb900;
+	--wp-warning-text: #f56e28;
+
+	--wp-success: #46b450;
+	--wp-success-text: #79ba49;
+
+	/* Panel style */
+	--panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
+	--panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+
+	--slides_gui: rgba(238, 238, 238, .9);
+
+	/* Panel Transition */
+	--transition-hover: all .3s;
+
+	/* Layers (Z-indexes) */
+	--under-layer: -1;
+	--ground-layer: 0;
+	--first-layer: 1;
+	--second-layer: 2;
+	--third-layer: 3;
+	--fourth-layer: 4;
+
+	--element-overlay: 9998;
+	--editor-layer: 9999;
+	--super-layer: 10000;
+
+	/* Grid Columns */
+	--column-size-10: 10%;
+	--column-size-11: 11.111%;
+	--column-size-12: 12.5%;
+	--column-size-14: 14.285%;
+	--column-size-16: 16.666%;
+	--column-size-20: 20%;
+	--column-size-25: 25%;
+	--column-size-30: 30%;
+	--column-size-33: 33.333%;
+	--column-size-40: 40%;
+	--column-size-50: 50%;
+	--column-size-60: 60%;
+	--column-size-66: 66.666%;
+	--column-size-70: 70%;
+	--column-size-75: 75%;
+	--column-size-80: 80%;
+	--column-size-83: 83.333%;
+	--column-size-90: 90%;
+	--column-size-100: 100%;
+
+	--control-unit: 27px;
+
+	/* Panel */
+	--panel-width: 280px;
+	--panel-xl-width: 300px;
+
+	/* Grid Breakpoints */
+	--breakpoint-sm: 480px; /*Mobile landscape*/
+	--breakpoint-md: 768px; /* Tablet */
+	--breakpoint-lg: 1025px; /* Desktop */
+	--breakpoint-xl: 1440px; /* Larger devices */
+	--breakpoint-xxl: 1600px; /* Largest devices */
+
+	--devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile';
+}

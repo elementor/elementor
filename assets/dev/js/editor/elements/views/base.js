@@ -41,6 +41,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			'data-id': this.getID(),
 			'data-element_type': this.model.get( 'elType' ),
+			'data-model-cid': this.model.cid,
 		};
 	},
 
@@ -134,7 +135,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getContextMenuGroups() {
-		const controlSign = environment.mac ? '⌘' : '^';
+		const controlSign = environment.mac ? '&#8984;' : '^';
 
 		let groups = [
 			{
@@ -168,7 +169,9 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
 						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
-						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/copy', {
+							containers: elementor.selection.getElements( this.getContainer() ),
+						} ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
@@ -180,14 +183,23 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'pasteStyle',
-						title: __( 'Paste Style', 'elementor' ),
+						title: __( 'Paste style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
+						name: 'pasteArea',
+						icon: 'eicon-import-export',
+						title: __( 'Paste from other site', 'elementor' ),
+						callback: () => $e.run( 'document/elements/paste-area', {
+							container: this.getContainer(),
+						} ),
+					}, {
 						name: 'resetStyle',
-						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+						title: __( 'Reset style', 'elementor' ),
+						callback: () => $e.run( 'document/elements/reset-style', {
+							containers: elementor.selection.getElements( this.getContainer() ),
+						} ),
 					},
 				],
 			},
@@ -200,8 +212,8 @@ BaseElementView = BaseContainer.extend( {
 		 *
 		 * This filter allows adding new context menu groups to elements.
 		 *
-		 * @param  array  customGroups - An array of group objects.
-		 * @param  string elementType - The current element type.
+		 * @param array  customGroups - An array of group objects.
+		 * @param string elementType - The current element type.
 		 */
 		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
 
@@ -256,6 +268,14 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+
+		if ( ! this.onDynamicServerRequestEnd ) {
+			this.onDynamicServerRequestEnd = _.debounce( () => {
+				this.render();
+
+				this.$el.removeClass( 'elementor-loading' );
+			}, 100 );
+		}
 	},
 
 	getHandlesOverlay() {
@@ -276,7 +296,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param  array editButtons An array of buttons.
+			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
 
@@ -289,7 +309,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param  array editButtons An array of buttons.
+			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons/${ elementType }`, editButtons );
 		}
@@ -360,6 +380,11 @@ BaseElementView = BaseContainer.extend( {
 			model.isInner = true;
 		} else if ( 'container' !== model.elType ) {
 			// Don't allow adding anything other than widget, inner-section or a container.
+			return;
+		}
+
+		// Don't allow adding inner-sections inside inner-sections.
+		if ( 'section' === model.elType && this.isInner() ) {
 			return;
 		}
 
@@ -537,7 +562,9 @@ BaseElementView = BaseContainer.extend( {
 	renderCustomElementID() {
 		const customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
-		this.$el.attr( 'id', customElementID );
+		if ( customElementID ) {
+			this.$el.attr( 'id', customElementID );
+		}
 	},
 
 	renderUI() {
@@ -727,12 +754,12 @@ BaseElementView = BaseContainer.extend( {
 						changed = renderDataBinding( dataBinding );
 					}
 				}
-				break;
+					break;
 
 				case 'content': {
 					changed = renderDataBinding( dataBinding );
 				}
-				break;
+					break;
 			}
 
 			if ( changed ) {
@@ -769,11 +796,7 @@ BaseElementView = BaseContainer.extend( {
 			onServerRequestStart() {
 				self.$el.addClass( 'elementor-loading' );
 			},
-			onServerRequestEnd() {
-				self.render();
-
-				self.$el.removeClass( 'elementor-loading' );
-			},
+			onServerRequestEnd: self.onDynamicServerRequestEnd,
 		};
 	},
 
@@ -822,7 +845,27 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Defer to wait for all of the children to render.
-		setTimeout( () => this.initDraggable(), 0 );
+		setTimeout( () => {
+			this.initDraggable();
+			this.dispatchElementLifeCycleEvent( 'rendered' );
+		} );
+	},
+
+	dispatchElementLifeCycleEvent( eventType ) {
+		let event;
+
+		// Event name set like this for maintainability.
+		switch ( eventType ) {
+			case 'rendered':
+				event = 'elementor/editor/element-rendered';
+				break;
+			case 'destroyed':
+				event = 'elementor/editor/element-destroyed';
+				break;
+		}
+
+		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
+		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -902,6 +945,9 @@ BaseElementView = BaseContainer.extend( {
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
+
+		// Defer so the event is fired after the element is removed from the DOM.
+		setTimeout( () => this.dispatchElementLifeCycleEvent( 'destroyed' ) );
 	},
 
 	// eslint-disable-next-line jsdoc/require-returns-check
@@ -937,7 +983,7 @@ BaseElementView = BaseContainer.extend( {
 			<div class="icon">
 				<i class="${ model.getIcon() }"></i>
 			</div>
-			<div class="elementor-element-title-wrapper">
+			<div class="title-wrapper">
 				<div class="title">${ model.getTitle() }</div>
 			</div>
 		`;
@@ -949,6 +995,10 @@ BaseElementView = BaseContainer.extend( {
 	 * Initialize the Droppable instance.
 	 */
 	initDraggable() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		// Init the draggable only for Containers and their children.
 		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
 			return;

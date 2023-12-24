@@ -5,33 +5,78 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
+import InlineLink from 'elementor-app/ui/molecules/inline-link';
 
 const messagesContent = {
-		general: {
-			text: __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ),
-		},
-		'zip-archive-module-not-installed': {
-			text: __( 'Install a PHP zip on your server or contact your site host.', 'elementor' ),
-		},
-		'manifest-error': {
-			text: __( 'There is an error with the manifest file. Try importing again with a new kit file.', 'elementor' ),
-		},
-		'no-write-permissions': {
-			text: __( 'Elementor is not authorized to read or write from this file. Contact your site host.', 'elementor' ),
-		},
-		'plugin-installation-permissions-error': {
-			text: __( 'This kit requires new plugin installation. Unfortunately, you do not have permissions to install new plugins. Contact your site host.', 'elementor' ),
-		},
+	general: {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: <>
+			{ __( 'We couldn’t download the Kit due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
+			<InlineLink url="https://my.elementor.com/support-center/">
+				{ __( 'Support', 'elementor' ) }
+			</InlineLink>
+		</>,
 	},
-	dialogTitle = __( 'Something went wrong.', 'elementor' ),
-	tryAgainText = __( 'Try Again', 'elementor' );
+	'zip-archive-module-missing': {
+		title: __( 'Couldn’t handle the Kit', 'elementor' ),
+		text: __( 'Seems like your server is missing the PHP zip module. Install it on your server or contact your site host for further instructions.', 'elementor' ),
+	},
+	'invalid-zip-file': {
+		title: __( 'Couldn’t use the Kit', 'elementor' ),
+		text: <>
+			{ __( 'Seems like there is a problem with the Kit’s files. Try installing again and if the problem persists contact ', 'elementor' ) }
+			<InlineLink url="https://my.elementor.com/support-center/">
+				{ __( 'Support', 'elementor' ) }
+			</InlineLink>
+		</>,
+	},
+	timeout: {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: <>
+			{ __( 'It took too much time to download your Kit and we were unable to complete the process. If all the Kit’s parts don’t appear in ', 'elementor' ) }
+			<InlineLink url={ elementorAppConfig.pages_url } >
+				{ __( 'Pages', 'elementor' ) }
+			</InlineLink>
+			{ __( ', try again and if the problem persists contact ', 'elementor' ) }
+			<InlineLink url="https://my.elementor.com/support-center/">
+				{ __( 'Support', 'elementor' ) }
+			</InlineLink>
+		</>,
+	},
+	'invalid-kit-library-zip-error': {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: <>
+			{ __( 'We couldn’t download the Kit due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor' ) }
+			<InlineLink url="https://my.elementor.com/support-center/">
+				{ __( 'Support', 'elementor' ) }
+			</InlineLink>
+		</>,
+	},
+	'no-write-permissions': {
+		title: __( 'Couldn’t access the file', 'elementor' ),
+		text: __( 'Seems like Elementor isn’t authorized to access relevant files for installing this Kit. Contact your site host to get permission.', 'elementor' ),
+	},
+	'plugin-installation-permissions-error': {
+		title: __( 'Couldn’t install the Kit', 'elementor' ),
+		text: __( 'The Kit includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
+	},
+	'third-party-error': {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: __( 'This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go.', 'elementor' ),
+	},
+	'domdocument-missing': {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: __( 'This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor' ),
+	},
+};
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
 	const action = useAction(),
 		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
 		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
-		{ text } = messagesContent[ error ],
+		{ title, text } = messagesContent[ error ],
+		tryAgainText = __( 'Try Again', 'elementor' ),
 		isTryAgainAction = 'general' === error && onApprove,
 		handleOnApprove = () => {
 			/*
@@ -62,7 +107,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 
 	return (
 		<Dialog
-			title={ dialogTitle }
+			title={ title }
 			text={ text }
 			approveButtonColor="link"
 			approveButtonText={ isTryAgainAction ? tryAgainText : approveButton }

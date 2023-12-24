@@ -2,7 +2,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	getDefaultSettings() {
 		return {
 			classes: {
-				swiperContainer: 'elementor-background-slideshow swiper-container',
+				swiperContainer: `elementor-background-slideshow ${ elementorFrontend.config.swiperClass }`,
 				swiperWrapper: 'swiper-wrapper',
 				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
 				swiperPreloader: 'swiper-lazy-preloader',
@@ -18,24 +18,24 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	getSwiperOptions() {
 		const elementSettings = this.getElementSettings(),
 			swiperOptions = {
-			grabCursor: false,
-			slidesPerView: 1,
-			slidesPerGroup: 1,
-			loop: 'yes' === elementSettings.background_slideshow_loop,
-			speed: elementSettings.background_slideshow_transition_duration,
-			autoplay: {
-				delay: elementSettings.background_slideshow_slide_duration,
-				stopOnLastSlide: ! elementSettings.background_slideshow_loop,
-			},
-			handleElementorBreakpoints: true,
-			on: {
-				slideChange: () => {
-					if ( elementSettings.background_slideshow_ken_burns ) {
-						this.handleKenBurns();
-					}
+				grabCursor: false,
+				slidesPerView: 1,
+				slidesPerGroup: 1,
+				loop: 'yes' === elementSettings.background_slideshow_loop,
+				speed: elementSettings.background_slideshow_transition_duration,
+				autoplay: {
+					delay: elementSettings.background_slideshow_slide_duration,
+					stopOnLastSlide: ! elementSettings.background_slideshow_loop,
 				},
-			},
-		};
+				handleElementorBreakpoints: true,
+				on: {
+					slideChange: () => {
+						if ( elementSettings.background_slideshow_ken_burns ) {
+							this.handleKenBurns();
+						}
+					},
+				},
+			};
 
 		if ( 'yes' === elementSettings.background_slideshow_loop ) {
 			swiperOptions.loopedSlides = this.getSlidesCount();

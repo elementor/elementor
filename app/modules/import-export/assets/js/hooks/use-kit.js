@@ -21,20 +21,22 @@ export default function useKit() {
 			data: null,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
-		uploadKit = ( { file, kitLibraryNonce } ) => {
+		uploadKit = ( { kitId, file, kitLibraryNonce } ) => {
 			setAjax( {
 				data: {
 					action: UPLOAD_KIT_KEY,
 					e_import_file: file,
+					kit_id: kitId,
 					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
 			} );
 		},
-		initImportProcess = async ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+		initImportProcess = async ( { id, session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
 			const ajaxConfig = {
 				data: {
 					action: IMPORT_KIT_KEY,
 					data: {
+						id,
 						session,
 						include,
 						overrideConditions,
@@ -52,7 +54,15 @@ export default function useKit() {
 
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
-			return await runRequest( ajaxConfig );
+			return runRequest( ajaxConfig ).catch( ( error ) => {
+				const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
+				setKitState( ( prevState ) => ( {
+					...prevState,
+					status: KIT_STATUS_MAP.ERROR,
+					data: response || {},
+				} ) );
+			} );
 		},
 		runImportRunners = async ( session, runners ) => {
 			let stopIterations = false;
@@ -81,20 +91,23 @@ export default function useKit() {
 						.catch( ( error ) => {
 							stopIterations = true;
 
+							const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
 							setKitState( ( prevState ) => ( { ...prevState, ...{
-									status: KIT_STATUS_MAP.ERROR,
-									data: error,
-								} } ) );
+								status: KIT_STATUS_MAP.ERROR,
+								data: response || {},
+							} } ) );
 						} );
 				} else {
 					setAjax( ajaxConfig );
 				}
 			}
 		},
-		importKit = async ( { session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
+		importKit = async ( { id, session, include, overrideConditions, referrer, selectedCustomPostTypes } ) => {
 			ajaxActions.reset();
 
 			const importSession = await initImportProcess( {
+				id,
 				session,
 				include,
 				overrideConditions,
@@ -102,16 +115,11 @@ export default function useKit() {
 				selectedCustomPostTypes,
 			} );
 
-			if ( ! importSession.success ) {
-				const newState = {
-					status: KIT_STATUS_MAP.ERROR,
-					data: ajaxState.response || {},
-				};
-
-				setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
-			} else {
-				await runImportRunners( importSession.data.session, importSession.data.runners );
+			if ( ! importSession ) {
+				return;
 			}
+
+			await runImportRunners( importSession.data.session, importSession.data.runners );
 		},
 		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
 			setAjax( {
