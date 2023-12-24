@@ -163,7 +163,7 @@
 			var effect = settings.effects[intent],
 				$widget = elements.widget;
 
-			if ( 'function' === typeof effect ) {
+			if ('function' === typeof effect) {
 				effect.apply($widget, params);
 			} else {
 
@@ -880,7 +880,7 @@
 			}
 
 			if (this.focusedButton) {
-				this.focusedButton.focus();
+				this.focusedButton.trigger('focus');
 			}
 		},
 		unbindHotKeys: function() {
