@@ -220,7 +220,6 @@ const FormLayout = ( {
 	}, [] );
 
 	return (
-
 		<LayoutDialog onClose={ onCloseIntent }>
 			<LayoutDialog.Header onClose={ onCloseIntent } { ...DialogHeaderProps }>
 				{ DialogHeaderProps.children }
