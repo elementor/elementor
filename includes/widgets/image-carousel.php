@@ -678,7 +678,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'bottom_space',
+			'dots_bottom_space',
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -714,7 +714,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'width',
+			'image_width',
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -749,7 +749,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'max_width',
+			'image_max_width',
 			[
 				'label' => esc_html__( 'Max Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -784,7 +784,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'height',
+			'image_height',
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -815,7 +815,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'object_fit',
+			'image_object_fit',
 			[
 				'label' => esc_html__( 'Object Fit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
@@ -905,7 +905,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
-			'opacity',
+			'image_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -926,7 +926,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Css_Filter::get_type(),
 			[
-				'name' => 'css_filters',
+				'name' => 'image_css_filters',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel img',
 			]
 		);
