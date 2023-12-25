@@ -1,7 +1,9 @@
 import { useState, forwardRef } from 'react';
-import { Autocomplete, Box, Divider, Paper, TextField, Typography, useTheme } from '@elementor/ui';
+import { Autocomplete, Box, Divider, Paper, Stack, TextField, Typography, useTheme } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
+import PromptLibraryLink from '../../../components/prompt-library-link';
+import { MODE_VARIATION, useConfig } from '../context/config';
 
 const TextInput = forwardRef( ( props, ref ) => (
 	<TextField
@@ -29,6 +31,8 @@ TextInput.propTypes = {
 };
 
 const PaperComponent = function( props ) {
+	const { mode } = useConfig();
+	const libraryLink = MODE_VARIATION === mode ? 'https://go.elementor.com/ai-prompt-library-variations/' : 'https://go.elementor.com/ai-prompt-library-containers/';
 	return (
 		<Paper { ...props }
 			elevation={ 8 }
@@ -47,6 +51,9 @@ const PaperComponent = function( props ) {
 			</Typography>
 			<Divider />
 			{ props.children }
+			<Stack sx={ { m: 2 } }>
+				<PromptLibraryLink libraryLink={ libraryLink } />
+			</Stack>
 		</Paper>
 	);
 };
