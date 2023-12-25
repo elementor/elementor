@@ -7,7 +7,7 @@ import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
 
 export const UrlDialog = ( props ) => {
-	const { iframeSource } = useAttachUrlService();
+	const { iframeSource } = useAttachUrlService( { url: props.url } );
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
 
 	useEffect( () => {
@@ -85,4 +85,5 @@ export const UrlDialog = ( props ) => {
 UrlDialog.propTypes = {
 	onAttach: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
+	url: PropTypes.string,
 };
