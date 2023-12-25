@@ -368,6 +368,21 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
