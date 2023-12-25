@@ -130,6 +130,22 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
+			'gallery_display_caption',
+			[
+				'label' => esc_html__( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'' => esc_html__( 'Attachment Caption', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'gallery_link',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -273,21 +289,8 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'gallery_display_caption',
-			[
-				'label' => esc_html__( 'Display', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => esc_html__( 'Show', 'elementor' ),
-					'none' => esc_html__( 'Hide', 'elementor' ),
-				],
-				'selectors' => [
-					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
+				'condition' => [
+					'gallery_display_caption' => '',
 				],
 			]
 		);
