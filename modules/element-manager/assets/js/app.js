@@ -6,29 +6,34 @@ import {
 	useMemo,
 } from '@wordpress/element';
 import {
-	Modal,
 	Button,
-	ToggleControl,
-	Spinner,
-	SearchControl,
 	ButtonGroup,
+	Flex,
+	FlexItem,
+	Tooltip,
+	Modal,
+	Notice,
 	Panel,
 	PanelBody,
 	PanelRow,
+	SearchControl,
 	SelectControl,
-	FlexItem,
-	Flex,
 	Snackbar,
-	Notice,
+	Spinner,
+	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import {
-	saveDisabledWidgets,
 	getAdminAppData,
 	getUsageWidgets,
 	markNoticeViewed,
+	saveDisabledWidgets,
 } from './api';
+import {
+	RolePermissions,
+	EditButtonDisabled,
+} from './role-permissions';
 
 export const App = () => {
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -36,6 +41,7 @@ export const App = () => {
 	const [ widgets, setWidgets ] = useState( [] );
 	const [ promotionWidgets, setPromotionWidgets ] = useState( [] );
 	const [ plugins, setPlugins ] = useState( [] );
+	const [ roles, setRoles ] = useState( [] );
 	const [ usageWidgets, setUsageWidgets ] = useState( {
 		isLoading: false,
 		data: null,
@@ -44,6 +50,7 @@ export const App = () => {
 	const [ sortingColumn, setSortingColumn ] = useState( 'widget' );
 	const [ sortingDirection, setSortingDirection ] = useState( 'asc' );
 	const [ filterByPlugin, setFilterByPlugin ] = useState( '' );
+	const [ filterByStatus, setFilterByStatus ] = useState( 'all' );
 	const [ changeProgress, setChangeProgress ] = useState( {
 		isSaving: false,
 		isUnsavedChanges: false,
@@ -51,6 +58,8 @@ export const App = () => {
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ isSnackbarOpen, setIsSnackbarOpen ] = useState( false );
 	const [ noticeData, setNoticeData ] = useState( null );
+
+	const [ widgetsRoleRestrictions, setWidgetsRoleRestrictions ] = useState( null );
 
 	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
@@ -68,6 +77,16 @@ export const App = () => {
 		if ( '' !== filterByPlugin ) {
 			filteredWidgets = filteredWidgets.filter( ( widget ) => {
 				return widget.plugin.toLowerCase() === filterByPlugin.toLowerCase();
+			} );
+		}
+
+		if ( 'all' !== filterByStatus ) {
+			filteredWidgets = filteredWidgets.filter( ( widget ) => {
+				if ( 'active' === filterByStatus ) {
+					return ! widgetsDisabled.includes( widget.name );
+				}
+
+				return widgetsDisabled.includes( widget.name );
 			} );
 		}
 
@@ -97,7 +116,7 @@ export const App = () => {
 		} );
 
 		return filteredWidgets;
-	}, [ widgets, searchKeyword, sortingColumn, sortingDirection, filterByPlugin, usageWidgets ] );
+	}, [ widgets, searchKeyword, sortingColumn, sortingDirection, filterByPlugin, usageWidgets, filterByStatus, widgetsDisabled ] );
 
 	const getSortingIndicatorClasses = ( column ) => {
 		if ( sortingColumn !== column ) {
@@ -128,7 +147,7 @@ export const App = () => {
 		setIsConfirmDialogOpen( false );
 		setChangeProgress( { ...changeProgress, isSaving: true } );
 
-		await saveDisabledWidgets( widgetsDisabled );
+		await saveDisabledWidgets( widgetsDisabled, widgetsRoleRestrictions );
 
 		setChangeProgress( { ...changeProgress, isSaving: false, isUnsavedChanges: false } );
 
@@ -194,6 +213,14 @@ export const App = () => {
 			setWidgets( appData.widgets );
 			setPromotionWidgets( appData.promotion_widgets );
 
+			if ( appData.additional_data?.roles ) {
+				setRoles( appData.additional_data.roles );
+			}
+
+			if ( appData.additional_data?.role_restrictions ) {
+				setWidgetsRoleRestrictions( appData.additional_data.role_restrictions );
+			}
+
 			const pluginsData = appData.plugins.map( ( plugin ) => {
 				return {
 					label: plugin,
@@ -220,7 +247,24 @@ export const App = () => {
 		}
 
 		setChangeProgress( { ...changeProgress, isUnsavedChanges: true } );
-	}, [ widgetsDisabled ] );
+	}, [ widgetsDisabled, widgetsRoleRestrictions ] );
+
+	useEffect( () => {
+		const handleBeforeUnload = ( event ) => {
+			event.preventDefault();
+			event.returnValue = '';
+		};
+
+		if ( changeProgress.isUnsavedChanges ) {
+			window.addEventListener( 'beforeunload', handleBeforeUnload );
+		} else {
+			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+		}
+
+		return () => {
+			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+		};
+	}, [ changeProgress.isUnsavedChanges ] );
 
 	if ( isLoading ) {
 		return (
@@ -306,6 +350,25 @@ export const App = () => {
 									size={ '__unstable-large' }
 									__nextHasNoMarginBottom={ true }
 									options={ plugins }
+								/>
+								<SelectControl
+									onChange={ setFilterByStatus }
+									size={ '__unstable-large' }
+									__nextHasNoMarginBottom={ true }
+									options={ [
+										{
+											label: __( 'All Statuses', 'elementor' ),
+											value: 'all',
+										},
+										{
+											label: __( 'Active', 'elementor' ),
+											value: 'active',
+										},
+										{
+											label: __( 'Inactive', 'elementor' ),
+											value: 'inactive',
+										},
+									] }
 								/>
 								<hr
 									style={ {
@@ -401,6 +464,42 @@ export const App = () => {
 											</Button>
 										</th>
 										<th>{ __( 'Plugin', 'elementor' ) }</th>
+										<th>
+											<Flex
+												justify={ 'flex-start' }
+											>
+												<FlexItem>
+													{ __( 'Role Permissions', 'elementor' ) }
+												</FlexItem>
+												<FlexItem>
+													<Tooltip
+														placement={ 'top' }
+														delay={ 100 }
+														text={ __( 'Choose which role will have access to a specific widget.', 'elementor' ) }
+													>
+														<Button
+															icon={ 'info-outline' }
+														/>
+													</Tooltip>
+												</FlexItem>
+												{ null === widgetsRoleRestrictions && (
+													<FlexItem>
+														<Button
+															variant="primary"
+															href="https://go.elementor.com/go-pro-element-manager/"
+															target="_blank"
+															rel={ 'noreferrer' }
+															size={ 'small' }
+															style={ {
+																background: 'var(--e-a-btn-bg-accent, #93003f)',
+															} }
+														>
+															{ __( 'Upgrade Now', 'elementor' ) }
+														</Button>
+													</FlexItem>
+												) }
+											</Flex>
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -434,6 +533,18 @@ export const App = () => {
 													/>
 												</td>
 												<td>{ widget.plugin }</td>
+												<td>
+													{ null !== widgetsRoleRestrictions && ! widgetsDisabled.includes( widget.name ) ? (
+														<RolePermissions
+															widgetName={ widget.name }
+															roles={ roles }
+															widgetsRoleRestrictions={ widgetsRoleRestrictions }
+															setWidgetsRoleRestrictions={ setWidgetsRoleRestrictions }
+														/>
+													) : (
+														<EditButtonDisabled />
+													) }
+												</td>
 											</tr>
 										);
 									} ) }
@@ -484,6 +595,26 @@ export const App = () => {
 											<th>{ __( 'Status', 'elementor' ) }</th>
 											<th>{ __( 'Usage', 'elementor' ) }</th>
 											<th>{ __( 'Plugin', 'elementor' ) }</th>
+											<th>
+												<Flex
+													justify={ 'flex-start' }
+												>
+													<FlexItem>
+														{ __( 'Role Permissions', 'elementor' ) }
+													</FlexItem>
+													<FlexItem>
+														<Tooltip
+															placement={ 'top' }
+															delay={ 100 }
+															text={ __( 'Choose which role will have access to a specific widget.', 'elementor' ) }
+														>
+															<Button
+																icon={ 'info-outline' }
+															/>
+														</Tooltip>
+													</FlexItem>
+												</Flex>
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -507,6 +638,9 @@ export const App = () => {
 													</td>
 													<td></td>
 													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
+													<td>
+														<EditButtonDisabled />
+													</td>
 												</tr>
 											);
 										} ) }
@@ -568,34 +702,6 @@ export const App = () => {
 					</ButtonGroup>
 				</Modal>
 			) }
-
-			{ /*
-			<ConfirmDialog
-				isOpen={ isConfirmDialogOpen }
-				onConfirm={ onSaveClicked }
-				cancelButtonText={ __( 'Cancel', 'elementor' ) }
-				confirmButtonText={ __( 'Save', 'elementor' ) }
-				onCancel={ () => {
-					setIsConfirmDialogOpen( false );
-				} }
-			>
-				<h4
-					style={ {
-						marginBottom: '20px',
-					} }
-				>
-					{ __( 'Sure you want to save these changes?', 'elementor' ) }
-				</h4>
-				<p
-					style={ {
-						maxWidth: '400px',
-						lineHeight: '1.5',
-					} }
-				>
-					{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
-				</p>
-			</ConfirmDialog>
-			*/ }
 
 			{ /* TODO: Use notices API */ }
 			<div style={ {
