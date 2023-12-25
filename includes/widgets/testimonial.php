@@ -140,7 +140,10 @@ class Widget_Testimonial extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => 'John Doe',
+				'ai' => [
+					'active' => false,
+				],
+				'default' => esc_html__( 'John Doe', 'elementor' ),
 			]
 		);
 
@@ -152,7 +155,10 @@ class Widget_Testimonial extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => 'Designer',
+				'ai' => [
+					'active' => false,
+				],
+				'default' => esc_html__( 'Designer', 'elementor' ),
 			]
 		);
 
@@ -280,7 +286,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_size',
 			[
 				'label' => esc_html__( 'Image Resolution', 'elementor' ),
