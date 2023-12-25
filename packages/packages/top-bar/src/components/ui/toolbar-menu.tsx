@@ -1,13 +1,17 @@
 import { ReactNode } from 'react';
-import { Box } from '@elementor/ui';
+import { Stack } from '@elementor/ui';
 import { MenuContextProvider } from '../../contexts/menu-context';
 
-export default function ToolbarMenu( { children }: { children?: ReactNode } ) {
+export type ToolbarMenuProps = {
+	children?: ReactNode;
+}
+
+export default function ToolbarMenu( { children }: ToolbarMenuProps ) {
 	return (
 		<MenuContextProvider type={ 'toolbar' }>
-			<Box sx={ { display: 'flex', alignItems: 'center', gap: 4 } }>
+			<Stack sx={ { px: 4 } } spacing={ 4 } direction="row" alignItems="center">
 				{ children }
-			</Box>
+			</Stack>
 		</MenuContextProvider>
 	);
 }

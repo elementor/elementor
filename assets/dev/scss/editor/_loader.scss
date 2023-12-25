@@ -11,7 +11,7 @@
 	padding: 40px;
 	height: 150px;
 	width: 150px;
-	background-color: rgba(255, 255, 255, 0.9);
+	background-color: var(--e-a-bg-active);
 	box-sizing: border-box; // For admin
 	box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, .02);
 }
@@ -26,7 +26,7 @@
 	$animation-time: 1.8s;
 
 	position: absolute;
-	background-color: $editor-lightest;
+	background-color: var(--e-a-color-txt-hover);
 	animation: load $animation-time linear infinite;
 
 	&:nth-of-type(1) {
@@ -60,8 +60,7 @@
 
 .elementor-loading-title {
 	$spacing: 7px;
-
-	color: $editor-light;
+	color: var(--e-a-color-txt);
 	text-align: center;
 	text-transform: uppercase;
 	margin-top: 30px;

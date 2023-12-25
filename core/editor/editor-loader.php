@@ -3,6 +3,7 @@ namespace Elementor\Core\Editor;
 
 use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
 use Elementor\Core\Utils\Collection;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -132,6 +133,14 @@ class Editor_Loader {
 		$body_file_path = $this->config_provider->get_template_body_file_path();
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	public function register_additional_templates() {
+		$templates = $this->config_provider->get_additional_template_paths();
+
+		foreach ( $templates as $template_path ) {
+			Plugin::$instance->common->add_template( $template_path );
+		}
 	}
 
 	/**

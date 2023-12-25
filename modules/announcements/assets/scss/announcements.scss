@@ -1,0 +1,122 @@
+@import "assets/dev/scss/helpers/variables";
+@import "app/assets/styles/tokens/_font";
+
+$base-color: #0C0D0E;
+$button-base-color: #524CFF;
+$button-base-color-hover: #4C43E5;
+$description-color: #515962;
+
+#e-announcements-root {
+	position: fixed;
+	display: flex;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	color: $platform-darker-gray;
+	font-family: $admin-font-family;
+	z-index: $element-overlay;
+
+	.announcements-container {
+		width: 637px;
+		background-color: $white;
+		z-index: $element-overlay;
+
+		.announcements-heading-container {
+			display: flex;
+			align-items: center;
+			padding: 16px 32px;
+			border-bottom: 1px solid $platform-gray-lightest;
+
+			.eicon-elementor {
+				color: $white;
+				background-color: $base-color;
+				border-radius: 50%;
+				padding: 8px;
+			}
+
+			.heading-title {
+				margin-inline-start: 12px;
+				text-transform: uppercase;
+				font-size: 13px;
+			}
+
+			.close-button {
+				margin-inline-start: auto;
+				background: none;
+				color: inherit;
+				border: none;
+				padding: 0;
+				font: inherit;
+				cursor: pointer;
+				outline: inherit;
+			}
+		}
+
+		.announcement-body-container {
+			.announcement-body-media img {
+				width: 100%;
+				max-height: 360px;
+				object-fit: contain;
+			}
+
+			.announcement-body-content{
+				padding: 32px;
+
+				.announcement-body-title {
+					font-size: 18px;
+					font-weight: $eps-font-weight-bold;
+					color: $base-color;
+					padding: 20px 0 12px;
+				}
+
+				.announcement-body-description {
+					font-size: 16px;
+					line-height: 24px;
+					font-weight: $eps-font-weight-normal;
+					color: $description-color;
+				}
+			}
+		}
+
+		.announcement-footer-container {
+			display: flex;
+			flex-direction: row-reverse;
+			padding: 12px 32px 32px;
+
+			.button-item {
+				margin-inline-start: 12px;
+				padding: 12px;
+				color: $button-base-color;
+				font-size: 18px;
+				font-weight: $eps-font-weight-medium;
+				border-radius: 3px;
+				padding: 12px 16px;
+				text-decoration: none;
+				font-family: $admin-font-family;
+
+				&.primary {
+					color: $white;
+					background-color: $button-base-color;
+					border: 1px solid $button-base-color;
+
+					&:hover {
+						background-color: $button-base-color-hover;					}
+				}
+
+				&.secondary {
+					border: 1px solid $button-base-color;
+				}
+			}
+		}
+	}
+
+	.announcements-screen-overlay {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.6);
+	}
+}

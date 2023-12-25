@@ -3,7 +3,7 @@
 	.elementor-control {
 
 		&-media__content {
-			border: 1px solid $editor-lightest;
+			border: var(--e-a-border-bold);
 			border-radius: 3px;
 		}
 
@@ -11,7 +11,7 @@
 			font-size: 12px;
 			height: 27px;
 			@include padding-start(10px);
-			border-bottom: 1px solid $editor-lightest;
+			border-bottom: var(--e-a-border-bold);
 			display: flex;
 
 			> * {
@@ -49,6 +49,7 @@
 			height: 48px;
 			background-size: cover;
 			background-position: 50% 50%;
+			border: var(--e-a-border);
 		}
 
 		&-gallery-edit {
@@ -57,7 +58,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			background-color: rgba($editor-dark, .3);
+			background-color: rgba(0, 0, 0, .2);
 			padding: 10px;
 			font-size: 11px;
 			transition: all .3s ease-in-out;
@@ -71,14 +72,18 @@
 				@include end(10px);
 				width: 21px;
 				height: 21px;
-				background-color: rgba(#fff, .9);
-				color: $editor-light;
+				color: var(--e-a-color-white);
+				background-color: rgba(0, 0, 0, .5);
 				box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.2);
-				border-radius: 3px;
+				transition: var(--e-a-transition-hover);
 
 				i {
 					font-size: 11px;
 					padding: 5px;
+				}
+
+				&:hover {
+					background-color: rgba(0, 0, 0, .6);
 				}
 			}
 		}
@@ -86,18 +91,10 @@
 		&-gallery-add {
 			width: 48px;
 			height: 48px;
-			color: #fff;
-			background-color: $editor-lightest;
 			font-size: 14px;
-			border-radius: 0;
-
-			&:hover {
-				background-color: $editor-lighter;
-			}
 
 			i {
 				margin: 0;
-				color: $editor-light;
 			}
 		}
 	}
@@ -125,7 +122,7 @@
 	&.elementor-control-dynamic {
 
 		.elementor-control-gallery-clear {
-			@include border-start(1px solid $editor-lightest);
+			@include border-start(var(--e-a-border));
 		}
 	}
 
@@ -134,14 +131,14 @@
 		justify-content: center;
 
 		&:hover {
-			color: $editor-warning;
+			color: var(--e-a-color-danger);
 		}
 	}
 
 	.elementor-control-dynamic-switcher {
-		border: none;
-		border-bottom: 1px solid $editor-lightest;
-		@include border-start(1px solid $editor-lightest);
-		border-radius: getValueByDirection(0 3px 0 0, 3px 0 0 0);
+		border-width: 0;
+		border-inline-start-width: 1px;
+		border-bottom-width: 1px;
+		border-radius: 0;
 	}
 }

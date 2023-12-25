@@ -167,7 +167,9 @@ class Module extends BaseModule {
 							if ( lazyloadSelector ) {
 								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
 							}
-							lazyloadBackground.classList.add( 'lazyloaded' );
+							if( lazyloadBackground ) {
+								lazyloadBackground.classList.add( 'lazyloaded' );
+							}
 							lazyloadBackgroundObserver.unobserve( entry.target );
 						}
 					});

@@ -47,4 +47,11 @@ interface Config_Provider_Interface {
 	 * @return string
 	 */
 	public function get_template_body_file_path();
+
+	/**
+	 * Return a list of Marionette templates to register.
+	 *
+	 * @return string[]
+	 */
+	public function get_additional_template_paths();
 }

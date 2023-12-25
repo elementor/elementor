@@ -99,12 +99,12 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
-		var isOpen = $tool.hasClass( 'elementor-open' );
+		var isOpen = $tool.hasClass( 'e-open' );
 
-		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
+		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'e-open' );
 
 		if ( ! isOpen ) {
-			$tool.addClass( 'elementor-open' );
+			$tool.addClass( 'e-open' );
 		}
 	},
 

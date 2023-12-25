@@ -1,26 +1,31 @@
-$eps-box-notice-color: tints(500);
-$eps-box-notice-dark-color: dark-tints(200);
-$eps-box-notice-background-color: tints(100);
+$eps-box-notice-background-color: tints(50);
 $eps-box-notice-dark-background-color: dark-tints(600);
 
+$eps-notice-semantic-success-color: theme-colors(success);
+$eps-notice-semantic-success-bg: theme-colors(success-bg);
+$eps-notice-semantic-success-dark-bg: dark-theme-colors(success-bg);
 $eps-notice-semantic-warning-color: theme-colors(warning);
+$eps-notice-semantic-warning-bg: theme-colors(warning-bg);
+$eps-notice-semantic-warning-dark-bg: dark-theme-colors(warning-bg);
 $eps-notice-semantic-danger-color: theme-colors(danger);
+$eps-notice-semantic-danger-bg: theme-colors(danger-bg);
+$eps-notice-semantic-danger-dark-bg: dark-theme-colors(danger-bg);
 $eps-notice-semantic-info-color: theme-colors(info);
+$eps-notice-semantic-info-bg: theme-colors(info-bg);
+$eps-notice-semantic-info-dark-bg: dark-theme-colors(info-bg);
 
 $root: eps-notice;
 
 .#{$root} {
 	$parent: &;
 
-	--eps-box-notice-color: #{$eps-box-notice-color};
 	--eps-box-notice-background-color: #{$eps-box-notice-background-color};
 
 	padding: spacing(10) spacing(16);
-	box-shadow: $eps-box-shadow-1;
-	background-color: var(--eps-box-notice-background-color);
 
 	&-semantic {
 		border-inline-start: $eps-border-width-lg $border-style-solid var(--eps-notice-semantic-color);
+		background-color: var(--eps-notice-semantic-bg);
 
 		#{$parent}__icon {
 			color: var(--eps-notice-semantic-color);
@@ -31,21 +36,22 @@ $root: eps-notice;
 
 	&--warning {
 		--eps-notice-semantic-color: #{$eps-notice-semantic-warning-color};
+		--eps-notice-semantic-bg: #{$eps-notice-semantic-warning-bg};
 	}
 
 	&--danger {
 		--eps-notice-semantic-color: #{$eps-notice-semantic-danger-color};
+		--eps-notice-semantic-bg: #{$eps-notice-semantic-danger-bg};
 	}
 
 	&--info {
 		--eps-notice-semantic-color: #{$eps-notice-semantic-info-color};
+		--eps-notice-semantic-bg: #{$eps-notice-semantic-info-bg};
 	}
 
 	&__text {
 		margin: 0;
 		padding: 0;
-		color: var(--eps-box-notice-color);
-		font-style: italic;
 	}
 
 	&__button-container {
@@ -57,7 +63,18 @@ $root: eps-notice;
 
 .eps-theme-dark {
 	.#{$root} {
-		--eps-box-notice-color: #{$eps-box-notice-dark-color};
 		--eps-box-notice-background-color: #{$eps-box-notice-dark-background-color};
+
+		&--warning {
+			--eps-notice-semantic-bg: #{$eps-notice-semantic-warning-dark-bg};
+		}
+
+		&--danger {
+			--eps-notice-semantic-bg: #{$eps-notice-semantic-danger-dark-bg};
+		}
+
+		&--info {
+			--eps-notice-semantic-bg: #{$eps-notice-semantic-info-dark-bg};
+		}
 	}
 }

@@ -19,7 +19,7 @@ test.describe( 'Icon List', () => {
 		await page.locator( '.elementor-control-icon_vertical_offset .elementor-slider-input input' ).fill( '10' );
 
 		// Assert.
-		await expect( editor.getFrame().locator( '.elementor-icon-list-item' ).first() ).toHaveCSS( 'align-items', 'flex-start' );
-		await expect( editor.getFrame().locator( '.elementor-icon-list-icon' ).first() ).toHaveCSS( 'top', '10px' );
+		await expect( editor.getPreviewFrame().locator( '.elementor-icon-list-item' ).first() ).toHaveCSS( 'align-items', 'flex-start' );
+		await expect( editor.getPreviewFrame().locator( '.elementor-icon-list-icon' ).first() ).toHaveCSS( 'top', '10px' );
 	} );
 } );

@@ -138,7 +138,7 @@ class Widget_Icon_Box extends Widget_Base {
 		$this->add_control(
 			'title_text',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
@@ -152,7 +152,7 @@ class Widget_Icon_Box extends Widget_Base {
 		$this->add_control(
 			'description_text',
 			[
-				'label' => '',
+				'label' => esc_html__( 'Description', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'dynamic' => [
 					'active' => true,
@@ -160,8 +160,6 @@ class Widget_Icon_Box extends Widget_Base {
 				'default' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
 				'rows' => 10,
-				'separator' => 'none',
-				'show_label' => false,
 			]
 		);
 

@@ -46,14 +46,14 @@ export function getInjectionsOf( location: string ) {
 		.sort( ( a, b ) => a.priority - b.priority );
 }
 
-export function resetInjections() {
+export function flushInjections() {
 	injections.clear();
 }
 
 function wrapFiller( FillerComponent: Filler ) {
-	return () => (
+	return ( props: object ) => (
 		<FillerWrapper>
-			<FillerComponent />
+			<FillerComponent { ...props } />
 		</FillerWrapper>
 	);
 }

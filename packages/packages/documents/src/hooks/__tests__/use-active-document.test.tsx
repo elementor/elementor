@@ -1,9 +1,8 @@
-import { Slice } from '../../types';
-import { PropsWithChildren } from 'react';
-import { createSlice } from '../../store';
-import { renderHook } from '@testing-library/react-hooks';
+import { Slice, createSlice } from '../../store';
 import useActiveDocument from '../use-active-document';
-import { createStore, deleteStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
+import { createStore, dispatch, SliceState, Store } from '@elementor/store';
+import { renderHookWithStore } from './test-utils';
+import { createMockDocument } from 'test-utils';
 
 describe( '@elementor/documents - useActiveDocument', () => {
 	let store: Store<SliceState<Slice>>;
@@ -14,24 +13,9 @@ describe( '@elementor/documents - useActiveDocument', () => {
 		store = createStore();
 	} );
 
-	afterEach( () => {
-		deleteStore();
-	} );
-
 	it( 'should return the current document', () => {
 		// Arrange.
-		const mockDocument = {
-			id: 1,
-			title: 'Document 1',
-			status: 'publish' as const,
-			type: 'wp-page',
-			isDirty: false,
-			isSaving: false,
-			isSavingDraft: false,
-			userCan: {
-				publish: true,
-			},
-		};
+		const mockDocument = createMockDocument();
 
 		dispatch( slice.actions.activateDocument( mockDocument ) );
 
@@ -50,15 +34,3 @@ describe( '@elementor/documents - useActiveDocument', () => {
 		expect( result.current ).toBeNull();
 	} );
 } );
-
-function renderHookWithStore( hook: () => unknown, store: Store ) {
-	const wrapper = ( { children }: PropsWithChildren<unknown> ) => (
-		<StoreProvider store={ store }>
-			{ children }
-		</StoreProvider>
-	);
-
-	return renderHook( hook, {
-		wrapper,
-	} );
-}

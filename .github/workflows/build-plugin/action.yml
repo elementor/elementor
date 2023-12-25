@@ -6,7 +6,8 @@ inputs:
     required: true
     description: 'The version to inject into the plugin package.json file.'
   UPDATE_VERSIONS_SCRIPT_PATH:
-    required: true
+    required: false
+    default: ""
     description: 'The path to the script that updates the versions in the plugin PHP files.'
   BUILD_SCRIPT_PATH:
     required: true
@@ -22,7 +23,14 @@ runs:
                 echo "PACKAGE_VERSION is empty string or undefined"
                 exit 1
             fi
-            bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
+
+            # TODO - Remove this when publish-cloud is removed.
+            if [ "${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}" != "" ];
+              then
+                echo "Running update version script"
+                bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
+            fi
+            
             bash ${{ inputs.BUILD_SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}

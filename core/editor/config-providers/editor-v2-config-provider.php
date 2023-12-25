@@ -12,12 +12,21 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	const EXTENSION_PACKAGES = [
 		'documents',
+		'documents-ui',
 		'elements-panel',
+		'finder',
+		'help',
+		'history',
+		'responsive',
+		'site-settings',
 		'structure',
+		'theme-builder',
 		'top-bar',
+		'user-preferences',
 	];
 
 	const UTIL_PACKAGES = [
+		'icons',
 		'locations',
 		'ui',
 		'v1-adapters',
@@ -71,6 +80,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $script_asset ) {
 				return $script_asset['handle'];
 			} )
+			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
@@ -113,6 +123,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
+	}
+
+	public function get_additional_template_paths() {
+		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
 	private function get_packages_script_assets() {

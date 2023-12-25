@@ -15,13 +15,16 @@ body.elementor-navigator-docked #elementor-navigator {
 	top: var(--editor-v2-top-bar-height);
 }
 
-#elementor-panel-header-menu-button,
-#elementor-panel-header-add-button,
-#elementor-panel-footer {
-	// TODO: Uncomment when we have enough buttons, to prevent insanity.
-	//display: none !important;
+.elementor-panel #elementor-panel-header-menu-button,
+.elementor-panel #elementor-panel-header-add-button,
+.elementor-panel #elementor-panel-footer {
+	display: none;
 }
 
-#elementor-panel-content-wrapper {
-	bottom: 0;
+.elementor-panel #elementor-panel-header {
+	font-weight: 700;
+	background-color: var( --e-a-bg-default );
+	color: var( --e-a-color-txt-accent );
+	border-bottom: var( --e-a-border );
+	height: 48px;
 }

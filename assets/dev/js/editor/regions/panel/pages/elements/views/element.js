@@ -87,7 +87,7 @@ module.exports = Marionette.ItemView.extend( {
 				// eslint-disable-next-line @wordpress/valid-sprintf
 				url: sprintf( promotion.action_button.url, widgetType ),
 				text: promotion.action_button.text,
-				classes: promotion.action_button.classes || [ 'elementor-button', 'elementor-button-success' ],
+				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
 			},
 		} );
 	},

@@ -74,6 +74,9 @@ class Control_Popover_Toggle extends Base_Data_Control {
 				</label>
 			</div>
 		</div>
+		<# if ( data.description ) { #>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 }

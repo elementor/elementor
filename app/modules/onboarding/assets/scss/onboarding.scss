@@ -3,6 +3,7 @@
 
 .e-onboarding {
 	font-family: 'DM Sans', 'Roboto', sans-serif;
+	color-scheme: light; //to avoid conflict with Elementor's dark mode
 
 	.eps-app__main {
 		justify-content: center;
@@ -12,8 +13,8 @@
 
 	&__content {
 		max-width: 1135px;
-		padding: initial;
-		margin: 2.75rem;
+		padding: 2.75rem;
+		margin: initial;
 		// For small screens, move the scrollbar from the padded content container to the top level main container.
 		overflow-y: initial;
 	}

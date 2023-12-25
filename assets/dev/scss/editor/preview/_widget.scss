@@ -1,0 +1,21 @@
+//
+// Widget - Preview Settings
+//
+
+// Widget - Overlay Settings
+.elementor-editor-widget-settings {
+	z-index: $second-layer;
+	top: -1px;
+	@include end(-1px);
+	flex-direction: row-reverse;
+	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+	overflow: hidden;
+
+	.elementor-editor-element-setting {
+		background-color: var(--e-p-border-widget);
+
+		&:hover {
+			background-color: var(--e-p-border-widget-hover);
+		}
+	}
+}

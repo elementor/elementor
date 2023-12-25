@@ -1,5 +1,5 @@
 import syncPanelTitle from '../sync-panel-title';
-import { flushListeners, isRouteActive } from '@elementor/v1-adapters';
+import { isRouteActive } from '@elementor/v1-adapters';
 
 type ExtendedWindow = Window & {
 	elementor?: {
@@ -33,14 +33,6 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		};
 	} );
 
-	afterEach( () => {
-		flushListeners();
-
-		jest.clearAllMocks();
-
-		delete ( window as unknown as ExtendedWindow ).elementor;
-	} );
-
 	it( 'should change the panel title when opening the elements panel', () => {
 		// Arrange.
 		syncPanelTitle();
@@ -53,7 +45,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		} ) );
 
 		// Assert.
-		expect( mockSetTitle ).toHaveBeenCalledWith( 'Widget Panel' );
+		expect( mockSetTitle ).toHaveBeenCalledWith( 'Elements' );
 	} );
 
 	it( 'should change the panel title when V1 is ready and the elements panel is open', () => {
@@ -65,7 +57,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 
 		// Assert.
-		expect( mockSetTitle ).toHaveBeenCalledWith( 'Widget Panel' );
+		expect( mockSetTitle ).toHaveBeenCalledWith( 'Elements' );
 		expect( mockIsRouteActive ).toHaveBeenCalledWith( 'panel/elements' );
 	} );
 

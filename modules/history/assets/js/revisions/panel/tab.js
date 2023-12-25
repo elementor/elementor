@@ -8,8 +8,8 @@ module.exports = Marionette.CompositeView.extend( {
 	childViewContainer: '#elementor-revisions-list',
 
 	ui: {
-		discard: '.elementor-panel-scheme-discard .elementor-button',
-		apply: '.elementor-panel-scheme-save .elementor-button',
+		discard: '.elementor-button.e-revision-discard',
+		apply: '.elementor-button.e-revision-save',
 	},
 
 	events: {
@@ -151,10 +151,6 @@ module.exports = Marionette.CompositeView.extend( {
 		this.currentPreviewId = null;
 
 		this.exitReviewMode();
-
-		if ( this.currentPreviewItem ) {
-			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
-		}
 	},
 
 	onDestroy() {

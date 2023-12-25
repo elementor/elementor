@@ -90,7 +90,7 @@ module.exports = class EditorPage extends BasePage {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
-	async getPreviewElement( id ) {
+	getPreviewElement( id ) {
 		return this.getPreviewFrame().locator( `.elementor-element-${ id }` );
 	}
 
@@ -131,31 +131,5 @@ module.exports = class EditorPage extends BasePage {
 
 			await this.page.waitForTimeout( 400 );
 		}
-	}
-
-	/**
-	 * We are using custom page screenshot because:
-	 * 1. Screenshot should be taken after the element is loaded.
-	 * 2. Screenshot should be taken of element boundries but the maximum size is the viewport size.
-	 *
-	 * @param {string} id
-	 * @return {Promise<Buffer>}
-	 */
-	async screenshotElement( id ) {
-		await this.waitForElementRender( id );
-
-		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
-		const elementRect = await ( await this.getPreviewElement( id ) ).boundingBox();
-
-		return await this.page.screenshot( {
-			type: 'jpeg',
-			quality: 70,
-			clip: {
-				x: elementRect.x,
-				y: elementRect.y,
-				width: Math.min( elementRect.width, frameRect.width ) || 1,
-				height: Math.min( elementRect.height, frameRect.height ) || 1,
-			},
-		} );
 	}
 };

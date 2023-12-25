@@ -1,4 +1,5 @@
-import { Document, Slice } from '../types';
+import { Slice } from '../store';
+import { Document } from '../types';
 import { dispatch } from '@elementor/store';
 import { normalizeV1Document, getV1DocumentsManager } from './utils';
 import {
@@ -11,39 +12,41 @@ import {
 } from '@elementor/v1-adapters';
 
 export function syncStore( slice: Slice ) {
-	syncDocuments( slice );
-	syncCurrentDocument( slice );
+	syncInitialization( slice );
+	syncActiveDocument( slice );
 	syncOnDocumentSave( slice );
 	syncOnDocumentChange( slice );
 }
 
-function syncDocuments( slice: Slice ) {
-	const { setDocuments } = slice.actions;
+function syncInitialization( slice: Slice ) {
+	const { init } = slice.actions;
 
 	listenTo(
 		v1ReadyEvent(),
 		() => {
-			const normalizedDocuments = Object
-				.entries( getV1DocumentsManager().documents )
+			const documentsManager = getV1DocumentsManager();
+
+			const entities = Object.entries( documentsManager.documents )
 				.reduce( ( acc: Record<string, Document>, [ id, document ] ) => {
 					acc[ id ] = normalizeV1Document( document );
 
 					return acc;
 				}, {} );
 
-			dispatch( setDocuments( normalizedDocuments ) );
+			dispatch( init( {
+				entities,
+				hostId: documentsManager.getInitialId(),
+				activeId: documentsManager.getCurrentId(),
+			} ) );
 		}
 	);
 }
 
-function syncCurrentDocument( slice: Slice ) {
+function syncActiveDocument( slice: Slice ) {
 	const { activateDocument } = slice.actions;
 
 	listenTo(
-		[
-			v1ReadyEvent(),
-			commandEndEvent( 'editor/documents/open' ),
-		],
+		commandEndEvent( 'editor/documents/open' ),
 		() => {
 			const documentsManager = getV1DocumentsManager();
 			const currentDocument = normalizeV1Document( documentsManager.getCurrent() );
@@ -66,17 +69,6 @@ function syncOnDocumentSave( slice: Slice ) {
 	};
 
 	listenTo(
-		v1ReadyEvent(),
-		() => {
-			const { isSaving } = getV1DocumentsManager().getCurrent().editor;
-
-			if ( isSaving ) {
-				dispatch( startSaving() );
-			}
-		}
-	);
-
-	listenTo(
 		commandStartEvent( 'document/save/save' ),
 		( e ) => {
 			if ( isDraft( e ) ) {
@@ -91,12 +83,15 @@ function syncOnDocumentSave( slice: Slice ) {
 	listenTo(
 		commandEndEvent( 'document/save/save' ),
 		( e ) => {
-			if ( isDraft( e ) ) {
-				dispatch( endSavingDraft() );
-				return;
-			}
+			const activeDocument = normalizeV1Document(
+				getV1DocumentsManager().getCurrent()
+			);
 
-			dispatch( endSaving() );
+			if ( isDraft( e ) ) {
+				dispatch( endSavingDraft( activeDocument ) );
+			} else {
+				dispatch( endSaving( activeDocument ) );
+			}
 		}
 	);
 }

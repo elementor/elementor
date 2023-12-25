@@ -1,19 +1,12 @@
-import { createSlice } from './store';
 import { syncStore } from './sync';
-import { injectIntoCanvasDisplay, injectIntoPrimaryAction } from '@elementor/top-bar';
-import TopBarIndicator from './components/top-bar-indicator';
-import PrimaryAction from './components/top-bar/primary-action';
+import { createSlice } from './store';
 
-const slice = createSlice();
+export default function init() {
+	initStore();
+}
 
-syncStore( slice );
+function initStore() {
+	const slice = createSlice();
 
-injectIntoCanvasDisplay( {
-	name: 'top-bar-indicator',
-	filler: TopBarIndicator,
-} );
-
-injectIntoPrimaryAction( {
-	name: 'top-bar-primary-action',
-	filler: PrimaryAction,
-} );
+	syncStore( slice );
+}

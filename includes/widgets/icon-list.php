@@ -472,7 +472,6 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 14,
 				],
 				'range' => [
@@ -580,7 +579,6 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 0,
 				],
 				'range' => [
@@ -607,6 +605,25 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'icon_typography',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item > .elementor-icon-list-text, {{WRAPPER}} .elementor-icon-list-item > a',
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
 			]
 		);
 
@@ -674,26 +691,6 @@ class Widget_Icon_List extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'icon_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-item > .elementor-icon-list-text, {{WRAPPER}} .elementor-icon-list-item > a',
-				'global' => [
-					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
-			[
-				'name' => 'text_shadow',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
-			]
-		);
 
 		$this->end_controls_section();
 	}

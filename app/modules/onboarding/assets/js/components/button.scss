@@ -1,18 +1,28 @@
 .e-onboarding__button {
 	font-size: 18px;
 	cursor: pointer;
+	transition: var(--e-a-transition-hover);
+
 
 	&-action {
-		color: $platform-text;
-		background-color: $platform-primary;
-		width: 325px;
-		padding: 15px 15px;
+		color: var(--e-a-btn-color);
+		background-color: var(--e-a-btn-bg-primary);
+		min-width: 325px;
+		padding: 15px 30px;
 		text-align: center;
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-primary-hover);
+		}
 	}
 
 	&-skip {
-		color: $platform-secondary;
-		padding: 15px 29px;
+		padding: 8px 16px;
+		color: $e-gray-600;
+
+		&:hover {
+			background-color: $e-gray-25;
+		}
 	}
 
 	&--disabled {

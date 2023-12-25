@@ -3,7 +3,7 @@ import PopoverMenuItem from '../ui/popover-menu-item';
 import ToolbarMenuToggleItem from '../ui/toolbar-menu-toggle-item';
 import { ElementType } from 'react';
 
-type Props = {
+export type Props = {
 	title: string;
 	icon: ElementType;
 	selected?: boolean;

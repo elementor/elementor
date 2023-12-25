@@ -17,7 +17,7 @@
 			margin-top: 2px;
 
 			&--active {
-				background: $editor-success;
+				background: $green;
 			}
 		}
 
@@ -35,6 +35,11 @@
 			font-weight: 600;
 			margin-top: 5px;
 			@include margin-start(24px);
+
+			&__secondary {
+				background: rgba(0,0,0,0.1);
+				color: inherit;
+			}
 		}
 	}
 

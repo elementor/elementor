@@ -8,7 +8,6 @@
 @import "wrapper";
 @import "global";
 @import "loader";
-@import "buttons";
 @import "forms";
 
 // Components
@@ -17,7 +16,6 @@
 @import "panel/panel";
 @import "panel/controls";
 @import "mode-switcher";
-@import "responsive-bar";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
 @import "../../../../core/kits/assets/css/panel";
@@ -25,6 +23,7 @@
 @import "animations";
 @import "devices";
 @import "templates-modal";
+@import "dialog-confirm";
 @import "dynamic-tags";
 @import "context-menu";
 @import "hotkeys";

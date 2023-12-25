@@ -26,7 +26,7 @@ export function dispatchV1ReadyEvent() {
 	dispatchWindowEvent( 'elementor/initialized' );
 }
 
-export function makeDocumentsManager( documentsArray: V1Document[], current = 1 ) {
+export function makeDocumentsManager( documentsArray: V1Document[], current = 1, initial = current ) {
 	const documents = documentsArray.reduce( ( acc: Record<number, V1Document>, document ) => {
 		acc[ document.id ] = document;
 
@@ -38,22 +38,42 @@ export function makeDocumentsManager( documentsArray: V1Document[], current = 1 
 		getCurrentId() {
 			return current;
 		},
+		getInitialId() {
+			return initial;
+		},
 		getCurrent() {
 			return this.documents[ this.getCurrentId() ];
 		},
 	};
 }
 
-export function makeMockV1Document( id = 1 ): V1Document {
+export function makeMockV1Document( {
+	id = 1,
+	title = 'Document ' + id,
+	status = 'publish',
+	type = 'wp-page',
+}: {
+	id?: number,
+	status?: string,
+	title?: string,
+	type?: string,
+} = {} ): V1Document {
 	return {
 		id,
 		config: {
-			type: 'wp-page',
+			type,
 			user: {
 				can_publish: true,
 			},
 			revisions: {
 				current_id: id,
+			},
+			panel: {
+				title: type.toUpperCase(),
+			},
+			status: {
+				label: status.toUpperCase(),
+				value: status,
 			},
 		},
 		editor: {
@@ -62,15 +82,14 @@ export function makeMockV1Document( id = 1 ): V1Document {
 		},
 		container: {
 			settings: makeV1Settings( {
-				post_title: 'Document ' + id,
-				post_status: 'publish',
+				post_title: title,
 			} ),
 		},
 	};
 }
 
 // Mock Backbone's settings model.
-export function makeV1Settings<T extends object>( settings: T ) {
+function makeV1Settings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];

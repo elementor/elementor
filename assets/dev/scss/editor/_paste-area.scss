@@ -1,9 +1,9 @@
 #elementor-paste-area-dialog {
+	text-align: center;
 
 	.dialog-header {
 		padding-top: 60px;
 		font-size: 30px;
-		color: $editor-light;
 	}
 
 	.dialog-message {
@@ -31,6 +31,7 @@
 	}
 
 	.dialog-widget-content {
+		width: 400px;
 
 		.eicon-loading {
 			display: none;
@@ -46,12 +47,12 @@
 	}
 
 	#elementor-paste-area-dialog__error {
-		color: $editor-danger;
+		color: var(--e-a-color-danger);
 		font-size: 12px;
 
 		&:before {
 			content: '';
-			border-top: 1px solid $editor-background-light;
+			border-top: var(--e-a-border);
 			display: block;
 			margin: 10px -15px;
 		}

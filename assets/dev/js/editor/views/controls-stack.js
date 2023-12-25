@@ -159,7 +159,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[ 0 ] ) {
-			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
+			activeSectionView[ 0 ].$el.addClass( 'e-open' );
 
 			const eventNamespace = this.getNamespaceArray();
 
@@ -190,7 +190,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewControlSectionClicked( childView ) {
-		var isSectionOpen = childView.$el.hasClass( 'elementor-open' );
+		var isSectionOpen = childView.$el.hasClass( 'e-open' );
 
 		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
 

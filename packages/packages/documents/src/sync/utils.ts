@@ -1,4 +1,4 @@
-import { Document, ExtendedWindow, V1Document } from '../';
+import { Document, ExtendedWindow, V1Document } from '../types';
 
 export function getV1DocumentsManager() {
 	const documentsManager = ( window as unknown as ExtendedWindow ).elementor?.documents;
@@ -11,17 +11,20 @@ export function getV1DocumentsManager() {
 }
 
 export function normalizeV1Document( documentData: V1Document ): Document {
-	// TODO: See: https://github.com/elementor/elementor/blob/e86b957a2/assets/dev/js/editor/document/save/behaviors/footer-saver.js#L96-L101
-	const status = documentData.container.settings.get( 'post_status' ) ?? 'pending';
-
 	// Draft or autosave.
 	const isUnpublishedRevision = documentData.config.revisions.current_id !== documentData.id;
 
 	return {
 		id: documentData.id,
 		title: documentData.container.settings.get( 'post_title' ),
-		status,
-		type: documentData.config.type,
+		type: {
+			value: documentData.config.type,
+			label: documentData.config.panel.title,
+		},
+		status: {
+			value: documentData.config.status.value,
+			label: documentData.config.status.label,
+		},
 		isDirty: documentData.editor.isChanged || isUnpublishedRevision,
 		isSaving: documentData.editor.isSaving,
 		isSavingDraft: false,

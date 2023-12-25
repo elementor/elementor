@@ -1,23 +1,17 @@
-import { ToggleButton, ToggleButtonProps, Tooltip } from '@elementor/ui';
+import { Box, ToggleButton, ToggleButtonProps, Tooltip } from '@elementor/ui';
 
-type Props = Omit<ToggleButtonProps, 'onChange'> & {
+export type ToolbarMenuToggleItemProps = Omit<ToggleButtonProps, 'onChange'> & {
 	title?: string;
 	onClick?: () => void;
 }
 
-export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Props ) {
+export default function ToolbarMenuToggleItem( { title, onClick, ...props }: ToolbarMenuToggleItemProps ) {
 	return (
-		<Tooltip
-			title={ title }
-			PopperProps={ {
-				sx: {
-					'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
-						mt: 6,
-					},
-				},
-			} }
-		>
-			<ToggleButton { ...props } onChange={ onClick } size="small" />
+		<Tooltip title={ title }>
+			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
+			<Box component="span" aria-label={ undefined }>
+				<ToggleButton { ...props } onChange={ onClick } aria-label={ title } size="small" />
+			</Box>
 		</Tooltip>
 	);
 }

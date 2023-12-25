@@ -1,7 +1,9 @@
 import { ExtendedWindow, ListenerEvent } from './types';
+import { setReady } from './is-ready';
 
 export function dispatchReadyEvent() {
 	return getV1LoadingPromise().then( () => {
+		setReady( true );
 		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 	} );
 }

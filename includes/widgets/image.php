@@ -324,15 +324,6 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'unit' => 'px',
-				],
-				'tablet_default' => [
-					'unit' => 'px',
-				],
-				'mobile_default' => [
-					'unit' => 'px',
-				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [

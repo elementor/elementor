@@ -1,5 +1,6 @@
 import useListenTo from './use-listen-to';
-import { editModeChangeEvent, getCurrentEditMode } from '../';
+import { getCurrentEditMode } from '../readers';
+import { editModeChangeEvent } from '../listeners';
 
 export default function useIsPreviewMode() {
 	return useListenTo(

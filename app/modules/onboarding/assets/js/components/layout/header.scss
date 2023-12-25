@@ -3,7 +3,7 @@
 	&-logo {
 
 		.eps-app__logo {
-			background-color: $platform-darkest-gray;
+			background-color: $e-gray-900;
 			color: $white;
 			width: 1.3rem;
 			height: 1.3rem;
@@ -52,6 +52,7 @@
 .e-onboarding__go-pro {
 	width: 288px;
 	font-size: 12px;
+	background-color: $white;
 
 	&-title {
 		font-size: 18px;

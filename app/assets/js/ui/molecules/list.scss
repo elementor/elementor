@@ -8,6 +8,8 @@ $root: eps-list;
 
 	padding: 0;
 	margin: 0;
+	border-radius: $eps-radius;
+	border: $eps-border;
 	list-style-type: none;
 
 	&--padding {

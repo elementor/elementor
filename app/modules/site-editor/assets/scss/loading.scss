@@ -1,21 +1,25 @@
-$e-elementor-loader-container-background-color: tints(200);
-$e-elementor-loader-background-color: rgba(theme-colors(light), .9);
+$e-elementor-loader-color: theme-elements-colors(body-bg);
+$e-elementor-loader-wrapper-color: tints(25);
+$e-elementor-loader-box-color: tints(75);
 
 :root {
-	--e-elementor-loader-container-background-color: #{$e-elementor-loader-container-background-color};
-	--e-elementor-loader-background-color: #{$e-elementor-loader-background-color};
+	--e-elementor-loader-color: #{$e-elementor-loader-color};
+	--e-elementor-loader-wrapper-color: #{$e-elementor-loader-wrapper-color};
+	--e-elementor-loader-box-color: #{$e-elementor-loader-box-color};
 }
 
-$e-elementor-loader-dark-background-color: dark-tints(500);
-$e-elementor-loader-container-dark-background-color: dark-tints(700);
+$e-elementor-loader-dark-color: dark-theme-elements-colors(body-bg);
+$e-elementor-loader-dark-wrapper-color: tints(750);
+$e-elementor-loader-dark-box-color: tints(700);
 
 .eps-theme-dark {
-	--e-elementor-loader-container-background-color: #{$e-elementor-loader-container-dark-background-color};
-	--e-elementor-loader-background-color: #{$e-elementor-loader-dark-background-color};
+	--e-elementor-loader-color: #{$e-elementor-loader-dark-color};
+	--e-elementor-loader-wrapper-color: #{$e-elementor-loader-dark-wrapper-color};
+	--e-elementor-loader-box-color: #{$e-elementor-loader-dark-box-color};
 }
 
 .elementor-loading {
-	background-color: var(--e-elementor-loader-container-background-color);
+	background-color: var(--e-elementor-loader-color);
 	height: 100vh;
 }
 
@@ -32,7 +36,7 @@ $e-elementor-loader-container-dark-background-color: dark-tints(700);
 	padding: 40px;
 	height: 150px;
 	width: 150px;
-	background-color: var(--e-elementor-loader-background-color);
+	background-color: var(--e-elementor-loader-wrapper-color);
 	box-sizing: border-box; // For admin
 	box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, .02);
 }
@@ -45,9 +49,8 @@ $e-elementor-loader-container-dark-background-color: dark-tints(700);
 
 .elementor-loader-box {
 	$animation-time: 1.8s;
-
 	position: absolute;
-	background-color: $editor-lightest;
+	background-color: var(--e-elementor-loader-box-color);
 	animation: load $animation-time linear infinite;
 
 	&:nth-of-type(1) {

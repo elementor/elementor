@@ -19,37 +19,37 @@
 		input {
 			@include border-start(none);
 			border-radius: 0;
-			padding: 3px;
+			padding: var(--e-a-border-radius);
 
 			&:focus {
-				@include border-start(1px solid $editor-light);
+				@include border-start(var(--e-a-border-bold));
 				@include margin-start(-1px);
 				width: calc(100% + 1px);
 
 				+ .elementor-control-dimension-label {
-					color: $editor-light;
+					color: var(--e-a-color-txt);
 				}
 			}
 		}
 
 		.elementor-link-dimensions {
-			border: 1px solid $editor-lightest;
+			border: var(--e-a-border-bold);
 			@include border-start(none);
-			background-color: #fff;
+			background-color: var(--e-a-bg-default);
 			padding: 0;
 			outline: none;
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 			cursor: pointer;
 		}
 
 		&:first-child {
 
 			input {
-				@include border-start(1px solid $editor-lightest);
-				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+				@include border-start(1px solid var(--e-a-border-color-bold));
+				border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
 
 				&:focus {
-					border-color: $editor-light;
+					border-color: var(--e-a-border-color-focus);
 					@include margin-start(0);
 					width: 100%;
 				}
@@ -72,18 +72,17 @@
 	}
 
 	.elementor-control-dimension-label {
+		color: var(--e-a-color-txt-disabled);
 		display: block;
 		text-align: center;
-		color: $editor-lightest;
 		font-size: 9px;
-		text-transform: uppercase;
 		padding-top: 5px;
 	}
 
 	.elementor-link-dimensions {
 
 		&.unlinked {
-			background-color: #fff;
+			background-color: var(--e-a-bg-default);
 
 			.elementor-linked {
 				display: none;
@@ -91,17 +90,13 @@
 		}
 
 		&:not(.unlinked) {
-			background-color: $editor-light;
-			border-color: $editor-light;
+			background-color: var(--e-a-bg-active-bold);
+			color: var(--e-a-color-txt-accent);
+			border-color: var(--e-a-border-color-bold);
 
 			.elementor-unlinked {
 				display: none;
 			}
 		}
-
-		.elementor-linked {
-			color: #fff;
-		}
-
 	}
 }

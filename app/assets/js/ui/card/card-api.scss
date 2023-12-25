@@ -3,9 +3,9 @@
 
 // Private API. Will consume global tokens
 // - Default tokens
-$card-background-color: rgba(theme-colors(light), $opacity-05);
+$card-background-color: rgba($eps-theme-light, $opacity-05);
 $card-background-color-hover: theme-colors(light);
-$card-box-shadow: $eps-box-shadow-2;
+$card-border: $eps-border-width $eps-border-style tints(100);
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
 $card-font-size: type(text,xs);
@@ -32,10 +32,9 @@ $card-image-overlay-background-color: rgba(theme-colors(dark), $opacity-02);
 $card-image-overlay-transition: $card-transition;
 
 // - Dark tokens
-$card-dark-background-color: dark-tints(600);
-$card-dark-background-color-hover: rgba( dark-tints(500), $opacity-08 );
-$card-dark-box-shadow: $eps-box-shadow;
-$card-dark-header-footer-border: $eps-border-width $eps-border-style dark-tints(700);
+$card-dark-background-color-hover: dark-tints(750);
+$card-dark-border: $eps-border-width $eps-border-style dark-tints(725);
+$card-dark-header-footer-border: $eps-border-width $eps-border-style dark-tints(725);
 $card-dark-header-footer-active-border: $eps-border-width $eps-border-style dark-tints(800);
 $card-dark-headline-color: dark-tints(100);
 $card-dark-figure-background-color: dark-tints(700);
@@ -43,9 +42,8 @@ $card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-05);
 
 
 :root {
-	--card-background-color: #{$card-background-color};
 	--card-background-color-hover: #{$card-background-color-hover};
-	--card-box-shadow: #{$card-box-shadow};
+	--card-border: #{$card-border};
 	--card-header-footer-border: #{$card-header-footer-border};
 	--card-header-footer-active-border: #{$card-header-footer-active-border};
 	--card-headline-color: #{$card-headline-color};
@@ -54,9 +52,8 @@ $card-dark-image-overlay-background-color: rgba(dark-tints(700), $opacity-05);
 }
 
 .eps-theme-dark {
-	--card-background-color: #{$card-dark-background-color};
 	--card-background-color-hover: #{$card-dark-background-color-hover};
-	--card-box-shadow: #{$card-dark-box-shadow};
+	--card-border: #{$card-dark-border};
 	--card-header-footer-border: #{$card-dark-header-footer-border};
 	--card-header-footer-active-border: #{$card-dark-header-footer-active-border};
 	--card-headline-color: #{$card-dark-headline-color};

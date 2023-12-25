@@ -23,10 +23,6 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		eRoute = extendedWindow.$e.route;
 	} );
 
-	afterEach( () => {
-		delete ( window as unknown as { $e?: unknown } ).$e;
-	} );
-
 	it( 'should run a V1 command that returns Promise', () => {
 		// Arrange.
 		const command = 'editor/documents/open',

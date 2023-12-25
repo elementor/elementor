@@ -4,8 +4,8 @@ $button-line-height: 16px;
 $button-padding-y: 0.5em;
 $button-padding-x: 1.5em;
 $button-border-radius: $eps-radius;
-$button-hover-constant: 5%;
-$button-active-constant: 3%;
+$button-hover-constant: 10%;
+$button-active-constant: 20%;
 // sizing
 // -- sm
 $button-sm-font-size: type(text,xs);
@@ -14,10 +14,10 @@ $button-sm-line-height: 14px;
 $button-lg-font-size: type(text,lg);
 $button-lg-line-height: 18px;
 //Semantic Colors
-$button-primary-background-color: theme-colors(success);
-$button-primary-hover-background-color: darken($button-primary-background-color, $button-hover-constant);
-$button-primary-active-background-color: darken($button-primary-background-color, $button-active-constant);
-$button-primary-color: theme-colors(light);
+$button-primary-background-color: theme-colors(accent);
+$button-primary-hover-background-color: $e-pink-100;
+$button-primary-active-background-color: theme-colors(accent);
+$button-primary-color: $eps-btn-color;
 $button-secondary-background-color: tints(500);
 $button-secondary-hover-background-color: darken($button-secondary-background-color, $button-hover-constant);
 $button-secondary-active-background-color: darken($button-secondary-background-color, $button-active-constant);
@@ -30,6 +30,10 @@ $button-cta-background-color: theme-colors(cta);
 $button-cta-hover-background-color: darken($button-cta-background-color, $button-hover-constant);
 $button-cta-active-background-color: darken($button-cta-background-color, $button-active-constant);
 $button-cta-color: theme-colors(light);
+$button-brand-background-color: theme-colors(brand);
+$button-brand-hover-background-color: darken($button-cta-background-color, $button-hover-constant);
+$button-brand-active-background-color: darken($button-cta-background-color, $button-active-constant);
+$button-brand-color: theme-colors(light);
 $button-link-background-color: theme-elements-colors(link-color);
 $button-link-hover-background-color: darken($button-link-background-color, $button-hover-constant);
 $button-link-active-background-color: darken($button-link-background-color, $button-active-constant);
@@ -39,10 +43,10 @@ $button-disabled-hover-background-color: darken($button-disabled-background-colo
 $button-disabled-active-background-color: darken($button-disabled-background-color, $button-active-constant);
 $button-disabled-color: theme-colors(light);
 // -- dark
-$button-dark-primary-background-color: dark-theme-colors(success);
-$button-dark-primary-color: dark-theme-colors(light);
-$button-dark-primary-hover-background-color: darken($button-dark-primary-background-color, $button-hover-constant);
-$button-dark-primary-active-background-color: darken($button-dark-primary-background-color, $button-active-constant);
+$button-dark-primary-background-color: theme-colors(accent);
+$button-dark-primary-color: $eps-btn-color;
+$button-dark-primary-hover-background-color: $e-pink-400;
+$button-dark-primary-active-background-color: theme-colors(accent);
 $button-dark-secondary-background-color: dark-tints(200);
 $button-dark-secondary-hover-background-color: darken($button-dark-secondary-background-color, $button-hover-constant);
 $button-dark-secondary-active-background-color: darken($button-dark-secondary-background-color, $button-active-constant);
@@ -55,6 +59,10 @@ $button-dark-cta-background-color: dark-theme-colors(cta);
 $button-dark-cta-hover-background-color: darken($button-dark-cta-background-color, $button-hover-constant);
 $button-dark-cta-active-background-color: darken($button-dark-cta-background-color, $button-active-constant);
 $button-dark-cta-color: dark-theme-colors(light);
+$button-dark-brand-background-color: dark-theme-colors(brand);
+$button-dark-brand-hover-background-color: darken($button-dark-cta-background-color, $button-hover-constant);
+$button-dark-brand-active-background-color: darken($button-dark-cta-background-color, $button-active-constant);
+$button-dark-brand-color: dark-theme-colors(light);
 $button-dark-link-background-color: theme-elements-colors(link-color);
 $button-dark-link-hover-background-color: darken($button-dark-link-background-color, $button-hover-constant);
 $button-dark-link-active-background-color: darken($button-dark-link-background-color, $button-active-constant);
@@ -89,6 +97,11 @@ $button-dark-disabled-color: dark-theme-colors(light);
 	--button-cta-hover-background-color: #{$button-cta-hover-background-color};
 	--button-cta-active-background-color: #{$button-cta-active-background-color};
 	--button-cta-color: #{$button-cta-color};
+	// brand
+	--button-brand-background-color: #{$button-brand-background-color};
+	--button-brand-hover-background-color: #{$button-brand-hover-background-color};
+	--button-brand-active-background-color: #{$button-brand-active-background-color};
+	--button-brand-color: #{$button-brand-color};
 	// link
 	--button-link-background-color: #{$button-link-background-color};
 	--button-link-hover-background-color: #{$button-link-hover-background-color};
@@ -117,6 +130,11 @@ $button-dark-disabled-color: dark-theme-colors(light);
 	--button-cta-hover-background-color: #{$button-dark-cta-hover-background-color};
 	--button-cta-active-background-color: #{$button-dark-cta-active-background-color};
 	--button-cta-color: #{$button-dark-cta-color};
+	// brand
+	--button-brand-hover-background-color: #{$button-dark-brand-hover-background-color};
+	--button-brand-active-background-color: #{$button-dark-brand-active-background-color};
+	--button-brand-color: #{$button-dark-brand-color};
+	--button-brand-background-color: #{$button-dark-brand-background-color};
 	// link
 	--button-link-background-color: #{$button-dark-link-background-color};
 	--button-link-hover-background-color: #{$button-dark-link-hover-background-color};

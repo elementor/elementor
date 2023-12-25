@@ -8,11 +8,9 @@ $e-app-import-export-page-header-description-dark-color: dark-tints(100);
 $root: e-app-import-export-page-header;
 
 .#{$root} {
-	--e-app-import-export-page-header-border-bottom-color: #{$e-app-import-export-page-header-border-bottom-color};
 	--e-app-import-export-page-header-heading-color: #{$e-app-import-export-page-header-heading-color};
 	--e-app-import-export-page-header-description-color: #{$e-app-import-export-page-header-description-color};
 
-	border-bottom: 1px solid var(--e-app-import-export-page-header-border-bottom-color);
 	margin-bottom: spacing(44);
 
 	&__content-wrapper {
@@ -32,7 +30,6 @@ $root: e-app-import-export-page-header;
 
 .eps-theme-dark {
 	.#{$root} {
-		--e-app-import-export-page-header-border-bottom-color: #{$e-app-import-export-page-header-border-bottom-dark-color};
 		--e-app-import-export-page-header-heading-color: #{$e-app-import-export-page-header-heading-dark-color};
 		--e-app-import-export-page-header-description-color: #{$e-app-import-export-page-header-description-dark-color};
 	}

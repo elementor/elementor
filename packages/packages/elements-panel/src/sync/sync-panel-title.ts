@@ -12,7 +12,7 @@ type ExtendedWindow = Window & {
 }
 
 export default function syncPanelTitle() {
-	const title = __( 'Widget Panel', 'elementor' );
+	const title = __( 'Elements', 'elementor' );
 
 	listenTo(
 		routeOpenEvent( 'panel/elements' ),

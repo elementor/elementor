@@ -1,0 +1,20 @@
+//
+// Compatibility
+//
+
+// WP Media Modal Compatibility
+.media-modal.wp-core-ui {
+	color-scheme: light; //light mode only
+	color: $e-gray-600; //light mode only
+
+	// Normalize form elements in WP's core media management modal
+	select {
+		width: initial;
+		padding-inline: 8px;
+	}
+
+	fieldset {
+		padding: 0;
+		border: 0;
+	}
+}

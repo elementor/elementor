@@ -89,7 +89,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	// Test Desktop
 	await page.fill( '.elementor-control-image_spacing_custom input[type="number"]', '100' );
 	await editor.togglePreviewMode();
-	await expect( editor.getFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
+	await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
 
 	// Test Tablet Extra
 	await editor.togglePreviewMode();
@@ -97,7 +97,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers [data-device="tablet_extra"]' ).click();
 	await page.fill( '.elementor-control-image_spacing_custom_tablet_extra input[type="number"]', '50' );
 	await editor.togglePreviewMode();
-	await expect( editor.getFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
+	await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
 
 	// Test Tablet
 	await editor.togglePreviewMode();
@@ -105,7 +105,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers [data-device="tablet"]' ).click();
 	await page.fill( '.elementor-control-image_spacing_custom_tablet input[type="number"]', '10' );
 	await editor.togglePreviewMode();
-	await expect( editor.getFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
+	await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 
 	await wpAdmin.setExperiments( {
 		additional_custom_breakpoints: 'inactive',

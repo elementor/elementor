@@ -6,25 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-panel-revisions">
 	<div class="elementor-panel-box">
-	<div class="elementor-panel-scheme-buttons">
-			<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-				<button class="elementor-button" disabled>
-					<i class="eicon-close" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Discard', 'elementor' ); ?>
-				</button>
-			</div>
-			<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-				<button class="elementor-button elementor-button-success" disabled>
-					<?php echo esc_html__( 'Apply', 'elementor' ); ?>
-				</button>
-			</div>
+		<div class="elementor-panel-revisions-buttons">
+			<button class="elementor-button e-btn-txt e-revision-discard" disabled>
+				<?php echo esc_html__( 'Discard', 'elementor' ); ?>
+			</button>
+			<button class="elementor-button e-revision-save" disabled>
+				<?php echo esc_html__( 'Apply', 'elementor' ); ?>
+			</button>
 		</div>
 	</div>
 
 	<div class="elementor-panel-box">
-		<div class="elementor-panel-heading">
-			<div class="elementor-panel-heading-title"><?php echo esc_html__( 'Revisions', 'elementor' ); ?></div>
-		</div>
 		<div id="elementor-revisions-list" class="elementor-panel-box-content"></div>
 	</div>
 </script>
@@ -65,12 +57,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="elementor-revision-item__tools">
+			<i class="elementor-revision-item__tools-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+
 			<# if ( 'current' === type ) { #>
-				<i class="elementor-revision-item__tools-current eicon-star" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Current', 'elementor' ); ?></span>
+				<i class="elementor-revision-item__tools-current eicon-check" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Published', 'elementor' ); ?></span>
 			<# } #>
 
-			<i class="elementor-revision-item__tools-spinner eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+<!--			<# if ( 'revision' === type ) { #>-->
+<!--				<i class="eicon-undo" aria-hidden="true"></i>-->
+<!--				<span class="elementor-screen-only">--><?php //echo esc_html__( 'Restore', 'elementor' ); ?><!--</span>-->
+<!--			<# } #>-->
+
 		</div>
 	</div>
 </script>
