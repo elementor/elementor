@@ -6,37 +6,41 @@ export class Unload extends $e.modules.CommandInternalBase {
 	}
 
 	apply( args ) {
-		const { document } = args;
+		return new Promise( ( resolve, reject ) => {
+			const { document } = args;
 
-		if ( document.id !== elementor.config.document.id ) {
-			return;
-		}
+			if ( document.id !== elementor.config.document.id ) {
+				reject();
+			}
 
-		elementor.elements = [];
+			elementor.elements = [];
 
-		elementor.saver.stopAutoSave( document );
+			elementor.saver.stopAutoSave( document );
 
-		elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
+			elementor.channels.dataEditMode.trigger( 'switch', 'preview' );
 
-		if ( document.$element ) {
-			document.$element
-				.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
-				.addClass( 'elementor-editor-preview' );
-		}
+			if ( document.$element ) {
+				document.$element
+					.removeClass( 'elementor-edit-area-active elementor-edit-mode' )
+					.addClass( 'elementor-editor-preview' );
+			}
 
-		elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
+			elementorCommon.elements.$body.removeClass( `elementor-editor-${ document.config.type }` );
 
-		elementor.settings.page.destroy();
+			elementor.settings.page.destroy();
 
-		elementor.heartbeat.destroy();
+			elementor.heartbeat.destroy();
 
-		document.editor.status = 'closed';
+			document.editor.status = 'closed';
 
-		elementor.config.document = {};
+			elementor.config.document = {};
 
-		elementor.documents.unsetCurrent();
+			elementor.documents.unsetCurrent();
 
-		elementor.trigger( 'document:unloaded', document );
+			elementor.trigger( 'document:unloaded', document );
+
+			resolve();
+		} );
 	}
 }
 

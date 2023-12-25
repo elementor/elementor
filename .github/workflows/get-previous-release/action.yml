@@ -5,6 +5,9 @@ inputs:
   CHANNEL:
     required: true
     description: "The channel to get the version to (ga, cloud, beta)."
+  POSTFIX:
+    required: false
+    description: "The postfix that will be added to the package version -rc / -test / empty string."
 
 runs:
   using: "composite"
@@ -12,15 +15,19 @@ runs:
     - shell: bash
       run: |
         # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
-        # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
+        # excluding any "-rc" and "-test" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
         if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
-           tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | awk '{print $2}')
+          if [[ "${{ inputs.POSTFIX }}" == "-test" ]]; then
+            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep "\-test" | awk '{print $2}')
+          else
+            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | grep -v "\-test" | awk '{print $2}')
+          fi
         fi
 
         # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
         # and store them in the 'tags' variable. e.g. "refs/tags/v3.11.1 , refs/tags/v3.11.2"
         if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
-           tags=$(git ls-remote --tags | grep "refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$")
+           tags=$(git ls-remote --tags | grep "refs/tags/[0-9]\+\.[0-9]\+\.[0-9]\+$")
         fi
 
         # Get the last release of a specific channel (ga, cloud, beta) by datetime descending order

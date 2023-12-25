@@ -1,6 +1,6 @@
 import Component from './component';
 
-	var TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
+var TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
 
 TemplateLibraryManager = function() {
@@ -132,6 +132,11 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
+	/**
+	 * @param {*}      model - Template model.
+	 * @param {Object} args  - Template arguments.
+	 * @deprecated since 2.8.0, use `$e.run( 'library/insert-template' )` instead.
+	 */
 	this.importTemplate = function( model, args = {} ) {
 		elementorDevTools.deprecation.deprecated( 'importTemplate', '2.8.0',
 			"$e.run( 'library/insert-template' )" );
@@ -213,7 +218,7 @@ TemplateLibraryManager = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementorCommon.dialogsManager.createWidget( 'alert', {
 				id: 'elementor-template-library-error-dialog',
-				headerMessage: __( 'An error occurred', 'elementor' ),
+				headerMessage: __( 'An error occurred.', 'elementor' ),
 			} );
 		}
 

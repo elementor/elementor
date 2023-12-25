@@ -52,7 +52,7 @@ class Widget_Common extends Widget_Base {
 	 * Returns an array of device args.
 	 *
 	 * @since 3.4.7
-	 * @deprcated 3.7.0 - Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
+	 * @deprecated 3.7.0 Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
 	 * @access protected
 	 *
 	 * @param array $args arguments to duplicate per breakpoint
@@ -239,22 +239,17 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[
-				'label' => esc_html__( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Custom Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
 				'range' => [
 					'px' => [
 						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'max' => 100,
-						'step' => 1,
 					],
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
 				],
@@ -391,7 +386,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -407,7 +401,7 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
@@ -430,7 +424,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 0.1,
 					],
 					'%' => [
 						'min' => -200,
@@ -446,7 +439,7 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
@@ -493,7 +486,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -510,7 +502,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
@@ -531,7 +523,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -548,7 +539,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
@@ -579,6 +570,9 @@ class Widget_Common extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
@@ -591,6 +585,9 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -722,10 +719,11 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -836,11 +834,12 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -903,7 +902,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'media_type' => 'image',
+				'media_types' => [ 'image' ],
 				'should_include_svg_inline_option' => true,
 				'library_type' => 'image/svg+xml',
 				'dynamic' => [
@@ -972,10 +971,6 @@ class Widget_Common extends Widget_Base {
 					'%' => [
 						'min' => 0,
 						'max' => 200,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'default' => [
@@ -1130,7 +1125,12 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]

@@ -24,13 +24,13 @@
 	}
 
 	&__tab-links {
-		margin-top: 30px;
+		margin-block-start: 30px;
 	}
 
 	&__upload {
 		margin: 20px 45px;
-		padding-top: 35px;
-		border-top: var(--e-a-border);
+		padding-block-start: 35px;
+		border-block-start: var(--e-a-border);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -82,7 +82,7 @@
 			color: var(--e-a-color-txt);
 			font-size: 16px;
 			font-weight: 500;
-			text-align: $start;
+			text-align: start;
 
 			@media (max-width: $editor-screen-xs-max) {
 				display: none;
@@ -118,7 +118,7 @@
 		display: flex;
 		align-items: center;
 		flex-direction: column;
-		padding-top: 70px;
+		padding-block-start: 70px;
 
 		&__icon {
 			font-size: 60px;
@@ -127,11 +127,11 @@
 		&__text {
 			width: 300px;
 			font-size: 16px;
-			padding-top: 25px;
+			padding-block-start: 25px;
 		}
 
 		&__link {
-			margin-top: 20px;
+			margin-block-start: 20px;
 		}
 	}
 }
@@ -139,15 +139,16 @@
 .elementor-icons-manager {
 
 	&__tab-link {
-		@include padding(15px, 0, 15px, 45px);
+		padding-block: 15px;
+		padding-inline: 45px 0;
 		font-size: 12px;
-		text-align: $start;
+		text-align: start;
 		cursor: pointer;
 		position: relative;
 
 		i {
 			font-size: 20px;
-			@include padding-end(15px);
+			padding-inline-end: 15px;
 		}
 
 		@media (max-width: $editor-screen-md-max) {
@@ -180,7 +181,7 @@
 	&__tab__item {
 		position: relative;
 		height: 0;
-		padding-bottom: 100%;
+		padding-block-end: 100%;
 		border: var(--e-a-border);
 		border-radius: 3px;
 		cursor: pointer;

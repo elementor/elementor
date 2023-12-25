@@ -1,0 +1,65 @@
+@use "../helpers/mixins";
+
+//
+// Dialog Confirm
+//
+
+$e-dialog-confirm-space: 20px;
+
+.dialog-type-confirm,
+.dialog-type-alert {
+
+	.dialog-widget-content {
+		margin: auto;
+		width: 400px;
+		padding: $e-dialog-confirm-space;
+	}
+
+	.dialog-header {
+		font-size: 15px;
+		font-weight: 500;
+
+		&:after {
+			content: '';
+			display: block;
+			border-block-end: var(--e-a-border);
+			padding-block-end: 10px;
+			margin-block-end: 10px;
+			margin-inline-start: -$e-dialog-confirm-space;
+			margin-inline-end: -$e-dialog-confirm-space;
+		}
+	}
+
+	.dialog-message {
+		min-height: 50px;
+	}
+
+	.dialog-buttons-wrapper {
+		padding-block-start: 10px;
+		display: flex;
+		justify-content: flex-end;
+		gap: 15px;
+
+		.dialog-button {
+			@include mixins.e-button;
+
+			&:hover,
+			&:focus,
+			&:visited {
+				color: initial;
+			}
+
+			&.dialog-ok {
+				@extend .e-primary;
+			}
+
+			&.dialog-cancel {
+				@extend .e-btn-txt;
+			}
+
+			&.dialog-take_over {
+				@extend .e-primary;
+			}
+		}
+	}
+}

@@ -8,28 +8,28 @@ const { useMemo } = React;
 
 export default function TaxonomiesFilter( props ) {
 	const taxonomiesByType = useMemo( () => {
-		if ( ! props.taxonomies ) {
-			return [];
-		}
+			if ( ! props.taxonomies ) {
+				return [];
+			}
 
-		return taxonomyType
-			.map( ( tagType ) => ( {
-				...tagType,
-				data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
-			} ) )
-			.filter( ( { data } ) => data.length > 0 );
-	}, [ props.taxonomies ] ),
-	eventTracking = ( command, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
-		command,
-		{
-			page_source: 'home page',
-			element_location: 'app_sidebar',
-			category: props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' ),
-			section,
-			search_term: search,
-			event_type: eventType,
-		},
-	);
+			return taxonomyType
+				.map( ( tagType ) => ( {
+					...tagType,
+					data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
+				} ) )
+				.filter( ( { data } ) => data.length > 0 );
+		}, [ props.taxonomies ] ),
+		eventTracking = ( command, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
+			command,
+			{
+				page_source: 'home page',
+				element_location: 'app_sidebar',
+				category: props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' ),
+				section,
+				search_term: search,
+				event_type: eventType,
+			},
+		);
 
 	return (
 		<div className="e-kit-library__tags-filter">

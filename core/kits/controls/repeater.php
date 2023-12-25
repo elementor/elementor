@@ -60,7 +60,8 @@ class Repeater extends Control_Repeater {
 		<# if ( itemActions.add ) { #>
 			<div class="elementor-button-wrapper">
 				<button class="elementor-button elementor-repeater-add" type="button">
-					<i class="eicon-plus" aria-hidden="true"></i><span class="elementor-repeater__add-button__text">{{{ addButtonText }}}</span>
+					<i class="eicon-plus" aria-hidden="true"></i>
+					<span class="elementor-repeater__add-button__text">{{{ addButtonText }}}</span>
 				</button>
 			</div>
 		<# } #>

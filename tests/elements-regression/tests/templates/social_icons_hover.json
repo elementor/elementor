@@ -1,0 +1,49 @@
+{
+    "content": [
+        {
+            "id": "664907ed",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "4ff4c119",
+                    "settings": {
+                        "social_icon_list": [
+                            {
+                                "social_icon": {
+                                    "value": "fab fa-facebook",
+                                    "library": "fa-brands"
+                                },
+                                "_id": "307976a"
+                            },
+                            {
+                                "social_icon": {
+                                    "value": "fab fa-twitter",
+                                    "library": "fa-brands"
+                                },
+                                "_id": "0786a8f"
+                            },
+                            {
+                                "social_icon": {
+                                    "value": "fab fa-youtube",
+                                    "library": "fa-brands"
+                                },
+                                "_id": "da90a9d"
+                            }
+                        ],
+                        "hover_animation": "rotate"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "social-icons",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "social_icons_hover",
+    "type": "page"
+}

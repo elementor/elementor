@@ -7,6 +7,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				container: window,
 			},
 			considerScrollbar: false,
+			cssOutput: 'inline',
 		};
 	},
 
@@ -80,16 +81,46 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		css[ settings.direction ] = correctOffset + 'px';
 
+		if ( 'variables' === settings.cssOutput ) {
+			this.applyCssVariables( $element, css );
+			return;
+		}
+
 		$element.css( css );
 	},
 
 	reset() {
-		var css = {};
+		const css = {},
+			settings = this.getSettings(),
+			$element = this.elements.$element;
+
+		if ( 'variables' === settings.cssOutput ) {
+			this.resetCssVariables( $element );
+			return;
+		}
 
 		css.width = '';
 
-		css[ this.getSettings( 'direction' ) ] = '';
+		css[ settings.direction ] = '';
 
-		this.elements.$element.css( css );
+		$element.css( css );
+	},
+
+	applyCssVariables( $element, css ) {
+		$element.css( '--stretch-width', css.width );
+
+		if ( !! css.left ) {
+			$element.css( '--stretch-left', css.left );
+		} else {
+			$element.css( '--stretch-right', css.right );
+		}
+	},
+
+	resetCssVariables( $element ) {
+		$element.css( {
+			'--stretch-width': '',
+			'--stretch-left': '',
+			'--stretch-right': '',
+		} );
 	},
 } );

@@ -13,12 +13,12 @@
 	}
 
 	&__drop-zone {
-		margin-top: 3rem;
+		margin-block-start: 3rem;
 	}
 
 	.eps-display-3 {
 		font-size: 16px;
-		margin-bottom: 0.5rem;
+		margin-block-end: 0.5rem;
 	}
 
 	.e-app-upload-file__button {
@@ -34,7 +34,7 @@
 
 		&-container {
 			position: relative;
-			margin-top: 3rem;
+			margin-block-start: 3rem;
 			min-height: 120px;
 			width: fit-content;
 			display: flex;
@@ -52,7 +52,7 @@
 
 		&-remove {
 			position: absolute;
-			right: 8px;
+			@include end(0);
 			top: 5px;
 
 			i {

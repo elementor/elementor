@@ -9,20 +9,20 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 // Mock WP_CLI classes because they are not available in the test environment.
-require_once __DIR__ . '/mock/wp-cli-command.php';
-require_once __DIR__ . '/mock/wp-cli.php';
+require_once __DIR__ . '/../../mock/wp-cli-command.php';
+require_once __DIR__ . '/../../mock/wp-cli.php';
 
 class Test_Wp_Cli extends Elementor_Test_Base {
 	const MOCK_KIT_ZIP_PATH = __DIR__ . '/mock/sample-kit.zip';
 
 	private $mock_import_export_module;
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		// TODO: find a better way.
 		Plugin::$instance->app->add_component( 'import-export', new Module() );
 	}
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->mock_import_export_module = $this->getMockBuilder( Module::class )

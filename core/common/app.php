@@ -183,7 +183,12 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION
 		);
 
-		$this->enqueue_theme_ui_styles();
+		wp_enqueue_style(
+			'e-theme-ui-light',
+			$this->get_css_assets_url( 'theme-light' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**
@@ -221,49 +226,6 @@ class App extends BaseApp {
 		foreach ( $this->templates as $template ) {
 			echo $template; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
-	}
-
-	private function enqueue_theme_ui_styles() {
-		$ui_theme_selected = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
-
-		$ui_themes = [
-			'light',
-			'dark',
-		];
-
-		if ( 'auto' === $ui_theme_selected || ! in_array( $ui_theme_selected, $ui_themes, true ) ) {
-			$ui_light_theme_media_queries = '(prefers-color-scheme: light)';
-			$ui_dark_theme_media_queries = '(prefers-color-scheme: dark)';
-		} else {
-			$ui_light_theme_media_queries = 'none';
-			$ui_dark_theme_media_queries = 'none';
-
-			if ( 'light' === $ui_theme_selected ) {
-				$ui_light_theme_media_queries = 'all';
-			} elseif ( 'dark' === $ui_theme_selected ) {
-				$ui_dark_theme_media_queries = 'all';
-			}
-		}
-
-		if ( 'admin_enqueue_scripts' === current_action() ) {
-			$ui_light_theme_media_queries = 'all';
-			$ui_dark_theme_media_queries = 'none';
-		}
-
-		$this->enqueue_theme_ui( 'light', $ui_light_theme_media_queries );
-		$this->enqueue_theme_ui( 'dark', $ui_dark_theme_media_queries );
-	}
-
-	private function enqueue_theme_ui( $ui_theme, $ui_theme_media_queries = 'all' ) {
-		$suffix = Utils::is_script_debug() ? '' : '.min';
-
-		wp_enqueue_style(
-			'e-theme-ui-' . $ui_theme,
-			ELEMENTOR_ASSETS_URL . 'css/theme-' . $ui_theme . $suffix . '.css',
-			[],
-			ELEMENTOR_VERSION,
-			$ui_theme_media_queries
-		);
 	}
 
 	/**

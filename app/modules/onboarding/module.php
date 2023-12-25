@@ -129,7 +129,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'you are not allowed to perform this action', 'elementor' ),
+				'error_message' => esc_html__( 'You do not have permissions to perform this action.', 'elementor' ),
 			],
 		];
 	}
@@ -147,7 +147,7 @@ class Module extends BaseModule {
 		$problem_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site name', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site name.', 'elementor' ),
 			],
 		];
 
@@ -204,7 +204,7 @@ class Module extends BaseModule {
 		$data_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site logo', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site logo.', 'elementor' ),
 			],
 		];
 
@@ -254,7 +254,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_upload_logo_image() {
-		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
 
@@ -339,7 +339,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
 

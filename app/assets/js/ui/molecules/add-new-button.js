@@ -22,7 +22,7 @@ export default class AddNewButton extends Button {
 	static defaultProps = {
 		...Button.defaultProps,
 		className: 'eps-add-new-button',
-		text: __( 'Add New', 'elementor-pro' ),
+		text: __( 'Add New', 'elementor' ),
 		icon: 'eicon-plus',
 	};
 }

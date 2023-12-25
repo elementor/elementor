@@ -25,8 +25,8 @@ export const breakpoints = [
 		value: 'tablet',
 		label: __( 'Tablet', 'elementor' ),
 		style: {
-			marginTop: '30px',
-			marginBottom: '30px',
+			marginBlockStart: '30px',
+			marginBlockEnd: '30px',
 			width: '768px',
 			height: '1024px',
 		},
@@ -35,8 +35,8 @@ export const breakpoints = [
 		value: 'mobile',
 		label: __( 'Mobile', 'elementor' ),
 		style: {
-			marginTop: '30px',
-			marginBottom: '30px',
+			marginBlockStart: '30px',
+			marginBlockEnd: '30px',
 			width: '375px',
 			height: '667px',
 		},

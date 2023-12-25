@@ -18,7 +18,7 @@ import './export-kit.scss';
 
 export default function ExportKit() {
 	const exportContext = useContext( ExportContext ),
-	sharedContext = useContext( SharedContext ),
+		sharedContext = useContext( SharedContext ),
 		getFooter = () => (
 			<ActionsFooter>
 				<Button

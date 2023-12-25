@@ -20,11 +20,8 @@ class Form_Submissions_Promotion_Item extends Base_Promotion_Item {
 	}
 
 	public function render_promotion_description() {
-		echo esc_html__(
-			'Save and manage all of your form submissions in one single place.
-			All within a simple, intuitive place.',
-			'elementor'
-		); ?>
+		echo esc_html__( 'Save and manage all of your form submissions in one single place. All within a simple, intuitive place.', 'elementor' );
+		?>
 
 		<a href="https://go.elementor.com/wp-dash-submissions" target="_blank" rel="nofollow">
 			<?php echo esc_html__( 'Learn More', 'elementor' ); ?>

@@ -30,7 +30,7 @@ export default function IndexHeader( props ) {
 	const buttons = useMemo( () => [
 		{
 			id: 'info',
-			text: __( 'Info', 'elementor-pro' ),
+			text: __( 'Info', 'elementor' ),
 			hideText: true,
 			icon: 'eicon-info-circle-o',
 			onClick: () => {
@@ -40,7 +40,7 @@ export default function IndexHeader( props ) {
 		},
 		{
 			id: 'refetch',
-			text: __( 'Refetch', 'elementor-pro' ),
+			text: __( 'Refetch', 'elementor' ),
 			hideText: true,
 			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
 			onClick: () => {
@@ -50,7 +50,7 @@ export default function IndexHeader( props ) {
 		},
 		{
 			id: 'import',
-			text: __( 'Import', 'elementor-pro' ),
+			text: __( 'Import', 'elementor' ),
 			hideText: true,
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,

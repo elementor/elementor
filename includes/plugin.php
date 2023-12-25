@@ -17,7 +17,6 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
-use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -101,6 +100,7 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @var Schemes_Manager
 	 */
@@ -754,7 +754,6 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
-			new Elementor_3_Re_Migrate_Globals();
 		}
 	}
 
@@ -772,7 +771,7 @@ class Plugin {
 	 * Get Legacy Mode
 	 *
 	 * @since 3.0.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead
+	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead.
 	 *
 	 * @param string $mode_name Optional. Default is null
 	 *

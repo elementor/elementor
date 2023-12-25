@@ -10,7 +10,8 @@ export default function KitContentCheckbox( props ) {
 		setIncludes = ( event ) => {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
-				props.onCheck?.( event, props.type );
+
+			props.onCheck?.( event, props.type );
 
 			sharedContext.dispatch( { type: actionType, payload: props.type } );
 		};

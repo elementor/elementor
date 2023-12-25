@@ -37,7 +37,7 @@ const map = ( { isInner, settings = {} } ) => {
 				wider: 30,
 			};
 
-			value = ( 'custom' === value ) ? sectionSettings.gap_columns_custom : { size: sizesMap[ value ], unit: 'px' };
+			value = ( 'custom' === value ) ? sectionSettings.gap_columns_custom : { size: sizesMap[ value ], column: '' + sizesMap[ value ], row: '' + sizesMap[ value ], unit: 'px' };
 
 			return [ 'flex_gap', value ];
 		},

@@ -27,7 +27,7 @@
 		font-size: 11px;
 		cursor: pointer;
 		color: var(--e-a-color-txt-muted);
-		border-top: var(--e-a-border);
+		border-block-start: var(--e-a-border);
 		margin: 0 -20px;
 
 		&:hover {
@@ -62,12 +62,12 @@
 	}
 
 	.elementor-control-structure-preset-wrapper {
-		margin-bottom: 15px;
+		margin-block-end: 15px;
 	}
 
 	.elementor-control-structure-preset-title {
 		text-align: center;
-		padding-top: 5px;
+		padding-block-start: 5px;
 		font-style: italic;
 		font-size: 11px;
 		color: $editor-light;

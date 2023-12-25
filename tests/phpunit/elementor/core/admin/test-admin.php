@@ -18,7 +18,7 @@ class Test_Admin extends Elementor_Test_Base {
 	 */
 	private $pagenow;
 
-	public function setUp() {
+	public function setUp(): void {
 		global $pagenow;
 
 		parent::setUp();
@@ -26,7 +26,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->pagenow = $pagenow;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		global $pagenow;
 
 		parent::tearDown();
@@ -116,7 +116,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$result = apply_filters( 'admin_body_class', '' );
 
 		// Assert
-		$this->assertRegExp( '/elementor-editor-inactive/', $result );
+		$this->assertMatchesRegularExpression( '/elementor-editor-inactive/', $result );
 	}
 
 	public function test_body_statues_classes__when_edit_with_elementor() {
@@ -133,7 +133,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$result = apply_filters( 'admin_body_class', '' );
 
 		// Assert
-		$this->assertRegExp( '/elementor-editor-active/', $result );
+		$this->assertMatchesRegularExpression( '/elementor-editor-active/', $result );
 	}
 
 	public function test_get_init_settings__returns_experiments_config() {
@@ -153,6 +153,9 @@ class Test_Admin extends Elementor_Test_Base {
 			'title' => 'Experiment 1',
 			'state' => Experiments_Manager::STATE_ACTIVE,
 			'other-prop' => 'some-value',
+			'messages' => [
+				'on_deactivate' => 'test-message',
+			],
 		];
 
 		$experiment2 = [
@@ -181,6 +184,10 @@ class Test_Admin extends Elementor_Test_Base {
 				'title' => 'Experiment 1',
 				'state' => Experiments_Manager::STATE_ACTIVE,
 				'dependencies' => [],
+				'messages' => [
+					'on_deactivate' => 'test-message',
+				],
+
 			],
 			[
 				'name' => 'experiment-2',
@@ -190,6 +197,7 @@ class Test_Admin extends Elementor_Test_Base {
 				'dependencies' => [
 					'experiment-1',
 				],
+				'messages' => [],
 			],
 		], $settings['experiments'] );
 

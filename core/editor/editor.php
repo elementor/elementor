@@ -4,7 +4,8 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Config_Providers\Config_Provider_Factory;
+use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
+use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -68,7 +69,7 @@ class Editor {
 	public $promotion;
 
 	/**
-	 * @var Editor_Loader
+	 * @var Editor_Loader_Interface
 	 */
 	private $loader;
 
@@ -354,9 +355,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$this->get_loader()->print_client_settings();
 		$this->get_loader()->enqueue_scripts();
-		$this->get_loader()->load_scripts_translations();
 
 		Plugin::$instance->controls_manager->enqueue_control_scripts();
 
@@ -391,6 +390,8 @@ class Editor {
 		$this->get_loader()->register_styles();
 		$this->get_loader()->enqueue_styles();
 
+		$this->enqueue_theme_ui_styles();
+
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
 		// The two breakpoints under 'tablet' need to be checked for values.
@@ -409,6 +410,44 @@ class Editor {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/editor/after_enqueue_styles' );
+	}
+
+	private function enqueue_theme_ui_styles() {
+		$ui_theme_selected = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
+
+		$ui_themes = [
+			'light',
+			'dark',
+		];
+
+		if ( 'auto' === $ui_theme_selected || ! in_array( $ui_theme_selected, $ui_themes, true ) ) {
+			$ui_light_theme_media_queries = '(prefers-color-scheme: light)';
+			$ui_dark_theme_media_queries = '(prefers-color-scheme: dark)';
+		} else {
+			$ui_light_theme_media_queries = 'none';
+			$ui_dark_theme_media_queries = 'none';
+
+			if ( 'light' === $ui_theme_selected ) {
+				$ui_light_theme_media_queries = 'all';
+			} elseif ( 'dark' === $ui_theme_selected ) {
+				$ui_dark_theme_media_queries = 'all';
+			}
+		}
+
+		$this->enqueue_theme_ui( 'light', $ui_light_theme_media_queries );
+		$this->enqueue_theme_ui( 'dark', $ui_dark_theme_media_queries );
+	}
+
+	private function enqueue_theme_ui( $ui_theme, $ui_theme_media_queries = 'all' ) {
+		$suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_style(
+			'e-theme-ui-' . $ui_theme,
+			ELEMENTOR_ASSETS_URL . 'css/theme-' . $ui_theme . $suffix . '.css',
+			[],
+			ELEMENTOR_VERSION,
+			$ui_theme_media_queries
+		);
 	}
 
 	/**
@@ -450,8 +489,6 @@ class Editor {
 		$plugin->controls_manager->render_controls();
 		$plugin->widgets_manager->render_widgets_content();
 		$plugin->elements_manager->render_elements_content();
-
-		$plugin->schemes_manager->print_schemes_templates();
 
 		$plugin->dynamic_tags->print_templates();
 
@@ -549,12 +586,13 @@ class Editor {
 	/**
 	 * Get loader.
 	 *
-	 * @return Editor_Loader
+	 * @return Editor_Loader_Interface
 	 */
 	private function get_loader() {
 		if ( ! $this->loader ) {
-			$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
-			$this->loader->register_hooks();
+			$this->loader = Editor_Loader_Factory::create();
+
+			$this->loader->init();
 		}
 
 		return $this->loader;
@@ -580,5 +618,53 @@ class Editor {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
+	}
+
+	/**
+	 * Get elements presets.
+	 *
+	 * @return array
+	 */
+	public function get_elements_presets() {
+		$element_types = Plugin::$instance->elements_manager->get_element_types();
+		$presets = [];
+
+		foreach ( $element_types as $el_type => $element ) {
+			$this->check_element_for_presets( $element, $el_type, $presets );
+		}
+
+		return $presets;
+	}
+
+	/**
+	 * @return void
+	 */
+	private function check_element_for_presets( $element, $el_type, &$presets ) {
+		$element_presets = $element->get_panel_presets();
+
+		if ( empty( $element_presets ) ) {
+			return;
+		}
+
+		foreach ( $element_presets as $key => $preset ) {
+			$this->maybe_add_preset( $el_type, $preset, $key, $presets );
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	private function maybe_add_preset( $el_type, $preset, $key, &$presets ) {
+		if ( $this->is_valid_preset( $el_type, $preset ) ) {
+			$presets[ $key ] = $preset;
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	private function is_valid_preset( $el_type, $preset ) {
+		return isset( $preset['replacements']['custom']['originalWidget'] )
+			&& $el_type === $preset['replacements']['custom']['originalWidget'];
 	}
 }

@@ -2,8 +2,8 @@ $menu-item-font-size: $eps-font-size-caption;
 $menu-item-line-height: $eps-line-height-sm;
 $menu-item-link-spacing: spacing(12);
 $menu-item-icon-size: $font-size-18;
-$menu-item-padding-y: spacing(8);
-$menu-item-padding-x: spacing(30);
+$menu-item-padding-block: spacing(8);
+$menu-item-padding-inline: spacing(30);
 $menu-item-height: spacing(44);
 $menu-item-pointer-width: spacing(5);
 $menu-item-pointer-color: tints(900);
@@ -58,7 +58,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 		display: block;
 		position: absolute;
 		top: 0;
-		inset-inline-start: 0;
+		@include start(0);
 		height: 100%;
 		width: var(--menu-item-pointer-width);
 		background-color: $menu-item-pointer-color;
@@ -78,7 +78,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 	}
 
 	&__link {
-		padding: $menu-item-padding-y $menu-item-padding-x;
+		padding: $menu-item-padding-block $menu-item-padding-inline;
 		min-height: $menu-item-height;
 		font-size: $menu-item-font-size;
 		line-height: $menu-item-line-height;

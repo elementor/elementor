@@ -1,10 +1,10 @@
-@import "assets/dev/scss/helpers/variables";
-@import "app/assets/styles/tokens/_font";
+@import "../../../../assets/dev/scss/helpers/variables";
+@import "../../../../app/assets/styles/tokens/_font";
 
-$base-color: #0C0D0E;
-$button-base-color: #524CFF;
-$button-base-color-hover: #4C43E5;
-$description-color: #515962;
+$base-color: var(--e-a-color-txt-accent);
+$button-base-color: var(--e-a-btn-bg-accent);
+$button-base-color-hover: var(--e-a-btn-bg-accent-hover);
+$description-color: var(--e-a-color-txt);
 
 #e-announcements-root {
 	position: fixed;
@@ -15,24 +15,26 @@ $description-color: #515962;
 	height: 100%;
 	align-items: center;
 	justify-content: center;
-	color: $platform-darker-gray;
+	color: var(--e-a-color-txt);
 	font-family: $admin-font-family;
 	z-index: $element-overlay;
 
 	.announcements-container {
-		width: 637px;
-		background-color: $white;
+		width: 640px;
+		max-width: 100%;
+		background-color: var(--e-a-bg-default);
+		border-radius: var(--e-a-border-radius);
 		z-index: $element-overlay;
 
 		.announcements-heading-container {
 			display: flex;
 			align-items: center;
 			padding: 16px 32px;
-			border-bottom: 1px solid $platform-gray-lightest;
+			border-block-end: var(--e-a-border);
 
 			.eicon-elementor {
-				color: $white;
-				background-color: $base-color;
+				color: var(--e-a-color-logo);
+				background-color: var(--e-a-bg-logo);
 				border-radius: 50%;
 				padding: 8px;
 			}
@@ -40,7 +42,8 @@ $description-color: #515962;
 			.heading-title {
 				margin-inline-start: 12px;
 				text-transform: uppercase;
-				font-size: 13px;
+				font-weight: 700;
+				color: var(--e-a-color-txt-active);
 			}
 
 			.close-button {
@@ -52,6 +55,10 @@ $description-color: #515962;
 				font: inherit;
 				cursor: pointer;
 				outline: inherit;
+
+				&:hover {
+					color: var(--e-a-color-txt-hover);
+				}
 			}
 		}
 
@@ -63,13 +70,13 @@ $description-color: #515962;
 			}
 
 			.announcement-body-content{
-				padding: 32px;
+				padding: 30px;
 
 				.announcement-body-title {
 					font-size: 18px;
-					font-weight: $eps-font-weight-bold;
+					font-weight: 700;
 					color: $base-color;
-					padding: 20px 0 12px;
+					padding-block-end: 15px;
 				}
 
 				.announcement-body-description {
@@ -77,6 +84,20 @@ $description-color: #515962;
 					line-height: 24px;
 					font-weight: $eps-font-weight-normal;
 					color: $description-color;
+				}
+
+				p {
+					margin-block-end: 15px;
+				}
+
+				ul {
+					margin-inline-start: 20px;
+					margin-block-end: 15px;
+				}
+
+				li {
+					list-style: disc;
+					margin-block-end: 5px;
 				}
 			}
 		}
@@ -88,26 +109,36 @@ $description-color: #515962;
 
 			.button-item {
 				margin-inline-start: 12px;
-				padding: 12px;
-				color: $button-base-color;
-				font-size: 18px;
-				font-weight: $eps-font-weight-medium;
-				border-radius: 3px;
-				padding: 12px 16px;
-				text-decoration: none;
-				font-family: $admin-font-family;
+				padding: 8px 16px;
+				outline: none;
+				border: none;
+				border-radius: var(--e-a-border-radius);
+				transition: var(--e-a-transition-hover);
+				background: transparent;
+				color: var(--e-a-color-txt);
+				cursor: pointer;
 
-				&.primary {
-					color: $white;
-					background-color: $button-base-color;
-					border: 1px solid $button-base-color;
-
-					&:hover {
-						background-color: $button-base-color-hover;					}
+				&:hover {
+					background: var(--e-a-bg-hover);
+					color: var(--e-a-color-txt-hover);
 				}
 
-				&.secondary {
-					border: 1px solid $button-base-color;
+				&:disabled {
+					background: transparent;
+					color: var(--e-a-color-txt-disabled);
+				}
+
+				&.primary {
+					background-color: var(--e-a-btn-bg-accent);
+					color: var(--e-a-btn-color-invert);
+
+					&:hover {
+						background-color: var(--e-a-btn-bg-accent-hover);
+					}
+
+					&:active {
+						background-color: var(--e-a-btn-bg-accent-active);
+					}
 				}
 			}
 		}

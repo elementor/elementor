@@ -12,12 +12,17 @@ export default class AnnouncementIndex {
 		if ( ! announcements || ! container ) {
 			return;
 		}
+		const unMount = () => {
+			ReactDOM.unmountComponentAtNode( container );
+			document.getElementById( 'e-announcements-root' ).remove();
+		};
+
 		await $e.components.register( new AnnouncementCommands() );
 
 		ReactDOM.render(
 			<>
 				<Overlay />
-				<Announcements announcements={ announcements } />
+				<Announcements announcements={ announcements } unMount={ unMount } />
 			</>,
 			container,
 		);

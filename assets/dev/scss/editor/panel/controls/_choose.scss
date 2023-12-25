@@ -18,24 +18,24 @@
 	overflow: hidden;
 
 	.elementor-choices-label {
-		border-top: var(--e-a-border-bold);
-		border-bottom: var(--e-a-border-bold);
-		@include border-start(var(--e-a-border-bold));
-		@include border-end(none);
+		border-block-start: var(--e-a-border-bold);
+		border-block-end: var(--e-a-border-bold);
+		border-inline-start: var(--e-a-border-bold);
+		border-inline-end: none;
 		font-size: 12px;
 		transition: var(--e-a-transition-hover);
 		cursor: pointer;
 		overflow: hidden;
 
 		&:nth-child(2) {
-			@include _dimension_side_property(border-top, start, radius, var(--e-a-border-radius));
-			@include _dimension_side_property(border-bottom, start, radius, var(--e-a-border-radius));
+			border-start-start-radius: var(--e-a-border-radius);
+			border-end-start-radius: var(--e-a-border-radius);
 		}
 
 		&:last-child {
-			@include border-end(var(--e-a-border-bold));
-			@include _dimension_side_property(border-top, end, radius, var(--e-a-border-radius));
-			@include _dimension_side_property(border-bottom, end, radius, var(--e-a-border-radius));
+			border-inline-end: var(--e-a-border-bold);
+			border-start-end-radius: var(--e-a-border-radius);
+			border-end-end-radius: var(--e-a-border-radius);
 		}
 	}
 

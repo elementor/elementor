@@ -1,13 +1,13 @@
 .e-kit-library__error-screen {
-	margin-top: spacing(44);
+	margin-block-start: spacing(44);
 
 	&-title {
-		margin-top: spacing(44);
-		margin-bottom: 0;
+		margin-block-start: spacing(44);
+		margin-block-end: 0;
 	}
 
 	&-description {
-		margin-top: spacing(24);
+		margin-block-start: spacing(24);
 		color: tints( 500 );
 		text-align: center;
 		max-width: 520px;

@@ -1,0 +1,97 @@
+[
+	{
+		"id": "d64e8bf",
+		"elType": "container",
+		"settings": [],
+		"elements": [
+			{
+				"id": "14080fa",
+				"elType": "widget",
+				"widgetType": "nested-accordion",
+				"settings": {
+					"items": [
+						{
+							"item_title": "Item #1",
+							"_id": "e6325be"
+						},
+						{
+							"item_title": "Item #2",
+							"_id": "796de55"
+						},
+						{
+							"item_title": "Item #3",
+							"_id": "79035bc"
+						}
+					],
+					"faq_schema": "yes"
+				},
+				"elements": [
+					{
+						"id": "56467b2",
+						"elType": "container",
+						"settings": {
+							"_title": "item #1",
+							"content_width": "full"
+						},
+						"elements": [
+							{
+								"id": "39a6b62",
+								"elType": "widget",
+								"settings": {
+									"title": "Add Your Heading Text Here 1"
+								},
+								"elements": [],
+								"widgetType": "heading"
+							}
+						],
+						"isInner": true,
+						"isLocked": true
+					},
+					{
+						"id": "26e790c",
+						"elType": "container",
+						"settings": {
+							"_title": "item #2",
+							"content_width": "full"
+						},
+						"elements": [
+							{
+								"id": "08c2c33",
+								"elType": "widget",
+								"settings": {
+									"title": "Add Your Heading Text Here 2"
+								},
+								"elements": [],
+								"widgetType": "heading"
+							}
+						],
+						"isInner": true,
+						"isLocked": true
+					},
+					{
+						"id": "364c948",
+						"elType": "container",
+						"settings": {
+							"_title": "item #3",
+							"content_width": "full"
+						},
+						"elements": [
+							{
+								"id": "9d913e0",
+								"elType": "widget",
+								"settings": {
+									"title": "Add Your Heading Text Here 3"
+								},
+								"elements": [],
+								"widgetType": "heading"
+							}
+						],
+						"isInner": true,
+						"isLocked": true
+					}
+				]
+			}
+		],
+		"isInner": false
+	}
+]
