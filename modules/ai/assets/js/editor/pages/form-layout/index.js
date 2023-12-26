@@ -127,6 +127,7 @@ const FormLayout = ( {
 
 		if ( isURL( prompt ) ) {
 			setShouldRenderWebApp( true );
+			return;
 		}
 
 		onGenerate();
@@ -266,6 +267,7 @@ const FormLayout = ( {
 						<AttachDialog
 							type={ ATTACHMENT_TYPE_URL }
 							url={ promptInputRef.current.value }
+							onAttach={ () => {} }
 							onClose={ () => {
 								setShouldRenderWebApp( false );
 							} } />

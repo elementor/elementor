@@ -39,6 +39,15 @@ export const UrlDialog = ( props ) => {
 		};
 	}, [ turnOffTimeout ] );
 
+	if ( ! iframeSource ) {
+		return (
+			<AlertDialog
+				message={ __( 'The app is not available. Please try again later.', 'elementor' ) }
+				onClose={ props.onClose }
+			/>
+		);
+	}
+
 	return (
 		<Dialog
 			open={ true }
