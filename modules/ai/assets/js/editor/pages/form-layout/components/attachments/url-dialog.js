@@ -47,7 +47,6 @@ export const UrlDialog = ( props ) => {
 			/>
 		);
 	}
-
 	return (
 		<Dialog
 			open={ true }

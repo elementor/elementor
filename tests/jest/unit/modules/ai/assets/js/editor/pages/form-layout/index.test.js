@@ -8,7 +8,7 @@ import { elementorCommon } from '../../mock/elementor-common';
 import { addPromptAndGenerate, sleep } from '../../test-utils';
 import {
 	RemoteConfigProvider,
-} from '../../../../../../../../../../modules/ai/assets/js/editor/pages/form-layout/context/remote-config';
+} from 'elementor/modules/ai/assets/js/editor/pages/form-layout/context/remote-config';
 
 describe( 'FormLayout', () => {
 	beforeEach( async () => {
@@ -53,5 +53,36 @@ describe( 'FormLayout', () => {
 
 		expect( root.querySelector( 'iframe' ) ).not.toBeNull();
 		expect( root.querySelector( 'iframe' ).src ).toContain( 'https%3A%2F%2Fwww.google.com' );
+	} );
+
+	it( 'Should not render AttachDialog once prompt is not url', async () => {
+		const props = {
+			DialogHeaderProps: {},
+			DialogContentProps: {},
+			attachments: [],
+		};
+		const { getByTestId } = render(
+			<TestThemeProvider>
+				<RemoteConfigProvider onError={ () => {} }>
+					<ConfigProvider mode={ 'layout' }
+						attachmentsTypes={ {} }
+						onClose={ () => {} }
+						onConnect={ () => {} }
+						onData={ () => {} }
+						onInsert={ () => {} }
+						onSelect={ () => {} }
+						onGenerate={ () => {} }>
+						<FormLayout { ...props } />
+					</ConfigProvider>
+				</RemoteConfigProvider>
+			</TestThemeProvider>,
+		);
+
+		await addPromptAndGenerate( 'How are you doing?' );
+
+		await sleep( 1000 );
+		const root = getByTestId( 'root' );
+
+		expect( root.querySelector( 'iframe' ) ).toBeNull();
 	} );
 } );
