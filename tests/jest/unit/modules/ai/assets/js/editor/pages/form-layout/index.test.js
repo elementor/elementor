@@ -23,45 +23,37 @@ describe( 'FormLayout', () => {
 			} ) );
 	} );
 
-	it( 'Should render AttachDialog once prompt is url', async () => {
-		const props = {
-			DialogHeaderProps: {},
-			DialogContentProps: {},
-			attachments: [],
-		};
-		const { getByTestId } = render(
-			<TestThemeProvider>
-				<RemoteConfigProvider onError={ () => {} }>
-					<ConfigProvider mode={ 'layout' }
-						attachmentsTypes={ {} }
-						onClose={ () => {} }
-						onConnect={ () => {} }
-						onData={ () => {} }
-						onInsert={ () => {} }
-						onSelect={ () => {} }
-						onGenerate={ () => {} }>
-						<FormLayout { ...props } />
-					</ConfigProvider>
-				</RemoteConfigProvider>
-			</TestThemeProvider>,
-		);
+	it( 'Should render AttachDialog iframe once prompt is url', async () => {
+		const { getByTestId } = renderElement();
 
 		await addPromptAndGenerate( 'https://www.google.com' );
-
 		await sleep( 1000 );
+
 		const root = getByTestId( 'root' );
 
 		expect( root.querySelector( 'iframe' ) ).not.toBeNull();
 		expect( root.querySelector( 'iframe' ).src ).toContain( 'https%3A%2F%2Fwww.google.com' );
 	} );
 
-	it( 'Should not render AttachDialog once prompt is not url', async () => {
+	it( 'Should not render AttachDialog iframe when prompt is not url', async () => {
+		const { getByTestId } = renderElement();
+
+		await addPromptAndGenerate( 'How are you doing?' );
+		await sleep( 1000 );
+
+		const root = getByTestId( 'root' );
+
+		expect( root.querySelector( 'iframe' ) ).toBeNull();
+	} );
+
+	const renderElement = ( ) => {
 		const props = {
 			DialogHeaderProps: {},
 			DialogContentProps: {},
 			attachments: [],
 		};
-		const { getByTestId } = render(
+
+		return render(
 			<TestThemeProvider>
 				<RemoteConfigProvider onError={ () => {} }>
 					<ConfigProvider mode={ 'layout' }
@@ -77,12 +69,5 @@ describe( 'FormLayout', () => {
 				</RemoteConfigProvider>
 			</TestThemeProvider>,
 		);
-
-		await addPromptAndGenerate( 'How are you doing?' );
-
-		await sleep( 1000 );
-		const root = getByTestId( 'root' );
-
-		expect( root.querySelector( 'iframe' ) ).toBeNull();
-	} );
+	};
 } );
