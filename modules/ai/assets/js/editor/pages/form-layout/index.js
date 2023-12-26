@@ -129,7 +129,6 @@ const FormLayout = ( {
 			setShouldRenderWebApp( true );
 			return;
 		}
-
 		onGenerate();
 
 		lastRun.current = () => {
