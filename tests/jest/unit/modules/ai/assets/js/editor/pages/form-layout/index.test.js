@@ -1,5 +1,5 @@
 import FormLayout from 'elementor/modules/ai/assets/js/editor/pages/form-layout';
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
 	ConfigProvider,
 } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/context/config';
@@ -34,6 +34,33 @@ describe( 'FormLayout', () => {
 		const root = getByTestId( 'root' );
 
 		expect( root.querySelector( 'iframe' ) ).toBeNull();
+	} );
+
+	it( 'Should keep the Regenerate button enabled less than 5 attempts', async () => {
+		const { getByTestId } = renderElement();
+		const root = getByTestId( 'root' );
+		await addPromptAndGenerate( 'How are you doing?' );
+
+		for ( let i = 0; i < 4; i++ ) {
+			fireEvent.click( screen.getByText( /^regenerate/i ) );
+			await waitFor( () => Promise.resolve() );
+			await sleep( 1000 );
+		}
+
+		expect( screen.getByText( /^regenerate/i ) ).not.toBeDisabled();
+	} );
+
+	it( 'Should make the Regenerate button disabled after 5 attempts', async () => {
+		const { getByTestId } = renderElement();
+		const root = getByTestId( 'root' );
+		await addPromptAndGenerate( 'How are you doing?' );
+
+		for ( let i = 0; i < 5; i++ ) {
+			fireEvent.click( screen.getByText( /^regenerate/i ) );
+			await waitFor( () => Promise.resolve() );
+		}
+
+		expect( screen.getByText( /^regenerate/i ) ).toBeDisabled();
 	} );
 
 	const renderElement = ( ) => {
