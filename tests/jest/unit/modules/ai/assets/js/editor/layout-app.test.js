@@ -3,7 +3,14 @@ import LayoutApp from '../../../../../../../../modules/ai/assets/js/editor/layou
 import TestThemeProvider from './mock/test-theme-provider';
 import { elementorCommon, ajaxResponses } from './mock/elementor-common';
 import { SCREENSHOT_LIGHT_1 } from './mock/data';
-import { addPromptAndGenerate, assertUniqueIds, clickEditPromptButton, sleep } from './test-utils';
+import {
+	addPromptAndGenerate,
+	assertUniqueIds,
+	clickEditPromptButton,
+	commonTestSetup,
+	mockResizeObserver,
+	sleep,
+} from './test-utils';
 
 const REQUESTS_PER_BATCH = 3;
 
@@ -42,14 +49,7 @@ describe( 'LayoutApp', () => {
 	let rerender;
 	beforeEach( async () => {
 		global.elementorCommon = elementorCommon;
-
-		global.ResizeObserver =
-			global.ResizeObserver ||
-			jest.fn().mockImplementation( () => ( {
-				disconnect: jest.fn(),
-				observe: jest.fn(),
-				unobserve: jest.fn(),
-			} ) );
+		mockResizeObserver();
 
 		const result = render( <App /> );
 

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { CONFIG_KEYS, useRemoteConfig } from '../context/remote-config';
 
 export const useAttachUrlService = ( args ) => {
-	const [ currentUrl, setCurrentUrl ] = useState( args.url );
+	const [ currentUrl, setCurrentUrl ] = useState( args.targetUrl );
 	const theme = useTheme();
 	const { isLoaded, isError, remoteConfig } = useRemoteConfig();
 

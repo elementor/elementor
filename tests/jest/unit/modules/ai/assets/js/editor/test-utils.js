@@ -32,3 +32,16 @@ export const clickEditPromptButton = () => {
 	const editButton = wrapper.querySelector( '[aria-label="Edit prompt"] button' );
 	fireEvent.click( editButton );
 };
+
+export const mockResizeObserver = () => {
+	global.ResizeObserver =
+		global.ResizeObserver ||
+		jest.fn().mockImplementation( () => ( {
+			disconnect: jest.fn(),
+			observe: jest.fn(),
+			unobserve: jest.fn(),
+		} ) );
+};
+
+export class commonTestSetup {
+}

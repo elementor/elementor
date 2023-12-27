@@ -266,7 +266,7 @@ const FormLayout = ( {
 						<AttachDialog
 							type={ ATTACHMENT_TYPE_URL }
 							url={ promptInputRef.current.value }
-							onAttach={ () => {} }
+							onAttach={ onAttach }
 							onClose={ () => {
 								setShouldRenderWebApp( false );
 							} } />
