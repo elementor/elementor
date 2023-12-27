@@ -1,9 +1,15 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LayoutApp from '../../../../../../../../modules/ai/assets/js/editor/layout-app';
 import TestThemeProvider from './mock/test-theme-provider';
-import { elementorCommon, ajaxResponses } from './mock/elementor-common';
+import { ajaxResponses } from './mock/elementor-common';
 import { SCREENSHOT_LIGHT_1 } from './mock/data';
-import { addPromptAndGenerate, assertUniqueIds, clickEditPromptButton, sleep } from './test-utils';
+import {
+	addPromptAndGenerate,
+	assertUniqueIds,
+	clickEditPromptButton,
+	mockEditorEnvironment,
+	sleep,
+} from './test-utils';
 
 const REQUESTS_PER_BATCH = 3;
 
@@ -41,15 +47,7 @@ const App = () => (
 describe( 'LayoutApp', () => {
 	let rerender;
 	beforeEach( async () => {
-		global.elementorCommon = elementorCommon;
-
-		global.ResizeObserver =
-			global.ResizeObserver ||
-			jest.fn().mockImplementation( () => ( {
-				disconnect: jest.fn(),
-				observe: jest.fn(),
-				unobserve: jest.fn(),
-			} ) );
+		mockEditorEnvironment();
 
 		const result = render( <App /> );
 
