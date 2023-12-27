@@ -24,6 +24,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import { UpgradeButton } from './upgrade-button';
+
 import {
 	getAdminAppData,
 	getUsageWidgets,
@@ -484,18 +486,14 @@ export const App = () => {
 												</FlexItem>
 												{ null === widgetsRoleRestrictions && (
 													<FlexItem>
-														<Button
-															variant="primary"
-															href="https://go.elementor.com/go-pro-element-manager/"
-															target="_blank"
-															rel={ 'noreferrer' }
+														<UpgradeButton
+															href={
+																promotionWidgets.length ?
+																	'https://go.elementor.com/go-pro-element-manager-permissions/' :
+																	'https://go.elementor.com/go-pro-advanced-element-manager-permissions/'
+															}
 															size={ 'small' }
-															style={ {
-																background: 'var(--e-a-btn-bg-accent, #93003f)',
-															} }
-														>
-															{ __( 'Upgrade Now', 'elementor' ) }
-														</Button>
+														/>
 													</FlexItem>
 												) }
 											</Flex>
@@ -571,17 +569,9 @@ export const App = () => {
 										</p>
 									</FlexItem>
 									<FlexItem>
-										<Button
-											variant="primary"
+										<UpgradeButton
 											href="https://go.elementor.com/go-pro-element-manager/"
-											target="_blank"
-											rel={ 'noreferrer' }
-											style={ {
-												background: 'var(--e-a-btn-bg-accent, #93003f)',
-											} }
-										>
-											{ __( 'Upgrade Now', 'elementor' ) }
-										</Button>
+										/>
 									</FlexItem>
 								</Flex>
 							</PanelRow>
