@@ -3,17 +3,15 @@ import { render } from '@testing-library/react';
 import {
 	ConfigProvider,
 } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/context/config';
-import { elementorCommon } from '../../mock/elementor-common';
 import TestThemeProvider from '../../mock/test-theme-provider';
-import { addPromptAndGenerate, mockResizeObserver, sleep } from '../../test-utils';
+import { addPromptAndGenerate, mockEditorEnvironment, sleep } from '../../test-utils';
 import {
 	RemoteConfigProvider,
 } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/context/remote-config';
 
 describe( 'FormLayout', () => {
 	beforeEach( async () => {
-		global.elementorCommon = elementorCommon;
-		mockResizeObserver();
+		mockEditorEnvironment();
 	} );
 
 	it( 'Should render AttachDialog iframe once prompt is url', async () => {
@@ -32,7 +30,6 @@ describe( 'FormLayout', () => {
 		const { getByTestId } = renderElement();
 
 		await addPromptAndGenerate( 'How are you doing?' );
-		// Await sleep( 1000 );
 
 		const root = getByTestId( 'root' );
 

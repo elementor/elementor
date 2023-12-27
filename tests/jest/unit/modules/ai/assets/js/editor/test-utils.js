@@ -1,4 +1,4 @@
-import { ajaxResponses } from './mock/elementor-common';
+import { ajaxResponses, elementorCommon } from './mock/elementor-common';
 import { fireEvent, screen } from '@testing-library/react';
 
 export const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
@@ -33,7 +33,8 @@ export const clickEditPromptButton = () => {
 	fireEvent.click( editButton );
 };
 
-export const mockResizeObserver = () => {
+export const mockEditorEnvironment = () => {
+	global.elementorCommon = elementorCommon;
 	global.ResizeObserver =
 		global.ResizeObserver ||
 		jest.fn().mockImplementation( () => ( {
@@ -42,6 +43,3 @@ export const mockResizeObserver = () => {
 			unobserve: jest.fn(),
 		} ) );
 };
-
-export class commonTestSetup {
-}
