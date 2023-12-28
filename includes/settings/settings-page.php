@@ -339,7 +339,12 @@ abstract class Settings_Page {
 						$full_section_id = 'elementor_' . $section_id . '_section';
 
 						if ( ! empty( $section['label'] ) ) {
-							echo '<h2>' . esc_html( $section['label'] ) . '</h2>';
+
+							$label_class = empty( $section['fields'][$section_id]['field_args']['label_class'] )
+								? ''
+								: ( 'class="' . $section['fields'][ $section_id ]['field_args']['label_class'] . '"' );
+
+							echo '<h2 ' . $label_class . '>' . esc_html( $section['label'] ) . '</h2>';
 						}
 
 						if ( ! empty( $section['callback'] ) ) {
