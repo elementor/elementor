@@ -17,6 +17,8 @@ import { AttachmentPropType } from '../../types/attachment';
 import { PromptPowerNotice } from './components/attachments/prompt-power-notice';
 import { ProWidgetsNotice } from './components/pro-widgets-notice';
 import { ATTACHMENT_TYPE_URL } from './components/attachments';
+import AttachDialog from './components/attachments/attach-dialog';
+import isURL from 'validator/lib/isURL';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
@@ -82,6 +84,8 @@ const FormLayout = ( {
 
 	const [ attachments, setAttachments ] = useState( [] );
 
+	const [ shouldRenderWebApp, setShouldRenderWebApp ] = useState( false );
+
 	const [ isMinimized, setIsMinimized ] = useState( false );
 
 	const lastRun = useRef( () => {} );
@@ -121,6 +125,10 @@ const FormLayout = ( {
 			return;
 		}
 
+		if ( isURL( prompt ) ) {
+			setShouldRenderWebApp( true );
+			return;
+		}
 		onGenerate();
 
 		lastRun.current = () => {
@@ -254,7 +262,15 @@ const FormLayout = ( {
 							onCancel={ () => setShowUnsavedChangesAlert( false ) }
 						/>
 					) }
-
+					{ shouldRenderWebApp && (
+						<AttachDialog
+							type={ ATTACHMENT_TYPE_URL }
+							url={ promptInputRef.current.value }
+							onAttach={ onAttach }
+							onClose={ () => {
+								setShouldRenderWebApp( false );
+							} } />
+					) }
 					<PromptForm
 						ref={ promptInputRef }
 						isActive={ isPromptFormActive }
