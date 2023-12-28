@@ -25,7 +25,7 @@ export default {
 		navigationTimeout: 8_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		viewport: { width: 1920, height: 1080 },
+		viewport: { width: 1920, height: 3080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
 		storageState: './storageState.json',
 		user: {
