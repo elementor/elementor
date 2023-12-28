@@ -8,7 +8,7 @@ import {
 	assertUniqueIds,
 	clickEditPromptButton,
 	mockEditorEnvironment,
-	sleep,
+	sleep, waitForNextTick,
 } from './test-utils';
 
 const REQUESTS_PER_BATCH = 3;
@@ -111,8 +111,7 @@ describe( 'LayoutApp', () => {
 		// Act - Should keep only the sessionId, on a new prompt.
 		await addPromptAndGenerate( 'test2' );
 
-		// Wait for next tick
-		await waitFor( () => Promise.resolve() );
+		await waitForNextTick();
 
 		// Assert
 		assertUniqueIds( {

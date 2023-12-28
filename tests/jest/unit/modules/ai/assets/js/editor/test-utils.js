@@ -1,5 +1,5 @@
 import { ajaxResponses, elementorCommon } from './mock/elementor-common';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 export const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 
@@ -43,3 +43,5 @@ export const mockEditorEnvironment = () => {
 			unobserve: jest.fn(),
 		} ) );
 };
+
+export const waitForNextTick = () => waitFor( () => Promise.resolve() );

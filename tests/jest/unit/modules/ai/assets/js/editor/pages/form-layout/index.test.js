@@ -1,15 +1,19 @@
 import FormLayout from 'elementor/modules/ai/assets/js/editor/pages/form-layout';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import {
 	ConfigProvider,
 } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/context/config';
 import TestThemeProvider from '../../mock/test-theme-provider';
-import { addPromptAndGenerate, mockEditorEnvironment, sleep } from '../../test-utils';
+import { addPromptAndGenerate, mockEditorEnvironment, sleep, waitForNextTick } from '../../test-utils';
 import {
 	RemoteConfigProvider,
 } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/context/remote-config';
+import LayoutApp from 'elementor/modules/ai/assets/js/editor/layout-app';
+import { SCREENSHOT_LIGHT_1 } from '../../mock/data';
+import { MAX_PAGES } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/hooks/use-slider';
 
 describe( 'FormLayout', () => {
+	const ATTEMPTS_INCLUDING_FIRST_GENERATE = MAX_PAGES - 1;
 	beforeEach( async () => {
 		mockEditorEnvironment();
 	} );
@@ -37,31 +41,58 @@ describe( 'FormLayout', () => {
 	} );
 
 	it( 'Should keep the Regenerate button enabled less than 5 attempts', async () => {
-		const { getByTestId } = renderElement();
-		const root = getByTestId( 'root' );
+		const { getByRole } = render( <App /> );
+		await sleep( 1000 );
 		await addPromptAndGenerate( 'How are you doing?' );
+		await waitForNextTick();
+		await sleep( 1000 );
 
-		for ( let i = 0; i < 4; i++ ) {
+		for ( let i = 0; i < ATTEMPTS_INCLUDING_FIRST_GENERATE - 1; i++ ) {
 			fireEvent.click( screen.getByText( /^regenerate/i ) );
-			await waitFor( () => Promise.resolve() );
-			await sleep( 1000 );
+			await sleep( 100 );
 		}
 
-		expect( screen.getByText( /^regenerate/i ) ).not.toBeDisabled();
+		const a = screen.logTestingPlaygroundURL();
+		const button = await getByRole( 'button', { name: /regenerate/i, hidden: true } );
+		expect( button.className ).not.toContain( 'Mui-disabled' );
 	} );
 
 	it( 'Should make the Regenerate button disabled after 5 attempts', async () => {
-		const { getByTestId } = renderElement();
-		const root = getByTestId( 'root' );
+		const { getByRole } = render( <App /> );
+		await sleep( 1000 );
 		await addPromptAndGenerate( 'How are you doing?' );
+		await waitForNextTick();
+		await sleep( 1000 );
 
-		for ( let i = 0; i < 5; i++ ) {
+		for ( let i = 0; i < ATTEMPTS_INCLUDING_FIRST_GENERATE; i++ ) {
 			fireEvent.click( screen.getByText( /^regenerate/i ) );
-			await waitFor( () => Promise.resolve() );
+			await sleep( 100 );
 		}
 
-		expect( screen.getByText( /^regenerate/i ) ).toBeDisabled();
+		const button = await getByRole( 'button', { name: /regenerate/i, hidden: true } );
+		expect( button.className ).toContain( 'Mui-disabled' );
 	} );
+
+	const onData = () => {
+		return SCREENSHOT_LIGHT_1;
+	};
+	const onGenerate = jest.fn();
+	const App = () => (
+		<TestThemeProvider>
+			<LayoutApp
+				onClose={ () => {} }
+				onConnect={ () => {} }
+				onData={ onData }
+				onInsert={ () => {} }
+				onSelect={ () => {} }
+				onGenerate={ onGenerate }
+				mode={ 'layout' }
+				attachmentsTypes={ {} }
+				hasPro={ true }
+				editorSessionId={ 'EDITOR_SESSION_ID' }
+			/>
+		</TestThemeProvider>
+	);
 
 	const renderElement = ( ) => {
 		const props = {

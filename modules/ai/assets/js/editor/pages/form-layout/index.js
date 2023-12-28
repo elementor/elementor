@@ -9,7 +9,7 @@ import PromptForm from './components/prompt-form';
 import RefreshIcon from '../../icons/refresh-icon';
 import Screenshot from './components/screenshot';
 import useScreenshots from './hooks/use-screenshots';
-import useSlider from './hooks/use-slider';
+import useSlider, { MAX_PAGES, SCREENSHOTS_PER_PAGE } from './hooks/use-slider';
 import MinimizeDiagonalIcon from '../../icons/minimize-diagonal-icon';
 import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
 import { useConfig } from './context/config';
@@ -55,6 +55,14 @@ const UseLayoutButton = ( props ) => (
 UseLayoutButton.propTypes = {
 	sx: PropTypes.object,
 };
+
+const isRegenerateButtonDisabled = ( screenshots, isLoading, isPromptFormActive ) => {
+	if ( isLoading || isPromptFormActive ) {
+		return true;
+	}
+	return screenshots.length >= SCREENSHOTS_PER_PAGE * MAX_PAGES;
+};
+
 const FormLayout = ( {
 	DialogHeaderProps = {},
 	DialogContentProps = {},
@@ -334,7 +342,8 @@ const FormLayout = ( {
 										<Box sx={ { pt: 0, px: 2, pb: 2 } } display="grid" gridTemplateColumns="repeat(3, 1fr)" justifyItems="center">
 											<RegenerateButton
 												onClick={ handleRegenerate }
-												disabled={ isLoading || isPromptFormActive }
+												data-testid={ 'regenerate-button' }
+												disabled={ isRegenerateButtonDisabled( screenshots, isLoading, isPromptFormActive ) }
 												sx={ { justifySelf: 'start' } }
 											/>
 
