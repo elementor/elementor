@@ -340,9 +340,9 @@ abstract class Settings_Page {
 
 						if ( ! empty( $section['label'] ) ) {
 
-							$label_class = empty( $section['fields'][$section_id]['field_args']['label_class'] )
+							$label_class = empty( $section['fields'][ $section_id ]['field_args']['label_class'] )
 								? ''
-								: ( 'class="' . $section['fields'][ $section_id ]['field_args']['label_class'] . '"' );
+								: esc_html( 'class=' . $section['fields'][ $section_id ]['field_args']['label_class'] );
 
 							echo '<h2 ' . $label_class . '>' . esc_html( $section['label'] ) . '</h2>';
 						}
