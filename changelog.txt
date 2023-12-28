@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 3.18.3 - 2023-12-20 =
+
+* Fix: Modified control sanitization to enforce better security policies in Dynamic tags
+* Fix: Elementor Editor is slow when using Safari 17 and Firefox on macOS
+* Fix: Inner containers added to the top of the page when using AI Variations
+
 = 3.18.2 - 2023-12-08 =
 
 * Security Fix: Addressed security weaknesses in template upload mechanism
@@ -34,15 +40,15 @@
 
 = 3.17.3 - 2023-11-08 =
 
-* Modified control sanitization to enforce better security policies in Dynamic tags
+* Fix: Modified control sanitization to enforce better security policies in Dynamic tags
 
 = 3.17.2 - 2023-11-01 =
 
-* Modified controls sanitization to enforce better security policies in Heading, Icon, Image Box, and Testimonial widgets
+* Fix: Modified controls sanitization to enforce better security policies in Heading, Icon, Image Box, and Testimonial widgets
 
 = 3.17.1 - 2023-10-25 =
 
-* Error message appears when loading the Theme Builder
+* Fix: Error message appears when loading the Theme Builder
 
 = 3.17.0 - 2023-10-25 =
 

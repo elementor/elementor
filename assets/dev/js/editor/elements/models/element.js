@@ -63,7 +63,7 @@ ElementModel = BaseElementModel.extend( {
 			SettingsModel = settingModels[ elType ] || elementorModules.editor.elements.models.BaseSettings;
 
 		if ( jQuery.isEmptyObject( settings ) ) {
-			settings = elementorCommon.helpers.cloneObject( settings );
+			settings = structuredClone( settings );
 		}
 
 		if ( 'widget' === elType ) {
