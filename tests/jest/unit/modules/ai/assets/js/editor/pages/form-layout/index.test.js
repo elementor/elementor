@@ -13,7 +13,7 @@ import { SCREENSHOT_LIGHT_1 } from '../../mock/data';
 import { MAX_PAGES } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/hooks/use-slider';
 
 describe( 'FormLayout', () => {
-	const ATTEMPTS_INCLUDING_FIRST_GENERATE = MAX_PAGES - 1;
+	const REGENERATE_ATTEMPTS_INCLUDING_FIRST_GENERATE = MAX_PAGES - 1;
 	beforeEach( async () => {
 		mockEditorEnvironment();
 	} );
@@ -47,7 +47,7 @@ describe( 'FormLayout', () => {
 		await waitForNextTick();
 		await sleep( 1000 );
 
-		for ( let i = 0; i < ATTEMPTS_INCLUDING_FIRST_GENERATE - 1; i++ ) {
+		for ( let i = 0; i < REGENERATE_ATTEMPTS_INCLUDING_FIRST_GENERATE - 1; i++ ) {
 			fireEvent.click( screen.getByText( /^regenerate/i ) );
 			await sleep( 100 );
 		}
@@ -63,7 +63,7 @@ describe( 'FormLayout', () => {
 		await waitForNextTick();
 		await sleep( 1000 );
 
-		for ( let i = 0; i < ATTEMPTS_INCLUDING_FIRST_GENERATE; i++ ) {
+		for ( let i = 0; i < REGENERATE_ATTEMPTS_INCLUDING_FIRST_GENERATE; i++ ) {
 			fireEvent.click( screen.getByText( /^regenerate/i ) );
 			await sleep( 100 );
 		}
