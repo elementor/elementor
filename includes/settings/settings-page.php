@@ -339,7 +339,6 @@ abstract class Settings_Page {
 						$full_section_id = 'elementor_' . $section_id . '_section';
 
 						if ( ! empty( $section['label'] ) ) {
-
 							$label_class = empty( $section['fields'][ $section_id ]['field_args']['label_class'] )
 								? ''
 								: ( 'class=' . $section['fields'][ $section_id ]['field_args']['label_class'] );
