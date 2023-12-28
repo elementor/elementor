@@ -33,7 +33,7 @@ describe( 'FormLayout', () => {
 	it( 'Should not render AttachDialog iframe when prompt is not url', async () => {
 		const { getByTestId } = renderElement();
 
-		await addPromptAndGenerate( 'How are you doing?' );
+		await addPromptAndGenerate( 'Test: How are you doing?' );
 
 		const root = getByTestId( 'root' );
 
@@ -43,7 +43,7 @@ describe( 'FormLayout', () => {
 	it( 'Should keep the Regenerate button enabled less than 5 attempts', async () => {
 		const { getByRole } = render( <App /> );
 		await sleep( 1000 );
-		await addPromptAndGenerate( 'How are you doing?' );
+		await addPromptAndGenerate( 'Test:How are you doing?' );
 		await waitForNextTick();
 		await sleep( 1000 );
 
@@ -59,7 +59,7 @@ describe( 'FormLayout', () => {
 	it( 'Should make the Regenerate button disabled after 5 attempts', async () => {
 		const { getByRole } = render( <App /> );
 		await sleep( 1000 );
-		await addPromptAndGenerate( 'How are you doing?' );
+		await addPromptAndGenerate( 'Test: How are you doing?' );
 		await waitForNextTick();
 		await sleep( 1000 );
 

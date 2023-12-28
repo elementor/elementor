@@ -342,7 +342,6 @@ const FormLayout = ( {
 										<Box sx={ { pt: 0, px: 2, pb: 2 } } display="grid" gridTemplateColumns="repeat(3, 1fr)" justifyItems="center">
 											<RegenerateButton
 												onClick={ handleRegenerate }
-												data-testid={ 'regenerate-button' }
 												disabled={ isRegenerateButtonDisabled( screenshots, isLoading, isPromptFormActive ) }
 												sx={ { justifySelf: 'start' } }
 											/>

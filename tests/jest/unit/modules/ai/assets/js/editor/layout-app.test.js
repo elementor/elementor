@@ -8,7 +8,8 @@ import {
 	assertUniqueIds,
 	clickEditPromptButton,
 	mockEditorEnvironment,
-	sleep, waitForNextTick,
+	sleep,
+	waitForNextTick,
 } from './test-utils';
 
 const REQUESTS_PER_BATCH = 3;
