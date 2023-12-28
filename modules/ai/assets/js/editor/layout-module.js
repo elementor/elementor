@@ -28,6 +28,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		const contextMenu = {
 			name: 'ai',
 			icon: 'eicon-ai',
+			isEnabled: () => 0 !== currentElement.getContainer().children.length,
 			title: __( 'Generate variations with AI', 'elementor' ),
 			callback: async () => {
 				const container = currentElement.getContainer();

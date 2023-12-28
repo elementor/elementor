@@ -1,10 +1,10 @@
 import { Alert, Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 import LockIcon from '../../../icons/lock-icon';
+import useIntroduction from '../../../hooks/use-introduction';
 
 export const ProWidgetsNotice = () => {
-	const [ isViewed, setIsViewed ] = useState( false );
+	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-pro-widget' );
 
 	if ( isViewed ) {
 		return null;
@@ -22,7 +22,7 @@ export const ProWidgetsNotice = () => {
 				severity="info"
 				variant="filled"
 				color="accent"
-				onClose={ () => setIsViewed( true ) }
+				onClose={ () => markAsViewed( ) }
 				icon={ <LockIcon /> }
 				sx={ {
 					'& .MuiAlert-message': {
