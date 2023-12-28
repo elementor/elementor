@@ -379,20 +379,24 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							echo '<p>' .
+							echo '<p class="elementor-become-a-beta-tester">' .
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';
 							echo sprintf(
 								/* translators: 1: Link open tag, 2: Link close tag. */
-								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
-								'<a id="beta-tester-first-to-know" href="#">',
-								'</a>'
+								esc_html__( '%1$sClick here%2$s %3$sto join our first-to-know email updates.%4$s', 'elementor' ),
+								'<a id="beta-tester-first-to-know" class="elementor-become-a-beta-tester" href="#">',
+								'</a>',
+								'<span class="elementor-become-a-beta-tester">',
+								'</span>',
 							);
 						},
 						'fields' => [
 							'beta' => [
 								'label' => esc_html__( 'Beta Tester', 'elementor' ),
 								'field_args' => [
+									'label_class' => 'elementor-become-a-beta-tester',
+									'class' => 'elementor-become-a-beta-tester',
 									'type' => 'select',
 									'std' => 'no',
 									'options' => [
@@ -401,6 +405,7 @@ class Tools extends Settings_Page {
 									],
 									'desc' => '<span style="color: red;">' . esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
 								],
+								'class' => 'elementor-become-a-beta-tester',
 							],
 						],
 					],
