@@ -52,7 +52,6 @@ describe( 'FormLayout', () => {
 			await sleep( 100 );
 		}
 
-		const a = screen.logTestingPlaygroundURL();
 		const button = await getByRole( 'button', { name: /regenerate/i, hidden: true } );
 		expect( button.className ).not.toContain( 'Mui-disabled' );
 	} );
