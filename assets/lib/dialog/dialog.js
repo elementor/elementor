@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.9.2
+ * Dialogs Manager v4.9.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -785,7 +785,7 @@
 					}
 				}
 
-				this.focusedButton = this.buttons[nextButtonIndex].focus();
+				this.focusedButton = this.buttons[nextButtonIndex].trigger('focus');
 			}
 		},
 		addButton: function(options) {
@@ -881,7 +881,7 @@
 			}
 
 			if (this.focusedButton) {
-				this.focusedButton.focus();
+				this.focusedButton.trigger('focus');
 			}
 		},
 		unbindHotKeys: function() {
