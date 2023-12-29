@@ -151,7 +151,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'render_type' => 'ui',
 		];
 
-
 		$fields['gradient_notice'] = [
 			'type' => Controls_Manager::RAW_HTML,
 			'raw' => esc_html__( 'To activate gradients, set values to all the fields - colors, locations, angle etc.', 'elementor' ),
