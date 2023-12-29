@@ -173,16 +173,25 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
+		$aside = is_rtl() ? 'right' : 'left';
+
 		$this->add_control(
 			'testimonial_image_position',
 			[
 				'label' => esc_html__( 'Image Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'default' => 'aside',
 				'options' => [
-					'aside' => esc_html__( 'Aside', 'elementor' ),
-					'top' => esc_html__( 'Top', 'elementor' ),
+					'aside' => [
+						'title' => esc_html__( 'Aside', 'elementor' ),
+						'icon' => 'eicon-h-align-' . $aside,
+					],
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
 				],
+				'toggle' => false,
 				'condition' => [
 					'testimonial_image[url]!' => '',
 				],
