@@ -91,11 +91,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				hasChangedAlt = !! changedAlt;
 
 			if (
-				( hasAttachmentAlt && ! hasChangedAlt ) ||
+				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
 				( ! hasAttachmentAlt && hasChangedAlt ) ||
-				( ! hasAttachmentAlt && ! hasChangedAlt )
+				( hasAttachmentAlt && ! hasChangedAlt )
 			) {
-				this.ui.warnings.toggleClass( 'elementor-hidden' );
+				this.ui.warnings.removeClass( 'elementor-hidden' );
+			} else {
+				this.ui.warnings.addClass( 'elementor-hidden' );
 			}
 		}
 	},
