@@ -377,9 +377,10 @@ class Tools extends Settings_Page {
 						],
 					],
 					'beta' => [
+						'show_if' => $this->display_beta_tester(),
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							echo '<p class="elementor-become-a-beta-tester">' .
+							echo '<p>' .
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';
 							echo sprintf(
@@ -395,8 +396,6 @@ class Tools extends Settings_Page {
 							'beta' => [
 								'label' => esc_html__( 'Beta Tester', 'elementor' ),
 								'field_args' => [
-									'label_class' => 'elementor-become-a-beta-tester',
-									'class' => 'elementor-become-a-beta-tester',
 									'type' => 'select',
 									'std' => 'no',
 									'options' => [
@@ -405,7 +404,6 @@ class Tools extends Settings_Page {
 									],
 									'desc' => '<span style="color: red;">' . esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
 								],
-								'class' => 'elementor-become-a-beta-tester',
 							],
 						],
 					],
@@ -447,5 +445,26 @@ class Tools extends Settings_Page {
 	 */
 	public static function can_user_rollback_versions() {
 		return current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
+	}
+
+	/**
+	 * Check if the beta tester should be displayed.
+	 *
+	 * @since 3.19.0
+	 *
+	 * @return bool
+	 */
+	public function display_beta_tester(): bool {
+		$display_beta_tester = true;
+		/**
+		 * Filter to allow override the display of the beta tester.
+		 *
+		 * @param bool $display_beta_tester Whether to display the beta tester.
+		 *
+		 * @since 3.19.0
+		 *
+		 * return bool
+		 */
+		return apply_filters( 'elementor/admin/show_beta_tester', $display_beta_tester );
 	}
 }
