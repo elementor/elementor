@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 export const THUMBNAIL_SIZE = 64;
@@ -14,8 +15,11 @@ export const Thumbnail = ( props ) => {
 			const isImage = 'IMG' === previewRoot?.tagName;
 
 			if ( ! isImage ) {
-				const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
-				const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
+				const dataWidth = props.html.match( 'data-width="(?<width>\\d+)"' )?.groups?.width;
+				const dataHeight = props.html.match( 'data-height="(?<height>\\d+)"' )?.groups?.height;
+
+				const width = dataWidth ? parseInt( dataWidth ) : THUMBNAIL_SIZE;
+				const height = dataHeight ? parseInt( dataHeight ) : THUMBNAIL_SIZE;
 
 				// Keep the aspect ratio
 				previewRoot.style.width = `${ width }px`;
@@ -32,23 +36,22 @@ export const Thumbnail = ( props ) => {
 
 				previewRef.current.style.transformOrigin = `${ left }px ${ top }px`;
 			}
-
-			// Set the preview size only after the transform is applied
-			previewRef.current.style.width = `${ THUMBNAIL_SIZE }px`;
-			previewRef.current.style.height = `${ THUMBNAIL_SIZE }px`;
 		}
-	}, [ previewRef.current ] );
+	}, [ props.html ] );
 
 	return (
 		<Box
 			dir="ltr"
 			sx={ {
-				border: '1px solid',
-				borderColor: 'grey.300',
 				position: 'relative',
 				cursor: 'default',
 				overflow: 'hidden',
+				border: '1px solid',
+				borderColor: 'grey.300',
 				borderRadius: 1,
+				boxSizing: 'border-box',
+				width: THUMBNAIL_SIZE,
+				height: THUMBNAIL_SIZE,
 				opacity: props.disabled ? 0.5 : 1,
 				'& img': {
 					width: '100%',
@@ -59,14 +62,20 @@ export const Thumbnail = ( props ) => {
 		>
 			<Box
 				ref={ previewRef }
-				sx={ {
-					pointerEvents: 'none',
-					transformOrigin: 'center',
-				} }
-				dangerouslySetInnerHTML={ {
-					__html: props.html,
-				} }
-			/>
+			>
+				<iframe
+					title={ __( 'Preview', 'elementor' ) }
+					sandbox=""
+					srcDoc={
+						'<style>html,body{margin:0;padding:0;overflow:hidden;}</style>' +
+						props.html
+					}
+					style={ {
+						border: 'none',
+						overflow: 'hidden',
+					} }
+				/>
+			</Box>
 		</Box>
 	);
 };
