@@ -13,6 +13,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
+		ui.warnings = '.elementor-control-media__warnings';
+		ui.warnings_a11y = '.elementor-control-media__warnings_a11y';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 
 		ui.mediaInputImageSize = '.e-image-size-select';
@@ -50,6 +52,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
+			attachmentId = this.getControlValue( 'id' ),
 			isPlaceholder = ( ! value && url ),
 			mediaType = this.getMediaType();
 
@@ -81,6 +84,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.ui.controlMedia
 			.toggleClass( 'e-media-empty', ! value )
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
+
+		if ( 'image' === mediaType && attachmentId ) {
+			const attachment = wp.media.attachment( attachmentId ),
+				attachmentAlt = attachment.attributes?.alt;
+
+			if ( '' === attachmentAlt ) {
+				this.ui.warnings.toggleClass( 'elementor-hidden' );
+			}
+		}
 	},
 
 	async openFrame( e, source = null ) {
