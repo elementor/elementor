@@ -14,7 +14,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.warnings = '.elementor-control-media__warnings';
-		ui.warnings_a11y = '.elementor-control-media__warnings_a11y';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 
 		ui.mediaInputImageSize = '.e-image-size-select';
@@ -87,9 +86,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		if ( 'image' === mediaType && attachmentId ) {
 			const attachment = wp.media.attachment( attachmentId ),
-				attachmentAlt = attachment.attributes?.alt;
+				attachmentAlt = attachment.attributes?.alt,
+				changedAlt = attachment.changed?.alt;
 
-			if ( '' === attachmentAlt ) {
+			if ( '' === attachmentAlt && '' === changedAlt ) {
 				this.ui.warnings.toggleClass( 'elementor-hidden' );
 			}
 		}
