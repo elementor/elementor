@@ -54,11 +54,11 @@ Even better, you can [submit a Pull Request](https://elemn.to/gh-new-pr) with a 
 
 ### Security Report
 
-Join our community-driven [Managed Security Bug Bounty program](https://elemn.to/bug-bounty).
+Join our community-driven [Bug Bounty programs](https://elemn.to/gh-to-bounty-programs).
 
-We leverage the collective expertise of our community, offering round-the-clock crowdsourced vulnerability detection. The program provides a comprehensive overview of features and endpoints considered 'in scope,' reward specifics, and our complete terms and conditions.
+We leverage the collective expertise of our community, offering round-the-clock crowdsourced vulnerability detection. The programs provide a comprehensive overview of features and endpoints considered 'in scope,' reward specifics where relevant, and our complete terms and conditions.
 
-To learn more about our security efforts and how to contact us for security inquiries, please visit our [Trust Center](https://elemn.to/gh-to-trust-center).
+To learn more about our security efforts, visit our [Trust Center](https://elemn.to/gh-to-trust-center). Security issues can be reported through our dedicated [Bug Bounty Programs page](https://elemn.to/gh-to-bounty-programs).
 
 ### Feature Request
 

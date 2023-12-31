@@ -242,7 +242,6 @@ class TextPath extends Widget_Base {
 						'step' => 10,
 					],
 					'px' => [
-						'min' => 0,
 						'max' => 800,
 						'step' => 50,
 					],
@@ -336,12 +335,14 @@ class TextPath extends Widget_Base {
 					'px' => [
 						'min' => -20,
 						'max' => 20,
-						'step' => 1,
 					],
 					'em' => [
 						'min' => -1,
 						'max' => 1,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => -1,
+						'max' => 1,
 					],
 				],
 				'default' => [
@@ -362,7 +363,7 @@ class TextPath extends Widget_Base {
 		$this->add_control(
 			'start_point',
 			[
-				'label' => esc_html__( 'Starting Point', 'elementor' ),
+				'label' => esc_html__( 'Starting Point', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%' ],
 				'range' => [
@@ -522,14 +523,20 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 1,
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => 1,
 						'max' => 20,
-						'step' => 1,
+					],
+					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
+						'max' => 2,
 					],
 				],
 				'selectors' => [
@@ -587,14 +594,20 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => '',
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
+						'min' => 1,
 						'max' => 20,
-						'step' => 1,
+					],
+					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
+						'max' => 2,
 					],
 				],
 				'selectors' => [
