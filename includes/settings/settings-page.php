@@ -336,7 +336,7 @@ abstract class Settings_Page {
 					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 					foreach ( $tab['sections'] as $section_id => $section ) {
-						if( ! $this->should_render_section( $section ) ){
+						if ( ! $this->should_render_section( $section ) ) {
 							continue;
 						}
 
@@ -435,6 +435,6 @@ abstract class Settings_Page {
 	 */
 	private function should_render_section( $section ) {
 		// BC - When 'show_if' prop is not exists, it actually should render the section.
-		return  ! isset( $section['show_if'] ) || $section['show_if'];
+		return ! isset( $section['show_if'] ) || $section['show_if'];
 	}
 }
