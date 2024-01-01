@@ -337,8 +337,8 @@ class Frontend extends App {
 
 	public function init_swiper_settings() {
 		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
-		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
-		$this->e_swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
+		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v10.2.0/' : 'assets/lib/swiper/';
+		$this->e_swiper_version = $e_swiper_latest ? '10.2.0' : '5.3.6';
 	}
 
 	/**

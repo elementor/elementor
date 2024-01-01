@@ -38,7 +38,7 @@ export default class AssetsLoader {
 const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
 
 const swiperSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
+	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v10.2.0/swiper${ fileSuffix }.js?ver=10.2.0`
 	: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
 
 AssetsLoader.assets = {
