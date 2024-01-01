@@ -495,7 +495,6 @@ class Widget_Divider extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'text',
 			[
