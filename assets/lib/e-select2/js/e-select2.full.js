@@ -5392,7 +5392,7 @@ S2.define('select2/core',[
     });
 
     this.selection.on('focus', function (params) {
-		self.trigger('focus', params);
+	  self.trigger('focus', params);
     });
 
     this.selection.on('*', function (name, params) {
