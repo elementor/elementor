@@ -84,17 +84,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 
 		if ( 'image' === mediaType && attachmentId ) {
-			const attachment = wp.media.attachment( attachmentId ),
-				attachmentAlt = attachment.attributes?.alt?.trim() || '',
-				changedAlt = attachment.changed?.alt?.trim() || '',
-				hasAttachmentAlt = !! attachmentAlt,
-				hasChangedAlt = !! changedAlt,
-				showWarning =
-					( ! hasAttachmentAlt && ! hasChangedAlt ) ||
-					( ! hasAttachmentAlt && hasChangedAlt ) ||
-					( hasAttachmentAlt && ! hasChangedAlt );
-
-			this.ui.warnings.text( showWarning ? __( 'Accessibility Issue: The image has no ALT text.', 'elementor' ) : '' );
+			this.ui.warnings.text( this.imageHasAlt( attachmentId ) ? '' : __( 'Accessibility Issue: The image has no ALT text.', 'elementor' ) );
 		}
 	},
 
@@ -150,6 +140,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.applySavedValue();
 
 		this.ui.warnings.text( '' );
+	},
+
+	imageHasAlt( attachmentId ) {
+		const attachment = wp.media.attachment( attachmentId ),
+			attachmentAlt = attachment.attributes?.alt?.trim() || '',
+			changedAlt = attachment.changed?.alt?.trim() || '',
+			hasAttachmentAlt = !! attachmentAlt,
+			hasChangedAlt = !! changedAlt,
+			missingAlt =
+				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
+				( ! hasAttachmentAlt && hasChangedAlt ) ||
+				( hasAttachmentAlt && ! hasChangedAlt );
+
+		return ! missingAlt;
 	},
 
 	onMediaInputImageSizeChange() {
