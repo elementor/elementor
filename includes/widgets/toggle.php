@@ -161,15 +161,6 @@ class Widget_Toggle extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->add_control(
 			'selected_icon',
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
