@@ -6,25 +6,25 @@ import styled from 'styled-components';
 export const THUMBNAIL_SIZE = 64;
 
 const StyledBody = styled.body`
-		html, body {
-			margin: 0;
-			padding: 0;
-			overflow: hidden;
-		}
+	html, body {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
 
-		body > * {
-			width: 100% !important;
-		}
+	body > * {
+		width: 100% !important;
+	}
 
-		body > img {
-			height: 100%;
-			object-fit: cover;
-		}
+	body > img {
+		height: 100%;
+		object-fit: cover;
+	}
 
-		body:has(> img) {
-			height: ${ THUMBNAIL_SIZE }px
-		}
-	`;
+	body:has(> img) {
+		height: ${ THUMBNAIL_SIZE }px
+	}
+`;
 
 export const Thumbnail = ( props ) => {
 	const dataWidth = props.html.match( 'data-width="(?<width>\\d+)"' )?.groups?.width;
@@ -76,8 +76,7 @@ export const Thumbnail = ( props ) => {
 			/>
 		</Box>
 	);
-}
-;
+};
 
 Thumbnail.propTypes = {
 	html: PropTypes.string.isRequired,
