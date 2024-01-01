@@ -128,31 +128,6 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
-			'align',
-			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
-				],
-			]
-		);
-
 		$this->add_control(
 			'caption_source',
 			[
@@ -251,6 +226,31 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
+				],
 			]
 		);
 
