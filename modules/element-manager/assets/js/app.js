@@ -471,7 +471,7 @@ export const App = () => {
 												justify={ 'flex-start' }
 											>
 												<FlexItem>
-													{ __( 'Role Permissions', 'elementor' ) }
+													{ __( 'Permission', 'elementor' ) }
 												</FlexItem>
 												<FlexItem>
 													<Tooltip
@@ -590,7 +590,7 @@ export const App = () => {
 													justify={ 'flex-start' }
 												>
 													<FlexItem>
-														{ __( 'Role Permissions', 'elementor' ) }
+														{ __( 'Permission', 'elementor' ) }
 													</FlexItem>
 													<FlexItem>
 														<Tooltip

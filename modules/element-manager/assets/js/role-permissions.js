@@ -33,7 +33,7 @@ const RolesList = ( props ) => {
 	if ( ! rolesEnables.length ) {
 		return (
 			<>
-				({ __( 'Admins', 'elementor' ) })
+				({ __( 'Admin', 'elementor' ) })
 			</>
 		);
 	}
