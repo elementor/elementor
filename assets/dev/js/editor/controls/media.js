@@ -94,7 +94,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 					( ! hasAttachmentAlt && hasChangedAlt ) ||
 					( hasAttachmentAlt && ! hasChangedAlt );
 
-			this.ui.warnings.text( showWarning ? __( 'Accessibility Issue: At least one image has no ALT text.', 'elementor' ) : '' );
+			this.ui.warnings.text( showWarning ? __( 'Accessibility Issue: The image has no ALT text.', 'elementor' ) : '' );
 		}
 	},
 
