@@ -7,7 +7,9 @@ import { getUniqueId } from './utils/generate-ids';
 
 const LayoutApp = ( props ) => {
 	return (
-		<RemoteConfigProvider>
+		<RemoteConfigProvider
+			onError={ props.onClose }
+		>
 			<ConfigProvider
 				mode={ props.mode }
 				attachmentsTypes={ props.attachmentsTypes }

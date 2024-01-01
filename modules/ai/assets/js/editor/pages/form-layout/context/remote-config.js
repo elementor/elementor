@@ -57,4 +57,5 @@ export const RemoteConfigProvider = ( props ) => {
 
 RemoteConfigProvider.propTypes = {
 	children: PropTypes.node.isRequired,
+	onError: PropTypes.func.isRequired,
 };
