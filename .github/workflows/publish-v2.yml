@@ -81,6 +81,7 @@ jobs:
         if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
+          README_TXT_PATH: $GITHUB_WORKSPACE/elementor/readme.txt
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Upload Debug Build To GitHub Artifacts

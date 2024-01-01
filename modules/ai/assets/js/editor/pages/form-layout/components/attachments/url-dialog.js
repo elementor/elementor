@@ -7,7 +7,7 @@ import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
 
 export const UrlDialog = ( props ) => {
-	const { iframeSource } = useAttachUrlService();
+	const { iframeSource } = useAttachUrlService( { targetUrl: props.url } );
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
 
 	useEffect( () => {
@@ -39,6 +39,14 @@ export const UrlDialog = ( props ) => {
 		};
 	}, [ turnOffTimeout ] );
 
+	if ( ! iframeSource ) {
+		return (
+			<AlertDialog
+				message={ __( 'The app is not available. Please try again later.', 'elementor' ) }
+				onClose={ props.onClose }
+			/>
+		);
+	}
 	return (
 		<Dialog
 			open={ true }
@@ -85,4 +93,5 @@ export const UrlDialog = ( props ) => {
 UrlDialog.propTypes = {
 	onAttach: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
+	url: PropTypes.string,
 };
