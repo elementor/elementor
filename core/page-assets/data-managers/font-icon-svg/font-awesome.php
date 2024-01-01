@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.4.0
  */
 class Font_Awesome extends Base {
-	const LIBRARY_CURRENT_VERSION = '6.4.2';
+	const LIBRARY_CURRENT_VERSION = '6.5.1';
 
 	protected function get_config( $icon ) {
 		preg_match( '/fa(.*) fa-/', $icon['value'], $icon_name_matches );

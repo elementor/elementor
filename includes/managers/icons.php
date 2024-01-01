@@ -138,7 +138,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
-				'ver' => '6.4.2',
+				'ver' => self::ELEMENTOR_ICONS_VERSION,
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
 			],
@@ -150,7 +150,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
-				'ver' => '6.4.2',
+				'ver' => self::ELEMENTOR_ICONS_VERSION,
 				'fetchJson' => self::get_fa_asset_url( 'solid', 'js', false ),
 				'native' => true,
 			],
@@ -162,7 +162,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
-				'ver' => '6.4.2',
+				'ver' => self::ELEMENTOR_ICONS_VERSION,
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
 			],
@@ -230,16 +230,6 @@ class Icons_Manager {
 		);
 	}
 
-	private static function is_script_debug() {
-		static $is_script_debug = null;
-
-		if ( null === $is_script_debug ) {
-			$is_script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
-		}
-
-		return $is_script_debug;
-	}
-
 	private static function is_test_mode() {
 		static $is_test_mode = null;
 
@@ -253,7 +243,10 @@ class Icons_Manager {
 	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/' . $filename;
 
-		if ( ! self::is_script_debug() && ! self::is_test_mode() && $add_suffix ) {
+		$script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
+		$test_mode = defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+
+		if ( ! $script_debug && ! self::is_test_mode() && $add_suffix ) {
 			$url .= '.min';
 		}
 
@@ -407,23 +400,21 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function fa_icon_value_migration( $value ) {
-		$migration_dictionary = self::get_migration_dictionary();
+		if ( is_string( $value ) && '' === $value ) {
+			return [
+				'value' => '',
+				'library' => '',
+			];
+		}
 
 		if ( is_string( $value ) ) {
-			if ( '' === $value ) {
-				return [
-					'value' => '',
-					'library' => '',
-				];
-			}
-
 			$value = [
 				'value' => $value,
 				'library' => '',
 			];
 		}
 
-		foreach ( $migration_dictionary as $mapping_by_version ) {
+		foreach ( self::get_migration_dictionary() as $mapping_by_version ) {
 			if ( isset( $mapping_by_version[ $value['value'] ] ) ) {
 				$value = $mapping_by_version[ $value ];
 			}
@@ -446,28 +437,22 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function get_migration_dictionary() {
+		static $migration_dictionary = [];
+
 		if ( ! empty( $migration_dictionary ) ) {
 			return $migration_dictionary;
 		}
 
-		static $migration_dictionary = [];
-
 		$current_version = self::get_current_fa_version();
 		$oldest_legacy_version = 4;
-
-		$mapping_files = [];
 
 		for ( $i = $oldest_legacy_version; $i <= $current_version; $i++ ) {
 			$mapping_by_version = sprintf( 'mapping-v%s-to-v%s', $i, $i + 1 );
 			$mapping_file = ELEMENTOR_ASSETS_PATH . "/lib/font-awesome/migration/$mapping_by_version.js";
 
 			if ( file_exists( $mapping_file ) ) {
-				$mapping_files[] = $mapping_file;
+				$migration_dictionary[] = json_decode( Utils::file_get_contents( $mapping_file ), true );
 			}
-		}
-
-		foreach ( $mapping_files as $mapping_file ) {
-			$migration_dictionary[] = json_decode( Utils::file_get_contents( $mapping_file ), true );
 		}
 
 		return $migration_dictionary;
@@ -546,7 +531,13 @@ class Icons_Manager {
 			$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
 
 			// Check if migration is required based on get_needs_upgrade_option() or version comparison
-			$migration_required = null !== $needs_upgrade || ( $latest_migration_version && version_compare( $latest_migration_version, self::LATEST_MIGRATION_REQUIRED_VERSION, '<' ) );
+			$is_migration_required = $latest_migration_version && version_compare(
+				$latest_migration_version,
+				self::LATEST_MIGRATION_REQUIRED_VERSION,
+				'<'
+			);
+
+			$migration_required = 'yes' === $needs_upgrade || $is_migration_required;
 
 			/**
 			 * Is icon migration required.
@@ -615,7 +606,7 @@ class Icons_Manager {
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
 							esc_url( $this->get_upgrade_redirect_url() ),
-							sprintf( esc_html__( 'Update now', 'elementor' ), self::get_current_fa_version() )
+							sprintf( esc_html__( 'Update Now', 'elementor' ), self::get_current_fa_version() )
 						),
 					],
 				],
