@@ -247,11 +247,7 @@ class Control_Media extends Control_Base_Multiple {
 							#>
 						</div>
 					</div>
-					<div class="elementor-control-media__warnings elementor-panel-alert elementor-panel-alert-warning elementor-hidden" role="alert">
-						<p class="elementor-control-media__warnings_a11y">
-							<?php echo esc_html__( 'Accessibility Issue: The image has no ALT text.', 'elementor' ); ?>
-						</p>
-					</div>
+					<div class="elementor-control-media__warnings elementor-panel-alert elementor-panel-alert-warning" role="alert"></div>
 				</div>
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">

@@ -88,17 +88,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				attachmentAlt = attachment.attributes?.alt?.trim() || '',
 				changedAlt = attachment.changed?.alt?.trim() || '',
 				hasAttachmentAlt = !! attachmentAlt,
-				hasChangedAlt = !! changedAlt;
+				hasChangedAlt = !! changedAlt,
+				showWarning =
+					( ! hasAttachmentAlt && ! hasChangedAlt ) ||
+					( ! hasAttachmentAlt && hasChangedAlt ) ||
+					( hasAttachmentAlt && ! hasChangedAlt );
 
-			if (
-				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
-				( ! hasAttachmentAlt && hasChangedAlt ) ||
-				( hasAttachmentAlt && ! hasChangedAlt )
-			) {
-				this.ui.warnings.removeClass( 'elementor-hidden' );
-			} else {
-				this.ui.warnings.addClass( 'elementor-hidden' );
-			}
+			this.ui.warnings.text( showWarning ? __( 'Accessibility Issue: At least one image has no ALT text.', 'elementor' ) : '' );
 		}
 	},
 
@@ -153,7 +149,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		this.applySavedValue();
 
-		this.ui.warnings.addClass( 'elementor-hidden' );
+		this.ui.warnings.text( '' );
 	},
 
 	onMediaInputImageSizeChange() {
