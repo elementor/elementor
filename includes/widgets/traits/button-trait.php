@@ -205,16 +205,6 @@ trait Button_Trait {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_control(
 			'button_css_id',
 			[
 				'label' => esc_html__( 'Button ID', 'elementor' ),
