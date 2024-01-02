@@ -45,7 +45,7 @@ define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
 add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
 
-if ( ! version_compare( PHP_VERSION, '7.3', '>=' ) ) {
+if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '6.0', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
@@ -81,7 +81,7 @@ function elementor_fail_php_version() {
 		esc_html__( '%1$sElementor isn’t running because PHP is outdated.%2$s Update to PHP version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
 		'<h3>',
 		'</h3>',
-		'7.3',
+		'7.4',
 		'<a href="https://go.elementor.com/wp-dash-update-php/" target="_blank">',
 		'</a>'
 	);

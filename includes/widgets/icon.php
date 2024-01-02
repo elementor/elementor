@@ -160,6 +160,16 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
 		$this->add_responsive_control(
 			'align',
 			[
@@ -183,16 +193,6 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-wrapper' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_style_icon',
-			[
-				'label' => esc_html__( 'Icon', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 

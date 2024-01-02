@@ -16,17 +16,13 @@ export const ThumbnailUrl = ( props ) => {
 		<Box
 			sx={ {
 				position: 'relative',
-				borderRadius: 1,
-				overflow: 'hidden',
-				minWidth: THUMBNAIL_SIZE,
-				maxHeight: THUMBNAIL_SIZE,
-
 				'&:hover::before': {
 					content: '""',
 					position: 'absolute',
 					userSelect: 'none',
 					inset: 0,
 					backgroundColor: 'rgba(0,0,0,0.6)',
+					borderRadius: 1,
 					zIndex: 1,
 				},
 				'&:hover .remove-attachment': {
