@@ -684,7 +684,7 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
-		if ( ! isset( $settings['icon'] ) && Icons_Manager::is_migration_required() ) {
+		if ( ! isset( $settings['selected_icon'] ) && Icons_Manager::is_migration_required() ) {
 			// add old default
 			$settings['icon'] = 'fa fa-star';
 		}
@@ -709,7 +709,7 @@ class Widget_Icon_Box extends Widget_Base {
 			$has_icon = true;
 		}
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_required();
+		$is_new = ! isset( $settings['icon'] );
 
 		?>
 		<div class="elementor-icon-box-wrapper">

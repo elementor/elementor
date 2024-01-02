@@ -740,12 +740,12 @@ class Widget_Icon_List extends Widget_Base {
 					}
 
 					// add old default
-					if ( ! isset( $item['icon'] ) && $migration_required ) {
+					if ( ! isset( $item['selected_icon'] ) && $migration_required ) {
 						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
 					}
 
 					$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
-					$is_new = ! isset( $item['icon'] ) && ! $migration_required;
+					$is_new = ! isset( $item['icon'] );
 					if ( ! empty( $item['icon'] ) || ( ! empty( $item['selected_icon']['value'] ) && $is_new ) ) :
 						?>
 						<span class="elementor-icon-list-icon">

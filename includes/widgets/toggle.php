@@ -566,7 +566,7 @@ class Widget_Toggle extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 
-		if ( ! isset( $settings['icon'] ) && Icons_Manager::is_migration_required() ) {
+		if ( ! isset( $settings['selected_icon'] ) && Icons_Manager::is_migration_required() ) {
 			// @todo: remove when deprecated
 			// added as bc in 2.6
 			// add old default
@@ -575,7 +575,7 @@ class Widget_Toggle extends Widget_Base {
 			$settings['icon_align'] = $this->get_settings( 'icon_align' );
 		}
 
-		$is_new = empty( $settings['icon'] ) && ! Icons_Manager::is_migration_required();
+		$is_new = empty( $settings['icon'] );
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 
 		?>

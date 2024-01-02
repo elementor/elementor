@@ -584,7 +584,7 @@ class Widget_Social_Icons extends Widget_Base {
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] ) && ! $migration_required;
+				$is_new = empty( $item['social'] );
 				$social = '';
 
 				// add old default
