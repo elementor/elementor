@@ -31,7 +31,7 @@ class Font_Awesome extends Base {
 		return [
 			'key' => $icon_key,
 			'version' => self::LIBRARY_CURRENT_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/v' . $fa_version . '/' .$icon_file_name . '.json',
+			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/v' . $fa_version . '/' . $icon_file_name . '.json',
 			'data' => [
 				'icon_data' => [
 					'name' => $icon_name,

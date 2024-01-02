@@ -525,7 +525,7 @@ class Icons_Manager {
 			$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
 
 			// Check if migration is required based on get_needs_upgrade_option() or version comparison
-			$is_migration_required = $latest_migration_version === null || version_compare(
+			$is_migration_required = null === $latest_migration_version || version_compare(
 				$latest_migration_version,
 				self::LATEST_MIGRATION_REQUIRED_VERSION,
 				'<'
