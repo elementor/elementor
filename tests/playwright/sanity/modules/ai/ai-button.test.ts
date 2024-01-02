@@ -3,6 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'AI @ai', () => {
 	test( 'AI Button', async ( { page }, testInfo ) => {
+		expect( true ).toEqual( false );
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		const editor = await wpAdmin.openNewPage();
