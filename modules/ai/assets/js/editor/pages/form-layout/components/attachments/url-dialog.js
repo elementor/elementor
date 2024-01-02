@@ -9,7 +9,7 @@ import { useTimeout } from '../../../../hooks/use-timeout';
 export const UrlDialog = ( props ) => {
 	const iframeRef = useRef( null );
 	const { iframeSource } = useAttachUrlService( { targetUrl: props.url } );
-	const iframeOrigin = new URL( iframeSource ).origin;
+	const iframeOrigin = iframeSource ? new URL( iframeSource ).origin : '';
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
 
 	useEffect( () => {
