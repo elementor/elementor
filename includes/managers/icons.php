@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -410,7 +411,7 @@ class Icons_Manager {
 
 		foreach ( self::get_migration_dictionary() as $mapping_by_version ) {
 			if ( isset( $mapping_by_version[ $value['value'] ] ) ) {
-				$value = $mapping_by_version[ $value ];
+				$value = $mapping_by_version[ $value['value'] ];
 			}
 		}
 
@@ -521,17 +522,22 @@ class Icons_Manager {
 		static $migration_required = false;
 
 		if ( false === $migration_required ) {
-			$needs_upgrade = self::get_needs_upgrade_option();
-			$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
+			if ( empty( key( Upgrade_Manager::get_installs_history() ) ) ) {
+				// If `get_installs_history()` is empty, Elementor was never installed on this site.
+				update_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
+			} else {
+				$needs_upgrade = self::get_needs_upgrade_option();
+				$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
 
-			// Check if migration is required based on get_needs_upgrade_option() or version comparison
-			$is_migration_required = null === $latest_migration_version || version_compare(
-				$latest_migration_version,
-				self::LATEST_MIGRATION_REQUIRED_VERSION,
-				'<'
-			);
+				// Check if migration is required based on get_needs_upgrade_option() or version comparison
+				$is_migration_required = null === $latest_migration_version || version_compare(
+					$latest_migration_version,
+					self::LATEST_MIGRATION_REQUIRED_VERSION,
+					'<'
+				);
 
-			$migration_required = 'yes' === $needs_upgrade || $is_migration_required;
+				$migration_required = 'yes' === $needs_upgrade || $is_migration_required;
+			}
 
 			/**
 			 * Is icon migration required.
@@ -644,6 +650,12 @@ class Icons_Manager {
 			wp_send_json_error( 'Permission denied' );
 		}
 
+		Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [ 'migrate_fa_icon_values' ] );
+
+		// Trigger the custom task.
+		wp_remote_post( admin_url( 'admin-ajax.php' ), [ 'timeout' => 15 ] );
+
+		// Remove the update flag and update the latest migration flag.
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 		update_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 

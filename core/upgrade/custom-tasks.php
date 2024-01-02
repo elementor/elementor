@@ -15,4 +15,8 @@ class Custom_Tasks {
 	public static function opt_in_send_tracking_data() {
 		Tracker::send_tracking_data( true );
 	}
+
+	public static function migrate_fa_icon_values( $updater ) {
+		Upgrades::_v_3_19_0_fa5_migration_values( $updater );
+	}
 }

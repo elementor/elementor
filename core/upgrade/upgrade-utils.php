@@ -22,9 +22,9 @@ class Upgrade_Utils {
 		global $wpdb;
 
 		$post_ids = $updater->query_col(
-			'SELECT `post_id` 
-					FROM `' . $wpdb->postmeta . '` 
-					WHERE `meta_key` = "_elementor_data" 
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data"
 					AND `meta_value` LIKE \'%"widgetType":"' . $widget_id . '"%\';'
 		);
 
@@ -47,17 +47,19 @@ class Upgrade_Utils {
 				continue;
 			}
 
-			// loop thru callbacks & array
+			// loop through callbacks & array
 			foreach ( $changes as $change ) {
 				$args = [
 					'do_update' => &$do_update,
 					'widget_id' => $widget_id,
 					'control_ids' => $change['control_ids'],
+					'migrate_icon_names' => ! empty( $change['migrate_icon_names'] ) ? $change['migrate_icon_names'] : null,
 				];
 
 				if ( isset( $change['prefix'] ) ) {
 					$args['prefix'] = $change['prefix'];
 					$args['new_id'] = $change['new_id'];
+					$args['migrate_icon_names'] = $change['migrate_icon_names'];
 				}
 
 				$data = Plugin::instance()->db->iterate_data( $data, $change['callback'], $args );
