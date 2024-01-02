@@ -377,6 +377,7 @@ class Tools extends Settings_Page {
 						],
 					],
 					'beta' => [
+						'show_if' => $this->display_beta_tester(),
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
 							echo '<p>' .
@@ -384,9 +385,11 @@ class Tools extends Settings_Page {
 								'</p>';
 							echo sprintf(
 								/* translators: 1: Link open tag, 2: Link close tag. */
-								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
-								'<a id="beta-tester-first-to-know" href="#">',
-								'</a>'
+								esc_html__( '%1$sClick here%2$s %3$sto join our first-to-know email updates.%4$s', 'elementor' ),
+								'<a id="beta-tester-first-to-know" class="elementor-become-a-beta-tester" href="#">',
+								'</a>',
+								'<span class="elementor-become-a-beta-tester">',
+								'</span>',
 							);
 						},
 						'fields' => [
@@ -442,5 +445,26 @@ class Tools extends Settings_Page {
 	 */
 	public static function can_user_rollback_versions() {
 		return current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
+	}
+
+	/**
+	 * Check if the beta tester should be displayed.
+	 *
+	 * @since 3.19.0
+	 *
+	 * @return bool
+	 */
+	public function display_beta_tester(): bool {
+		$display_beta_tester = true;
+		/**
+		 * Filter to allow override the display of the beta tester.
+		 *
+		 * @param bool $display_beta_tester Whether to display the beta tester.
+		 *
+		 * @since 3.19.0
+		 *
+		 * return bool
+		 */
+		return apply_filters( 'elementor/admin/show_beta_tester', $display_beta_tester );
 	}
 }
