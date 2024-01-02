@@ -85,7 +85,7 @@ export const UrlDialog = ( props ) => {
 							src={ iframeSource }
 							onLoad={ () => {
 								iframeRef.current.contentWindow.postMessage( {
-									type: 'referer/info',
+									type: 'referrer/info',
 									info: {
 										page: {
 											url: window.location.href,
