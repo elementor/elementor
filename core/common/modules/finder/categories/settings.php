@@ -71,7 +71,7 @@ class Settings extends Base_Category {
 				'title' => esc_html__( 'Element Manager', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=' . ElementManagerModule::PAGE_ID ),
 				'keywords' => [ 'settings', 'elements', 'widgets', 'manager' ],
-			]
+			],
 		];
 	}
 }
