@@ -134,7 +134,7 @@ class Icons_Manager {
 				'name' => 'fa-regular',
 				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
-				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome6' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
@@ -146,7 +146,7 @@ class Icons_Manager {
 				'name' => 'fa-solid',
 				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
-				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome6' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
@@ -158,7 +158,7 @@ class Icons_Manager {
 				'name' => 'fa-brands',
 				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
-				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome6' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
@@ -678,7 +678,8 @@ class Icons_Manager {
 
 	public function enqueue_fontawesome_css() {
 		if ( self::is_migration_required() ) {
-			wp_enqueue_style( 'font-awesome' );
+			wp_enqueue_style( 'fontawesome5' );
+			wp_enqueue_style( 'fontawesome4' );
 		} else {
 			$current_filter = current_filter();
 			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );

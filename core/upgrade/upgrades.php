@@ -962,6 +962,7 @@ class Upgrades {
 					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
 		);
 	}
+
 	/**
 	 * @param $data
 	 *
