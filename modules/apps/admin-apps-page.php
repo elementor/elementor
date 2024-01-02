@@ -38,22 +38,8 @@ class Admin_Apps_Page {
 
 	private static function get_plugins() : array {
 		$apps = static::get_remote_apps();
-		$filtered_apps = static::filter_apps( $apps );
 
-		if ( ! static::is_elementor_pro_installed() ) {
-			array_unshift( $filtered_apps, [
-				'name' => 'Elementor Pro',
-				'author' => 'Elementor',
-				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-elementor-pro/',
-				'badge' => 'Premium',
-				'description' => 'Unlock Elementor Pro and build any website with advanced design capabilities, marketing tools, WooCommerce features, Dynamic Content, and more.',
-				'action_label' => 'Let\'s Go',
-				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-elementor-pro/',
-				'image' => static::get_images_url() . 'elementor.svg',
-			] );
-		}
-
-		return $filtered_apps;
+		return static::filter_apps( $apps );
 	}
 
 	private static function get_remote_apps() {
@@ -78,6 +64,10 @@ class Admin_Apps_Page {
 		foreach ( $apps as $app ) {
 			if ( static::is_wporg_app( $app ) ) {
 				$app = static::filter_wporg_app( $app );
+			}
+
+			if ( static::is_ecom_app( $app ) ) {
+				$app = static::filter_ecom_app( $app );
 			}
 
 			if ( empty( $app ) ) {
@@ -116,6 +106,32 @@ class Admin_Apps_Page {
 				$app['action_url'] = '#';
 			}
 		}
+
+		return $app;
+	}
+
+	private static function is_ecom_app( $app ) {
+		return isset( $app['type'] ) && 'ecom' === $app['type'];
+	}
+
+	private static function filter_ecom_app( $app ) {
+		if ( static::is_plugin_activated( $app['file_path'] ) ) {
+			return null;
+		}
+
+		if ( ! static::is_plugin_installed( $app['file_path'] ) ) {
+			return $app;
+		}
+
+		if ( current_user_can( 'activate_plugins' ) ) {
+			$app['action_label'] = 'Activate';
+			$app['action_url'] = static::get_activate_plugin_url( $app['file_path'] );
+		} else {
+			$app['action_label'] = 'Cannot Activate';
+			$app['action_url'] = '#';
+		}
+
+		$app['target'] = '_self';
 
 		return $app;
 	}
