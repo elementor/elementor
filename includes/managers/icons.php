@@ -134,10 +134,10 @@ class Icons_Manager {
 				'name' => 'fa-regular',
 				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
-				'enqueue' => [ self::get_fa_asset_url( 'fontawesome6' ) ],
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
-				'labelIcon' => 'fab fa-font-awesome-alt',
+				'labelIcon' => 'fab fa-font-awesome-alt fa-square-font-awesome-stroke',
 				'ver' => self::ELEMENTOR_ICONS_VERSION,
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
@@ -146,7 +146,7 @@ class Icons_Manager {
 				'name' => 'fa-solid',
 				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
-				'enqueue' => [ self::get_fa_asset_url( 'fontawesome6' ) ],
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
@@ -158,10 +158,10 @@ class Icons_Manager {
 				'name' => 'fa-brands',
 				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
-				'enqueue' => [ self::get_fa_asset_url( 'fontawesome6' ) ],
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
-				'labelIcon' => 'fab fa-font-awesome-flag',
+				'labelIcon' => 'fab fa-font-awesome-flag fa-flag',
 				'ver' => self::ELEMENTOR_ICONS_VERSION,
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
@@ -230,23 +230,17 @@ class Icons_Manager {
 		);
 	}
 
-	private static function is_test_mode() {
-		static $is_test_mode = null;
-
-		if ( null === $is_test_mode ) {
-			$is_test_mode = defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
-		}
-
-		return $is_test_mode;
-	}
-
 	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
-		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/' . $filename;
+		$version = self::is_migration_required()
+			? self::get_current_fa_version() - 1
+			: self::get_current_fa_version();
+
+		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/v' . $version . '/' . $filename;
 
 		$script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 		$test_mode = defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
 
-		if ( ! $script_debug && ! self::is_test_mode() && $add_suffix ) {
+		if ( ! $script_debug && ! $test_mode && $add_suffix ) {
 			$url .= '.min';
 		}
 
@@ -385,7 +379,7 @@ class Icons_Manager {
 	 *
 	 * @return int
 	 */
-	private static function get_current_fa_version() {
+	public static function get_current_fa_version() {
 		return (int) explode( '.', self::ELEMENTOR_ICONS_VERSION )[0];
 	}
 
@@ -531,7 +525,7 @@ class Icons_Manager {
 			$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
 
 			// Check if migration is required based on get_needs_upgrade_option() or version comparison
-			$is_migration_required = $latest_migration_version && version_compare(
+			$is_migration_required = $latest_migration_version === null || version_compare(
 				$latest_migration_version,
 				self::LATEST_MIGRATION_REQUIRED_VERSION,
 				'<'
@@ -669,7 +663,7 @@ class Icons_Manager {
 	 * @return array;
 	 */
 	public function add_update_needed_flag( $settings ) {
-		if ( ! self::is_test_mode() ) {
+		if ( ! ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ) {
 			$settings['icons_update_needed'] = true;
 		}
 
@@ -678,8 +672,8 @@ class Icons_Manager {
 
 	public function enqueue_fontawesome_css() {
 		if ( self::is_migration_required() ) {
-			wp_enqueue_style( 'fontawesome5' );
 			wp_enqueue_style( 'fontawesome4' );
+			wp_enqueue_style( 'fontawesome5' );
 		} else {
 			$current_filter = current_filter();
 			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );

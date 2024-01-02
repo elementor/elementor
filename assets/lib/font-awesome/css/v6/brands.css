@@ -12,7 +12,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("../fonts/v6/fa-brands-400.woff2") format("woff2"), url("../fonts/v6/fa-brands-400.ttf") format("truetype"); }
+  src: url("../../fonts/v6/fa-brands-400.woff2") format("woff2"), url("../../fonts/v6/fa-brands-400.ttf") format("truetype"); }
 
 .fab,
 .fa-brands {

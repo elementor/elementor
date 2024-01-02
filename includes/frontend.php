@@ -502,10 +502,17 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_styles' );
 
 		wp_register_style(
-			'font-awesome',
-			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/css/' ),
+			'fontawesome4',
+			$this->get_css_assets_url( 'fontawesome', 'assets/lib/font-awesome/css/v4/' ),
 			[],
 			'4.7.0'
+		);
+
+		wp_register_style(
+			'fontawesome5',
+			$this->get_css_assets_url( 'fontawesome', 'assets/lib/font-awesome/css/v5/' ),
+			[],
+			'5.15.3'
 		);
 
 		wp_register_style(

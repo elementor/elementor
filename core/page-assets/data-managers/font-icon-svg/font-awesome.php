@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg;
 
+use Elementor\Icons_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -22,10 +24,14 @@ class Font_Awesome extends Base {
 
 		$icon_file_name = str_replace( 'fa-', '', $icon['library'] );
 
+		$fa_version = Icons_Manager::is_migration_required()
+			? Icons_Manager::get_current_fa_version() - 1
+			: Icons_Manager::get_current_fa_version();
+
 		return [
 			'key' => $icon_key,
 			'version' => self::LIBRARY_CURRENT_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/' . $icon_file_name . '.json',
+			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/v' . $fa_version . '/' .$icon_file_name . '.json',
 			'data' => [
 				'icon_data' => [
 					'name' => $icon_name,
