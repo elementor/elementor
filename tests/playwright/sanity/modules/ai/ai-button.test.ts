@@ -6,6 +6,7 @@ test.describe( 'AI @ai', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		const editor = await wpAdmin.openNewPage();
+		expect( true ).toEqual( false );
 
 		await test.step( 'Textarea control', async () => {
 			await editor.addWidget( 'heading' );
