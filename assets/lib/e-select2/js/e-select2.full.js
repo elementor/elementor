@@ -3241,7 +3241,7 @@ S2.define('select2/data/select',[
     this.container = container;
 
     container.on('select', function (params) {
-      self.trigger('select', params.data);
+      self.select(params.data);
     });
 
     container.on('unselect', function (params) {
@@ -5392,7 +5392,7 @@ S2.define('select2/core',[
     });
 
     this.selection.on('focus', function (params) {
-		self.trigger('focus', params);
+		self.focus( params);
     });
 
     this.selection.on('*', function (name, params) {
