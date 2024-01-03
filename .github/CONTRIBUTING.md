@@ -36,13 +36,13 @@ Alternatively, you can visit one of these resources:
 
 ## How to report Security Issues
 
-Security is paramount at Elementor. If you discover a security vulnerability, we want to hear about it right away, and we appreciate your help in disclosing it to us in a coordinated manner. For this reason, we run a community-driven [Managed Security Bug Bounty program](https://elemn.to/bug-bounty).
+Security is paramount at Elementor. If you discover a security vulnerability, we want to hear about it right away, and we appreciate your help in disclosing it to us in a coordinated manner. For this reason, we run community-driven [Managed Security Bug Bounty programs](https://elemn.to/gh-to-bounty-programs).
 
-We leverage the collective expertise of our community, offering round-the-clock crowdsourced vulnerability detection. The program provides a comprehensive overview of features and endpoints considered 'in scope,' reward specifics, and our complete terms and conditions.
+We leverage the collective expertise of our community, offering round-the-clock crowdsourced vulnerability detection. These programs provide a comprehensive overview of features and endpoints considered 'in scope,' reward specifics where relevant, and our complete terms and conditions.
 
 ### Please do not report security issues on GitHub
 
-Join our [Managed Security Bug Bounty program](https://elemn.to/bug-bounty) instead and help us maintain Elementor, a secure software, responsibly.
+Join our [Managed Security Bug Bounty programs](https://elemn.to/gh-to-bounty-programs) instead and help us maintain Elementor, a secure software, responsibly.
 
 **To learn more about our security efforts and how to contact us for security inquiries, please visit our [Trust Center](https://elemn.to/gh-to-trust-center).**
 
@@ -57,8 +57,8 @@ If you found a bug in the source code and can reproduce it consistently after tr
 -   **Troubleshoot your Issue** <br>Visit our [Help Center](https://elemn.to/gh-to-help-center) and use the search function to find [troubleshooting articles](https://elemn.to/help-troubleshooting) for the most common problems that can be solved quickly.
 -   **Isolate the Problem and Validate your Issue** <br>Ensure your issue happens when only the **Elementor (and Elementor Pro)** plugins are active while also using the [Hello Elementor theme](https://elemn.to/wp-hello-elementor-theme). <br>Isolating the problem helps identify if Elementor causes the issue you're experiencing
 -   **Write a Clear and Concise Title** <br>Summarize your title in a short sentence that can help identify your issue at a glance without needing to read the description.
--   **Provide a Detailed Description** <br>Please help us understand in detail what problems you are experiencing. <br>Describe the problems in detail, and provide examples, screenshots, screen recordings, and related links.
--   **Explain how we can Recreate your Issue** <br>Give detailed **Steps to Reproduce** so we can replicate your issue in our environment.
+-   **Provide a Detailed Description** <br>Please help us understand in detail what problems you are experiencing. <br>Give a detailed description of your problem, and provide examples, screenshots, screen recordings, and related links.
+-   **Explain how we can Recreate your Issue** <br>Enumerate all the steps needed to reproduce the issue in detail so we can replicate it in our environment.
 -   **Tell us what you were Expecting to Happen** <br>Describe the **Expected Behavior** to help identify the root of the issue.
 -   **Share the Elementor System Info** <br>Be ready to share a full copy of the [Elementor System Info](https://elemn.to/help-system-info) report from your WordPress **`Dashboard`** > **`Elementor`** > **`System Info`** page (available at the bottom of the page). <br>**We won't accept issues without it. [Learn how to copy it here](https://elemn.to/help-system-info).**
 -   **Write One Bug Report per Issue** <br>If you are experiencing more than one bug, submit only **<ins>ONE BUG PER ISSUE</ins>**.
@@ -77,10 +77,10 @@ Suggest new ideas, features, or enhancements by [submitting a Feature Request](h
 -   **Search Before Posting** <br>Before creating a new Feature Request, please [search for similar requests](https://elemn.to/gh-feature-requests) to prevent creating duplicates.
 -   **Confirm Before Posting** <br>Please check the [Elementor Features page](https://elemn.to/features) before posting to avoid requesting an existing feature.
 -   **Write a Clear and Concise Title** <br>Summarize your title in a short sentence that can help identify your request at a glance without needing to read the description.
--   **Provide a Detailed Description** <br>Please describe how you'd like us to implement the solution.
+-   **Provide a Detailed Description** <br>Elaborate on how you envision the feature. Include examples, use cases, and any other relevant details.
 -   **Describe the Solution** <br>Describe how you'd like a solution to be implemented.
--   **Provide Alternatives** <br>Give examples of alternative solutions you've considered.
--   **Give Additional Context** <br>Add context to your suggestion by providing examples, screenshots, screen recordings, related links, and additional information.
+-   **Provide Alternatives** <br>Mention any alternative solutions or workarounds you've considered.
+-   **Give Additional Context** <br>Add context to your suggestion by providing examples, screenshots, screen recordings, related links, and additional information that might help us understand your request better.
 -   **Write One Request Per Thread** <br>If you have multiple requests, please submit only **<ins>ONE REQUEST PER THREAD</ins>**.
 
 **As a gentle reminder, we may close requests that do not comply with these guidelines without action.**

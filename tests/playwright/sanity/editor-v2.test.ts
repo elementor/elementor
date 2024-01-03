@@ -15,7 +15,7 @@ test.describe( 'Editor v2', () => {
 
 		await wpAdminPage.setExperiments( { editor_v2: true } );
 
-		editor = await wpAdminPage.openNewPage();
+		editor = await wpAdminPage.openNewPage( 'editor_v2' );
 	} );
 
 	test.afterAll( async () => {
@@ -28,9 +28,10 @@ test.describe( 'Editor v2', () => {
 
 		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
 
-		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Test page' );
+		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
 
-		await wrapper.getByRole( 'button', { name: 'Test page' } ).waitFor();
+		await wrapper.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
+		await editor.isUiStable( wrapper, 5 );
 
 		// Assert
 		await expect( await wrapper.screenshot( {

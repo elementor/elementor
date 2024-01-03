@@ -1,5 +1,5 @@
-import { ajaxResponses } from './mock/elementor-common';
-import { fireEvent, screen } from '@testing-library/react';
+import { ajaxResponses, elementorCommon } from './mock/elementor-common';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 export const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 
@@ -32,3 +32,16 @@ export const clickEditPromptButton = () => {
 	const editButton = wrapper.querySelector( '[aria-label="Edit prompt"] button' );
 	fireEvent.click( editButton );
 };
+
+export const mockEditorEnvironment = () => {
+	global.elementorCommon = elementorCommon;
+	global.ResizeObserver =
+		global.ResizeObserver ||
+		jest.fn().mockImplementation( () => ( {
+			disconnect: jest.fn(),
+			observe: jest.fn(),
+			unobserve: jest.fn(),
+		} ) );
+};
+
+export const waitForNextTick = () => waitFor( () => Promise.resolve() );
