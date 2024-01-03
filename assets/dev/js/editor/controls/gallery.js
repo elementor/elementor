@@ -63,8 +63,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.ui.warnings.text(
 			imagesWithoutAlt > 0
 				? sprintf(
-					/* Translators: %s: The number of images that have no ALT text. */
-					__( 'Accessibility Issue: %s images have no ALT text.', 'elementor' ),
+					/* Translators: %s: The number of images that don’t contain ALT text. */
+					__( 'These %s images don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
 					imagesWithoutAlt,
 				)
 				: '',
