@@ -130,6 +130,22 @@ class Widget_Image_Gallery extends Widget_Base {
 		);
 
 		$this->add_control(
+			'gallery_display_caption',
+			[
+				'label' => esc_html__( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'' => esc_html__( 'Attachment Caption', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'gallery_link',
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
@@ -179,15 +195,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -218,12 +225,18 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'image_spacing_custom',
 			[
-				'label' => esc_html__( 'Image Spacing', 'elementor' ),
+				'label' => esc_html__( 'Custom Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'show_label' => false,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'default' => [
@@ -267,21 +280,8 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'gallery_display_caption',
-			[
-				'label' => esc_html__( 'Display', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => esc_html__( 'Show', 'elementor' ),
-					'none' => esc_html__( 'Hide', 'elementor' ),
-				],
-				'selectors' => [
-					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
+				'condition' => [
+					'gallery_display_caption' => '',
 				],
 			]
 		);
@@ -353,6 +353,24 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'caption_shadow',
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
 			]
 		);
 

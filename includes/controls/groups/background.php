@@ -121,12 +121,44 @@ class Group_Control_Background extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	public function init_fields() {
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$location_device_args = [];
+		$location_device_defaults = [
+			'default' => [
+				'unit' => '%',
+			],
+		];
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$location_device_args[ $breakpoint_name ] = $location_device_defaults;
+		}
+
+		$angel_device_args = [];
+		$angel_device_defaults = [
+			'default' => [
+				'unit' => 'deg',
+			],
+		];
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$angel_device_args[ $breakpoint_name ] = $angel_device_defaults;
+		}
+
 		$fields = [];
 
 		$fields['background'] = [
 			'label' => esc_html__( 'Background Type', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'render_type' => 'ui',
+		];
+
+		$fields['gradient_notice'] = [
+			'type' => Controls_Manager::RAW_HTML,
+			'raw' => esc_html__( 'Set colors, locations, and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'elementor' ),
+			'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+			'render_type' => 'ui',
+			'condition' => [
+				'background' => [ 'gradient' ],
+			],
 		];
 
 		$fields['color'] = [
@@ -150,6 +182,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'unit' => '%',
 				'size' => 0,
 			],
+			'device_args' => $location_device_args,
+			'responsive' => true,
 			'render_type' => 'ui',
 			'condition' => [
 				'background' => [ 'gradient' ],
@@ -176,6 +210,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'unit' => '%',
 				'size' => 100,
 			],
+			'device_args' => $location_device_args,
+			'responsive' => true,
 			'render_type' => 'ui',
 			'condition' => [
 				'background' => [ 'gradient' ],
@@ -206,6 +242,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'unit' => 'deg',
 				'size' => 180,
 			],
+			'device_args' => $angel_device_args,
+			'responsive' => true,
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
 			],
@@ -456,16 +494,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 1000,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
 				],
 			],
 			'default' => [
@@ -497,6 +526,9 @@ class Group_Control_Background extends Group_Control_Base {
 					TagsModule::POST_META_CATEGORY,
 					TagsModule::URL_CATEGORY,
 				],
+			],
+			'ai' => [
+				'active' => false,
 			],
 			'condition' => [
 				'background' => [ 'video' ],
