@@ -2,12 +2,25 @@ import AiLayoutBehavior from './ai-layout-behavior';
 import { importToEditor, renderLayoutApp } from './utils/editor-integration';
 import { __ } from '@wordpress/i18n';
 import { MODE_VARIATION } from './pages/form-layout/context/config';
+import ApplyTemplateForAi from './integration/library/apply-template-for-ai';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'views/add-section/behaviors', this.registerAiLayoutBehavior );
 
+		elementor.hooks.addFilter( 'elementor/editor/template-library/template/action-button', this.filterLibraryActionButtonTemplate, 11 );
+
 		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.registerVariationsContextMenu );
+
+		elementor.hooks.addFilter( 'elementor/editor/template-library/preview/behaviors', this.registerLibraryActionButtonBehavior );
+	}
+
+	registerLibraryActionButtonBehavior( behaviors ) {
+		behaviors.applyAiTemplate = {
+			behaviorClass: ApplyTemplateForAi,
+		};
+
+		return behaviors;
 	}
 
 	registerAiLayoutBehavior( behaviors ) {
@@ -16,6 +29,15 @@ export default class Module extends elementorModules.editor.utils.Module {
 		};
 
 		return behaviors;
+	}
+
+	filterLibraryActionButtonTemplate( viewId ) {
+		const modalConfig = $e.components.get( 'library' ).manager.modalConfig;
+
+		if ( 'ai-attachment' === modalConfig.mode ) {
+			viewId = '#tmpl-elementor-template-library-apply-ai-button';
+		}
+		return viewId;
 	}
 
 	registerVariationsContextMenu = ( groups, currentElement ) => {

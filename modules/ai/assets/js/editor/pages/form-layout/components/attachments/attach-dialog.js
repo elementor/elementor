@@ -1,7 +1,7 @@
 import { UrlDialog } from './url-dialog';
 import PropTypes from 'prop-types';
-
-export const ATTACHMENT_TYPE_URL = 'url';
+import { LibraryDialog } from './library-dialog';
+import { ATTACHMENT_TYPE_LIBRARY, ATTACHMENT_TYPE_URL } from '../attachments';
 
 export const AttachDialog = ( props ) => {
 	const type = props.type;
@@ -11,6 +11,14 @@ export const AttachDialog = ( props ) => {
 		case ATTACHMENT_TYPE_URL:
 			return <UrlDialog
 				url={ url }
+				onAttach={ props.onAttach }
+				onClose={ props.onClose }
+			/>;
+		case ATTACHMENT_TYPE_LIBRARY:
+			return <LibraryDialog
+				json={ props.json }
+				html={ props.html }
+				label={ props.label }
 				onAttach={ props.onAttach }
 				onClose={ props.onClose }
 			/>;
@@ -24,6 +32,9 @@ AttachDialog.propTypes = {
 	onAttach: PropTypes.func,
 	onClose: PropTypes.func,
 	url: PropTypes.string,
+	json: PropTypes.string,
+	html: PropTypes.string,
+	label: PropTypes.string,
 };
 
 export default AttachDialog;

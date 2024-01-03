@@ -173,7 +173,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary e-btn-txt">
 			<i class="eicon-file-download" aria-hidden="true"></i>
-			<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
+			<span class="elementor-button-title"><?php echo esc_html__( 'Insert2', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-template-library-template-more-toggle">
 			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
@@ -197,7 +197,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
 	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
 		<i class="eicon-file-download" aria-hidden="true"></i>
-		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
+		<span class="elementor-button-title"><?php echo esc_html__( 'Insert1', 'elementor' ); ?></span>
+	</a>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-apply-ai-button">
+	<a class="elementor-template-library-template-action elementor-template-library-template-apply-ai elementor-button e-primary">
+		<i class="eicon-file-download" aria-hidden="true"></i>
+		<span class="elementor-button-title"><?php echo esc_html__( 'Apply', 'elementor' ); ?></span>
 	</a>
 </script>
 
