@@ -5,13 +5,9 @@ module.exports = Marionette.ItemView.extend( {
 
 	id: 'elementor-template-library-header-preview',
 
-	behaviors() {
-		const behaviors = {
-			insertTemplate: {
-				behaviorClass: TemplateLibraryInsertTemplateBehavior,
-			},
-		};
-
-		return elementor.hooks.applyFilters( 'elementor/editor/template-library/preview/behaviors', behaviors, this );
+	behaviors: {
+		insertTemplate: {
+			behaviorClass: TemplateLibraryInsertTemplateBehavior,
+		},
 	},
 } );
