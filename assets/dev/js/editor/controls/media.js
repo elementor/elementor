@@ -84,7 +84,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 
 		if ( 'image' === mediaType && attachmentId ) {
-			this.ui.warnings.text( this.imageHasAlt( attachmentId ) ? '' : __( 'Accessibility Issue: The image has no ALT text.', 'elementor' ) );
+			this.ui.warnings.text( this.imageHasAlt( attachmentId ) ? '' : __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ) );
 		}
 	},
 
