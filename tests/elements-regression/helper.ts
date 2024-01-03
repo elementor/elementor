@@ -5,7 +5,7 @@ type ScreenShot = {
 	device: string,
 	isPublished: boolean,
 	widgetType: string,
-	hoverSelector: {[ key: string ]: string}
+	hoverSelector: { [ key: string ]: string }
 }
 export default class ElementRegressionHelper {
 	readonly page: Page;
@@ -16,6 +16,10 @@ export default class ElementRegressionHelper {
 		this.editorPage = new EditorPage( page, testInfo );
 	}
 
+	getLabel( isPublished: boolean ) {
+		return isPublished ? 'published' : 'editor';
+	}
+
 	async doScreenshot( widgetType: string, isPublished: boolean ) {
 		if ( widgetType.includes( 'hover' ) ) {
 			return;
@@ -24,7 +28,7 @@ export default class ElementRegressionHelper {
 			? this.page.locator( EditorSelectors.container )
 			: this.editorPage.getPreviewFrame().locator( EditorSelectors.container );
 
-		const label = isPublished ? 'published' : 'editor';
+		const label = this.getLabel( isPublished );
 
 		if ( ! isPublished ) {
 			await this.page.evaluate( async () => {
@@ -41,7 +45,7 @@ export default class ElementRegressionHelper {
 			const widget = args.isPublished
 				? this.page.locator( EditorSelectors.widget )
 				: this.editorPage.getPreviewFrame().locator( EditorSelectors.widget );
-			const label = args.isPublished ? 'published' : 'editor';
+			const label = this.getLabel( args.isPublished );
 			const widgetCount = await widget.count();
 
 			for ( let i = 0; i < widgetCount; i++ ) {
