@@ -1,17 +1,23 @@
 import { Dialog, DialogContent } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
 
 export const UrlDialog = ( props ) => {
+	const iframeRef = useRef( null );
 	const { iframeSource } = useAttachUrlService( { targetUrl: props.url } );
+	const iframeOrigin = iframeSource ? new URL( iframeSource ).origin : '';
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
+			if ( event.origin !== iframeOrigin ) {
+				return;
+			}
+
 			const { type, html, url } = event.data;
 
 			switch ( type ) {
@@ -37,7 +43,7 @@ export const UrlDialog = ( props ) => {
 		return () => {
 			window.removeEventListener( 'message', onMessage );
 		};
-	}, [ turnOffTimeout ] );
+	}, [ iframeOrigin, iframeSource, props, turnOffTimeout ] );
 
 	if ( ! iframeSource ) {
 		return (
@@ -74,8 +80,19 @@ export const UrlDialog = ( props ) => {
 				{
 					! isTimeout && (
 						<iframe
+							ref={ iframeRef }
 							title={ __( 'URL as a reference', 'elementor' ) }
 							src={ iframeSource }
+							onLoad={ () => {
+								iframeRef.current.contentWindow.postMessage( {
+									type: 'referrer/info',
+									info: {
+										page: {
+											url: window.location.href,
+										},
+									},
+								}, iframeOrigin );
+							} }
 							style={ {
 								border: 'none',
 								overflow: 'scroll',
