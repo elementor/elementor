@@ -72,6 +72,9 @@ export const RolePermissions = ( props ) => {
 							variant={ 'link' }
 							onClick={ onToggle }
 							aria-expanded={ isOpen }
+							style={ {
+								textDecoration: 'none',
+							} }
 						>
 							{ __( 'Edit', 'elementor' ) }
 						</Button>
@@ -143,6 +146,9 @@ export const EditButtonDisabled = () => {
 			<Button
 				variant="link"
 				disabled
+				style={ {
+					textDecoration: 'none',
+				} }
 			>
 				{ __( 'Edit', 'elementor' ) }
 			</Button>

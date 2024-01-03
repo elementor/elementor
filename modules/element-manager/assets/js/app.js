@@ -347,12 +347,23 @@ export const App = () => {
 									__nextHasNoMarginBottom={ true }
 									onChange={ setSearchKeyword }
 								/>
+								<FlexItem
+									style={ {
+										maxWidth: '130px',
+									} }
+								>
 								<SelectControl
 									onChange={ setFilterByPlugin }
 									size={ '__unstable-large' }
 									__nextHasNoMarginBottom={ true }
 									options={ plugins }
 								/>
+								</FlexItem>
+								<FlexItem
+									style={ {
+										maxWidth: '130px',
+									} }
+								>
 								<SelectControl
 									onChange={ setFilterByStatus }
 									size={ '__unstable-large' }
@@ -372,6 +383,7 @@ export const App = () => {
 										},
 									] }
 								/>
+								</FlexItem>
 								<hr
 									style={ {
 										height: '30px',
@@ -469,6 +481,7 @@ export const App = () => {
 										<th>
 											<Flex
 												justify={ 'flex-start' }
+												gap={ 0 }
 											>
 												<FlexItem>
 													{ __( 'Permission', 'elementor' ) }
@@ -477,15 +490,20 @@ export const App = () => {
 													<Tooltip
 														placement={ 'top' }
 														delay={ 100 }
-														text={ __( 'Choose which role will have access to a specific widget.', 'elementor' ) }
+														text={ __( 'Choose which users will have access to each widget.', 'elementor' ) }
 													>
 														<Button
 															icon={ 'info-outline' }
+															iconSize={ 16 }
 														/>
 													</Tooltip>
 												</FlexItem>
 												{ null === widgetsRoleRestrictions && (
-													<FlexItem>
+													<FlexItem
+														style={ {
+															marginInlineStart: '10px',
+														} }
+													>
 														<UpgradeButton
 															href={
 																promotionWidgets.length ?
@@ -508,6 +526,8 @@ export const App = () => {
 													<i
 														style={ {
 															marginInlineEnd: '5px',
+															marginInlineStart: '0',
+															display: 'inline-block',
 														} }
 														className={ `${ widget.icon }` }
 													></i> { widget.title }
