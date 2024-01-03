@@ -4933,7 +4933,7 @@ S2.define('select2/defaults',[
 
     function matcher (params, data) {
       // Always return the object if there is nothing to compare
-      if (params?.term?.trim() === '') {
+      if (! params || ! params.term || params.term.trim() === '') {
         return data;
       }
 
