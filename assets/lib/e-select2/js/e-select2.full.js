@@ -6100,7 +6100,7 @@ S2.define('select2/compat/matcher',[
     function wrappedMatcher (params, data) {
       var match = $.extend(true, {}, data);
 
-      if (params.term == null || params.term.trim() === '') {
+      if (params.term == null || params?.term?.trim() === '') {
         return match;
       }
 
