@@ -1214,4 +1214,31 @@ class Controls_Manager {
 
 		return true;
 	}
+
+	public function add_display_conditions_controls( Controls_Stack $controls_stack ) {
+		ob_start();
+		?>
+		<div class="e-control-display-conditions-promotion__wrapper">
+			<div class="e-control-display-conditions-promotion__desc">
+				<span class="e-control-display-conditions-promotion__text">
+					<?php echo esc_html__('Display Conditions', 'elementor'); ?>
+				</span>
+				<span class="e-control-display-conditions-promotion__lock_wrapper">
+					<i class="eicon-lock e-control-display-conditions-promotion"></i>
+				</span>
+			</div>
+			<i class="eicon-flow e-control-display-conditions-promotion"></i>
+		</div>
+		<?php
+		$control_template = ob_get_clean();
+
+		$controls_stack->add_control(
+			'display_conditions_pro',
+			[
+				'type'      => self::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $control_template,
+			]
+		);
+	}
 }

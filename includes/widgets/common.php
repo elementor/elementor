@@ -597,34 +597,9 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'e_display_conditions_promotion',
-			array(
-				'type'      => Controls_Manager::RAW_HTML,
-				'separator' => 'before',
-				'raw'       => $this->get_display_conditions_control_template(),
-			)
-		);
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		$this->end_controls_section();
-	}
-
-	private function get_display_conditions_control_template() {
-		ob_start();
-		?>
-		<div class="e-control-display-conditions-promotion__wrapper">
-			<div class="e-control-display-conditions-promotion__desc">
-				<span class="e-control-display-conditions-promotion__text">
-					<?php echo esc_html__('Display Conditions', 'elementor-pro'); ?>
-				</span>
-				<span class="e-control-display-conditions-promotion__lock_wrapper">
-					<i class="eicon-lock e-control-display-conditions-promotion"></i>
-				</span>
-			</div>
-			<i class="eicon-flow e-control-display-conditions-promotion"></i>
-		</div>
-		<?php
-		return ob_get_clean();
 	}
 
 	/**
