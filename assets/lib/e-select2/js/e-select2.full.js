@@ -5769,7 +5769,7 @@ S2.define('select2/compat/utils',[
   function syncCssClasses ($dest, $src, adapter) {
     var classes, replacements = [], adapted;
 
-    classes = $dest?.attr('class')?.trim();
+    classes = ($dest?.attr('class') ?? '').trim();
 
     if (classes) {
       classes = '' + classes; // for IE which returns object
