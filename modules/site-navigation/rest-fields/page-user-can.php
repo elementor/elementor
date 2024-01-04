@@ -8,12 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Page_User_Can {
 	public function register_rest_field() {
-		$fields = $_GET['_fields'];
-		$array_fields = explode( ',', $fields );
-		if ( ! in_array( 'user_can', $array_fields ) ) {
+		if ( ! isset( $_GET['_fields'] ) ) {
 			return;
 		}
 
+		$fields = sanitize_text_field( $_GET['_fields'] );
+		$array_fields = explode( ',', $fields );
+
+		if ( ! in_array( 'user_can', $array_fields ) ) {
+			return;
+		}
+		
 		register_rest_field(
 			'page',
 			'user_can',
