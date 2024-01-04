@@ -21,7 +21,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerControlBehavior( behaviors, view ) {
-		if ( 'e_display_conditions_promotion' !== view.options.model.get( 'name' ) ) {
+		if ( 'display_conditions_pro' !== view.options.model.get( 'name' ) ) {
 			return behaviors;
 		}
 
