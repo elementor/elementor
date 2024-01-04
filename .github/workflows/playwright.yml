@@ -1,8 +1,14 @@
-name: Playwright
+name: Playwright123
 
 on:
   pull_request:
   merge_group:
+  workflow_dispatch:
+      inputs:
+        reporter:
+          required: false
+          description: 'Select a reporter'
+          default: 'list'
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -129,14 +135,14 @@ jobs:
         if: ${{matrix.testSuite !='elements-regression'}}
         env:
           TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright
+        run: npm run test:playwright --reporter=$${{inputs.reporter}}
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
         run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-test-results-${{ matrix.testSuite }}
+          name: playwright-test-results
           path: test-results/
           retention-days: 3
 

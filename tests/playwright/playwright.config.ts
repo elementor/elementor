@@ -59,7 +59,7 @@ export default {
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
 		navigationTimeout: 10_000,
-		trace: 'retain-on-failure',
+		trace: 'on',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
