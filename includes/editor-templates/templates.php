@@ -208,6 +208,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</a>
 </script>
 
+<script type="text/template" id="tmpl-elementor-template-library-insert-and-ai-variations-buttons">
+    <a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
+        <i class="eicon-file-download" aria-hidden="true"></i>
+        <span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
+    </a>
+    <a class="elementor-template-library-template-action elementor-template-library-template-generate-variation elementor-button e-btn-txt">
+        <i class="eicon-ai" aria-hidden="true"></i>
+        <span class="elementor-button-title"><?php echo esc_html__( 'Generate Variations', 'elementor' ); ?></span>
+    </a>
+</script>
+
 <script type="text/template" id="tmpl-elementor-template-library-upgrade-plan-button">
 	<a
 		class="elementor-template-library-template-action elementor-button go-pro"

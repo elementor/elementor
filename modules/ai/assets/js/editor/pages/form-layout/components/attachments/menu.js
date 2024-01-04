@@ -37,7 +37,7 @@ export const Menu = ( props ) => {
 					horizontal: 'rtl' === direction ? 'right' : 'left',
 				} }
 			>
-				<Stack spacing={ 2 } sx={ {
+				<Stack sx={ {
 					width: 440,
 				} }>
 					{ props.items.map( ( item ) => (

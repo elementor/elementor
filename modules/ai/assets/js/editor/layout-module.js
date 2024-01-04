@@ -33,9 +33,15 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 	filterLibraryActionButtonTemplate( viewId ) {
 		const modalConfig = $e.components.get( 'library' ).manager.modalConfig;
+		const originalCoreViewId = '#tmpl-elementor-template-library-insert-button';
 
+		if ( originalCoreViewId !== viewId ) {
+			return viewId;
+		}
 		if ( 'ai-attachment' === modalConfig.mode ) {
 			viewId = '#tmpl-elementor-template-library-apply-ai-button';
+		} else {
+			viewId = '#tmpl-elementor-template-library-insert-and-ai-variations-buttons';
 		}
 		return viewId;
 	}
