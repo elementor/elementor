@@ -1221,7 +1221,7 @@ class Controls_Manager {
 		<div class="e-control-display-conditions-promotion__wrapper">
 			<div class="e-control-display-conditions-promotion__desc">
 				<span class="e-control-display-conditions-promotion__text">
-					<?php echo esc_html__('Display Conditions', 'elementor'); ?>
+					<?php echo esc_html__( 'Display Conditions', 'elementor' ); ?>
 				</span>
 				<span class="e-control-display-conditions-promotion__lock_wrapper">
 					<i class="eicon-lock e-control-display-conditions-promotion"></i>
