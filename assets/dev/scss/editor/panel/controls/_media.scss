@@ -155,9 +155,16 @@
 		display: none;
 	}
 
-	&__warnings:empty {
-		display: none;
-	}
+	&__warnings {
+
+		&:empty {
+			display: none;
+		}
+
+		&:not(:empty) {
+			margin-block-start: 10px;
+		}
+	}	
 
 	// When attachment type is not image and not video
 	&__file {
