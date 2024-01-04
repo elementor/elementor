@@ -45,7 +45,10 @@ export const Menu = ( props ) => {
 							key={ item.type }
 							title={ item.title }
 							icon={ item.icon }
-							onClick={ () => setSelectedType( item.type ) }
+							onClick={ () => {
+								setSelectedType( item.type );
+								setIsOpen( false );
+							} }
 						/> ) ) }
 				</Stack>
 			</Popover>

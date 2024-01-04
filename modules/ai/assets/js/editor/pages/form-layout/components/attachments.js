@@ -10,7 +10,7 @@ import { Stack } from '@elementor/ui';
 
 export const ATTACHMENT_TYPE_JSON = 'json';
 export const ATTACHMENT_TYPE_URL = 'url';
-export const ATTACHMENT_TYPE_LIBRARY = 'library';
+export const MENU_TYPE_LIBRARY = 'library';
 
 const Attachments = ( props ) => {
 	if ( ! props.attachments.length ) {
@@ -26,7 +26,7 @@ const Attachments = ( props ) => {
 				{
 					title: __( 'Create variations from Template Library', 'elementor' ),
 					icon: CopyPageIcon,
-					type: ATTACHMENT_TYPE_LIBRARY,
+					type: MENU_TYPE_LIBRARY,
 				} ] }
 			/>
 		);

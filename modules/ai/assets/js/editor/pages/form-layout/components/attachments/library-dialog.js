@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
-import { ATTACHMENT_TYPE_LIBRARY } from '../attachments';
+import { ATTACHMENT_TYPE_JSON, ATTACHMENT_TYPE_LIBRARY } from '../attachments';
 
 export const LibraryDialog = ( props ) => {
 	useEffect( () => {
@@ -18,7 +18,7 @@ export const LibraryDialog = ( props ) => {
 					break;
 				case 'element-selector/attach':
 					props.onAttach( [ {
-						type: ATTACHMENT_TYPE_LIBRARY,
+						type: ATTACHMENT_TYPE_JSON,
 						previewHTML: html,
 						content: json,
 						label,

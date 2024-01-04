@@ -1,7 +1,7 @@
 import { UrlDialog } from './url-dialog';
 import PropTypes from 'prop-types';
 import { LibraryDialog } from './library-dialog';
-import { ATTACHMENT_TYPE_LIBRARY, ATTACHMENT_TYPE_URL } from '../attachments';
+import { MENU_TYPE_LIBRARY, ATTACHMENT_TYPE_URL } from '../attachments';
 
 export const AttachDialog = ( props ) => {
 	const type = props.type;
@@ -14,7 +14,7 @@ export const AttachDialog = ( props ) => {
 				onAttach={ props.onAttach }
 				onClose={ props.onClose }
 			/>;
-		case ATTACHMENT_TYPE_LIBRARY:
+		case MENU_TYPE_LIBRARY:
 			return <LibraryDialog
 				json={ props.json }
 				html={ props.html }
