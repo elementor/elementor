@@ -68,7 +68,10 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
-			await helper.doScreenshotComparison( { widgetType, hoverSelector } );
+
+			await page.setViewportSize( { width: 1920, height: 3080 } );
+			await helper.doScreenshot( widgetType, false );
+			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: false } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: false, widgetType } );
 
@@ -76,7 +79,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 			await editorPage.waitForIframeToLoaded( widgetType, true );
 			await editorPage.removeWpAdminBar();
-			await helper.doScreenshotPublished( { widgetType, hoverSelector } );
+			await helper.doScreenshot( widgetType, true );
+			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: true } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
 		} );
