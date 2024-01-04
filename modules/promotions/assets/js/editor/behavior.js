@@ -20,10 +20,7 @@ export default class PromotionBehavior extends Marionette.Behavior {
 				'Upgrade to Elementor Pro Advanced to get the Display Conditions Feature as well as additional professional and ecommerce widgets',
 				'elementor',
 			),
-			targetElement: event.target,
-			position: {
-				blockStart: '-10',
-			},
+			targetElement: this.el,
 			actionButton: {
 				url: 'https://go.elementor.com/go-pro-display-conditions/',
 				text: __( 'Upgrade Now', 'elementor' ),
