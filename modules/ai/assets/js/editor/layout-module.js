@@ -38,6 +38,11 @@ export default class Module extends elementorModules.editor.utils.Module {
 		if ( originalCoreViewId !== viewId ) {
 			return viewId;
 		}
+
+		if ( $e.routes.current.library !== 'library/templates/blocks' ) {
+			return viewId;
+		}
+
 		if ( 'ai-attachment' === modalConfig.mode ) {
 			viewId = '#tmpl-elementor-template-library-apply-ai-button';
 		} else {
