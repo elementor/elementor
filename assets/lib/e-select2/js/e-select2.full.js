@@ -5782,7 +5782,7 @@ S2.define('select2/compat/utils',[
       });
     }
 
-    classes = $src?.attr('class')?.trim();
+    classes = ($src?.attr('class') ?? '').trim();
 
     if (classes) {
       classes = '' + classes; // for IE which returns object
