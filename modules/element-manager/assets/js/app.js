@@ -352,37 +352,37 @@ export const App = () => {
 										maxWidth: '130px',
 									} }
 								>
-								<SelectControl
-									onChange={ setFilterByPlugin }
-									size={ '__unstable-large' }
-									__nextHasNoMarginBottom={ true }
-									options={ plugins }
-								/>
+									<SelectControl
+										onChange={ setFilterByPlugin }
+										size={ '__unstable-large' }
+										__nextHasNoMarginBottom={ true }
+										options={ plugins }
+									/>
 								</FlexItem>
 								<FlexItem
 									style={ {
 										maxWidth: '130px',
 									} }
 								>
-								<SelectControl
-									onChange={ setFilterByStatus }
-									size={ '__unstable-large' }
-									__nextHasNoMarginBottom={ true }
-									options={ [
-										{
-											label: __( 'All Statuses', 'elementor' ),
-											value: 'all',
-										},
-										{
-											label: __( 'Active', 'elementor' ),
-											value: 'active',
-										},
-										{
-											label: __( 'Inactive', 'elementor' ),
-											value: 'inactive',
-										},
-									] }
-								/>
+									<SelectControl
+										onChange={ setFilterByStatus }
+										size={ '__unstable-large' }
+										__nextHasNoMarginBottom={ true }
+										options={ [
+											{
+												label: __( 'All Statuses', 'elementor' ),
+												value: 'all',
+											},
+											{
+												label: __( 'Active', 'elementor' ),
+												value: 'active',
+											},
+											{
+												label: __( 'Inactive', 'elementor' ),
+												value: 'inactive',
+											},
+										] }
+									/>
 								</FlexItem>
 								<hr
 									style={ {
@@ -506,9 +506,9 @@ export const App = () => {
 													>
 														<UpgradeButton
 															href={
-																promotionWidgets.length ?
-																	'https://go.elementor.com/go-pro-element-manager-permissions/' :
-																	'https://go.elementor.com/go-pro-advanced-element-manager-permissions/'
+																promotionWidgets.length
+																	? 'https://go.elementor.com/go-pro-element-manager-permissions/'
+																	: 'https://go.elementor.com/go-pro-advanced-element-manager-permissions/'
 															}
 															size={ 'small' }
 														/>
