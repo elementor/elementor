@@ -97,7 +97,7 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
-				<div class="elementor-control-media__warnings elementor-panel-alert elementor-panel-alert-warning" role="alert"></div>
+				<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
 			</div>
 		</div>
 		<?php
