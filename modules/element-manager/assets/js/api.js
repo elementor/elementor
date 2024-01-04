@@ -1,15 +1,21 @@
-export const saveDisabledWidgets = async ( widgetsDisabled ) => {
+export const saveDisabledWidgets = async ( widgetsDisabled, elementsRestriction = {} ) => {
 	try {
+		const bodyData = {
+			action: 'elementor_element_manager_save_disabled_elements',
+			nonce: eElementManagerConfig.nonce,
+			widgets: JSON.stringify( widgetsDisabled ),
+		};
+
+		if ( null !== elementsRestriction ) {
+			bodyData.elements_restriction = JSON.stringify( elementsRestriction );
+		}
+
 		const response = await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: new URLSearchParams( {
-				action: 'elementor_element_manager_save_disabled_elements',
-				nonce: eElementManagerConfig.nonce,
-				widgets: JSON.stringify( widgetsDisabled ),
-			} ),
+			body: new URLSearchParams( bodyData ),
 		} );
 
 		const data = await response.json();
