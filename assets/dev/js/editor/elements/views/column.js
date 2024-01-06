@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: '> .elementor-widget-wrap',
+	childViewContainer: elementorCommon.config.experimentalFeatures.e_dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = '> .elementor-widget-wrap';
+		ui.columnInner = elementorCommon.config.experimentalFeatures.e_dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -197,15 +197,27 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender() {
-		const getDropIndex = ( side, event ) => {
+		const isDomOptimizationActive = elementorCommon.config.experimentalFeatures.e_dom_optimization,
+			getDropIndex = ( side, event ) => {
 				let newIndex = jQuery( event.currentTarget ).index();
 
-				if ( 'top' === side ) {
+				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
+				if ( 'bottom' === side && ! isDomOptimizationActive ) {
+					newIndex++;
+				} else if ( 'top' === side && isDomOptimizationActive ) {
 					newIndex--;
 				}
 
 				return newIndex;
 			};
+
+		let itemsClasses = '';
+
+		if ( isDomOptimizationActive ) {
+			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		} else {
+			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		}
 
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
@@ -214,7 +226,7 @@ ColumnView = BaseElementView.extend( {
 		this.changeSizeUI();
 
 		this.$el.html5Droppable( {
-			items: ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+			items: itemsClasses,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
