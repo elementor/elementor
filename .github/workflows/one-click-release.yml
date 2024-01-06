@@ -78,6 +78,7 @@ jobs:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Get Release Name
+        if: env.CHANNEL != 'cloud'
         uses : ./.github/workflows/get-release-name
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip

@@ -69,6 +69,38 @@ class Test_Tracker extends Elementor_Test_Base {
 		], $actual );
 	}
 
+	public function test_get_settings_experiments_usage() {
+		// Arrange.
+		$original_experiments_manager = Plugin::$instance->experiments;
+
+		// Mock experiments manager.
+		Plugin::$instance->experiments = $this->getMockBuilder( Experiments_Manager::class )
+		     ->setMethods( [ 'get_features' ] )
+		     ->getMock();
+
+		// Set mock data.
+		Plugin::$instance->experiments
+			->method( 'get_features' )
+			->willReturn( [
+				'e_dom_optimization' => [
+					'default' => 'active',
+					'name' => 'e_dom_optimization',
+					'state' => 'default',
+				],
+			] );
+
+		// Assert.
+		$this->assertEquals( [
+			'e_dom_optimization' => [
+				'default' => 'active',
+				'state' => 'default',
+			]
+		], Tracker::get_settings_experiments_usage() );
+
+		// Cleanup.
+		Plugin::$instance->experiments = $original_experiments_manager;
+	}
+
 	public function test_get_tools_general_usage() {
 		// Arrange.
 		// Load elementor_safe_mode settings.
