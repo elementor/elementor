@@ -199,7 +199,7 @@ export default class Component extends ComponentModalBase {
 		this.downloadTemplate( args, ( data, callbackParams ) => {
 			const model = args.model;
 			window.postMessage( {
-				type: 'element-selector/attach',
+				type: 'library/attach',
 				json: data.content[ 0 ],
 				html: `<img src="${ model.get( 'thumbnail' ) }" />`,
 				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,

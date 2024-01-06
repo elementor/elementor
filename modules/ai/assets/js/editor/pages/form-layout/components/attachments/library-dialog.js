@@ -7,7 +7,7 @@ export const LibraryDialog = ( props ) => {
 		const onMessage = ( event ) => {
 			const { type, json, html, label } = event.data;
 
-			if ( 'element-selector/attach' !== type ) {
+			if ( 'library/attach' !== type ) {
 				return;
 			}
 			props.onAttach( [ {
