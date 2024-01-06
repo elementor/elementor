@@ -8,7 +8,13 @@ const DEFAULT_INNER_SECTION_COLUMNS = 2,
 
 const SectionView = BaseElementView.extend( {
 	childViewContainer() {
-		return '> .elementor-container';
+		let containerSelector = '> .elementor-container';
+
+		if ( ! elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
+			containerSelector += ' > .elementor-row';
+		}
+
+		return containerSelector;
 	},
 
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),

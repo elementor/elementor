@@ -1,0 +1,145 @@
+@import "../helpers/variables";
+@import "./breakpoints/proxy";
+
+// Legacy SCSS for markup removed in Elementor v3.0.0
+
+// Elementor Grid System
+.elementor-bc-flex-widget {
+
+	.elementor-section-content-top {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: flex-start;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-section-content-middle {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: center;
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-section-content-bottom {
+
+		> .elementor-container {
+
+			> .elementor-row {
+
+				> .elementor-column {
+
+					> .elementor-column-wrap {
+						align-items: flex-end;
+					}
+				}
+			}
+		}
+	}
+}
+
+.elementor-row {
+
+	> .elementor-column {
+
+		> .elementor-element-populated > .elementor-widget-wrap {
+
+			.elementor-column-gap-narrow  > & {
+				padding: 5px;
+			}
+
+			.elementor-column-gap-default > & {
+				padding: 10px;
+			}
+
+			.elementor-column-gap-extended > & {
+				padding: 15px;
+			}
+
+			.elementor-column-gap-wide > & {
+				padding: 20px;
+			}
+
+			.elementor-column-gap-wider > & {
+				padding: 30px;
+			}
+		}
+	}
+}
+
+@mixin legacy-reverse-columns($device) {
+
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: -$i + 11;
+			}
+		}
+	}
+}
+
+@mixin legacy-reverse-columns-initial($device) {
+
+	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
+		@for $i from 1 through 10 {
+			> :nth-child(#{$i}) {
+				order: initial;
+			}
+		}
+	}
+}
+
+@media (min-width:$screen-widescreen-min) {
+	@include legacy-reverse-columns(-widescreen);
+}
+
+@media (min-width:$screen-tablet-next) and (max-width: $screen-laptop-max) {
+	@include legacy-reverse-columns(-laptop);
+}
+
+@media (min-width:$screen-tablet-extra-next) and (max-width: $screen-laptop-max) {
+	@include legacy-reverse-columns(-laptop);
+}
+
+@media (min-width:$screen-tablet-next) and (max-width: $screen-tablet-extra-max) {
+	@include legacy-reverse-columns-initial(-laptop);
+	@include legacy-reverse-columns(-tablet_extra);
+}
+
+@media (min-width:$screen-mobile-next) and (max-width: $screen-tablet-max) {
+	@include legacy-reverse-columns(-tablet);
+}
+
+@media (min-width:$screen-mobile-extra-next) and (max-width: $screen-tablet-max) {
+	@include legacy-reverse-columns(-tablet);
+}
+
+@media (min-width:$screen-mobile-next) and (max-width: $screen-mobile-extra-max) {
+	@include legacy-reverse-columns-initial(-tablet);
+	@include legacy-reverse-columns(-mobile_extra);
+}
+
+@media (max-width: $screen-mobile-max) {
+	@include legacy-reverse-columns(-mobile);
+
+	.elementor-column {
+		width: 100%; //Default width for mobile
+	}
+}

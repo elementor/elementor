@@ -7,8 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Apps_Page {
 
-	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
-
 	public static function render() {
 		?>
 		<div class="wrap e-a-apps">
@@ -45,7 +43,7 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_remote_apps() {
-		$apps = wp_remote_get( static::APPS_URL );
+		$apps = wp_remote_get( 'https://assets.elementor.com/apps/v1/apps.json' );
 
 		if ( is_wp_error( $apps ) ) {
 			return [];
