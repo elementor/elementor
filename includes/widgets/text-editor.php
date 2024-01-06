@@ -425,9 +425,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$is_dom_optimized = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$should_render_inline_editing = ( ! $is_dom_optimized || $is_edit_mode );
+		$should_render_inline_editing = Plugin::$instance->editor->is_edit_mode();
 
 		$editor_content = $this->get_settings_for_display( 'editor' );
 		$editor_content = $this->parse_text_editor( $editor_content );
@@ -473,9 +471,7 @@ class Widget_Text_Editor extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		const isDomOptimized = ! ! elementorFrontend.config.experimentalFeatures.e_dom_optimization,
-			isEditMode = elementorFrontend.isEditMode(),
-			shouldRenderInlineEditing = ( ! isDomOptimized || isEditMode );
+		const shouldRenderInlineEditing = elementorFrontend.isEditMode();
 
 		if ( shouldRenderInlineEditing ) {
 			view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
