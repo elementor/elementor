@@ -2,9 +2,9 @@ const { renderLayoutApp, importToEditor } = require( '../../utils/editor-integra
 const { MODE_VARIATION } = require( '../../pages/form-layout/context/config' );
 const { __ } = require( '@wordpress/i18n' );
 const { ATTACHMENT_TYPE_JSON } = require( '../../pages/form-layout/components/attachments' );
-var ApplyTemplateForAi;
+var ApplyTemplateForAiBehavior;
 
-ApplyTemplateForAi = Marionette.Behavior.extend( {
+ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
 	ui: {
 		applyButton: '.elementor-template-library-template-apply-ai',
 		generateVariation: '.elementor-template-library-template-generate-variation',
@@ -68,4 +68,4 @@ ApplyTemplateForAi = Marionette.Behavior.extend( {
 	},
 } );
 
-module.exports = ApplyTemplateForAi;
+module.exports = ApplyTemplateForAiBehavior;

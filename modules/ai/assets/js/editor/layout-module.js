@@ -2,17 +2,17 @@ import AiLayoutBehavior from './ai-layout-behavior';
 import { importToEditor, renderLayoutApp } from './utils/editor-integration';
 import { __ } from '@wordpress/i18n';
 import { MODE_VARIATION } from './pages/form-layout/context/config';
-import ApplyTemplateForAi from './integration/library/apply-template-for-ai';
+import ApplyTemplateForAi from './integration/library/apply-template-for-ai-behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'views/add-section/behaviors', this.registerAiLayoutBehavior );
 
-		elementor.hooks.addFilter( 'elementor/editor/template-library/template/action-button', this.filterLibraryActionButtonTemplate, 11 );
-
 		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.registerVariationsContextMenu );
 
 		elementor.hooks.addFilter( 'elementor/editor/template-library/preview/behaviors', this.registerLibraryActionButtonBehavior );
+
+		elementor.hooks.addFilter( 'elementor/editor/template-library/template/action-button', this.filterLibraryActionButtonTemplate, 11 );
 	}
 
 	registerLibraryActionButtonBehavior( behaviors ) {

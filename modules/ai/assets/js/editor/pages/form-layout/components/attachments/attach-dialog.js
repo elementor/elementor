@@ -16,9 +16,6 @@ export const AttachDialog = ( props ) => {
 			/>;
 		case MENU_TYPE_LIBRARY:
 			return <LibraryDialog
-				json={ props.json }
-				html={ props.html }
-				label={ props.label }
 				onAttach={ props.onAttach }
 				onClose={ props.onClose }
 			/>;
@@ -32,9 +29,6 @@ AttachDialog.propTypes = {
 	onAttach: PropTypes.func,
 	onClose: PropTypes.func,
 	url: PropTypes.string,
-	json: PropTypes.string,
-	html: PropTypes.string,
-	label: PropTypes.string,
 };
 
 export default AttachDialog;
