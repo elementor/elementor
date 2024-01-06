@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { MODE_VARIATION } from './pages/form-layout/context/config';
 import ApplyTemplateForAi from './integration/library/apply-template-for-ai-behavior';
 
+export const AI_ATTACHMENT = 'ai-attachment';
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'views/add-section/behaviors', this.registerAiLayoutBehavior );
@@ -43,7 +44,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			return viewId;
 		}
 
-		if ( 'ai-attachment' === modalConfig.mode ) {
+		if ( AI_ATTACHMENT === modalConfig.mode ) {
 			viewId = '#tmpl-elementor-template-library-apply-ai-button';
 		} else {
 			viewId = '#tmpl-elementor-template-library-insert-and-ai-variations-buttons';
