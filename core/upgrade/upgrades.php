@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
+use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -544,35 +545,19 @@ class Upgrades {
 			return $element;
 		}
 
-		if ( ! empty( $args['control_ids'] ) ) {
-			foreach ( $args['control_ids'] as $old_name => $new_name ) {
-				// exit if new value exists
-				if ( isset( $element['settings'][ $new_name ] ) ) {
-					continue;
-				}
-
-				// exit if no value to migrate
-				if ( ! isset( $element['settings'][ $old_name ] ) ) {
-					continue;
-				}
-
-				$element['settings'][ $new_name ] = Icons_Manager::fa_icon_value_migration( $element['settings'][ $old_name ] );
-				$args['do_update'] = true;
+		foreach ( $args['control_ids'] as $old_name => $new_name ) {
+			// exit if new value exists
+			if ( isset( $element['settings'][ $new_name ] ) ) {
+				continue;
 			}
-		}
 
-		if ( ! empty( $args['migrate_icon_names'] ) && $args['migrate_icon_names'] ) {
-			foreach ( $element['settings'] as $key => $value ) {
-				if ( ! empty( $value['value'] ) && str_contains( $value['value'], ' fa-' ) ) {
-					$substitute = Icons_Manager::fa_icon_value_migration( $value );
-					if ( $substitute === $value ) {
-						continue;
-					}
-
-					$element['settings'][ $key ] = $substitute;
-					$args['do_update'] = true;
-				}
+			// exit if no value to migrate
+			if ( ! isset( $element['settings'][ $old_name ] ) ) {
+				continue;
 			}
+
+			$element['settings'][ $new_name ] = Icons_Migrations::fa_icon_value_migration( $element['settings'][ $old_name ] );
+			$args['do_update'] = true;
 		}
 
 		return $element;
@@ -885,28 +870,9 @@ class Upgrades {
 		}
 	}
 
-	public static function _v_3_19_0_fa5_migration_flag() {
-		add_option( 'elementor_icon_manager_needs_update', 'yes' );
-	}
-
-	public static function _v_3_19_0_fa5_migration_values( $updater ) {
-		$changes = [
-			[
-				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_fa_icon_values' ],
-				'migrate_icon_names' => true,
-			],
-		];
-
-		Upgrade_Utils::_update_widget_settings( 'accordion', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'alert', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'divider', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'icon', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'icon-list', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'social-icons', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'toggle', $updater, $changes );
-		Upgrade_Utils::_update_widget_settings( 'video', $updater, $changes );
+	public static function _v_3_19_0_fa5_icons_migration( $updater ) {
+		Icons_Migrations::migrate_icon_values( $updater );
+		Icons_Migrations::update_migration_required_flags();
 	}
 
 	private static function maybe_add_gap_control_data( $option_name ) {

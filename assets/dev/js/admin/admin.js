@@ -201,6 +201,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 			$( '#elementor_upgrade_fa_button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				const $updateButton = $( this );
+				const originalButtonLabel = $updateButton.text();
 				$updateButton.addClass( 'loading' );
 
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
@@ -214,6 +215,8 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					defaultOption: 'confirm',
 					onConfirm: () => {
 						$updateButton.removeClass( 'error' ).addClass( 'loading' );
+						$updateButton.disabled = true;
+						$updateButton.text( __( 'Updating...', 'elementor' ) );
 
 						const {
 							_nonce,
@@ -224,6 +227,8 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 						$.post( ajaxurl, { action, _nonce } )
 							.done( function( response ) {
 								$updateButton.removeClass( 'loading' ).addClass( 'success' );
+								$updateButton.disabled = false;
+								$updateButton.text( originalButtonLabel );
 
 								const messageElement = document.createElement( 'p' );
 								messageElement.appendChild( document.createTextNode( response.data.message ) );

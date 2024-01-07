@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 /**
  * Elementor icon box widget.
@@ -684,7 +685,7 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
-		if ( ! isset( $settings['selected_icon'] ) && Icons_Manager::is_migration_required() ) {
+		if ( ! isset( $settings['selected_icon'] ) && Icons_Migrations::is_migration_required() ) {
 			// add old default
 			$settings['icon'] = 'fa fa-star';
 		}
