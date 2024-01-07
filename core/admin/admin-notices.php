@@ -345,7 +345,6 @@ class Admin_Notices extends Module {
 
 		$experiments = Plugin::$instance->experiments;
 		$is_all_performance_features_active = (
-			$experiments->is_feature_active( 'e_dom_optimization' ) &&
 			$experiments->is_feature_active( 'additional_custom_breakpoints' ) &&
 			$experiments->is_feature_active( 'e_optimized_css_loading' ) &&
 			$experiments->is_feature_active( 'e_optimized_assets_loading' )
