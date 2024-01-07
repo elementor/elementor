@@ -2,12 +2,42 @@ import AiLayoutBehavior from './ai-layout-behavior';
 import { importToEditor, renderLayoutApp } from './utils/editor-integration';
 import { __ } from '@wordpress/i18n';
 import { MODE_VARIATION } from './pages/form-layout/context/config';
+import ApplyTemplateForAi from './integration/library/apply-template-for-ai-behavior';
 
+export const AI_ATTACHMENT = 'ai-attachment';
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'views/add-section/behaviors', this.registerAiLayoutBehavior );
 
 		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.registerVariationsContextMenu );
+
+		elementor.hooks.addFilter( 'elementor/editor/template-library/template/behaviors', this.registerLibraryActionButtonBehavior );
+
+		elementor.hooks.addFilter( 'elementor/editor/template-library/template/action-button', this.filterLibraryActionButtonTemplate, 11 );
+
+		$e.commands.register( 'library', 'generate-ai-variation', ( args ) => {
+			return this.applyTemplate( args );
+		} );
+	}
+
+	applyTemplate( args ) {
+		$e.components.get( 'library' ).downloadTemplate( args, ( data ) => {
+			const model = args.model;
+			window.postMessage( {
+				type: 'library/attach',
+				json: data.content[ 0 ],
+				html: `<img src="${ model.get( 'thumbnail' ) }" />`,
+				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
+			}, window.location.origin );
+		} );
+	}
+
+	registerLibraryActionButtonBehavior( behaviors ) {
+		behaviors.applyAiTemplate = {
+			behaviorClass: ApplyTemplateForAi,
+		};
+
+		return behaviors;
 	}
 
 	registerAiLayoutBehavior( behaviors ) {
@@ -16,6 +46,26 @@ export default class Module extends elementorModules.editor.utils.Module {
 		};
 
 		return behaviors;
+	}
+
+	filterLibraryActionButtonTemplate( viewId ) {
+		const modalConfig = $e.components.get( 'library' ).manager.modalConfig;
+		const originalCoreViewId = '#tmpl-elementor-template-library-insert-button';
+
+		if ( originalCoreViewId !== viewId ) {
+			return viewId;
+		}
+
+		if ( $e.routes.current.library !== 'library/templates/blocks' ) {
+			return viewId;
+		}
+
+		if ( AI_ATTACHMENT === modalConfig.mode ) {
+			viewId = '#tmpl-elementor-template-library-apply-ai-button';
+		} else {
+			viewId = '#tmpl-elementor-template-library-insert-and-ai-variations-buttons';
+		}
+		return viewId;
 	}
 
 	registerVariationsContextMenu = ( groups, currentElement ) => {
