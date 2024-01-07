@@ -11,7 +11,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.registerVariationsContextMenu );
 
-		elementor.hooks.addFilter( 'elementor/editor/template-library/preview/behaviors', this.registerLibraryActionButtonBehavior );
+		elementor.hooks.addFilter( 'elementor/editor/template-library/template/behaviors', this.registerLibraryActionButtonBehavior );
 
 		elementor.hooks.addFilter( 'elementor/editor/template-library/template/action-button', this.filterLibraryActionButtonTemplate, 11 );
 
