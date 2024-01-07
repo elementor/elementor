@@ -195,18 +195,6 @@ export default class Component extends ComponentModalBase {
 		} );
 	}
 
-	applyTemplate( args ) {
-		this.downloadTemplate( args, ( data, callbackParams ) => {
-			const model = args.model;
-			window.postMessage( {
-				type: 'library/attach',
-				json: data.content[ 0 ],
-				html: `<img src="${ model.get( 'thumbnail' ) }" />`,
-				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
-			}, window.location.origin );
-		} );
-	}
-
 	getImportSettingsDialog() {
 		// Moved from ./behaviors/insert-template.js
 		const InsertTemplateHandler = {

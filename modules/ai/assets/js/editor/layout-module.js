@@ -14,6 +14,22 @@ export default class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addFilter( 'elementor/editor/template-library/preview/behaviors', this.registerLibraryActionButtonBehavior );
 
 		elementor.hooks.addFilter( 'elementor/editor/template-library/template/action-button', this.filterLibraryActionButtonTemplate, 11 );
+
+		$e.commands.register( 'library', 'generate-ai-variation', ( args ) => {
+			return this.applyTemplate( args );
+		} );
+	}
+
+	applyTemplate( args ) {
+		$e.components.get( 'library' ).downloadTemplate( args, ( data ) => {
+			const model = args.model;
+			window.postMessage( {
+				type: 'library/attach',
+				json: data.content[ 0 ],
+				html: `<img src="${ model.get( 'thumbnail' ) }" />`,
+				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
+			}, window.location.origin );
+		} );
 	}
 
 	registerLibraryActionButtonBehavior( behaviors ) {
