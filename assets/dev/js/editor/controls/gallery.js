@@ -11,6 +11,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		ui.clearGallery = '.elementor-control-gallery-clear';
 		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
 		ui.status = '.elementor-control-gallery-status-title';
+		ui.warnings = '.elementor-control-media__warnings';
 
 		return ui;
 	},
@@ -31,7 +32,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	applySavedValue() {
 		var images = this.getControlValue(),
 			imagesCount = images.length,
-			hasImages = !! imagesCount;
+			hasImages = !! imagesCount,
+			imagesWithoutAlt = 0;
 
 		this.$el
 			.toggleClass( 'elementor-gallery-has-images', hasImages )
@@ -48,17 +50,43 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			return;
 		}
 
-		this.getControlValue().forEach( function( image ) {
+		this.getControlValue().forEach( ( image ) => {
 			var $thumbnail = jQuery( '<div>', { class: 'elementor-control-gallery-thumbnail' } );
 
 			$thumbnail.css( 'background-image', 'url(' + image.url + ')' );
 
 			$galleryThumbnails.append( $thumbnail );
+
+			imagesWithoutAlt += this.imageHasAlt( image.id ) ? 0 : 1;
 		} );
+
+		this.ui.warnings.text(
+			imagesWithoutAlt > 0
+				? sprintf(
+					/* Translators: %s: The number of images that don’t contain ALT text. */
+					__( 'These %s images don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+					imagesWithoutAlt,
+				)
+				: '',
+		);
 	},
 
 	hasImages() {
 		return !! this.getControlValue().length;
+	},
+
+	imageHasAlt( attachmentId ) {
+		const attachment = wp.media.attachment( attachmentId ),
+			attachmentAlt = attachment.attributes?.alt?.trim() || '',
+			changedAlt = attachment.changed?.alt?.trim() || '',
+			hasAttachmentAlt = !! attachmentAlt,
+			hasChangedAlt = !! changedAlt,
+			missingAlt =
+				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
+				( ! hasAttachmentAlt && hasChangedAlt ) ||
+				( hasAttachmentAlt && ! hasChangedAlt );
+
+		return ! missingAlt;
 	},
 
 	openFrame( action ) {
@@ -180,6 +208,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.setValue( [] );
 
 		this.applySavedValue();
+
+		this.ui.warnings.text( '' );
 	},
 
 	initRemoveDialog() {

@@ -62,6 +62,11 @@ class Settings extends Base_Category {
 				'url' => $settings_url . '#tab-experiments',
 				'keywords' => [ 'settings', 'elementor', 'experiments' ],
 			],
+			'features' => [
+				'title' => esc_html__( 'Features', 'elementor' ),
+				'url' => $settings_url . '#tab-experiments',
+				'keywords' => [ 'settings', 'elementor', 'features' ],
+			],
 			'element-manager' => [
 				'title' => esc_html__( 'Element Manager', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=' . ElementManagerModule::PAGE_ID ),

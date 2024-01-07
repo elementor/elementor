@@ -210,15 +210,6 @@ class Widget_Image extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -699,10 +690,6 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
-		}
-
 		$has_caption = $this->has_caption( $settings );
 
 		$link = $this->get_link_url( $settings );
@@ -720,9 +707,6 @@ class Widget_Image extends Widget_Base {
 				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
 			}
 		} ?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-		<?php } ?>
 			<?php if ( $has_caption ) : ?>
 				<figure class="wp-caption">
 			<?php endif; ?>
@@ -741,9 +725,6 @@ class Widget_Image extends Widget_Base {
 			<?php if ( $has_caption ) : ?>
 				</figure>
 			<?php endif; ?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			</div>
-		<?php } ?>
 		<?php
 	}
 
@@ -812,10 +793,6 @@ class Widget_Image extends Widget_Base {
 				link_url = settings.image.url;
 			}
 
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			<?php } ?>
-
 			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
@@ -842,11 +819,6 @@ class Widget_Image extends Widget_Base {
 			if ( hasCaption() ) {
 				#></figure><#
 			}
-
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				#></div><#
-			<?php } ?>
-
 		} #>
 		<?php
 	}
