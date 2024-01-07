@@ -58,6 +58,3 @@ Attachments.propTypes = {
 };
 
 export default Attachments;
-
-export class ATTACHMENT_TYPE_LIBRARY {
-}
