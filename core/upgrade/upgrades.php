@@ -729,16 +729,6 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater );
 	}
 
-	public static function v_3_1_0_move_optimized_dom_output_to_experiments() {
-		$saved_option = get_option( 'elementor_optimized_dom_output' );
-
-		if ( $saved_option ) {
-			$new_option = 'enabled' === $saved_option ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE;
-
-			add_option( 'elementor_experiment-e_dom_optimization', $new_option );
-		}
-	}
-
 	public static function _v_3_2_0_migrate_breakpoints_to_new_system( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );

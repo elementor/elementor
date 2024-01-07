@@ -328,18 +328,6 @@ class Manager extends Base_Object {
 
 	private function add_default_features() {
 		$this->add_feature( [
-			'name' => 'e_dom_optimization',
-			'title' => esc_html__( 'Optimized DOM Output', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_optimized_assets_loading',
 			'title' => esc_html__( 'Improved Asset Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
