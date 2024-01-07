@@ -26,10 +26,6 @@ class Homepage extends Endpoint {
 		$homepage_id = get_option( 'page_on_front' );
 		$show_on_front = get_option( 'show_on_front' );
 
-		if ( 'page' !== $show_on_front ) {
-			return 0;
-		}
-
-		return intval( $homepage_id );
+		return 'page' === $show_on_front ? intval( $homepage_id ) : 0 ;
 	}
 }
