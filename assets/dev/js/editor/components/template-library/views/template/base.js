@@ -66,7 +66,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 			},
 		};
 
-		return elementor.hooks.applyFilters( 'elementor/editor/template-library/preview/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elementor/editor/template-library/template/behaviors', behaviors, this );
 	},
 } );
 
