@@ -34,10 +34,7 @@ export const Menu = ( props ) => {
 			<Popover
 				open={ isOpen }
 				anchorEl={ anchorRef.current }
-				onClose={ () => {
-					setIsOpen( false );
-					setSelectedType( null );
-				} }
+				onClose={ () => setIsOpen( false ) }
 				anchorOrigin={ {
 					vertical: 'bottom',
 					horizontal: 'rtl' === direction ? 'right' : 'left',
