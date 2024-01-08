@@ -843,42 +843,6 @@
 		"value": "fas fa-border-top-left",
 		"library": "fa-solid"
 	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-405": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
 	"fas fa-archive": {
 		"value": "fas fa-box-archive",
 		"library": "fa-solid"
@@ -1139,40 +1103,12 @@
 		"value": "fas fa-clock-rotate-left",
 		"library": "fa-solid"
 	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
+	"fas fa-cloud-download": {
+		"value": "fas fa-cloud-arrow-down",
 		"library": "fa-solid"
 	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-346": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
+	"fas fa-cloud-download-alt": {
+		"value": "fas fa-cloud-arrow-down",
 		"library": "fa-solid"
 	},
 	"fas fa-cloud-upload": {
@@ -1471,40 +1407,8 @@
 		"value": "fas fa-face-surprise",
 		"library": "fa-solid"
 	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-279": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
+	"fas fa-tired": {
+		"value": "fas fa-face-tired",
 		"library": "fa-solid"
 	},
 	"fas fa-feather-alt": {
@@ -1729,42 +1633,6 @@
 	},
 	"fas fa-headphones-alt": {
 		"value": "fas fa-headphones-simple",
-		"library": "fa-solid"
-	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-233": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
 		"library": "fa-solid"
 	},
 	"fas fa-heart-broken": {
@@ -1999,42 +1867,6 @@
 		"value": "fas fa-message",
 		"library": "fa-solid"
 	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-182": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
 	"fas fa-microphone-alt": {
 		"value": "fas fa-microphone-lines",
 		"library": "fa-solid"
@@ -2199,40 +2031,8 @@
 		"value": "fas fa-photo-film",
 		"library": "fa-solid"
 	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-141": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
+	"fas fa-add": {
+		"value": "fas fa-plus",
 		"library": "fa-solid"
 	},
 	"fas fa-poo-bolt": {
@@ -2369,10 +2169,6 @@
 	},
 	"fas fa-triangle-circle-square": {
 		"value": "fas fa-shapes",
-		"library": "fa-solid"
-	},
-	"fas fa-arrow-turn-right": {
-		"value": "fas fa-share",
 		"library": "fa-solid"
 	},
 	"fas fa-mail-forward": {
@@ -2547,40 +2343,8 @@
 		"value": "fas fa-square-poll-vertical",
 		"library": "fa-solid"
 	},
-	"fas fa-BC": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa--": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-only": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v5": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-to": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-v6": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-[": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-76": {
-		"value": "fas fa-BC - new name only",
-		"library": "fa-solid"
-	},
-	"fas fa-]": {
-		"value": "fas fa-BC - new name only",
+	"fas fa-square-root-alt": {
+		"value": "fas fa-square-root-variable",
 		"library": "fa-solid"
 	},
 	"fas fa-rss-square": {
