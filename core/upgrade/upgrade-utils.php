@@ -21,7 +21,7 @@ class Upgrade_Utils {
 	public static function _update_widget_settings( $widget_id, $updater, $changes ) {
 		global $wpdb;
 
-		$widget_type = $widget_id === "*"
+		$widget_type = '*' === $widget_id
 			? 'REGEXP \'"widgetType":"[a-zA-Z_\-]+"\''
 			: 'LIKE \'%"widgetType":"' . $widget_id . '"%\'';
 
