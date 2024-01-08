@@ -76,8 +76,8 @@ jobs:
       matrix:
         testSuite: [
           'ai',
-          #'onBoarding',
-          #'video',
+          'onBoarding',
+          'video',
           # 'elements-regression',
           # 'default',
           # 'nested-tabs',
