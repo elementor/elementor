@@ -13,7 +13,7 @@ on:
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-plugin:
@@ -73,6 +73,7 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
+      fail-fast: false
       matrix:
         testSuite: [
           'ai',
