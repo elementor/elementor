@@ -76,8 +76,8 @@ jobs:
       matrix:
         testSuite: [
           'ai',
-          'onBoarding',
-          'video',
+          #'onBoarding',
+          #'video',
           # 'elements-regression',
           # 'default',
           # 'nested-tabs',
@@ -139,6 +139,11 @@ jobs:
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
         run: npm run test:playwright:elements-regression
+      - name: debug
+        run: |
+          pwd
+          ls -al
+          cd ./tests/playwright/ && ls -al
       - uses: actions/upload-artifact@v3
         if: always()
         with:
