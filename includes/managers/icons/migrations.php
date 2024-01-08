@@ -339,10 +339,12 @@ class Migrations {
 	 *
 	 * @return array;
 	 */
-	public function add_update_needed_flag( $settings ) {
+	public function add_settings( $settings ) {
 		if ( ! ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ) {
 			$settings['icons_update_needed'] = true;
 		}
+
+		$settings['icons']['legacy_library'] = Icons_Manager::get_fa_asset_url( 'fontawesome' );
 
 		return $settings;
 	}
@@ -352,7 +354,7 @@ class Migrations {
 	 */
 	public function __construct() {
 		if ( self::is_migration_required() ) {
-			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
+			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_settings' ] );
 			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_settings' ], 100 );
 
 			if ( ! empty( $_POST ) ) { // phpcs:ignore -- nonce validation done in callback

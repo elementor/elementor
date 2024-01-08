@@ -126,7 +126,12 @@ module.exports = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config.icons_update_needed ) {
+		if ( elementor.config.icons_update_needed ) {
+			this.enqueueEditorStylesheet( elementor.config.icons.legacy_library );
+			return;
+		}
+
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) ) {
 			return;
 		}
 

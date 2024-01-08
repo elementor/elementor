@@ -223,7 +223,7 @@ class Icons_Manager {
 		);
 	}
 
-	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
+	public static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		$version = Migrations::is_migration_required()
 			? self::get_current_fa_version() - 1
 			: self::get_current_fa_version();
@@ -441,8 +441,12 @@ class Icons_Manager {
 		);
 	}
 
-	public function enqueue_fontawesome_css() {
+	public static function enqueue_fa_legacy_css() {
 		if ( Migrations::is_migration_required() ) {
+			global $wp_styles;
+
+			$aaa = $wp_styles->registered['fontawesome4'];
+
 			wp_enqueue_style( 'fontawesome4' );
 			wp_enqueue_style( 'fontawesome5' );
 		} else {
@@ -478,7 +482,7 @@ class Icons_Manager {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 		}
 
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fa_legacy_css' ] );
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 }

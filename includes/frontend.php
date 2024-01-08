@@ -876,6 +876,7 @@ class Frontend extends App {
 
 	private function maybe_enqueue_icon_font( $icon_font_type ) {
 		if ( Icons_Migrations::is_migration_required() ) {
+			Icons_Manager::enqueue_fa_legacy_css();
 			return;
 		}
 
@@ -891,7 +892,12 @@ class Frontend extends App {
 	}
 
 	private function enqueue_icon_fonts() {
-		if ( empty( $this->icon_fonts_to_enqueue ) || Icons_Migrations::is_migration_required() ) {
+		if ( Icons_Migrations::is_migration_required() ) {
+			Icons_Manager::enqueue_fa_legacy_css();
+			return;
+		}
+
+		if ( empty( $this->icon_fonts_to_enqueue ) ) {
 			return;
 		}
 
