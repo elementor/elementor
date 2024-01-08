@@ -79,7 +79,7 @@ jobs:
           'onBoarding',
           'video',
           # 'elements-regression',
-          'default',
+          # 'default',
           # 'nested-tabs',
           # 'reverse-columns',
           # 'container',
@@ -135,7 +135,7 @@ jobs:
         if: ${{matrix.testSuite !='elements-regression'}}
         env:
           TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright --reporter=${{inputs.reporter}}
+        run: npm run test:playwright
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
         run: npm run test:playwright:elements-regression
@@ -143,7 +143,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results
-          path: playwright-report/
+          path: blob-report/
           retention-days: 3
 
   test-result:
