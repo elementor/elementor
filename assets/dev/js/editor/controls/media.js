@@ -13,8 +13,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
+		ui.warnings = '.elementor-control-media__warnings';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
-
 		ui.mediaInputImageSize = '.e-image-size-select';
 
 		return ui;
@@ -50,6 +50,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
+			attachmentId = this.getControlValue( 'id' ),
 			isPlaceholder = ( ! value && url ),
 			mediaType = this.getMediaType();
 
@@ -81,6 +82,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.ui.controlMedia
 			.toggleClass( 'e-media-empty', ! value )
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
+
+		if ( 'image' === mediaType && attachmentId ) {
+			this.ui.warnings.text( this.imageHasAlt( attachmentId ) ? '' : __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ) );
+		}
 	},
 
 	async openFrame( e, source = null ) {
@@ -133,6 +138,22 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
+
+		this.ui.warnings.text( '' );
+	},
+
+	imageHasAlt( attachmentId ) {
+		const attachment = wp.media.attachment( attachmentId ),
+			attachmentAlt = attachment.attributes?.alt?.trim() || '',
+			changedAlt = attachment.changed?.alt?.trim() || '',
+			hasAttachmentAlt = !! attachmentAlt,
+			hasChangedAlt = !! changedAlt,
+			missingAlt =
+				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
+				( ! hasAttachmentAlt && hasChangedAlt ) ||
+				( hasAttachmentAlt && ! hasChangedAlt );
+
+		return ! missingAlt;
 	},
 
 	onMediaInputImageSizeChange() {

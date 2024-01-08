@@ -1134,18 +1134,9 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-			<?php endif; ?>
 				<?php $this->print_elements( $elements_data ); ?>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-				</div>
-			</div>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
