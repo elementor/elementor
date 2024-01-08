@@ -809,6 +809,8 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
+
 		// TODO: Backward comparability for deprecated controls
 		$this->add_control(
 			'screen_sm',
