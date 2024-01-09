@@ -50,7 +50,7 @@ export default defineConfig( {
 	retries: process.env.CI ? 1 : 0,
 	workers: process.env.CI ? 1 : 1,
 	fullyParallel: false,
-	reporter: 'blob',
+	reporter: 'html',
 	use: {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
