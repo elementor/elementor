@@ -1,16 +1,23 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconButton, Popover, Stack, useTheme } from '@elementor/ui';
 import { MenuItem } from './menu-item';
 import XCircleIcon from '../../../../icons/x-circle-icon';
 import PlusCircleIcon from '../../../../icons/plus-circle-icon';
 import PropTypes from 'prop-types';
 import { AttachDialog } from './attach-dialog';
+import { MENU_TYPE_LIBRARY } from '../attachments';
 
 export const Menu = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ selectedType, setSelectedType ] = useState( null );
 	const { direction } = useTheme();
 	const anchorRef = useRef( null );
+
+	useEffect( () => {
+		if ( ! isOpen && selectedType === MENU_TYPE_LIBRARY ) {
+			setSelectedType( null );
+		}
+	}, [ isOpen ] );
 
 	return (
 		<>
