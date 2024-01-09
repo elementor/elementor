@@ -2,11 +2,13 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
+use Elementor\Modules\Promotions\AdminMenuItems\Base_Promotion_Feature;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Form_Submissions_Promotion_Item extends Base_Promotion_Item {
+class Form_Submissions_Promotion_Item extends Base_Promotion_Feature {
 	public function get_label() {
 		return esc_html__( 'Submissions', 'elementor' );
 	}

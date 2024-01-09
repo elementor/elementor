@@ -375,3 +375,25 @@ body {
 		}
 	}
 }
+
+.e-feature-promotion {
+	&_flex {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 5em 0;
+		margin: auto;
+		max-width: 1520px;
+		text-align: center;
+		font-family: var(--e-a-font-family);
+	}
+
+	&_data {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: self-start;
+		width: 50%;
+		margin: 0 30px;
+	}
+}
