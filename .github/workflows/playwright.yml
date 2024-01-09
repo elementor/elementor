@@ -76,9 +76,9 @@ jobs:
       fail-fast: false
       matrix:
         testSuite: [
-          # 'ai',
+           'ai',
            'onBoarding',
-          # 'video',
+           'video',
           # 'elements-regression',
           # 'default',
           # 'nested-tabs',
