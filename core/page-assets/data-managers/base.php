@@ -136,13 +136,7 @@ abstract class Base {
 			$this->assets_data[ $asset_key ] = [];
 		}
 
-		$asset_content = $this->get_asset_content();
-
-		if ( ! $asset_content ) {
-			return;
-		}
-
-		$this->assets_data[ $asset_key ]['content'] = $asset_content;
+		$this->assets_data[ $asset_key ]['content'] = $this->get_asset_content();
 		$this->assets_data[ $asset_key ]['version'] = $this->get_version();
 
 		$this->save_asset_data( $asset_key );
