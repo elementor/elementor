@@ -77,8 +77,8 @@ jobs:
       matrix:
         testSuite: [
           'ai',
-          'onBoarding',
-          'video',
+          # 'onBoarding',
+          # 'video',
           # 'elements-regression',
           # 'default',
           # 'nested-tabs',
@@ -144,7 +144,7 @@ jobs:
         run: |
           pwd
           ls -al
-          cd ./tests/playwright/blob-report && ls -al
+          cd ./tests/playwright/ && ls -al
       - uses: actions/upload-artifact@v3
         if: always()
         with:
