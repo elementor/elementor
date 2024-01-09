@@ -46,7 +46,7 @@ export type LinkOptions = {
 }
 
 export type WpPage = {
-	title: string,
+	title: any,
 	date?: string,
 	date_gmt?: string,
 	guid?: string,

@@ -49,18 +49,6 @@ export async function deleteDefaultMedia( request: APIRequestContext, ids: strin
 }
 
 export async function cleanUpTestPages( request: APIRequestContext ) {
-	const postsPublished = await getPosts( request ),
-		postsDraft = await getPosts( request, 'draft' ),
-		posts = [ ...postsPublished, ...postsDraft ];
-
-	const ids = posts
-		.filter( ( post: Post ) => post.title?.rendered?.includes( 'Playwright Test Page' ) )
-		.map( ( post: Post ) => post.id );
-
-	for ( const id of ids ) {
-		await deletePost( request, id );
-	}
-
 	const pagesPublished = await getPages( request ),
 		pagesDraft = await getPages( request, 'draft' ),
 		pages = [ ...pagesPublished, ...pagesDraft ];
