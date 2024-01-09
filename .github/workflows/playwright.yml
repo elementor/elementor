@@ -8,7 +8,22 @@ on:
         reporter:
           required: false
           description: 'Select a reporter'
-          default: 'list'
+          type: choice
+          options:
+            - allure-playwright
+            - html
+            - blob
+          default: ''
+        path-to-results:
+          required: false
+          description: 'Provide path to reporter files'
+          default: test-results/
+          type: choice
+          options:
+            - test-results/
+            - tests/playwright/blob-report
+            - allure-results
+
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -144,7 +159,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results
-          path: allure-results/
+          path: ${{inputs.path-to-results}}
           retention-days: 3
 
   test-result:
