@@ -47,7 +47,15 @@ class Font_Awesome extends Base {
 
 		$file_data = json_decode( $this->get_file_data( 'content', $icon_data['library'] ), true );
 
+		if ( null === $file_data && JSON_ERROR_NONE !== json_last_error() ) {
+			return false;
+		}
+
 		$icon_name = $icon_data['name'];
+
+		if ( ! isset( $file_data['icons'][ $icon_name ] ) ) {
+			return false;
+		}
 
 		$svg_data = $file_data['icons'][ $icon_name ];
 

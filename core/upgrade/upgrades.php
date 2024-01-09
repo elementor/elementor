@@ -861,8 +861,7 @@ class Upgrades {
 	}
 
 	public static function _v_3_19_0_fa5_icons_migration( $updater ) {
-		Icons_Migrations::migrate_icon_values( $updater );
-		Icons_Migrations::update_migration_required_flags();
+		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 	}
 
 	private static function maybe_add_gap_control_data( $option_name ) {
