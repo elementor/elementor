@@ -91,10 +91,10 @@ jobs:
       fail-fast: false
       matrix:
         testSuite: [
-           'ai',
-           'onBoarding',
-           'video',
-          # 'elements-regression',
+          'ai',
+          'onBoarding',
+          'video',
+          'elements-regression',
           'default',
           'nested-tabs',
           'reverse-columns',
@@ -102,10 +102,10 @@ jobs:
           'nested-accordion',
           'styleguide_image_link',
           'rating',
-          # 'pluginTester1_containers',
-          # 'pluginTester2_containers',
-          # 'pluginTester1_sections',
-          # 'pluginTester2_sections'
+          'pluginTester1_containers',
+          'pluginTester2_containers',
+          'pluginTester1_sections',
+          'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code
@@ -154,7 +154,7 @@ jobs:
         run: npm run test:playwright -- --reporter=${{inputs.reporter}}
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
-        run: npm run test:playwright:elements-regression
+        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter}}
       - uses: actions/upload-artifact@v3
         if: always()
         with:

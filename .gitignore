@@ -36,5 +36,5 @@ test-results/
 tests/playwright/config/local.config.js
 playwright-report
 tests/playwright/blob-report
-tests/playwright/allure-results
+**/allure-results
 playwright-test-results
