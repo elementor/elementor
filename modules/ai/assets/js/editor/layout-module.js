@@ -40,6 +40,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				} ];
 
 				renderLayoutApp( {
+					parentContainer: container.parent,
 					mode: MODE_VARIATION,
 					at: container.view._index,
 					attachments,
@@ -51,6 +52,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					},
 					onInsert: ( template ) => {
 						importToEditor( {
+							parentContainer: container.parent,
 							at: container.view._index,
 							template,
 							historyTitle: __( 'AI Variation', 'elementor' ),
