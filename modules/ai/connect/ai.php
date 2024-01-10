@@ -529,7 +529,7 @@ class Ai extends Library {
 					$body['json'] = [
 						'type' => 'elementor',
 						'elements' => [ $attachment['content'] ],
-                        'label' => $attachment['label'],
+						'label' => $attachment['label'],
 					];
 					break;
 				case 'url':
