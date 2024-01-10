@@ -4,7 +4,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 test.describe( 'AI @ai', () => {
 	test( 'AI Button', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		expect( true ).toEqual( false );
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Textarea control', async () => {
