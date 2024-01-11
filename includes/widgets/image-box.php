@@ -357,17 +357,10 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-			]
-		);
-
 		$this->start_controls_tabs( 'image_effects' );
 
-		$this->start_controls_tab( 'normal',
+		$this->start_controls_tab(
+			'normal',
 			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
@@ -399,30 +392,10 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'background_hover_transition',
-			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 0.3,
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 3,
-						'step' => 0.1,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
-				],
-			]
-		);
-
 		$this->end_controls_tab();
 
-		$this->start_controls_tab( 'hover',
+		$this->start_controls_tab(
+			'hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
@@ -451,6 +424,35 @@ class Widget_Image_Box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}:hover .elementor-image-box-img img' => 'opacity: {{SIZE}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'background_hover_transition',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'transition-duration: {{SIZE}}s',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_animation',
+			[
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
 
