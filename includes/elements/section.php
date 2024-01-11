@@ -1250,6 +1250,8 @@ class Element_Section extends Element_Base {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
