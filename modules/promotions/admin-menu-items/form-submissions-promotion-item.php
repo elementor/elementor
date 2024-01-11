@@ -19,7 +19,7 @@ class Form_Submissions_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	public function get_promotion_title() {
-		echo esc_html( 'Create Forms and Collect Leads with Elementor Pro', 'elementor' );
+		return esc_html( 'Create Forms and Collect Leads with Elementor Pro', 'elementor' );
 	}
 
 	public function set_list() {
