@@ -9,7 +9,6 @@ test( 'Promotion screenshot', async ( { page }, testInfo ) => {
 	await page.goto( '/wp-admin/admin.php?page=e-form-submissions/' );
 	await page.waitForSelector( promotionContainer );
 	expect.soft( await page.locator( promotionContainer ).screenshot( {
-		type: 'jpeg',
-		quality: 70,
-	} ) ).toMatchSnapshot( 'promotion-menu-item-desktop.jpeg' );
+		type: 'png',
+	} ) ).toMatchSnapshot( 'promotion-menu-item-desktop.png' );
 } );
