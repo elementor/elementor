@@ -35,6 +35,7 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 	public function set_list() {
 		return [];
 	}
+
 	public function get_list() {
 		ob_start();
 		if ( ! empty( $this->set_list() ) ) {
