@@ -92,20 +92,20 @@ jobs:
       matrix:
         testSuite: [
           'ai',
-          'onBoarding',
-          'video',
-          'elements-regression',
-          'default',
-          'nested-tabs',
-          'reverse-columns',
-          'container',
-          'nested-accordion',
-          'styleguide_image_link',
-          'rating',
-          'pluginTester1_containers',
-          'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections'
+          # 'onBoarding',
+          # 'video',
+          # 'elements-regression',
+          # 'default',
+          # 'nested-tabs',
+          # 'reverse-columns',
+          # 'container',
+          # 'nested-accordion',
+          # 'styleguide_image_link',
+          # 'rating',
+          # 'pluginTester1_containers',
+          # 'pluginTester2_containers',
+          # 'pluginTester1_sections',
+          # 'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code

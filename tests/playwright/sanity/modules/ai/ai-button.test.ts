@@ -8,8 +8,7 @@ test.describe( 'AI @ai', () => {
 
 		await test.step( 'Textarea control', async () => {
 			await editor.addWidget( 'heading' );
-			// Fix me here
-			await expect( page.locator( '.1elementor-control-title.elementor-control-type-textarea .e-ai-button' ) ).toHaveCount( 1 );
+			await expect( page.locator( '.elementor-control-title.elementor-control-type-textarea .e-ai-button' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'Wysiwyg control', async () => {
