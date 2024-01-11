@@ -168,6 +168,12 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
+		const hasIntentionForDecimalPlace = '.' === event?.originalEvent?.data;
+
+		if ( hasIntentionForDecimalPlace ) {
+			return;
+		}
+
 		if ( this.isLinkedDimensions() ) {
 			var $thisControl = this.$( event.target );
 
