@@ -30,10 +30,11 @@
 		justify-content: center;
 		align-items: self-start;
 		margin-inline-start: 15px;
+		padding-inline-end: 40px;
 		max-width: 608px;
 
 		h3 {
-			@include margin( 0, 0, 1.6rem, 0 );
+			@include margin( 0, 0, 33px, 0 );
 			text-align: start;
 			font-size: 1.85rem;
 			font-weight: 300;
@@ -47,13 +48,13 @@
 			text-align: start;
 
 			> li {
-				@include margin( 0, 9px, 5px, 8px );
+				@include margin( 0, 9px, 8px, 8px );
 				display: flex;
 				font-size: 1rem;
-				line-height: 1.3rem;
+				line-height: 21px;
 
 				&:before {
-					content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAYCAYAAAAPtVbGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB8SURBVHgB7ZJBCoAgEEW/bbOhm9oN8gieVWibzQiBUO5GcDEPRBG+T/wChjEKB0VWIpmCnHvlnN79BUp4FvCNoytI7sYObUTAI/qNivcUoc3cAi4wcPgcJqiSlY4a7ojUnkjCPZFqB38iWauX3IqGCD6iUYJWJB8ChjEVDwpBK3vLpijfAAAAAElFTkSuQmCC');
+					content: url("data:image/svg+xml,%3Csvg width='25' height='24' viewBox='0 0 25 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M21.5201 6.46967C21.813 6.76256 21.813 7.23744 21.5201 7.53033L11.5201 17.5303C11.2272 17.8232 10.7523 17.8232 10.4594 17.5303L5.45942 12.5303C5.16652 12.2374 5.16652 11.7626 5.45942 11.4697C5.75231 11.1768 6.22718 11.1768 6.52008 11.4697L10.9897 15.9393L20.4594 6.46967C20.7523 6.17678 21.2272 6.17678 21.5201 6.46967Z' fill='%230C0D0E'/%3E%3C/svg%3E%0A");
 					font-size: 1.4rem;
 					@include margin( -3px, 9px, 0, -9px );
 				}
@@ -69,7 +70,7 @@
 
 		> .side-note {
 			justify-self: baseline;
-			margin-block-start: 1rem;
+			margin-block-start: 2rem;
 			text-align: start;
 		}
 	}
@@ -86,14 +87,17 @@ body.rtl .e-feature-promotion {
 	transform: translateX( 10px );
 }
 
-@media ( max-width: 1420px ) {
+@media ( max-width: 1410px ) {
 	.e-feature-promotion {
 		display: flex;
 		flex-direction: column;
+		justify-content: center;
 		width: 90%;
 
 		&_data {
 			margin-block-end: 2rem;
+			margin-inline-start: unset;
+			padding-inline-end: unset;
 		}
 
 		&_iframe {

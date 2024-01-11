@@ -62,7 +62,7 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 
 					<?php Utils::print_unescaped_internal_string( $this->get_list() ); ?>
 
-					<a class="elementor-button go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
+					<a class="elementor-button go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>" target="_blank">
 						<?php Utils::print_unescaped_internal_string( $this->get_cta_text() ); ?>
 					</a>
 
@@ -73,7 +73,8 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 					<?php } ?>
 
 				</div>
-				<iframe class="e-feature-promotion_iframe" src="<?php Utils::print_unescaped_internal_string( $this->get_video_url() ); ?>&amp;controls=0" title="Elementor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+				<iframe class="e-feature-promotion_iframe" src="<?php Utils::print_unescaped_internal_string( $this->get_video_url() ); ?>" title="Elementor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 			</div>
 		<?php
 	}
