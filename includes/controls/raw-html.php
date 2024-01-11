@@ -46,7 +46,7 @@ class Control_Raw_Html extends Base_UI_Control {
 			<# if ( data.label ) { #>
 				<div class="elementor-control-raw-html-title">{{{ data.label }}}</div>
 			<# } #>
-			{{{ data.raw }}}
+			<div class="elementor-control-raw-html-content">{{{ data.raw }}}</div>
 		</div>
 		<?php
 	}
