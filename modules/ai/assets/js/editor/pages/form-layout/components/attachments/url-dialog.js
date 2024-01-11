@@ -33,7 +33,7 @@ export const UrlDialog = ( props ) => {
 						previewHTML: html,
 						content: html,
 						label: url ? new URL( url ).host : '',
-						source: url ? 'user-url' : 'user-element',
+						source: 'user-url',
 					} ] );
 					break;
 			}

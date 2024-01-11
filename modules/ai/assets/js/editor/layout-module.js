@@ -3,6 +3,7 @@ import { importToEditor, renderLayoutApp } from './utils/editor-integration';
 import { __ } from '@wordpress/i18n';
 import { MODE_VARIATION } from './pages/form-layout/context/config';
 import ApplyTemplateForAi from './integration/library/apply-template-for-ai-behavior';
+import { ELEMENTOR_LIBRARY } from './pages/form-layout/components/attachments/library-dialog';
 
 export const AI_ATTACHMENT = 'ai-attachment';
 export default class Module extends elementorModules.editor.utils.Module {
@@ -28,7 +29,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				json: data.content[ 0 ],
 				html: `<img src="${ model.get( 'thumbnail' ) }" />`,
 				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
-				source: 'elementor-library',
+				source: ELEMENTOR_LIBRARY,
 			}, window.location.origin );
 		} );
 	}
@@ -89,6 +90,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					previewHTML: '',
 					content: json,
 					label: container.model.get( 'title' ),
+					source: 'user-variation',
 				} ];
 
 				renderLayoutApp( {

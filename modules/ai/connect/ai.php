@@ -530,6 +530,7 @@ class Ai extends Library {
 						'type' => 'elementor',
 						'elements' => [ $attachment['content'] ],
 						'label' => $attachment['label'],
+						'source' => $attachment['source'],
 					];
 					break;
 				case 'url':
