@@ -5,7 +5,7 @@ import { ATTACHMENT_TYPE_JSON } from '../attachments';
 export const LibraryDialog = ( props ) => {
 	useEffect( () => {
 		const onMessage = ( event ) => {
-			const { type, json, html, label } = event.data;
+			const { type, json, html, label, source } = event.data;
 
 			if ( 'library/attach' !== type ) {
 				return;
@@ -15,6 +15,7 @@ export const LibraryDialog = ( props ) => {
 				previewHTML: html,
 				content: json,
 				label,
+				source,
 			} ] );
 		};
 

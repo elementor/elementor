@@ -31,6 +31,7 @@ ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
 				previewHTML: `<img src="${ model.get( 'thumbnail' ) }" />`,
 				content: data.content[ 0 ],
 				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
+				source: 'elementor-library',
 			};
 
 			renderLayoutApp( {

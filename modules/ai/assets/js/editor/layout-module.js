@@ -28,6 +28,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				json: data.content[ 0 ],
 				html: `<img src="${ model.get( 'thumbnail' ) }" />`,
 				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
+				source: 'elementor-library',
 			}, window.location.origin );
 		} );
 	}
