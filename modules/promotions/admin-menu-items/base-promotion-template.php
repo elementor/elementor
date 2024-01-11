@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Feature;
+use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Menu_Item_Promotion;
 use Elementor\Settings;
 use Elementor\Utils;
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base_Promotion_Feature implements Promotion_Menu_Feature {
+abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 
 	public function is_visible() {
 		return true;

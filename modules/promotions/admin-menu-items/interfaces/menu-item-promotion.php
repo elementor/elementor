@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-interface Promotion_Menu_Feature extends Admin_Menu_Item_With_Page {
+interface Menu_Item_Promotion extends Admin_Menu_Item_With_Page {
 	public function get_promotion_title();
 
 	public function set_list();
