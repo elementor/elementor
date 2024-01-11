@@ -41,7 +41,7 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 			?>
 			<ul>
 				<?php foreach ( $this->set_list() as $item ) { ?>
-					<li><?php echo $item; ?></li>
+					<li><?php Utils::print_unescaped_internal_string( $item ); ?></li>
 				<?php } ?>
 			</ul>
 			<?php
@@ -60,7 +60,7 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 				<div class="e-feature-promotion_data">
 					<h3><?php Utils::print_unescaped_internal_string( $this->get_promotion_title() ); ?></h3>
 
-					<?php echo $this->get_list(); ?>
+					<?php Utils::print_unescaped_internal_string( $this->get_list() ); ?>
 
 					<a class="elementor-button go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
 						<?php Utils::print_unescaped_internal_string( $this->get_cta_text() ); ?>
@@ -68,12 +68,12 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 
 					<?php if ( ! empty( $this->get_side_note() ) ) { ?>
 						<div class="side-note">
-							<p><?php echo $this->get_side_note(); ?></p>
+							<p><?php Utils::print_unescaped_internal_string( $this->get_side_note() ); ?></p>
 						</div>
 					<?php } ?>
 
 				</div>
-				<iframe class="e-feature-promotion_iframe" src="<?php echo $this->get_video_url(); ?>&amp;controls=0" title="Elementor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+				<iframe class="e-feature-promotion_iframe" src="<?php Utils::print_unescaped_internal_string( $this->get_video_url() ); ?>&amp;controls=0" title="Elementor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 			</div>
 		<?php
 	}
