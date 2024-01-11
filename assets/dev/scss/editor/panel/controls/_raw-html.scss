@@ -1,0 +1,20 @@
+.elementor-control-raw-html {
+	&-title {
+		font-weight: bold;
+		line-height: 1.5;
+		margin: 0 0 6px;
+	}
+
+	&-text {
+		margin: 0 0 8px;
+	}
+
+	a {
+		color: var(--e-a-color-info);
+
+		&:hover,
+		&:focus {
+			color: var(--e-a-color-hover);
+		}
+	}
+}
