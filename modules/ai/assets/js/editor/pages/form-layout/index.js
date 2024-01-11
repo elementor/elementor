@@ -209,6 +209,7 @@ const FormLayout = ( {
 		} );
 
 		setAttachments( items );
+		setShouldRenderWebApp( false );
 		setIsPromptEditable( true );
 	};
 
