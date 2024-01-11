@@ -321,6 +321,19 @@ class Admin_Apps_Page {
 
 		$wporg_plugins = [
 			[
+				'file_path' => 'image-optimization/image-optimization.php',
+				'name' => 'Image Optimizer',
+				'author' => 'Elementor',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-elementor-io/',
+				'badge' => 'New',
+				'description' => 'Check out this incredibly useful plugin that will compress and optimize your images, giving you leaner, faster websites.',
+				'learn_more_url' => 'https://go.elementor.com/wp-dash-apps-learn-more-elementor-io/',
+				'action_label' => 'Install',
+				'action_url' => '#',
+				'image' => $images_url . 'image-optimizer.svg',
+				'target' => '_self',
+			],
+			[
 				'file_path' => 'aryo-activity-log/aryo-activity-log.php',
 				'name' => 'Activity Log',
 				'author' => 'Activity Log Team',
