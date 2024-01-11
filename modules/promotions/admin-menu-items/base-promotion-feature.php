@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Feature;
 use Elementor\Settings;
 use Elementor\Utils;
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base_Promotion_Feature implements Promotion_Menu_Item {
+abstract class Base_Promotion_Feature implements Promotion_Menu_Feature {
 
 	public function is_visible() {
 		return true;
@@ -28,35 +28,53 @@ abstract class Base_Promotion_Feature implements Promotion_Menu_Item {
 		return esc_html__( 'Upgrade Now', 'elementor' );
 	}
 
-	public function get_image_url() {
-		return ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg';
+	public function get_side_note() {
+		return '';
+	}
+
+	public function set_list() {
+		return [];
+	}
+	public function get_list() {
+		ob_start();
+		if ( ! empty( $this->set_list() ) ) {
+			?>
+			<ul>
+				<?php foreach ( $this->set_list() as $item ) { ?>
+					<li><?php echo $item; ?></li>
+				<?php } ?>
+			</ul>
+			<?php
+		}
+
+		return ob_get_clean();
+	}
+
+	public function get_video_url() {
+		return '';
 	}
 
 	public function render() {
 		?>
-		<div class="wrap">
-			<div class="e-feature-promotion_flex">
+			<div class="e-feature-promotion">
 				<div class="e-feature-promotion_data">
 					<h3><?php Utils::print_unescaped_internal_string( $this->get_promotion_title() ); ?></h3>
 
-					<ul>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-						<li>asdfasdfasdf</li>
-					</ul>
+					<?php echo $this->get_list(); ?>
 
 					<a class="elementor-button go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
 						<?php Utils::print_unescaped_internal_string( $this->get_cta_text() ); ?>
 					</a>
+
+					<?php if ( ! empty( $this->get_side_note() ) ) { ?>
+						<div class="side-note">
+							<p><?php echo $this->get_side_note(); ?></p>
+						</div>
+					<?php } ?>
+
 				</div>
-				<iframe width="424" height="238" src="https://www.youtube.com/embed/_Yvf0MNIw-8" title="Elementor Hosting: Why It’s the Best WP Hosting for Elementor Websites!" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+				<iframe class="e-feature-promotion_iframe" src="<?php echo $this->get_video_url(); ?>&amp;controls=0" title="Elementor" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 			</div>
-		</div>
 		<?php
 	}
 }

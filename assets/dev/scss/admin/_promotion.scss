@@ -1,0 +1,104 @@
+@mixin margin( $top: inherit, $right: inherit, $bottom: inherit, $left: inherit ) {
+	margin-block-start: $top;
+	margin-inline-end: $right;
+	margin-block-end: $bottom;
+	margin-inline-start: $left;
+}
+
+.e-feature-promotion {
+	--e-a-top-bar-height: 50px;
+	--e-a-content-area-spacing: 110px;
+
+	width: 1220px;
+	height: calc( 100vh - var(--e-a-top-bar-height) - var(--e-a-content-area-spacing) );
+	display: grid;
+	grid-template-columns: repeat(2, auto);
+	grid-template-rows: auto;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+	margin: auto;
+	transform: translate( -10px, 40px );
+	text-align: center;
+	font-family: var(--e-a-font-family);
+
+	&_data {
+		grid-column: 1 / 2;
+		grid-row: 1 / 2;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: self-start;
+		margin-inline-start: 15px;
+		max-width: 608px;
+
+		h3 {
+			@include margin( 0, 0, 1.6rem, 0 );
+			text-align: start;
+			font-size: 1.85rem;
+			font-weight: 300;
+			color: inherit;
+			line-height: 1.2;
+		}
+
+		ul {
+			margin-block-start: 0;
+			margin-block-end: 1.6rem;
+			text-align: start;
+
+			> li {
+				@include margin( 0, 9px, 5px, 8px );
+				display: flex;
+				font-size: 1rem;
+				line-height: 1.3rem;
+
+				&:before {
+					content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAYCAYAAAAPtVbGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB8SURBVHgB7ZJBCoAgEEW/bbOhm9oN8gieVWibzQiBUO5GcDEPRBG+T/wChjEKB0VWIpmCnHvlnN79BUp4FvCNoytI7sYObUTAI/qNivcUoc3cAi4wcPgcJqiSlY4a7ojUnkjCPZFqB38iWauX3IqGCD6iUYJWJB8ChjEVDwpBK3vLpijfAAAAAElFTkSuQmCC');
+					font-size: 1.4rem;
+					@include margin( -3px, 9px, 0, -9px );
+				}
+			}
+		}
+
+		> .go-pro {
+			display: flex;
+			align-items: center;
+			padding: 9px 15px;
+			font-size: 1rem;
+		}
+
+		> .side-note {
+			justify-self: baseline;
+			margin-block-start: 1rem;
+			text-align: start;
+		}
+	}
+
+	&_iframe {
+		grid-column: 2 / 3;
+		grid-row: 1 / 2;
+		aspect-ratio: 16/9;
+		width: 608px;
+	}
+}
+
+body.rtl .e-feature-promotion {
+	transform: translateX( 10px );
+}
+
+@media ( max-width: 1420px ) {
+	.e-feature-promotion {
+		display: flex;
+		flex-direction: column;
+		width: 90%;
+
+		&_data {
+			margin-block-end: 2rem;
+		}
+
+		&_iframe {
+			max-width: 90%;
+			aspect-ratio: 16/9;
+		}
+	}
+}
