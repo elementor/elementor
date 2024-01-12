@@ -1216,6 +1216,10 @@ class Controls_Manager {
 	}
 
 	public function add_display_conditions_controls( Controls_Stack $controls_stack ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
 		ob_start();
 		?>
 		<div class="e-control-display-conditions-promotion__wrapper">
