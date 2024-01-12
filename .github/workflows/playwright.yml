@@ -150,10 +150,10 @@ jobs:
         if: ${{matrix.testSuite !='elements-regression'}}
         env:
           TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright -- --reporter=${{inputs.reporter}}
+        run: npm run test:playwright -- --reporter=${{inputs.reporter || 'allure-playwright'}}
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
-        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter}}
+        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'allure-playwright'}}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -214,8 +214,10 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           publish_branch: gh-pages
           publish_dir: allure-history
+      - name: Debug
+        run: echo ${{steps.allure.outputs.report_url}}
       - name: Comment PR with Allure Report link
-        if: github.event_name == 'pull_request' && steps.allure.outputs.report_url
+        if: ${{ always() && github.event_name == 'pull_request' && steps.allure.outputs.report_url }}
         continue-on-error: true
         uses: thollander/actions-comment-pull-request@v2
         with:
