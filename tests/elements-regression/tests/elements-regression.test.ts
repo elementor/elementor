@@ -68,6 +68,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
+			await editorPage.removeElementsById( 'e-notice-bar' );
 			await helper.doScreenshotComparison( { widgetType, hoverSelector } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: false, widgetType } );
@@ -75,7 +76,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.publishAndViewPage();
 
 			await editorPage.waitForIframeToLoaded( widgetType, true );
-			await editorPage.removeWpAdminBar();
+			await editorPage.removeElementsById( 'wpadminbar' );
 			await helper.doScreenshotPublished( { widgetType, hoverSelector } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
