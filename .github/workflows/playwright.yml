@@ -176,7 +176,7 @@ jobs:
 
   Build-and-Publish-report:
     needs: Playwright
-    if: ${{ needs.Playwright.result != 'skipped' }}
+    if: always()
     runs-on: ubuntu-22.04
     name: Build Allure report and publish to GH pages
     steps:
