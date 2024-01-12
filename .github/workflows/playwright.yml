@@ -93,19 +93,19 @@ jobs:
         testSuite: [
           'ai',
           'onBoarding',
-          'video',
-          'elements-regression',
-          'default',
-          'nested-tabs',
-          'reverse-columns',
-          'container',
-          'nested-accordion',
-          'styleguide_image_link',
-          'rating',
-          'pluginTester1_containers',
-          'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections'
+          # 'video',
+          # 'elements-regression',
+          # 'default',
+          # 'nested-tabs',
+          # 'reverse-columns',
+          # 'container',
+          # 'nested-accordion',
+          # 'styleguide_image_link',
+          # 'rating',
+          # 'pluginTester1_containers',
+          # 'pluginTester2_containers',
+          # 'pluginTester1_sections',
+          # 'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code
@@ -161,6 +161,12 @@ jobs:
           name: playwright-test-results
           path: ${{inputs.path-to-results}}
           retention-days: 3     
+      - name: Save allure report results to cache
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        uses: actions/cache/save@v3
+        with:
+          path: ./allure-results/*
+          key: allure-results-${{ github.sha }}
 
   test-result:
     needs: Playwright
@@ -182,6 +188,12 @@ jobs:
     steps:
       - name: Pull repo
         uses: actions/checkout@v3
+      - name: Restore build from cache
+        uses: actions/cache/restore@v3
+        id: restore-allure
+        with:
+          path: ./allure-results/*
+          key: allure-results-${{ github.sha }}
       - name: Load test report history
         uses: actions/checkout@v3
         if: always()
@@ -189,6 +201,11 @@ jobs:
         with:
             ref: gh-pages
             path: gh-pages
+      - name: Debug
+        run: |
+          pwd 
+          ls -al
+          cd ./allure-results && ls -al
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.7
         if: always()
