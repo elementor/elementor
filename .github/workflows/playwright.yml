@@ -198,15 +198,16 @@ jobs:
         continue-on-error: true
         with:
             ref: gh-pages
-            path: gh-pages
-      - name: Build test report
-        uses: simple-elf/allure-report-action@v1.7
-        id: allure
+            path: gh-pages  
+      - name: Allure Report Action
+        uses: mgrybyk/allure-report-branch-action@v1
         if: always()
+        continue-on-error: true
+        id: allure
         with:
+          report_id: 'self-test'
           gh_pages: gh-pages
-          allure_history: allure-history
-          allure_results: allure-results
+          report_dir: allure-results
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
