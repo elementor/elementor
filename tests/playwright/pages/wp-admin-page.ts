@@ -30,7 +30,7 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage( setWithApi : boolean = true, setPageName : boolean = true ) {
+	async openNewPage( setWithApi: boolean = true, setPageName: boolean = true ) {
 		if ( setWithApi ) {
 			await this.createNewPostWithAPI();
 		} else {
@@ -59,7 +59,7 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 	}
 
-	async createNewPostFromDashboard( setPageName : boolean ) {
+	async createNewPostFromDashboard( setPageName: boolean ) {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
