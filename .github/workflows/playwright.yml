@@ -161,7 +161,7 @@ jobs:
           name: playwright-test-results
           path: ${{inputs.path-to-results}}
           retention-days: 3     
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: allure-results
