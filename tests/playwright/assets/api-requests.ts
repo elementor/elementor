@@ -54,7 +54,7 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 		pages = [ ...pagesPublished, ...pagesDraft ];
 
 	const pageIds = pages
-		.filter( ( page: WpPage ) => page.title?.rendered?.includes( 'Playwright Test Page' ) )
+		.filter( ( page: WpPage ) => page.title['rendered'].includes( 'Playwright Test Page' ) )
 		.map( ( page: WpPage ) => page.id );
 
 	for ( const id of pageIds ) {
