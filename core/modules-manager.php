@@ -87,6 +87,7 @@ class Modules_Manager {
 			'wp-cli',
 			'safe-mode',
 			'ai',
+			'notification-center',
 			'usage',
 			'dev-tools',
 			'landing-pages',

@@ -1,7 +1,7 @@
 import BarButton from './components/bar-button/bar-button';
 import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
 import environment from 'elementor-common/utils/environment';
 
@@ -32,6 +32,8 @@ export default function AdminTopBar() {
 	const controlSign = environment.mac ? '\u2318' : '^';
 	const finderTooltipText = __( 'Search or do anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
 
+	const BarButtonNotification = window?.elementorNotificationCenter?.BarButtonNotification;
+
 	return (
 		<div className="e-admin-top-bar">
 			<div className="e-admin-top-bar__main-area">
@@ -44,6 +46,7 @@ export default function AdminTopBar() {
 					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Apps', 'elementor' ) }</BarButton>
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
 					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
+					{ BarButtonNotification ? <BarButtonNotification>{ __( 'What\'s New', 'elementor' ) }</BarButtonNotification> : '' }
 				</div>
 
 				<ConnectionButton />
