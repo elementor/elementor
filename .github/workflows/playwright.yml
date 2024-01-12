@@ -162,7 +162,7 @@ jobs:
           path: ${{inputs.path-to-results}}
           retention-days: 3     
       - name: Save allure report results to cache
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        if: always()
         uses: actions/cache/save@v3
         with:
           path: ./allure-results/*
