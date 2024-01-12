@@ -12,11 +12,11 @@ on:
             - allure-playwright
             - html
             - blob
-          default: ''
+          default: allure-playwright
         path-to-results:
           required: false
           description: 'Provide path to reporter files'
-          default: test-results/
+          default: allure-results
           type: choice
           options:
             - test-results/
