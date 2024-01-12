@@ -2,7 +2,6 @@ name: Playwright123
 
 on:
   pull_request:
-  merge_group:
   workflow_dispatch:
       inputs:
         reporter:
@@ -200,13 +199,9 @@ jobs:
         with:
             ref: gh-pages
             path: gh-pages
-      - name: Debug
-        run: |
-          pwd 
-          ls -al
-          cd ./allure-results && ls -al
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.7
+        id: allure
         if: always()
         with:
           gh_pages: gh-pages
@@ -219,3 +214,12 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           publish_branch: gh-pages
           publish_dir: allure-history
+      - name: Comment PR with Allure Report link
+        if: github.event_name == 'pull_request' && steps.allure.outputs.report_url
+        continue-on-error: true
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+            message: |
+                ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
+            comment_tag: allure_report
+            mode: recreate
