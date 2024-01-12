@@ -7,8 +7,7 @@ test( 'Promotion screenshot', async ( { page }, testInfo ) => {
 
 	await wpAdminPage.login();
 	await page.goto( '/wp-admin/admin.php?page=e-form-submissions/' );
-	await page.waitForSelector( promotionContainer );
-	expect( await page.locator( promotionContainer ).screenshot( {
-		type: 'png',
-	} ) ).toMatchSnapshot( 'promotion-menu-item-desktop.png' );
+	const promoContainer = page.locator( promotionContainer );
+	await promoContainer.waitFor();
+	await expect( promoContainer ).toHaveScreenshot( 'promotion-menu-item-desktop.png' );
 } );
