@@ -161,12 +161,12 @@ jobs:
           name: playwright-test-results
           path: ${{inputs.path-to-results}}
           retention-days: 3     
-      - name: Save allure report results to cache
+      - uses: actions/upload-artifact@v3
         if: always()
-        uses: actions/cache/save@v3
         with:
-          path: ./allure-results/*
-          key: allure-results-${{ github.sha }}
+          name: allure-results
+          path: allure-results/
+          retention-days: 3   
 
   test-result:
     needs: Playwright
@@ -188,12 +188,10 @@ jobs:
     steps:
       - name: Pull repo
         uses: actions/checkout@v3
-      - name: Restore build from cache
-        uses: actions/cache/restore@v3
-        id: restore-allure
+      - name: Download allure data
+        uses: actions/download-artifact@v4
         with:
-          path: ./allure-results/*
-          key: allure-results-${{ github.sha }}
+          name: allure-results
       - name: Load test report history
         uses: actions/checkout@v3
         if: always()
