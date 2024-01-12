@@ -1216,7 +1216,7 @@ class Controls_Manager {
 	}
 
 	public function add_display_conditions_controls( Controls_Stack $controls_stack ) {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'display-conditions' ) ) {
+		if ( Utils::has_pro() ) {
 			return;
 		}
 
