@@ -199,21 +199,21 @@ jobs:
         with:
             ref: gh-pages
             path: gh-pages
-      - name: Build test report
-        uses: simple-elf/allure-report-action@v1.7
-        id: allure
+      - name: Allure Report Action
+        uses: mgrybyk/allure-report-branch-action@v1
         if: always()
+        continue-on-error: true
+        id: allure # used in comment to PR
         with:
+          report_id: 'self-test'
           gh_pages: gh-pages
-          allure_history: allure-history
-          allure_results: allure-results
-      - name: Publish test report
-        uses: peaceiris/actions-gh-pages@v3
+          report_dir: allure-results
+      - name: Git Commit and Push Action
+        uses: mgrybyk/git-commit-pull-push-action@v1
         if: always()
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          publish_branch: gh-pages
-          publish_dir: allure-history
+          repository: .
+          branch: gh-pages
       - name: Debug
         run: echo ${{steps.allure.outputs.report_url}}
       - name: Comment PR with Allure Report link
