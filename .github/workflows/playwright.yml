@@ -198,7 +198,7 @@ jobs:
         continue-on-error: true
         with:
             ref: gh-pages
-            path: gh-pages
+            path: gh-pages-dir
       - name: Allure Report Action
         uses: mgrybyk/allure-report-branch-action@v1
         if: always()
@@ -206,14 +206,15 @@ jobs:
         id: allure # used in comment to PR
         with:
           report_id: 'self-test'
-          gh_pages: gh-pages
+          gh_pages: gh-pages-dir
           report_dir: allure-results
       - name: Git Commit and Push Action
         uses: mgrybyk/git-commit-pull-push-action@v1
         if: always()
         with:
-          repository: .
+          repository: gh-pages-dir
           branch: gh-pages
+          pull_args: --no-rebase
       - name: Debug
         run: echo ${{steps.allure.outputs.report_url}}
       - name: Comment PR with Allure Report link
