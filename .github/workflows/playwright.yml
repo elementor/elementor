@@ -197,29 +197,29 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-            ref: gh-pages2
-            path: gh-pages-dir2
+            ref: gh-pages
+            path: gh-pages
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.8
         if: always()
         with:
-            gh_pages: gh-pages-dir2
+            gh_pages: gh-pages
             allure_history: allure-history
             allure_results: allure-results
             keep_reports: 3
-      - name: Git Commit and Push Action
-        uses: mgrybyk/git-commit-pull-push-action@v1
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
-          repository: gh-pages-dir2
-          branch: gh-pages2
-          pull_args: --no-rebase
-      # - name: Comment PR with Allure Report link
-      #   if: always()
-      #   continue-on-error: true
-      #   uses: thollander/actions-comment-pull-request@v2
-      #   with:
-      #       message: |
-      #           ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
-      #       comment_tag: allure_report
-      #       mode: recreate
+            github_token: ${{github.token}}
+            publish_branch: gh-pages
+            publish_dir: allure-history
+      - name: Comment PR with Allure Report link
+        if: ${{github.event_name == 'pull_request'}}
+        continue-on-error: true
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+            message: |
+              [Allure Report](`https://dmaziar.github.io/elementor/${{github.run_number }}`)
+            comment_tag: allure_report
+            mode: recreate
