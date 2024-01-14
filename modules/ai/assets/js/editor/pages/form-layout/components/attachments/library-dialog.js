@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { ATTACHMENT_TYPE_JSON } from '../attachments';
 
 export const ELEMENTOR_LIBRARY = 'elementor-library';
@@ -38,7 +38,6 @@ export const LibraryDialog = ( props ) => {
 						label,
 						source,
 					} ] );
-					// IsLibraryOpen.current = false;
 					isApplyingTemplate.current = false;
 					props.onClose();
 					break;
