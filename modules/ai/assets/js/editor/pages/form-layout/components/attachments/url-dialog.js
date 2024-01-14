@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
+import { USER_URL_SOURCE } from '../attachments';
 
 export const UrlDialog = ( props ) => {
 	const iframeRef = useRef( null );
@@ -33,7 +34,7 @@ export const UrlDialog = ( props ) => {
 						previewHTML: html,
 						content: html,
 						label: url ? new URL( url ).host : '',
-						source: 'user-url',
+						source: USER_URL_SOURCE,
 					} ] );
 					break;
 			}

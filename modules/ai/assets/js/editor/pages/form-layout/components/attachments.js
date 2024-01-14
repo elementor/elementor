@@ -14,6 +14,7 @@ export const MENU_TYPE_LIBRARY = 'library';
 
 export const USER_VARIATION_SOURCE = 'user-variation';
 export const ELEMENTOR_LIBRARY_SOURCE = 'elementor-library';
+export const USER_URL_SOURCE = 'user-url';
 
 const Attachments = ( props ) => {
 	if ( ! props.attachments.length ) {
