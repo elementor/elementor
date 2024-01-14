@@ -218,7 +218,7 @@ jobs:
       - name: Debug
         run: echo ${{steps.allure.outputs.report_url}}
       - name: Comment PR with Allure Report link
-        if: ${{github.event_name == 'pull_request'}}
+        if: ${{ always() && github.event_name == 'pull_request' && steps.allure.outputs.report_url }}
         continue-on-error: true
         uses: thollander/actions-comment-pull-request@v2
         with:
