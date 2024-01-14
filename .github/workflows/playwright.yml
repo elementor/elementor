@@ -159,13 +159,13 @@ jobs:
         with:
           name: playwright-test-results
           path: ${{inputs.path-to-results || 'test-results/'}} 
-          retention-days: 3     
+          retention-days: 2     
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: allure-results
           path: allure-results
-          retention-days: 3   
+          retention-days: 2   
 
   test-result:
     needs: Playwright
@@ -206,7 +206,7 @@ jobs:
             gh_pages: gh-pages
             allure_history: allure-history
             allure_results: allure-results
-            keep_reports: 3
+            keep_reports: 5
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
