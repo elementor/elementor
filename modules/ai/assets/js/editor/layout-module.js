@@ -22,6 +22,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	applyTemplate( args ) {
+		window.postMessage( {
+			type: 'library/attach:start',
+		} );
+
 		$e.components.get( 'library' ).downloadTemplate( args, ( data ) => {
 			const model = args.model;
 			window.postMessage( {

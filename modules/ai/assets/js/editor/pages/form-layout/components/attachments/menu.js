@@ -13,11 +13,11 @@ export const Menu = ( props ) => {
 	const { direction } = useTheme();
 	const anchorRef = useRef( null );
 
-	useEffect( () => {
-		if ( ! isOpen && selectedType === MENU_TYPE_LIBRARY ) {
-			setSelectedType( null );
-		}
-	}, [ isOpen ] );
+	// UseEffect( () => {
+	// 	if ( ! isOpen && selectedType === MENU_TYPE_LIBRARY ) {
+	// 		setSelectedType( null );
+	// 	}
+	// }, [ isOpen ] );
 
 	return (
 		<>
