@@ -12,6 +12,9 @@ export const ATTACHMENT_TYPE_JSON = 'json';
 export const ATTACHMENT_TYPE_URL = 'url';
 export const MENU_TYPE_LIBRARY = 'library';
 
+export const USER_VARIATION_SOURCE = 'user-variation';
+export const ELEMENTOR_LIBRARY_SOURCE = 'elementor-library';
+
 const Attachments = ( props ) => {
 	if ( ! props.attachments.length ) {
 		return (

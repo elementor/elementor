@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { ATTACHMENT_TYPE_JSON } from '../attachments';
 
-export const ELEMENTOR_LIBRARY = 'elementor-library';
-
 export const LibraryDialog = ( props ) => {
 	const isApplyingTemplate = useRef( false );
 
