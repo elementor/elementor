@@ -221,12 +221,13 @@ jobs:
           else
             ICON='❌'
           fi
+          echo "ICON=${ICON}" >> $GITHUB_ENV
       - name: Comment PR with Allure Report link
         if: ${{github.event_name == 'pull_request'}}
         continue-on-error: true
         uses: thollander/actions-comment-pull-request@v2
         with:
             message: |
-              $ICON [Allure Report](https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }})
+              ${{github.env.ICON}} [Allure Report](https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }})
             comment_tag: allure_report
             mode: recreate
