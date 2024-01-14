@@ -379,6 +379,7 @@ class Widget_Image extends Widget_Base {
 					'{{WRAPPER}} img' => 'object-position: {{VALUE}};',
 				],
 				'condition' => [
+					'height[size]!' => '',
 					'object-fit' => 'cover',
 				],
 			]
