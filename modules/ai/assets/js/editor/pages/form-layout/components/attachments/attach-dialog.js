@@ -17,6 +17,7 @@ export const AttachDialog = ( props ) => {
 		case MENU_TYPE_LIBRARY:
 			return <LibraryDialog
 				onAttach={ props.onAttach }
+				onClose={ props.onClose }
 			/>;
 	}
 
