@@ -197,17 +197,16 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-            ref: gh-pages
-            path: gh-pages-dir
-      - name: Allure Report Action
-        uses: mgrybyk/allure-report-branch-action@v1
+            ref: gh-pages2
+            path: gh-pages2
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.8
         if: always()
-        continue-on-error: true
-        id: allure # used in comment to PR
         with:
-          report_id: 'self-test'
-          gh_pages: gh-pages-dir
-          report_dir: allure-results
+            gh_pages: gh-pages2
+            allure_history: allure-history
+            allure_results: allure-results
+            keep_reports: 3
       - name: Git Commit and Push Action
         uses: mgrybyk/git-commit-pull-push-action@v1
         if: always()
@@ -215,14 +214,12 @@ jobs:
           repository: gh-pages-dir
           branch: gh-pages
           pull_args: --no-rebase
-      - name: Debug
-        run: echo ${{steps.allure.outputs.report_url}}
-      - name: Comment PR with Allure Report link
-        if: ${{ always() && github.event_name == 'pull_request' && steps.allure.outputs.report_url }}
-        continue-on-error: true
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-            message: |
-                ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
-            comment_tag: allure_report
-            mode: recreate
+      # - name: Comment PR with Allure Report link
+      #   if: always()
+      #   continue-on-error: true
+      #   uses: thollander/actions-comment-pull-request@v2
+      #   with:
+      #       message: |
+      #           ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
+      #       comment_tag: allure_report
+      #       mode: recreate
