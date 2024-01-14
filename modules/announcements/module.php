@@ -93,7 +93,7 @@ class Module extends BaseApp {
 				'title' => 'Unlock the Power of Elementor AI',
 				'description' => '<p>Design professional websites with natively integrated AI tools.</p>
 				<ul>
-					<li>Boost creativity & productivity with AI-generated containers. Build layouts from scratch or existing Elementor containers. Coming soon: Generate containers from any layout you reference from the web!</li>
+					<li>Boost creativity & productivity with AI-generated containers. Build layouts from scratch or existing Elementor containers. Generate containers from any layout you reference from the web!</li>
 					<li>Let AI write or edit your text, adjust its length and tone of voice. Also generate custom code that seamlessly integrates into your website.</li>
 					<li>Create one-of-a kind images, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
 					<li>Access and repurpose previously-generated text, code or image prompts with Elementor’s AI History Panel to work efficiently and ensure consistency.</li>
