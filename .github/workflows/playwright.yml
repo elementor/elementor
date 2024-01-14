@@ -222,13 +222,13 @@ jobs:
             context: 'Test report'
             state: 'success'
             sha: ${{ github.event.pull_request.head.sha }}
-            target_url: dmaziar.github.io/elementor/${{ github.run_number }}
+            target_url: https://${{github.repository_owner}}.github.io/elementor/${{ github.run_number }}
       - name: Comment PR with Allure Report link
         if: ${{github.event_name == 'pull_request'}}
         continue-on-error: true
         uses: thollander/actions-comment-pull-request@v2
         with:
             message: |
-              [Allure Report](https://dmaziar.github.io/elementor/${{github.run_number }})
+              [Allure Report](https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }})
             comment_tag: allure_report
             mode: recreate
