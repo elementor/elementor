@@ -79,12 +79,13 @@ const useScreenshots = ( { onData } ) => {
 					batchId,
 					requestId: `request-${ getUniqueId() }`,
 				},
-				attachments: attachments.map( ( { type, content, label } ) => {
+				attachments: attachments.map( ( { type, content, label, source } ) => {
 					// Send only the data that is needed for the generation.
 					return {
 						type,
 						content,
 						label,
+						source,
 					};
 				} ),
 			};

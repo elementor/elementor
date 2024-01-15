@@ -1,7 +1,7 @@
 const { renderLayoutApp, importToEditor } = require( '../../utils/editor-integration' );
 const { MODE_VARIATION } = require( '../../pages/form-layout/context/config' );
 const { __ } = require( '@wordpress/i18n' );
-const { ATTACHMENT_TYPE_JSON } = require( '../../pages/form-layout/components/attachments' );
+const { ATTACHMENT_TYPE_JSON, ELEMENTOR_LIBRARY_SOURCE } = require( '../../pages/form-layout/components/attachments' );
 var ApplyTemplateForAiBehavior;
 
 ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
@@ -31,6 +31,7 @@ ApplyTemplateForAiBehavior = Marionette.Behavior.extend( {
 				previewHTML: `<img src="${ model.get( 'thumbnail' ) }" />`,
 				content: data.content[ 0 ],
 				label: `${ model.get( 'template_id' ) } - ${ model.get( 'title' ) }`,
+				source: ELEMENTOR_LIBRARY_SOURCE,
 			};
 
 			renderLayoutApp( {

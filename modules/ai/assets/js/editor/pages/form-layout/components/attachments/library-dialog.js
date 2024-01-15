@@ -1,21 +1,45 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { ATTACHMENT_TYPE_JSON } from '../attachments';
 
 export const LibraryDialog = ( props ) => {
-	useEffect( () => {
-		const onMessage = ( event ) => {
-			const { type, json, html, label } = event.data;
+	const isApplyingTemplate = useRef( false );
 
-			if ( 'library/attach' !== type ) {
+	useEffect( () => {
+		const onLibraryHide = ( ) => {
+			if ( isApplyingTemplate.current ) {
 				return;
 			}
-			props.onAttach( [ {
-				type: ATTACHMENT_TYPE_JSON,
-				previewHTML: html,
-				content: json,
-				label,
-			} ] );
+			props.onClose();
+		};
+
+		$e.components.get( 'library' ).layout.getModal().on( 'hide', onLibraryHide );
+
+		return () => {
+			$e.components.get( 'library' ).layout.getModal().off( 'hide', onLibraryHide );
+		};
+	}, [ props ] );
+
+	useEffect( () => {
+		const onMessage = ( event ) => {
+			const { type, json, html, label, source } = event.data;
+
+			switch ( type ) {
+				case 'library/attach:start':
+					isApplyingTemplate.current = true;
+					break;
+				case 'library/attach':
+					props.onAttach( [ {
+						type: ATTACHMENT_TYPE_JSON,
+						previewHTML: html,
+						content: json,
+						label,
+						source,
+					} ] );
+					isApplyingTemplate.current = false;
+					props.onClose();
+					break;
+			}
 		};
 
 		window.addEventListener( 'message', onMessage );
@@ -25,9 +49,11 @@ export const LibraryDialog = ( props ) => {
 		};
 	} );
 	$e.run( 'library/open', { toDefault: true, mode: 'ai-attachment' } );
+	isApplyingTemplate.current = false;
 	return null;
 };
 
 LibraryDialog.propTypes = {
 	onAttach: PropTypes.func.isRequired,
+	onClose: PropTypes.func.isRequired,
 };
