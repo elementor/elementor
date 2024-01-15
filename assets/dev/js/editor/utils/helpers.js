@@ -430,52 +430,59 @@ module.exports = {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 
 			if ( hasIconsControl ) {
-				const dialogTitle = __( 'Ready for the new icon library?', 'elementor' );
-
-				const dialogMessage = __( 'Font Awesome v6 includes new, updated icons and faster loading.', 'elementor' ) + '<br><br>';
-
-				const dialogMessageNote = elementor.config.user.is_administrator
-					? (
-						'<strong>' + __( 'Keep in mind:', 'elementor' ) + '</strong> ' +
-						'<ul><li>' + __( 'To ensure a smooth transition, create a backup of your site before updating.', 'elementor' ) + '</li>' +
-						'<li>' + __( 'This update can’t be undone.', 'elementor' ) + '</li></ul>'
-					) : (
-						'Contact your site admin to update the icon library.'
-					);
-
-				const dialogType = elementor.config.user.is_administrator ? 'confirm' : 'alert';
-
-				const dialogConfirmText = elementor.config.user.is_administrator
-					? __( 'Update Now', 'elementor' )
-					: __( 'Got it', 'elementor' );
-
-				elementorCommon.dialogsManager.createWidget( dialogType, {
-					id: 'e-fa-migration-dialog',
-					headerMessage: dialogTitle,
-					message: dialogMessage + dialogMessageNote,
-					position: {
-						my: 'center center',
-						at: 'center center',
-					},
-					strings: {
-						confirm: dialogConfirmText,
-					},
-					onConfirm: () => {
-						if ( ! elementor.config.user.is_administrator ) {
-							return;
-						}
-
-						window.location.href = elementor.config.tools_page_link +
-							'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
-							'&_wpnonce=' + elementor.config.tools_page_nonce +
-							'#tab-fontawesome_migration';
-					},
-				} ).show();
-
+				this.showFontAwesomeMigrationDialog();
 				return true;
 			}
 		}
 		return false;
+	},
+
+	showFontAwesomeMigrationDialog() {
+		const dialogTitle = __( 'Ready for the new icon library?', 'elementor' );
+
+		const dialogMessage = __( 'Font Awesome v6 includes new, updated icons and faster loading.', 'elementor' ) + '<br><br>';
+
+		const dialogMessageNote = elementor.config.user.is_administrator
+			? (
+				'<strong>' + __( 'Keep in mind:', 'elementor' ) + '</strong> ' +
+				'<ul><li>' + __( 'To ensure a smooth transition, create a backup of your site before updating.', 'elementor' ) + '</li>' +
+				'<li>' + __( 'This update can’t be undone.', 'elementor' ) + '</li></ul>'
+			) : (
+				'Contact your site admin to update the icon library.'
+			);
+
+		const dialogType = elementor.config.user.is_administrator ? 'confirm' : 'alert';
+
+		const dialogConfirmText = elementor.config.user.is_administrator
+			? __( 'Update Now', 'elementor' )
+			: __( 'Got it', 'elementor' );
+
+		if ( ! this.fontAwesomeMigrationDialog ) {
+			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogType, {
+				id: 'e-fa-migration-dialog',
+				headerMessage: dialogTitle,
+				message: dialogMessage + dialogMessageNote,
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: dialogConfirmText,
+				},
+				onConfirm: () => {
+					if ( ! elementor.config.user.is_administrator ) {
+						return;
+					}
+
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome_migration';
+				},
+			} );
+		}
+
+		this.fontAwesomeMigrationDialog.show();
 	},
 
 	/**
