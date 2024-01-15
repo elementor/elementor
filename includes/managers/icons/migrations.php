@@ -250,13 +250,16 @@ class Migrations {
 		$this->run_migration();
 		self::update_migration_required_flags();
 
-		$success_msg = sprintf(
+		$success_title = sprintf(
 			/* translators: %s: Version number. */
-			esc_html__( 'Hurray! The upgrade process to Font Awesome %s was completed successfully.', 'elementor' ),
+			esc_html__( 'You\'ve got Font Awesome %s!', 'elementor' ),
 			Icons_Manager::get_current_fa_version()
 		);
 
-		wp_send_json_success( [ 'message' => $success_msg ] );
+		wp_send_json_success( [
+			'title' => $success_title,
+			'message' => esc_html__( 'Elevate your designs with these new and updated icons.', 'elementor' ),
+		] );
 	}
 
 	/**

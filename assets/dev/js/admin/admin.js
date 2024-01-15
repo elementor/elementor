@@ -205,7 +205,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				$updateButton.addClass( 'loading' );
 
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
-					id: 'confirm_fa_migration_admin_modal',
+					id: 'e-confirm-fa-migration-admin-modal',
 					message: __( 'I understand that by upgrading to Font Awesome 6,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
 					headerMessage: __( 'Font Awesome 6 Migration', 'elementor' ),
 					strings: {
@@ -230,20 +230,30 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 								$updateButton.disabled = false;
 								$updateButton.text( originalButtonLabel );
 
-								const messageElement = document.createElement( 'p' );
-								messageElement.appendChild( document.createTextNode( response.data.message ) );
+								const goBack = () => {
+									if ( redirectUrl ) {
+										location.href = decodeURIComponent( redirectUrl );
+										return;
+									}
 
-								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
+									history.go( -1 );
+								};
 
-								if ( redirectUrl ) {
-									location.href = decodeURIComponent( redirectUrl );
-
-									return;
-								}
-
-								history.go( -1 );
-							} )
-							.fail( function() {
+								elementorCommon.dialogsManager.createWidget( 'alert', {
+									id: 'e-fa-migration-completed-modal',
+									headerMessage: response.data.title,
+									message: response.data.message,
+									position: {
+										my: 'center center',
+										at: 'center center',
+									},
+									strings: {
+										confirm: __( 'Got it', 'elementor' ),
+									},
+									onHide: () => goBack(),
+									onConfirm: () => goBack(),
+								} ).show();
+							} ).fail( function() {
 								$updateButton.removeClass( 'loading' ).addClass( 'error' );
 							} );
 					},
