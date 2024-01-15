@@ -216,7 +216,7 @@ jobs:
             publish_dir: allure-history
       - name: Get icon
         run : |
-          if [[ ${{needs.Playwright.result == 'success'}} ]]; then
+          if [ ${{needs.Playwright.result == 'success'}} ]; then
             ICON='✅' 
           else
             ICON='❌'
