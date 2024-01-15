@@ -181,7 +181,6 @@ jobs:
 
   Build-and-Publish-report:
     needs: Playwright
-    if: always()
     runs-on: ubuntu-22.04
     name: Build Allure report and publish to GH pages
     steps:
@@ -209,14 +208,13 @@ jobs:
             keep_reports: 5
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
-        if: always()
         with:
             github_token: ${{github.token}}
             publish_branch: gh-pages
             publish_dir: allure-history
       - name: Get icon
         run : |
-          if [ "${{needs.Playwright.result}}" =='success' ]; then
+          if [[ "${{needs.Playwright.result}}" =='success' ]]; then
             ICON="✅" 
           else
             ICON="❌"
