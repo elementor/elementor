@@ -216,10 +216,10 @@ jobs:
             publish_dir: allure-history
       - name: Get icon
         run : |
-          if [ ${{needs.Playwright.result == 'success'}} ]; then
-            ICON='✅' 
+          if [ "${{needs.Playwright.result}}" =='success' ]; then
+            ICON="✅" 
           else
-            ICON='❌'
+            ICON="❌"
           fi
           echo "ICON=${ICON}" >> $GITHUB_ENV
       - name: Comment PR with Allure Report link
