@@ -476,9 +476,14 @@ export default class EditorPage extends BasePage {
 	}
 
 	async changeUiTheme( uiMode: string ) {
+		const uiThemeOptions = {
+			light: '.eicon-circle-o',
+			dark: '.eicon-circle',
+			auto: '.eicon-device-desktop',
+		};
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
-		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+		await this.page.locator( `.elementor-control-ui_theme ${ uiThemeOptions[ uiMode ] }` ).click();
 	}
 
 	/**
