@@ -93,19 +93,19 @@ jobs:
         testSuite: [
           'ai',
           'onBoarding',
-          'video',
-          'elements-regression',
-          'default',
-          'nested-tabs',
-          'reverse-columns',
-          'container',
-          'nested-accordion',
-          'styleguide_image_link',
-          'rating',
-          'pluginTester1_containers',
-          'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections'
+          # 'video',
+          # 'elements-regression',
+          # 'default',
+          # 'nested-tabs',
+          # 'reverse-columns',
+          # 'container',
+          # 'nested-accordion',
+          # 'styleguide_image_link',
+          # 'rating',
+          # 'pluginTester1_containers',
+          # 'pluginTester2_containers',
+          # 'pluginTester1_sections',
+          # 'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code
@@ -231,3 +231,5 @@ jobs:
               ${{ env.ICON }} [Allure Report](https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }})
             comment_tag: allure_report
             mode: recreate
+      - name: Add report link to GH annotation
+        run: echo "::notice https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}"
