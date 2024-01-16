@@ -162,6 +162,7 @@ jobs:
           path: ${{inputs.path-to-results || 'test-results/'}} 
           retention-days: 2     
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: allure-results
           path: allure-results
