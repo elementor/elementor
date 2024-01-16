@@ -216,7 +216,7 @@ jobs:
             publish_dir: allure-history
       - name: Get icon
         run : |
-          if [[ "${{needs.Playwright.result}}"=="success" ]]; then
+          if [[ ${{needs.Playwright.result == 'success'}} ]]; then
             ICON="✅" 
           else
             ICON="❌"
@@ -233,5 +233,5 @@ jobs:
             mode: recreate
       - name: Add report link to GH annotation
         run: |
-          text="https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}"
+          text="\e]8;;https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}/aLink to Allure report!\e]8;;\a"
           echo "::notice ::$text"
