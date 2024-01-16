@@ -55,6 +55,12 @@
 			line-height: 1.5;
 		}
 
+		&-actions {
+			display: flex;
+			gap: 10px;
+			padding-block-start: 8px;
+		}
+
 		a {
 			color: inherit;
 			font-weight: 700;
