@@ -55,15 +55,24 @@ class Model extends BaseModel {
 		$this->add_control(
 			'ui_theme',
 			[
-				'label' => esc_html__( 'UI Theme', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
-				'default' => 'auto',
+				'label' => esc_html__( 'Editor Theme Colors', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'auto' => esc_html__( 'Auto Detect', 'elementor' ),
-					'light' => esc_html__( 'Light', 'elementor' ),
-					'dark' => esc_html__( 'Dark', 'elementor' ),
+					'light' => [
+						'title' => esc_html__( 'Light', 'elementor' ),
+						'icon' => 'eicon-circle-o',
+					],
+					'dark' => [
+						'title' => esc_html__( 'Dark', 'elementor' ),
+						'icon' => 'eicon-circle',
+					],
+					'auto' => [
+						'title' => esc_html__( 'Auto Detect', 'elementor' ),
+						'icon' => 'eicon-device-desktop',
+					],
 				],
+				'default' => 'auto',
+				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
 			]
 		);
 
