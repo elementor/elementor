@@ -58,7 +58,6 @@ export const ProWidgetsNotice = () => {
 						variant="outlined"
 						size="small"
 						onClick={ () => window.open( 'https://go.elementor.com/upgrade-pro/', '_blank' ) }
-						target="_blank"
 						color="inherit"
 					>
 						{ __( 'Go Pro', 'elementor' ) }
