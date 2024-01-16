@@ -6,12 +6,14 @@ import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
 import { USER_URL_SOURCE } from '../attachments';
+import { CONFIG_KEYS, useRemoteConfig } from '../../context/remote-config';
 
 export const UrlDialog = ( props ) => {
 	const iframeRef = useRef( null );
 	const { iframeSource } = useAttachUrlService( { targetUrl: props.url } );
 	const iframeOrigin = iframeSource ? new URL( iframeSource ).origin : '';
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
+	const { isLoaded, isError, remoteConfig } = useRemoteConfig();
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
@@ -55,6 +57,11 @@ export const UrlDialog = ( props ) => {
 			/>
 		);
 	}
+
+	if ( ! isLoaded || isError ) {
+		return null;
+	}
+
 	return (
 		<Dialog
 			open={ true }
@@ -92,6 +99,7 @@ export const UrlDialog = ( props ) => {
 										page: {
 											url: window.location.href,
 										},
+										authToken: remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ] || '',
 									},
 								}, iframeOrigin );
 							} }
