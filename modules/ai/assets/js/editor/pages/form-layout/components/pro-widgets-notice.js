@@ -43,7 +43,7 @@ export const ProWidgetsNotice = () => {
 						} }
 					>
 						<Typography
-							variant="body2"
+							variant="subtitle2"
 							component="span"
 							sx={ {
 								paddingInlineEnd: 1,
@@ -57,15 +57,9 @@ export const ProWidgetsNotice = () => {
 					<Button
 						variant="outlined"
 						size="small"
-						href="https://go.elementor.com/upgrade-pro/"
+						onClick={ () => window.open( 'https://go.elementor.com/upgrade-pro/', '_blank' ) }
 						target="_blank"
-						sx={ {
-							color: 'accent.contrastText',
-							borderColor: 'accent.contrastText',
-							'&:hover': {
-								borderColor: 'accent.contrastText',
-							},
-						} }
+						color="inherit"
 					>
 						{ __( 'Go Pro', 'elementor' ) }
 					</Button>
