@@ -67,12 +67,12 @@ class Control_Notice extends Base_UI_Control {
 				<# if ( data.button_text || button_text2 ) { #>
 				<div class="elementor-control-notice-main-actions">
 					<# if ( data.button_text || button_event ) { #>
-					<button type="button" class="e-btn e-{{{ data.notice_type }}}" data-event="{{{ data.button_event }}}">
+					<button type="button" class="e-btn e-{{{ data.notice_type }}} e-btn-1" data-event="{{{ data.button_event }}}">
 						{{{ data.button_text }}}
 					</button>
 					<# } #>
 					<# if ( data.button_text2 || button_event2 ) { #>
-					<button type="button" class="e-btn e-{{{ data.notice_type }}}" data-event="{{{ data.button_event2 }}}">
+					<button type="button" class="e-btn e-{{{ data.notice_type }}} e-btn-2" data-event="{{{ data.button_event2 }}}">
 						{{{ data.button_text2 }}}
 					</button>
 					<# } #>

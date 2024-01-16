@@ -11,7 +11,21 @@ module.exports = ControlBaseView.extend( {
 	},
 
 	events: {
-		'click @ui.button': 'onDismissButtonClick',
+		'click @ui.button.e-btn-1': 'onButton1Click',
+		'click @ui.button.e-btn-2': 'onButton2Click',
+		'click @ui.button.elementor-control-notice-dismiss': 'onDismissButtonClick',
+	},
+
+	onButton1Click() {
+		const eventName = this.model.get( 'event' );
+
+		elementor.channels.editor.trigger( eventName, this );
+	},
+
+	onButton2Click() {
+		const eventName = this.model.get( 'event' );
+
+		elementor.channels.editor.trigger( eventName, this );
 	},
 
 	getDismissId() {
