@@ -232,4 +232,4 @@ jobs:
             comment_tag: allure_report
             mode: recreate
       - name: Add report link to GH annotation
-        run: echo "::notice https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}"
+        run: echo '::notice https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}'
