@@ -58,7 +58,7 @@ export const UrlDialog = ( props ) => {
 		);
 	}
 
-	if ( ! isLoaded || isError || ! remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ] ) {
+	if ( ! isLoaded || isError ) {
 		return null;
 	}
 
@@ -99,7 +99,7 @@ export const UrlDialog = ( props ) => {
 										page: {
 											url: window.location.href,
 										},
-										authToken: remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ],
+										authToken: remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ] || '',
 									},
 								}, iframeOrigin );
 							} }
