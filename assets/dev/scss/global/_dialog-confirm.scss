@@ -12,6 +12,7 @@ $e-dialog-confirm-space: 20px;
 	.dialog-widget-content {
 		margin: auto;
 		width: 400px;
+		max-width: 100%;
 		padding: $e-dialog-confirm-space;
 	}
 
@@ -69,5 +70,12 @@ $e-dialog-confirm-space: 20px;
 				@extend .e-primary;
 			}
 		}
+	}
+}
+
+.dialog-type-confirm-large {
+
+	.dialog-widget-content {
+		width: 800px;
 	}
 }

@@ -54,9 +54,9 @@ class Font_Awesome extends Base {
 		}
 
 		return [
-			'width' => isset( $svg_data ) ? $svg_data[0] : '',
-			'height' => isset( $svg_data ) ? $svg_data[1] : '',
-			'path' => isset( $svg_data ) ? $svg_data[4] : '',
+			'width' => $svg_data[0] ?? '',
+			'height' => $svg_data[1] ?? '',
+			'path' => $svg_data[4] ?? '',
 			'key' => $this->get_key(),
 		];
 	}

@@ -3,8 +3,9 @@ namespace Elementor\Icons_Manager;
 
 use Elementor\Icons_Manager;
 use Elementor\Utils;
-use Elementor\Tools;
 use Elementor\Plugin;
+
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Upgrade\Upgrade_Utils;
@@ -169,82 +170,16 @@ class Migrations {
 		return $migration_required;
 	}
 
-	/**
-	 * Create the FontAwesome Updater admin tools tab.
-	 *
-	 * @param Tools $settings
-	 */
-	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome_migration', [ 'label' => esc_html__( 'Font Awesome', 'elementor' ) ] );
-
-		$settings->add_section( 'fontawesome_migration', 'fontawesome_migration', [
-			'callback' => function() {
-				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
-				echo '<p>' . // PHPCS - Plain Text
-				/* translators: %s: Version number. */
-				sprintf( esc_html__( 'Access 1,700+ amazing icons, faster performance, and design flexibility with Font Awesome v%s.', 'elementor' ), Icons_Manager::get_current_fa_version() ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				'<br>' .
-				esc_html__( 'We’ll automatically convert existing icons on your site to the new versions anytime you edit a page that already contains icons, so some may appear different.', 'elementor' ) . '<br>' .
-				'</p><p><strong>' .
-				esc_html__( 'Keep in mind:', 'elementor' ) .
-				'</strong></p><ul class="ul-disc"><li>' .
-				esc_html__( 'To ensure a smooth transition, create a backup of your site first.', 'elementor' ) .
-				'</li><li>' .
-				esc_html__( 'This update can’t be undone, even if you roll back your site to a previous version.', 'elementor' ) .
-				'</li></ul>';
-			},
-			'fields' => [
-				[
-					/* translators: %s: Version number. */
-					'label' => sprintf( esc_html__( 'Font Awesome v%s:', 'elementor' ), Icons_Manager::get_current_fa_version() ),
-					'field_args' => [
-						'type' => 'raw_html',
-						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button elementor-button-spinner" id="elementor_upgrade_fa_button">%s</span>',
-							self::NEEDS_UPDATE_OPTION . '_upgrade',
-							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
-							esc_url( $this->get_upgrade_redirect_url() ),
-							esc_html__( 'Update Now', 'elementor' )
-						),
-					],
-				],
-			],
-		] );
-	}
-
-	/**
-	 * Get redirect URL when upgrading font awesome.
-	 *
-	 * @return string
-	 */
-	public function get_upgrade_redirect_url() {
-
-		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_GET, '_wpnonce' ), 'tools-page-from-editor' ) ) {
-			return '';
-		}
-
-		$document_id = ! empty( $_GET['redirect_to_document'] ) ? absint( $_GET['redirect_to_document'] ) : null;
-
-		if ( ! $document_id ) {
-			return '';
-		}
-
-		$document = Plugin::$instance->documents->get( $document_id );
-
-		if ( ! $document ) {
-			return '';
-		}
-
-		return $document->get_edit_url();
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'icon_manager_migrate', [ $this, 'ajax_upgrade_to_current_version' ] );
 	}
 
 	/**
 	 * Ajax Upgrade to the current version of Font Awesome
 	 */
 	public function ajax_upgrade_to_current_version() {
-		check_ajax_referer( self::NEEDS_UPDATE_OPTION, '_nonce' );
-
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( 'Permission denied' );
+			throw new \Exception( 'Permission denied' );
 		}
 
 		$this->run_migration();
@@ -256,10 +191,10 @@ class Migrations {
 			Icons_Manager::get_current_fa_version()
 		);
 
-		wp_send_json_success( [
+		return [
 			'title' => $success_title,
 			'message' => esc_html__( 'Elevate your designs with these new and updated icons.', 'elementor' ),
-		] );
+		];
 	}
 
 	/**
@@ -358,11 +293,7 @@ class Migrations {
 	public function __construct() {
 		if ( self::is_migration_required() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_settings' ] );
-			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_settings' ], 100 );
-
-			if ( ! empty( $_POST ) ) { // phpcs:ignore -- nonce validation done in callback
-				add_action( 'wp_ajax_' . self::NEEDS_UPDATE_OPTION . '_upgrade', [ $this, 'ajax_upgrade_to_current_version' ] );
-			}
+			add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		}
 	}
 }

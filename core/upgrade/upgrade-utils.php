@@ -56,7 +56,7 @@ class Upgrade_Utils {
 				$args = [
 					'do_update' => &$do_update,
 					'widget_id' => $widget_id,
-					'control_ids' => $change['control_ids'],
+					'control_ids' => $change['control_ids'] ?? null,
 				];
 
 				if ( isset( $change['prefix'] ) ) {
