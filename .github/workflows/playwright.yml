@@ -184,6 +184,7 @@ jobs:
     needs: Playwright
     runs-on: ubuntu-22.04
     name: Build Allure report and publish to GH pages
+    if: always()
     steps:
       - name: Pull repo
         uses: actions/checkout@v3
