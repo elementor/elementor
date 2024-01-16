@@ -26,11 +26,13 @@ module.exports = ControlBaseView.extend( {
 	onDismissButtonClick() {
 		const dismissId = this.getDismissId();
 
-		this.$el.remove();
-
 		elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
 			data: {
 				dismissId,
+			},
+			success: () => {
+				this.$el.remove();
+				elementor.config.user.dismissed_editor_notices[ dismissId ] = true;
 			},
 		} );
 	},
