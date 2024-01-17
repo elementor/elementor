@@ -49,15 +49,16 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	const lastRun = useRef( () => {} );
 
-	let autocompleteItems = '';
+	let autocompleteItems = codeHtmlAutocomplete;
 	let promptLibraryLink = '';
 
 	if ( 'css' === additionalOptions?.codeLanguage ) {
 		autocompleteItems = codeCssAutocomplete;
 		promptLibraryLink = 'https://go.elementor.com/ai-prompt-library-css/';
-	} else {
-		autocompleteItems = codeHtmlAutocomplete;
+	} else if ( additionalOptions?.htmlMarkup ) {
 		promptLibraryLink = 'https://go.elementor.com/ai-prompt-library-html/';
+	} else {
+		promptLibraryLink = 'https://go.elementor.com/ai-prompt-library-custom-code/';
 	}
 
 	const showSuggestions = ! prompt;
