@@ -140,7 +140,10 @@ class Widget_Testimonial extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => 'John Doe',
+				'ai' => [
+					'active' => false,
+				],
+				'default' => esc_html__( 'John Doe', 'elementor' ),
 			]
 		);
 
@@ -152,7 +155,10 @@ class Widget_Testimonial extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => 'Designer',
+				'ai' => [
+					'active' => false,
+				],
+				'default' => esc_html__( 'Designer', 'elementor' ),
 			]
 		);
 
@@ -167,16 +173,25 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
+		$aside = is_rtl() ? 'right' : 'left';
+
 		$this->add_control(
 			'testimonial_image_position',
 			[
 				'label' => esc_html__( 'Image Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'default' => 'aside',
 				'options' => [
-					'aside' => esc_html__( 'Aside', 'elementor' ),
-					'top' => esc_html__( 'Top', 'elementor' ),
+					'aside' => [
+						'title' => esc_html__( 'Aside', 'elementor' ),
+						'icon' => 'eicon-h-align-' . $aside,
+					],
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
 				],
+				'toggle' => false,
 				'condition' => [
 					'testimonial_image[url]!' => '',
 				],
@@ -209,15 +224,6 @@ class Widget_Testimonial extends Widget_Base {
 					'{{WRAPPER}} .elementor-testimonial-wrapper' => 'text-align: {{VALUE}}',
 				],
 				'style_transfer' => true,
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 
@@ -280,7 +286,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'image_size',
 			[
 				'label' => esc_html__( 'Image Resolution', 'elementor' ),

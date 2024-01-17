@@ -1,10 +1,10 @@
 import { Alert, Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 import LockIcon from '../../../icons/lock-icon';
+import useIntroduction from '../../../hooks/use-introduction';
 
 export const ProWidgetsNotice = () => {
-	const [ isViewed, setIsViewed ] = useState( false );
+	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-pro-widget' );
 
 	if ( isViewed ) {
 		return null;
@@ -22,7 +22,7 @@ export const ProWidgetsNotice = () => {
 				severity="info"
 				variant="filled"
 				color="accent"
-				onClose={ () => setIsViewed( true ) }
+				onClose={ () => markAsViewed( ) }
 				icon={ <LockIcon /> }
 				sx={ {
 					'& .MuiAlert-message': {
@@ -43,7 +43,7 @@ export const ProWidgetsNotice = () => {
 						} }
 					>
 						<Typography
-							variant="body2"
+							variant="subtitle2"
 							component="span"
 							sx={ {
 								paddingInlineEnd: 1,
@@ -57,15 +57,8 @@ export const ProWidgetsNotice = () => {
 					<Button
 						variant="outlined"
 						size="small"
-						href="https://go.elementor.com/upgrade-pro/"
-						target="_blank"
-						sx={ {
-							color: 'accent.contrastText',
-							borderColor: 'accent.contrastText',
-							'&:hover': {
-								borderColor: 'accent.contrastText',
-							},
-						} }
+						onClick={ () => window.open( 'https://go.elementor.com/upgrade-pro/', '_blank' ) }
+						color="inherit"
 					>
 						{ __( 'Go Pro', 'elementor' ) }
 					</Button>

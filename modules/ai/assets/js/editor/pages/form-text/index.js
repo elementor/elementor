@@ -7,6 +7,7 @@ import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
 import Textarea from '../../components/textarea';
 import PromptSuggestions from '../../components/prompt-suggestions';
+import PromptLibraryLink from '../../components/prompt-library-link';
 import PromptActionSelection from '../../components/prompt-action-selection';
 import GenerateButton from '../../components/generate-button';
 import PromptAction from '../../components/prompt-action';
@@ -145,7 +146,9 @@ const FormText = (
 							suggestions={ autocompleteItems }
 							onSelect={ handleSuggestion }
 							suggestionFilter={ ( suggestion ) => suggestion + '...' }
-						/>
+						>
+							<PromptLibraryLink libraryLink="https://go.elementor.com/ai-prompt-library-text/" />
+						</PromptSuggestions>
 					) }
 
 					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>

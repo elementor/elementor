@@ -336,6 +336,10 @@ abstract class Settings_Page {
 					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 					foreach ( $tab['sections'] as $section_id => $section ) {
+						if ( ! $this->should_render_section( $section ) ) {
+							continue;
+						}
+
 						$full_section_id = 'elementor_' . $section_id . '_section';
 
 						if ( ! empty( $section['label'] ) ) {
@@ -418,5 +422,19 @@ abstract class Settings_Page {
 	private function should_render_tab( $tab ) {
 		// BC - When 'show_if' prop is not exists, it actually should render the tab.
 		return ! empty( $tab['sections'] ) && ( ! isset( $tab['show_if'] ) || $tab['show_if'] );
+	}
+
+	/**
+	 * Should it render the settings section
+	 *
+	 * @param $section
+	 *
+	 * Since 3.19.0
+	 *
+	 * @return bool
+	 */
+	private function should_render_section( $section ) {
+		// BC - When 'show_if' prop is not exists, it actually should render the section.
+		return ! isset( $section['show_if'] ) || $section['show_if'];
 	}
 }

@@ -11,6 +11,7 @@ const EditorSelectors = {
 	updateBtn: 'Update',
 	menuIcon: '#elementor-panel-header-menu-button i',
 	widget: '[data-element_type="widget"]',
+	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	loadingElement: ( id: string ) => `.elementor-element-${ id }.elementor-loading`,
 	videoIframe: 'iframe.elementor-video',
 	playIcon: '[aria-label="Play"]',

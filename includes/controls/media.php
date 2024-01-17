@@ -247,6 +247,7 @@ class Control_Media extends Control_Base_Multiple {
 							#>
 						</div>
 					</div>
+					<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
 				</div>
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">

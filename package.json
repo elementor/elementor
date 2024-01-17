@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "3.19.0",
+	"version": "3.20.0",
 	"last_beta_version": "3.12.0-beta3",
 	"last_cloud_version": "3.13.0-cloud2",
 	"last_dev_version": "3.9.0-dev2",
@@ -119,9 +119,9 @@
 		"@elementor/editor": "0.10.5",
 		"@elementor/editor-app-bar": "0.9.7",
 		"@elementor/editor-documents": "0.10.1",
-		"@elementor/editor-panels": "0.4.5",
+		"@elementor/editor-panels": "0.4.6",
 		"@elementor/editor-responsive": "0.8.7",
-		"@elementor/editor-site-navigation": "0.19.8",
+		"@elementor/editor-site-navigation": "0.20.0",
 		"@elementor/editor-v1-adapters": "0.6.0",
 		"@elementor/env": "0.3.2",
 		"@elementor/icons": "0.7.2",
@@ -149,6 +149,7 @@
 		"react-markdown": "^8.0.5",
 		"react-redux": "^7.2.6",
 		"react-sketch-canvas": "^6.2.0",
+		"validator": "^13.11.0",
 		"write": "^2.0.0"
 	},
 	"overrides": {

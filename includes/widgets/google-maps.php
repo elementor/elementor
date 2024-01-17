@@ -137,6 +137,9 @@ class Widget_Google_Maps extends Widget_Base {
 						TagsModule::POST_META_CATEGORY,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'placeholder' => $default_address,
 				'default' => $default_address,
 				'label_block' => true,
@@ -171,24 +174,11 @@ class Widget_Google_Maps extends Widget_Base {
 						'min' => 40,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 
@@ -237,10 +227,11 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],

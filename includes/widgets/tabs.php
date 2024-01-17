@@ -157,15 +157,6 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->add_control(
 			'type',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
@@ -255,12 +246,25 @@ class Widget_Tabs extends Widget_Base {
 			[
 				'label' => esc_html__( 'Navigation Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
 				'range' => [
+					'px' => [
+						'min' => 10,
+						'max' => 500,
+					],
 					'%' => [
 						'min' => 10,
+						'max' => 50,
+					],
+					'em' => [
+						'min' => 1,
+						'max' => 50,
+					],
+					'rem' => [
+						'min' => 1,
 						'max' => 50,
 					],
 				],

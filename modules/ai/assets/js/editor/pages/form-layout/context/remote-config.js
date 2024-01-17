@@ -8,6 +8,7 @@ export const useRemoteConfig = () => React.useContext( RemoteConfigContext );
 
 export const CONFIG_KEYS = {
 	WEB_BASED_BUILDER_URL: 'webBasedBuilderUrl',
+	AUTH_TOKEN: 'jwt',
 };
 
 export const RemoteConfigProvider = ( props ) => {
