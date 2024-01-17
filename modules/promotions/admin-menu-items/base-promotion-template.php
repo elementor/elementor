@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Menu_Item_Promotion;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 use Elementor\Utils;
 
@@ -10,7 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Base_Promotion_Template implements Menu_Item_Promotion {
+abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
+
+	abstract protected function get_promotion_title();
+
+	abstract protected function get_cta_url();
+
+	abstract protected function set_list();
+
+	abstract protected function get_video_url();
 
 	public function is_visible() {
 		return true;
@@ -28,15 +36,15 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 		return esc_html__( 'Upgrade Now', 'elementor' );
 	}
 
-	public function get_side_note() {
+	/**
+	 * Should the promotion have a side note.
+	 * @return string
+	 */
+	protected function get_side_note() {
 		return '';
 	}
 
-	public function set_list() {
-		return [];
-	}
-
-	public function get_list() {
+	protected function get_list() {
 		ob_start();
 		if ( ! empty( $this->set_list() ) ) {
 			?>
@@ -49,10 +57,6 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 		}
 
 		return ob_get_clean();
-	}
-
-	public function get_video_url() {
-		return '';
 	}
 
 	public function render() {
