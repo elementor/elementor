@@ -285,7 +285,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		$temp_file_path = Plugin::$instance->uploads_manager->create_temp_file( $template, $file_name );
 
 		// Assert.
-		$this->assertRegExp( $assert_path, $temp_file_path, "Failed for file name: { $file_name }" );
+		$this->assertMatchesRegularExpression( $assert_path, $temp_file_path, "Failed for file name: { $file_name }" );
 
 		// Clean up.
 		$temp_dir = dirname( $temp_file_path );

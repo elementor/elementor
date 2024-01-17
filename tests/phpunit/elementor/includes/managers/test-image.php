@@ -23,6 +23,7 @@ class Test_Image extends Elementor_Test_Base {
 
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
 
+		$image_meta = $this->initialize_image_meta_array( $image_meta );
 		$image_meta['sizes']['test_size'] = [
 			'file' => 'test-image.png',
 			'width' => 300,
@@ -95,6 +96,7 @@ class Test_Image extends Elementor_Test_Base {
 
 		$attachment_id = $this->create_image();
 		$image_meta = wp_get_attachment_metadata( $attachment_id );
+		$image_meta = $this->initialize_image_meta_array( $image_meta );
 		$image_meta['sizes']['elementor_custom_100x100'] = [
 			'file' => '/elementor/thumbs/mock-image.png',
 			'width' => 100,
@@ -116,5 +118,19 @@ class Test_Image extends Elementor_Test_Base {
 
 		// Cleanup
 		unlink( $base_full_path );
+	}
+
+	/**
+	 * @param false|array $image_meta
+	 *
+	 * @return array
+	 */
+	public function initialize_image_meta_array ( false|array $image_meta ): array
+	{
+		if ( !isset( $image_meta['sizes'] ) || !is_array( $image_meta['sizes'] ) ) {
+			$image_meta['sizes'] = [];
+		}
+
+		return $image_meta;
 	}
 }
