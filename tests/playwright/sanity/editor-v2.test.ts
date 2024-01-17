@@ -15,7 +15,7 @@ test.describe( 'Editor v2', () => {
 
 		await wpAdminPage.setExperiments( { editor_v2: true } );
 
-		editor = await wpAdminPage.openNewPage( 'editor_v2' );
+		editor = await wpAdminPage.openNewPage();
 	} );
 
 	test.afterAll( async () => {
@@ -26,7 +26,7 @@ test.describe( 'Editor v2', () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 
-		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
+		await wrapper.getByRole( 'button', { name: 'Page Settings' } ).click();
 
 		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
 

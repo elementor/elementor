@@ -189,7 +189,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<?php if ( ! Utils::has_pro() ) : ?>
 	<# if ( elementData.upsale_data && elementData.upsale_data.description ) { #>
 	<div class="elementor-nerd-box">
-		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy">
+		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 		<# if ( elementData.upsale_data.title ) { #>
 		<div class="elementor-nerd-box-title">{{ elementData.upsale_data.title }}</div>
 		<# } #>
@@ -201,7 +201,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" />
+	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php
 		printf(

@@ -1107,7 +1107,7 @@ class Controls_Manager {
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" />
+			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 			<div class="elementor-nerd-box-title"><?php Utils::print_unescaped_internal_string( $texts['title'] ); ?></div>
 			<?php foreach ( $texts['messages'] as $message ) { ?>
 				<div class="elementor-nerd-box-message"><?php Utils::print_unescaped_internal_string( $message ); ?></div>
@@ -1213,5 +1213,36 @@ class Controls_Manager {
 		}
 
 		return true;
+	}
+
+	public function add_display_conditions_controls( Controls_Stack $controls_stack ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
+		ob_start();
+		?>
+		<div class="e-control-display-conditions-promotion__wrapper">
+			<div class="e-control-display-conditions-promotion__description">
+				<span class="e-control-display-conditions-promotion__text">
+					<?php echo esc_html__( 'Display Conditions', 'elementor' ); ?>
+				</span>
+				<span class="e-control-display-conditions-promotion__lock-wrapper">
+					<i class="eicon-lock e-control-display-conditions-promotion"></i>
+				</span>
+			</div>
+			<i class="eicon-flow e-control-display-conditions-promotion"></i>
+		</div>
+		<?php
+		$control_template = ob_get_clean();
+
+		$controls_stack->add_control(
+			'display_conditions_pro',
+			[
+				'type'      => self::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $control_template,
+			]
+		);
 	}
 }
