@@ -240,7 +240,7 @@ class Utils {
 	public static function is_post_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
 
-		$is_supported = self::class::is_post_type_support( $post_type );
+		$is_supported = self::is_post_type_support( $post_type );
 
 		/**
 		 * Is post type support.
@@ -521,7 +521,7 @@ class Utils {
 	 */
 	public static function print_html_attributes( array $attributes ) {
 		// PHPCS - the method render_html_attributes is safe.
-		echo self::class::render_html_attributes( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo self::render_html_attributes( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public static function get_meta_viewport( $context = '' ) {
@@ -556,7 +556,7 @@ class Utils {
 	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
 
-		if ( get_option( self::class::EDITOR_BREAK_LINES_OPTION_KEY ) ) {
+		if ( get_option( self::EDITOR_BREAK_LINES_OPTION_KEY ) ) {
 			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config = str_replace( '}},"', '}},' . PHP_EOL . '"', $config );
 		}
@@ -575,7 +575,7 @@ class Utils {
 
 		$alias_version_as_float = (float) $alias_version[0];
 
-		if ( round( $current_version_as_float - $alias_version_as_float, 1 ) >= self::class::DEPRECATION_RANGE ) {
+		if ( round( $current_version_as_float - $alias_version_as_float, 1 ) >= self::DEPRECATION_RANGE ) {
 			_deprecated_file( $item, $version, $replacement ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
@@ -682,7 +682,7 @@ class Utils {
 			}
 
 			if ( ! empty( $element['elements'] ) ) {
-				$element = self::class::find_element_recursive( $element['elements'], $id );
+				$element = self::find_element_recursive( $element['elements'], $id );
 
 				if ( $element ) {
 					return $element;
@@ -724,7 +724,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		return in_array( strtolower( $tag ), self::class::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
 
 	/**
@@ -734,7 +734,7 @@ class Utils {
 	 */
 	public static function print_validated_html_tag( $tag ) {
 		// PHPCS - the method validate_html_tag is safe.
-		echo self::class::validate_html_tag( $tag ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo self::validate_html_tag( $tag ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -772,8 +772,8 @@ class Utils {
 		$allowed_html = wp_kses_allowed_html( 'post' );
 
 		foreach ( $tags as $tag ) {
-			if ( isset( self::class::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] ) ) {
-				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::class::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
+			if ( isset( self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] ) ) {
+				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
 				$allowed_html = array_replace_recursive( $allowed_html, $extended_tags );
 			}
 		}
@@ -823,8 +823,8 @@ class Utils {
 
 		if ( $_FILES === $super_global ) {
 			return isset( $super_global[ $key ]['name'] ) ?
-				self::class::sanitize_file_name( $super_global[ $key ] ) :
-				self::class::sanitize_multi_upload( $super_global[ $key ] );
+				self::sanitize_file_name( $super_global[ $key ] ) :
+				self::sanitize_multi_upload( $super_global[ $key ] );
 		}
 
 		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
