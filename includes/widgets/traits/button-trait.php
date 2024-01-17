@@ -10,6 +10,8 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
+use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -226,6 +228,8 @@ trait Button_Trait {
 				'condition' => $args['section_condition'],
 			]
 		);
+
+		$this->add_promotion_control();
 	}
 
 	protected function register_button_style_controls( $args = [] ) {
@@ -585,5 +589,25 @@ trait Button_Trait {
 
 	public function on_import( $element ) {
 		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
+	}
+
+	protected function add_promotion_control() {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
+		$this->add_control(
+			'button_pro',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => Plugin::$instance->controls_manager->get_teaser_template( [
+					'title' => esc_html__( 'Convert visitors into customers', 'elementor' ),
+					'messages' => [
+						esc_html__( 'Design engaging calls-to-action and grow your toolbox with Elementor Pro.', 'elementor' ),
+					],
+					'link' => 'https://go.elementor.com/go-pro-button-widget/',
+				] ),
+			]
+		);
 	}
 }
