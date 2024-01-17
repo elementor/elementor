@@ -208,7 +208,7 @@ jobs:
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         with:
-            github_token: ${{github.token}}
+            github_token: ${{secrets.MAINTAIN_TOKEN}}
             publish_branch: gh-pages
             publish_dir: allure-history
       - name: Get icon
