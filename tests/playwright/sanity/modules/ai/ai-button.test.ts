@@ -4,10 +4,12 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 test.describe( 'AI @ai', () => {
 	test( 'AI Button', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
+
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Textarea control', async () => {
 			await editor.addWidget( 'heading' );
+
 			await expect( page.locator( '.elementor-control-title.elementor-control-type-textarea .e-ai-button' ) ).toHaveCount( 1 );
 		} );
 
