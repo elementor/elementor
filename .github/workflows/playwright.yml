@@ -34,7 +34,7 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-latest
-    #if: startsWith( github.repository, 'elementor/' )
+    if: startsWith( github.repository, 'elementor/' )
     outputs:
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
