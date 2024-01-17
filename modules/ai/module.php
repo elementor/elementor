@@ -8,6 +8,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
 use Elementor\Plugin;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -160,6 +161,28 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
+
+		if ( ! empty( $config['usage']['hasAiSubscription'] ) ) {
+			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config' );
+			if ( ! empty( $remote_config['remoteIntegrationUrl'] ) ) {
+				wp_enqueue_scripts(
+					'elementor-ai-integration',
+					$remote_config['remoteIntegrationUrl'],
+					[
+						'elementor-editor',
+					],
+					ELEMENTOR_VERSION,
+					true
+				);
+			}
+
+			add_filter( 'script_loader_tag', function( $tag, $handle ) {
+				if ( 'elementor-ai-integration' === $handle ) {
+					return str_replace( ' src', ' type="module" src', $tag );
+				}
+				return $tag;
+			}, 10, 2 );
+		}
 	}
 
 	private function enqueue_layout_script() {
