@@ -55,7 +55,7 @@ class Model extends BaseModel {
 		$this->add_control(
 			'ui_theme',
 			[
-				'label' => esc_html__( 'Editor Theme Colors', 'elementor' ),
+				'label' => esc_html__( 'Editor Theme', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'light' => [
@@ -72,7 +72,7 @@ class Model extends BaseModel {
 					],
 				],
 				'default' => 'auto',
-				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
+				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your operating system setting.', 'elementor' ),
 			]
 		);
 

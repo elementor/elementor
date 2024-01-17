@@ -12,16 +12,25 @@
 				"name": "preferences"
 			},
 			"ui_theme": {
-				"type": "select",
+				"type": "choose",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "UI Theme",
-				"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
+				"label": "Editor Theme",
+				"description": "Set light or dark mode, or use Auto Detect to sync it with your operating system setting.",
 				"default": "auto",
 				"options": {
-					"auto": "Auto Detect",
-					"light": "Light",
-					"dark": "Dark"
+					"light": {
+						"title": "Light",
+						"icon": "eicon-circle-o"
+					},
+					"dark": {
+						"title": "Dark",
+						"icon": "eicon-circle"
+					},
+					"auto": {
+						"title": "Auto Detect",
+						"icon": "eicon-device-desktop"
+					}
 				},
 				"name": "ui_theme"
 			},
