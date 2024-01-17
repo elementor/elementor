@@ -859,4 +859,15 @@ class Utils {
 		}
 		return $array;
 	}
+
+	public static function get_cached_callback( $callback, $cache_key, $cache_time = 24 * HOUR_IN_SECONDS ) {
+		$cache = get_site_transient( $cache_key );
+
+		if ( ! $cache ) {
+			$cache = call_user_func( $callback );
+			set_site_transient( $cache_key, $cache, $cache_time );
+		}
+
+		return $cache;
+	}
 }
