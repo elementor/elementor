@@ -32,7 +32,7 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 		return 'manage_options';
 	}
 
-	 protected function get_cta_text() {
+	protected function get_cta_text() {
 		return esc_html__( 'Upgrade Now', 'elementor' );
 	}
 
