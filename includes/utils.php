@@ -865,7 +865,10 @@ class Utils {
 
 		if ( ! $cache ) {
 			$cache = call_user_func( $callback );
-			set_site_transient( $cache_key, $cache, $cache_time );
+
+			if ( ! is_wp_error( $cache ) ) {
+				set_site_transient( $cache_key, $cache, $cache_time );
+			}
 		}
 
 		return $cache;
