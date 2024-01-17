@@ -88,7 +88,6 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      fail-fast: false
       matrix:
         testSuite: [
           'ai',
@@ -195,14 +194,12 @@ jobs:
           path: allure-results
       - name: Load test report history
         uses: actions/checkout@v3
-        if: always()
         continue-on-error: true
         with:
             ref: gh-pages
             path: gh-pages
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.8
-        if: always()
         with:
             gh_pages: gh-pages
             allure_history: allure-history
@@ -232,4 +229,4 @@ jobs:
             comment_tag: allure_report
             mode: recreate
       - name: Add report link to GH annotation
-        run: echo "::notice links::wiki https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}"
+        run: echo "::notice links::https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}"
