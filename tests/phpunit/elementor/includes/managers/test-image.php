@@ -128,6 +128,7 @@ class Test_Image extends Elementor_Test_Base {
 	public function initialize_image_meta_array ( false|array $image_meta ): array
 	{
 		if ( !isset( $image_meta['sizes'] ) || !is_array( $image_meta['sizes'] ) ) {
+			$image_meta = [];
 			$image_meta['sizes'] = [];
 		}
 
