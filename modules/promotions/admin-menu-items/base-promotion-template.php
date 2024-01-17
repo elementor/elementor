@@ -24,7 +24,7 @@ abstract class Base_Promotion_Template implements Menu_Item_Promotion {
 		return 'manage_options';
 	}
 
-	public function get_cta_text() {
+	protected function get_cta_text() {
 		return esc_html__( 'Upgrade Now', 'elementor' );
 	}
 
