@@ -18,6 +18,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 
 	for ( const widget in data ) {
 		test( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
+			// Remove me after test
 			const link = 'https://elementor.com/';
 			const customAttributes = { key: 'mykey', value: 'myValue' };
 			const wpAdmin = new WpAdminPage( page, testInfo );

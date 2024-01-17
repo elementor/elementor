@@ -1,4 +1,4 @@
-name: Playwright123
+name: Playwright
 
 on:
   pull_request:
@@ -12,11 +12,12 @@ on:
             - allure-playwright
             - html
             - blob
-          default: ''
+            - list
+          default: allure-playwright
         path-to-results:
           required: false
           description: 'Provide path to reporter files'
-          default: test-results/
+          default: allure-results
           type: choice
           options:
             - test-results/
@@ -87,7 +88,6 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      fail-fast: false
       matrix:
         testSuite: [
           'ai',
@@ -150,22 +150,22 @@ jobs:
         if: ${{matrix.testSuite !='elements-regression'}}
         env:
           TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright -- --reporter=${{inputs.reporter}}
+        run: npm run test:playwright -- --reporter=${{inputs.reporter || 'allure-playwright'}}
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
-        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter}}
+        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'allure-playwright'}}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-test-results
-          path: ${{inputs.path-to-results}}
-          retention-days: 3     
+          path: ${{inputs.path-to-results || 'test-results/'}} 
+          retention-days: 2     
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: allure-results
           path: allure-results
-          retention-days: 3   
+          retention-days: 2   
 
   test-result:
     needs: Playwright
@@ -181,9 +181,9 @@ jobs:
 
   Build-and-Publish-report:
     needs: Playwright
-    if: always()
     runs-on: ubuntu-22.04
     name: Build Allure report and publish to GH pages
+    if: always()
     steps:
       - name: Pull repo
         uses: actions/checkout@v3
@@ -194,32 +194,39 @@ jobs:
           path: allure-results
       - name: Load test report history
         uses: actions/checkout@v3
-        if: always()
         continue-on-error: true
         with:
             ref: gh-pages
             path: gh-pages
       - name: Build test report
-        uses: simple-elf/allure-report-action@v1.7
-        id: allure
-        if: always()
+        uses: simple-elf/allure-report-action@v1.8
         with:
-          gh_pages: gh-pages
-          allure_history: allure-history
-          allure_results: allure-results
+            gh_pages: gh-pages
+            allure_history: allure-history
+            allure_results: allure-results
+            keep_reports: 5
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
-        if: always()
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          publish_branch: gh-pages
-          publish_dir: allure-history
+            github_token: ${{github.token}}
+            publish_branch: gh-pages
+            publish_dir: allure-history
+      - name: Get icon
+        run : |
+          if [[ ${{needs.Playwright.result == 'success'}} ]]; then
+            ICON="✅" 
+          else
+            ICON="❌"
+          fi
+          echo "ICON=${ICON}" >> $GITHUB_ENV
       - name: Comment PR with Allure Report link
-        if: github.event_name == 'pull_request' && steps.allure.outputs.report_url
+        if: ${{github.event_name == 'pull_request'}}
         continue-on-error: true
         uses: thollander/actions-comment-pull-request@v2
         with:
             message: |
-                ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
+              ${{ env.ICON }} [Allure Report](https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }})
             comment_tag: allure_report
             mode: recreate
+      - name: Add report link to GH annotation
+        run: echo "::notice links::https://${{github.repository_owner}}.github.io/elementor/${{github.run_number }}"
