@@ -164,7 +164,8 @@ class Module extends BaseModule {
 
 		if ( ! empty( $config['usage']['hasAiSubscription'] ) ) {
 			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config' );
-			if ( ! empty( $remote_config['remoteIntegrationUrl'] ) ) {
+
+			if ( ! is_wp_error( $remote_config ) && ! empty( $remote_config['remoteIntegrationUrl'] ) ) {
 				wp_enqueue_scripts(
 					'elementor-ai-integration',
 					$remote_config['remoteIntegrationUrl'],
