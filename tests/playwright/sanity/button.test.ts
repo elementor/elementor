@@ -56,7 +56,7 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );
 
-test.only( 'Verify Button Promotions', async ( { page }, testInfo ) => {
+test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.openNewPage();
