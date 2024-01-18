@@ -10,8 +10,6 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
-use Elementor\Plugin;
-use Elementor\Utils;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -228,7 +226,6 @@ trait Button_Trait {
 				'condition' => $args['section_condition'],
 			]
 		);
-
 	}
 
 	protected function register_button_style_controls( $args = [] ) {
