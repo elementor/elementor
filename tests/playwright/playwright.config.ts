@@ -61,7 +61,7 @@ export default {
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || 'http://wordpress-dev2.local',
 		viewport: { width: 1920, height: 1080 },
 		storageState: './storageState.json',
 		user: {
