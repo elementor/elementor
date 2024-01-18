@@ -46,17 +46,18 @@ module.exports = ControlBaseView.extend( {
 			},
 			success: () => {
 				this.$el.remove();
-				elementor.config.user.dismissed_editor_notices[ dismissId ] = true;
+				const dismissedNotices = elementor?.config?.user?.dismissed_editor_notices ? [ ...elementor.config.user.dismissed_editor_notices ] : [];
+				elementor.config.user.dismissed_editor_notices = [ ...dismissedNotices, dismissId ];
 			},
 		} );
 	},
 
 	templateHelpers() {
 		const controlData = ControlBaseView.prototype.templateHelpers.apply( this, arguments );
-		const dismissedNotices = elementor?.config?.user?.dismissed_editor_notices ? { ...elementor.config.user.dismissed_editor_notices } : {};
+		const dismissedNotices = elementor?.config?.user?.dismissed_editor_notices ? [ ...elementor.config.user.dismissed_editor_notices ] : [];
 		const dismissId = this.getDismissId();
 
-		controlData.data.shouldRenderNotice = ( true !== dismissedNotices[ dismissId ] );
+		controlData.data.shouldRenderNotice = ! dismissedNotices.includes( dismissId );
 
 		return controlData;
 	},
