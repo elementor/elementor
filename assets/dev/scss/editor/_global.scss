@@ -55,10 +55,16 @@
 		margin-block-start: 20px;
 	}
 
-	&.widget-upsale-promotion {
+	&--upsale {
+		padding: 15px 30px 30px;
+
 		.elementor-nerd-box-title {
 			font-weight: 500;
 			line-height: 1.2;
+		}
+
+		.elementor-nerd-box-message {
+			line-height: 1.5;
 		}
 	}
 }
