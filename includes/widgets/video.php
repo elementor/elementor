@@ -591,6 +591,7 @@ class Widget_Video extends Widget_Base {
 
 		$this->end_controls_section();
 
+
 		$this->start_controls_section(
 			'section_image_overlay',
 			[
@@ -1376,5 +1377,13 @@ class Widget_Video extends Widget_Base {
 		?>
 		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
+	}
+
+	protected function get_upsale_data() {
+		return [
+			'title' => esc_html__( 'Grab your visitor\'s attention', 'elementor' ),
+			'description' => esc_html__( 'Customize a playlist of video\'s and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-custom-css/',
+		];
 	}
 }
