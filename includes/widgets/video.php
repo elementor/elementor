@@ -1380,8 +1380,8 @@ class Widget_Video extends Widget_Base {
 
 	protected function get_upsale_data() {
 		return [
-			'title' => 'Grab your visitor\'s attention',
-			'description' => esc_html__( 'Customize a playlist of video\'s and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'title' => 'Grab your visitors\' attention',
+			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro', 'elementor' ),
 			'upgrade_url' => 'https://go.elementor.com/go-pro-custom-css/',
 		];
 	}
