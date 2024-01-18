@@ -591,7 +591,6 @@ class Widget_Video extends Widget_Base {
 
 		$this->end_controls_section();
 
-
 		$this->start_controls_section(
 			'section_image_overlay',
 			[
@@ -1381,7 +1380,7 @@ class Widget_Video extends Widget_Base {
 
 	protected function get_upsale_data() {
 		return [
-			'title' =>  'Grab your visitor\'s attention',
+			'title' => 'Grab your visitor\'s attention',
 			'description' => esc_html__( 'Customize a playlist of video\'s and grow your toolbox with Elementor Pro.', 'elementor' ),
 			'upgrade_url' => 'https://go.elementor.com/go-pro-custom-css/',
 		];

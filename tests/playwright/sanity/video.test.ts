@@ -27,7 +27,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		} );
 	} );
 
-	test.only( 'Verify Video Promotions', async ( { browser }, testInfo ) => {
+	test( 'Verify Video Promotions', async ( { browser }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
