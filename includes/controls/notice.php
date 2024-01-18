@@ -41,7 +41,7 @@ class Control_Notice extends Base_UI_Control {
 	public function content_template() {
 		?>
 		<#
-		if ( ! data.shouldRenderControl ) {
+		if ( ! data.shouldRenderNotice ) {
 			return;
 		}
 

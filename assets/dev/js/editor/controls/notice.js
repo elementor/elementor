@@ -55,7 +55,7 @@ module.exports = ControlBaseView.extend( {
 		const controlData = ControlBaseView.prototype.templateHelpers.apply( this, arguments );
 		const dismissId = this.getDismissId();
 
-		controlData.data.shouldRenderControl = ! ( elementor.config.user?.dismissed_editor_notices && true === elementor.config.user?.dismissed_editor_notices[ dismissId ] );
+		controlData.data.shouldRenderNotice = ! ( elementor.config.user?.dismissed_editor_notices && true === elementor.config.user?.dismissed_editor_notices[ dismissId ] );
 
 		return controlData;
 	},
