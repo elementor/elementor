@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { defineConfig } from '@playwright/test';
 
 process.env.DEBUG_PORT = '9222';
 
@@ -34,7 +33,8 @@ function getGrep() {
 	return [ /.*/ ];
 }
 
-export default defineConfig( {
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
+export default {
 	testDir: './sanity',
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
@@ -70,4 +70,4 @@ export default defineConfig( {
 		},
 		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
-} );
+};
