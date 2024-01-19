@@ -38,7 +38,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = await page.locator( '.elementor-nerd-box' );
+		const promoArea = await page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		// Set container padding to 0.
