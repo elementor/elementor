@@ -41,7 +41,6 @@ test.describe( 'Video tests inside a container @video', () => {
 		const promoArea = await page.locator( '.elementor-nerd-box' );
 
 		// Act.
-		// Set container padding to 0.
 		await editor.selectElement( videoId );
 		await promoArea.scrollIntoViewIfNeeded;
 
