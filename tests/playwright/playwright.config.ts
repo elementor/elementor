@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { defineConfig } from '@playwright/test';
 
 process.env.DEBUG_PORT = '9222';
 
@@ -33,8 +34,7 @@ function getGrep() {
 	return [ /.*/ ];
 }
 
-/** @type {import('@playwright/test').PlaywrightTestConfig} */
-export default {
+export default defineConfig( {
 	testDir: './sanity',
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
@@ -61,7 +61,7 @@ export default {
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: process.env.BASE_URL || 'http://wordpress-dev2.local',
+		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
 		storageState: './storageState.json',
 		user: {
@@ -70,4 +70,4 @@ export default {
 		},
 		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
-};
+} );
