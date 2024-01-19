@@ -1377,4 +1377,12 @@ class Widget_Video extends Widget_Base {
 		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
 	}
+
+	protected function get_upsale_data() {
+		return [
+			'title' => __( 'Grab your visitors\' attention', 'elementor' ),
+			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/', 'elementor' ),
+		];
+	}
 }
