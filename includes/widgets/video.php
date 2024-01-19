@@ -1382,7 +1382,7 @@ class Widget_Video extends Widget_Base {
 		return [
 			'title' => __('Grab your visitors\' attention'),
 			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-video-widget/',
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/', 'elementor' ),
 		];
 	}
 }
