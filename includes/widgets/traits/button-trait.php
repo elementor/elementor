@@ -10,6 +10,7 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
+use Elementor\Plugin;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,23 +65,27 @@ trait Button_Trait {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$this->add_control(
-			'button_type',
-			[
-				'label' => esc_html__( 'Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'info' => esc_html__( 'Info', 'elementor' ),
-					'success' => esc_html__( 'Success', 'elementor' ),
-					'warning' => esc_html__( 'Warning', 'elementor' ),
-					'danger' => esc_html__( 'Danger', 'elementor' ),
-				],
-				'prefix_class' => 'elementor-button-',
-				'condition' => $args['section_condition'],
-			]
-		);
+		if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
+
+			$this->add_control(
+				'button_type',
+				[
+					'label' => esc_html__( 'Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => '',
+					'options' => [
+						'' => esc_html__( 'Default', 'elementor' ),
+						'info' => esc_html__( 'Info', 'elementor' ),
+						'success' => esc_html__( 'Success', 'elementor' ),
+						'warning' => esc_html__( 'Warning', 'elementor' ),
+						'danger' => esc_html__( 'Danger', 'elementor' ),
+					],
+					'prefix_class' => 'elementor-button-',
+					'condition' => $args['section_condition'],
+				]
+			);
+
+		}
 
 		$this->add_control(
 			'text',
