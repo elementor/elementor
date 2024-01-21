@@ -102,6 +102,11 @@ class Controls_Manager {
 	const DEPRECATED_NOTICE = 'deprecated_notice';
 
 	/**
+	 * Alert control.
+	 */
+	const ALERT = 'alert';
+
+	/**
 	 * Popover Toggle control.
 	 */
 	const POPOVER_TOGGLE = 'popover_toggle';
@@ -406,6 +411,7 @@ class Controls_Manager {
 			self::TABS,
 			self::DIVIDER,
 			self::DEPRECATED_NOTICE,
+			self::ALERT,
 			self::NOTICE,
 
 			self::COLOR,
