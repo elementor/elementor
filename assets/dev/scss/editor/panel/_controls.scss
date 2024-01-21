@@ -28,6 +28,10 @@
 		font-size: var(--control-title-size);
 		line-height: 1;
 		margin-inline-end: 5px;
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	.elementor-control-spinner {
