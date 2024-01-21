@@ -162,7 +162,7 @@ class Module extends BaseModule {
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
 
-		if ( ! empty( $config['usage']['hasAiSubscription'] ) ) {
+		if ( $this->get_ai_app()->is_connected() && ! empty( $config['is_get_started'] ) ) {
 			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config' );
 
 			if ( ! is_wp_error( $remote_config ) && ! empty( $remote_config['remoteIntegrationUrl'] ) ) {
