@@ -165,10 +165,10 @@ class Module extends BaseModule {
 		if ( $this->get_ai_app()->is_connected() && ! empty( $config['is_get_started'] ) ) {
 			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config' );
 
-			if ( ! is_wp_error( $remote_config ) && ! empty( $remote_config['remoteIntegrationUrl'] ) ) {
+			if ( ! is_wp_error( $remote_config ) && ! empty( $remote_config['config']['remoteIntegrationUrl'] ) ) {
 				wp_enqueue_scripts(
 					'elementor-ai-integration',
-					$remote_config['remoteIntegrationUrl'],
+					$remote_config['config']['remoteIntegrationUrl'],
 					[
 						'elementor-editor',
 					],
