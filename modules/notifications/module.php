@@ -74,7 +74,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_get_notifications() {
-		$notifications = Api::get_notifications( true );
+		//$notifications = Api::get_notifications( true );
+		$notifications = API::get_notifications_by_conditions();
 
 		Options::mark_notification_read( $notifications );
 
