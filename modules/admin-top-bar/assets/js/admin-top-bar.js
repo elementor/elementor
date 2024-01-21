@@ -46,7 +46,10 @@ export default function AdminTopBar() {
 					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Apps', 'elementor' ) }</BarButton>
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
 					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
-					{ BarButtonNotification ? <BarButtonNotification>{ __( 'What\'s New', 'elementor' ) }</BarButtonNotification> : '' }
+					{ BarButtonNotification
+						? <BarButtonNotification defaultIsRead={ ! elementorNotifications?.is_unread }>{ __( 'What\'s New', 'elementor' ) }</BarButtonNotification>
+						: ''
+					}
 				</div>
 
 				<ConnectionButton />

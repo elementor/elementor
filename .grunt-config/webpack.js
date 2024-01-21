@@ -122,7 +122,8 @@ const entry = {
 	'editor-environment-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-environment-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
-	'notification-center': path.resolve( __dirname, '../modules/notification-center/assets/js/index.js' ),
+	'admin-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/admin.js' ),
+	'editor-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/editor.js' ),
 	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
 	// Temporary solution for the AI App in the Admin.

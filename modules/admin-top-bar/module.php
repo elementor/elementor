@@ -46,8 +46,6 @@ class Module extends BaseApp {
 			'react',
 			'react-dom',
 			'tipsy',
-			'elementor-v2-ui',
-			'elementor-v2-icons',
 		], ELEMENTOR_VERSION, true );
 
 		wp_set_script_translations( 'elementor-admin-top-bar', 'elementor' );

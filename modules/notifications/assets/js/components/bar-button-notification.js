@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import BarButton from 'elementor/modules/admin-top-bar/assets/js/components/bar-button/bar-button';
 import { WhatsNew } from './whats-new';
-import { items } from '../items';
-import { Badge, Button } from '@elementor/ui';
+import { Badge } from '@elementor/ui';
 import { GiftIcon } from '../icons/gift-icon';
 
 export const BarButtonNotification = ( props ) => {
-	const [ isOpen, setIsOpen ] = useState( true );
-	const [ isRead, setIsRead ] = useState( false );
+	const { defaultIsRead } = props;
+
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isRead, setIsRead ] = useState( defaultIsRead );
 
 	// TODO: This is a temporary solution until we have a proper admin bar component.
 	return (
@@ -34,7 +34,7 @@ export const BarButtonNotification = ( props ) => {
 					{ props.children }
 				</span>
 			</a>
-			<WhatsNew items={ items } isOpen={ isOpen } setIsOpen={ setIsOpen } onWhatever={ setIsRead } />
+			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } onWhatever={ setIsRead } />
 		</>
 	);
 };

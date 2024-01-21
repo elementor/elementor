@@ -127,5 +127,37 @@
 	}
 }
 
+// Notification Center (v1)
+@mixin e-notification-icon-bullet() {
+	position: relative;
+
+	&:after {
+		position: absolute;
+		content: '';
+		display: block;
+		background: var(--e-a-color-primary);
+		border-radius: 50%;
+		width: 8px;
+		height: 8px;
+		top: 5px;
+		right: 5px;
+	}
+}
+
+body.e-has-notification {
+	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center {
+		.elementor-panel-menu-item-icon {
+			@include e-notification-icon-bullet();
+		}
+	}
+
+	#elementor-panel-header-menu-button {
+		.elementor-icon.tooltip-target.eicon-menu-bar {
+			@include e-notification-icon-bullet();
+		}
+	}
+}
+
+
 //Compatibility
 @import "compatibility";
