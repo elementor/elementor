@@ -92,6 +92,11 @@ class Controls_Manager {
 	const RAW_HTML = 'raw_html';
 
 	/**
+	 * Notice control.
+	 */
+	const NOTICE = 'notice';
+
+	/**
 	 * Deprecated Notice control.
 	 */
 	const DEPRECATED_NOTICE = 'deprecated_notice';
@@ -407,6 +412,7 @@ class Controls_Manager {
 			self::DIVIDER,
 			self::DEPRECATED_NOTICE,
 			self::ALERT,
+			self::NOTICE,
 
 			self::COLOR,
 			self::MEDIA,
