@@ -35,7 +35,7 @@ const WhatsNewTopBar = ( props ) => {
 	return (
 		<>
 			<AppBar
-				position="relative"
+				position="sticky"
 				sx={ {
 					boxShadow: 'none',
 					backgroundColor: 'background.default',

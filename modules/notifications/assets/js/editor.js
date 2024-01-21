@@ -28,7 +28,7 @@ elementor.on( 'panel:init', () => {
 
 	elementor.getPanelView().getPages( 'menu' ).view.addItem( {
 		name: 'notification-center',
-		icon: 'eicon-info',
+		icon: 'eicon-notification',
 		title: __( 'What\'s New', 'elementor' ),
 		callback: onButtonClicked,
 	}, 'navigate_from_page', 'view-page' );

@@ -28,9 +28,6 @@ class API {
 					'readMoreText' => 'Read More',
 					'cta' => 'Get Started',
 					'ctaLink' => '{https_url}',
-					'conditions' => [
-
-					],
 				],
 				[
 					'id' => 'release-note-3.1111',
@@ -46,7 +43,6 @@ class API {
 					'readMoreText' => 'Read More',
 					'cta' => 'Get Started',
 					'ctaLink' => '{https_url}',
-					'conditions'
 				],
 				[
 					'id' => 'release-note-3.17-2',
