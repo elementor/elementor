@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A base control for creating alerts in the Editor panels.
  *
- * @since 3.20.0
+ * @since 3.19.0
  */
 class Control_Alert extends Base_UI_Control {
 
@@ -19,7 +19,7 @@ class Control_Alert extends Base_UI_Control {
 	 *
 	 * Retrieve the control type, in this case `alert`.
 	 *
-	 * @since 3.20.0
+	 * @since 3.19.0
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -35,7 +35,7 @@ class Control_Alert extends Base_UI_Control {
 	 * template. The variables for the class are available using `data` JS
 	 * object.
 	 *
-	 * @since 3.20.0
+	 * @since 3.19.0
 	 * @access public
 	 */
 	public function content_template() {
@@ -64,7 +64,7 @@ class Control_Alert extends Base_UI_Control {
 	 * Retrieve the default settings of the alert control. Used to return the
 	 * default settings while initializing the alert control.
 	 *
-	 * @since 3.20.0
+	 * @since 3.19.0
 	 * @access protected
 	 *
 	 * @return array Control default settings.
