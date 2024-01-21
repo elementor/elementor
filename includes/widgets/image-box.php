@@ -108,7 +108,6 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'default' => 'full',
-				'separator' => 'none',
 				'condition' => [
 					'image[url]!' => '',
 				],
@@ -139,7 +138,6 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'default' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
-				'separator' => 'none',
 				'rows' => 10,
 			]
 		);

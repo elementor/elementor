@@ -304,7 +304,6 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			'condition' => [
 				'size' => 'custom',
 			],
-			'separator' => 'none',
 		];
 
 		return $fields;

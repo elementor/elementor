@@ -128,7 +128,6 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'testimonial_image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `testimonial_image_size` and `testimonial_image_custom_dimension`.
 				'default' => 'full',
-				'separator' => 'none',
 			]
 		);
 
