@@ -37,7 +37,7 @@ export const Menu = ( props ) => {
 					horizontal: 'rtl' === direction ? 'right' : 'left',
 				} }
 			>
-				<Stack spacing={ 2 } sx={ {
+				<Stack sx={ {
 					width: 440,
 				} }>
 					{ props.items.map( ( item ) => (
@@ -45,7 +45,10 @@ export const Menu = ( props ) => {
 							key={ item.type }
 							title={ item.title }
 							icon={ item.icon }
-							onClick={ () => setSelectedType( item.type ) }
+							onClick={ () => {
+								setSelectedType( item.type );
+								setIsOpen( false );
+							} }
 						/> ) ) }
 				</Stack>
 			</Popover>

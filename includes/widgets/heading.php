@@ -312,6 +312,8 @@ class Widget_Heading extends Widget_Base {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$this->add_render_attribute( 'title', 'class', 'elementor-size-default' );
 		}
 
 		$this->add_inline_editing_attributes( 'title' );
@@ -347,7 +349,13 @@ class Widget_Heading extends Widget_Base {
 			title = '<a href="' + _.escape( settings.link.url ) + '">' + title + '</a>';
 		}
 
-		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title', 'elementor-size-' + settings.size ] );
+		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title' ] );
+
+		if ( '' !== settings.size ) {
+			view.addRenderAttribute( 'title', 'class', [ 'elementor-size-' + settings.size ] );
+		} else {
+			view.addRenderAttribute( 'title', 'class', [ 'elementor-size-default' ] );
+		}
 
 		view.addInlineEditingAttributes( 'title' );
 
