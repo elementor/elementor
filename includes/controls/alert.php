@@ -40,7 +40,13 @@ class Control_Alert extends Base_UI_Control {
 	 */
 	public function content_template() {
 		?>
-		<# data.content = elementor.compileTemplate( data.content, { view } ); #>
+		<#
+		const validAlertTypes = [ 'info', 'success', 'warning', 'danger' ];
+		if ( ! validAlertTypes.includes( data.alert_type ) ) {
+			data.alert_type = 'info';
+		}
+		data.content = elementor.compileTemplate( data.content, { view } );
+		#>
 		<div class="elementor-control-alert elementor-panel-alert elementor-panel-alert-{{ data.alert_type }}">
 			<# if ( data.heading ) { #>
 			<div class="elementor-control-alert-heading">{{{ data.heading }}}</div>
@@ -65,7 +71,7 @@ class Control_Alert extends Base_UI_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'alert_type' => 'info', // info, success, warning, danger.
+			'alert_type' => '', // info, success, warning, danger.
 			'heading' => '',
 			'content' => '',
 		];
