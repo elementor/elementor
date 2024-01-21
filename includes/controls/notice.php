@@ -45,8 +45,8 @@ class Control_Notice extends Base_UI_Control {
 			return;
 		}
 
-		const validTypes = [ 'info', 'success', 'warning', 'danger' ];
-		const showIcon = validTypes.includes( data.notice_type );
+		const validNoticeTypes = [ 'info', 'success', 'warning', 'danger' ];
+		const showIcon = validNoticeTypes.includes( data.notice_type );
 		data.content = elementor.compileTemplate( data.content, { view } );
 		#>
 		<div class="elementor-control-notice elementor-control-notice-type-{{ data.notice_type }}">
