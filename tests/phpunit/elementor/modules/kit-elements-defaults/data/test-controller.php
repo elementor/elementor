@@ -202,7 +202,7 @@ class Test_Controller extends Elementor_Test_Base {
 			[ 'inner-section', ['html_tag' => 'div'] ],
 			[ 'column', [ 'html_tag' => 'div' ] ],
 			[ 'container', ['content_width' => 'full'] ],
-			[ 'heading', ['html_tag' => 'h2'] ],
+			[ 'button', ['text' => 'Click here'] ],
 		];
 	}
 
