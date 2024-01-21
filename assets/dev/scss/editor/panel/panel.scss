@@ -144,7 +144,7 @@
 	}
 }
 
-body.e-has-notification {
+body.e-has-notification:not(.e-route-panel-menu) {
 	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center {
 		.elementor-panel-menu-item-icon {
 			@include e-notification-icon-bullet();
@@ -152,9 +152,7 @@ body.e-has-notification {
 	}
 
 	#elementor-panel-header-menu-button {
-		.elementor-icon.tooltip-target.eicon-menu-bar {
-			@include e-notification-icon-bullet();
-		}
+		@include e-notification-icon-bullet();
 	}
 }
 
