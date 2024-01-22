@@ -28,7 +28,7 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
-import EditorEvents from 'elementor/modules/editor-events/assets/js/module';
+import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
