@@ -655,7 +655,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -808,6 +807,8 @@ class Element_Column extends Element_Base {
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		// TODO: Backward comparability for deprecated controls
 		$this->add_control(

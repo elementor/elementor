@@ -270,7 +270,6 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -1091,7 +1090,6 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -1249,6 +1247,8 @@ class Element_Section extends Element_Base {
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		$this->end_controls_section();
 

@@ -8,6 +8,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
 use Elementor\Plugin;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -143,18 +144,46 @@ class Module extends BaseModule {
 			true
 		);
 
+		$config = [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+		];
+
+		if ( $this->get_ai_app()->is_connected() ) {
+			// Use a cached version, don't call the API on every editor load.
+			$config['usage'] = $this->get_ai_app()->get_cached_usage();
+		}
+
 		wp_localize_script(
 			'elementor-ai',
 			'ElementorAiConfig',
-			[
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-				// Use a cached version, don't call the API on every editor load.
-				'usage' => $this->get_ai_app()->get_cached_usage(),
-			]
+			$config
 		);
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
+
+		if ( $this->get_ai_app()->is_connected() && ! empty( $config['is_get_started'] ) ) {
+			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config' );
+
+			if ( ! is_wp_error( $remote_config ) && ! empty( $remote_config['config']['remoteIntegrationUrl'] ) ) {
+				wp_enqueue_scripts(
+					'elementor-ai-integration',
+					$remote_config['config']['remoteIntegrationUrl'],
+					[
+						'elementor-editor',
+					],
+					ELEMENTOR_VERSION,
+					true
+				);
+			}
+
+			add_filter( 'script_loader_tag', function( $tag, $handle ) {
+				if ( 'elementor-ai-integration' === $handle ) {
+					return str_replace( ' src', ' type="module" src', $tag );
+				}
+				return $tag;
+			}, 10, 2 );
+		}
 	}
 
 	private function enqueue_layout_script() {
