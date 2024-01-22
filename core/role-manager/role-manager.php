@@ -156,11 +156,14 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function get_go_pro_link_html() {
 		$promotion = $this->get_go_pro_link_content();
+		$description = $promotion['description'];
+		$cta_button_text = $promotion['cta_button_text'];
+		$cta_button_url = $promotion['cta_button_url'];
 
 		?>
 		<div class="elementor-role-go-pro">
-			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( $promotion['description'], 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url($promotion['cta_button_url'] ?? 'https://go.elementor.com/go-pro-role-manager/') ?>"><?php echo esc_html__( $promotion['cta_button_text'] ?? 'Upgrade', 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( $description, 'elementor' ); ?></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $cta_button_url ?? 'https://go.elementor.com/go-pro-role-manager/' ); ?>"><?php echo esc_html__( $cta_button_text ?? 'Upgrade', 'elementor' ); ?></a></div>
 		</div>
 		<?php
 	}
@@ -176,7 +179,7 @@ class Role_Manager extends Settings_Page {
 
 		$promotion = apply_filters( 'elementor/role/restrictions/custom_promotion', $promotion );
 
-		if ( strpos( $promotion['button_url'], 'elementor.com') === false ){
+		if ( strpos( $promotion['button_url'], 'elementor.com' ) === false ) {
 			$promotion['button_url'] = $button_url;
 		}
 

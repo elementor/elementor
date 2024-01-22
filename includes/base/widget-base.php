@@ -378,7 +378,7 @@ abstract class Widget_Base extends Element_Base {
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
-		if ( strpos( $config['upsale_data']['cta_button_url'], 'elementor.com') !== false ){
+		if ( strpos( $config['upsale_data']['cta_button_url'], 'elementor.com' ) !== false ) {
 			$config['upsale_data']['cta_button_url'] = $this->get_upsale_data()['cta_button_url'];
 		}
 
