@@ -156,14 +156,11 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function get_go_pro_link_html() {
 		$promotion = $this->get_go_pro_link_content();
-		$description = $promotion['description'];
-		$upgrade_text = $promotion['upgrade_text'];
-		$upgrade_url = $promotion['upgrade_url'];
 
 		?>
 		<div class="elementor-role-go-pro">
-			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( $description, 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $upgrade_url ); ?>"><?php echo esc_html__( $upgrade_text, 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__desc"><?php echo esc_html( $promotion['description'] ); ?></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $promotion['upgrade_url'] ); ?>"><?php echo esc_html( $promotion['upgrade_text'] ); ?></a></div>
 		</div>
 		<?php
 	}
@@ -172,9 +169,9 @@ class Role_Manager extends Settings_Page {
 		$upgrade_url = 'https://go.elementor.com/go-pro-role-manager/';
 
 		$promotion = [
-			'description' => 'Want to give access only to content?',
+			'description' => __( 'Want to give access only to content?' ),
 			'upgrade_url' => $upgrade_url,
-			'upgrade_text' => 'Upgrade',
+			'upgrade_text' => __( 'Upgrade' ),
 		];
 
 		$promotion = apply_filters( 'elementor/role/restrictions/custom_promotion', $promotion );

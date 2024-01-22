@@ -379,7 +379,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( isset( $config['upsale_data']['upgrade_url'] ) && strpos( $config['upsale_data']['upgrade_url'], 'elementor.com' ) !== false ) {
-			$config['upsale_data']['upgrade_url'] = $this->get_upsale_data()['upgrade_url'];
+			$config['upsale_data']['upgrade_url'] = esc_url( $this->get_upsale_data()['upgrade_url'] );
 		}
 
 		return array_replace_recursive( parent::get_initial_config(), $config );

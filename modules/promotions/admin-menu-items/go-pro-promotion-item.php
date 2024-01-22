@@ -40,7 +40,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 			$this->url = $filtered_url;
 		}
 
-		return $this->url;
+		return esc_url( $this->url );
 	}
 
 	public function render() {
