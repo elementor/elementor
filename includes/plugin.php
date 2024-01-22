@@ -768,36 +768,6 @@ class Plugin {
 	}
 
 	/**
-	 * Get Legacy Mode
-	 *
-	 * @since 3.0.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead.
-	 *
-	 * @param string $mode_name Optional. Default is null
-	 *
-	 * @return bool|bool[]
-	 */
-	public function get_legacy_mode( $mode_name = null ) {
-		self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation
-			->deprecated_function( __METHOD__, '3.1.0', 'Plugin::$instance->experiments->is_feature_active()' );
-
-		$legacy_mode = [
-			'elementWrappers' => ! self::$instance->experiments->is_feature_active( 'e_dom_optimization' ),
-		];
-
-		if ( ! $mode_name ) {
-			return $legacy_mode;
-		}
-
-		if ( isset( $legacy_mode[ $mode_name ] ) ) {
-			return $legacy_mode[ $mode_name ];
-		}
-
-		// If there is no legacy mode with the given mode name;
-		return false;
-	}
-
-	/**
 	 * Add custom post type support.
 	 *
 	 * Register Elementor support for all the supported post types defined by

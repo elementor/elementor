@@ -97,6 +97,7 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
+				<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
 			</div>
 		</div>
 		<?php
@@ -116,7 +117,6 @@ class Control_Gallery extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'separator' => 'none',
 			'dynamic' => [
 				'categories' => [ TagsModule::GALLERY_CATEGORY ],
 				'returnType' => 'object',

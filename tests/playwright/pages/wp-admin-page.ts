@@ -1,6 +1,8 @@
+import { type APIRequestContext } from '@playwright/test';
 import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
+import { create } from '../assets/api-requests';
 
 /**
  * This post is used for any tests that need a post, with empty elements.
@@ -28,18 +30,58 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage() {
+	async openNewPage( setWithApi: boolean = true, setPageName: boolean = true ) {
+		if ( setWithApi ) {
+			await this.createNewPostWithAPI();
+		} else {
+			await this.createNewPostFromDashboard( setPageName );
+		}
+
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( this.page, this.testInfo );
+	}
+
+	async createNewPostWithAPI() {
+		const request: APIRequestContext = this.page.context().request,
+			postDataInitial = {
+				title: 'Playwright Test Page - Uninitialized',
+				content: '',
+			},
+			postId = await create( request, 'pages', postDataInitial ),
+			postDataUpdated = {
+				title: `Playwright Test Page #${ postId }`,
+			};
+
+		await create( request, `pages/${ postId }`, postDataUpdated );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+	}
+
+	async createNewPostFromDashboard( setPageName: boolean ) {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
-		await this.waitForPanel();
 
-		await this.closeAnnouncementsIfVisible();
+		if ( ! setPageName ) {
+			return;
+		}
 
-		return new EditorPage( this.page, this.testInfo );
+		await this.setPageName();
+	}
+
+	async setPageName() {
+		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+
+		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
+		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
+
+		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
+		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
 	async convertFromGutenberg() {

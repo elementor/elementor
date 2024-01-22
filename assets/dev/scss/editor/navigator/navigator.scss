@@ -86,7 +86,7 @@ body {
 			padding: 25px;
 		}
 
-		> &-section {
+		> .elementor-navigator__element-section {
 			border-block-end: var(--e-a-border);
 		}
 	}
@@ -293,8 +293,8 @@ body {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: var(--e-a-color-txt-invert);
-			background-color: var(--e-a-color-white);
+			color: var(--e-a-color-txt);
+			background-color: var(--e-a-bg-default);
 			border-inline-start: var(--e-a-border);
 
 			&:first-child {

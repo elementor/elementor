@@ -459,14 +459,6 @@ class Container extends Element_Base {
 					'min' => 500,
 					'max' => 1600,
 				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
-				],
 			],
 			'default' => [
 				'unit' => '%',
@@ -478,7 +470,6 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
-			'separator' => 'none',
 		];
 
 		$this->add_responsive_control(
@@ -544,12 +535,7 @@ class Container extends Element_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'description' => sprintf(
@@ -747,10 +733,17 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
@@ -965,10 +958,11 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1113,7 +1107,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -1121,6 +1115,7 @@ class Container extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1455,7 +1450,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1494,7 +1488,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 0.1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1557,7 +1550,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1595,7 +1587,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1671,6 +1662,8 @@ class Container extends Element_Base {
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		$this->end_controls_section();
 	}

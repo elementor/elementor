@@ -130,7 +130,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div id="elementor-template-library-footer-banner">
 			<img class="elementor-nerd-box-icon" src="<?php
 				Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' );
-			?>" loading="lazy" />
+			?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
 			<div class="elementor-excerpt"><?php echo esc_html__( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
 	<# } #>
@@ -198,6 +198,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
 		<i class="eicon-file-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
+	</a>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-apply-ai-button">
+	<a class="elementor-template-library-template-action elementor-template-library-template-apply-ai elementor-button e-primary">
+		<i class="eicon-file-download" aria-hidden="true"></i>
+		<span class="elementor-button-title"><?php echo esc_html__( 'Apply', 'elementor' ); ?></span>
+	</a>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-insert-and-ai-variations-buttons">
+	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
+		<i class="eicon-file-download" aria-hidden="true"></i>
+		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
+	</a>
+	<a class="elementor-template-library-template-action elementor-template-library-template-generate-variation elementor-button e-btn-txt e-btn-txt-border">
+		<i class="eicon-ai" aria-hidden="true"></i>
+		<span class="elementor-button-title"><?php echo esc_html__( 'Generate Variations', 'elementor' ); ?></span>
 	</a>
 </script>
 
@@ -285,7 +303,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'utm_content' => '%%template_type%%', // will be replaced in the frontend
 		] );
 		?>
-	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_attr( $url ); ?>">
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_url( $url ); ?>">
 		{{{ button }}}
 	</a>
 	<?php

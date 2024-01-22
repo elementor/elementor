@@ -589,15 +589,6 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'youtube',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -641,7 +632,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'name' => 'image_overlay', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_overlay_size` and `image_overlay_custom_dimension`.
 				'default' => 'full',
-				'separator' => 'none',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
@@ -1385,5 +1375,13 @@ class Widget_Video extends Widget_Base {
 		?>
 		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
+	}
+
+	protected function get_upsale_data() {
+		return [
+			'title' => __( 'Grab your visitors\' attention', 'elementor' ),
+			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/', 'elementor' ),
+		];
 	}
 }

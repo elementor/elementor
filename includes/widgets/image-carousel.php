@@ -113,7 +113,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
-				'separator' => 'none',
 			]
 		);
 
@@ -357,15 +356,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					'caption' => esc_html__( 'Caption', 'elementor' ),
 					'description' => esc_html__( 'Description', 'elementor' ),
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 
@@ -830,6 +820,18 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'name' => 'caption_shadow',
 				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
+			]
+		);
+
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 

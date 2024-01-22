@@ -1,0 +1,163 @@
+name: One Click Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        required: true
+        type: choice
+        description: Select a channel. For cloud, use main branch only!
+        options:
+          - ga
+          - beta
+          - cloud
+      pre_release:
+        type: boolean
+        description: 'Pre-release?'
+        required: false
+
+env:
+  CHANNEL: ${{inputs.channel}}
+  CHANGELOG_FILE: "temp-changelog.txt"
+
+permissions:
+  contents: write
+  id-token: "write"
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{inputs.branch}}
+      - name: Get Configuration
+        id: configuration
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
+        with:
+          filename: "./.github/workflows/config.json"
+          prefix: config
+      - name: Test permissions
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Env Vars Configure
+        id: env_vars_configure
+        uses: ./.github/workflows/env-vars-configure
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          REF: ${{ github.ref }}
+          POSTFIX: ''
+      - name: Bump Channel Version
+        id: bump_channel_version
+        uses: ./.github/workflows/bump-channel-version
+        with:
+          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+          CHANNEL: ${{ env.CHANNEL }}
+          POSTFIX: ''
+          OVERRIDE_PACKAGE_VERSION: true
+      - name: Update Readme.txt
+        if: env.CHANNEL != 'cloud'
+        uses: ./.github/workflows/update-readme-txt
+        with:
+          README_TXT_PATH: $GITHUB_WORKSPACE/readme.txt
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+      - name: Get Release Name
+        uses : ./.github/workflows/get-release-name
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+      - name: Generate changelog
+        uses: ./.github/workflows/generate-changelog
+        with:
+          TOKEN:  ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: ${{ github.ref }}
+          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
+          GENERATE_EMPTY_CHANGELOG: true
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          target_commitish: ${{ env.CLEAN_REF }}
+          files: |
+            elementor-*.zip
+            ${{ env.CHANGELOG_FILE }}
+          prerelease: ${{ github.event.inputs.pre_release }}
+          body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Publish to WordPress.org SVN
+        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      - name: Release Dev From Beta
+        if: env.CHANNEL == 'beta' # Only for beta releases
+        uses: ./.github/workflows/release-dev-from-beta
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+      - name: Post To Slack Created Release
+        if: github.event.inputs.pre_release == 'false'
+        uses : ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+          PAYLOAD: |
+                    {
+                      "blocks": [
+                        {
+                          "type": "section",
+                          "text": {
+                            "type": "mrkdwn",
+                            "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
+                          }
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "section",
+                          "text": {
+                            "type": "mrkdwn",
+                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                          },
+                          "accessory": {
+                            "type": "button",
+                            "text": {
+                              "type": "plain_text",
+                              "text": "Open :point_left:",
+                              "emoji": true
+                            },
+                            "value": "open-release",
+                            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
+                            "action_id": "button-action"
+                          }
+                        }
+                      ]
+                    }
