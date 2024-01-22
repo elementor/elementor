@@ -4,6 +4,14 @@ import wpAdminPage from '../pages/wp-admin-page';
 import WpEnvCli from '../assets/wp-env-cli';
 
 const pluginList1 = [
+	'essential-addons-for-elementor-lite',
+	'jetsticky-for-elementor',
+	'jetgridbuilder',
+	'mighty-addons',
+	'the-plus-addons-for-elementor-page-builder',
+	'stratum',
+	'bdthemes-prime-slider-lite',
+	'wunderwp',
 	'addon-elements-for-elementor-page-builder',
 	'addons-for-elementor',
 	'anywhere-elementor',
@@ -39,6 +47,9 @@ const pluginList2 = [
 	'jetsticky-for-elementor',
 	'tutor-lms-elementor-addons',
 	'code-block-for-elementor',
+	'jetwidgets-for-elementor',
+	'envato-elements',
+	'happy-elementor-addons',
 ];
 
 test.describe( `Plugin tester tests: containers`, () => {
