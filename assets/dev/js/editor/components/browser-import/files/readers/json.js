@@ -9,7 +9,7 @@ export class Json extends FileReaderBase {
 	}
 
 	static isActive() {
-		return ElementorConfig.user.is_administrator || ( ElementorConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
+		return elementor.config.user.is_administrator || ( elementor.config.user.restrictions?.includes( 'json-upload' ) ?? false );
 	}
 
 	/**
