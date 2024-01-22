@@ -458,10 +458,12 @@ module.exports = {
 			? __( 'Update now', 'elementor' )
 			: __( 'Got it', 'elementor' );
 
+		const dialogClass = elementor.config.user.is_administrator ? 'dialog-type-confirm-large' : '';
+
 		if ( ! this.fontAwesomeMigrationDialog ) {
 			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogType, {
 				id: 'e-fa-migration-dialog',
-				className: 'dialog-type-confirm-large',
+				className: dialogClass,
 				headerMessage: dialogTitle,
 				message: dialogMessage,
 				position: {
@@ -474,8 +476,12 @@ module.exports = {
 				hide: {
 					onButtonClick: false,
 				},
+				onCancel: () => {
+					this.fontAwesomeMigrationDialog.hide();
+				},
 				onConfirm: async () => {
 					if ( ! elementor.config.user.is_administrator ) {
+						this.fontAwesomeMigrationDialog.hide();
 						return;
 					}
 
