@@ -12,6 +12,9 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
 		ui.status = '.elementor-control-gallery-status-title';
 		ui.warnings = '.elementor-control-media__warnings';
+		ui.promotions = '.elementor-control-media__promotions';
+		ui.promotions_dismiss = '.elementor-control-media__promotions .elementor-control-notice-dismiss';
+		ui.promotions_action = '.elementor-control-media__promotions .elementor-control-notice-main-actions button';
 
 		return ui;
 	},
@@ -21,6 +24,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
 			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick',
+			'click @ui.promotions_dismiss': 'onPromotionDismiss',
+			'click @ui.promotions_action': 'onPromotionAction',
 			'keyup @ui.galleryThumbnails': 'onGalleryThumbnailsKeyPress',
 		} );
 	},
@@ -29,11 +34,14 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.initRemoveDialog();
 	},
 
-	applySavedValue() {
+	async applySavedValue() {
 		var images = this.getControlValue(),
 			imagesCount = images.length,
 			hasImages = !! imagesCount,
-			imagesWithoutAlt = 0;
+			imagesWithoutAlt = 0,
+			imagesWithoutOptimization = 0;
+
+		const hasPromotions = this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( 'image_optimizer_hint' );
 
 		this.$el
 			.toggleClass( 'elementor-gallery-has-images', hasImages )
@@ -50,6 +58,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			return;
 		}
 
+		const attachments = [];
+
 		this.getControlValue().forEach( ( image ) => {
 			var $thumbnail = jQuery( '<div>', { class: 'elementor-control-gallery-thumbnail' } );
 
@@ -57,36 +67,51 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 			$galleryThumbnails.append( $thumbnail );
 
-			imagesWithoutAlt += this.imageHasAlt( image.id ) ? 0 : 1;
+			const handleHints = ( attachment ) => {
+				const hasAlt = this.imageHasAlt( attachment );
+				if ( ! hasAlt ) {
+					$thumbnail.css( 'outline', '2px solid var( --e-a-btn-bg-danger-active )' );
+					$thumbnail.css( 'opacity', '0.6' );
+					imagesWithoutAlt += hasAlt ? 0 : 1;
+				}
+
+				if ( hasPromotions && this.imageNotOptimized( attachment ) ) {
+					imagesWithoutOptimization += 1;
+				}
+			};
+
+			attachments.push( wp.media.attachment( image.id ).fetch().then( handleHints ) );
 		} );
 
-		this.ui.warnings.text(
-			imagesWithoutAlt > 0
-				? sprintf(
-					/* Translators: %s: The number of images that don’t contain ALT text. */
-					__( 'These %s images don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
-					imagesWithoutAlt,
-				)
-				: '',
-		);
+		// Ensure all attachments are fetched before updating the warnings
+		await Promise.all( attachments ).then( () => {
+			this.ui.warnings.toggle( !! imagesWithoutAlt );
+			if ( hasPromotions ) {
+				this.ui.promotions.toggle( !! imagesWithoutOptimization );
+			}
+		} );
 	},
 
 	hasImages() {
 		return !! this.getControlValue().length;
 	},
 
-	imageHasAlt( attachmentId ) {
-		const attachment = wp.media.attachment( attachmentId ),
-			attachmentAlt = attachment.attributes?.alt?.trim() || '',
-			changedAlt = attachment.changed?.alt?.trim() || '',
-			hasAttachmentAlt = !! attachmentAlt,
-			hasChangedAlt = !! changedAlt,
-			missingAlt =
-				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
-				( ! hasAttachmentAlt && hasChangedAlt ) ||
-				( hasAttachmentAlt && ! hasChangedAlt );
+	imageHasAlt( attachment ) {
+		const attachmentAlt = attachment?.alt?.trim() || '';
+		return !! attachmentAlt;
+	},
 
-		return ! missingAlt;
+	imageNotOptimized( attachment ) {
+		const checks = {
+			height: 1200,
+			width: 1200,
+			filesizeInBytes: 200000,
+		};
+
+		return Object.keys( checks ).some( ( key ) => {
+			const value = attachment[ key ] || false;
+			return value && value > checks[ key ];
+		} );
 	},
 
 	openFrame( action ) {
@@ -196,6 +221,38 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.applySavedValue();
 	},
 
+	onPromotionDismiss() {
+		const $promotions = this.ui.promotions;
+		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
+		// Remove listener
+		$dismissButton.off( 'click' );
+		const eventName = $dismissButton[ 0 ]?.dataset?.event || false;
+		this.dismissPromotion( eventName );
+	},
+
+	onPromotionAction( event ) {
+		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		if ( actionURL ) {
+			window.open( actionURL, '_blank' );
+		}
+		this.onPromotionDismiss();
+	},
+
+	dismissPromotion( eventName ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( eventName ) {
+			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
+				data: {
+					dismissId: eventName,
+				},
+			} );
+
+			// Prevent opening the same promotion again in current editor session.
+			elementor.config.user.dismissed_editor_notices.push( eventName );
+		}
+	},
+
 	onBeforeDestroy() {
 		if ( this.frame ) {
 			this.frame.off();
@@ -209,7 +266,10 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.applySavedValue();
 
-		this.ui.warnings.text( '' );
+		this.ui.warnings.hide();
+		if ( this.ui.promotions ) {
+			this.ui.promotions.hide();
+		}
 	},
 
 	initRemoveDialog() {

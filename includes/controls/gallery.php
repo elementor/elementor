@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -97,7 +98,34 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
-				<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
+				<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
+					<?php Hints::get_notice_template( [
+						'type' => 'warning',
+						'content' => __( 'Images marked in red don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+						'icon' => true,
+					] ); ?>
+				</div>
+				<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) {
+					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
+					$content = $once_dismissed ?
+						__( 'Oh! Some images exceed the recommended size.Try reducing them with the new Image Optimizer.', 'elementor' ) :
+						__( 'Get a performance boost and improved SEO results with the Image Optimizer.', 'elementor' );
+					$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
+					?>
+					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
+						<?php Hints::get_notice_template( [
+							'type' => 'info',
+							'content' => $content,
+							'icon' => true,
+							'dismissible' => $dismissible,
+							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ?  __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
+							'button_event' => $dismissible,
+							'button_data' => [
+								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+							],
+						] ); ?>
+					</div>
+				<?php } ?>
 			</div>
 		</div>
 		<?php
