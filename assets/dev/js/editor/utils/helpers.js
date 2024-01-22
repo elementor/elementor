@@ -489,12 +489,12 @@ module.exports = {
 					const updateButtonText = updateButton.text();
 
 					updateButton.text( __( 'Updating...', 'elementor' ) );
-					updateButton[0].setAttribute( 'disabled', 'disabled' );
+					updateButton[ 0 ].setAttribute( 'disabled', 'disabled' );
 
 					elementorCommon.ajax.addRequest( 'icon_manager_migrate', {
 						success: ( response ) => {
 							this.fontAwesomeMigrationDialog.hide();
-							updateButton[0].removeAttribute( 'disabled' );
+							updateButton[ 0 ].removeAttribute( 'disabled' );
 							updateButton.text( updateButtonText );
 
 							elementorCommon.dialogsManager.createWidget( 'alert', {
@@ -509,7 +509,7 @@ module.exports = {
 									confirm: __( 'Got it', 'elementor' ),
 								},
 								onConfirm: () => {
-									location.reload()
+									location.reload();
 								},
 							} ).show();
 						},
