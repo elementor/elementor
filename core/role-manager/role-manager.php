@@ -18,7 +18,7 @@ class Role_Manager extends Settings_Page {
 
 	const ROLE_MANAGER_ADVANCED = 'role-manager';
 
-	static $advanced_options = [];
+	private static $advanced_options = [];
 
 	/**
 	 * @since 2.0.0
