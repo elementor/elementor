@@ -163,24 +163,24 @@ class Role_Manager extends Settings_Page {
 		?>
 		<div class="elementor-role-go-pro">
 			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( $description, 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $cta_button_url ?? 'https://go.elementor.com/go-pro-role-manager/' ); ?>"><?php echo esc_html__( $cta_button_text ?? 'Upgrade', 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $cta_button_url ); ?>"><?php echo esc_html__( $cta_button_text, 'elementor' ); ?></a></div>
 		</div>
 		<?php
 	}
 
 	public function get_go_pro_link_content() {
-		$button_url = 'https://go.elementor.com/go-pro-role-manager/';
+		$upgrade_url = 'https://go.elementor.com/go-pro-role-manager/';
 
 		$promotion = [
 			'description' => 'Want to give access only to content?',
-			'button_url' => $button_url,
-			'button_text' => 'Upgrade',
+			'upgrade_url' => $upgrade_url,
+			'upgrade_text' => 'Upgrade',
 		];
 
 		$promotion = apply_filters( 'elementor/role/restrictions/custom_promotion', $promotion );
 
-		if ( strpos( $promotion['button_url'], 'elementor.com' ) === false ) {
-			$promotion['button_url'] = $button_url;
+		if ( strpos( $promotion['upgrade_url'], 'elementor.com' ) === false ) {
+			$promotion['upgrade_url'] = $upgrade_url;
 		}
 
 		return $promotion;
