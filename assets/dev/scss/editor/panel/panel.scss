@@ -144,15 +144,17 @@
 	}
 }
 
-body.e-has-notification:not(.e-route-panel-menu) {
+body.e-has-notification {
 	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center {
 		.elementor-panel-menu-item-icon {
 			@include e-notification-icon-bullet();
 		}
 	}
 
-	#elementor-panel-header-menu-button {
-		@include e-notification-icon-bullet();
+	&:not(.e-route-panel-menu) {
+		#elementor-panel-header-menu-button {
+			@include e-notification-icon-bullet();
+		}
 	}
 }
 

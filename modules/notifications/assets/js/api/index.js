@@ -1,6 +1,6 @@
 const request = ( endpoint, data = {} ) => {
 	return new Promise( ( resolve, reject ) => {
-		const ajaxData = elementorCommon.ajax.addRequest(
+		elementorCommon.ajax.addRequest(
 			endpoint,
 			{
 				success: resolve,

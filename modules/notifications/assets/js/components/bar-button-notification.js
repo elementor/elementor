@@ -12,29 +12,40 @@ export const BarButtonNotification = ( props ) => {
 	// TODO: This is a temporary solution until we have a proper admin bar component.
 	return (
 		<>
-			<a
-				href="#"
+			<button
 				className="e-admin-top-bar__bar-button"
-				onClick={ () => setIsOpen( true ) }
-				{ ...props }
+				style={ {
+					backgroundColor: 'transparent',
+					border: 'none',
+				} }
+				onClick={ ( event ) => {
+					event.preventDefault();
+
+					setIsOpen( true );
+				} }
 			>
 				<Badge
 					color="primary"
 					variant="dot"
 					invisible={ isRead }
 					sx={ {
-						marginInline: '4px',
+						mx: 0.5,
 					} }
 				>
 					<GiftIcon
-						fontSize="13px"
+						fontSize="inherit"
 					/>
 				</Badge>
 				<span className="e-admin-top-bar__bar-button-title">
 					{ props.children }
 				</span>
-			</a>
-			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } onWhatever={ setIsRead } />
+			</button>
+			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } setIsRead={ setIsRead } />
 		</>
 	);
+};
+
+BarButtonNotification.propTypes = {
+	defaultIsRead: PropTypes.bool,
+	children: PropTypes.any.isRequired,
 };

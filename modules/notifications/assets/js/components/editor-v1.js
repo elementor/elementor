@@ -17,7 +17,7 @@ export const EditorV1 = () => {
 		<WhatsNew
 			isOpen={ isOpen }
 			setIsOpen={ setIsOpen }
-			onWhatever={ setIsRead }
+			setIsRead={ setIsRead }
 			anchorPosition="left"
 		/>
 	);

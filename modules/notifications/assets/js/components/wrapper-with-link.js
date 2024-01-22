@@ -3,7 +3,7 @@ import { Link } from '@elementor/ui';
 export const WrapperWithLink = ( props ) => {
 	const { link, children } = props;
 
-	if ( !link ) {
+	if ( ! link ) {
 		return children;
 	}
 
@@ -16,10 +16,15 @@ export const WrapperWithLink = ( props ) => {
 			sx={ {
 				'&:hover': {
 					color: 'inherit',
-				}
+				},
 			} }
 		>
 			{ children }
 		</Link>
 	);
+};
+
+WrapperWithLink.propTypes = {
+	link: PropTypes.string,
+	children: PropTypes.any.isRequired,
 };

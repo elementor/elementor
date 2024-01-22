@@ -10,10 +10,16 @@ class Options {
 			return false;
 		}
 
-		$notifications = API::get_notifications();
-		$notifications_ids = wp_list_pluck( $notifications, 'id' );
+		$unread_notifications = get_transient( "elementor_unread_notifications_{$current_user->ID}" );
 
-		$unread_notifications = array_diff( $notifications_ids, static::get_notifications_dismissed() );
+		if ( false === $unread_notifications ) {
+			$notifications = API::get_notifications_by_conditions();
+			$notifications_ids = wp_list_pluck( $notifications, 'id' );
+
+			$unread_notifications = array_diff( $notifications_ids, static::get_notifications_dismissed() );
+
+			set_transient( "elementor_unread_notifications_{$current_user->ID}", $unread_notifications, HOUR_IN_SECONDS );
+		}
 
 		return ! empty( $unread_notifications );
 	}
@@ -52,6 +58,8 @@ class Options {
 		$notifications_dismissed = array_unique( $notifications_dismissed );
 
 		update_user_meta( $current_user->ID, '_e_notifications_dismissed', $notifications_dismissed );
+
+		delete_transient( "elementor_unread_notifications_{$current_user->ID}" );
 
 		return true;
 	}

@@ -12,7 +12,7 @@ const onButtonClicked = () => {
 
 		ReactDOM.render(
 			<EditorV1 />,
-			container
+			container,
 		);
 
 		return;

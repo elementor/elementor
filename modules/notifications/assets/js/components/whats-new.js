@@ -35,9 +35,9 @@ const WhatsNewTopBar = ( props ) => {
 	return (
 		<>
 			<AppBar
+				elevation={ 0 }
 				position="sticky"
 				sx={ {
-					boxShadow: 'none',
 					backgroundColor: 'background.default',
 				} }
 			>
@@ -62,8 +62,12 @@ const WhatsNewTopBar = ( props ) => {
 	);
 };
 
+WhatsNewTopBar.propTypes = {
+	setIsOpen: PropTypes.func.isRequired,
+};
+
 const WhatsNewDrawerContent = () => {
-	const { isPending, error, data: items } = useQuery({
+	const { isPending, error, data: items } = useQuery( {
 		queryKey: [ 'e-notifications' ],
 		queryFn: getNotifications,
 	} );
@@ -93,7 +97,7 @@ const WhatsNewDrawerContent = () => {
 				} );
 			}
 
-			if ( item.chipTags.length ) {
+			if ( item.chipTags ) {
 				item.chipTags.forEach( ( chipTag ) => {
 					chips.push( {
 						variant: 'outlined',
@@ -108,29 +112,32 @@ const WhatsNewDrawerContent = () => {
 					display="flex"
 					flexDirection="column"
 					sx={ {
-						paddingBlockStart: 2,
+						pt: 2,
 					} }
 				>
-					<Stack
-						direction="row"
-						divider={ <Divider orientation="vertical"
-						                   flexItem/> }
-						spacing={ 1 }
-						color="text.tertiary"
-						sx={ {
-							paddingBlockEnd: 1,
-						} }
-					>
-						{ item.topic && (
-							<Box>{ item.topic }</Box>
-						) }
-						<Box>{ item.date }</Box>
-					</Stack>
+					{ ( item.topic || item.date ) && (
+						<Stack
+							direction="row"
+							divider={ <Divider orientation="vertical" flexItem /> }
+							spacing={ 1 }
+							color="text.tertiary"
+							sx={ {
+								pb: 1,
+							} }
+						>
+							{ item.topic && (
+								<Box>{ item.topic }</Box>
+							) }
+							{ item.topic && (
+								<Box>{ item.date }</Box>
+							) }
+						</Stack>
+					) }
 					<WrapperWithLink link={ item.link }>
 						<Typography
 							variant="subtitle1"
 							sx={ {
-								paddingBlockEnd: 2,
+								pb: 2,
 							} }
 						>
 							{ item.title }
@@ -139,7 +146,7 @@ const WhatsNewDrawerContent = () => {
 					{ item.imageSrc && (
 						<Box
 							sx={ {
-								paddingBlockEnd: 2,
+								pb: 2,
 							} }
 						>
 							<WrapperWithLink link={ item.link }>
@@ -151,13 +158,13 @@ const WhatsNewDrawerContent = () => {
 							</WrapperWithLink>
 						</Box>
 					) }
-					{ chips && (
+					{ !! chips.length && (
 						<Stack
 							direction="row"
 							flexWrap="wrap"
 							gap={ 1 }
 							sx={ {
-								paddingBlockEnd: 1,
+								pb: 1,
 							} }
 						>
 							{ chips.map( ( chip, chipIndex ) => {
@@ -170,29 +177,31 @@ const WhatsNewDrawerContent = () => {
 							} ) }
 						</Stack>
 					) }
-					<Typography
-						variant="body2"
-						sx={ {
-							paddingBlockEnd: 2,
-						} }
-					>
-						{ item.description }
-						{ item.readMoreText && (
-							<>
-								{ ' ' }
-								<Link
-									href={ item.link }
-									target="_blank"
-								>
-									{ item.readMoreText }
-								</Link>
-							</>
-						) }
-					</Typography>
+					{ item.description && (
+						<Typography
+							variant="body2"
+							sx={ {
+								pb: 2,
+							} }
+						>
+							{ item.description }
+							{ item.readMoreText && (
+								<>
+									{ ' ' }
+									<Link
+										href={ item.link }
+										target="_blank"
+									>
+										{ item.readMoreText }
+									</Link>
+								</>
+							) }
+						</Typography>
+					) }
 					{ item.cta && item.ctaLink && (
 						<Box
 							sx={ {
-								paddingBlockEnd: 2,
+								pb: 2,
 							} }
 						>
 							<Button
@@ -206,7 +215,7 @@ const WhatsNewDrawerContent = () => {
 						</Box>
 					) }
 					{ itemIndex !== items.length - 1 && (
-						<Divider/>
+						<Divider />
 					) }
 				</Box>
 			);
@@ -215,15 +224,15 @@ const WhatsNewDrawerContent = () => {
 };
 
 export const WhatsNew = ( props ) => {
-	const { isOpen, setIsOpen, onWhatever, anchorPosition = 'right' } = props;
+	const { isOpen, setIsOpen, setIsRead, anchorPosition = 'right' } = props;
 
 	useEffect( () => {
 		if ( ! isOpen ) {
 			return;
 		}
 
-		onWhatever( true );
-	}, [ isOpen ] );
+		setIsRead( true );
+	}, [ isOpen, setIsRead ] );
 
 	return (
 		<>
@@ -261,4 +270,11 @@ export const WhatsNew = ( props ) => {
 			</QueryClientProvider>
 		</>
 	);
+};
+
+WhatsNew.propTypes = {
+	isOpen: PropTypes.bool.isRequired,
+	setIsOpen: PropTypes.func.isRequired,
+	setIsRead: PropTypes.func.isRequired,
+	anchorPosition: PropTypes.oneOf( [ 'left', 'top', 'right', 'bottom' ] ),
 };

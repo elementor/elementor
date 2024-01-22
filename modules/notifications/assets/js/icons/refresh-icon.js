@@ -1,5 +1,5 @@
-import { forwardRef } from "react";
-import { SvgIcon } from "@elementor/ui";
+import { forwardRef } from 'react';
+import { SvgIcon } from '@elementor/ui';
 
 export const RefreshIcon = forwardRef( ( props, ref ) => {
 	return (

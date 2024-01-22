@@ -3,87 +3,10 @@ namespace Elementor\Modules\Notifications;
 
 class API {
 
-	public static function get_notifications( $force_request = false ) {
-		$notifications = self::get_transient( '_elementor_notifications_data' );
+	const NOTIFICATIONS_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
 
-		$notifications = false;
-
-		if ( $force_request || false === $notifications ) {
-			$notifications = [
-				[
-					// Required
-					'id' => 'release-note-3.17',
-					// Required
-					'title' => 'Elementor 3.17 Released (HEB)!',
-					// Required
-					'description' => 'Elementor 3.17 is here! This release includes a new way to create.',
-
-					'link' => '{https_url}',
-					'imageSrc' => 'https://ps.w.org/elementor/assets/screenshot-1.gif',
-					'date' => '{YYYY-MM-DD}',
-					'time' => '{00-00}',
-					'topic' => 'New Feature',
-					'chipPlan' => 'Pro',
-					'chipTags' => [ 'Improvment', 'Tweak' ],
-					'readMoreText' => 'Read More',
-					'cta' => 'Get Started',
-					'ctaLink' => '{https_url}',
-					'conditions' => [
-						[
-							[
-								'type' => 'language',
-								'languages' => [ 'en_US1' ],
-								'operator' => 'in',
-							],
-						],
-					],
-				],
-				[
-					'id' => 'release-note-3.17',
-					'title' => 'Elementor 3.17 Released (DUPE)!',
-					'description' => 'Elementor 3.17 is here! This release includes a new way to create.',
-					'link' => '{https_url}',
-					'imageSrc' => 'https://ps.w.org/elementor/assets/screenshot-1.gif',
-					'date' => '{YYYY-MM-DD}',
-					'time' => '{00-00}',
-					'topic' => 'New Feature',
-					'chipPlan' => 'Pro',
-					'chipTags' => [ 'Improvment', 'Tweak' ],
-					'readMoreText' => 'Read More',
-					'cta' => 'Get Started',
-					'ctaLink' => '{https_url}',
-				],
-				[
-					'id' => 'release-note-3.17-2',
-					'title' => 'Elementor 3.17 Released!',
-					'description' => 'Elementor 3.17 is here! This release includes a new way to create',
-					'link' => '{https_url}',
-					'date' => '{YYYY-MM-DD}',
-					'time' => '{00-00}',
-					'chipPlan' => 'Pro',
-					'chipTags' => [ 'Improvment' ],
-				],
-				[
-					'id' => 'release-note-3.17-3',
-					'title' => 'Elementor 3.17 Released!',
-					'description' => 'Elementor 3.17 is here! This release includes a new way to create',
-					'imageSrc' => 'https://ps.w.org/elementor/assets/screenshot-1.gif',
-					'date' => '{YYYY-MM-DD}',
-					'time' => '{00-00}',
-					'chipPlan' => 'Pro',
-					'chipTags' => [ 'Improvment' ],
-					'readMoreText' => 'Read More',
-				],
-			];
-
-			static::set_transient( '_elementor_notifications_data', $notifications, '+1 hour' );
-		}
-
-		return $notifications;
-	}
-
-	public static function get_notifications_by_conditions() {
-		$notifications = static::get_notifications();
+	public static function get_notifications_by_conditions( $force_request = false ) {
+		$notifications = static::get_notifications( $force_request );
 
 		$filtered_notifications = [];
 
@@ -102,6 +25,34 @@ class API {
 		}
 
 		return $filtered_notifications;
+	}
+
+	private static function get_notifications( $force_request = false ) {
+		$notifications = self::get_transient( '_elementor_notifications_data' );
+
+		if ( $force_request || false === $notifications ) {
+			$notifications = static::fetch_data();
+
+			static::set_transient( '_elementor_notifications_data', $notifications, '+1 hour' );
+		}
+
+		return $notifications;
+	}
+
+	private static function fetch_data() : array {
+		$response = wp_remote_get( self::NOTIFICATIONS_URL );
+
+		if ( is_wp_error( $response ) ) {
+			return [];
+		}
+
+		$data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( empty( $data['notifications'] ) || ! is_array( $data['notifications'] ) ) {
+			return [];
+		}
+
+		return $data['notifications'];
 	}
 
 	private static function add_to_array( $filtered_notifications, $notification ) {
