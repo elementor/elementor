@@ -384,7 +384,9 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 		},
 
 		initTemplatesImport() {
-			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
+			const canImport = elementorAdminConfig.user.is_administrator || ( elementorAdminConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
+
+			if ( ! canImport || ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 

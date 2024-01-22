@@ -51,7 +51,11 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 */
 	parseConfig( config = {} ) {
 		for ( const reader of config.readers || {} ) {
-			this.registerFileReader( reader );
+			const isActive = reader.isActive?.() ?? true;
+
+			if ( isActive ) {
+				this.registerFileReader( reader );
+			}
 		}
 
 		for ( const parser of config.parsers || {} ) {
