@@ -92,9 +92,19 @@ class Controls_Manager {
 	const RAW_HTML = 'raw_html';
 
 	/**
+	 * Notice control.
+	 */
+	const NOTICE = 'notice';
+
+	/**
 	 * Deprecated Notice control.
 	 */
 	const DEPRECATED_NOTICE = 'deprecated_notice';
+
+	/**
+	 * Alert control.
+	 */
+	const ALERT = 'alert';
 
 	/**
 	 * Popover Toggle control.
@@ -401,6 +411,8 @@ class Controls_Manager {
 			self::TABS,
 			self::DIVIDER,
 			self::DEPRECATED_NOTICE,
+			self::ALERT,
+			self::NOTICE,
 
 			self::COLOR,
 			self::MEDIA,
@@ -1107,7 +1119,7 @@ class Controls_Manager {
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" />
+			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 			<div class="elementor-nerd-box-title"><?php Utils::print_unescaped_internal_string( $texts['title'] ); ?></div>
 			<?php foreach ( $texts['messages'] as $message ) { ?>
 				<div class="elementor-nerd-box-message"><?php Utils::print_unescaped_internal_string( $message ); ?></div>
@@ -1216,6 +1228,10 @@ class Controls_Manager {
 	}
 
 	public function add_display_conditions_controls( Controls_Stack $controls_stack ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
 		ob_start();
 		?>
 		<div class="e-control-display-conditions-promotion__wrapper">

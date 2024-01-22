@@ -127,7 +127,6 @@ class Widget_Alert extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
 				'default' => esc_html__( 'I am a description. Click the edit button to change this text.', 'elementor' ),
-				'separator' => 'none',
 				'dynamic' => [
 					'active' => true,
 				],
