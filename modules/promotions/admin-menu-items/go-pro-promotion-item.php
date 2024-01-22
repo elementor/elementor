@@ -34,9 +34,9 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public function get_url() {
 		$promotion['upgrade_url'] = $this->url;
-		$filtered_url = apply_filters('elementor/adminmenuitems/restrictions/custom_promotion', $promotion )['upgrade_url'] ?? '';
+		$filtered_url = apply_filters( 'elementor/adminmenuitems/restrictions/custom_promotion', $promotion )['upgrade_url'] ?? '';
 
-		if( strpos( $filtered_url, 'elementor.com' ) !== false ) {
+		if ( strpos( $filtered_url, 'elementor.com' ) !== false ) {
 			$this->url = $filtered_url;
 		}
 

@@ -157,13 +157,13 @@ class Role_Manager extends Settings_Page {
 	public function get_go_pro_link_html() {
 		$promotion = $this->get_go_pro_link_content();
 		$description = $promotion['description'];
-		$cta_button_text = $promotion['cta_button_text'];
-		$cta_button_url = $promotion['cta_button_url'];
+		$upgrade_text = $promotion['upgrade_text'];
+		$upgrade_url = $promotion['upgrade_url'];
 
 		?>
 		<div class="elementor-role-go-pro">
 			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( $description, 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $cta_button_url ); ?>"><?php echo esc_html__( $cta_button_text, 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php esc_url( $upgrade_url ); ?>"><?php echo esc_html__( $upgrade_text, 'elementor' ); ?></a></div>
 		</div>
 		<?php
 	}
