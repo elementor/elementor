@@ -32,7 +32,7 @@ export default class FileReaderBase {
 	 * Check if the reader is currently active.
 	 *
 	 * @abstract
-	 * @returns {boolean}
+	 * @return {boolean}
 	 */
 	static isActive() {
 		return true;
