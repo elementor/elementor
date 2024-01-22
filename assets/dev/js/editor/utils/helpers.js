@@ -196,7 +196,7 @@ module.exports = {
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
 			}
-			const tagUniqueID = tag + this.getUniqueID();
+			const tagUniqueID = tag + elementorCommon.helpers.getUniqueId();
 			view.addRenderAttribute( tagUniqueID, attributes );
 			view.addRenderAttribute( tagUniqueID, 'class', iconValue );
 			const htmlTag = '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
