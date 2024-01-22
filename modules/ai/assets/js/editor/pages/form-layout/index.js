@@ -281,6 +281,7 @@ const FormLayout = ( {
 							} } />
 					) }
 					<PromptForm
+						shouldResetPrompt={ shouldRenderWebApp }
 						ref={ promptInputRef }
 						isActive={ isPromptFormActive }
 						isLoading={ isLoading }
