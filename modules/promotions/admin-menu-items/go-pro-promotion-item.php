@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
-	private $url = 'https://go.elementor.com/pro-admin-menu/';
+	private static string $url = 'https://go.elementor.com/pro-admin-menu/';
 
 	public function is_visible() {
 		return true;
@@ -32,18 +32,18 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 		return 'manage_options';
 	}
 
-	public function get_url() {
-		$promotion['upgrade_url'] = $this->url;
+	static function get_url() {
+		$promotion['upgrade_url'] = self::$url;
 		$filtered_url = apply_filters( 'elementor/admin_menu_items/restrictions/custom_promotion', $promotion )['upgrade_url'] ?? '';
 
-		if ( false !== $this->domain_is_on_elementor_dot_com( $filtered_url ) ) {
-			$this->url = $filtered_url;
+		if ( false !== self::domain_is_on_elementor_dot_com( $filtered_url ) ) {
+			self::$url = $filtered_url;
 		}
 
-		return esc_url( $this->url );
+		return esc_url( self::$url );
 	}
 
-	function domain_is_on_elementor_dot_com( $url ):bool {
+	static function domain_is_on_elementor_dot_com( string $url ):bool {
 		$url_components = parse_url( $url );
 		if ( $url_components && isset( $url_components['host'] ) ) {
 			$domain = $url_components['host'];
