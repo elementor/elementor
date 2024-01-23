@@ -6,7 +6,7 @@ import {
 	Chip,
 	Divider,
 	Drawer,
-	IconButton, Link,
+	IconButton, LinearProgress, Link,
 	Stack,
 	ThemeProvider,
 	Toolbar,
@@ -41,7 +41,9 @@ const WhatsNewTopBar = ( props ) => {
 					backgroundColor: 'background.default',
 				} }
 			>
-				<Toolbar>
+				<Toolbar
+					variant="dense"
+				>
 					<Typography
 						variant="overline"
 						sx={ { flexGrow: 1 } }
@@ -74,7 +76,11 @@ const WhatsNewDrawerContent = () => {
 
 	if ( isPending ) {
 		return (
-			<Box>Loading...</Box>
+			<Box>
+				<LinearProgress
+					color="secondary"
+				/>
+			</Box>
 		);
 	}
 
@@ -93,6 +99,7 @@ const WhatsNewDrawerContent = () => {
 			if ( item.chipPlan ) {
 				chips.push( {
 					color: 'promotion',
+					size: 'small',
 					label: item.chipPlan,
 				} );
 			}
@@ -101,6 +108,7 @@ const WhatsNewDrawerContent = () => {
 				item.chipTags.forEach( ( chipTag ) => {
 					chips.push( {
 						variant: 'outlined',
+						size: 'small',
 						label: chipTag,
 					} );
 				} );
@@ -180,6 +188,7 @@ const WhatsNewDrawerContent = () => {
 					{ item.description && (
 						<Typography
 							variant="body2"
+							color="text.secondary"
 							sx={ {
 								pb: 2,
 							} }
@@ -215,7 +224,11 @@ const WhatsNewDrawerContent = () => {
 						</Box>
 					) }
 					{ itemIndex !== items.length - 1 && (
-						<Divider />
+						<Divider
+							sx={ {
+								my: 1,
+							} }
+						/>
 					) }
 				</Box>
 			);
