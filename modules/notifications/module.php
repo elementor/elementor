@@ -16,8 +16,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_enqueue_scripts', function() {
-			// TODO: Enqueue only when it's needed
+		add_action( 'elementor/admin_top_bar/before_enqueue_scripts', function() {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
 			wp_enqueue_script(
 				'e-admin-notifications',
 				$this->get_js_assets_url( 'admin-notifications' ),

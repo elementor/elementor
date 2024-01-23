@@ -92,7 +92,7 @@ const WhatsNewDrawerContent = () => {
 
 			if ( item.chipPlan ) {
 				chips.push( {
-					color: 'accent',
+					color: 'promotion',
 					label: item.chipPlan,
 				} );
 			}
@@ -208,7 +208,7 @@ const WhatsNewDrawerContent = () => {
 								href={ item.ctaLink }
 								target="_blank"
 								variant="contained"
-								color="accent"
+								color="promotion"
 							>
 								{ item.cta }
 							</Button>
