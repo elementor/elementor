@@ -199,6 +199,7 @@ const WhatsNewDrawerContent = () => {
 									{ ' ' }
 									<Link
 										href={ item.link }
+										color="info.main"
 										target="_blank"
 									>
 										{ item.readMoreText }
@@ -217,6 +218,7 @@ const WhatsNewDrawerContent = () => {
 								href={ item.ctaLink }
 								target="_blank"
 								variant="contained"
+								size="small"
 								color="promotion"
 							>
 								{ item.cta }
