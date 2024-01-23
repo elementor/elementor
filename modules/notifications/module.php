@@ -39,7 +39,7 @@ class Module extends BaseModule {
 				'elementorNotifications',
 				$this->get_app_js_config()
 			);
-		}, 5 /* Above Elementor's admin enqueue scripts */ );
+		}, 5 /* Before Elementor's admin enqueue scripts */ );
 
 		add_action( 'elementor/editor/after_enqueue_scripts', function() {
 			//API::test_conditions();
