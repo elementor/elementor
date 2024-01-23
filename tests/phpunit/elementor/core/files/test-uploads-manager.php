@@ -219,6 +219,8 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_are_unfiltered_uploads_enabled() {
+		$this->act_as_admin();
+
 		$current_option_state = get_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY );
 
 		// Test when option is true.
