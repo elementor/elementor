@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
+use elementor\core\utils\promotions\Validate_Promotion;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -52,26 +54,10 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 
 		$promotion = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion );
 
-		if ( false === $this->domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
+		if ( false === Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
 			$promotion['upgrade_url'] = $upgrade_url;
 		}
 
 		return esc_url( $promotion['upgrade_url'] );
-	}
-
-	function domain_is_on_elementor_dot_com( $url ):bool {
-		$url_components = parse_url( $url );
-		if ( $url_components && isset( $url_components['host'] ) ) {
-			$domain = $url_components['host'];
-
-			$domainSegments = explode( '.', $domain );
-
-			if ( count( $domainSegments ) >= 2 ) {
-				$rootDomain = $domainSegments[ count( $domainSegments ) - 2] . '.' . $domainSegments[ count($domainSegments) - 1 ];
-				return $rootDomain === 'elementor.com';
-			}
-		}
-
-		return false;
 	}
 }

@@ -2,6 +2,7 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use elementor\core\utils\promotions\Validate_Promotion;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -176,7 +177,7 @@ class Role_Manager extends Settings_Page {
 
 		$promotion = apply_filters( 'elementor/role/restrictions/custom_promotion', $promotion );
 
-		if ( strpos( $promotion['upgrade_url'], 'elementor.com' ) === false ) {
+		if ( false === Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
 			$promotion['upgrade_url'] = $upgrade_url;
 		}
 
