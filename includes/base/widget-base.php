@@ -368,7 +368,7 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
-			'upsale_data' => $this->get_upsale_data()
+			'upsale_data' => $this->get_upsale_data(),
 		];
 
         $config['upsale_data'] = apply_filters( 'elementor/widgets/' . $this->get_name() . '/custom_promotion', $this->get_upsale_data() ) ?? $this->get_upsale_data();
