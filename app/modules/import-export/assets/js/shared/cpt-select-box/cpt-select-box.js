@@ -32,18 +32,18 @@ export default function CptSelectBox() {
 			</Text>
 			{ customPostTypes.length > 0
 				? <Select2
-						multiple
-						settings={ { width: '100%' } }
-						options={ customPostTypes }
-						onChange={ ( e ) => selectedCpt( e.target.selectedOptions ) }
-						value={ selected }
-						placeholder={ __( 'Click to select custom post types', 'elementor' ) }
+					multiple
+					settings={ { width: '100%' } }
+					options={ customPostTypes }
+					onChange={ ( e ) => selectedCpt( e.target.selectedOptions ) }
+					value={ selected }
+					placeholder={ __( 'Click to select custom post types', 'elementor' ) }
 				/>
 				: <TextField
-						variant="outlined"
-						// eslint-disable-next-line @wordpress/i18n-ellipsis
-						placeholder={ __( 'No custom post types in your site...', 'elementor' ) }
-						className="e-app-export-kit-content__disabled"
+					variant="outlined"
+					// eslint-disable-next-line @wordpress/i18n-ellipsis
+					placeholder={ __( 'No custom post types in your site...', 'elementor' ) }
+					className="e-app-export-kit-content__disabled"
 				/>
 			}
 			<Text variant="sm" tag="span" className="e-app-export-kit-content__small-notice">
