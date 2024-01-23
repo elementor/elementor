@@ -77,6 +77,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await helper.doScreenshotPublished( { widgetType, hoverSelector } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
+			// Sdf
 		} );
 	}
 } );
