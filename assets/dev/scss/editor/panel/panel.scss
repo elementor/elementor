@@ -128,32 +128,21 @@
 }
 
 // Notification Center (v1)
-@mixin e-notification-icon-bullet() {
-	position: relative;
-
-	&:after {
-		position: absolute;
-		content: '';
-		display: block;
-		background: var(--e-a-color-primary);
-		border-radius: 50%;
-		width: 8px;
-		height: 8px;
-		top: 5px;
-		right: 5px;
-	}
-}
-
 body.e-has-notification {
-	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center {
-		.elementor-panel-menu-item-icon {
-			@include e-notification-icon-bullet();
-		}
-	}
+	&:not(.e-route-panel-menu) #elementor-panel-header-menu-button,
+	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center .elementor-panel-menu-item-icon {
+		position: relative;
 
-	&:not(.e-route-panel-menu) {
-		#elementor-panel-header-menu-button {
-			@include e-notification-icon-bullet();
+		&:after {
+			position: absolute;
+			content: '';
+			display: block;
+			background: var(--e-a-color-primary);
+			border-radius: 50%;
+			width: 8px;
+			height: 8px;
+			top: 5px;
+			right: 5px;
 		}
 	}
 }

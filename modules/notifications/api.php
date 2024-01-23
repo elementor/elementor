@@ -39,6 +39,23 @@ class API {
 		return $notifications;
 	}
 
+	public static function test_conditions() {
+		$conditions = [
+			[
+				[
+					'type' => 'language',
+					'languages' => [ 'en_US1' ],
+					'operator' => 'in',
+				],
+			],
+		];
+
+		var_dump(
+			static::check_conditions( $conditions )
+		);
+		die;
+	}
+
 	private static function fetch_data() : array {
 		$response = wp_remote_get( self::NOTIFICATIONS_URL );
 
