@@ -60,18 +60,19 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		const attachments = [];
 
-		this.getControlValue().forEach( ( image ) => {
-			var $thumbnail = jQuery( '<div>', { class: 'elementor-control-gallery-thumbnail' } );
-
-			$thumbnail.css( 'background-image', 'url(' + image.url + ')' );
+		this.getControlValue().forEach( ( image, thumbIndex ) => {
+			const $thumbnail = jQuery( '<img>', {
+				class: 'elementor-control-gallery-thumbnail',
+				src: image.url,
+				alt: 'gallery-thumbnail-' + thumbIndex,
+			} );
 
 			$galleryThumbnails.append( $thumbnail );
 
 			const handleHints = ( attachment ) => {
 				const hasAlt = this.imageHasAlt( attachment );
 				if ( ! hasAlt ) {
-					$thumbnail.css( 'outline', '2px solid var( --e-a-btn-bg-danger-active )' );
-					$thumbnail.css( 'opacity', '0.6' );
+					$thumbnail.addClass( 'unoptimized__image' );
 					imagesWithoutAlt += hasAlt ? 0 : 1;
 				}
 
