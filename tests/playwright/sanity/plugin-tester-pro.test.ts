@@ -7,7 +7,6 @@ const pluginList1 = [
 	'essential-addons-for-elementor-lite',
 	'jetsticky-for-elementor',
 	'jetgridbuilder',
-	'mighty-addons',
 	'the-plus-addons-for-elementor-page-builder',
 	'stratum',
 	'bdthemes-prime-slider-lite',
