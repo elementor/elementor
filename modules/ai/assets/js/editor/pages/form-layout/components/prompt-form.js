@@ -1,4 +1,4 @@
-import { useState, useRef, forwardRef } from 'react';
+import { useState, useRef, forwardRef, useEffect } from 'react';
 import { Box, Stack, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -76,8 +76,14 @@ const PromptForm = forwardRef( ( {
 	onSubmit,
 	onBack,
 	onEdit,
+	shouldResetPrompt = false,
 }, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
+	useEffect( () => {
+		if ( shouldResetPrompt ) {
+			setPrompt( '' );
+		}
+	}, [ shouldResetPrompt ] );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
 	const { attachmentsTypes } = useConfig();
@@ -167,6 +173,7 @@ PromptForm.propTypes = {
 	onBack: PropTypes.func.isRequired,
 	onEdit: PropTypes.func.isRequired,
 	attachments: PropTypes.arrayOf( AttachmentPropType ),
+	shouldResetPrompt: PropTypes.bool,
 };
 
 export default PromptForm;
