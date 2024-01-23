@@ -41,7 +41,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			imagesWithoutAlt = 0,
 			imagesWithoutOptimization = 0;
 
-		const hasPromotions = this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( 'image_optimizer_hint' );
+		const hasPromotions = this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( this.getDismissPromotionEventName() );
 
 		this.$el
 			.toggleClass( 'elementor-gallery-has-images', hasImages )
@@ -223,12 +223,25 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	},
 
 	onPromotionDismiss() {
+		this.dismissPromotion( this.getDismissPromotionEventName() );
+	},
+
+	getDismissPromotionEventName() {
 		const $promotions = this.ui.promotions;
 		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
 		// Remove listener
 		$dismissButton.off( 'click' );
-		const eventName = $dismissButton[ 0 ]?.dataset?.event || false;
-		this.dismissPromotion( eventName );
+		return $dismissButton[ 0 ]?.dataset?.event || false;
+	},
+
+	hidePromotion( eventName = null ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( ! eventName ) {
+			eventName = this.getDismissPromotionEventName();
+		}
+		// Prevent opening the same promotion again in current editor session.
+		elementor.config.user.dismissed_editor_notices.push( eventName );
 	},
 
 	onPromotionAction( event ) {
@@ -236,7 +249,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
 		}
-		this.onPromotionDismiss();
+		this.hidePromotion();
 	},
 
 	dismissPromotion( eventName ) {

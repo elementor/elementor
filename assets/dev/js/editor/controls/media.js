@@ -90,9 +90,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		if ( 'image' === mediaType ) {
 			if ( attachmentId ) {
+				const dismissPromotionEventName = this.getDismissPromotionEventName();
 				wp.media.attachment( attachmentId ).fetch().then( ( attachment ) => {
 					this.ui.warnings.toggle( ! this.imageHasAlt( attachment ) );
-					if ( this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( 'image_optimizer_hint' ) ) {
+					if ( this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( dismissPromotionEventName ) ) {
 						this.ui.promotions.toggle( this.imageNotOptimized( attachment ) );
 					}
 				} );
@@ -175,13 +176,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
-	onPromotionDismiss() {
+	getDismissPromotionEventName() {
 		const $promotions = this.ui.promotions;
 		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
 		// Remove listener
 		$dismissButton.off( 'click' );
-		const eventName = $dismissButton[ 0 ]?.dataset?.event || false;
-		this.dismissPromotion( eventName );
+		return $dismissButton[ 0 ]?.dataset?.event || false;
+	},
+
+	onPromotionDismiss() {
+		this.dismissPromotion( this.getDismissPromotionEventName() );
 	},
 
 	onPromotionAction( event ) {
@@ -189,22 +193,28 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
 		}
-		this.onPromotionDismiss();
+		this.hidePromotion();
 	},
 
 	dismissPromotion( eventName ) {
-		const $promotions = this.ui.promotions;
-		$promotions.hide();
+		this.hidePromotion( eventName );
 		if ( eventName ) {
 			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
 				data: {
 					dismissId: eventName,
 				},
 			} );
-
-			// Prevent opening the same promotion again in current editor session.
-			elementor.config.user.dismissed_editor_notices.push( eventName );
 		}
+	},
+
+	hidePromotion( eventName = null ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( ! eventName ) {
+			eventName = this.getDismissPromotionEventName();
+		}
+		// Prevent opening the same promotion again in current editor session.
+		elementor.config.user.dismissed_editor_notices.push( eventName );
 	},
 
 	onMediaInputImageSizeChange() {
