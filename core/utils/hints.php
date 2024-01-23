@@ -112,15 +112,15 @@ class Hints {
 		}
 
 		if ( ! empty( $notice_settings['heading'] ) ) {
-			$heading = '<div class="elementor-control-notice-main-heading">' . $notice_settings['heading']. '</div>';
+			$heading = '<div class="elementor-control-notice-main-heading">' . $notice_settings['heading'] . '</div>';
 		}
 
 		if ( ! empty( $notice_settings['content'] ) ) {
-			$content = '<div class="elementor-control-notice-main-content">' . $notice_settings['content']. '</div>';
+			$content = '<div class="elementor-control-notice-main-content">' . $notice_settings['content'] . '</div>';
 		}
 
 		if ( ! empty( $notice_settings['button_text'] ) ) {
-			$button_settings = ( ! empty( $notice_settings['button_data'] ) ) ? ' data-settings="' . esc_attr( json_encode( $notice_settings['button_data'] ) ) .'"' : '';
+			$button_settings = ( ! empty( $notice_settings['button_data'] ) ) ? ' data-settings="' . esc_attr( json_encode( $notice_settings['button_data'] ) ) . '"' : '';
 			$button = '<div class="elementor-control-notice-main-actions">
 				<button type="button" class="e-btn e-' . $notice_settings['type'] . ' e-btn-1" data-event="' . $notice_settings['button_event'] . '"' . $button_settings . '>
 					' . $notice_settings['button_text'] . '
@@ -196,7 +196,7 @@ class Hints {
 	 */
 	public static function is_dismissed( $key ): bool {
 		$dismissed = User::get_dismissed_editor_notices();
-		return in_array( $key,$dismissed, true );
+		return in_array( $key, $dismissed, true );
 	}
 
 	/**
@@ -274,7 +274,7 @@ class Hints {
 	 */
 	public static function get_plugin_action_url( $plugin ): string {
 		if ( ! self::is_plugin_installed( $plugin ) ) {
-			return  self::get_plugin_install_url( $plugin );
+			return self::get_plugin_install_url( $plugin );
 		}
 
 		if ( ! self::is_plugin_active( $plugin ) ) {

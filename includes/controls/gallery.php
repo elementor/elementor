@@ -121,7 +121,7 @@ class Control_Gallery extends Base_Data_Control {
 								'content' => $content,
 								'icon' => true,
 								'dismissible' => $dismissible,
-								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ?  __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
+								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
 								'button_event' => $dismissible,
 								'button_data' => [
 									'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
