@@ -90,9 +90,6 @@ class Recent_Posts extends Endpoint {
 					'doc_type' => $document->get_name(),
 					'label' => $document->get_title(),
 				],
-				'user_can' => [
-					'edit' => current_user_can( 'edit_post', $id ),
-				],
 			];
 		}
 
