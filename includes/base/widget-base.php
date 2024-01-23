@@ -368,8 +368,13 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
-			'upsale_data' => apply_filters( 'elementor/widgets/' . $this->get_name() . '/custom_promotion', $this->get_upsale_data() ) ?? $this->get_upsale_data(),
+			'upsale_data' => $this->get_upsale_data()
 		];
+
+        $config['upsale_data'] = apply_filters( 'elementor/widgets/' . $this->get_name() . '/custom_promotion', $this->get_upsale_data() ) ?? $this->get_upsale_data();
+		if ( isset($config['upsale_data']['image'] ) ) {
+			sanitize_file_name( $config['upsale_data']['image'] );
+		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -377,12 +382,27 @@ abstract class Widget_Base extends Element_Base {
 			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
-
-		if ( isset( $config['upsale_data']['upgrade_url'] ) && strpos( $config['upsale_data']['upgrade_url'], 'elementor.com' ) === false ) {
+		if ( isset( $config['upsale_data']['upgrade_url'] ) && false === $this->domain_is_on_elementor_dot_com( $config['upsale_data']['upgrade_url'] ) ) {
 			$config['upsale_data']['upgrade_url'] = esc_url( $this->get_upsale_data()['upgrade_url'] );
 		}
 
 		return array_replace_recursive( parent::get_initial_config(), $config );
+	}
+
+	function domain_is_on_elementor_dot_com( $url ):bool {
+		$url_components = parse_url( $url );
+		if ( $url_components && isset( $url_components['host'] ) ) {
+			$domain = $url_components['host'];
+
+			$domainSegments = explode( '.', $domain );
+
+			if ( count( $domainSegments ) >= 2 ) {
+				$rootDomain = $domainSegments[ count( $domainSegments ) - 2] . '.' . $domainSegments[ count($domainSegments) - 1 ];
+				return $rootDomain === 'elementor.com';
+			}
+		}
+
+		return false;
 	}
 
 	/**

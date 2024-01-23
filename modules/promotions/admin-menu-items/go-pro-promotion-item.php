@@ -34,13 +34,29 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public function get_url() {
 		$promotion['upgrade_url'] = $this->url;
-		$filtered_url = apply_filters( 'elementor/adminmenuitems/restrictions/custom_promotion', $promotion )['upgrade_url'] ?? '';
+		$filtered_url = apply_filters( 'elementor/admin_menu_items/restrictions/custom_promotion', $promotion )['upgrade_url'] ?? '';
 
-		if ( strpos( $filtered_url, 'elementor.com' ) !== false ) {
+		if ( false !== $this->domain_is_on_elementor_dot_com( $filtered_url ) ) {
 			$this->url = $filtered_url;
 		}
 
 		return esc_url( $this->url );
+	}
+
+	function domain_is_on_elementor_dot_com( $url ):bool {
+		$url_components = parse_url( $url );
+		if ( $url_components && isset( $url_components['host'] ) ) {
+			$domain = $url_components['host'];
+
+			$domainSegments = explode( '.', $domain );
+
+			if ( count( $domainSegments ) >= 2 ) {
+				$rootDomain = $domainSegments[ count( $domainSegments ) - 2] . '.' . $domainSegments[ count($domainSegments) - 1 ];
+				return $rootDomain === 'elementor.com';
+			}
+		}
+
+		return false;
 	}
 
 	public function render() {

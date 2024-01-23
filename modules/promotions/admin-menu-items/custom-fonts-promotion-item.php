@@ -16,10 +16,14 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 	}
 
 	public function get_image_url() {
-			$promotion['image'] = 'images/go-pro-wp-dashboard.svg';
+			$default_image = 'images/go-pro-wp-dashboard.svg';
+			$promotion['image'] = $default_image;
+			$promotion = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion );
 
-			$promotion = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion )['image'] ?? $promotion['image'];
-			return esc_url( ELEMENTOR_ASSETS_URL . $promotion['image'] );
+			if ( isset( $promotion['image'] ) ) {
+				return esc_url( ELEMENTOR_ASSETS_URL . $promotion['image'] );
+			}
+			return esc_url($default_image);
 	}
 
 	public function get_cta_text() {
@@ -48,9 +52,26 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 
 		$promotion = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion );
 
-		if ( strpos( $promotion['upgrade_url'] ?? '', 'elementor.com' ) === false ) {
+		if ( false === $this->domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
 			$promotion['upgrade_url'] = $upgrade_url;
 		}
+
 		return esc_url( $promotion['upgrade_url'] );
+	}
+
+	function domain_is_on_elementor_dot_com( $url ):bool {
+		$url_components = parse_url( $url );
+		if ( $url_components && isset( $url_components['host'] ) ) {
+			$domain = $url_components['host'];
+
+			$domainSegments = explode( '.', $domain );
+
+			if ( count( $domainSegments ) >= 2 ) {
+				$rootDomain = $domainSegments[ count( $domainSegments ) - 2] . '.' . $domainSegments[ count($domainSegments) - 1 ];
+				return $rootDomain === 'elementor.com';
+			}
+		}
+
+		return false;
 	}
 }
