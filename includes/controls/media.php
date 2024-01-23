@@ -249,11 +249,13 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 					<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
-						<?php Hints::get_notice_template( [
-							'type' => 'warning',
-							'content' => __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
-							'icon' => true,
-						] ); ?>
+						<?php
+							Hints::get_notice_template( [
+								'type' => 'warning',
+								'content' => __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+								'icon' => true,
+							] );
+						?>
 					</div>
 					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) { ?>
 						<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
@@ -268,7 +270,7 @@ class Control_Media extends Control_Base_Multiple {
 								'content' => $content,
 								'icon' => true,
 								'dismissible' => $dismissible,
-								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ?  __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
+								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
 								'button_event' => $dismissible,
 								'button_data' => [
 									'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
