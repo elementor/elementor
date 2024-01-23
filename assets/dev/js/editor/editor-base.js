@@ -490,7 +490,6 @@ export default class EditorBase extends Marionette.Application {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.initial_document.urls.preview,
-				title: __( 'Preview', 'elementor' ),
 				allowfullscreen: 1,
 			} );
 
