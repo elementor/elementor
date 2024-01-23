@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use elementor\core\utils\promotions\Validate_Promotion;
+use Elementor\core\utils\promotions\Validate_Promotion;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {

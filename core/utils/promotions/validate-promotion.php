@@ -1,6 +1,10 @@
 <?php
 
-namespace elementor\core\utils\promotions;
+namespace Elementor\core\utils\promotions;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Validate_Promotion {
 
