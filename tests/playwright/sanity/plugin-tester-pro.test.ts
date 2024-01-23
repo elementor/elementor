@@ -101,8 +101,10 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editorPage.removeClasses( 'elementor-motion-effects-element' );
 			await editorPage.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
-
 			await page.goto( '/law-firm-about/?elementor' );
+			if ( 'happy-elementor-addons' === plugin ) {
+				await page.goto( '/law-firm-about/?elementor' );
+			}
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
 			await editorPage.closeNavigatorIfOpen();
@@ -169,6 +171,9 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
+			if ( 'happy-elementor-addons' === plugin ) {
+				await page.goto( '/law-firm-about/?elementor' );
+			}
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
 			await editorPage.closeNavigatorIfOpen();
