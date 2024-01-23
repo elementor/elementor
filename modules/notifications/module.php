@@ -42,8 +42,6 @@ class Module extends BaseModule {
 		}, 5 /* Before Elementor's admin enqueue scripts */ );
 
 		add_action( 'elementor/editor/after_enqueue_scripts', function() {
-			//API::test_conditions();
-
 			wp_enqueue_script(
 				'e-editor-notifications',
 				$this->get_js_assets_url( 'editor-notifications' ),

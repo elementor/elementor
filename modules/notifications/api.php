@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\Notifications;
 
+use Elementor\User;
+
 class API {
 
 	const NOTIFICATIONS_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
@@ -37,23 +39,6 @@ class API {
 		}
 
 		return $notifications;
-	}
-
-	public static function test_conditions() {
-		$conditions = [
-			[
-				[
-					'type' => 'language',
-					'languages' => [ 'en_US1' ],
-					'operator' => 'in',
-				],
-			],
-		];
-
-		var_dump(
-			static::check_conditions( $conditions )
-		);
-		die;
 	}
 
 	private static function fetch_data() : array {
@@ -116,22 +101,7 @@ class API {
 					$result = 'in' === $condition['operator'] ? $in_array : ! $in_array;
 					break;
 				case 'plugin':
-					if ( ! empty( $condition['plugin_file'] ) ) {
-						$plugin_file = $condition['plugin_file']; // For PHP Unit tests.
-					} else {
-						$plugin_file = WP_PLUGIN_DIR . '/' . $condition['plugin']; // Default.
-					}
-
-					$version = '';
-
-					if ( is_plugin_active( $condition['plugin'] ) && file_exists( $plugin_file ) ) {
-						$plugin_data = get_plugin_data( $plugin_file );
-						if ( isset( $plugin_data['Version'] ) ) {
-							$version = $plugin_data['Version'];
-						}
-					}
-
-					$result = version_compare( $version, $condition['version'], $condition['operator'] );
+					$result = is_plugin_active( $condition['plugin'] );
 					break;
 				case 'theme':
 					$theme = wp_get_theme();
@@ -146,6 +116,9 @@ class API {
 					}
 
 					$result = version_compare( $version, $condition['version'], $condition['operator'] );
+					break;
+				case 'introduction_meta':
+					$result = User::get_introduction_meta( $condition['meta'] );
 					break;
 
 				default:
