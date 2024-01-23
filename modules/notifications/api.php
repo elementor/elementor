@@ -149,6 +149,16 @@ class API {
 					break;
 
 				default:
+					/**
+					 * Filters the notification condition, whether to check the group or not.
+					 *
+					 * The dynamic portion of the hook name, `$condition['type']`, refers to the condition type.
+					 *
+					 * @since 3.19.0
+					 *
+					 * @param bool  $result    Whether to check the group.
+					 * @param array $condition Notification condition.
+					 */
 					$result = apply_filters( "elementor/notifications/condition/{$condition['type']}", $result, $condition );
 					break;
 			}
