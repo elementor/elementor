@@ -32,11 +32,11 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 		$promotion['title'] = __( 'Add Your Custom Fonts', 'elementor' );
 
 		$title = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion )['title'] ?? $promotion['title'];
-		return  esc_html( $title );
+		return esc_html( $title );
 	}
 
 	public function render_promotion_description() {
-		$promotion['description'] = __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.' );
+		$promotion['description'] = __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' );
 
 		$description = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion )['description'] ?? $promotion['description'];
 		echo esc_html( $description );
