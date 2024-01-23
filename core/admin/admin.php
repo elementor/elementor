@@ -891,6 +891,8 @@ class Admin extends App {
 			'settings_url' => Settings::get_url(),
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
+				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
+				'is_administrator' => current_user_can( 'manage_options' ),
 			],
 			'beta_tester' => [
 				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
