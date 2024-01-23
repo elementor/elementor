@@ -1,0 +1,11 @@
+.elementor-control-alert {
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	align-items: start;
+	gap: 8px;
+
+	&-heading {
+		font-weight: bold;
+	}
+}
