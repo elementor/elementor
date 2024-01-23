@@ -101,7 +101,12 @@ class Hints {
 			$notice_settings['type'] = 'info';
 		}
 
-		$icon =  $heading = $content = $dismissible = $button = '';
+		$icon = '';
+		$heading = '';
+		$content = '';
+		$dismissible = '';
+		$button = '';
+
 		if ( $notice_settings['icon'] ) {
 			$icon = self::get_notice_icon();
 		}
