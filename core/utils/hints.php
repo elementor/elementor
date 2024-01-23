@@ -180,20 +180,7 @@ class Hints {
 	 * @return string
 	 */
 	public static function get_plugin_activate_url( $plugin_slug ): string {
-		$action = 'activate';
-		return wp_nonce_url(
-			add_query_arg(
-				[
-					'action' => $action,
-					'plugin' => self::ensure_plugin_folder( $plugin_slug ),
-					'plugin_status' => 'all',
-					'paged' => 1,
-					's' => '',
-				],
-				admin_url( 'plugins.php' )
-			),
-			'activate-plugin_' . $plugin_slug
-		);
+		return admin_url( 'plugins.php' );
 	}
 
 	/**
