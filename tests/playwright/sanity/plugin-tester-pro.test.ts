@@ -93,9 +93,6 @@ test.describe( `Plugin tester tests: containers`, () => {
 			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
 			await page.goto( '/law-firm-about/' );
-			if ( 'happy-elementor-addons' === plugin ) {
-				await page.goto( '/law-firm-about/?elementor' );
-			}
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
 			await page.evaluate( ( selector ) => {
 				const admin = document.getElementById( selector );
@@ -106,6 +103,9 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
+			if ( 'happy-elementor-addons' === plugin ) {
+				await page.goto( '/law-firm-about/?elementor' );
+			}
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
 			await editorPage.closeNavigatorIfOpen();
@@ -162,9 +162,6 @@ test.describe( 'Plugin tester tests: sections', () => {
 			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
 
 			await page.goto( '/law-firm-about/' );
-			if ( 'happy-elementor-addons' === plugin ) {
-				await page.goto( '/law-firm-about/?elementor' );
-			}
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
 			await page.evaluate( ( selector ) => {
 				const admin = document.getElementById( selector );
@@ -175,6 +172,9 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
+			if ( 'happy-elementor-addons' === plugin ) {
+				await page.goto( '/law-firm-about/?elementor' );
+			}
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
 			await editorPage.closeNavigatorIfOpen();
