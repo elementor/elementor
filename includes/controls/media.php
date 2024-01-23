@@ -413,7 +413,7 @@ class Control_Media extends Control_Base_Multiple {
 	public static function get_image_alt( $instance ) {
 		if ( empty( $instance['id'] ) ) {
 			// For `Insert From URL` images.
-			return isset( $instance['alt'] ) ? trim( strip_tags( $instance['alt'] ) ) : '';
+			return isset( $instance['alt'] ) ? trim( esc_attr( strip_tags( $instance['alt'] ) ) ) : '';
 		}
 
 		$attachment_id = $instance['id'];
@@ -433,7 +433,7 @@ class Control_Media extends Control_Base_Multiple {
 				$alt = $attachment->post_title;
 			}
 		}
-		return trim( strip_tags( $alt ) );
+		return trim( esc_attr( strip_tags( $alt ) ) );
 	}
 
 	public function get_style_value( $css_property, $control_value, array $control_data ) {
