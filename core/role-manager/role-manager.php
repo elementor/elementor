@@ -16,12 +16,29 @@ class Role_Manager extends Settings_Page {
 
 	const ROLE_MANAGER_OPTION_NAME = 'exclude_user_roles';
 
+	const ROLE_MANAGER_ADVANCED = 'role-manager';
+
+	private static $advanced_options = [];
+
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function get_role_manager_options() {
 		return get_option( 'elementor_' . self::ROLE_MANAGER_OPTION_NAME, [] );
+	}
+
+	private function get_role_manager_advanced_options() {
+		return get_option( 'elementor_' . self::ROLE_MANAGER_ADVANCED, [] );
+	}
+
+	public function get_user_advanced_options() {
+		if ( ! empty( static::$advanced_options ) ) {
+			return static::$advanced_options;
+		}
+
+		static::$advanced_options = $this->get_role_manager_advanced_options();
+		return static::$advanced_options;
 	}
 
 	/**
@@ -62,11 +79,24 @@ class Role_Manager extends Settings_Page {
 									'sanitize_callback' => [ $validation_class, 'checkbox_list' ],
 								],
 							],
+							self::ROLE_MANAGER_ADVANCED => [
+								'field_args' => [
+									'type' => 'raw_html',
+									'html' => '',
+								],
+								'setting_args' => [
+									'sanitize_callback' => [ $this, 'save_advanced_options' ],
+								],
+							],
 						],
 					],
 				],
 			],
 		];
+	}
+
+	public function save_advanced_options( $input ) {
+		return $input;
 	}
 
 	/**
@@ -126,7 +156,7 @@ class Role_Manager extends Settings_Page {
 						<?php echo esc_html__( 'No access to editor', 'elementor' ); ?>
 					</label>
 				</div>
-				<div>
+				<div class="elementor-role-controls-advanced">
 					<?php
 					/**
 					 * Role restrictions controls.
@@ -150,6 +180,23 @@ class Role_Manager extends Settings_Page {
 		<?php
 	}
 
+	public function add_json_enable_control( $role_slug ) {
+		$value = 'json-upload';
+		$id = self::ROLE_MANAGER_ADVANCED . '_' . $role_slug . '_' . $value;
+		$name = 'elementor_' . self::ROLE_MANAGER_ADVANCED . '[' . $role_slug . '][]';
+
+		$advanced_options = $this->get_user_advanced_options();
+		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : [];
+		?>
+		<div class="elementor-role-control">
+			<label for="<?php echo esc_attr( $id ); ?>">
+				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked ), true ); ?>>
+				<?php echo esc_html__( 'Enable the option to upload JSON files', 'elementor' ); ?>
+			</label>
+			<p class="elementor-role-control-warning"><strong><?php echo esc_html__( 'Heads up', 'elementor' ); ?>:</strong> <?php echo esc_html__( 'Giving broad access to upload JSON files can pose a security risk to your website because such files may contain malicious scripts, etc.', 'elementor' ); ?></p>
+		</div>
+		<?php
+	}
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -168,7 +215,7 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function get_user_restrictions_array() {
-		$user  = wp_get_current_user();
+		$user = wp_get_current_user();
 		$user_roles = $user->roles;
 		$options = $this->get_user_restrictions();
 		$restrictions = [];
@@ -239,6 +286,7 @@ class Role_Manager extends Settings_Page {
 			}, Settings::ADMIN_MENU_PRIORITY + 10 );
 		}
 
+		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 	}
 }
