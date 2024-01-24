@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\core\utils\promotions\Validate_Promotion;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,11 +25,13 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Upgrade', 'elementor' );
+		$upgrade_text = __( 'Upgrade', 'elementor' );
+		$promotion['upgrade_text'] = $upgrade_text;
+		return apply_filters( 'elementor/admin_menu_promo/restrictions/custom_promotion', $promotion )['upgrade_text'] ?? $upgrade_text;
 	}
 
 	public function get_page_title() {
-		return '';
+		return esc_html__( 'Upgrade', 'elementor' );
 	}
 
 	public function get_capability() {
