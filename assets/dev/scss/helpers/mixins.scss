@@ -186,6 +186,16 @@
 		}
 	}
 
+	&.elementor-button-info,
+	&.e-info {
+		background-color: var(--e-a-btn-bg-info);
+
+		&:hover,
+		&:focus {
+			background-color: var(--e-a-btn-bg-info-hover);
+		}
+	}
+
 	&.elementor-button-warning,
 	&.e-warning {
 		background-color: var(--e-a-btn-bg-warning);

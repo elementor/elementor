@@ -163,20 +163,6 @@ $title-size: 12px;
 			&:hover {
 				color: var(--e-a-color-primary-bold);
 			}
-
-			&:not([data-choose="custom"]) {
-
-				i {
-					display: none;
-				}
-			}
-
-			&[data-choose="custom"] {
-
-				span {
-					display: none;
-				}
-			}
 		}
 	}
 

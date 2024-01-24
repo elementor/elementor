@@ -193,6 +193,7 @@ export default class EditorBase extends Marionette.Application {
 			Icons: require( 'elementor-controls/icons' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
+			Notice: require( 'elementor-controls/notice' ),
 			Number: require( 'elementor-controls/number' ),
 			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
@@ -489,6 +490,7 @@ export default class EditorBase extends Marionette.Application {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.initial_document.urls.preview,
+				title: __( 'Preview', 'elementor' ),
 				allowfullscreen: 1,
 			} );
 
