@@ -10,7 +10,7 @@ export default class extends elementorModules.Module {
 	};
 
 	onInit() {
-		if ( ! elementor.config.editor_events.can_send_events ) {
+		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
 
@@ -18,7 +18,7 @@ export default class extends elementorModules.Module {
 	}
 
 	dispatchEvent( type, eventId, context ) {
-		if ( ! elementor.config.editor_events.can_send_events ) {
+		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
 
