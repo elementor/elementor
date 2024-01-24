@@ -17,12 +17,12 @@ export default class extends elementorModules.Module {
 		window.addEventListener( 'unload', this.sendEvents() );
 	}
 
-	dispatchEvent( data ) {
+	dispatchEvent( type, eventId, context ) {
 		if ( ! elementor.config.editor_events.can_send_events ) {
 			return;
 		}
 
-		EventsStorage.set( data );
+		EventsStorage.set( { type, event_id: eventId, context, timestamp: Date.now() } );
 	}
 
 	sendEvents() {
