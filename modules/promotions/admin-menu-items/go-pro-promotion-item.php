@@ -28,7 +28,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	public function get_label() {
 		$upgrade_text = __( 'Upgrade', 'elementor' );
 		$promotion['upgrade_text'] = $upgrade_text;
-		return apply_filters( 'elementor/admin_menu/promotion/upgrade_url', $promotion )['upgrade_text'] ?? $upgrade_text;
+		return apply_filters( 'elementor/admin_menu/promotion/upgrade_text', $promotion )['upgrade_text'] ?? $upgrade_text;
 	}
 
 	public function get_page_title() {
