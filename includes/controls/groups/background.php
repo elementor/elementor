@@ -153,7 +153,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 		$fields['gradient_notice'] = [
 			'type' => Controls_Manager::RAW_HTML,
-			'raw' => esc_html__( 'Set colors, locations, and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'elementor' ),
+			'raw' => esc_html__( 'Set locations and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'elementor' ),
 			'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			'render_type' => 'ui',
 			'condition' => [
@@ -437,7 +437,6 @@ class Group_Control_Background extends Group_Control_Base {
 			'type' => Controls_Manager::RAW_HTML,
 			'content_classes' => 'elementor-control-field-description',
 			'raw' => esc_html__( 'Note: Attachment Fixed works only on desktop.', 'elementor' ),
-			'separator' => 'none',
 			'condition' => [
 				'background' => [ 'classic' ],
 				'image[url]!' => '',

@@ -470,7 +470,6 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
-			'separator' => 'none',
 		];
 
 		$this->add_responsive_control(
@@ -1663,6 +1662,8 @@ class Container extends Element_Base {
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		$this->end_controls_section();
 	}

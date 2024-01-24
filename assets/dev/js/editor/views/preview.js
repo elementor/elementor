@@ -114,26 +114,14 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	onRender() {
-		let $contentContainer;
-
-		if ( elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
-			$contentContainer = this.$el;
-		} else {
-			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );
-
-			this.$el.html( $inner );
-
-			$contentContainer = $inner;
-		}
-
-		$contentContainer.html( this.$childViewContainer );
+		this.$el.html( this.$childViewContainer );
 
 		if ( elementor.userCan( 'design' ) ) {
 			const addNewSectionView = new AddSectionView();
 
 			addNewSectionView.render();
 
-			$contentContainer.append( addNewSectionView.$el );
+			this.$el.append( addNewSectionView.$el );
 		}
 	},
 } );

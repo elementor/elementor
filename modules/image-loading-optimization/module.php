@@ -53,7 +53,7 @@ class Module extends BaseModule {
 				'<code>loading="lazy"</code>'
 			),
 			'generator_tag' => true,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 	}
