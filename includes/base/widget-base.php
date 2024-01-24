@@ -3,7 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
-use Elementor\core\utils\promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
