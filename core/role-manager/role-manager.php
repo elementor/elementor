@@ -2,7 +2,7 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\core\utils\promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
