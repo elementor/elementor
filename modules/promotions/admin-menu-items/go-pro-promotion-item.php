@@ -31,7 +31,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Upgrade', 'elementor' );
+		return '';
 	}
 
 	public function get_capability() {
