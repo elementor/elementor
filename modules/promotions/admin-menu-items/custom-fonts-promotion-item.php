@@ -20,7 +20,7 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 	}
 
 	public function get_image_url() {
-		return 'images/go-pro-wp-dashboard.svg';
+		return ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg';
 	}
 
 	public function get_cta_text() {
