@@ -41,6 +41,15 @@ class Module extends BaseApp {
 
 		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar', null, 'default', true ), [], ELEMENTOR_VERSION );
 
+		/**
+		 * Before admin top bar enqueue scripts.
+		 *
+		 * Fires before Elementor admin top bar scripts are enqueued.
+		 *
+		 * @since 3.19.0
+		 */
+		do_action( 'elementor/admin_top_bar/before_enqueue_scripts', $this );
+
 		wp_enqueue_script( 'elementor-admin-top-bar', $this->get_js_assets_url( 'admin-top-bar' ), [
 			'elementor-common',
 			'react',
