@@ -401,8 +401,10 @@ class User {
 	public static function set_dismissed_editor_notices( array $data ) {
 		$editor_notices = self::get_dismissed_editor_notices();
 
-		$editor_notices[] = $data['dismissId'];
+		if ( ! in_array( $data['dismissId'], $editor_notices, true ) ) {
+			$editor_notices[] = $data['dismissId'];
 
-		update_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, $editor_notices );
+			update_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, $editor_notices );
+		}
 	}
 }
