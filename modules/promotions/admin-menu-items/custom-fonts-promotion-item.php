@@ -36,6 +36,6 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 	}
 
 	public function get_cta_url() {
-		return esc_url( 'https://go.elementor.com/go-pro-custom-fonts/', 'elementor' );
+		return 'https://go.elementor.com/go-pro-custom-fonts/';
 	}
 }
