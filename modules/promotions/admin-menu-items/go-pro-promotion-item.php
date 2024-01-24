@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	private static string $url = 'https://go.elementor.com/pro-admin-menu/';
 
+	public function get_name() {
+		return 'admin_menu_promo';
+	}
+
 	public function is_visible() {
 		return true;
 	}
@@ -22,9 +26,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		$upgrade_text = __( 'Upgrade', 'elementor' );
-		$promotion['upgrade_text'] = $upgrade_text;
-		return apply_filters( 'elementor/admin_menu_items/restrictions/custom_promotion', $promotion )['upgrade_text'] ?? $upgrade_text;
+		return esc_html__( 'Upgrade', 'elementor' );
 	}
 
 	public function get_page_title() {
@@ -36,13 +38,6 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public static function get_url() {
-		$promotion['upgrade_url'] = self::$url;
-		$filtered_url = apply_filters( 'elementor/admin_menu_items/restrictions/custom_promotion', $promotion )['upgrade_url'] ?? '';
-
-		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
-			self::$url = $filtered_url;
-		}
-
 		return esc_url( self::$url );
 	}
 

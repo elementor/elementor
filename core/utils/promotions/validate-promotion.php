@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\core\utils\promotions;
+namespace Elementor\Core\Utils\Promotions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
