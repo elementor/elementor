@@ -24,28 +24,31 @@ export default function FavoritesActions( props ) {
 
 	return (
 		props.isFavorite
-			? <Button
-				text={ __( 'Remove from Favorites', 'elementor' ) }
-				hideText={ true }
-				icon="eicon-heart"
-				className={ `e-kit-library__kit-favorite-actions e-kit-library__kit-favorite-actions--active ${ loadingClasses }` }
-				onClick={ () => {
-					// eslint-disable-next-line no-unused-expressions
-					! isLoading && removeFromFavorites.mutate( props.id );
-					eventTracking( props?.name, props?.source, 'uncheck' );
-				} }
-			/>
-			: <Button
-				text={ __( 'Add to Favorites', 'elementor' ) }
-				hideText={ true }
-				icon="eicon-heart-o"
-				className={ `e-kit-library__kit-favorite-actions ${ loadingClasses }` }
-				onClick={ () => {
-					// eslint-disable-next-line no-unused-expressions
-					! isLoading && addToFavorites.mutate( props.id );
-					eventTracking( props?.name, props?.source, 'check', props?.index, props?.queryParams );
-				} }
-			/>
+			? (
+				<Button
+					text={ __( 'Remove from Favorites', 'elementor' ) }
+					hideText={ true }
+					icon="eicon-heart"
+					className={ `e-kit-library__kit-favorite-actions e-kit-library__kit-favorite-actions--active ${ loadingClasses }` }
+					onClick={ () => {
+						// eslint-disable-next-line no-unused-expressions
+						! isLoading && removeFromFavorites.mutate( props.id );
+						eventTracking( props?.name, props?.source, 'uncheck' );
+					} }
+				/>
+			) : (
+				<Button
+					text={ __( 'Add to Favorites', 'elementor' ) }
+					hideText={ true }
+					icon="eicon-heart-o"
+					className={ `e-kit-library__kit-favorite-actions ${ loadingClasses }` }
+					onClick={ () => {
+						// eslint-disable-next-line no-unused-expressions
+						! isLoading && addToFavorites.mutate( props.id );
+						eventTracking( props?.name, props?.source, 'check', props?.index, props?.queryParams );
+					} }
+				/>
+			)
 	);
 }
 

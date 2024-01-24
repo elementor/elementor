@@ -17,7 +17,8 @@ function PluginsTable( {
 	initialSelected,
 	initialDisabled,
 } ) {
-	const CellText = ( cellTextProps ) => (
+	const CellText = ( cellTextProps ) =>
+		(
 			<Text className="e-app-import-export-plugins-table__cell-content">
 				{ cellTextProps.text }
 			</Text>
