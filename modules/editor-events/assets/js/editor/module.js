@@ -1,3 +1,5 @@
+import EventsStorage from './events-storage';
+
 export default class extends elementorModules.Module {
 	types = {
 		click: 'click',
@@ -7,17 +9,37 @@ export default class extends elementorModules.Module {
 		site_settings: 'site_settings',
 	};
 
-	sendEvent( data ) {
+	onInit() {
 		if ( ! elementor.config.editor_events.can_send_events ) {
 			return;
 		}
 
-		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, JSON.stringify( data ) ) ) {
+		window.addEventListener( 'unload', this.sendEvents() );
+	}
+
+	dispatchEvent( data ) {
+		if ( ! elementor.config.editor_events.can_send_events ) {
+			return;
+		}
+
+		EventsStorage.set( data );
+	}
+
+	sendEvents() {
+		const events = EventsStorage.get();
+
+		if ( ! events.length ) {
+			return;
+		}
+
+		EventsStorage.clear();
+
+		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, JSON.stringify( events ) ) ) {
 			return;
 		}
 
 		fetch( elementor.config.editor_events.data_system_url, {
-			body: JSON.stringify( data ),
+			body: JSON.stringify( events ),
 			method: 'POST',
 			credentials: 'omit',
 			keepalive: true,
