@@ -35,7 +35,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 	public function render() {
 		$config = [
 			'title' => $this->get_promotion_title(),
-			'description' => $this->render_promotion_description(),
+			'description' => $this->get_promotion_description(),
 			'image' => $this->get_image_url(),
 			'upgrade_text' => $this->get_cta_text(),
 			'upgrade_url' => $this->get_cta_url(),
@@ -54,7 +54,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 
 				<h3><?php echo esc_html__( $config['title'] ?? $this->get_promotion_title() ); ?></h3>
 
-				<p><?php echo esc_html__( $config['description'] ?? $this->render_promotion_description() ) ?></p>
+				<p><?php echo esc_html__( $config['description'] ?? $this->get_promotion_description() ) ?></p>
 
 				<a class="elementor-button go-pro" href="<?php echo esc_url( $config['upgrade_url'] ?? $this->get_cta_url() ); ?>">
 					<?php echo esc_html__( $config['upgrade_text'] ?? $this->get_cta_text() ); ?>

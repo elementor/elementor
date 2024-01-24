@@ -13,7 +13,7 @@ interface Promotion_Menu_Item extends Admin_Menu_Item_With_Page {
 
 	public function get_promotion_title();
 
-	public function render_promotion_description();
+	public function get_promotion_description();
 
 	public function get_cta_text();
 
