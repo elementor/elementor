@@ -98,7 +98,6 @@ export const UrlDialog = ( props ) => {
 									info: {
 										page: {
 											url: window.location.href,
-											title: document.title,
 										},
 										products: {
 											core: {
