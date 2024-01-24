@@ -209,6 +209,7 @@ const FormLayout = ( {
 		} );
 
 		setAttachments( items );
+		setShouldRenderWebApp( false );
 		setIsPromptEditable( true );
 	};
 
@@ -280,6 +281,7 @@ const FormLayout = ( {
 							} } />
 					) }
 					<PromptForm
+						shouldResetPrompt={ shouldRenderWebApp }
 						ref={ promptInputRef }
 						isActive={ isPromptFormActive }
 						isLoading={ isLoading }

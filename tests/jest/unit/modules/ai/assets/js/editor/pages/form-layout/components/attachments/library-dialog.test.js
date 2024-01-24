@@ -8,9 +8,16 @@ import {
 
 describe( 'LibraryDialog', () => {
 	const mockOnAttach = jest.fn();
+	const mockOnClose = jest.fn();
 	const mockRun = jest.fn();
+	const mockGet = jest.fn();
+	mockGet.mockReturnValue( {
+		layout: {
+			getModal: jest.fn().mockReturnValue( {	on: jest.fn(), off: jest.fn() } ),
+		},
+	} );
 
-	global.$e = { run: mockRun };
+	global.$e = { run: mockRun, components: { get: mockGet } };
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -20,7 +27,7 @@ describe( 'LibraryDialog', () => {
 		const addSpy = jest.spyOn( window, 'addEventListener' );
 		const removeSpy = jest.spyOn( window, 'removeEventListener' );
 
-		const { unmount } = render( <LibraryDialog onAttach={ mockOnAttach } /> );
+		const { unmount } = render( <LibraryDialog onAttach={ mockOnAttach } onClose={ mockOnClose } /> );
 
 		expect( addSpy ).toHaveBeenCalledWith( 'message', expect.any( Function ) );
 
@@ -30,13 +37,14 @@ describe( 'LibraryDialog', () => {
 	} );
 
 	it( 'should handle library/attach message', () => {
-		render( <LibraryDialog onAttach={ mockOnAttach } /> );
+		render( <LibraryDialog onAttach={ mockOnAttach } onClose={ mockOnClose } /> );
 		const event = new MessageEvent( 'message', {
 			data: {
 				type: 'library/attach',
 				json: { some: 'data' },
 				html: '<div>Preview</div>',
 				label: 'Test - How you doing?',
+				source: 'hello',
 			},
 		} );
 
@@ -47,11 +55,12 @@ describe( 'LibraryDialog', () => {
 			previewHTML: '<div>Preview</div>',
 			content: { some: 'data' },
 			label: 'Test - How you doing?',
+			source: 'hello',
 		} ] );
 	} );
 
 	it( 'should not handle other message types', () => {
-		render( <LibraryDialog onAttach={ mockOnAttach } /> );
+		render( <LibraryDialog onAttach={ mockOnAttach } onClose={ mockOnClose } /> );
 		const event = new MessageEvent( 'message', {
 			data: { type: 'otherType' },
 		} );
@@ -62,7 +71,7 @@ describe( 'LibraryDialog', () => {
 	} );
 
 	it( 'should call $e.run with correct arguments', () => {
-		render( <LibraryDialog onAttach={ mockOnAttach } /> );
+		render( <LibraryDialog onAttach={ mockOnAttach } onClose={ mockOnClose } /> );
 
 		expect( mockRun ).toHaveBeenCalledWith( 'library/open', {
 			toDefault: true,

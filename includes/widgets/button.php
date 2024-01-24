@@ -113,4 +113,12 @@ class Widget_Button extends Widget_Base {
 	protected function render() {
 		$this->render_button();
 	}
+
+	protected function get_upsale_data() {
+		return [
+			'title' => esc_html__( 'Convert visitors into customers', 'elementor' ),
+			'description' => esc_html__( 'Get the Call to Action widget and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-button-widget/' ),
+		];
+	}
 }
