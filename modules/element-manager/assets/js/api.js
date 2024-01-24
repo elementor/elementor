@@ -20,7 +20,7 @@ export const saveDisabledWidgets = async ( widgetsDisabled, elementsRestriction 
 
 		const data = await response.json();
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
 
@@ -42,7 +42,7 @@ export const getAdminAppData = async () => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
 
@@ -64,7 +64,7 @@ export const getUsageWidgets = async () => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
 
@@ -86,6 +86,6 @@ export const markNoticeViewed = async ( noticeId ) => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
