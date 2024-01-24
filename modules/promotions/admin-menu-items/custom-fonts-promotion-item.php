@@ -18,14 +18,14 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 	}
 
 	public function get_image_url() {
-			$default_image = 'images/go-pro-wp-dashboard.svg';
-			$promotion['image'] = $default_image;
-			$promotion = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion );
+		$default_image = 'images/go-pro-wp-dashboard.svg';
+		$promotion['image'] = $default_image;
+		$promotion = apply_filters( 'elementor/fonts/restrictions/custom_promotion', $promotion );
 
-			if ( isset( $promotion['image'] ) ) {
-				return esc_url( ELEMENTOR_ASSETS_URL . $promotion['image'] );
-			}
-			return esc_url($default_image);
+		if ( isset( $promotion['image'] ) ) {
+			return esc_url( ELEMENTOR_ASSETS_URL . $promotion['image'] );
+		}
+		return esc_url($default_image);
 	}
 
 	public function get_cta_text() {
