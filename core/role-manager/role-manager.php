@@ -217,9 +217,9 @@ class Role_Manager extends Settings_Page {
 		$upgrade_url = 'https://go.elementor.com/go-pro-role-manager/';
 
 		$promotion = [
-			'description' => __( 'Want to give access only to content?', 'elementor' ),
-			'upgrade_url' => $upgrade_url,
-			'upgrade_text' => __( 'Upgrade', 'elementor' ),
+			'description' => esc_html__( 'Want to give access only to content?', 'elementor' ),
+			'upgrade_url' => esc_url( $upgrade_url ),
+			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
 		];
 
 		$promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );

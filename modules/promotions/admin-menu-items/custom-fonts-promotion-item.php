@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\core\utils\promotions\Validate_Promotion;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
