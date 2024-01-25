@@ -14,7 +14,7 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		window.addEventListener( 'unload', this.sendEvents() );
+		window.addEventListener( 'beforeunload', this.sendEvents() );
 	}
 
 	dispatchEvent( type, eventId, context ) {
@@ -22,7 +22,13 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		EventsStorage.set( { type, event_id: eventId, context, timestamp: Date.now() } );
+		const newEvent = { type, event_id: eventId, context, timestamp: Date.now() };
+
+		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, JSON.stringify( newEvent ) ) ) {
+			return;
+		}
+
+		EventsStorage.set( newEvent );
 	}
 
 	sendEvents() {
@@ -32,17 +38,13 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		EventsStorage.clear();
-
-		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, JSON.stringify( events ) ) ) {
-			return;
-		}
-
 		fetch( elementor.config.editor_events.data_system_url, {
 			body: JSON.stringify( events ),
 			method: 'POST',
 			credentials: 'omit',
 			keepalive: true,
-		} ).catch( console.error );
+		} )
+			.then( EventsStorage.clear() )
+			.catch( console.error );
 	}
 }
