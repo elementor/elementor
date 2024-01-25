@@ -198,7 +198,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<div class="elementor-nerd-box-title">{{ elementData.upsale_data.title }}</div>
 		<# } #>
 		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>
-		<a class="elementor-button go-pro" href='{{ elementData.upsale_data.upgrade_url }}' target="_blank"><?php echo esc_html( '{{ elementData.upsale_data.upgrade_text || `Upgrade Now` }}', 'elementor' ); ?></a>
+		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank"><?php echo esc_html( '{{ elementData.upsale_data.upgrade_text || `Upgrade Now` }}', 'elementor' ); ?></a>
 	</div>
 	<# } #>
 	<?php endif; ?>
