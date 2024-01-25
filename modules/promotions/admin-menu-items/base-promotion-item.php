@@ -5,6 +5,7 @@ namespace Elementor\Modules\Promotions\AdminMenuItems;
 use Elementor\Core\Utils\Promotions\Validate_Promotion;
 use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Item;
 use Elementor\Settings;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -50,14 +51,14 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo $config['image'] ?? $this->get_image_url(); ?>" loading="lazy" />
+				<img src="<?php echo esc_url( $config['image'] ?? $this->get_image_url() ); ?>" loading="lazy" />
 
-				<h3><?php echo $config['title'] ?? $this->get_promotion_title(); ?></h3>
+				<h3><?php echo esc_html( $config['title'] ?? $this->get_promotion_title() ); ?></h3>
 
-				<p><?php echo $config['description'] ?? $this->get_promotion_description(); ?></p>
+				<p><?php echo esc_html( $config['description'] ?? $this->get_promotion_description() ); ?></p>
 
 				<a class="elementor-button go-pro" href="<?php echo esc_url( $config['upgrade_url'] ?? $this->get_cta_url() ); ?>">
-					<?php echo $config['upgrade_text'] ?? $this->get_cta_text(); ?>
+					<?php echo esc_html( $config['upgrade_text'] ?? $this->get_cta_text() ); ?>
 				</a>
 			</div>
 		</div>

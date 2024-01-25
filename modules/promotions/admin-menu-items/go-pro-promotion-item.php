@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
-	CONST URL = 'https://go.elementor.com/pro-admin-menu/';
+	const URL = 'https://go.elementor.com/pro-admin-menu/';
 
 	public function get_name() {
 		return 'admin_menu_promo';
@@ -27,7 +27,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public function get_label() {
 		$upgrade_text = __( 'Upgrade', 'elementor' );
-		return apply_filters( 'elementor/admin_menu/promotion/upgrade_text', ['upgrade_text' => $upgrade_text ] )['upgrade_text'] ?? $upgrade_text;
+		return apply_filters( 'elementor/admin_menu/promotion/upgrade_text', [ 'upgrade_text' => $upgrade_text ] )['upgrade_text'] ?? $upgrade_text;
 	}
 
 	public function get_page_title() {
@@ -40,7 +40,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public static function get_url() {
 		$url = self::URL;
-		$filtered_url = apply_filters( 'elementor/admin_menu/promotion/upgrade_url', ['upgrade_url' => $url ] )['upgrade_url'] ?? '';
+		$filtered_url = apply_filters( 'elementor/admin_menu/promotion/upgrade_url', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? '';
 
 		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
 			$url = $filtered_url;
