@@ -21,8 +21,8 @@ class Notice_Bar extends Base_Object {
 		$upgrade_url = 'https://go.elementor.com/go-pro-editor-notice-bar/';
 
 		$config = [
-			'description' => esc_html__( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'description' => $this->get_description(),
+			'upgrade_text' => $this->get_upgrade_text(),
 			'upgrade_url' => $upgrade_url,
 		];
 
@@ -35,10 +35,18 @@ class Notice_Bar extends Base_Object {
 		return [
 			'muted_period' => 14,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
-			'message' => $config['description'],
-			'action_title' => $config['upgrade_text'],
-			'action_url' => $config['upgrade_url'],
+			'message' => $config['description'] ?? $this->get_description(),
+			'action_title' => $config['upgrade_text'] ?? $this->get_upgrade_text(),
+			'action_url' => $config['upgrade_url'] ?? $upgrade_url,
 		];
+	}
+
+	public function get_upgrade_text() {
+		return esc_html__( 'Upgrade Now', 'elementor' );
+	}
+
+	public function get_description() {
+		return esc_html__( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' );
 	}
 
 	final public function get_notice() {
