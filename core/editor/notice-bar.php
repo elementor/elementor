@@ -18,7 +18,7 @@ class Notice_Bar extends Base_Object {
 			return [];
 		}
 
-        $upgrade_url = 'https://go.elementor.com/go-pro-editor-notice-bar/';
+		$upgrade_url = 'https://go.elementor.com/go-pro-editor-notice-bar/';
 
 		$config = [
 			'description' => esc_html__( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ),
