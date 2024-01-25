@@ -375,7 +375,7 @@ abstract class Widget_Base extends Element_Base {
 		$config['upsale_data'] = apply_filters( 'elementor/widgets/' . $this->get_name() . '/custom_promotion', $config['upsale_data'] ) ?? $this->get_upsale_data();
 
 		if ( isset( $config['upsale_data']['image'] ) ) {
-			sanitize_file_name( $config['upsale_data']['image'] );
+			$config['upsale_data']['image'] = esc_url( $config['upsale_data']['image'] );
 		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
