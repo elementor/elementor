@@ -3,6 +3,7 @@ namespace Elementor\Core\Editor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,12 +18,26 @@ class Notice_Bar extends Base_Object {
 			return [];
 		}
 
+        $upgrade_url = 'https://go.elementor.com/go-pro-editor-notice-bar/';
+
+		$config = [
+			'description' => esc_html__( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'upgrade_url' => $upgrade_url,
+		];
+
+		$config = apply_filters( 'elementor/notice-bar/custom_promotion', $config );
+
+		if ( isset( $config['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
+			$config['upgrade_url'] = esc_url( $upgrade_url );
+		}
+
 		return [
 			'muted_period' => 14,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
-			'message' => esc_html__( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ),
-			'action_title' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'action_url' => 'https://go.elementor.com/go-pro-editor-notice-bar/',
+			'message' => $config['description'],
+			'action_title' => $config['upgrade_text'],
+			'action_url' => $config['upgrade_url'],
 		];
 	}
 
