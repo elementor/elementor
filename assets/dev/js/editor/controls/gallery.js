@@ -223,7 +223,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	},
 
 	onPromotionDismiss() {
-		this.dismissPromotion( this.getDismissPromotionEventName() );
+		this.dismissPromotion();
 	},
 
 	getDismissPromotionEventName() {
@@ -231,7 +231,13 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
 		// Remove listener
 		$dismissButton.off( 'click' );
-		return $dismissButton[ 0 ]?.dataset?.event || false;
+		return $dismissButton.data( 'event' ) || false;
+	},
+
+	getDismissNonce() {
+		const $promotions = this.ui.promotions;
+		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
+		return $dismissButton.data( 'dismiss-nonce' ) || false;
 	},
 
 	hidePromotion( eventName = null ) {
@@ -252,13 +258,16 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.hidePromotion();
 	},
 
-	dismissPromotion( eventName ) {
+	dismissPromotion() {
+		const dismissId = this.getDismissPromotionEventName();
+		const dismissNonce = this.getDismissNonce();
 		const $promotions = this.ui.promotions;
 		$promotions.hide();
-		if ( eventName ) {
+		if ( dismissId ) {
 			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
 				data: {
-					dismissId: eventName,
+					dismissId,
+					dismissNonce,
 				},
 			} );
 

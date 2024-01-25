@@ -399,6 +399,10 @@ class User {
 	 * @return void
 	 */
 	public static function set_dismissed_editor_notices( array $data ) {
+		if ( ! wp_verify_nonce( $data['dismissNonce'], self::DISMISSED_EDITOR_NOTICES_KEY ) ) {
+			die(); 
+		}
+
 		$editor_notices = self::get_dismissed_editor_notices();
 
 		if ( ! in_array( $data['dismissId'], $editor_notices, true ) ) {

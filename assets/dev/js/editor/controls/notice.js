@@ -37,12 +37,18 @@ module.exports = ControlBaseView.extend( {
 		return `${ elementType }-${ controlName }`;
 	},
 
+	getDismissNonce() {
+		return this.ui.button.data( 'dismiss-nonce' );
+	},
+
 	onDismissButtonClick() {
 		const dismissId = this.getDismissId();
+		const dismissNonce = this.getDismissNonce();
 
 		elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
 			data: {
 				dismissId,
+				dismissNonce,
 			},
 			success: () => {
 				this.$el.remove();

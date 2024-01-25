@@ -181,11 +181,17 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
 		// Remove listener
 		$dismissButton.off( 'click' );
-		return $dismissButton[ 0 ]?.dataset?.event || false;
+		return $dismissButton.data( 'event' ) || false;
+	},
+
+	getDismissNonce() {
+		const $promotions = this.ui.promotions;
+		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
+		return $dismissButton.data( 'dismiss-nonce' ) || false;
 	},
 
 	onPromotionDismiss() {
-		this.dismissPromotion( this.getDismissPromotionEventName() );
+		this.dismissPromotion();
 	},
 
 	onPromotionAction( event ) {
@@ -196,12 +202,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.hidePromotion();
 	},
 
-	dismissPromotion( eventName ) {
-		this.hidePromotion( eventName );
-		if ( eventName ) {
+	dismissPromotion() {
+		const dismissId = this.getDismissPromotionEventName();
+		const dismissNonce = this.getDismissNonce();
+		this.hidePromotion( dismissId );
+		if ( dismissId ) {
 			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
 				data: {
-					dismissId: eventName,
+					dismissId,
+					dismissNonce,
 				},
 			} );
 		}

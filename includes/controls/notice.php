@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\User;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -80,7 +82,7 @@ class Control_Notice extends Base_UI_Control {
 				<# } #>
 			</div>
 			<# if ( data.dismissible ) { #>
-			<button class="elementor-control-notice-dismiss">
+			<button class="elementor-control-notice-dismiss" data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( User::DISMISSED_EDITOR_NOTICES_KEY ) ); ?>">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this notice.', 'elementor' ); ?></span>
 			</button>

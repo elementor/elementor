@@ -21,6 +21,7 @@ class Hints {
 
 	/**
 	 * get_notice_types
+	 *
 	 * @return string[]
 	 */
 	public static function get_notice_types(): array {
@@ -75,6 +76,7 @@ class Hints {
 	 * get_notice_template
 	 *
 	 * Print or Retrieve the notice template.
+	 *
 	 * @param array $notice
 	 * @param bool $return
 	 *
@@ -129,9 +131,9 @@ class Hints {
 		}
 
 		if ( $notice_settings['dismissible'] ) {
-			$dismissible = '<button class="elementor-control-notice-dismiss" data-event="' . $notice_settings['dismissible'] . '">
+			$dismissible = '<button class="elementor-control-notice-dismiss" data-event="' . esc_attr( $notice_settings['dismissible'] ) . '" data-dismiss-nonce="' . esc_attr( self::get_dismiss_nonce() ) . '">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only">' . __( 'Dismiss this notice.', 'elementor' ) . '</span>
+				<span class="elementor-screen-only">' . esc_html__( 'Dismiss this notice.', 'elementor' ) . '</span>
 			</button>';
 		}
 
@@ -160,6 +162,7 @@ class Hints {
 
 	/**
 	 * get_plugin_install_url
+	 *
 	 * @param $plugin_slug
 	 *
 	 * @return string
@@ -180,6 +183,7 @@ class Hints {
 
 	/**
 	 * get_plugin_activate_url
+	 *
 	 * @param $plugin_slug
 	 *
 	 * @return string
@@ -189,7 +193,23 @@ class Hints {
 	}
 
 	/**
+	 * get_dismiss_nonce
+	 *
+	 * @return string
+	 */
+	public static function get_dismiss_nonce(): string {
+		static $dismiss_nonce = null;
+
+		if ( null === $dismiss_nonce ) {
+			$dismiss_nonce = wp_create_nonce( User::DISMISSED_EDITOR_NOTICES_KEY );
+		}
+
+		return $dismiss_nonce;
+	}
+
+	/**
 	 * is_dismissed
+	 *
 	 * @param $key
 	 *
 	 * @return bool
@@ -201,6 +221,7 @@ class Hints {
 
 	/**
 	 * should_display_hint
+	 *
 	 * @param $hint_key
 	 *
 	 * @return bool
@@ -245,6 +266,7 @@ class Hints {
 
 	/**
 	 * is_plugin_installed
+	 *
 	 * @param $plugin
 	 *
 	 * @return bool
@@ -257,6 +279,7 @@ class Hints {
 
 	/**
 	 * is_plugin_active
+	 *
 	 * @param $plugin
 	 *
 	 * @return bool
@@ -268,6 +291,7 @@ class Hints {
 
 	/**
 	 * get_plugin_action_url
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
@@ -286,6 +310,7 @@ class Hints {
 
 	/**
 	 * ensure_plugin_folder
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
@@ -299,6 +324,7 @@ class Hints {
 
 	/**
 	 * get_notice_allowed_html
+	 *
 	 * @return array[]
 	 */
 	public static function get_notice_allowed_html(): array {
@@ -324,6 +350,7 @@ class Hints {
 				'class' => [],
 				'data-event' => [],
 				'data-settings' => [],
+				'data-dismiss-nonce' => [],
 			],
 			'i' => [
 				'class' => [],
