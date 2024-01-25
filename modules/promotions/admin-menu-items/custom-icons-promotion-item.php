@@ -31,10 +31,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Item {
 	 * @return void
 	 */
 	public function render_promotion_description() {
-		echo esc_html__(
-			'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.',
-			'elementor'
-		);
+		echo $this->get_promotion_description();
 	}
 
 	public function get_cta_url() {

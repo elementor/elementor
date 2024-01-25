@@ -31,10 +31,7 @@ class Custom_Code_Promotion_Item extends Base_Promotion_Item {
 	 * @return void
 	 */
 	public function render_promotion_description() {
-		echo esc_html__(
-			'Custom Code is a tool gives you one place where you can insert scripts, rather than dealing with dozens of different plugins and deal with code.',
-			'elementor'
-		);
+		echo $this->get_promotion_description();
 	}
 
 	public function get_cta_url() {

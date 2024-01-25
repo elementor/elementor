@@ -42,7 +42,7 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 	 * @return void
 	 */
 	public function render_promotion_description() {
-		echo esc_html__( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' );
+		echo $this->get_promotion_description();
 	}
 
 	public function get_cta_url() {
