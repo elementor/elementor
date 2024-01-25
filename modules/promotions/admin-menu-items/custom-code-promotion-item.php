@@ -31,7 +31,7 @@ class Custom_Code_Promotion_Item extends Base_Promotion_Item {
 	 * @return void
 	 */
 	public function render_promotion_description() {
-		echo $this->get_promotion_description();
+		echo $this->get_promotion_description(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function get_cta_url() {
