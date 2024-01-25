@@ -190,9 +190,9 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<# if ( elementData.upsale_data && elementData.upsale_data.description ) { #>
 	<div class="elementor-nerd-box elementor-nerd-box--upsale">
 		<# if ( elementData.upsale_data.image ) { #>
-		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . '{{ elementData.upsale_data.image }}' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
+		<img class="elementor-nerd-box-icon" src="<?php echo Utils::print_unescaped_internal_string( '{{ elementData.upsale_data.image }}' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 		<# } else { #>
-		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
+		<img class="elementor-nerd-box-icon" src="<?php echo Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 		<# } #>
 		<# if ( elementData.upsale_data.title ) { #>
 		<div class="elementor-nerd-box-title">{{ elementData.upsale_data.title }}</div>
