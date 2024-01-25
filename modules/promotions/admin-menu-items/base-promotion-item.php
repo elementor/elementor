@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 
-	abstract function get_name();
+	abstract public function get_name();
 
 	public function is_visible() {
 		return true;
