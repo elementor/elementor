@@ -5,7 +5,6 @@ namespace Elementor\Modules\Promotions\AdminMenuItems;
 use Elementor\Core\Utils\Promotions\Validate_Promotion;
 use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Item;
 use Elementor\Settings;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -13,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 
-	public function get_name() {}
+	abstract function get_name();
 
 	public function is_visible() {
 		return true;

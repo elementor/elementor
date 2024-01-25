@@ -7,6 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Custom_Icons_Promotion_Item extends Base_Promotion_Item {
+	public function get_name() {
+		return 'custom_icons';
+	}
+
+
 	public function get_label() {
 		return esc_html__( 'Custom Icons', 'elementor' );
 	}

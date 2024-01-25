@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Custom_Code_Promotion_Item extends Base_Promotion_Item {
+	public function get_name() {
+		return 'custom_code';
+	}
+
 	public function get_label() {
 		return esc_html__( 'Custom Code', 'elementor' );
 	}

@@ -13,6 +13,11 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 		return Source_Local::ADMIN_MENU_SLUG;
 	}
 
+	public function get_name() {
+		return 'popups';
+	}
+
+
 	public function get_label() {
 		return esc_html__( 'Popups', 'elementor' );
 	}
