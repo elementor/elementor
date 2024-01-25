@@ -35,7 +35,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 	public function render() {
 		$config = [
 			'title' => $this->get_promotion_title(),
-			'description' => $this->get_promotion_description(),
+			'description' => $this->render_promotion_description(),
 			'image' => $this->get_image_url(),
 			'upgrade_text' => $this->get_cta_text(),
 			'upgrade_url' => $this->get_cta_url(),

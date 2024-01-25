@@ -25,8 +25,8 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 		return esc_html__( 'Get Popup Builder', 'elementor' );
 	}
 
-	public function get_promotion_description() {
-		return esc_html__(
+	public function render_promotion_description() {
+		echo esc_html__(
 			'The Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Get Elementor Pro and start designing your popups today.',
 			'elementor'
 		);
