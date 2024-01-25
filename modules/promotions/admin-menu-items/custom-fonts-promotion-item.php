@@ -33,8 +33,16 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Item {
 		return esc_html__( 'Add Your Custom Fonts', 'elementor' );
 	}
 
-	public function render_promotion_description() {
+	public function get_promotion_description() {
 		return esc_html__( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' );
+	}
+
+	/**
+	 * @deprecated use get_promotion_description instead
+	 * @return void
+	 */
+	public function render_promotion_description() {
+		echo esc_html__( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' );
 	}
 
 	public function get_cta_url() {
