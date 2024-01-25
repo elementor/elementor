@@ -222,7 +222,7 @@ class Role_Manager extends Settings_Page {
 			'upgrade_text' => __( 'Upgrade', 'elementor' ),
 		];
 
-		$promotion = apply_filters( 'elementor/role/restrictions/custom_promotion', $promotion );
+		$promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
 
 		if ( false === Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
 			$promotion['upgrade_url'] = $upgrade_url;

@@ -42,7 +42,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 			'upgrade_url' => $this->get_cta_url(),
 		];
 
-		$config = apply_filters( 'elementor/' . $this->get_name() . '/restrictions/custom_promotion', $config );
+		$config = apply_filters( 'elementor/' . $this->get_name() . '/custom_promotion', $config );
 
 		if ( isset( $config['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
 			$config['upgrade_url'] = esc_url( $this->get_cta_url()['upgrade_url'] );
