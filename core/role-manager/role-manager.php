@@ -2,6 +2,7 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -202,12 +203,32 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function get_go_pro_link_html() {
+		$promotion = $this->get_go_pro_link_content();
+
 		?>
 		<div class="elementor-role-go-pro">
-			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( 'Want to give access only to content?', 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/go-pro-role-manager/"><?php echo esc_html__( 'Upgrade', 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__desc"><?php echo esc_html( $promotion['description'] ); ?></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="<?php echo esc_url( $promotion['upgrade_url'] ); ?>"><?php echo esc_html( $promotion['upgrade_text'] ); ?></a></div>
 		</div>
 		<?php
+	}
+
+	public function get_go_pro_link_content() {
+		$upgrade_url = 'https://go.elementor.com/go-pro-role-manager/';
+
+		$promotion = [
+			'description' => esc_html__( 'Want to give access only to content?', 'elementor' ),
+			'upgrade_url' => esc_url( $upgrade_url ),
+			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
+		];
+
+		$promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
+
+		if ( false === Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
+			$promotion['upgrade_url'] = $upgrade_url;
+		}
+
+		return $promotion;
 	}
 
 	/**
