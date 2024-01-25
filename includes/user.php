@@ -400,7 +400,7 @@ class User {
 	 */
 	public static function set_dismissed_editor_notices( array $data ) {
 		if ( ! wp_verify_nonce( $data['dismissNonce'], self::DISMISSED_EDITOR_NOTICES_KEY ) ) {
-			die(); 
+			die();
 		}
 
 		$editor_notices = self::get_dismissed_editor_notices();
