@@ -27,8 +27,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public function get_label() {
 		$upgrade_text = __( 'Upgrade', 'elementor' );
-		$promotion['upgrade_text'] = $upgrade_text;
-		return apply_filters( 'elementor/admin_menu/promotion/upgrade_text', $promotion )['upgrade_text'] ?? $upgrade_text;
+		return apply_filters( 'elementor/admin_menu/promotion/upgrade_text', ['upgrade_text' => $upgrade_text ] )['upgrade_text'] ?? $upgrade_text;
 	}
 
 	public function get_page_title() {
@@ -40,8 +39,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public static function get_url() {
-		$promotion['upgrade_url'] = self::$url;
-		$filtered_url = apply_filters( 'elementor/admin_menu/promotion/upgrade_url', $promotion )['upgrade_url'] ?? '';
+		$filtered_url = apply_filters( 'elementor/admin_menu/promotion/upgrade_url', ['upgrade_url' => self::$url ] )['upgrade_url'] ?? '';
 
 		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
 			self::$url = $filtered_url;
