@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 Elementor is the leading WordPress website builder that empowers you to successfully build professional, pixel-perfect websites. With an intuitive drag and drop interface, you get complete control to build any type of website,  without writing a single line of code.
 
-Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create complete sections, original text, code, and images instantly.
+Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/wp-repo-description-tab-elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create complete sections, original text, code, and images instantly.
 
 Unlock all of Elementor’s features and elevate your website’s potential with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
@@ -82,6 +82,8 @@ To accelerate your workflow Elementor includes a multitude of workflow enhancing
 
 = FAST LOADING WEBSITES =
 Your website’s performance impacts your visitor’s experience and search result ranking. Therefore, Elementor continuously invests in improving performance and recently partnered with Google Chrome to identify more ways to optimize performance, without impacting design. Performance improving features include: reduced DOM output, improved media file loading, reduced CSS and JS files, lazy loading, faster font loading, optimize front-end asset loading, and more. To learn more, check out our [performance page](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/).
+
+***Looking to boost your site's performance?** Meet the [Image Optimizer plugin](https://go.elementor.com/wp-repo-description-tab-elementor-io/) by Elementor: an easy-to-use WordPress plugin that effortlessly reduces image sizes without sacrificing quality. Compatible with popular formats like JPEG, PNG, WebP, and GIF, it ensures a visually stunning, high-speed website. Elevate your performance with Image Optimizer – [download now](https://wordpress.org/plugins/image-optimization/)!*
 
 = EMPLOYING ACCESSIBILITY BEST-PRACTICES =
 Elementor is built with accessibility in mind and offers tools and enhancements to help you provide a better experience for all users. These include HTML 5 semantic, full keyboard navigation menu, ongoing accessibility improvement of features, widget, and more.
