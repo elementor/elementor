@@ -27,6 +27,8 @@ export default class NestedTitleKeyboardHandler extends Base {
 				ArrowUp: this.directionPrevious,
 				ArrowRight: elementorFrontendConfig.is_rtl ? this.directionPrevious : this.directionNext,
 				ArrowDown: this.directionNext,
+				Tab: this.directionNext,
+				ShiftTab: this.directionPrevious,
 			},
 		};
 	}
@@ -114,7 +116,17 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	handleTitleKeyboardNavigation( event ) {
-		if ( this.isDirectionKey( event ) ) {
+		if ( 'Tab' === event.key ) {
+			const currentTitleIndex = parseInt( this.getTitleIndex( event.currentTarget ) ) || 1,
+				numberOfTitles = this.elements.$itemTitles.length,
+				titleIndexUpdated = this.getNextTitleKey( event, currentTitleIndex, numberOfTitles );
+
+			if ( !! titleIndexUpdated ) {
+				this.changeTitleFocus(titleIndexUpdated);
+
+				event.stopPropagation();
+			}
+		} else if ( this.isDirectionKey( event ) ) {
 			event.preventDefault();
 
 			const currentTitleIndex = parseInt( this.getTitleIndex( event.currentTarget ) ) || 1,
@@ -147,6 +159,19 @@ export default class NestedTitleKeyboardHandler extends Base {
 		}
 
 		return isLinkElement;
+	}
+
+	getNextTitleKey( event, currentTitleIndex, numberOfTitles ) {
+		const directionValue = this.getKeyDirectionValue( event ),
+			isEndReached = numberOfTitles < currentTitleIndex + directionValue;
+
+		if ( isEndReached ) {
+			return false;
+		}
+
+		event.preventDefault();
+
+		return currentTitleIndex + directionValue;
 	}
 
 	getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles ) {
