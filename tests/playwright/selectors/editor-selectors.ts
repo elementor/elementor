@@ -86,7 +86,7 @@ const EditorSelectors = {
 		},
 		addGalleryBtn: 'button.elementor-control-gallery-add',
 		navigationSelect: '.elementor-control-navigation select',
-		autoplaySelect: 'select[data-setting="autoplay"]',
+		autoplaySelect: 'input[data-setting="autoplay"]',
 		autoplaySpeedLabel: 'Autoplay Speed',
 		autoplaySpeedInp: '[data-setting="autoplay_speed"]',
 		autoplayToggle: '.elementor-switch-handle',
