@@ -300,10 +300,10 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	</div>
 </script>
 <script type="text/template" id="tmpl-elementor-control-element-color-picker">
-	<div class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
+	<button class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
 		<i class="eicon-eyedropper" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Color Sampler', 'elementor' ); ?></span>
-	</div>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">
