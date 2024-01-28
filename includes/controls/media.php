@@ -266,6 +266,7 @@ class Control_Media extends Control_Base_Multiple {
 								__( 'Get a performance boost and improved SEO results with the Image Optimizer.', 'elementor' );
 							$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 							Hints::get_notice_template( [
+								'display' => ! $once_dismissed,
 								'type' => 'info',
 								'content' => $content,
 								'icon' => true,
