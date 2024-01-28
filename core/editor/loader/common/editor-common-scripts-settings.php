@@ -6,6 +6,7 @@ use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Apps\Module as AppsModule;
+use Elementor\Modules\EditorEvents\Module as EditorEventsModule;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Shapes;
@@ -68,6 +69,7 @@ class Editor_Common_Scripts_Settings {
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
 			],
 			'preview' => [
@@ -95,6 +97,7 @@ class Editor_Common_Scripts_Settings {
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
 			],
+			'editor_events' => EditorEventsModule::get_editor_events_config(),
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {

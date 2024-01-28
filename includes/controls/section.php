@@ -52,21 +52,4 @@ class Control_Section extends Base_UI_Control {
 		</div>
 		<?php
 	}
-
-	/**
-	 * Get repeater control default settings.
-	 *
-	 * Retrieve the default settings of the repeater control. Used to return the
-	 * default settings while initializing the repeater control.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @return array Control default settings.
-	 */
-	protected function get_default_settings() {
-		return [
-			'separator' => 'none',
-		];
-	}
 }

@@ -8,6 +8,7 @@ use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\File_Types\Zip;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -149,7 +150,9 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY ) && Svg::file_sanitizer_can_run();
+		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
+			&& Svg::file_sanitizer_can_run()
+			&& User::is_current_user_can_upload_json();
 
 		/**
 		 * Allow Unfiltered Files Upload.
@@ -555,7 +558,10 @@ class Uploads_Manager extends Base_Object {
 		// If there is a File Type Handler for the uploaded file, it means it is a non-standard file type. In this case,
 		// we check if unfiltered file uploads are enabled or not before allowing it.
 		if ( ! self::are_unfiltered_uploads_enabled() ) {
-			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'This file is not allowed for security reasons.', 'elementor' ) );
+			$error = 'json' === $file_extension
+				? esc_html__( 'You don\'t have permission to upload JSON files. Contact the administrator.', 'elementor' )
+				: esc_html__( 'This file is not allowed for security reasons.', 'elementor' );
+			return new \WP_Error( Exceptions::FORBIDDEN, $error );
 		}
 
 		// Here is each file type handler's chance to run its own specific validations
