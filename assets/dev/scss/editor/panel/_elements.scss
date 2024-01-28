@@ -83,6 +83,8 @@
 		cursor: move;
 		position: relative;
 		transition: var(--e-a-transition-hover);
+		width: 100%;
+		background-color: transparent;
 
 		&--promotion {
 
@@ -92,7 +94,8 @@
 			}
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-bg-hover);
 			border-color: var(--e-a-border-color-bold);
 

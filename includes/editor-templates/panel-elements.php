@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
-	<div class="elementor-element">
+	<button class="elementor-element">
 		<# if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="title-wrapper">
 			<div class="title">{{{ title }}}</div>
 		</div>
-	</div>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-global">
