@@ -31,7 +31,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	public function set_list() {
 		return [
 			sprintf(
-				esc_html( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
+				esc_html__( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
 				'<br />'
 			),
 			esc_html__( 'Add any icon, anywhere on your website', 'elementor' ),
