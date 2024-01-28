@@ -92,6 +92,7 @@ class Hints {
 			'button_text' => '',
 			'button_event' => '',
 			'button_data' => [],
+			'display' => false,
 		];
 		$notice_settings = array_merge( $default_settings, $notice );
 
@@ -137,7 +138,7 @@ class Hints {
 			</button>';
 		}
 
-		$notice_template = sprintf( '<div class="elementor-control-notice elementor-control-notice-type-%1$s">
+		$notice_template = sprintf( '<div class="elementor-control-notice elementor-control-notice-type-%1$s" data-display="%7$s">
 			%2$s
 			<div class="elementor-control-notice-main">
 				%3$s
@@ -151,7 +152,8 @@ class Hints {
 			$heading,
 			$content,
 			$button,
-			$dismissible
+			$dismissible,
+			$notice_settings['display']
 		);
 
 		if ( $return ) {
@@ -331,6 +333,7 @@ class Hints {
 		return [
 			'div' => [
 				'class' => [],
+				'data-display' => [],
 			],
 			'svg' => [
 				'width' => [],

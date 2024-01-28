@@ -39,7 +39,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			imagesCount = images.length,
 			hasImages = !! imagesCount,
 			imagesWithoutAlt = 0,
-			imagesWithoutOptimization = 0;
+			imagesWithoutOptimization = 0,
+			promotionsAlwaysOn = false;
 
 		const hasPromotions = this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( this.getDismissPromotionEventName() );
 
@@ -54,6 +55,9 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		/* Translators: %s: Selected images count. */
 		this.ui.status.text( hasImages ? sprintf( __( '%s Images Selected', 'elementor' ), imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
+		if ( hasPromotions ) {
+			promotionsAlwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
+		}
 		if ( ! hasImages ) {
 			return;
 		}
@@ -88,7 +92,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		await Promise.all( attachments ).then( () => {
 			this.ui.warnings.toggle( !! imagesWithoutAlt );
 			if ( hasPromotions ) {
-				this.ui.promotions.toggle( !! imagesWithoutOptimization );
+				const showHints = promotionsAlwaysOn || !! imagesWithoutOptimization;
+				this.ui.promotions.toggle( showHints );
 			}
 		} );
 	},
@@ -104,9 +109,9 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 	imageNotOptimized( attachment ) {
 		const checks = {
-			height: 1200,
-			width: 1200,
-			filesizeInBytes: 200000,
+			height: 1080,
+			width: 1920,
+			filesizeInBytes: 100000,
 		};
 
 		return Object.keys( checks ).some( ( key ) => {

@@ -91,12 +91,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( 'image' === mediaType ) {
 			if ( attachmentId ) {
 				const dismissPromotionEventName = this.getDismissPromotionEventName();
-				wp.media.attachment( attachmentId ).fetch().then( ( attachment ) => {
+				const handleHints = ( attachment ) => {
 					this.ui.warnings.toggle( ! this.imageHasAlt( attachment ) );
 					if ( this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( dismissPromotionEventName ) ) {
-						this.ui.promotions.toggle( this.imageNotOptimized( attachment ) );
+						const alwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
+						const showHint = alwaysOn || this.imageNotOptimized( attachment );
+						this.ui.promotions.toggle( showHint );
 					}
-				} );
+				};
+				wp.media.attachment( attachmentId ).fetch().then( handleHints );
 			} else {
 				this.ui.warnings.hide();
 				if ( this.ui.promotions.length ) {
@@ -165,9 +168,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	imageNotOptimized( attachment ) {
 		const checks = {
-			height: 1920,
+			height: 1080,
 			width: 1920,
-			filesizeInBytes: 200000,
+			filesizeInBytes: 100000,
 		};
 
 		return Object.keys( checks ).some( ( key ) => {
