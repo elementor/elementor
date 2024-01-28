@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
-test.only( 'Promotion screenshots', async ( { page }, testInfo ) => {
+test( 'Promotion screenshots', async ( { page }, testInfo ) => {
 	const wpAdminPage = new WpAdminPage( page, testInfo ),
 		promotionContainer = '.e-feature-promotion';
 

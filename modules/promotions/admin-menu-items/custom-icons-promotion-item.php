@@ -39,7 +39,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	public function get_cta_url() {
-		return 'https://go.elementor.com/go-pro-submissions/';
+		return 'https://go.elementor.com/go-pro-custom-icons/';
 	}
 
 	public function get_video_url() {
