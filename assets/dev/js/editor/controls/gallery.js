@@ -56,7 +56,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.ui.status.text( hasImages ? sprintf( __( '%s Images Selected', 'elementor' ), imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
 		if ( hasPromotions ) {
-			promotionsAlwaysOn =this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
+			promotionsAlwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
 		}
 		if ( ! hasImages ) {
 			return;
