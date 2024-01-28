@@ -87,7 +87,7 @@ class Module extends BaseModule {
 		exit;
 	}
 
-public function add_plugins_page_styles() {
+	public function add_plugins_page_styles() {
 	?>
 	<style>
 		.plugin-install-elementor > a::after {
