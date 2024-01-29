@@ -119,15 +119,15 @@ export default class NestedTitleKeyboardHandler extends Base {
 	handleTitleKeyboardNavigation( event ) {
 		if ( 'Tab' === event.key ) {
 			const currentTitleIndex = this.getTitleIndex( event.currentTarget ),
-				activeTitle = this.getActiveTitleElement(),
-				activeTitleIndex = activeTitle?.attr( this.getSettings( 'datasets' ).titleIndex ) || false,
+				$activeTitle = this.getActiveTitleElement(),
+				activeTitleIndex = $activeTitle.attr( this.getSettings( 'datasets' ).titleIndex ) || false,
 				isActiveTitle = currentTitleIndex === activeTitleIndex;
 
 			if ( ! isActiveTitle ) {
 				return;
 			}
 
-			const activeTitleControl = activeTitle?.attr( this.getSettings( 'ariaAttributes' ).titleControlAttribute );
+			const activeTitleControl = $activeTitle.attr( this.getSettings( 'ariaAttributes' ).titleControlAttribute );
 
 			this.focusFirstFocusableContainerElement( event, activeTitleControl );
 		} else if ( this.isDirectionKey( event ) ) {
@@ -242,18 +242,19 @@ export default class NestedTitleKeyboardHandler extends Base {
 			return;
 		}
 
+		const $activeTitle = this.getActiveTitleElement();
+
+		if ( this.isLastTitle( $activeTitle ) ) {
+			return;
+		}
+
 		event.preventDefault();
 
-		const $activeTitle = this.getActiveTitleElement(),
-			activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ),
-			numberOfTitles = this.elements.$itemTitles.length,
-			isLast;
+		const nextTitleIndex = this.getNextTitleIndex( $activeTitle );
 
-		// Check if there is a next title.
-		// Focus next title.
+		this.changeTitleFocus( nextTitleIndex );
 
-		elementorFrontend.elements.$window.trigger( 'elementor/nested-elements/activate-by-keyboard', { widgetId: this.getID() } );
-		this.changeTitleFocus( activeTitleIndex );
+		event.stopPropagation();
 	}
 
 	focusFirstFocusableContainerElement( event, titleControl ) {
@@ -268,5 +269,15 @@ export default class NestedTitleKeyboardHandler extends Base {
 		event.preventDefault();
 		$firstFocusableContainer[ 0 ]?.focus();
 		event.stopPropagation();
+	}
+
+	isLastTitle( $title ) {
+		return $title.is( this.elements.$itemTitles.last() );
+	}
+
+	getNextTitleIndex( $currentTitle ) {
+		const $nextTitle = $currentTitle.next();
+
+		return $nextTitle.attr( this.getSettings( 'datasets' ).titleIndex );
 	}
 }
