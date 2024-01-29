@@ -126,17 +126,25 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		$text_columns = range( 1, 10 );
-		$text_columns = array_combine( $text_columns, $text_columns );
-		$text_columns[''] = esc_html__( 'Default', 'elementor' );
-
 		$this->add_responsive_control(
 			'text_columns',
 			[
 				'label' => esc_html__( 'Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'separator' => 'before',
-				'options' => $text_columns,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'1' => esc_html__( '1', 'elementor' ),
+					'2' => esc_html__( '2', 'elementor' ),
+					'3' => esc_html__( '3', 'elementor' ),
+					'4' => esc_html__( '4', 'elementor' ),
+					'5' => esc_html__( '5', 'elementor' ),
+					'6' => esc_html__( '6', 'elementor' ),
+					'7' => esc_html__( '7', 'elementor' ),
+					'8' => esc_html__( '8', 'elementor' ),
+					'9' => esc_html__( '9', 'elementor' ),
+					'10' => esc_html__( '10', 'elementor' ),
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'columns: {{VALUE}};',
 				],
@@ -170,6 +178,21 @@ class Widget_Text_Editor extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'text_columns',
+							'operator' => '>',
+							'value' => 1,
+						],
+						[
+							'name' => 'text_columns',
+							'operator' => '===',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
@@ -384,6 +407,9 @@ class Widget_Text_Editor extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-drop-cap' => 'border-radius: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'drop_cap_view!' => 'default',
 				],
 			]
 		);
