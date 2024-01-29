@@ -6,10 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
-	<div id="elementor-template-library-header-import" class="elementor-templates-modal__header__item">
-		<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Import Template', 'elementor' ); ?></span>
-	</div>
+	<?php if ( User::is_current_user_can_upload_json() ) { ?>
+		<div id="elementor-template-library-header-import" class="elementor-templates-modal__header__item">
+			<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
+			<span class="elementor-screen-only"><?php echo esc_html__( 'Import Template', 'elementor' ); ?></span>
+		</div>
+	<?php } ?>
 	<div id="elementor-template-library-header-sync" class="elementor-templates-modal__header__item">
 		<i class="eicon-sync" aria-hidden="true" title="<?php esc_attr_e( 'Sync Library', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Sync Library', 'elementor' ); ?></span>
@@ -303,7 +305,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'utm_content' => '%%template_type%%', // will be replaced in the frontend
 		] );
 		?>
-	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_attr( $url ); ?>">
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_url( $url ); ?>">
 		{{{ button }}}
 	</a>
 	<?php

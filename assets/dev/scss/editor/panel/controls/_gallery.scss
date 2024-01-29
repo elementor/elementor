@@ -48,9 +48,13 @@
 		&-gallery-thumbnail {
 			width: 48px;
 			height: 48px;
-			background-size: cover;
-			background-position: 50% 50%;
+			object-fit: cover;
 			border: var(--e-a-border);
+
+			+ .unoptimized__image {
+				outline: 2px solid var( --e-a-btn-bg-danger-active );
+				opacity: 0.6;
+			}
 		}
 
 		&-gallery-edit {

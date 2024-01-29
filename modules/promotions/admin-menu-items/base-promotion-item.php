@@ -2,15 +2,17 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Item;
 use Elementor\Settings;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 abstract class Base_Promotion_Item implements Promotion_Menu_Item {
+
+	abstract public function get_name();
 
 	public function is_visible() {
 		return true;
@@ -33,17 +35,31 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 	}
 
 	public function render() {
+		$config = [
+			'title' => $this->get_promotion_title(),
+			'description' => $this->get_promotion_description(),
+			'image' => $this->get_image_url(),
+			'upgrade_text' => $this->get_cta_text(),
+			'upgrade_url' => $this->get_cta_url(),
+		];
+
+		$config = apply_filters( 'elementor/' . $this->get_name() . '/custom_promotion', $config );
+
+		if ( isset( $config['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
+			$config['upgrade_url'] = esc_url( $this->get_cta_url()['upgrade_url'] );
+		}
+
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo esc_url( $this->get_image_url() ); ?>" loading="lazy" />
+				<img src="<?php echo esc_url( $config['image'] ?? $this->get_image_url() ); ?>" loading="lazy" />
 
-				<h3><?php Utils::print_unescaped_internal_string( $this->get_promotion_title() ); ?></h3>
+				<h3><?php echo esc_html( $config['title'] ?? $this->get_promotion_title() ); ?></h3>
 
-				<p><?php $this->render_promotion_description(); ?></p>
+				<p><?php echo esc_html( $config['description'] ?? $this->get_promotion_description() ); ?></p>
 
-				<a class="elementor-button go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
-					<?php Utils::print_unescaped_internal_string( $this->get_cta_text() ); ?>
+				<a class="elementor-button go-pro" href="<?php echo esc_url( $config['upgrade_url'] ?? $this->get_cta_url() ); ?>">
+					<?php echo esc_html( $config['upgrade_text'] ?? $this->get_cta_text() ); ?>
 				</a>
 			</div>
 		</div>
