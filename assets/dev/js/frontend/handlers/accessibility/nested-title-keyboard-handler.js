@@ -18,6 +18,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 			ariaAttributes: {
 				titleStateAttribute: 'aria-selected',
 				activeTitleSelector: '[aria-selected="true"]',
+				titleControlAttribute: 'aria-controls',
 			},
 			datasets: {
 				titleIndex: 'data-tab-index',
@@ -79,13 +80,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return this.elements.$itemTitles.filter( activeTitleFilter );
 	}
 
-	getActiveTitleIndex() {
-		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector,
-			dataTabIndexSelector = this.getSettings( 'datasets' ).titleIndex;
-
-		return this.elements.$itemTitles.filter( activeTitleFilter )?.attr( dataTabIndexSelector );
-	}
-
 	onInit( ...args ) {
 		super.onInit( ...args );
 	}
@@ -125,14 +119,17 @@ export default class NestedTitleKeyboardHandler extends Base {
 	handleTitleKeyboardNavigation( event ) {
 		if ( 'Tab' === event.key ) {
 			const currentTitleIndex = this.getTitleIndex( event.currentTarget ),
-				activeTitleIndex = this.getActiveTitleIndex(),
+				activeTitle = this.getActiveTitleElement(),
+				activeTitleIndex = activeTitle?.attr( this.getSettings( 'datasets' ).titleIndex ) || false,
 				isActiveTitle = currentTitleIndex === activeTitleIndex;
 
 			if ( ! isActiveTitle ) {
 				return;
 			}
 
-			this.focusFirstFocusableContainerElement( event, currentTitleIndex );
+			const activeTitleControl = activeTitle?.attr( this.getSettings( 'ariaAttributes' ).titleControlAttribute );
+
+			this.focusFirstFocusableContainerElement( event, activeTitleControl );
 		} else if ( this.isDirectionKey( event ) ) {
 			event.preventDefault();
 
@@ -234,11 +231,33 @@ export default class NestedTitleKeyboardHandler extends Base {
 		this.getActiveTitleElement().trigger( 'focus' );
 	}
 
-	handleContentElementTabEvents() {}
+	handleContentElementTabEvents( event ) {
+		const $currentElement = jQuery( event.currentTarget ),
+			containerSelector = this.getSettings( 'selectors' ).itemContainer,
+			$focusableContainerElements = this.getFocusableElements( $currentElement.closest( containerSelector ) ),
+			$lastFocusableElement = $focusableContainerElements.last(),
+			isCurrentElementLastFocusableElement = $currentElement.is( $lastFocusableElement );
 
-	focusFirstFocusableContainerElement( event, titleIndex ) {
-		const dataTabIndexSelector = this.getSettings( 'datasets' ).titleIndex,
-			currentContainerSelector = `[${ dataTabIndexSelector }="${ titleIndex }"]`,
+		if ( ! isCurrentElementLastFocusableElement ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const $activeTitle = this.getActiveTitleElement(),
+			activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ),
+			numberOfTitles = this.elements.$itemTitles.length,
+			isLast;
+
+		// Check if there is a next title.
+		// Focus next title.
+
+		elementorFrontend.elements.$window.trigger( 'elementor/nested-elements/activate-by-keyboard', { widgetId: this.getID() } );
+		this.changeTitleFocus( activeTitleIndex );
+	}
+
+	focusFirstFocusableContainerElement( event, titleControl ) {
+		const currentContainerSelector = `#${ titleControl }`,
 			$activeContainer = this.elements.$itemContainers.filter( currentContainerSelector ),
 			$firstFocusableContainer = this.getFocusableElements( $activeContainer ).first();
 
