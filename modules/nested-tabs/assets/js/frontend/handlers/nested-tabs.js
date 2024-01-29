@@ -118,7 +118,6 @@ export default class NestedTabs extends Base {
 		const titleStateAttribute = this.getSettings( 'ariaAttributes' ).titleStateAttribute;
 
 		return {
-			tabindex: '0',
 			[ titleStateAttribute ]: 'true',
 		};
 	}
@@ -127,7 +126,6 @@ export default class NestedTabs extends Base {
 		const titleStateAttribute = this.getSettings( 'ariaAttributes' ).titleStateAttribute;
 
 		$activeTitle.attr( {
-			tabindex: '-1',
 			[ titleStateAttribute ]: 'false',
 		} );
 	}

@@ -122,7 +122,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 				titleIndexUpdated = this.getNextTitleKey( event, currentTitleIndex, numberOfTitles );
 
 			if ( !! titleIndexUpdated ) {
-				this.changeTitleFocus(titleIndexUpdated);
+				this.changeTitleFocus( titleIndexUpdated );
 
 				event.stopPropagation();
 			}
@@ -209,13 +209,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		$newTitle.trigger( 'focus' );
 	}
 
-	setTitleTabindex( titleIndex ) {
-		this.elements.$itemTitles.attr( 'tabindex', '-1' );
-
-		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndex ) );
-
-		$newTitle.attr( 'tabindex', '0' );
-	}
+	setTitleTabindex( titleIndex ) {}
 
 	handleTitleEscapeKeyEvents() {}
 

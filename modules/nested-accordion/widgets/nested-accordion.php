@@ -811,7 +811,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$this->add_render_attribute( $item_summary_key, [
 				'class' => [ 'e-n-accordion-item-title' ],
 				'data-accordion-index' => $accordion_count,
-				'tabindex' => 0 === $index ? 0 : -1,
+				'tabindex' => '0',
 				'aria-expanded' => $aria_expanded ? 'true' : 'false',
 				'aria-controls' => $item_id,
 			] );
@@ -936,7 +936,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					view.addRenderAttribute( itemTitleKey, {
 						'class': ['e-n-accordion-item-title'],
 						'data-accordion-index': itemCount,
-						'tabindex': 0 === index ? 0 : -1,
+						'tabindex': '0',
 						'aria-expanded': ariaExpanded,
 						'aria-controls': itemId,
 					});
