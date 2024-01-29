@@ -79,6 +79,13 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return this.elements.$itemTitles.filter( activeTitleFilter );
 	}
 
+	getActiveTitleIndex() {
+		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector,
+			dataTabIndexSelector = this.getSettings( 'datasets' ).titleIndex;
+
+		return this.elements.$itemTitles.filter( activeTitleFilter )?.attr( dataTabIndexSelector );
+	}
+
 	onInit( ...args ) {
 		super.onInit( ...args );
 	}
@@ -117,15 +124,15 @@ export default class NestedTitleKeyboardHandler extends Base {
 
 	handleTitleKeyboardNavigation( event ) {
 		if ( 'Tab' === event.key ) {
-			const currentTitleIndex = parseInt( this.getTitleIndex( event.currentTarget ) ) || 1,
-				numberOfTitles = this.elements.$itemTitles.length,
-				titleIndexUpdated = this.getNextTitleKey( event, currentTitleIndex, numberOfTitles );
+			const currentTitleIndex = this.getTitleIndex( event.currentTarget ),
+				activeTitleIndex = this.getActiveTitleIndex(),
+				isActiveTitle = currentTitleIndex === activeTitleIndex;
 
-			if ( !! titleIndexUpdated ) {
-				this.changeTitleFocus( titleIndexUpdated );
-
-				event.stopPropagation();
+			if ( ! isActiveTitle ) {
+				return;
 			}
+
+			this.focusFirstFocusableContainerElement( event, currentTitleIndex );
 		} else if ( this.isDirectionKey( event ) ) {
 			event.preventDefault();
 
@@ -228,4 +235,19 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	handleContentElementTabEvents() {}
+
+	focusFirstFocusableContainerElement( event, titleIndex ) {
+		const dataTabIndexSelector = this.getSettings( 'datasets' ).titleIndex,
+			currentContainerSelector = `[${ dataTabIndexSelector }="${ titleIndex }"]`,
+			$activeContainer = this.elements.$itemContainers.filter( currentContainerSelector ),
+			$firstFocusableContainer = this.getFocusableElements( $activeContainer ).first();
+
+		if ( 0 === $firstFocusableContainer.length ) {
+			return;
+		}
+
+		event.preventDefault();
+		$firstFocusableContainer[ 0 ]?.focus();
+		event.stopPropagation();
+	}
 }
