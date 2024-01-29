@@ -409,6 +409,9 @@ class Manager {
 	 * Export template to a file after ensuring it is a valid Elementor template
 	 * and checking user permissions for private posts.
 	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
 	 * @param array $args Template arguments.
 	 *
 	 * @return mixed Whether the export succeeded or failed.
