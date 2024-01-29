@@ -438,7 +438,6 @@ class Manager {
 			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template', 'elementor' ) );
 		}
 
-
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
