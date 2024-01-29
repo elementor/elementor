@@ -431,7 +431,7 @@ class Manager {
 		}
 
 		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template', 'elementor' )  );
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template', 'elementor' ) );
 		}
 
 		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
