@@ -408,6 +408,9 @@ class Widget_Text_Editor extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-drop-cap' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
+				'condition' => [
+					'drop_cap_view!' => 'default',
+				],
 			]
 		);
 
