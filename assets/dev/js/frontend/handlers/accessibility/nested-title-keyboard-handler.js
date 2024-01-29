@@ -62,7 +62,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	 */
 	getTitleIndex( itemTitleElement ) {
 		const { titleIndex: indexAttribute } = this.getSettings( 'datasets' );
-		return itemTitleElement.getAttribute( indexAttribute );
+		return parseInt( itemTitleElement?.getAttribute( indexAttribute ) );
 	}
 
 	/**
@@ -120,8 +120,13 @@ export default class NestedTitleKeyboardHandler extends Base {
 		if ( 'Tab' === event.key ) {
 			const currentTitleIndex = this.getTitleIndex( event.currentTarget ),
 				$activeTitle = this.getActiveTitleElement(),
-				activeTitleIndex = $activeTitle.attr( this.getSettings( 'datasets' ).titleIndex ) || false,
+				activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ) || false,
 				isActiveTitle = currentTitleIndex === activeTitleIndex;
+
+			console.log( $activeTitle );
+			console.log( 'currentTitleIndex', currentTitleIndex );
+			console.log( 'activeTitleIndex', activeTitleIndex );
+			console.log( 'isActiveTitle', isActiveTitle );
 
 			if ( ! isActiveTitle ) {
 				return;
@@ -133,7 +138,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		} else if ( this.isDirectionKey( event ) ) {
 			event.preventDefault();
 
-			const currentTitleIndex = parseInt( this.getTitleIndex( event.currentTarget ) ) || 1,
+			const currentTitleIndex = this.getTitleIndex( event.currentTarget ) || 1,
 				numberOfTitles = this.elements.$itemTitles.length,
 				titleIndexUpdated = this.getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles );
 
@@ -163,19 +168,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 		}
 
 		return isLinkElement;
-	}
-
-	getNextTitleKey( event, currentTitleIndex, numberOfTitles ) {
-		const directionValue = this.getKeyDirectionValue( event ),
-			isEndReached = numberOfTitles < currentTitleIndex + directionValue;
-
-		if ( isEndReached ) {
-			return false;
-		}
-
-		event.preventDefault();
-
-		return currentTitleIndex + directionValue;
 	}
 
 	getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles ) {
@@ -208,6 +200,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	changeTitleFocus( titleIndexUpdated ) {
 		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
 
+		this.closeActiveContentElements();
 		this.setTitleTabindex( titleIndexUpdated );
 
 		$newTitle.trigger( 'focus' );
@@ -242,15 +235,17 @@ export default class NestedTitleKeyboardHandler extends Base {
 			return;
 		}
 
-		const $activeTitle = this.getActiveTitleElement();
+		const $activeTitle = this.getActiveTitleElement(),
+			activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ),
+			isLastTitle = this.elements.$itemTitles.length === activeTitleIndex;
 
-		if ( this.isLastTitle( $activeTitle ) ) {
+		if ( isLastTitle ) {
 			return;
 		}
 
 		event.preventDefault();
 
-		const nextTitleIndex = this.getNextTitleIndex( $activeTitle );
+		const nextTitleIndex = activeTitleIndex + 1;
 
 		this.changeTitleFocus( nextTitleIndex );
 
@@ -271,13 +266,5 @@ export default class NestedTitleKeyboardHandler extends Base {
 		event.stopPropagation();
 	}
 
-	isLastTitle( $title ) {
-		return $title.is( this.elements.$itemTitles.last() );
-	}
-
-	getNextTitleIndex( $currentTitle ) {
-		const $nextTitle = $currentTitle.next();
-
-		return $nextTitle.attr( this.getSettings( 'datasets' ).titleIndex );
-	}
+	closeActiveContentElements() {}
 }
