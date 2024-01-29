@@ -93,6 +93,28 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
+	 * @since 3.19.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' =>  ! Utils::has_pro(),
+			'image' => ELEMENTOR_ASSETS_URL . 'images/go-pro.svg',
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => __( 'Grab your visitors\' attention', 'elementor' ),
+			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/', 'elementor' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
+	/**
+	 * Register video widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
 	 * @since 3.1.0
 	 * @access protected
 	 */
@@ -1375,13 +1397,5 @@ class Widget_Video extends Widget_Base {
 		?>
 		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
-	}
-
-	protected function get_upsale_data() {
-		return [
-			'title' => __( 'Grab your visitors\' attention', 'elementor' ),
-			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/', 'elementor' ),
-		];
 	}
 }

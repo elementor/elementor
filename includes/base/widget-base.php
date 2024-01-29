@@ -113,6 +113,16 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'general' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array|null Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return null;
 	}
@@ -384,7 +394,8 @@ abstract class Widget_Base extends Element_Base {
 			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
-		if ( isset( $config['upsale_data']['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upsale_data']['upgrade_url'] ) ) {
+
+		if ( isset( $config['upsale_data']['upgrade_url'] ) ) {
 			$config['upsale_data']['upgrade_url'] = esc_url( $this->get_upsale_data()['upgrade_url'] );
 		}
 
