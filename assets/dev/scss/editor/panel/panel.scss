@@ -127,5 +127,26 @@
 	}
 }
 
+// Notification Center (v1)
+body.e-has-notification {
+	&:not(.e-route-panel-menu) #elementor-panel-header-menu-button,
+	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center .elementor-panel-menu-item-icon {
+		position: relative;
+
+		&:after {
+			position: absolute;
+			content: '';
+			display: block;
+			background: var(--e-a-color-primary);
+			border-radius: 50%;
+			width: 8px;
+			height: 8px;
+			top: 5px;
+			right: 5px;
+		}
+	}
+}
+
+
 //Compatibility
 @import "compatibility";
