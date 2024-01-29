@@ -101,7 +101,13 @@ class API {
 					$result = 'in' === $condition['operator'] ? $in_array : ! $in_array;
 					break;
 				case 'plugin':
-					$result = is_plugin_active( $condition['plugin'] );
+					$is_plugin_active = is_plugin_active( $condition['plugin'] );
+
+					if ( empty( $condition['operator'] ) ) {
+						$condition['operator'] = '==';
+					}
+
+					$result = '==' === $condition['operator'] ? $is_plugin_active : ! $is_plugin_active;
 					break;
 				case 'theme':
 					$theme = wp_get_theme();
