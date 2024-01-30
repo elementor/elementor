@@ -85,7 +85,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 	getContextData( view, controlType ) {
 		const controlName = view.options.model.get( 'name' );
-		const controlValue = view.options.container.view.model.get( 'settings' ).get( controlName );
+		const controlValue = view.options.container.settings.get( controlName );
 
 		if ( ! view.options.container ) {
 			return {
