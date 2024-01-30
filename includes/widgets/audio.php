@@ -245,15 +245,6 @@ class Widget_Audio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'soundcloud',
-			]
-		);
-
 		$this->end_controls_section();
 
 	}

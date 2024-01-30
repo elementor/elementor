@@ -70,7 +70,7 @@ class Model extends BaseModel {
 		$this->add_control(
 			'panel_width',
 			[
-				'label' => esc_html__( 'Panel Width', 'elementor' ),
+				'label' => esc_html__( 'Panel Width', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [

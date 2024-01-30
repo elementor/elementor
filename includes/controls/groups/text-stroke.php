@@ -68,12 +68,10 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 				'em' => [
 					'min' => 0,
 					'max' => 1,
-					'step' => 0.01,
 				],
 				'rem' => [
 					'min' => 0,
 					'max' => 1,
-					'step' => 0.01,
 				],
 			],
 			'responsive' => true,
