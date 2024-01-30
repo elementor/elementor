@@ -10,6 +10,7 @@ export default class NestedTabs extends Base {
 		super( ...args );
 
 		this.resizeListenerNestedTabs = null;
+		this.focusableElementSelector = 'audio, button, canvas, details, iframe, input, select, summary, textarea, video, [accesskey], [contenteditable], [href], [tabindex]:not([tabindex="-1"])';
 	}
 
 	/**
@@ -70,7 +71,14 @@ export default class NestedTabs extends Base {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
+			$focusableContainerElements: this.getFocusableElements( this.findElement( selectors.tabContent ) ),
 		};
+	}
+
+	getFocusableElements( $elements ) {
+		return $elements
+			.find( this.focusableElementSelector )
+			.not( '[disabled], [inert]' );
 	}
 
 	getKeyboardNavigationSettings() {
@@ -109,6 +117,7 @@ export default class NestedTabs extends Base {
 		this.setTabDeactivationAttributes( $activeTitle, newTabIndex );
 
 		$activeContent.removeClass( activeClass );
+		this.setTabindexFocusableContentElements( $activeContent, '-1' );
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
 
 		return $activeContent;
@@ -151,6 +160,7 @@ export default class NestedTabs extends Base {
 
 		$requestedTitle.attr( this.getTitleActivationAttributes() );
 		$requestedContent.addClass( activeClass );
+		this.setTabindexFocusableContentElements( $requestedContent, '0' );
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
@@ -388,5 +398,9 @@ export default class NestedTabs extends Base {
 		}
 
 		this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'false' );
+	}
+
+	setTabindexFocusableContentElements( $elements, $tabindexValue ) {
+		$elements.attr( 'tabindex', $tabindexValue );
 	}
 }

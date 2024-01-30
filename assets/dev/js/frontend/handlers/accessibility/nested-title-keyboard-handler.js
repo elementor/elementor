@@ -97,6 +97,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	getTitleEvents() {
 		return {
 			keydown: this.handleTitleKeyboardNavigation.bind( this ),
+			keyup: this.keyup.bind( this ),
 		};
 	}
 
@@ -123,17 +124,19 @@ export default class NestedTitleKeyboardHandler extends Base {
 				activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ) || false,
 				isActiveTitle = currentTitleIndex === activeTitleIndex;
 
-			console.log( $activeTitle );
-			console.log( 'currentTitleIndex', currentTitleIndex );
-			console.log( 'activeTitleIndex', activeTitleIndex );
-			console.log( 'isActiveTitle', isActiveTitle );
+			if ( this.isLastTitle( currentTitleIndex ) ) {
+				this.closeActiveContentElements();
+			}
 
 			if ( ! isActiveTitle ) {
 				return;
 			}
 
-			const activeTitleControl = $activeTitle.attr( this.getSettings( 'ariaAttributes' ).titleControlAttribute );
+			const activeTitleControl = $activeTitle.attr( this.getSettings( 'ariaAttributes' ).titleControlAttribute ),
+				activeContentSelector = `#${ activeTitleControl }`,
+				$activeContainer = this.elements.$itemContainers.filter( activeContentSelector );
 
+			this.setTabindexFocusableContentElements( $activeContainer, '0' );
 			this.focusFirstFocusableContainerElement( event, activeTitleControl );
 		} else if ( this.isDirectionKey( event ) ) {
 			event.preventDefault();
@@ -200,7 +203,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 	changeTitleFocus( titleIndexUpdated ) {
 		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
 
-		this.closeActiveContentElements();
 		this.setTitleTabindex( titleIndexUpdated );
 
 		$newTitle.trigger( 'focus' );
@@ -224,6 +226,10 @@ export default class NestedTitleKeyboardHandler extends Base {
 		this.getActiveTitleElement().trigger( 'focus' );
 	}
 
+	setTabindexFocusableContentElements( $elements, $tabindexValue ) {
+		$elements.attr( 'tabindex', $tabindexValue );
+	}
+
 	handleContentElementTabEvents( event ) {
 		const $currentElement = jQuery( event.currentTarget ),
 			containerSelector = this.getSettings( 'selectors' ).itemContainer,
@@ -236,10 +242,9 @@ export default class NestedTitleKeyboardHandler extends Base {
 		}
 
 		const $activeTitle = this.getActiveTitleElement(),
-			activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ),
-			isLastTitle = this.elements.$itemTitles.length === activeTitleIndex;
+			activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] );
 
-		if ( isLastTitle ) {
+		if ( this.isLastTitle( activeTitleIndex ) ) {
 			return;
 		}
 
@@ -248,6 +253,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		const nextTitleIndex = activeTitleIndex + 1;
 
 		this.changeTitleFocus( nextTitleIndex );
+		this.setTabindexFocusableContentElements( $focusableContainerElements, '-1' );
 
 		event.stopPropagation();
 	}
@@ -264,6 +270,10 @@ export default class NestedTitleKeyboardHandler extends Base {
 		event.preventDefault();
 		$firstFocusableContainer[ 0 ]?.focus();
 		event.stopPropagation();
+	}
+
+	isLastTitle( titleIndex ) {
+		return this.elements.$itemTitles.length === titleIndex;
 	}
 
 	closeActiveContentElements() {}
