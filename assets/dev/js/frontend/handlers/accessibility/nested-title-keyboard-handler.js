@@ -97,7 +97,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 	getTitleEvents() {
 		return {
 			keydown: this.handleTitleKeyboardNavigation.bind( this ),
-			keyup: this.keyup.bind( this ),
 		};
 	}
 
