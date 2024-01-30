@@ -266,26 +266,14 @@ class Widget_Image_Box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_style_image',
-			[
-				'label' => esc_html__( 'Image', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
-				'condition' => [
-					'image[url]!' => '',
-				],
+				'separator' => 'after',
 			]
 		);
 
 		$this->add_responsive_control(
 			'image_space',
 			[
-				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'label' => esc_html__( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
@@ -301,6 +289,47 @@ class Widget_Image_Box extends Widget_Base {
 					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-top .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 					'(mobile){{WRAPPER}} .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'image[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_bottom_space',
+			[
+				'label' => esc_html__( 'Content Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_image',
+			[
+				'label' => esc_html__( 'Image', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'image[url]!' => '',
 				],
 			]
 		);
@@ -474,31 +503,6 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_responsive_control(
-			'title_bottom_space',
-			[
-				'label' => esc_html__( 'Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'max' => 100,
-					],
-					'em' => [
-						'min' => 0,
-						'max' => 10,
-					],
-					'rem' => [
-						'min' => 0,
-						'max' => 10,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
-				],
 			]
 		);
 
