@@ -400,7 +400,7 @@ export default class NestedTabs extends Base {
 		this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'false' );
 	}
 
-	setTabindexFocusableContentElements( $elements, $tabindexValue ) {
-		$elements.attr( 'tabindex', $tabindexValue );
+	setTabindexFocusableContentElements( $containers, $tabindexValue ) {
+		this.getFocusableElements( $containers ).attr( 'tabindex', $tabindexValue );
 	}
 }
