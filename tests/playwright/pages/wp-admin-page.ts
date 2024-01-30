@@ -1,4 +1,4 @@
-import { type APIRequestContext } from '@playwright/test';
+import { type APIRequestContext, expect } from '@playwright/test';
 import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
@@ -241,5 +241,12 @@ export default class WpAdminPage extends BasePage {
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
+	}
+
+	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
+		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
+		const promoContainer = this.page.locator( promotionContainer );
+		await promoContainer.waitFor();
+		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
 }
