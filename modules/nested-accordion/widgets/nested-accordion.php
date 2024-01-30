@@ -301,7 +301,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'condition' => [
 					'faq_schema[value]' => 'yes',
 				],
-				'separator' => 'none',
 			]
 		);
 

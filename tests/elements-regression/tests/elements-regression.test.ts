@@ -5,15 +5,6 @@ import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: 'active',
-		} );
-	} );
-
 	const testData = [
 		'divider',
 		'heading',
@@ -63,7 +54,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
 			const helper = new ElementRegressionHelper( page, testInfo );
-			await wpAdminPage.openNewPage( false, false );;
+			await wpAdminPage.openNewPage( false, false );
 			await editorPage.closeNavigatorIfOpen();
 
 			await editorPage.loadTemplate( filePath, true );
