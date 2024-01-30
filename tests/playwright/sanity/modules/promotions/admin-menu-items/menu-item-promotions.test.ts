@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test( 'Promotion screenshots', async ( { page }, testInfo ) => {
@@ -8,14 +8,21 @@ test( 'Promotion screenshots', async ( { page }, testInfo ) => {
 	await wpAdminPage.login();
 
 	await test.step( 'Free to Pro - Submissions', async () => {
-		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
+		await promotionPageScreenshotTest( page, promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
 	} );
 
 	await test.step( 'Free to Pro - Custom Icons', async () => {
-		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
+		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
 	} );
 
 	await test.step( 'Free to Pro - Custom Fonts', async () => {
-		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
+		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
 	} );
 } );
+
+async function promotionPageScreenshotTest( page: Page, promotionContainer: string, pageUri: string, screenshotName: string ) {
+	await page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
+	const promoContainer = page.locator( promotionContainer );
+	await promoContainer.waitFor();
+	await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
+}
