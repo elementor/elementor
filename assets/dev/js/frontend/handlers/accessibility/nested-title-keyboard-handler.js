@@ -106,8 +106,8 @@ export default class NestedTitleKeyboardHandler extends Base {
 		};
 	}
 
-	isDirectionKey( event ) {
-		const directionKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End' ];
+	isHomeOrEndKey( event ) {
+		const directionKeys = [ 'Home', 'End' ];
 		return directionKeys.includes( event.key );
 	}
 
@@ -117,15 +117,13 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	handleTitleKeyboardNavigation( event ) {
-		if ( 'Tab' === event.key ) {
+		if ( event.shiftKey && 'Tab' === event.key ) {
+			this.closeActiveContentElements();
+		} else if ( 'Tab' === event.key ) {
 			const currentTitleIndex = this.getTitleIndex( event.currentTarget ),
 				$activeTitle = this.getActiveTitleElement(),
 				activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] ) || false,
 				isActiveTitle = currentTitleIndex === activeTitleIndex;
-
-			if ( this.isLastTitle( currentTitleIndex ) ) {
-				this.closeActiveContentElements();
-			}
 
 			if ( ! isActiveTitle ) {
 				return;
@@ -137,7 +135,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 
 			this.setTabindexFocusableContentElements( $activeContainer, '0' );
 			this.focusFirstFocusableContainerElement( event, activeTitleControl );
-		} else if ( this.isDirectionKey( event ) ) {
+		} else if ( this.isHomeOrEndKey( event ) ) {
 			event.preventDefault();
 
 			const currentTitleIndex = this.getTitleIndex( event.currentTarget ) || 1,
@@ -202,6 +200,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	changeTitleFocus( titleIndexUpdated ) {
 		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
 
+		this.closeActiveContentElements();
 		this.setTitleTabindex( titleIndexUpdated );
 
 		$newTitle.trigger( 'focus' );
@@ -245,6 +244,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 			activeTitleIndex = this.getTitleIndex( $activeTitle[ 0 ] );
 
 		if ( this.isLastTitle( activeTitleIndex ) ) {
+			this.closeActiveContentElements();
 			return;
 		}
 
