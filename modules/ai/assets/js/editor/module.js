@@ -89,8 +89,8 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		if ( ! view.options.container ) {
 			return {
-				controlName: controlName,
-				controlValue: controlValue,
+				controlName,
+				controlValue,
 				controlType,
 			};
 		}
@@ -100,8 +100,8 @@ export default class Module extends elementorModules.editor.utils.Module {
 			elementType: view.options.container.args.model.get( 'elType' ),
 			elementId: view.options.container.id,
 			widgetType: view.options.container.args.model.get( 'widgetType' ),
-			controlName: controlName,
-			controlValue: controlValue,
+			controlName,
+			controlValue,
 			controlType,
 		};
 	}
