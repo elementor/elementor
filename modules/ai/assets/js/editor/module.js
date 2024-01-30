@@ -85,12 +85,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 	getContextData( view, controlType ) {
 		const controlName = view.options.model.get( 'name' );
-		const controlValue = view.options.container.settings.get( controlName );
 
 		if ( ! view.options.container ) {
 			return {
 				controlName,
-				controlValue,
 				controlType,
 			};
 		}
@@ -101,8 +99,8 @@ export default class Module extends elementorModules.editor.utils.Module {
 			elementId: view.options.container.id,
 			widgetType: view.options.container.args.model.get( 'widgetType' ),
 			controlName,
-			controlValue,
 			controlType,
+			controlValue: view.options.container.settings.get( controlName ),
 		};
 	}
 }
