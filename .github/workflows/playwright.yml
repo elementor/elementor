@@ -26,7 +26,7 @@ on:
         fail_fast:
             type: boolean
             required: true
-            description: 'Run all tests'
+            description: 'Cancel tests when one of them fails'
             default: false
 
 
@@ -161,7 +161,7 @@ jobs:
         if: ${{matrix.testSuite =='elements-regression'}}
         run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
       - uses: actions/upload-artifact@v3
-        if: ${{ inputs.fail_fast == false || failure() }}
+        if: always()
         with:
           name: playwright-test-results
           path: ${{inputs.path-to-results || 'test-results/'}} 
