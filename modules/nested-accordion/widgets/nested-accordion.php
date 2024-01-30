@@ -573,18 +573,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tabs();
 
 		$this->add_control(
-			'header_section_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_control(
 			'heading_icon_style_title',
 			[
 				'type' => Controls_Manager::HEADING,
 				'label' => esc_html__( 'Icon', 'elementor' ),
-
+				'separator' => 'before',
 			]
 		);
 
