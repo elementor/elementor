@@ -117,6 +117,7 @@ class Control_Gallery extends Base_Data_Control {
 					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
 						<?php
 							Hints::get_notice_template( [
+								'display' => ! $once_dismissed,
 								'type' => 'info',
 								'content' => $content,
 								'icon' => true,
