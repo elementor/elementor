@@ -13,7 +13,7 @@ export default class ImageCarousel extends Content {
 		await this.page.selectOption( EditorSelectors.imageCarousel.navigationSelect, option );
 	}
 
-	async setAutoplay( option = false ) {
+	async setAutoplay( option = 'false' ) {
 		await this.page.getByText( 'Additional Options' ).click();
 		await this.page.setChecked( EditorSelectors.imageCarousel.autoplaySelect, option );
 	}
