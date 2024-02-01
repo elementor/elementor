@@ -159,7 +159,7 @@ class Manager extends Base_Object {
 		$installs_history = Upgrade_Manager::get_installs_history();
 
 		if ( empty( $installs_history ) ) {
-			return 1;
+			return false;
 		}
 
 		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
