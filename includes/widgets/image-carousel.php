@@ -86,10 +86,10 @@ class Widget_Image_Carousel extends Widget_Base {
 	protected function get_upsale_data() {
 		return [
 			'condition' => ! Utils::has_pro(),
-			'image' => ELEMENTOR_ASSETS_URL . 'images/go-pro.svg',
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'description' => esc_html__( 'Gain complete freedom to design every slide with Elementor"s Pro Carousel.', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-image-carousel-widget/' ),
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
 	}

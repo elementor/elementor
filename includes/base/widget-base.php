@@ -394,7 +394,6 @@ abstract class Widget_Base extends Element_Base {
 			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
-
 		if ( isset( $config['upsale_data']['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upsale_data']['upgrade_url'] ) ) {
 			$config['upsale_data']['upgrade_url'] = esc_url( $this->get_upsale_data()['upgrade_url'] );
 		}

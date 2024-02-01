@@ -189,7 +189,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<# if ( elementData.upsale_data && elementData.upsale_data.condition ) { #>
 	<div class="elementor-nerd-box elementor-nerd-box--upsale">
 		<# if ( elementData.upsale_data.image ) { #>
-		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( '{{ elementData.upsale_data.image }}' ); ?>" loading="lazy" alt="{{ elementData.upsale_data.image_alt || `Upgrade` }}" />
+		<img class="elementor-nerd-box-icon" src="{{ elementData.upsale_data.image }}" loading="lazy" alt="{{ elementData.upsale_data.image_alt }}" />
 		<# } #>
 		<# if ( elementData.upsale_data.title ) { #>
 		<div class="elementor-nerd-box-title">{{{ elementData.upsale_data.title }}}</div>
@@ -197,8 +197,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<# if ( elementData.upsale_data.description ) { #>
 		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>
 		<# } #>
-		<# if ( elementData.upsale_data.upgrade_url ) { #>
-		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text || `Upgrade Now` }}}</a>
+		<# if ( elementData.upsale_data.upgrade_url && elementData.upsale_data.upgrade_text ) { #>
+		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text }}}</a>
 		<# } #>
 	</div>
 	<# } #>

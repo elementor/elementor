@@ -90,7 +90,7 @@ class Widget_Button extends Widget_Base {
 	protected function get_upsale_data() {
 		return [
 			'condition' => ! Utils::has_pro(),
-			'image' => ELEMENTOR_ASSETS_URL . 'images/go-pro.svg',
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Convert visitors into customers', 'elementor' ),
 			'description' => esc_html__( 'Get the Call to Action widget and grow your toolbox with Elementor Pro.', 'elementor' ),

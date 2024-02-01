@@ -101,11 +101,11 @@ class Widget_Video extends Widget_Base {
 	protected function get_upsale_data() {
 		return [
 			'condition' => ! Utils::has_pro(),
-			'image' => ELEMENTOR_ASSETS_URL . 'images/go-pro.svg',
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'title' => __( 'Grab your visitors\' attention', 'elementor' ),
+			'title' => esc_html__( "Grab your visitors' attention", 'elementor' ),
 			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/' ),
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
 	}
