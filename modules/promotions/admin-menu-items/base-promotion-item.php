@@ -55,14 +55,16 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 			$config['upgrade_url'] = esc_url( $this->get_cta_url() );
 		}
 
+		$description = $config['description'] ?? $this->get_promotion_description() ?? '';
+
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
 				<img src="<?php echo esc_url( $config['image'] ?? $this->get_image_url() ); ?>" loading="lazy" />
 
 				<h3><?php echo esc_html( $config['title'] ?? $this->get_promotion_title() ); ?></h3>
-				<?php if( $config['description'] ?? $this->get_promotion_description() ): ?>
-				<p><?php echo esc_html( $config['description'] ?? $this->get_promotion_description() ?? '' ); ?></p>
+				<?php if ( $description ) : ?>
+				<p><?php echo esc_html( $description ); ?></p>
 				<?php endif; ?>
 				<a class="elementor-button go-pro" href="<?php echo esc_url( $config['upgrade_url'] ?? $this->get_cta_url() ); ?>">
 					<?php echo esc_html( $config['upgrade_text'] ?? $this->get_cta_text() ); ?>
