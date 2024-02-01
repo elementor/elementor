@@ -114,9 +114,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			}
 
 			if ( ! empty( $image_src ) ) {
-				$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
+				$image_class_html = ! empty( $image_class ) ? ' class="' . esc_attr( $image_class ) . '"' : '';
 
-				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s loading="lazy" />', esc_attr( $image_src ), Control_Media::get_image_title( $image ), Control_Media::get_image_alt( $image ), $image_class_html );
+				$html .= sprintf(
+					'<img src="%1$s" title="%2$s" alt="%3$s"%4$s loading="lazy" />',
+					esc_url( $image_src ),
+					esc_attr( Control_Media::get_image_title( $image ) ),
+					esc_attr( Control_Media::get_image_alt( $image ) ),
+					$image_class_html
+				);
 			}
 		}
 

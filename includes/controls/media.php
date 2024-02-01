@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -247,7 +248,37 @@ class Control_Media extends Control_Base_Multiple {
 							#>
 						</div>
 					</div>
-					<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
+					<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
+						<?php
+							Hints::get_notice_template( [
+								'type' => 'warning',
+								'content' => __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+								'icon' => true,
+							] );
+						?>
+					</div>
+					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) { ?>
+						<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
+							<?php
+							$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
+							$content = $once_dismissed ?
+								__( 'Oh! That image exceeds the recommended size.Try reducing it with the new Image Optimizer.', 'elementor' ) :
+								__( 'Get a performance boost and improved SEO results with the Image Optimizer.', 'elementor' );
+							$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
+							Hints::get_notice_template( [
+								'display' => ! $once_dismissed,
+								'type' => 'info',
+								'content' => $content,
+								'icon' => true,
+								'dismissible' => $dismissible,
+								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
+								'button_event' => $dismissible,
+								'button_data' => [
+									'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+								],
+							] ); ?>
+						</div>
+					<?php } ?>
 				</div>
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">
