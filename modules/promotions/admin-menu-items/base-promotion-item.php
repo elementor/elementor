@@ -36,6 +36,10 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		return ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg';
 	}
 
+	public function get_promotion_description() {
+		return '';
+	}
+
 	public function render() {
 		$config = [
 			'title' => $this->get_promotion_title(),
@@ -48,7 +52,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		$config = apply_filters( 'elementor/' . $this->get_name() . '/custom_promotion', $config );
 
 		if ( isset( $config['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
-			$config['upgrade_url'] = esc_url( $this->get_cta_url()['upgrade_url'] );
+			$config['upgrade_url'] = esc_url( $this->get_cta_url() );
 		}
 
 		?>
@@ -57,9 +61,9 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 				<img src="<?php echo esc_url( $config['image'] ?? $this->get_image_url() ); ?>" loading="lazy" />
 
 				<h3><?php echo esc_html( $config['title'] ?? $this->get_promotion_title() ); ?></h3>
-
-				<p><?php echo esc_html( $config['description'] ?? $this->get_promotion_description() ); ?></p>
-
+				{{ if( $config['description'] ?? $this->get_promotion_description() ) }}
+				<p><?php echo esc_html( $config['description'] ?? $this->get_promotion_description() ?? '' ); ?></p>
+				{{ endif }}
 				<a class="elementor-button go-pro" href="<?php echo esc_url( $config['upgrade_url'] ?? $this->get_cta_url() ); ?>">
 					<?php echo esc_html( $config['upgrade_text'] ?? $this->get_cta_text() ); ?>
 				</a>
