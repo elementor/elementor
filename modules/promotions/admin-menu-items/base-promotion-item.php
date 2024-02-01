@@ -61,9 +61,9 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 				<img src="<?php echo esc_url( $config['image'] ?? $this->get_image_url() ); ?>" loading="lazy" />
 
 				<h3><?php echo esc_html( $config['title'] ?? $this->get_promotion_title() ); ?></h3>
-				{{ if( $config['description'] ?? $this->get_promotion_description() ) }}
+				<?php if( $config['description'] ?? $this->get_promotion_description() ): ?>
 				<p><?php echo esc_html( $config['description'] ?? $this->get_promotion_description() ?? '' ); ?></p>
-				{{ endif }}
+				<?php endif; ?>
 				<a class="elementor-button go-pro" href="<?php echo esc_url( $config['upgrade_url'] ?? $this->get_cta_url() ); ?>">
 					<?php echo esc_html( $config['upgrade_text'] ?? $this->get_cta_text() ); ?>
 				</a>
