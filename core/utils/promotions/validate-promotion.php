@@ -16,12 +16,12 @@ class Validate_Promotion {
 
 		$domain_segments = explode( '.', $domain );
 
-		$isLocalhost = ( 1 === count( $domain_segments ) );
-		if ( ! count( $domain_segments ) >= 2 || $isLocalhost ) {
+		$is_localhost = ( 1 === count( $domain_segments ) );
+		if ( ! count( $domain_segments ) >= 2 || $is_localhost ) {
 			return false;
 		}
 
-		$root_domain = $domain_segments[ count( $domain_segments ) -2 ] . '.' . $domain_segments[ count( $domain_segments ) -1 ];
+		$root_domain = $domain_segments[ count( $domain_segments ) - 2 ] . '.' . $domain_segments[ count( $domain_segments ) - 1 ];
 		return 'elementor.com' === $root_domain;
 	}
 }
