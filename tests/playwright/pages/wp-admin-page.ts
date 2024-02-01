@@ -1,4 +1,4 @@
-import {type APIRequestContext, expect, Page} from '@playwright/test';
+import { type APIRequestContext, expect, Page } from '@playwright/test';
 import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
