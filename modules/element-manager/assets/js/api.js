@@ -17,8 +17,6 @@ export const saveDisabledWidgets = async ( widgetsDisabled, elementsRestriction 
 			},
 			body: new URLSearchParams( bodyData ),
 		} );
-
-		const data = await response.json();
 	} catch ( error ) {
 		console.error( error ); // eslint-disable-line no-console
 	}

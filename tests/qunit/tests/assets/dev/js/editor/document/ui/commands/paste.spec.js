@@ -72,22 +72,6 @@ export const DEFAULT_PASTE_RULES = {
 	},
 };
 
-const findChildrenContainer = ( parent, children ) => {
-	if ( 0 === parent.model.attributes.elements.length ) {
-		return false;
-	}
-
-	return parent.children.find( ( container ) => container.id === children.id );
-};
-
-const firstChildrenContainer = ( parent ) => {
-	return parent.children[ 0 ];
-};
-
-const lastChildrenContainer = ( parent ) => {
-	return parent.children[ parent.children.length - 1 ];
-};
-
 export const Paste = () => {
 	QUnit.module( 'Paste', () => {
 		QUnit.module( 'Single Selection', ( hooks ) => {
