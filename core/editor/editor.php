@@ -609,11 +609,9 @@ class Editor {
 			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
 			'description' => sprintf(
-				esc_html__(
-					'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way. %s',
-					'elementor'
-				),
-				'<a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">' . esc_html__( 'Learn more', 'elementor' ) . '</a>'
+				'%1$s <a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">%2$s</a>',
+				esc_html__( 'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
 			),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
