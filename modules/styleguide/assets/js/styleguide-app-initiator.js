@@ -1,5 +1,5 @@
 ( () => {
-	let styleguideRoot;
+	let styleguideRoot = null;
 	const styleguideBodyClass = 'e-styleguide-shown';
 
 	/**
@@ -32,7 +32,18 @@
 		return document.querySelector( '.dialog-styleguide-message' );
 	}
 
-	styleguideRoot = ReactDOM.createRoot( getStyleguideWidget() );
+	/**
+	 * Create root if the container element is available.
+	 */
+	function createRoot() {
+		const widget = getStyleguideWidget();
+
+		if ( styleguideRoot || ! widget ) {
+			return;
+		}
+
+		styleguideRoot = ReactDOM.createRoot( widget );
+	}
 
 	/**
 	 * Listen to an event from the Styleguide e-component to mount or unmount the app.
@@ -41,6 +52,8 @@
 		if ( ! event.data?.name?.startsWith( 'elementor/styleguide/preview' ) || ! getStyleguideWidget() ) {
 			return;
 		}
+
+		createRoot();
 
 		switch ( event.data.name ) {
 			case 'elementor/styleguide/preview/show':
