@@ -10,7 +10,7 @@
 
 		document.body.classList.add( styleguideBodyClass );
 
-		ReactDOM.render( <App /> );
+		styleguideRoot.render( <App /> );
 	}
 
 	/**
