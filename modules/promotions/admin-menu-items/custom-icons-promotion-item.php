@@ -21,8 +21,8 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	public function get_promotion_title() {
-		/* translators: %s: br  */
 		echo sprintf(
+			/* translators: %s: br  */
 			esc_html( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
 			'<br />'
 		);
