@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-revisions-revision-item">
-	<div class="elementor-revision-item__wrapper {{ type }}">
+	<button class="elementor-revision-item__wrapper {{ type }}">
 		<div class="elementor-revision-item__gravatar">{{{ gravatar }}}</div>
 		<div class="elementor-revision-item__details">
 			<div class="elementor-revision-date" title="{{{ new Date( timestamp * 1000 ) }}}">{{{ date }}}</div>
@@ -70,5 +70,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!--			<# } #>-->
 
 		</div>
-	</div>
+	</button>
 </script>
