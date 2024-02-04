@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
 /**

@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import App from './app';
 import ImportExport from '../../modules/import-export/assets/js/module';

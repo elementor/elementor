@@ -1,3 +1,5 @@
+import { createRoot } from 'react-dom/client';
+
 ( () => {
 	let styleguideRoot = null;
 	const styleguideBodyClass = 'e-styleguide-shown';
@@ -35,14 +37,14 @@
 	/**
 	 * Create root if the container element is available.
 	 */
-	function createRoot() {
+	function maybeCreateRoot() {
 		const widget = getStyleguideWidget();
 
 		if ( styleguideRoot || ! widget ) {
 			return;
 		}
 
-		styleguideRoot = ReactDOM.createRoot( widget );
+		styleguideRoot = createRoot( widget );
 	}
 
 	/**
@@ -53,7 +55,7 @@
 			return;
 		}
 
-		createRoot();
+		maybeCreateRoot();
 
 		switch ( event.data.name ) {
 			case 'elementor/styleguide/preview/show':

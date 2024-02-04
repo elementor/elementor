@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { createPreviewContainer } from './preview-container';
 import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';

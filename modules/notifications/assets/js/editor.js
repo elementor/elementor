@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { EditorV1 } from './components/editor-v1';
 
 let isRendered = false;
