@@ -45,12 +45,12 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 		return '';
 	}
 
-	protected function get_list() {
+	private function get_lines() {
 		ob_start();
-		if ( ! empty( $this->set_list() ) ) {
+		if ( ! empty( $this->get_content_lines() ) ) {
 			?>
 			<ul>
-				<?php foreach ( $this->set_list() as $item ) { ?>
+				<?php foreach ( $this->get_content_lines() as $item ) { ?>
 					<li><?php Utils::print_unescaped_internal_string( $item ); ?></li>
 				<?php } ?>
 			</ul>
@@ -67,7 +67,7 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 				<div class="e-feature-promotion_data">
 					<h3><?php Utils::print_unescaped_internal_string( $promotion_data['promotion_title'] ); ?></h3>
 
-					<?php Utils::print_unescaped_internal_string( $promotion_data['list'] ); ?>
+					<?php Utils::print_unescaped_internal_string( $promotion_data['lines'] ); ?>
 
 					<a class="elementor-button go-pro" href="<?php echo esc_url( $promotion_data['cta_url'] ); ?>" target="_blank">
 						<?php Utils::print_unescaped_internal_string( $promotion_data['cta_text'] ); ?>
@@ -112,7 +112,7 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 			'cta_url' => $this->get_cta_url(),
 			'cta_text' => $this->get_cta_text(),
 			'video_url' => $this->get_video_url(),
-			'list' => $this->get_list(),
+			'lines' => $this->get_lines(),
 			'side_note' => $this->get_side_note(),
 		];
 	}
