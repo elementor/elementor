@@ -110,7 +110,7 @@ class Control_Gallery extends Base_Data_Control {
 				<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) :
 					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
 					$content = $once_dismissed ?
-						__( 'Oh! Some images exceed the recommended size.Try reducing them with the new Image Optimizer.', 'elementor' ) :
+						__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce by 90% without losing quality.', 'elementor' ) :
 						__( 'Get a performance boost and improved SEO results with the Image Optimizer.', 'elementor' );
 					$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 					?>
