@@ -563,9 +563,9 @@ class Widget_Video extends Widget_Base {
 					'none' => esc_html__( 'None', 'elementor' ),
 				],
 				'description' => sprintf(
-					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads. %1$sLearn More%2$s', 'elementor' ),
-					'<a target="_blank" href="https://go.elementor.com/preload-video/">',
-					'</a>'
+					'%1$s <a target="_blank" href="https://go.elementor.com/preload-video/">%2$s</a>',
+					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' ),
 				),
 				'default' => 'metadata',
 				'condition' => [
