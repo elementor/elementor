@@ -19,11 +19,11 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Template {
 		return esc_html__( 'Custom Fonts', 'elementor' );
 	}
 
-	public function get_promotion_title() {
+	public function get_promotion_title(): string {
 		return esc_html__( 'Stay on brand with a Custom Font', 'elementor' );
 	}
 
-	public function set_list() {
+	public function get_content_lines(): array {
 		return [
 			esc_html__( 'Upload any font to keep your website true to your brand', 'elementor' ),
 			/* translators: %s: br  */
@@ -34,11 +34,11 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Template {
 		];
 	}
 
-	public function get_cta_url() {
+	public function get_cta_url(): string {
 		return 'https://go.elementor.com/go-pro-custom-fonts/';
 	}
 
-	public function get_video_url() {
+	public function get_video_url(): string {
 		return 'https://www.youtube-nocookie.com/embed/j_guJkm28eY?si=cdd2TInwuGDTtCGD';
 	}
 }

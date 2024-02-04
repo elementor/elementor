@@ -17,7 +17,7 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 
 	abstract protected function get_cta_url();
 
-	abstract protected function set_list();
+	abstract protected function get_content_lines();
 
 	abstract protected function get_video_url();
 
