@@ -21,7 +21,7 @@
 			&right {
 
 				.elementor-image-box-wrapper {
-					text-align: $end;
+					text-align: end;
 					flex-direction: getValueByDirection(row-reverse, row);
 				}
 			}
@@ -29,7 +29,7 @@
 			&left {
 
 				.elementor-image-box-wrapper {
-					text-align: $start;
+					text-align: start;
 					flex-direction: getValueByDirection(row, row-reverse);
 				}
 			}

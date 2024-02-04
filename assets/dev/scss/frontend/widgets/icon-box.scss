@@ -21,7 +21,7 @@
 		&right {
 
 			.elementor-icon-box-wrapper {
-				text-align: $end;
+				text-align: end;
 				flex-direction: getValueByDirection(row-reverse, row);
 			}
 
@@ -35,7 +35,7 @@
 		&left {
 
 			.elementor-icon-box-wrapper {
-				text-align: $start;
+				text-align: start;
 				flex-direction: getValueByDirection(row, row-reverse);
 			}
 
