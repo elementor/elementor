@@ -101,7 +101,17 @@ class API {
 					$result = 'in' === $condition['operator'] ? $in_array : ! $in_array;
 					break;
 				case 'plugin':
-					$result = is_plugin_active( $condition['plugin'] );
+					if ( ! function_exists( 'is_plugin_active' ) ) {
+						require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+					}
+
+					$is_plugin_active = is_plugin_active( $condition['plugin'] );
+
+					if ( empty( $condition['operator'] ) ) {
+						$condition['operator'] = '==';
+					}
+
+					$result = '==' === $condition['operator'] ? $is_plugin_active : ! $is_plugin_active;
 					break;
 				case 'theme':
 					$theme = wp_get_theme();

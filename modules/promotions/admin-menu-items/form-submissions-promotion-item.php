@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Form_Submissions_Promotion_Item extends Base_Promotion_Template {
+	public function get_name() {
+		return 'submissions';
+	}
 
 	public function get_label() {
 		return esc_html__( 'Submissions', 'elementor' );
