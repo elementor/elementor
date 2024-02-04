@@ -96,7 +96,6 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 
 		$new_promotion_data = array_replace( $promotion_data, $new_promotion_data );
 
-
 		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $new_promotion_data['cta_url'] ) ) {
 			$new_promotion_data['cta_url'] = $promotion_data['cta_url'];
 		}
