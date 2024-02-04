@@ -308,8 +308,11 @@ class WP_Import extends \WP_Importer {
 				$login = sanitize_user( $post['post_author'], true );
 
 				if ( empty( $login ) ) {
-					/* translators: %s: Post author. */
-					$this->output['errors'][] = sprintf( esc_html__( 'Failed to import author %s. Their posts will be attributed to the current user.', 'elementor' ), $post['post_author'] );
+					$this->output['errors'][] = sprintf(
+						/* translators: %s: Post author. */
+						esc_html__( 'Failed to import author %s. Their posts will be attributed to the current user.', 'elementor' ),
+						$post['post_author']
+					);
 					continue;
 				}
 
@@ -370,8 +373,11 @@ class WP_Import extends \WP_Importer {
 					}
 					$this->author_mapping[ $santized_old_login ] = $user_id;
 				} else {
-					/* translators: %s: Author display name. */
-					$error = sprintf( esc_html__( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'elementor' ), $this->authors[ $old_login ]['author_display_name'] );
+					$error = sprintf(
+						/* translators: %s: Author display name. */
+						esc_html__( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'elementor' ),
+						$this->authors[ $old_login ]['author_display_name']
+					);
 
 					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
 						$error .= PHP_EOL . $user_id->get_error_message();
