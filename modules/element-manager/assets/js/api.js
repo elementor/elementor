@@ -24,6 +24,7 @@ export const saveDisabledWidgets = async ( widgetsDisabled, elementsRestriction 
 	}
 };
 
+
 export const getAdminAppData = async () => {
 	try {
 		const response = await fetch( eElementManagerConfig.ajaxurl, {
