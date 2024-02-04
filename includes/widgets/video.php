@@ -898,9 +898,9 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'deprecation_warning',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Note: These controls have been deprecated and are only visible if they were previously in use. The video’s width and position are now set based on its aspect ratio.', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'danger',
+				'content' => esc_html__( 'Note: These controls have been deprecated and are only visible if they were previously in use. The video’s width and position are now set based on its aspect ratio.', 'elementor' ),
 				'separator' => 'before',
 				'condition' => [
 					'lightbox_video_width!' => '',
