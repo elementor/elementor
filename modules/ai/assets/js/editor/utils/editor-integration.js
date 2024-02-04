@@ -131,7 +131,7 @@ export const renderLayoutApp = ( options = {
 				hasPro={ elementor.helpers.hasPro() }
 				editorSessionId={ EDITOR_SESSION_ID }
 			/>
-		</LayoutAppWrapper>
+		</LayoutAppWrapper>,
 	);
 
 	options.onRenderApp?.( { previewContainer } );

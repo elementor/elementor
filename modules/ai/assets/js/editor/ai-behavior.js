@@ -53,7 +53,7 @@ export default class AiBehavior extends Marionette.Behavior {
 				} }
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
-			/>
+			/>,
 		);
 	}
 

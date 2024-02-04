@@ -12,7 +12,7 @@ const onButtonClicked = () => {
 		const Root = createRoot( container );
 
 		Root.render(
-			<EditorV1 />
+			<EditorV1 />,
 		);
 
 		return;

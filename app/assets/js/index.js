@@ -21,5 +21,5 @@ Root.render(
 		<AppProvider>
 			<App />
 		</AppProvider>
-	</AppWrapper>
+	</AppWrapper>,
 );

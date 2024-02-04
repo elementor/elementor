@@ -7,5 +7,5 @@ const adminTopBarElement = createRoot( document.getElementById( 'e-admin-top-bar
 adminTopBarElement.render(
 	<AppWrapper>
 		<AdminTopBar />
-	</AppWrapper>
+	</AppWrapper>,
 );
