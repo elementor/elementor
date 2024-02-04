@@ -152,9 +152,9 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['gradient_notice'] = [
-			'type' => Controls_Manager::RAW_HTML,
-			'raw' => esc_html__( 'Set locations and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'elementor' ),
-			'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+			'type' => Controls_Manager::ALERT,
+			'alert_type' => 'warning',
+			'content' => esc_html__( 'Set locations and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'elementor' ),
 			'render_type' => 'ui',
 			'condition' => [
 				'background' => [ 'gradient' ],
