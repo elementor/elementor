@@ -1,3 +1,4 @@
+import { createRoot } from 'react-dom';
 import { Announcements, Overlay } from './components';
 import AnnouncementCommands from './e-component';
 
@@ -8,23 +9,26 @@ export default class AnnouncementIndex {
 
 	async initAnnouncement() {
 		const container = document.getElementById( 'e-announcements-root' );
+		const Root = createRoot( container );
+
 		const announcements = window.elementorAnnouncementsConfig?.announcements;
 		if ( ! announcements || ! container ) {
 			return;
 		}
-		const unMount = () => {
-			ReactDOM.unmountComponentAtNode( container );
-			document.getElementById( 'e-announcements-root' ).remove();
-		};
 
 		await $e.components.register( new AnnouncementCommands() );
 
-		ReactDOM.render(
+		Root.render(
 			<>
 				<Overlay />
-				<Announcements announcements={ announcements } unMount={ unMount } />
-			</>,
-			container,
+				<Announcements
+					announcements={ announcements }
+					unMount={ () => {
+						Root.unmount();
+						container.remove();
+					} }
+				/>
+			</>
 		);
 	}
 }

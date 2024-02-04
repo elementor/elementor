@@ -1,5 +1,5 @@
 ( () => {
-	let styleguideWidget;
+	let styleguideRoot;
 	const styleguideBodyClass = 'e-styleguide-shown';
 
 	/**
@@ -10,14 +10,14 @@
 
 		document.body.classList.add( styleguideBodyClass );
 
-		ReactDOM.render( <App />, styleguideWidget );
+		ReactDOM.render( <App /> );
 	}
 
 	/**
 	 * Remove the app from the page.
 	 */
 	function unmount() {
-		ReactDOM.unmountComponentAtNode( styleguideWidget );
+		styleguideRoot.unmount();
 
 		document.body.classList.remove( styleguideBodyClass );
 	}
@@ -29,10 +29,10 @@
 	 * @return {Object|null}
 	 */
 	function getStyleguideWidget() {
-		styleguideWidget = document.querySelector( '.dialog-styleguide-message' );
-
-		return styleguideWidget;
+		return document.querySelector( '.dialog-styleguide-message' );
 	}
+
+	styleguideRoot = ReactDOM.createRoot( getStyleguideWidget() );
 
 	/**
 	 * Listen to an event from the Styleguide e-component to mount or unmount the app.

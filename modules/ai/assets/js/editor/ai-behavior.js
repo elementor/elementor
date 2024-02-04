@@ -1,3 +1,4 @@
+import { createRoot } from 'react-dom';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 
@@ -30,28 +31,30 @@ export default class AiBehavior extends Marionette.Behavior {
 		event.stopPropagation();
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
-
 		const isRTL = elementorCommon.config.isRTL;
-
-		const rootElement = document.createElement( 'div' );
-		document.body.append( rootElement );
 
 		window.elementorAiCurrentContext = this.getOption( 'context' );
 
-		ReactDOM.render( <App
-			type={ this.getOption( 'type' ) }
-			controlType={ this.getOption( 'controlType' ) }
-			getControlValue={ this.getOption( 'getControlValue' ) }
-			setControlValue={ this.getOption( 'setControlValue' ) }
-			additionalOptions={ this.getOption( 'additionalOptions' ) }
-			controlView={ this.getOption( 'controlView' ) }
-			onClose={ () => {
-				ReactDOM.unmountComponentAtNode( rootElement );
-				rootElement.remove();
-			} }
-			colorScheme={ colorScheme }
-			isRTL={ isRTL }
-		/>, rootElement );
+		const rootElement = document.createElement( 'div' );
+		document.body.append( rootElement );
+		const Root = createRoot( rootElement );
+
+		Root.render(
+			<App
+				type={ this.getOption( 'type' ) }
+				controlType={ this.getOption( 'controlType' ) }
+				getControlValue={ this.getOption( 'getControlValue' ) }
+				setControlValue={ this.getOption( 'setControlValue' ) }
+				additionalOptions={ this.getOption( 'additionalOptions' ) }
+				controlView={ this.getOption( 'controlView' ) }
+				onClose={ () => {
+					Root.unmount();
+					rootElement.remove();
+				} }
+				colorScheme={ colorScheme }
+				isRTL={ isRTL }
+			/>
+		);
 	}
 
 	getAiButtonLabel() {
