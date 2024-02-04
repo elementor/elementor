@@ -10,7 +10,7 @@ export const saveDisabledWidgets = async ( widgetsDisabled, elementsRestriction 
 			bodyData.elements_restriction = JSON.stringify( elementsRestriction );
 		}
 
-		const response = await fetch( eElementManagerConfig.ajaxurl, {
+		await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
