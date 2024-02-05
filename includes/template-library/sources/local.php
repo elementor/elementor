@@ -1412,7 +1412,6 @@ class Source_Local extends Source_Base {
 		);
 
 		printf(
-			/* translators: 1: Taxonomy slug, 2: Label text. */
 			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
 			esc_attr( self::TAXONOMY_CATEGORY_SLUG ),
 			esc_html_x( 'Filter by category', 'Template Library', 'elementor' )

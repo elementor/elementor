@@ -117,7 +117,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Build with AI', 'elementor' ),
 			'description' => esc_html__( 'Tap into the potential of AI to easily create and customize containers to your specifications, right within Elementor. This feature comes packed with handy AI tools, including generation, variations, and URL references.', 'elementor' ),
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'dependencies' => [
 				'container',
 			],

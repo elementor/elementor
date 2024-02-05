@@ -295,9 +295,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'faq_schema_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
 				'condition' => [
 					'faq_schema[value]' => 'yes',
 				],
