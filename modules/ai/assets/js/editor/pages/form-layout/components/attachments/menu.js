@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
-import { IconButton, Popover, Stack, useTheme } from '@elementor/ui';
-import { MenuItem } from './menu-item';
+import { MenuItem, IconButton, ListItemIcon, Popover, Stack, useTheme } from '@elementor/ui';
 import XCircleIcon from '../../../../icons/x-circle-icon';
 import PlusCircleIcon from '../../../../icons/plus-circle-icon';
 import PropTypes from 'prop-types';
@@ -40,16 +39,23 @@ export const Menu = ( props ) => {
 				<Stack sx={ {
 					width: 440,
 				} }>
-					{ props.items.map( ( item ) => (
-						<MenuItem
-							key={ item.type }
-							title={ item.title }
-							icon={ item.icon }
-							onClick={ () => {
-								setSelectedType( item.type );
-								setIsOpen( false );
-							} }
-						/> ) ) }
+					{ props.items.map( ( item ) => {
+						const IconComponent = item.icon;
+						return (
+							<MenuItem
+								key={ item.type }
+								onClick={ () => {
+									setSelectedType( item.type );
+									setIsOpen( false );
+								} }
+							>
+								<ListItemIcon>
+									<IconComponent />
+								</ListItemIcon>
+								{ item.title }
+							</MenuItem> );
+					},
+					) }
 				</Stack>
 			</Popover>
 			<AttachDialog
