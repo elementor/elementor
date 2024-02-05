@@ -625,7 +625,7 @@ class Module extends BaseModule {
 		$conflicts = $uploaded_kit['conflicts'];
 
 		if ( ! empty( $file_url ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $file_name ) );
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
@@ -711,7 +711,7 @@ class Module extends BaseModule {
 			throw new \Error( 'Could not read the exported file.' );
 		}
 
-		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $file_name ) );
 
 		$result = [
 			'manifest' => $export['manifest'],
