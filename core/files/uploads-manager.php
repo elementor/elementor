@@ -586,7 +586,7 @@ class Uploads_Manager extends Base_Object {
 		$is_name_valid = empty( $file['name'] ) || basename( $file['name'] ) === $file['name'];
 		$is_tmp_name_valid = empty( $file['tmp_name'] ) || realpath( $file['tmp_name'] ) !== false;
 
-		if ( ! $is_name_valid || ! $is_tmp_name_valid ) {
+		if ( ( empty( $file['name'] ) && empty( $file['tmp_name'] ) ) || ! $is_name_valid || ! $is_tmp_name_valid ) {
 			return new \WP_Error(
 				Exceptions::FORBIDDEN,
 				esc_html__( 'This file is not allowed for security reasons.', 'elementor' )
