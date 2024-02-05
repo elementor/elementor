@@ -98,6 +98,7 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
+				<?php if ( ! Hints::should_display_hint( 'image-optimization-once' ) && ! Hints::should_display_hint( 'image-optimization' ) ) { ?>
 				<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
 					<?php
 						Hints::get_notice_template( [
@@ -107,6 +108,7 @@ class Control_Gallery extends Base_Data_Control {
 						] );
 					?>
 				</div>
+				<?php } ?>
 				<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) :
 					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
 					$content = $once_dismissed ?

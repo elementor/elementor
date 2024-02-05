@@ -248,6 +248,7 @@ class Control_Media extends Control_Base_Multiple {
 							#>
 						</div>
 					</div>
+					<?php if ( ! Hints::should_display_hint( 'image-optimization-once' ) && ! Hints::should_display_hint( 'image-optimization' ) ) { ?>
 					<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
 						<?php
 							Hints::get_notice_template( [
@@ -257,6 +258,7 @@ class Control_Media extends Control_Base_Multiple {
 							] );
 						?>
 					</div>
+					<?php } ?>
 					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) { ?>
 						<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
 							<?php
