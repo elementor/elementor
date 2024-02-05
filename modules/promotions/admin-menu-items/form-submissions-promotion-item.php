@@ -19,9 +19,9 @@ class Form_Submissions_Promotion_Item extends Base_Promotion_Template {
 		return esc_html__( 'Submissions', 'elementor' );
 	}
 
-	protected function get_promotion_title(): string {
-		/* translators: %s: br  */
+	public function get_promotion_title() {
 		return sprintf(
+			/* translators: %s: br  */
 			esc_html( 'Create Forms and Collect Leads %s with Elementor Pro', 'elementor' ),
 			'<br />'
 		);
