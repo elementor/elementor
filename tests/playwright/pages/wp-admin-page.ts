@@ -242,9 +242,10 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
 	}
-	async promotionPageScreenshotTest( page: Page, promotionContainer: string, pageUri: string, screenshotName: string ) {
-		await page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
-		const promoContainer = page.locator( promotionContainer );
+
+	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
+		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
+		const promoContainer = this.page.locator( promotionContainer );
 		await promoContainer.waitFor();
 		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
