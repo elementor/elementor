@@ -98,6 +98,7 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
+				<?php if ( ! Hints::should_display_hint( 'image-optimization-once' ) && ! Hints::should_display_hint( 'image-optimization' ) ) { ?>
 				<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
 					<?php
 						Hints::get_notice_template( [
@@ -107,22 +108,23 @@ class Control_Gallery extends Base_Data_Control {
 						] );
 					?>
 				</div>
+				<?php } ?>
 				<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) :
 					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
 					$content = $once_dismissed ?
-						__( 'Oh! Some images exceed the recommended size.Try reducing them with the new Image Optimizer.', 'elementor' ) :
-						__( 'Get a performance boost and improved SEO results with the Image Optimizer.', 'elementor' );
+						__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
+						__( "Don't let unoptimized images be the downfall of your site's performance. Use Image Optimizer!", 'elementor' );
 					$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 					?>
 					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
 						<?php
 							Hints::get_notice_template( [
 								'display' => ! $once_dismissed,
-								'type' => 'info',
+								'type' => $once_dismissed ? 'warning' : 'info',
 								'content' => $content,
 								'icon' => true,
 								'dismissible' => $dismissible,
-								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Now', 'elementor' ) : __( 'Install Now', 'elementor' ),
+								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
 								'button_event' => $dismissible,
 								'button_data' => [
 									'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
