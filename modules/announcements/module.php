@@ -42,7 +42,9 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'announcements-app',
 			$this->get_js_assets_url( 'announcements-app' ),
-			[],
+			[
+				'wp-i18n',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
