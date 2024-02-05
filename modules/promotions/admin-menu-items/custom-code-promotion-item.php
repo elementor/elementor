@@ -19,11 +19,11 @@ class Custom_Code_Promotion_Item extends Base_Promotion_Template {
 		return esc_html__( 'Custom Code', 'elementor' );
 	}
 
-	public function get_promotion_title() {
+	protected function get_promotion_title(): string {
 		return esc_html__( 'Enjoy Creative Freedom with Custom Code', 'elementor' );
 	}
 
-	public function set_list() {
+	protected function get_content_lines():array {
 		return [
 			esc_html__( 'Add Custom Code snippets anywhere on your website, including the header or footer to measure your page’s performance*', 'elementor' ),
 			esc_html__( 'Use Custom Code to create sophisticated custom interactions to engage visitors', 'elementor' ),
@@ -31,20 +31,15 @@ class Custom_Code_Promotion_Item extends Base_Promotion_Template {
 		];
 	}
 
-	public function get_side_note() {
+	protected function get_side_note():string {
 		return esc_html__( '* Requires an Advanced subscription or higher', 'elementor' );
 	}
 
-
-	/**
-	 * @deprecated use get_promotion_description instead
-	 * @return void
-	 */
-	public function get_cta_url() {
+	protected function get_cta_url():string {
 		return 'https://go.elementor.com/go-pro-custom-code/';
 	}
 
-	public function get_video_url() {
+	protected function get_video_url():string {
 		return 'https://www.youtube-nocookie.com/embed/IOovQd1hJUg?si=xeBJ_mRZxRH1l5O6';
 	}
 }
