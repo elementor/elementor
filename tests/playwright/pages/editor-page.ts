@@ -477,9 +477,9 @@ export default class EditorPage extends BasePage {
 
 	async changeUiTheme( uiMode: string ) {
 		const uiThemeOptions = {
-			light: '.eicon-circle-o',
-			dark: '.eicon-circle',
-			auto: '.eicon-device-desktop',
+			light: '.eicon-light-mode',
+			dark: '.eicon-dark-mode',
+			auto: '.eicon-header',
 		};
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
