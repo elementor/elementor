@@ -133,7 +133,7 @@ class Module extends BaseModule {
 		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
-		/* translators: 1: New line break, 2: Learn More link. */
+			/* translators: 1: New line break, 2: Learn more link. */
 			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link
@@ -625,7 +625,7 @@ class Module extends BaseModule {
 		$conflicts = $uploaded_kit['conflicts'];
 
 		if ( ! empty( $file_url ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $file_name ) );
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
@@ -711,7 +711,7 @@ class Module extends BaseModule {
 			throw new \Error( 'Could not read the exported file.' );
 		}
 
-		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $file_name ) );
 
 		$result = [
 			'manifest' => $export['manifest'],

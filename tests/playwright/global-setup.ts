@@ -7,7 +7,11 @@ module.exports = async ( config: FullConfig ) => {
 	const browser = await chromium.launch( { headless } );
 	const context = await browser.newContext();
 	const page = await context.newPage();
-	const cookies = await loginApi( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password', 'http://localhost:8888/wp-login.php' );
+	const cookies = await loginApi(
+		process.env.USERNAME || 'admin',
+		process.env.PASSWORD || 'password',
+		process.env.BASE_URL || 'http://localhost:8888',
+	);
 	await context.addCookies( cookies );
 	await page.goto( `${ baseURL }/wp-admin` );
 	const storageState = await page.context().storageState( { path: './storageState.json' } );
