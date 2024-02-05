@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -97,7 +98,41 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
-				<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
+				<?php if ( ! Hints::should_display_hint( 'image-optimization-once' ) && ! Hints::should_display_hint( 'image-optimization' ) ) { ?>
+				<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
+					<?php
+						Hints::get_notice_template( [
+							'type' => 'warning',
+							'content' => __( 'Images marked in red don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+							'icon' => true,
+						] );
+					?>
+				</div>
+				<?php } ?>
+				<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) :
+					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
+					$content = $once_dismissed ?
+						__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
+						__( "Don't let unoptimized images be the downfall of your site's performance. Use Image Optimizer!", 'elementor' );
+					$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
+					?>
+					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
+						<?php
+							Hints::get_notice_template( [
+								'display' => ! $once_dismissed,
+								'type' => $once_dismissed ? 'warning' : 'info',
+								'content' => $content,
+								'icon' => true,
+								'dismissible' => $dismissible,
+								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
+								'button_event' => $dismissible,
+								'button_data' => [
+									'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+								],
+							] );
+						?>
+					</div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<?php
@@ -117,7 +152,6 @@ class Control_Gallery extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'separator' => 'none',
 			'dynamic' => [
 				'categories' => [ TagsModule::GALLERY_CATEGORY ],
 				'returnType' => 'object',

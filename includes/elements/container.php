@@ -470,7 +470,6 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
-			'separator' => 'none',
 		];
 
 		$this->add_responsive_control(
@@ -629,9 +628,9 @@ class Container extends Element_Base {
 		$this->add_control(
 			'link_note',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				'raw' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'content' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
 				'condition' => [
 					'html_tag' => 'a',
 				],
@@ -1381,9 +1380,10 @@ class Container extends Element_Base {
 		$this->add_control(
 			'position_description',
 			[
-				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'heading' => esc_html__( 'Please note!', 'elementor' ),
+				'content' => esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
 				'render_type' => 'ui',
 				'condition' => [
 					'position!' => '',
@@ -1800,9 +1800,9 @@ class Container extends Element_Base {
 			$container->add_control(
 				'transform_sticky_notice',
 				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'warning',
+					'content' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
 				]
 			);
 		} );

@@ -2,6 +2,8 @@ import fs from 'fs';
 import _path from 'path';
 import { APIRequest, type APIRequestContext } from '@playwright/test';
 import { Image, StorageState, Post, WpPage } from '../types/types';
+import axios from 'axios';
+import FormData from 'form-data';
 const headers = {
 	'X-WP-Nonce': process.env.WP_REST_NONCE,
 };
@@ -54,7 +56,7 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 		pages = [ ...pagesPublished, ...pagesDraft ];
 
 	const pageIds = pages
-		.filter( ( page: WpPage ) => page.title['rendered'].includes( 'Playwright Test Page' ) )
+		.filter( ( page: WpPage ) => page.title.rendered.includes( 'Playwright Test Page' ) )
 		.map( ( page: WpPage ) => page.id );
 
 	for ( const id of pageIds ) {
@@ -140,4 +142,36 @@ export async function getPosts( request: APIRequestContext, status: string = 'pu
 
 export async function getPages( request: APIRequestContext, status: string = 'publish' ) {
 	return await get( request, 'pages', status );
+}
+
+export async function loginApi( user: string, pw: string, url: string ) {
+	const data = new FormData();
+	data.append( 'log', user );
+	data.append( 'pwd', pw );
+	data.append( 'wp-submit', 'Log In' );
+	data.append( 'redirect_to', `${ url }/wp-admin/` );
+	data.append( 'testcookie', '1' );
+
+	const config = {
+		method: 'post',
+		maxBodyLength: Infinity,
+		url: `${ url }/wp-login.php`,
+		data,
+	};
+
+	const response = await axios.request( config );
+
+	const cookies: Array<{name: string, value: string, domain: string, path: string}> = [];
+	const domain = new URL( url );
+
+	response.headers[ 'set-cookie' ].forEach( ( cookie ) => {
+		const data1 = cookie.split( ';' )[ 0 ].split( '=' );
+		const obj = { name: data1[ 0 ], value: data1[ 1 ], domain: domain.hostname, path: '/' };
+		cookies.push( obj );
+	} );
+
+	if ( response.status !== 200 ) {
+		throw new Error( JSON.stringify( response.data ) );
+	}
+	return cookies;
 }

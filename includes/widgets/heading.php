@@ -286,7 +286,6 @@ class Widget_Heading extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
 				],
-				'separator' => 'none',
 			]
 		);
 
