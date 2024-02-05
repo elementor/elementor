@@ -189,8 +189,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		} );
 
 		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
-
-		$result = ! is_wp_error( $validation_result );
+		$result = is_wp_error( $validation_result );
 
 		$this->assertTrue( $result );
 	}
