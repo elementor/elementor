@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Icon, IconButton, ListItemIcon, Popover, Stack, SvgIcon, useTheme } from '@elementor/ui';
+import { IconButton, ListItemIcon, Popover, Stack, useTheme } from '@elementor/ui';
 import MenuItem from '@elementor/ui/MenuItem';
 import XCircleIcon from '../../../../icons/x-circle-icon';
 import PlusCircleIcon from '../../../../icons/plus-circle-icon';
