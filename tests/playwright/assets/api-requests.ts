@@ -161,7 +161,7 @@ export async function loginApi( user: string, pw: string, url: string ) {
 
 	const response = await axios.request( config );
 
-	const cookies = [];
+	const cookies: Array<{name: string, value: string, domain: string, path: string}> = [];
 	const domain = new URL( url );
 
 	response.headers[ 'set-cookie' ].forEach( ( cookie ) => {
