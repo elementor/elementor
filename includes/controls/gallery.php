@@ -113,7 +113,7 @@ class Control_Gallery extends Base_Data_Control {
 					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
 					$content = $once_dismissed ?
 						__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
-						__( 'Don\'t let unoptimized images be the downfall of your site\'s performance. Use Image Optimizer!', 'elementor' );
+						__( "Don't let unoptimized images be the downfall of your site's performance. Use Image Optimizer!", 'elementor' );
 					$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 					?>
 					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
