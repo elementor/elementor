@@ -61,7 +61,7 @@ export default class PromotionBehavior extends Marionette.Behavior {
 		const dialogOptions = {
 			title: __( 'Motion Effects', 'elementor' ),
 			content: __(
-				'Add a Mouse Track or 3d Tilt effect with<br />Elementor Pro',
+				'Add a Mouse Track or 3d Tilt effect with<br />Elementor Pro.',
 				'elementor',
 			),
 			targetElement: this.el,
