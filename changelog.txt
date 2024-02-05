@@ -1,5 +1,13 @@
 == Changelog ==
 
+= 3.19.1 - 2024-02-05 =
+
+* Tweak: Improved text-based AI capabilities within the widget type
+* Security Fix: Addressed security weaknesses in template library mechanism
+* Fix: Improved code security enforcement in Media control
+* Fix: SVG Icons break the title layout when using Firefox and Safari browsers in Accordion widget ([#24925](https://github.com/elementor/elementor/issues/24925))
+* Fix: Missing hover state to dropdown in AI Containers modal
+
 = 3.19.0 - 2024-01-29 =
 
 * New: Generate Container Variations with AI directly from Elementor's Blocks Template Library
