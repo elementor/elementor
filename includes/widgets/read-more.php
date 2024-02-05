@@ -101,13 +101,13 @@ class Widget_Read_More extends Widget_Base {
 		$this->add_control(
 			'theme_support',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => sprintf(
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'content' => sprintf(
 					/* translators: %s: The `the_content` function. */
 					esc_html__( 'Note: This widget only affects themes that use `%s` in archive pages.', 'elementor' ),
 					'the_content'
 				),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
 
