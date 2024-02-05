@@ -1294,7 +1294,7 @@ class Controls_Manager {
 		$controls_stack->add_control(
 			'sticky_pro_divider',
 			[
-				'type' => Controls_Manager::DIVIDER,
+				'type' => self::DIVIDER,
 			]
 		);
 	}
@@ -1304,7 +1304,7 @@ class Controls_Manager {
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label>
-						' .  esc_html__( 'Scrolling Effects', 'elementor' ) . '
+						' . esc_html__( 'Scrolling Effects', 'elementor' ) . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
@@ -1326,7 +1326,7 @@ class Controls_Manager {
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label>
-						' .  esc_html__( 'Mouse Effects', 'elementor' ) . '
+						' . esc_html__( 'Mouse Effects', 'elementor' ) . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
@@ -1348,7 +1348,7 @@ class Controls_Manager {
 			<div class="elementor-control-content">
 				<div class="elementor-control-field ">
 					<label for="sticky-motion-effect-pro">
-						' .  esc_html__( 'Sticky', 'elementor' ) . '
+						' . esc_html__( 'Sticky', 'elementor' ) . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
