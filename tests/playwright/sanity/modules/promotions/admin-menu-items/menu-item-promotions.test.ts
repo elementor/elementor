@@ -9,15 +9,19 @@ test( 'Promotion screenshots', async ( { page }, testInfo ) => {
 	await wpAdminPage.login();
 
 	await test.step( 'Free to Pro - Submissions', async () => {
-		await promotionPageScreenshotTest( page, promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
 	} );
 
 	await test.step( 'Free to Pro - Custom Icons', async () => {
-		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
 	} );
 
 	await test.step( 'Free to Pro - Custom Fonts', async () => {
-		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
+	} );
+
+	await test.step( 'Free to Pro - Custom Code', async () => {
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_code', 'custom-code-menu-item-desktop' );
 	} );
 } );
 
