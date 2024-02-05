@@ -12,26 +12,17 @@
 				"name": "preferences"
 			},
 			"ui_theme": {
-				"type": "choose",
+				"type": "select",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Editor Theme",
-				"description": "Set light or dark mode, or use Auto Detect to sync it with your operating system setting.",
+				"label": "UI Theme",
+				"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
 				"default": "auto",
 				"options": {
-					"light": {
-						"title": "Light",
-						"icon": "eicon-light-mode"
-					},
-					"dark": {
-						"title": "Dark",
-						"icon": "eicon-dark-mode"
-					},
-					"auto": {
-						"title": "Auto Detect",
-						"icon": "eicon-header"
-					}
-				},	
+					"auto": "Auto Detect",
+					"light": "Light",
+					"dark": "Dark"
+				},
 				"name": "ui_theme"
 			},
 			"edit_buttons": {
