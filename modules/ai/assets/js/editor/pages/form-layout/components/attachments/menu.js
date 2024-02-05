@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { IconButton, ListItemIcon, Popover, Stack, useTheme } from '@elementor/ui';
-import MenuItem from '@elementor/ui/MenuItem';
+import { useRef, useState } from 'react';
+import { MenuItem, IconButton, ListItemIcon, Popover, Stack, useTheme } from '@elementor/ui';
 import XCircleIcon from '../../../../icons/x-circle-icon';
 import PlusCircleIcon from '../../../../icons/plus-circle-icon';
 import PropTypes from 'prop-types';
