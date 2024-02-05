@@ -21,17 +21,17 @@
 				"options": {
 					"light": {
 						"title": "Light",
-						"icon": "eicon-circle-o"
+						"icon": "eicon-light-mode"
 					},
 					"dark": {
 						"title": "Dark",
-						"icon": "eicon-circle"
+						"icon": "eicon-dark-mode"
 					},
 					"auto": {
 						"title": "Auto Detect",
-						"icon": "eicon-device-desktop"
+						"icon": "eicon-header"
 					}
-				},
+				},	
 				"name": "ui_theme"
 			},
 			"edit_buttons": {
