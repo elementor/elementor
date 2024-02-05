@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Custom_Icons_Promotion_Item extends Base_Promotion_Item {
+class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	public function get_name() {
 		return 'custom_icons';
 	}
@@ -21,25 +21,28 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Item {
 	}
 
 	public function get_promotion_title() {
-		return esc_html__( 'Add Your Custom Icons', 'elementor' );
-	}
-
-	public function get_promotion_description() {
-		return esc_html__(
-			'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.',
-			'elementor'
+		echo sprintf(
+			/* translators: %s: br  */
+			esc_html( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
+			'<br />'
 		);
 	}
 
-	/**
-	 * @deprecated use get_promotion_description instead
-	 * @return void
-	 */
-	public function render_promotion_description() {
-		echo $this->get_promotion_description(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	public function set_list() {
+		return [
+			sprintf(
+				esc_html__( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
+				'<br />'
+			),
+			esc_html__( 'Add any icon, anywhere on your website', 'elementor' ),
+		];
 	}
 
 	public function get_cta_url() {
 		return 'https://go.elementor.com/go-pro-custom-icons/';
+	}
+
+	public function get_video_url() {
+		return 'https://www.youtube-nocookie.com/embed/PsowinxDWfM?si=SV9Z3TLz3_XEy5C6';
 	}
 }

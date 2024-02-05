@@ -103,7 +103,7 @@ class Safe_Mode {
 	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
 		if ( basename( __FILE__ ) === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( esc_html__( 'Learn More', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/safe-mode/" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );

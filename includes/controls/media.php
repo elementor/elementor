@@ -266,6 +266,7 @@ class Control_Media extends Control_Base_Multiple {
 								__( 'Get a performance boost and improved SEO results with the Image Optimizer.', 'elementor' );
 							$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 							Hints::get_notice_template( [
+								'display' => ! $once_dismissed,
 								'type' => 'info',
 								'content' => $content,
 								'icon' => true,
@@ -412,7 +413,7 @@ class Control_Media extends Control_Base_Multiple {
 	public static function get_image_alt( $instance ) {
 		if ( empty( $instance['id'] ) ) {
 			// For `Insert From URL` images.
-			return isset( $instance['alt'] ) ? trim( strip_tags( $instance['alt'] ) ) : '';
+			return isset( $instance['alt'] ) ? trim( self::sanitise_text( $instance['alt'] ) ) : '';
 		}
 
 		$attachment_id = $instance['id'];
@@ -432,7 +433,7 @@ class Control_Media extends Control_Base_Multiple {
 				$alt = $attachment->post_title;
 			}
 		}
-		return trim( strip_tags( $alt ) );
+		return trim( self::sanitise_text( $alt ) );
 	}
 
 	public function get_style_value( $css_property, $control_value, array $control_data ) {
@@ -445,5 +446,9 @@ class Control_Media extends Control_Base_Multiple {
 		}
 
 		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
+	}
+
+	public static function sanitise_text( $string ) {
+		return esc_attr( strip_tags( $string ) );
 	}
 }

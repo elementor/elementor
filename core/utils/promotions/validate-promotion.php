@@ -16,7 +16,8 @@ class Validate_Promotion {
 
 		$domain_segments = explode( '.', $domain );
 
-		if ( ! count( $domain_segments ) >= 2 ) {
+		$is_localhost = ( 1 === count( $domain_segments ) );
+		if ( ! count( $domain_segments ) >= 2 || $is_localhost ) {
 			return false;
 		}
 
