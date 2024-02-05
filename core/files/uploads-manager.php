@@ -44,6 +44,11 @@ class Uploads_Manager extends Base_Object {
 	private $temp_dir;
 
 	/**
+	 * @var array - Array of temp directories that were created during the upload process.
+	 */
+	private $temp_unique_dirs = [];
+
+	/**
 	 * Register File Types
 	 *
 	 * To Add a new file type to Elementor, with its own handling logic, you need to add it to the $file_types array here.
@@ -89,6 +94,8 @@ class Uploads_Manager extends Base_Object {
 			return $extracted;
 		}
 
+		$this->temp_unique_dirs[] = realpath( $extracted['extraction_directory'] );
+
 		// If there are no extracted file names, no files passed the extraction validation.
 		if ( empty( $extracted['files'] ) ) {
 			// TODO: Decide what to do if no files passed the extraction validation
@@ -120,25 +127,33 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.3.0
 	 * @access public
 	 *
-	 * @param array $file
-	 * @param array $allowed_file_extensions Optional. an array of file types that are allowed to pass validation for each
-	 * upload.
+	 * @param array $data {
+	 *     @type string 'fileName'
+	 *     @type string 'fileData'
+	 * }
+	 * @param array $allowed_file_extensions Optional. Array of file types, allowed to pass validation for each upload.
+	 *
 	 * @return array|\WP_Error
 	 */
-	public function handle_elementor_upload( array $file, $allowed_file_extensions = null ) {
+	public function handle_elementor_upload( array $data, $allowed_file_extensions = null ) {
+		$normalized_data = [
+			'fileName' => basename( $data['fileName'] ?? '' ),
+			'fileData' => $data['fileData'] ?? null,
+		];
+
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
-		if ( isset( $file['fileData'] ) ) {
-			$file = $this->save_base64_to_tmp_file( $file, $allowed_file_extensions );
+		if ( isset( $normalized_data['fileData'] ) ) {
+			$normalized_data = $this->save_base64_to_tmp_file( $normalized_data, $allowed_file_extensions );
 		}
 
-		$validation_result = $this->validate_file( $file, $allowed_file_extensions );
+		$validation_result = $this->validate_file( $normalized_data, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
-		return $file;
+		return $normalized_data;
 	}
 
 	/**
@@ -260,8 +275,40 @@ class Uploads_Manager extends Base_Object {
 	public function remove_file_or_dir( $path ) {
 		if ( is_dir( $path ) ) {
 			$this->remove_directory_with_files( $path );
-		} else {
+		} elseif ( is_file( $path ) ) {
 			unlink( $path );
+		}
+	}
+
+	/**
+	 * Safely removes a file or directory if it resides within the designated temporary folder.
+	 *
+	 * This method validates that the provided file path is located within the temporary directory
+	 * before proceeding with the removal. If the path is outside the temporary directory,
+	 * no action is taken to prevent unintended deletions.
+	 *
+	 * @since 3.19.0
+	 * @access public
+	 *
+	 * @param string $path
+	 *
+	 */
+	public function remove_temp_file_or_dir( $path ) {
+		$realpath = realpath( $path );
+		if ( false === $realpath ) {
+			return;
+		}
+
+		if ( is_uploaded_file( $path ) ) {
+			$this->remove_file_or_dir( $path );
+			return;
+		}
+
+		foreach ( $this->temp_unique_dirs as $temp_dir ) {
+			if ( strpos( $realpath, $temp_dir ) === 0 ) {
+				$this->remove_file_or_dir( $path );
+				break;
+			}
 		}
 	}
 
@@ -351,6 +398,9 @@ class Uploads_Manager extends Base_Object {
 		$unique_dir_path = $this->get_temp_dir() . uniqid() . DIRECTORY_SEPARATOR;
 
 		wp_mkdir_p( $unique_dir_path );
+
+		// Store uniqid and unique_dir_path pair
+		$this->temp_unique_dirs[] = realpath( $unique_dir_path );
 
 		return $unique_dir_path;
 	}
@@ -536,6 +586,16 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool|\WP_Error
 	 */
 	private function validate_file( array $file, $file_extensions = [] ) {
+		$is_name_valid = empty( $file['name'] ) || basename( $file['name'] ) === $file['name'];
+		$is_tmp_name_valid = empty( $file['tmp_name'] ) || realpath( $file['tmp_name'] ) !== false;
+
+		if ( ( empty( $file['name'] ) && empty( $file['tmp_name'] ) ) || ! $is_name_valid || ! $is_tmp_name_valid ) {
+			return new \WP_Error(
+				Exceptions::FORBIDDEN,
+				esc_html__( 'This file is not allowed for security reasons.', 'elementor' )
+			);
+		}
+
 		$uploaded_file_name = isset( $file['name'] ) ? $file['name'] : $file['tmp_name'];
 
 		$file_extension = pathinfo( $uploaded_file_name, PATHINFO_EXTENSION );
@@ -631,7 +691,7 @@ class Uploads_Manager extends Base_Object {
 		foreach ( new \RecursiveIteratorIterator( $dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST ) as $name => $item ) {
 			if ( is_dir( $name ) ) {
 				rmdir( $name );
-			} else {
+			} elseif ( is_file( $name ) ) {
 				unlink( $name );
 			}
 		}

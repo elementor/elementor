@@ -326,7 +326,7 @@ class Import {
 
 		$this->save_elements_of_imported_posts();
 
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->extracted_directory_path );
+		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $this->extracted_directory_path );
 		return $this->imported_data;
 	}
 
