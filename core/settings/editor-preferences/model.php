@@ -60,15 +60,15 @@ class Model extends BaseModel {
 				'options' => [
 					'light' => [
 						'title' => esc_html__( 'Light', 'elementor' ),
-						'icon' => 'eicon-circle-o',
+						'icon' => 'eicon-light-mode',
 					],
 					'dark' => [
 						'title' => esc_html__( 'Dark', 'elementor' ),
-						'icon' => 'eicon-circle',
+						'icon' => 'eicon-dark-mode',
 					],
 					'auto' => [
 						'title' => esc_html__( 'Auto Detect', 'elementor' ),
-						'icon' => 'eicon-device-desktop',
+						'icon' => 'eicon-tv',
 					],
 				],
 				'default' => 'auto',
