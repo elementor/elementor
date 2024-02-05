@@ -68,7 +68,7 @@ class Model extends BaseModel {
 					],
 					'auto' => [
 						'title' => esc_html__( 'Auto Detect', 'elementor' ),
-						'icon' => 'eicon-tv',
+						'icon' => 'eicon-header',
 					],
 				],
 				'default' => 'auto',
