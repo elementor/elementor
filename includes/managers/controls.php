@@ -303,7 +303,8 @@ class Controls_Manager {
 	/**
 	 * Has stacks cache been cleared.
 	 *
-	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
+	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current
+	 * runtime.
 	 *
 	 * @since 3.13.0
 	 * @access private
@@ -1256,5 +1257,107 @@ class Controls_Manager {
 				'raw'       => $control_template,
 			]
 		);
+	}
+
+	public function add_motion_effects_promotion_control( Controls_Stack $controls_stack ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
+		$controls_stack->add_control(
+			'scrolling_effects_pro',
+			[
+				'type'      => self::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $this->promotion_control_scrolling_effects(),
+			]
+		);
+
+		$controls_stack->add_control(
+			'mouse_effects_pro',
+			[
+				'type'      => self::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $this->promotion_control_mouse_effects(),
+			]
+		);
+
+		$controls_stack->add_control(
+			'sticky_pro',
+			[
+				'type'      => self::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $this->promotion_control_sticky(),
+			]
+		);
+
+		$controls_stack->add_control(
+			'sticky_pro_divider',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+	}
+
+	private function promotion_control_scrolling_effects(): string {
+		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">
+						' .  esc_html__( 'Scrolling Effects', 'elementor' ) . '
+					</label>
+					<span class="e-control-motion-effects-promotion__lock-wrapper">
+						<i class="eicon-lock"></i>
+					</span>
+					<div class="elementor-control-input-wrapper">
+						<label class="elementor-switch elementor-control-unit-2 e-control-scrolling-effects-promotion">
+							<input type="checkbox" class="elementor-switch-input" disabled>
+							<span class="elementor-switch-label" data-off="Off"></span>
+							<span class="elementor-switch-handle"></span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>';
+	}
+
+	private function promotion_control_mouse_effects(): string {
+		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title">
+						' .  esc_html__( 'Mouse Effects', 'elementor' ) . '
+					</label>
+					<span class="e-control-motion-effects-promotion__lock-wrapper">
+						<i class="eicon-lock"></i>
+					</span>
+					<div class="elementor-control-input-wrapper">
+						<label class="elementor-switch elementor-control-unit-2 e-control-mouse-effects-promotion">
+							<input type="checkbox" class="elementor-switch-input" disabled>
+							<span class="elementor-switch-label" data-off="Off"></span>
+							<span class="elementor-switch-handle"></span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>';
+	}
+
+	private function promotion_control_sticky(): string {
+		return '<div class="elementor-control-type-select elementor-label-inline e-control-motion-effects-promotion__wrapper">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field ">
+					<label for="sticky-motion-effect-pro" class="elementor-control-title">
+						' .  esc_html__( 'Sticky', 'elementor' ) . '
+					</label>
+					<span class="e-control-motion-effects-promotion__lock-wrapper">
+						<i class="eicon-lock"></i>
+					</span>
+					<div class="elementor-control-input-wrapper elementor-control-unit-5 e-control-sticky-effects-promotion">
+					<div class="select-promotion elementor-control-unit-5">None</div>
+					</div>
+				</div>
+			</div>
+		</div>';
 	}
 }
