@@ -911,4 +911,11 @@ export default class EditorPage extends BasePage {
 			admin.remove();
 		}, adminBar );
 	}
+
+	async promotionModalScreenshotTest( element: string, screenshotName: string ) {
+		const nodalContainer = this.page.locator( '.elementor-element--promotion__dialog' );
+		await this.page.locator( `.e-control-${ element }-promotion` ).click();
+		await expect( nodalContainer ).toHaveScreenshot( `${ screenshotName }.png` );
+		await this.page.locator( '.dialog-header .eicon-close' ).click();
+	}
 }
