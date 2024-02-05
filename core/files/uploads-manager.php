@@ -292,7 +292,7 @@ class Uploads_Manager extends Base_Object {
 	 */
 	public function remove_temp_file_or_dir( $path ) {
 		$realpath = realpath( $path );
-		if ( $realpath === false ) {
+		if ( false === $realpath ) {
 			return;
 		}
 
