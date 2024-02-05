@@ -36,7 +36,6 @@
 
 	&-icon {
 		width: 100px;
-		margin-inline-end: 10px;
 	}
 
 	&-title {
@@ -54,6 +53,19 @@
 
 	.elementor-button {
 		margin-block-start: 20px;
+	}
+
+	&--upsale {
+		padding: 15px 30px 30px;
+
+		.elementor-nerd-box-title {
+			font-weight: 500;
+			line-height: 1.2;
+		}
+
+		.elementor-nerd-box-message {
+			line-height: 1.5;
+		}
 	}
 }
 

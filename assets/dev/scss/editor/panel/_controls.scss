@@ -28,6 +28,10 @@
 		font-size: var(--control-title-size);
 		line-height: 1;
 		margin-inline-end: 5px;
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	.elementor-control-spinner {
@@ -177,8 +181,10 @@
 	height: 48px;
 	padding-inline: 20px;
 	width: 100%;
+	border: 0;
 	border-block-start: var(--e-a-border); //todo: remove
 	border-block-start-width: 2px;
+	background-color: transparent;
 	color: var(--e-a-color-txt-accent);
 	cursor: pointer;
 
@@ -191,6 +197,10 @@
 
 	&-title {
 		font-weight: bold;
+	}
+
+	&:focus-visible {
+		color: var(--e-a-color-txt-hover);
 	}
 }
 
@@ -340,6 +350,8 @@
 
 @import "controls-utility";
 
+@import "controls/alert";
+
 @import "controls/button";
 
 @import "controls/choose";
@@ -365,6 +377,8 @@
 @import "controls/image-dimensions";
 
 @import "controls/media";
+
+@import "controls/notice";
 
 @import "controls/popover-toggle";
 

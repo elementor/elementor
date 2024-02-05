@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -110,6 +111,10 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function get_categories() {
 		return [ 'general' ];
+	}
+
+	protected function get_upsale_data() {
+		return null;
 	}
 
 	/**
@@ -364,13 +369,23 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
+			'upsale_data' => $this->get_upsale_data(),
 		];
+
+		$config['upsale_data'] = apply_filters( 'elementor/widgets/' . $this->get_name() . '/custom_promotion', $config['upsale_data'] ) ?? $this->get_upsale_data();
+
+		if ( isset( $config['upsale_data']['image'] ) ) {
+			$config['upsale_data']['image'] = esc_url( $config['upsale_data']['image'] );
+		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( $stack ) {
 			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
+		}
+		if ( isset( $config['upsale_data']['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upsale_data']['upgrade_url'] ) ) {
+			$config['upsale_data']['upgrade_url'] = esc_url( $this->get_upsale_data()['upgrade_url'] );
 		}
 
 		return array_replace_recursive( parent::get_initial_config(), $config );
@@ -1108,9 +1123,9 @@ abstract class Widget_Base extends Element_Base {
 		$this->add_control(
 			'deprecation_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => $message,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => $message,
 				'separator' => 'after',
 			]
 		);

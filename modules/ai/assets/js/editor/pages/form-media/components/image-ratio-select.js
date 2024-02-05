@@ -1,4 +1,5 @@
 import PromptActionSelection from '../../../components/prompt-action-selection';
+import { __ } from '@wordpress/i18n';
 import { IMAGE_ASPECT_RATIO } from '../constants';
 
 const imageRatios = Object.entries( IMAGE_ASPECT_RATIO ).map( ( [ value, { label } ] ) => ( { label, value } ) );

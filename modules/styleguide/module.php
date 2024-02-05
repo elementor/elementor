@@ -59,11 +59,8 @@ class Module extends Base_Module {
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Global Style Guide', 'elementor' ),
 			'description' => esc_html__( 'Display a live preview of changes to global colors and fonts in a sleek style guide from the site’s settings. You will be able to toggle between the style guide and the page to see your changes in action.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.14',
-			],
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 		];
 	}
 

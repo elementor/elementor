@@ -326,7 +326,7 @@ export default class NestedTabs extends Base {
 	}
 
 	changeActiveTabByKeyboard( event, settings ) {
-		if ( settings.widgetId !== this.getID() ) {
+		if ( settings.widgetId.toString() !== this.getID().toString() ) {
 			return;
 		}
 

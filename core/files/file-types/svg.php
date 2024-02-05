@@ -213,7 +213,9 @@ class Svg extends Base {
 		$svg = get_post_meta( $attachment_id, self::META_KEY, true );
 
 		if ( ! empty( $svg ) ) {
-			return $svg;
+			$valid_svg = ( new SVG_Sanitizer() )->sanitize( $svg );
+
+			return ( false === $valid_svg ) ? '' : $valid_svg;
 		}
 
 		$attachment_file = get_attached_file( $attachment_id );

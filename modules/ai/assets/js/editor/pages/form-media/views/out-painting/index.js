@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { FormControl, Slider, Typography, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import ImageRatioSelect from '../../components/image-ratio-select';

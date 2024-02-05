@@ -50,6 +50,7 @@ class Test_Settings extends Elementor_Test_Base {
 		$expected_items = [
 			'elementor' => 'Settings',
 			'elementor-role-manager' => 'Role Manager',
+			'elementor-element-manager' => 'Element Manager',
 			'elementor-tools' => 'Tools',
 			'elementor-system-info' => 'System Info',
 			'elementor-getting-started' => 'Getting Started',

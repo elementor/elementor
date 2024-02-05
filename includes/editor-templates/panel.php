@@ -185,10 +185,27 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 			</a>
 		</div>
 	<# } #>
+
+	<?php if ( ! Utils::has_pro() ) : ?>
+	<# if ( elementData.upsale_data && elementData.upsale_data.description ) { #>
+	<div class="elementor-nerd-box elementor-nerd-box--upsale">
+		<# if ( elementData.upsale_data.image ) { #>
+		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( '{{ elementData.upsale_data.image }}' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
+		<# } else { #>
+		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
+		<# } #>
+		<# if ( elementData.upsale_data.title ) { #>
+		<div class="elementor-nerd-box-title">{{ elementData.upsale_data.title }}</div>
+		<# } #>
+		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>
+		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank"><?php echo esc_html( '{{ elementData.upsale_data.upgrade_text || `Upgrade Now` }}', 'elementor' ); ?></a>
+	</div>
+	<# } #>
+	<?php endif; ?>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" />
+	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php
 		printf(
@@ -277,16 +294,17 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
+	<button class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
 		<i class="eicon-database" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Dynamic Tags', 'elementor' ); ?></span>
-	</div>
+	</button>
 </script>
+
 <script type="text/template" id="tmpl-elementor-control-element-color-picker">
-	<div class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
+	<button class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
 		<i class="eicon-eyedropper" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Color Sampler', 'elementor' ); ?></span>
-	</div>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">

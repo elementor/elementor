@@ -5,7 +5,7 @@ use Elementor\Core\Utils\ImportExport\WP_Import;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_WP_Import extends Elementor_Test_Base {
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Should remove the default kit because it is actually a post and it affect

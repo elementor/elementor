@@ -82,7 +82,7 @@ class Admin extends App {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		Collection::make( [ 'ui', 'icons' ] )
+		Collection::make( [ 'ui', 'icons', 'query' ] )
 			->each( function( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
 				$config = $assets_config_provider->load( $package )->get( $package );
@@ -397,7 +397,7 @@ class Admin extends App {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-			/* translators: 1: Elementor, 2: Link to plugin review */
+				/* translators: 1: Elementor, 2: Link to plugin review */
 				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
 				'<strong>' . esc_html__( 'Elementor', 'elementor' ) . '</strong>',
 				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
@@ -525,7 +525,7 @@ class Admin extends App {
 						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 						?>
 						<li class="e-overview__post">
-							<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?>
+							<a href="<?php echo esc_url( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?>
 								<span class="dashicons dashicons-edit"></span></a>
 							<span><?php echo $date; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>, <?php the_modified_time(); ?></span>
 						</li>
@@ -586,7 +586,7 @@ class Admin extends App {
 			<ul>
 				<?php foreach ( self::static_get_dashboard_overview_widget_footer_actions() as $action_id => $action ) { ?>
 					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>">
-						<a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?>
+						<a href="<?php echo esc_url( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?>
 							<span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span>
 							<span aria-hidden="true" class="dashicons dashicons-external"></span></a>
 					</li>
@@ -616,19 +616,24 @@ class Admin extends App {
 			],
 		];
 
-		$additions_actions = [
-			'go-pro' => [
-				'title' => esc_html__( 'Upgrade', 'elementor' ),
-				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
-			],
-		];
+		$additions_actions = [];
 
-		if ( ! User::get_introduction_meta( 'ai_get_started' ) ) {
+		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
+			$additions_actions['ai-library'] = [
+				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
+			];
+		} else {
 			$additions_actions['ai'] = [
 				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
 				'link' => 'https://go.elementor.com/overview-widget-ai/',
 			];
 		}
+
+		$additions_actions['go-pro'] = [
+			'title' => esc_html__( 'Upgrade', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
+		];
 
 		/**
 		 * Dashboard widget footer actions.
@@ -801,7 +806,7 @@ class Admin extends App {
 				<div class="e-major-update-warning__message">
 					<?php
 					printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
 						esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
 						'<a href="https://go.elementor.com/wp-dash-update-backup/">',
 						'</a>'
@@ -886,6 +891,8 @@ class Admin extends App {
 			'settings_url' => Settings::get_url(),
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
+				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
+				'is_administrator' => current_user_can( 'manage_options' ),
 			],
 			'beta_tester' => [
 				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,

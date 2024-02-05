@@ -1,3 +1,4 @@
+import React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
 const MinimizeDiagonalIcon = React.forwardRef( ( props, ref ) => {

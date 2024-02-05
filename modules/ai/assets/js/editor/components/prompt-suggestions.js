@@ -1,4 +1,6 @@
 import { Box, Typography, Stack, Chip } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const PromptSuggestions = ( props ) => {
 	return (
@@ -19,6 +21,7 @@ const PromptSuggestions = ( props ) => {
 					/>
 				) ) }
 			</Stack>
+			{ props.children }
 		</Box>
 	);
 };
@@ -27,6 +30,7 @@ PromptSuggestions.propTypes = {
 	suggestions: PropTypes.arrayOf( PropTypes.string ),
 	onSelect: PropTypes.func.isRequired,
 	suggestionFilter: PropTypes.func,
+	children: PropTypes.node,
 };
 
 export default PromptSuggestions;

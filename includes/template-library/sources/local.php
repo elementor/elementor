@@ -14,6 +14,7 @@ use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categori
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -233,16 +234,16 @@ class Source_Local extends Source_Base {
 		$labels = [
 			'name' => $name,
 			'singular_name' => esc_html_x( 'Template', 'Template Library', 'elementor' ),
-			'add_new' => esc_html_x( 'Add New', 'Template Library', 'elementor' ),
-			'add_new_item' => esc_html_x( 'Add New Template', 'Template Library', 'elementor' ),
-			'edit_item' => esc_html_x( 'Edit Template', 'Template Library', 'elementor' ),
-			'new_item' => esc_html_x( 'New Template', 'Template Library', 'elementor' ),
-			'all_items' => esc_html_x( 'All Templates', 'Template Library', 'elementor' ),
-			'view_item' => esc_html_x( 'View Template', 'Template Library', 'elementor' ),
-			'search_items' => esc_html_x( 'Search Template', 'Template Library', 'elementor' ),
-			'not_found' => esc_html_x( 'No Templates found', 'Template Library', 'elementor' ),
-			'not_found_in_trash' => esc_html_x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
-			'parent_item_colon' => '',
+			'add_new' => esc_html__( 'Add New Template', 'elementor' ),
+			'add_new_item' => esc_html__( 'Add New Template', 'elementor' ),
+			'edit_item' => esc_html__( 'Edit Template', 'elementor' ),
+			'new_item' => esc_html__( 'New Template', 'elementor' ),
+			'all_items' => esc_html__( 'All Templates', 'elementor' ),
+			'view_item' => esc_html__( 'View Template', 'elementor' ),
+			'search_items' => esc_html__( 'Search Template', 'elementor' ),
+			'not_found' => esc_html__( 'No Templates found', 'elementor' ),
+			'not_found_in_trash' => esc_html__( 'No Templates found in Trash', 'elementor' ),
+			'parent_item_colon' => esc_html__( 'Parent Template:', 'elementor' ),
 			'menu_name' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
 		];
 
@@ -894,7 +895,7 @@ class Source_Local extends Source_Base {
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Delete the temporary extraction directory, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+				Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 
 				return $extracted_files;
 			}
@@ -904,7 +905,7 @@ class Source_Local extends Source_Base {
 
 				if ( is_wp_error( $import_result ) ) {
 					// Delete the temporary extraction directory, since it's now not necessary.
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+					Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 
 					return $import_result;
 				}
@@ -913,7 +914,7 @@ class Source_Local extends Source_Base {
 			}
 
 			// Delete the temporary extraction directory, since it's now not necessary.
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $path );
@@ -966,7 +967,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 */
 	public function admin_import_template_form() {
-		if ( ! self::is_base_templates_screen() ) {
+		if ( ! self::is_base_templates_screen() || ! User::is_current_user_can_upload_json() ) {
 			return;
 		}
 
@@ -1411,7 +1412,6 @@ class Source_Local extends Source_Base {
 		);
 
 		printf(
-			/* translators: 1: Taxonomy slug, 2: Label text. */
 			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
 			esc_attr( self::TAXONOMY_CATEGORY_SLUG ),
 			esc_html_x( 'Filter by category', 'Template Library', 'elementor' )

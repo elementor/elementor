@@ -870,4 +870,45 @@ export default class EditorPage extends BasePage {
 
 		await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 	}
+
+	async removeClasses( className: string ) {
+		await this.page.evaluate( async ( _class ) => {
+			await new Promise( ( resolve1 ) => {
+				var elems = document.querySelectorAll( `.${ _class }` );
+
+				[].forEach.call( elems, function( el: HTMLElement ) {
+					el.classList.remove( _class );
+				} );
+				resolve1( 'Foo' );
+			} );
+		}, className );
+	}
+
+	async scrollPage() {
+		await this.page.evaluate( async () => {
+			await new Promise( ( resolve1 ) => {
+				let totalHeight = 0;
+				const distance = 400;
+				const timer = setInterval( () => {
+					const scrollHeight = document.body.scrollHeight;
+					window.scrollBy( 0, distance );
+					totalHeight += distance;
+					if ( totalHeight >= scrollHeight ) {
+						clearInterval( timer );
+						window.scrollTo( 0, 0 );
+						resolve1( 'Foo' );
+					}
+				}, 100 );
+			} );
+		} );
+	}
+
+	async removeWpAdminBar() {
+		const adminBar = 'wpadminbar';
+		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+		await this.page.evaluate( ( selector ) => {
+			const admin = document.getElementById( selector );
+			admin.remove();
+		}, adminBar );
+	}
 }

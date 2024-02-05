@@ -406,7 +406,8 @@ class Manager {
 	/**
 	 * Export template.
 	 *
-	 * Export template to a file.
+	 * Export template to a file after ensuring it is a valid Elementor template
+	 * and checking user permissions for private posts.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -420,6 +421,21 @@ class Manager {
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
+		}
+
+		$post_id = intval( $args['template_id'] );
+		$post_status = get_post_status( $post_id );
+
+		if ( get_post_type( $post_id ) !== Source_Local::CPT ) {
+			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist', 'elementor' ) );
+		}
+
+		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template', 'elementor' ) );
+		}
+
+		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template', 'elementor' ) );
 		}
 
 		$source = $this->get_source( $args['source'] );
@@ -466,7 +482,7 @@ class Manager {
 		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
 
 		if ( is_wp_error( $upload_result ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $upload_result['tmp_name'] ) );
 
 			return $upload_result;
 		}
@@ -477,7 +493,7 @@ class Manager {
 		$import_result = $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
 
 		// Remove the temporary directory generated for the stream-uploaded file.
-		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $upload_result['tmp_name'] ) );
 
 		return $import_result;
 	}

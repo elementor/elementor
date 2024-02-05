@@ -149,34 +149,28 @@ export default class ExperimentsMessages {
 		} ).show();
 	}
 
-	joinDependenciesNames( array, glue = '', finalGlue = '' ) {
-		if ( '' === finalGlue ) {
-			return array.join( glue );
-		}
+	getSiteLanguageCode() {
+		const languageCode = document.querySelector( 'html' ).getAttribute( 'lang' );
 
-		if ( ! array.length ) {
-			return '';
-		}
+		return languageCode ?? 'en'; // Fallback to English if no language code found.
+	}
 
-		if ( 1 === array.length ) {
-			return array[ 0 ];
-		}
+	formatDependenciesList( dependencies ) {
+		const dependenciesTitles = dependencies.map( ( d ) => d.title );
+		const languageCode = this.getSiteLanguageCode();
 
-		const clone = [ ...array ],
-			lastItem = clone.pop();
-
-		return clone.join( glue ) + finalGlue + lastItem;
+		return new Intl.ListFormat( languageCode ).format( dependenciesTitles );
 	}
 
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
+			dependenciesList = this.formatDependenciesList( this.getExperimentDependencies( experimentId ) );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
 			.replace( '%1$s', `<strong>${ experimentName }</strong>` )
-			.replace( '%2$s', dialogMessage );
+			.replace( '%2$s', dependenciesList );
 
 		this.showDialog( {
 			message,
@@ -203,7 +197,7 @@ export default class ExperimentsMessages {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
 			strings: {
 				confirm: __( 'Deactivate', 'elementor' ),
-				cancel: __( 'Dismiss', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			onConfirm: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );

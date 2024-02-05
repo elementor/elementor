@@ -27,6 +27,8 @@ import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
+import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
+import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -192,6 +194,7 @@ export default class EditorBase extends Marionette.Application {
 			Icons: require( 'elementor-controls/icons' ),
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
+			Notice: require( 'elementor-controls/notice' ),
 			Number: require( 'elementor-controls/number' ),
 			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
@@ -292,7 +295,7 @@ export default class EditorBase extends Marionette.Application {
 			return false;
 		}
 
-		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
+		const elementConfig = structuredClone( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
 			elementConfig.title = __( 'Inner Section', 'elementor' );
@@ -405,6 +408,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
 
+		this.editorEvents = new EditorEvents();
+
 		this.documents = $e.components.register( new EditorDocuments() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
@@ -413,6 +418,8 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
+
+		this.modules.promotionModule = new PromotionModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
@@ -486,6 +493,7 @@ export default class EditorBase extends Marionette.Application {
 			this.$preview = $( '<iframe>', {
 				id: previewIframeId,
 				src: this.config.initial_document.urls.preview,
+				title: __( 'Preview', 'elementor' ),
 				allowfullscreen: 1,
 			} );
 
@@ -1022,39 +1030,6 @@ export default class EditorBase extends Marionette.Application {
 		return elementorCommon.translate( stringKey, null, templateArgs, i18nStack );
 	}
 
-	logSite() {
-		let text = '',
-			style = '';
-
-		if ( environment.firefox ) {
-			const asciiText = [
-				' ;;;;;;;;;;;;;;; ',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;;;;;;;;;;;',
-				';;;  ;;       ;;;',
-				' ;;;;;;;;;;;;;;; ',
-			];
-
-			text += '%c' + asciiText.join( '\n' ) + '\n';
-
-			style = 'color: #C42961';
-		} else {
-			text += '%c00';
-
-			style = 'font-size: 22px; background-image: url("' + elementorCommon.config.urls.assets + 'images/logo-icon.png"); color: transparent; background-repeat: no-repeat';
-		}
-
-		setTimeout( console.log.bind( console, text, style ) ); // eslint-disable-line
-
-		text = '%cLove using Elementor? Join our growing community of Elementor developers: %chttps://github.com/elementor/elementor';
-
-		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
-	}
-
 	requestWidgetsConfig() {
 		const excludeWidgets = {};
 
@@ -1157,8 +1132,6 @@ export default class EditorBase extends Marionette.Application {
 				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
-
-		this.logSite();
 	}
 
 	onPreviewLoaded() {
@@ -1429,7 +1402,7 @@ export default class EditorBase extends Marionette.Application {
 			const devicesArrayToDuplicate = controlDevices || devices;
 
 			devicesArrayToDuplicate.forEach( ( device, index ) => {
-				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
+				let controlArgs = structuredClone( controlConfig );
 
 				if ( controlArgs.device_args ) {
 					if ( controlArgs.device_args[ device ] ) {

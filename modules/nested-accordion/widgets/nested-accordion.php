@@ -112,6 +112,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 			]
@@ -292,13 +295,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'faq_schema_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
 				'condition' => [
 					'faq_schema[value]' => 'yes',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -378,11 +380,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Space between Items', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'default' => [
@@ -399,11 +406,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Distance from content', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'default' => [
@@ -561,18 +573,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tabs();
 
 		$this->add_control(
-			'header_section_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_control(
 			'heading_icon_style_title',
 			[
 				'type' => Controls_Manager::HEADING,
 				'label' => esc_html__( 'Icon', 'elementor' ),
-
+				'separator' => 'before',
 			]
 		);
 
@@ -583,14 +588,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'em' => [
-						'min' => 0,
 						'max' => 10,
-						'step' => 0.1,
 					],
 					'rem' => [
-						'min' => 0,
 						'max' => 10,
-						'step' => 0.1,
 					],
 				],
 				'default' => [
@@ -611,11 +612,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 400,
 					],
 					'vw' => [
-						'min' => 0,
 						'max' => 50,
 						'step' => 0.1,
 					],
@@ -804,7 +803,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			$this->add_render_attribute( $item_summary_key, [
 				'class' => [ 'e-n-accordion-item-title' ],
-				'role' => 'button',
 				'data-accordion-index' => $accordion_count,
 				'tabindex' => 0 === $index ? 0 : -1,
 				'aria-expanded' => $aria_expanded ? 'true' : 'false',
@@ -896,7 +894,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
-				itemTitleText = 'item-title-text-' + elementUid,
 				defaultState = settings.default_state,
 				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
@@ -907,6 +904,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				<# _.each( settings['items'], function( item, index ) {
 				const itemCount = index + 1,
 					itemUid = elementUid + index,
+					itemTitleTextKey = 'item-title-text-' + itemUid,
 					itemWrapperKey = itemUid,
 					itemTitleKey = 'item-' + itemUid,
 					ariaExpanded = 'expanded' === defaultState && 0 === index ? 'true' : 'false';
@@ -934,10 +932,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'tabindex': 0 === index ? 0 : -1,
 						'aria-expanded': ariaExpanded,
 						'aria-controls': itemId,
-						'role': 'button',
 					});
 
-					view.addRenderAttribute( itemTitleText, {
+					view.addRenderAttribute( itemTitleTextKey, {
 						'class': ['e-n-accordion-item-title-text'],
 						'data-binding-type': 'repeater-item',
 						'data-binding-repeater-name': 'items',
@@ -949,7 +946,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
 					<span class="e-n-accordion-item-title-header">
-						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleText ) }}}>
+						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleTextKey ) }}}>
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
 					</span>

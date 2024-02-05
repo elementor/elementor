@@ -118,14 +118,35 @@
 	width: 90%;
 	margin: 0 auto;
 	font-style: unset;
-	margin-bottom: 15px;
+	margin-block-end: 15px;
 	a {
 		font-weight: bold;
 		font-style: italic;
-		border-bottom: 2px dotted var(--e-a-color-info);
+		border-block-end: 2px dotted var(--e-a-color-info);
 		display: inline-block;
 	}
 }
+
+// Notification Center (v1)
+body.e-has-notification {
+	&:not(.e-route-panel-menu) #elementor-panel-header-menu-button,
+	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center .elementor-panel-menu-item-icon {
+		position: relative;
+
+		&:after {
+			position: absolute;
+			content: '';
+			display: block;
+			background: var(--e-a-color-primary);
+			border-radius: 50%;
+			width: 8px;
+			height: 8px;
+			top: 5px;
+			right: 5px;
+		}
+	}
+}
+
 
 //Compatibility
 @import "compatibility";

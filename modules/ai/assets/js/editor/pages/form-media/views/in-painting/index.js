@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import PromptField from '../../components/prompt-field';

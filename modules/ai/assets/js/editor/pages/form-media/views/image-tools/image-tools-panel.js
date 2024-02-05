@@ -1,4 +1,6 @@
 import { Box, Button, Typography, SvgIcon, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import ExpandIcon from '../../../../icons/expand-icon';
 import BrushIcon from '../../../../icons/brush-icon';
 import EvolveIcon from '../../../../icons/evolve-icon';

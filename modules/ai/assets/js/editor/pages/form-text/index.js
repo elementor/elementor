@@ -1,17 +1,19 @@
 import { useState, useRef } from 'react';
 import { Box, Button, Grid, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { AIIcon, MessageIcon, ShrinkIcon, ExpandIcon } from '@elementor/icons';
 import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
 import Textarea from '../../components/textarea';
 import PromptSuggestions from '../../components/prompt-suggestions';
+import PromptLibraryLink from '../../components/prompt-library-link';
 import PromptActionSelection from '../../components/prompt-action-selection';
 import GenerateButton from '../../components/generate-button';
 import PromptAction from '../../components/prompt-action';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
 import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
-import PromptCredits from '../../components/prompt-credits';
 import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
@@ -55,7 +57,7 @@ const FormText = (
 		setControlValue,
 		additionalOptions,
 		credits,
-		usagePercentage,
+		children,
 	},
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
@@ -125,6 +127,8 @@ const FormText = (
 		<>
 			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 2.5 } } /> }
 
+			{ children }
+
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
 					<Box sx={ { mb: 2.5 } }>
@@ -142,12 +146,12 @@ const FormText = (
 							suggestions={ autocompleteItems }
 							onSelect={ handleSuggestion }
 							suggestionFilter={ ( suggestion ) => suggestion + '...' }
-						/>
+						>
+							<PromptLibraryLink libraryLink="https://go.elementor.com/ai-prompt-library-text/" />
+						</PromptSuggestions>
 					) }
 
 					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
-						<PromptCredits usagePercentage={ usagePercentage } />
-
 						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>
 							<GenerateButton>
 								{ __( 'Generate text', 'elementor' ) }
@@ -191,8 +195,6 @@ const FormText = (
 					</Stack>
 
 					<Stack direction="row" alignItems="center" sx={ { my: 1 } }>
-						<PromptCredits usagePercentage={ usagePercentage } />
-
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
@@ -217,6 +219,7 @@ FormText.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	usagePercentage: PropTypes.number,
+	children: PropTypes.node,
 };
 
 export default FormText;
