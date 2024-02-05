@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
+import { config as _config } from 'dotenv';
 
 process.env.DEBUG_PORT = '9222';
 
@@ -24,6 +25,10 @@ function getGrepInvert() {
 	}
 	return [];
 }
+
+_config( {
+	path: resolve( __dirname, './.env' ),
+} );
 
 function getGrep() {
 	if ( undefined === process.env.TEST_SUITE || '@default' === process.env.TEST_SUITE ) {
@@ -64,10 +69,5 @@ export default defineConfig( {
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
 		storageState: './storageState.json',
-		user: {
-			username: process.env.USERNAME || 'admin',
-			password: process.env.PASSWORD || 'password',
-		},
-		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
 } );
