@@ -26,8 +26,8 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Template {
 	public function set_list() {
 		return [
 			esc_html__( 'Upload any font to keep your website true to your brand', 'elementor' ),
-			/* translators: %s: br  */
 			sprintf(
+				/* translators: %s: br  */
 				esc_html__( 'Remain GDPR compliant with Custom Fonts that let you disable %s Google Fonts from your website', 'elementor' ),
 				'<br />'
 			),

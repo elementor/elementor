@@ -101,6 +101,10 @@ class API {
 					$result = 'in' === $condition['operator'] ? $in_array : ! $in_array;
 					break;
 				case 'plugin':
+					if ( ! function_exists( 'is_plugin_active' ) ) {
+						require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+					}
+
 					$is_plugin_active = is_plugin_active( $condition['plugin'] );
 
 					if ( empty( $condition['operator'] ) ) {

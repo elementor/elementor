@@ -25,6 +25,7 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 		editor = await wpAdmin.useElementorCleanPost();
 
 	await editor.addWidget( 'button' );
+	await editor.activatePanelTab( 'style' );
 
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
