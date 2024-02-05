@@ -20,7 +20,7 @@ class Custom_Code_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	public function get_promotion_title() {
-		return esc_html( 'Enjoy Creative Freedom with Custom Code', 'elementor' );
+		return esc_html__( 'Enjoy Creative Freedom with Custom Code', 'elementor' );
 	}
 
 	public function set_list() {
