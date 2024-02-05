@@ -11,7 +11,6 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 		return 'custom_icons';
 	}
 
-
 	public function get_label() {
 		return esc_html__( 'Custom Icons', 'elementor' );
 	}
@@ -20,15 +19,15 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 		return esc_html__( 'Custom Icons', 'elementor' );
 	}
 
-	public function get_promotion_title() {
-		echo sprintf(
+	protected function get_promotion_title():string {
+		return sprintf(
 			/* translators: %s: br  */
 			esc_html( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
 			'<br />'
 		);
 	}
 
-	public function set_list() {
+	protected function get_content_lines(): array {
 		return [
 			sprintf(
 				esc_html__( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
@@ -38,11 +37,11 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 		];
 	}
 
-	public function get_cta_url() {
+	protected function get_cta_url(): string {
 		return 'https://go.elementor.com/go-pro-custom-icons/';
 	}
 
-	public function get_video_url() {
+	protected function get_video_url(): string {
 		return 'https://www.youtube-nocookie.com/embed/PsowinxDWfM?si=SV9Z3TLz3_XEy5C6';
 	}
 }
