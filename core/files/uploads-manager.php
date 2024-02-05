@@ -127,30 +127,33 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.3.0
 	 * @access public
 	 *
-	 * @param array $data
-	 * @param array $allowed_file_extensions Optional. an array of file types that are allowed to pass validation for each
-	 * upload.
+	 * @param array $data {
+	 *     @type string 'fileName'
+	 *     @type string 'fileData'
+	 * }
+	 * @param array $allowed_file_extensions Optional. Array of file types, allowed to pass validation for each upload.
+	 * 
 	 * @return array|\WP_Error
 	 */
 	public function handle_elementor_upload( array $data, $allowed_file_extensions = null ) {
-		$sanitized_data = [
+		$normalized_data = [
 			'fileName' => basename( $data['fileName'] ?? '' ),
 			'fileData' => $data['fileData'] ?? null,
 		];
 
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
-		if ( isset( $sanitized_data['fileData'] ) ) {
-			$sanitized_data = $this->save_base64_to_tmp_file( $sanitized_data, $allowed_file_extensions );
+		if ( isset( $normalized_data['fileData'] ) ) {
+			$normalized_data = $this->save_base64_to_tmp_file( $normalized_data, $allowed_file_extensions );
 		}
 
-		$validation_result = $this->validate_file( $sanitized_data, $allowed_file_extensions );
+		$validation_result = $this->validate_file( $normalized_data, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
-		return $sanitized_data;
+		return $normalized_data;
 	}
 
 	/**
