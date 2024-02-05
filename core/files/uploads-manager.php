@@ -132,7 +132,7 @@ class Uploads_Manager extends Base_Object {
 	 *     @type string 'fileData'
 	 * }
 	 * @param array $allowed_file_extensions Optional. Array of file types, allowed to pass validation for each upload.
-	 * 
+	 *
 	 * @return array|\WP_Error
 	 */
 	public function handle_elementor_upload( array $data, $allowed_file_extensions = null ) {
