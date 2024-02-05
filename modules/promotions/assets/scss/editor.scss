@@ -42,11 +42,20 @@
 	}
 }
 
-.e-control-motion-effects-promotion__wrapper {
-	&:hover {
-		.eicon-lock {
-			color: var(--e-a-color-accent)
+.e-control-motion-effects-promotion {
+	&__wrapper {
+		&:hover {
+			.eicon-lock {
+				color: var(--e-a-color-accent)
+			}
 		}
+	}
+
+	&__lock-wrapper {
+		width: 2.5rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.select-promotion {

@@ -1303,7 +1303,7 @@ class Controls_Manager {
 		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
-					<label class="elementor-control-title">
+					<label>
 						' .  esc_html__( 'Scrolling Effects', 'elementor' ) . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
@@ -1325,7 +1325,7 @@ class Controls_Manager {
 		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
-					<label class="elementor-control-title">
+					<label>
 						' .  esc_html__( 'Mouse Effects', 'elementor' ) . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
@@ -1347,7 +1347,7 @@ class Controls_Manager {
 		return '<div class="elementor-control-type-select elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field ">
-					<label for="sticky-motion-effect-pro" class="elementor-control-title">
+					<label for="sticky-motion-effect-pro">
 						' .  esc_html__( 'Sticky', 'elementor' ) . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
