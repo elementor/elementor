@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
 
 test.describe( 'Promotion tests @promotions', () => {
-	test.only( 'Modal Promotions screenshots', async ( { page }, testInfo ) => {
+	test( 'Modal Promotions screenshots', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
