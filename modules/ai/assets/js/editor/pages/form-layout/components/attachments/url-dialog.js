@@ -7,12 +7,19 @@ import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
 import { USER_URL_SOURCE } from '../attachments';
 import { CONFIG_KEYS, useRemoteConfig } from '../../context/remote-config';
+import useUserInfo from '../../../../hooks/use-user-info';
 
 export const UrlDialog = ( props ) => {
 	const iframeRef = useRef( null );
 	const { iframeSource } = useAttachUrlService( { targetUrl: props.url } );
 	const iframeOrigin = iframeSource ? new URL( iframeSource ).origin : '';
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
+	const {
+		isConnected,
+		hasSubscription,
+		credits,
+		usagePercentage,
+	} = useUserInfo();
 	const { isLoaded, isError, remoteConfig } = useRemoteConfig();
 
 	useEffect( () => {
@@ -93,6 +100,7 @@ export const UrlDialog = ( props ) => {
 							title={ __( 'URL as a reference', 'elementor' ) }
 							src={ iframeSource }
 							onLoad={ () => {
+                                const { access_level: accessLevel, access_tier: accessTier, is_pro: isPro } = window.elementorAppConfig[ 'kit-library' ];
 								iframeRef.current.contentWindow.postMessage( {
 									type: 'referrer/info',
 									info: {
@@ -100,6 +108,25 @@ export const UrlDialog = ( props ) => {
 											url: window.location.href,
 										},
 										authToken: remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ] || '',
+                                        products: {
+											core: {
+												version: window.elementor.config.version,
+											},
+											pro: {
+												isPro,
+												accessLevel,
+												accessTier,
+											},
+											ai: {
+												isConnected,
+												hasSubscription,
+												credits,
+												usagePercentage,
+											},
+										},
+										user: {
+											isAdmin: window.elementor.config.user.is_administrator,
+										},
 									},
 								}, iframeOrigin );
 							} }

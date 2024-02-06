@@ -96,7 +96,7 @@ class User extends Base {
 	 */
 	public function get_locale() {
 		return [
-			'value' => get_locale(),
+			'value' => get_bloginfo( 'language' ),
 		];
 	}
 

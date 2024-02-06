@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 Elementor is the leading WordPress website builder that empowers you to successfully build professional, pixel-perfect websites. With an intuitive drag and drop interface, you get complete control to build any type of website,  without writing a single line of code.
 
-Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create complete sections, original text, code, and images instantly.
+Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/wp-repo-description-tab-elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create complete sections, original text, code, and images instantly.
 
 Unlock all of Elementor’s features and elevate your website’s potential with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
@@ -82,6 +82,8 @@ To accelerate your workflow Elementor includes a multitude of workflow enhancing
 
 = FAST LOADING WEBSITES =
 Your website’s performance impacts your visitor’s experience and search result ranking. Therefore, Elementor continuously invests in improving performance and recently partnered with Google Chrome to identify more ways to optimize performance, without impacting design. Performance improving features include: reduced DOM output, improved media file loading, reduced CSS and JS files, lazy loading, faster font loading, optimize front-end asset loading, and more. To learn more, check out our [performance page](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/).
+
+***Looking to boost your site's performance?** Meet the [Image Optimizer plugin](https://go.elementor.com/wp-repo-description-tab-elementor-io/) by Elementor: an easy-to-use WordPress plugin that effortlessly reduces image sizes without sacrificing quality. Compatible with popular formats like JPEG, PNG, WebP, and GIF, it ensures a visually stunning, high-speed website. Elevate your performance with Image Optimizer – [download now](https://wordpress.org/plugins/image-optimization/)!*
 
 = EMPLOYING ACCESSIBILITY BEST-PRACTICES =
 Elementor is built with accessibility in mind and offers tools and enhancements to help you provide a better experience for all users. These include HTML 5 semantic, full keyboard navigation menu, ongoing accessibility improvement of features, widget, and more.
@@ -244,42 +246,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.18.3 - 2023-12-20 =
+= 3.19.1 - 2024-02-05 =
 
-* Fix: Modified control sanitization to enforce better security policies in Dynamic tags
-* Fix: Elementor Editor is slow when using Safari 17 and Firefox on macOS
-* Fix: Inner containers added to the top of the page when using AI Variations
-
-= 3.18.2 - 2023-12-08 =
-
-* Security Fix: Addressed security weaknesses in template upload mechanism
-
-= 3.18.1 - 2023-12-06 =
-
-* Fix: Improved code security enforcement in File Upload mechanism
-* Fix: Error appears on front when using various 3rd party plugins and Themes
-* Fix: Reverted Elementor Editor is slow when using Safari 17 and Firefox on macOS
-
-= 3.18.0 - 2023-12-04 =
-
-* New: Introducing Element Manager - Overview of all installed widgets on your site, allowing the deactivation of unused widgets for a personalized widget panel ([#9647](https://github.com/elementor/elementor/issues/9647))
-* New: Introducing Elementor AI for Text-Based Container Generation – Effortlessly generate uniquely designed containers by simply providing a single textual prompt
-* New: Introducing Elementor AI for Elementor-Based Container Variations – Customize your existing Elementor layouts by editing container content, images, fonts, colors, and icons
-* Tweak: Added support for Elementor AI Web-Based Container generation – Create containers by providing a specified URL to generate Elementor-compatible layouts
-* Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
-* Tweak: Implemented accessibility improvements in Progress Bar widget
-* Tweak: Added responsive control and size units to navigation size in Image Carousel widget
-* Tweak: Promoted Global Style Guide feature to a Stable status
-* Tweak: Activated Optimize Image Loading experiment by default for all sites
-* Tweak: Activated Optimized Gutenberg Loading experiment by default for all sites
-* Tweak: Activated Inline Font Icons experiment by default for new sites
-* Tweak: Renamed the 'Image Size' control into 'Image Resolution'
-* Tweak: Updated `eicons` library to v5.25.0
-* Tweak: Updated context menu UI
-* Fix: Elementor Editor is slow when using Safari 17 and Firefox on macOS ([#24260](https://github.com/elementor/elementor/issues/24260))
-* Fix: Locale with "comma" as decimal separator brakes generated CSS styles for decimal values ([#10992](https://github.com/elementor/elementor/issues/10992))
-* Fix: Changed Vimeo Background video player to transparent background player ([#16336](https://github.com/elementor/elementor/issues/16336))
-* Fix: Dynamic property creation is deprecated in container layout with PHP 8.2 ([#23830](https://github.com/elementor/elementor/issues/23830))
-* Fix: Ensure that the tab elements open correctly with a click in Tabs widget
+* Tweak: Improved text-based AI capabilities within the widget type
+* Security Fix: Addressed security weaknesses in template library mechanism
+* Fix: Improved code security enforcement in Media control
+* Fix: SVG Icons break the title layout when using Firefox and Safari browsers in Accordion widget ([#24925](https://github.com/elementor/elementor/issues/24925))
+* Fix: Missing hover state to dropdown in AI Containers modal
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

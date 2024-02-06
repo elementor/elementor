@@ -1,13 +1,26 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
-test( 'Promotion screenshot', async ( { page }, testInfo ) => {
+test( 'Promotion screenshots', async ( { page }, testInfo ) => {
 	const wpAdminPage = new WpAdminPage( page, testInfo ),
 		promotionContainer = '.e-feature-promotion';
 
 	await wpAdminPage.login();
-	await page.goto( '/wp-admin/admin.php?page=e-form-submissions/' );
-	const promoContainer = page.locator( promotionContainer );
-	await promoContainer.waitFor();
-	await expect( promoContainer ).toHaveScreenshot( 'promotion-menu-item-desktop.png' );
+
+	await test.step( 'Free to Pro - Submissions', async () => {
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
+	} );
+
+	await test.step( 'Free to Pro - Custom Icons', async () => {
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
+	} );
+
+	await test.step( 'Free to Pro - Custom Fonts', async () => {
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
+	} );
+
+	await test.step( 'Free to Pro - Custom Code', async () => {
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_code', 'custom-code-menu-item-desktop' );
+	} );
 } );
+

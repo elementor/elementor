@@ -82,7 +82,7 @@ class Admin extends App {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		Collection::make( [ 'ui', 'icons' ] )
+		Collection::make( [ 'ui', 'icons', 'query' ] )
 			->each( function( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
 				$config = $assets_config_provider->load( $package )->get( $package );
@@ -397,7 +397,7 @@ class Admin extends App {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-			/* translators: 1: Elementor, 2: Link to plugin review */
+				/* translators: 1: Elementor, 2: Link to plugin review */
 				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
 				'<strong>' . esc_html__( 'Elementor', 'elementor' ) . '</strong>',
 				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
@@ -806,7 +806,7 @@ class Admin extends App {
 				<div class="e-major-update-warning__message">
 					<?php
 					printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
 						esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
 						'<a href="https://go.elementor.com/wp-dash-update-backup/">',
 						'</a>'
@@ -891,6 +891,8 @@ class Admin extends App {
 			'settings_url' => Settings::get_url(),
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
+				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
+				'is_administrator' => current_user_can( 'manage_options' ),
 			],
 			'beta_tester' => [
 				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
