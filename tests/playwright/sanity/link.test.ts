@@ -28,7 +28,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			await editor.addWidget( data[ widget ].title );
 			if ( 'image-carousel' === data[ widget ].title ) {
 				await imageCarousel.addImageGallery();
-				await imageCarousel.setAutoplay( 'no' );
+				await imageCarousel.setAutoplay();
 				await editor.openSection( 'section_image_carousel' );
 			}
 
