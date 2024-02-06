@@ -1,7 +1,7 @@
 .elementor-control-notice {
 	display: flex;
-	justify-content: start;
-	align-items: start;
+	justify-content: flex-start;
+	align-items: flex-start;
 	gap: 8px;
 	padding: 16px;
 	border-radius: 3px;
@@ -40,8 +40,8 @@
 	&-main {
 		display: flex;
 		flex-direction: column;
-		justify-content: start;
-		align-items: start;
+		justify-content: flex-start;
+		align-items: flex-start;
 		gap: 6px;
 
 		flex: 1;
