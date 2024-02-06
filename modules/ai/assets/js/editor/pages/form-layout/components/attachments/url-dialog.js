@@ -100,7 +100,7 @@ export const UrlDialog = ( props ) => {
 							title={ __( 'URL as a reference', 'elementor' ) }
 							src={ iframeSource }
 							onLoad={ () => {
-                                const { access_level: accessLevel, access_tier: accessTier, is_pro: isPro } = window.elementorAppConfig[ 'kit-library' ];
+								const { access_level: accessLevel, access_tier: accessTier, is_pro: isPro } = window.elementorAppConfig[ 'kit-library' ];
 								iframeRef.current.contentWindow.postMessage( {
 									type: 'referrer/info',
 									info: {
@@ -108,7 +108,7 @@ export const UrlDialog = ( props ) => {
 											url: window.location.href,
 										},
 										authToken: remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ] || '',
-                                        products: {
+										products: {
 											core: {
 												version: window.elementor.config.version,
 											},

@@ -58,26 +58,29 @@ export default function UnfilteredFilesDialog( props ) {
 		<>
 			{
 				isEnableError
-				? <Dialog
-						title={ __( 'Something went wrong.', 'elementor' ) }
-						text={ props.errorModalText }
-						approveButtonColor="link"
-						approveButtonText={ __( 'Continue', 'elementor' ) }
-						approveButtonOnClick={ onReady }
-						dismissButtonText={ __( 'Go Back', 'elementor' ) }
-						dismissButtonOnClick={ onCancel }
-						onClose={ onCancel }
-				/>
-				: <Dialog
-						title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
-						text={ props.confirmModalText }
-						approveButtonColor="link"
-						approveButtonText={ __( 'Enable', 'elementor' ) }
-						approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
-						dismissButtonText={ __( 'Skip', 'elementor' ) }
-						dismissButtonOnClick={ onDismiss || onReady }
-						onClose={ onClose || onDismiss || onReady }
-				/>
+					? (
+						<Dialog
+							title={ __( 'Something went wrong.', 'elementor' ) }
+							text={ props.errorModalText }
+							approveButtonColor="link"
+							approveButtonText={ __( 'Continue', 'elementor' ) }
+							approveButtonOnClick={ onReady }
+							dismissButtonText={ __( 'Go Back', 'elementor' ) }
+							dismissButtonOnClick={ onCancel }
+							onClose={ onCancel }
+						/>
+					) : (
+						<Dialog
+							title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
+							text={ props.confirmModalText }
+							approveButtonColor="link"
+							approveButtonText={ __( 'Enable', 'elementor' ) }
+							approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
+							dismissButtonText={ __( 'Skip', 'elementor' ) }
+							dismissButtonOnClick={ onDismiss || onReady }
+							onClose={ onClose || onDismiss || onReady }
+						/>
+					)
 			}
 		</>
 	);

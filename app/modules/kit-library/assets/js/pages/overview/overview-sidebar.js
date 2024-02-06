@@ -2,8 +2,7 @@ import Collapse from '../../components/collapse';
 import ContentType from '../../models/content-type';
 import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
-import OverviewTaxonomyBadge from './overview-taxonomy-badge';
-import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
+import { Heading, CardImage, Text } from '@elementor/app-ui';
 import { useState } from 'react';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
