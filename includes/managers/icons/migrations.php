@@ -106,7 +106,6 @@ class Migrations {
 	 * @return array
 	 */
 	public static function on_import_migration( array $element, $old_control = '', $new_control = '', $remove_old = false ) {
-
 		if ( ! isset( $element['settings'][ $old_control ] ) || isset( $element['settings'][ $new_control ] ) ) {
 			return $element;
 		}
@@ -187,7 +186,7 @@ class Migrations {
 
 		$success_title = sprintf(
 			/* translators: %s: Version number. */
-			esc_html__( 'You\'ve got Font Awesome %s!', 'elementor' ),
+			esc_html__( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ),
 			Icons_Manager::get_current_fa_version()
 		);
 

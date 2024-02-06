@@ -140,6 +140,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'stack-overflow',
 						'steam',
 						'telegram',
+						'threads',
 						'thumb-tack',
 						'tripadvisor',
 						'tumblr',
@@ -152,6 +153,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'weixin',
 						'whatsapp',
 						'wordpress',
+						'x',
 						'xing',
 						'yelp',
 						'youtube',
@@ -237,7 +239,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
-							'value' => 'fab fa-twitter',
+							'value' => 'fab fa-instagram',
 							'library' => 'fa-brands',
 						],
 					],
@@ -569,7 +571,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$fallback_defaults = [
 			'fa fa-facebook',
-			'fa fa-twitter',
+			'fa fa-instagram',
 			'fa fa-google-plus',
 		];
 

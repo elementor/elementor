@@ -363,6 +363,17 @@ class Plugin {
 	public $icons_manager;
 
 	/**
+	 * Icons Manager - Migrations.
+	 *
+	 * Holds all the functionality of icons manager migrations.
+	 *
+	 * @access public
+	 *
+	 * @var Icons_Migrations
+	 */
+	public $icons_migrations;
+
+	/**
 	 * WordPress widgets manager.
 	 *
 	 * Holds the WordPress widgets manager.
