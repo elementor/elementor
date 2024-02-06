@@ -47,8 +47,6 @@ trait Button_Trait {
 	 *     @type array  $section_condition  Set of conditions to hide the controls.
 	 *     @type string $button_text  Text contained in button.
 	 *     @type string $text_control_label  Name for the label of the text control.
-	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
-	 *     @type string $alignment_default  Default alignment for the button.
 	 *     @type array $icon_exclude_inline_options  Set of icon types to exclude from icon controls.
 	 * }
 	 */
@@ -57,8 +55,6 @@ trait Button_Trait {
 			'section_condition' => [],
 			'button_default_text' => esc_html__( 'Click here', 'elementor' ),
 			'text_control_label' => esc_html__( 'Text', 'elementor' ),
-			'alignment_control_prefix_class' => 'elementor%s-align-',
-			'alignment_default' => '',
 			'icon_exclude_inline_options' => [],
 		];
 
@@ -107,35 +103,6 @@ trait Button_Trait {
 				'default' => [
 					'url' => '#',
 				],
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_responsive_control(
-			'align',
-			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left'    => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
-					],
-					'justify' => [
-						'title' => esc_html__( 'Justified', 'elementor' ),
-						'icon' => 'eicon-text-align-justify',
-					],
-				],
-				'prefix_class' => $args['alignment_control_prefix_class'],
-				'default' => $args['alignment_default'],
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -200,7 +167,7 @@ trait Button_Trait {
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => $args['section_condition'],
+				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
 			]
 		);
 
@@ -228,12 +195,54 @@ trait Button_Trait {
 		);
 	}
 
+	/**
+	 * @since 3.4.0
+	 *
+	 * @param array $args {
+	 *     An array of values for the button adjustments.
+	 *
+	 *     @type array  $section_condition  Set of conditions to hide the controls.
+	 *     @type string $alignment_default  Default alignment for the button.
+	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
+	 * }
+	 */
 	protected function register_button_style_controls( $args = [] ) {
 		$default_args = [
 			'section_condition' => [],
+			'alignment_default' => '',
+			'alignment_control_prefix_class' => 'elementor%s-align-',
 		];
 
 		$args = wp_parse_args( $args, $default_args );
+
+		$this->add_responsive_control(
+			'align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left'    => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+					'justify' => [
+						'title' => esc_html__( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'prefix_class' => $args['alignment_control_prefix_class'],
+				'default' => $args['alignment_default'],
+				'condition' => $args['section_condition'],
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
@@ -353,6 +362,21 @@ trait Button_Trait {
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
 				'condition' => $args['section_condition'],
+			]
+		);
+
+		$this->add_control(
+			'button_hover_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 

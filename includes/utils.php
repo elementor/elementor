@@ -724,7 +724,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+		return $tag && in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
 
 	/**
@@ -809,7 +809,7 @@ class Utils {
 	 * @return false|string
 	 */
 	public static function file_get_contents( $file, ...$args ) {
-		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
+		if ( realpath( $file ) === false || ! is_file( $file ) || ! is_readable( $file ) ) {
 			return false;
 		}
 

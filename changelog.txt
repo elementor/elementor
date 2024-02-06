@@ -1,5 +1,51 @@
 == Changelog ==
 
+= 3.19.1 - 2024-02-05 =
+
+* Tweak: Improved text-based AI capabilities within the widget type
+* Security Fix: Addressed security weaknesses in template library mechanism
+* Fix: Improved code security enforcement in Media control
+* Fix: SVG Icons break the title layout when using Firefox and Safari browsers in Accordion widget ([#24925](https://github.com/elementor/elementor/issues/24925))
+* Fix: Missing hover state to dropdown in AI Containers modal
+
+= 3.19.0 - 2024-01-29 =
+
+* New: Generate Container Variations with AI directly from Elementor's Blocks Template Library
+* New: Introducing the 'What's New' screen - Insights on the latest features, enhancements, and updates
+* Tweak: Added responsive controls to Gradient in Background and Background Overlay ([#10247](https://github.com/elementor/elementor/issues/10247), [#6783](https://github.com/elementor/elementor/issues/6783), [#10449](https://github.com/elementor/elementor/issues/10449), [#15377](https://github.com/elementor/elementor/issues/15377), [#17000](https://github.com/elementor/elementor/issues/17000))
+* Tweak: Added caption space option in Basic Gallery and Image Carousel widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo), [#12533](https://github.com/elementor/elementor/issues/12533), [#21128](https://github.com/elementor/elementor/issues/21128))
+* Tweak: Added responsive control to Size Resolution in Testimonial widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Restricted JSON file upload privileges to admin users only for enhanced security and control
+* Tweak: Introduced the ability for admin users to grant JSON file upload permissions to non-admin users in Role Manager
+* Tweak: Raised the minimum required PHP version from 7.3 to 7.4
+* Tweak: Incorporated workflow hints within the media control to improve accessibility
+* Tweak: Incorporated workflow hints within the gallery control to improve accessibility
+* Tweak: Implemented CSS logical properties in Divider widget
+* Tweak: Removed `Size` control for new usage in Heading Widget
+* Tweak: Removed `Size` control for new usage in Button Widget
+* Tweak: Removed `Progress Type` control for new usage in Progress Bar widget
+* Tweak: Added responsive control to Vertical Align in Icon Box widget
+* Tweak: Added responsive control to Image Position in Image Box widget
+* Tweak: Added All Statuses filter in Element Manager
+* Tweak: Added additional size units and custom units in all elements
+* Tweak: Limit pagination for five attempts in Build with AI modal
+* Tweak: Replaced select control with choose control for Image Position in Testimonial widget
+* Tweak: Shifted alignment controls from the Content tab to the Style tab in Heading, Icon, and Image widgets
+* Tweak: Promoted Optimized Gutenberg Loading feature to Stable status
+* Tweak: Promoted Optimize Image Loading feature to Stable status
+* Tweak: Promoted Build with AI feature to Beta status and activated for all users
+* Tweak: Optimized DOM Output feature merged to version
+* Tweak: Added new Notice control for Editor panels
+* Tweak: Added new Alert control for Editor panels
+* Fix: Deprecation notices in console log in History panel ([#19456](https://github.com/elementor/elementor/issues/19456), [#22159](https://github.com/elementor/elementor/issues/22159))
+* Fix: Dark Mode affects the link options modal in Text Editor widget ([#23477](https://github.com/elementor/elementor/issues/23477))
+* Fix: Enhanced code quality checks within the template export process
+* Fix: Added better output escaping to Image Size control attributes
+* Fix: Added better output escaping to URL controls
+* Fix: Justify items not working when grid is set to full width in Grid Container
+* Fix: Asymmetric icons are not displayed correctly in Accordion widget
+* Fix: Share copy options were not functioning properly with VideoPress integration in Video widget
+
 = 3.18.3 - 2023-12-20 =
 
 * Fix: Modified control sanitization to enforce better security policies in Dynamic tags
