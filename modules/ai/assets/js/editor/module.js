@@ -69,7 +69,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					type: aiOptions.type,
 					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: ( value ) => {},
+					setControlValue: () => {},
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),

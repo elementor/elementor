@@ -158,8 +158,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		const offset = this.getOffsetWidth();
-
 		switch ( offsetSide ) {
 			case 'right':
 				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
