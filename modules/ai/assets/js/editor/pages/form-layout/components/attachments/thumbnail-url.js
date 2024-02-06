@@ -1,4 +1,4 @@
-import { Thumbnail, THUMBNAIL_SIZE } from './thumbnail';
+import { Thumbnail } from './thumbnail';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { Box, IconButton } from '@elementor/ui';
