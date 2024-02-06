@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { widgetControlPromotionModalScreenshotTest } from './helper';
+import promotionsHelper from '../pages/promotions/helper';
 
 test.describe( 'Promotion tests @promotions', () => {
 	test( 'Menu Items Promotions - screenshots', async ( { page }, testInfo ) => {
@@ -48,7 +48,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await test.step( 'Free to Pro - Control modals screenshot tests', async () => {
 			const promotionControls = [ 'scrolling-effects', 'mouse-effects', 'sticky-effects' ];
 			for ( const effect of promotionControls ) {
-				await widgetControlPromotionModalScreenshotTest( page, effect );
+				await promotionsHelper.widgetControlPromotionModalScreenshotTest( effect );
 			}
 		} );
 	} );
