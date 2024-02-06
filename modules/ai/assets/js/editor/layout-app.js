@@ -3,31 +3,33 @@ import LayoutContent from './layout-content';
 import { AttachmentPropType, AttachmentsTypesPropType } from './types/attachment';
 import { ConfigProvider, LAYOUT_APP_MODES } from './pages/form-layout/context/config';
 import { RemoteConfigProvider } from './pages/form-layout/context/remote-config';
-import { getUniqueId } from './utils/generate-ids';
+import { getUniqueId, RequestIdsProvider } from './context/requests-ids';
 
 const LayoutApp = ( props ) => {
 	return (
 		<RemoteConfigProvider
 			onError={ props.onClose }
 		>
-			<ConfigProvider
-				mode={ props.mode }
-				attachmentsTypes={ props.attachmentsTypes }
-				onClose={ props.onClose }
-				onConnect={ props.onConnect }
-				onData={ props.onData }
-				onInsert={ props.onInsert }
-				onSelect={ props.onSelect }
-				onGenerate={ props.onGenerate }
-				currentContext={ props.currentContext }
-				hasPro={ props.hasPro }
-				sessionId={ `session-${ getUniqueId() }` }
-				editorSessionId={ props.editorSessionId }
-			>
-				<LayoutContent
-					attachments={ props.attachments }
-				/>
-			</ConfigProvider>
+			<RequestIdsProvider>
+				<ConfigProvider
+					mode={ props.mode }
+					attachmentsTypes={ props.attachmentsTypes }
+					onClose={ props.onClose }
+					onConnect={ props.onConnect }
+					onData={ props.onData }
+					onInsert={ props.onInsert }
+					onSelect={ props.onSelect }
+					onGenerate={ props.onGenerate }
+					currentContext={ props.currentContext }
+					hasPro={ props.hasPro }
+					// SessionId={ `session-${ getUniqueId() }` }
+					// editorSessionId={ props.editorSessionId }
+				>
+					<LayoutContent
+						attachments={ props.attachments }
+					/>
+				</ConfigProvider>
+			</RequestIdsProvider>
 		</RemoteConfigProvider>
 	);
 };

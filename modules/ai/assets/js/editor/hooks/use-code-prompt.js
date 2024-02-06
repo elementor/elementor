@@ -1,17 +1,17 @@
 import { getCustomCode, getCustomCSS } from '../api';
 import usePrompt from './use-prompt';
 
-const getCodeResult = async ( prompt, { codeLanguage, htmlMarkup, elementId } ) => {
+const getCodeResult = async ( payload, { codeLanguage, htmlMarkup, elementId } ) => {
 	if ( 'css' === codeLanguage ) {
-		return getCustomCSS( prompt, htmlMarkup, elementId );
+		return getCustomCSS( { ...payload, htmlMarkup, elementId } );
 	}
 
-	return getCustomCode( prompt, codeLanguage );
+	return getCustomCode( { ...payload, codeLanguage } );
 };
 
 const useCodePrompt = ( { codeLanguage, htmlMarkup, elementId, initialCredits: credits } ) => {
 	const promptData = usePrompt(
-		( promptValue ) => getCodeResult( promptValue, { codeLanguage, htmlMarkup, elementId } ),
+		( payload ) => getCodeResult( payload, { codeLanguage, htmlMarkup, elementId } ),
 		{ credits },
 	);
 

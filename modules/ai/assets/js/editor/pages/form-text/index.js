@@ -62,7 +62,10 @@ const FormText = (
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
 
-	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( { result: initialValue, credits } );
+	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( {
+		result: initialValue,
+		credits,
+	} );
 
 	const [ prompt, setPrompt ] = useState( '' );
 
@@ -86,7 +89,8 @@ const FormText = (
 
 	const resultField = useRef( null );
 
-	const lastRun = useRef( () => {} );
+	const lastRun = useRef( () => {
+	} );
 
 	const autocompleteItems = 'textarea' === type ? textareaAutocomplete : textAutocomplete;
 
@@ -95,13 +99,13 @@ const FormText = (
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		lastRun.current = () => send( prompt );
+		lastRun.current = () => send( { prompt } );
 
 		lastRun.current();
 	};
 
 	const handleCustomInstruction = async ( instruction ) => {
-		lastRun.current = () => send( resultField.current.value, instruction );
+		lastRun.current = () => send( { input: resultField.current.value, instruction } );
 
 		lastRun.current();
 	};
@@ -175,7 +179,8 @@ const FormText = (
 						{
 							promptActions.map( ( { label, icon, value } ) => (
 								<Grid item key={ label }>
-									<PromptAction label={ label } icon={ icon } onClick={ () => handleCustomInstruction( value ) } />
+									<PromptAction label={ label } icon={ icon }
+										onClick={ () => handleCustomInstruction( value ) } />
 								</Grid>
 							) )
 						}
@@ -220,6 +225,7 @@ FormText.propTypes = {
 	credits: PropTypes.number,
 	usagePercentage: PropTypes.number,
 	children: PropTypes.node,
+	sessionId: PropTypes.string,
 };
 
 export default FormText;

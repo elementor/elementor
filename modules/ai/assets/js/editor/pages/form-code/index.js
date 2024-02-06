@@ -47,7 +47,8 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 		},
 	] );
 
-	const lastRun = useRef( () => {} );
+	const lastRun = useRef( () => {
+	} );
 
 	let autocompleteItems = codeHtmlAutocomplete;
 	let promptLibraryLink = '';
@@ -66,7 +67,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 
-		lastRun.current = () => send( prompt );
+		lastRun.current = () => send( { prompt } );
 
 		lastRun.current();
 	};
@@ -101,7 +102,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						/>
 					</Box>
 
-					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } >
+					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt }>
 						<PromptLibraryLink libraryLink={ promptLibraryLink } />
 					</PromptSuggestions> }
 
@@ -117,9 +118,11 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 			{ data.result && (
 				<CodeDisplayWrapper>
-					<ReactMarkdown components={ { code: ( props ) => (
-						<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
-					) } }>
+					<ReactMarkdown components={ {
+						code: ( props ) => (
+							<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
+						),
+					} }>
 						{ data.result }
 					</ReactMarkdown>
 

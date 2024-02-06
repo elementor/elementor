@@ -1,8 +1,12 @@
 import { Button } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { AIIcon } from '@elementor/icons';
+import { useRequestIds } from '../context/requests-ids';
 
 const GenerateButton = ( props ) => {
+	const { setGenerate } = useRequestIds();
+	setGenerate();
+
 	return (
 		<Button
 			variant="contained"

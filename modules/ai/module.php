@@ -315,7 +315,7 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
@@ -325,7 +325,9 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-		$result = $app->get_completion_text( $data['prompt'], $context );
+        $requestIds = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $requestIds );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -349,16 +351,24 @@ class Module extends BaseModule {
 		return $data['context'];
 	}
 
+    private function get_request_ids( $data ) {
+        if ( empty( $data['requestIds'] ) ) {
+            return new \stdClass();
+        }
+
+        return $data['requestIds'];
+    }
+
 	public function ajax_ai_get_edit_text( $data ) {
 		$this->verify_permissions( $data['editor_post_id'] );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['input'] ) ) {
+		if ( empty( $data['payload']['input'] ) ) {
 			throw new \Exception( 'Missing input' );
 		}
 
-		if ( empty( $data['instruction'] ) ) {
+		if ( empty( $data['payload']['instruction'] ) ) {
 			throw new \Exception( 'Missing instruction' );
 		}
 
@@ -368,7 +378,9 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-		$result = $app->get_edit_text( $data['input'], $data['instruction'], $context );
+        $requestIds = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_edit_text( $data['payload']['input'], $data['payload']['instruction'], $context, $requestIds);
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -383,11 +395,11 @@ class Module extends BaseModule {
 	public function ajax_ai_get_custom_code( $data ) {
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['language'] ) ) {
+		if ( empty( $data['payload']['language'] ) ) {
 			throw new \Exception( 'Missing language' );
 		}
 
@@ -397,7 +409,9 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-		$result = $app->get_custom_code( $data['prompt'], $data['language'], $context );
+        $requestIds = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_custom_code( $data['payload']['prompt'], $data['payload']['language'], $context, $requestIds );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -414,15 +428,15 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['html_markup'] ) ) {
+		if ( empty( $data['payload']['html_markup'] ) ) {
 			$data['html_markup'] = '';
 		}
 
-		if ( empty( $data['element_id'] ) ) {
+		if ( empty( $data['payload']['element_id'] ) ) {
 			throw new \Exception( 'Missing element_id' );
 		}
 
@@ -431,8 +445,9 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+        $requestIds = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_custom_css( $data['prompt'], $data['html_markup'], $data['element_id'], $context );
+		$result = $app->get_custom_css( $data['payload']['prompt'], $data['payload']['html_markup'], $data['payload']['element_id'], $context, $requestIds );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}

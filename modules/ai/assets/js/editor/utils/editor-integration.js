@@ -3,8 +3,8 @@ import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
 import { startHistoryLog } from './history';
 import { __ } from '@wordpress/i18n';
-import { generateIds, getUniqueId } from './generate-ids';
 import LayoutAppWrapper from '../layout-app-wrapper';
+import { generateIds } from '../context/requests-ids';
 
 export const closePanel = () => {
 	$e.run( 'panel/close' );
@@ -45,7 +45,6 @@ const VARIATIONS_PROMPTS = [
 ];
 
 const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
-const EDITOR_SESSION_ID = `editor-session-${ getUniqueId() }`;
 
 export const renderLayoutApp = ( options = {
 	parentContainer: null,
@@ -127,7 +126,7 @@ export const renderLayoutApp = ( options = {
 				} }
 				onInsert={ options.onInsert }
 				hasPro={ elementor.helpers.hasPro() }
-				editorSessionId={ EDITOR_SESSION_ID }
+				// EditorSessionId={ window.AI_EDITOR_SESSION_ID }
 			/>
 		</LayoutAppWrapper>,
 		rootElement,

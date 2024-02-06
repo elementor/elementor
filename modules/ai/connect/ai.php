@@ -181,13 +181,14 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_completion_text( $prompt, $context = [] ) {
+	public function get_completion_text( $prompt, $context, $requestIds) {
 		return $this->ai_request(
 			'POST',
 			'text/completion',
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
+                'requestIds' => wp_json_encode($requestIds),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -213,7 +214,7 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_edit_text( $input, $instruction, $context = [] ) {
+	public function get_edit_text( $input, $instruction, $context, $requestIds) {
 		return $this->ai_request(
 			'POST',
 			'text/edit',
@@ -221,13 +222,14 @@ class Ai extends Library {
 				'input' => $input,
 				'instruction' => $instruction,
 				'context' => wp_json_encode( $context ),
+				'requestIds' => wp_json_encode($requestIds),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
 		);
 	}
 
-	public function get_custom_code( $prompt, $language, $context = [] ) {
+	public function get_custom_code( $prompt, $language, $context, $requestIds ) {
 		return $this->ai_request(
 			'POST',
 			'text/custom-code',
@@ -235,13 +237,14 @@ class Ai extends Library {
 				'prompt' => $prompt,
 				'language' => $language,
 				'context' => wp_json_encode( $context ),
+				'requestIds' => wp_json_encode( $requestIds ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
 		);
 	}
 
-	public function get_custom_css( $prompt, $html_markup, $element_id, $context = [] ) {
+	public function get_custom_css( $prompt, $html_markup, $element_id, $context, $requestIds ) {
 		return $this->ai_request(
 			'POST',
 			'text/custom-css',
@@ -250,6 +253,7 @@ class Ai extends Library {
 				'html_markup' => $html_markup,
 				'element_id' => $element_id,
 				'context' => wp_json_encode( $context ),
+                'requestIds' => wp_json_encode( $requestIds),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]

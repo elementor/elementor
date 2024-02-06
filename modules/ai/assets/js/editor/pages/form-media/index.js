@@ -46,6 +46,7 @@ const FormMedia = ( {
 	maybeRenderUpgradeChip,
 	hasSubscription,
 	usagePercentage,
+	sessionId,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -132,6 +133,7 @@ FormMedia.propTypes = {
 	maybeRenderUpgradeChip: PropTypes.func,
 	hasSubscription: PropTypes.bool,
 	usagePercentage: PropTypes.number,
+	sessionId: PropTypes.string,
 };
 
 export default FormMedia;
