@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import promotionsHelper from '../pages/promotions/helper';
+import PromotionsHelper from '../../../pages/promotions/helper';
 
 test.describe( 'Promotion tests @promotions', () => {
+
 	test( 'Menu Items Promotions - screenshots', async ( { page }, testInfo ) => {
 		const wpAdminPage = new WpAdminPage( page, testInfo ),
 			promotionContainer = '.e-feature-promotion';
@@ -27,8 +28,9 @@ test.describe( 'Promotion tests @promotions', () => {
 	} );
 
 	test( 'Modal Promotions screenshots', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.openNewPage(),
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			promotionsHelper = new PromotionsHelper( page, testInfo ),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( 'heading', container );
