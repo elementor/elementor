@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
@@ -46,16 +44,11 @@ test.describe( 'Promotion tests @promotions', () => {
 			}
 		} );
 
-		await test.step( 'Free to Pro - Scrolling Effect Modal', async () => {
-			await editor.promotionModalScreenshotTest( 'scrolling-effects' );
-		} );
-
-		await test.step( 'Free to Pro - Mouse Effect Modal', async () => {
-			await editor.promotionModalScreenshotTest( 'mouse-effects' );
-		} );
-
-		await test.step( 'Free to Pro - Sticky Modal', async () => {
-			await editor.promotionModalScreenshotTest( 'sticky-effects' );
+		await test.step( 'Free to Pro - Control modals screenshot tests', async () => {
+			const promotionControls = [ 'scrolling-effects', 'mouse-effects', 'sticky-effects' ];
+			for ( const effect of promotionControls ) {
+				await editor.promotionModalScreenshotTest( effect );
+			}
 		} );
 	} );
 } );
