@@ -1268,7 +1268,7 @@ class Controls_Manager {
 			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
-				'raw'       => $this->promotion_control_scrolling_effects(),
+				'raw'       => $this->promotion_switcher_control( esc_html__( 'Scrolling Effects', 'elementor' ), 'scrolling-effects' ),
 			]
 		);
 
@@ -1277,7 +1277,7 @@ class Controls_Manager {
 			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
-				'raw'       => $this->promotion_control_mouse_effects(),
+				'raw'       => $this->promotion_switcher_control( esc_html__( 'Mouse Effects', 'elementor' ), 'mouse-effects' ),
 			]
 		);
 
@@ -1286,7 +1286,7 @@ class Controls_Manager {
 			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
-				'raw'       => $this->promotion_control_sticky(),
+				'raw'       => $this->promotion_select_control( esc_html__( 'Sticky', 'elementor' ), 'sticky-effects' ),
 			]
 		);
 
@@ -1298,18 +1298,18 @@ class Controls_Manager {
 		);
 	}
 
-	private function promotion_control_scrolling_effects(): string {
+	private function promotion_switcher_control( $title, $id ): string {
 		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label>
-						' . esc_html__( 'Scrolling Effects', 'elementor' ) . '
+						' . $title . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
 					</span>
 					<div class="elementor-control-input-wrapper">
-						<label class="elementor-switch elementor-control-unit-2 e-control-scrolling-effects-promotion">
+						<label class="elementor-switch elementor-control-unit-2 e-control-' . $id . '-promotion">
 							<input type="checkbox" class="elementor-switch-input" disabled>
 							<span class="elementor-switch-label" data-off="Off"></span>
 							<span class="elementor-switch-handle"></span>
@@ -1320,39 +1320,17 @@ class Controls_Manager {
 		</div>';
 	}
 
-	private function promotion_control_mouse_effects(): string {
-		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
-			<div class="elementor-control-content">
-				<div class="elementor-control-field">
-					<label>
-						' . esc_html__( 'Mouse Effects', 'elementor' ) . '
-					</label>
-					<span class="e-control-motion-effects-promotion__lock-wrapper">
-						<i class="eicon-lock"></i>
-					</span>
-					<div class="elementor-control-input-wrapper">
-						<label class="elementor-switch elementor-control-unit-2 e-control-mouse-effects-promotion">
-							<input type="checkbox" class="elementor-switch-input" disabled>
-							<span class="elementor-switch-label" data-off="Off"></span>
-							<span class="elementor-switch-handle"></span>
-						</label>
-					</div>
-				</div>
-			</div>
-		</div>';
-	}
-
-	private function promotion_control_sticky(): string {
+	private function promotion_select_control( $title, $id ): string {
 		return '<div class="elementor-control-type-select elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field ">
 					<label for="sticky-motion-effect-pro">
-						' . esc_html__( 'Sticky', 'elementor' ) . '
+						' . $title . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
 					</span>
-					<div class="elementor-control-input-wrapper elementor-control-unit-5 e-control-sticky-effects-promotion">
+					<div class="elementor-control-input-wrapper elementor-control-unit-5 e-control-' . $id . '-promotion">
 					<div class="select-promotion elementor-control-unit-5">None</div>
 					</div>
 				</div>
