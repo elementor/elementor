@@ -7,7 +7,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 
 	static options = {};
 
-	getHistory( args ) {
+	getHistory() {
 		return false;
 	}
 
@@ -30,7 +30,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 				event.preventDefault();
 			} )
 			.on( 'blur', () => {
-				_.defer( () => $inputArea.focus() );
+				_.defer( () => $inputArea.trigger( 'focus' ) );
 			} )
 			.on( 'paste', async ( event ) => {
 				event.preventDefault();
@@ -86,10 +86,10 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 				iconClass: 'eicon-close',
 			},
 			onShow: () => {
-				$inputArea.focus();
+				$inputArea.trigger( 'focus' );
 
 				this.getDialog().getElements( 'widgetContent' ).on( 'click', () => {
-					$inputArea.focus();
+					$inputArea.trigger( 'focus' );
 				} );
 			},
 		} );
