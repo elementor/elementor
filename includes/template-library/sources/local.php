@@ -14,6 +14,7 @@ use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categori
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -894,7 +895,7 @@ class Source_Local extends Source_Base {
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Delete the temporary extraction directory, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+				Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 
 				return $extracted_files;
 			}
@@ -904,7 +905,7 @@ class Source_Local extends Source_Base {
 
 				if ( is_wp_error( $import_result ) ) {
 					// Delete the temporary extraction directory, since it's now not necessary.
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+					Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 
 					return $import_result;
 				}
@@ -913,7 +914,7 @@ class Source_Local extends Source_Base {
 			}
 
 			// Delete the temporary extraction directory, since it's now not necessary.
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $path );
@@ -966,7 +967,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 */
 	public function admin_import_template_form() {
-		if ( ! self::is_base_templates_screen() ) {
+		if ( ! self::is_base_templates_screen() || ! User::is_current_user_can_upload_json() ) {
 			return;
 		}
 

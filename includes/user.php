@@ -228,6 +228,18 @@ class User {
 	}
 
 	/**
+	 * Checks whether the current user is allowed to upload JSON files.
+	 *
+	 * Note: The 'json-upload' capability is managed by the Role Manager as a part of its blacklist restrictions.
+	 * In this context, we are negating the user's permission check to use it as a whitelist, allowing uploads.
+	 *
+	 * @return bool Whether the current user can upload JSON files.
+	 */
+	public static function is_current_user_can_upload_json() {
+		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'json-upload' );
+	}
+
+	/**
 	 * Set admin notice as viewed.
 	 *
 	 * Flag the admin notice as viewed by the current user, using an authenticated ajax request.
@@ -389,8 +401,10 @@ class User {
 	public static function set_dismissed_editor_notices( array $data ) {
 		$editor_notices = self::get_dismissed_editor_notices();
 
-		$editor_notices[] = $data['dismissId'];
+		if ( ! in_array( $data['dismissId'], $editor_notices, true ) ) {
+			$editor_notices[] = $data['dismissId'];
 
-		update_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, $editor_notices );
+			update_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, $editor_notices );
+		}
 	}
 }
