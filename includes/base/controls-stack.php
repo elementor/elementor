@@ -446,7 +446,8 @@ abstract class Controls_Stack extends Base_Object {
 				$args['label_on'],
 				$args['label_off'],
 				$args['labels'],
-				$args['handles']
+				$args['handles'],
+				$args['editor_available'],
 			);
 		}
 
