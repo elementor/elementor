@@ -2,7 +2,7 @@
 #elementor-role-manager {
 	max-width: 500px;
 	margin-block-start: 50px;
-	
+
 	h3 {
 		color: $editor-dark;
 		font-weight: normal;
@@ -12,7 +12,7 @@
 	.elementor-settings-form-page {
 		padding: 0;
 	}
-	
+
 	.elementor-role-row {
 		background: #ffffff;
 		color: $editor-dark;
@@ -48,18 +48,29 @@
 
 			.elementor-role-go-pro {
 				display: flex;
+				align-items: center;
 
 				.elementor-role-go-pro__desc {
 					font-weight: 500;
 					font-style: italic;
+					flex-grow: 1;
 				}
 
 				.elementor-role-go-pro__link {
-					text-align: end;
-					flex-grow: 1;
+					display: flex;
 				}
 			}
 		}
+
+		.elementor-role-controls-advanced {
+			> div + div {
+				margin-block-start: 15px;
+			}
+		}
+	}
+
+	.elementor-role-control-warning {
+		color: var(--e-a-color-danger);
 	}
 }
 
