@@ -303,8 +303,7 @@ class Controls_Manager {
 	/**
 	 * Has stacks cache been cleared.
 	 *
-	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current
-	 * runtime.
+	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
 	 *
 	 * @since 3.13.0
 	 * @access private
@@ -1292,7 +1291,7 @@ class Controls_Manager {
 		);
 
 		$controls_stack->add_control(
-			'sticky_pro_divider',
+			'motion_effects_promotion_divider',
 			[
 				'type' => self::DIVIDER,
 			]
