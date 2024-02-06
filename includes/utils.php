@@ -724,13 +724,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		$default = 'div';
-
-		if ( empty( $tag ) ) {
-			return $default;
-		}
-
-		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : $default;
+		return $tag && in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
 
 	/**
