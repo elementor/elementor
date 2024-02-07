@@ -21,6 +21,7 @@ function getGrepInvert() {
 			/@pluginTester2_containers/,
 			/@pluginTester1_sections/,
 			/@pluginTester2_sections/,
+			/@promotions/,
 		];
 	}
 	return [];
