@@ -44,12 +44,12 @@ class Hints {
 			'image-optimization-once' => [
 				self::DISMISSED => 'image-optimization-once',
 				self::CAPABILITY => 'install_plugins',
-				self::DEFINED => 'IMAGE_OPTIMIZER_VERSION',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
 			'image-optimization' => [
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'install_plugins',
-				self::DEFINED => 'IMAGE_OPTIMIZER_VERSION',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
 		];
 		if ( ! $hint_key ) {
