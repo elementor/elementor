@@ -93,7 +93,7 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      fail-fast: ${{inputs.fail_fast || true}}
+      fail-fast: ${{inputs.fail_fast || false}}
       matrix:
         testSuite: [
           'ai',
