@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Promotion tests @promotions', () => {
 
@@ -53,5 +54,21 @@ test.describe( 'Promotion tests @promotions', () => {
 				await promotionsHelper.widgetControlPromotionModalScreenshotTest( effect );
 			}
 		} );
+	} );
+
+	test( 'Context Menu Promotions - Free to Pro ', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			heading = await editor.addWidget( 'heading' );
+
+		await editor.getPreviewFrame().locator( `.elementor-element-${ heading }` ).click( { button: 'right' } );
+		await page.waitForSelector( EditorSelectors.ContextMenu.menu );
+		const saveAsGlobal = editor.getPreviewFrame().locator( `${ EditorSelectors.ContextMenu.saveAsGlobal } a` ),
+			saveAsGlobalHref = 'https://go.elementor.com/go-pro-notes-context-menu/',
+			notes = editor.getPreviewFrame().locator( `${ EditorSelectors.ContextMenu.notes } a` ),
+			notesHref = 'https://go.elementor.com/go-pro-global-widget-context-menu/';
+
+		await expect.soft( notes ).toHaveAttribute( 'href', notesHref );
+		await expect.soft( saveAsGlobal ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 } );
