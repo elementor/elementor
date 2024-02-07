@@ -522,13 +522,19 @@ test.describe( 'Container tests @container', () => {
 		const breakpoints = Breakpoints.getBasic().reverse();
 		const directions = [ 'right', 'down', 'left', 'up' ];
 
-		try {
-			let editor = await wpAdmin.useElementorCleanPost();
-			await editor.addElement( { elType: 'container' }, 'document' );
-			await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
+		const editor = await wpAdmin.openNewPage();
+		await editor.addElement( { elType: 'container' }, 'document' );
+		await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
+	} );
 
+	test( 'Justify icons are displayed correctly for RTL', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const breakpoints = Breakpoints.getBasic().reverse();
+		const directions = [ 'right', 'down', 'left', 'up' ];
+
+		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			editor = await wpAdmin.useElementorCleanPost();
+			const editor = await wpAdmin.openNewPage();
 			await editor.addElement( { elType: 'container' }, 'document' );
 			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
 		} finally {
