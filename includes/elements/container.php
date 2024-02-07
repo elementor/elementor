@@ -387,7 +387,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
 				'separator' => 'after',
-				'frontend_available' => true,
+				'editor_available' => true,
 			];
 		}
 
@@ -446,7 +446,7 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'template',
 				'prefix_class' => 'e-con-',
-				'frontend_available' => true,
+				'editor_available' => true,
 			]
 		);
 
@@ -1682,6 +1682,8 @@ class Container extends Element_Base {
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(
 			'animation',

@@ -20,7 +20,7 @@ const ReplaceBackground = () => {
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
-	const { data, send, isLoading: isGenerating, error, reset } = useReplaceBackground();
+	const { data, send, isLoading: isGenerating, error } = useReplaceBackground();
 
 	const { navigate } = useLocation();
 
