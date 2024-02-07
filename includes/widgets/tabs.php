@@ -163,13 +163,13 @@ class Widget_Tabs extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'horizontal',
 				'options' => [
-					'horizontal' => [
-						'title' => esc_html__( 'Horizontal', 'elementor' ),
-						'icon' => 'eicon-navigation-horizontal',
-					],
 					'vertical' => [
 						'title' => esc_html__( 'Vertical', 'elementor' ),
-						'icon' => 'eicon-navigation-vertical',
+						'icon' => 'eicon-h-align-' . ( is_rtl() ? 'right' : 'left' ),
+					],
+					'horizontal' => [
+						'title' => esc_html__( 'Horizontal', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
 					],
 				],
 				'prefix_class' => 'elementor-tabs-view-',
