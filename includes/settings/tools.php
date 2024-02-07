@@ -60,6 +60,31 @@ class Tools extends Settings_Page {
 		wp_send_json_success();
 	}
 
+	public function ajax_elementor_clear_custom_image_sizes() {
+		check_ajax_referer( 'elementor_clear_custom_image_sizes', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
+		require_once ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php';
+
+		if ( ! defined( 'BFITHUMB_UPLOAD_DIR' ) ) {
+			wp_send_json_error( 'Custom Image Sizes not defined' );
+		}
+
+		$upload_info = wp_upload_dir();
+		$upload_dir = $upload_info['basedir'] . '/' . BFITHUMB_UPLOAD_DIR;
+
+		$path = $upload_dir . '/*';
+
+		foreach ( glob( $path ) as $file_path ) {
+			unlink( $file_path );
+		}
+
+		wp_send_json_success();
+	}
+
 	/**
 	 * Recreate kit.
 	 *
@@ -200,6 +225,7 @@ class Tools extends Settings_Page {
 		}
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
+		add_action( 'wp_ajax_elementor_clear_custom_image_sizes', [ $this, 'ajax_elementor_clear_custom_image_sizes' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
 		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
 
@@ -303,6 +329,14 @@ class Tools extends Settings_Page {
 									'type' => 'raw_html',
 									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files & Data', 'elementor' ) ),
 									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
+								],
+							],
+							'clear_thumbs_cache' => [
+								'label' => esc_html__( 'Regenerate Custom Image Sizes', 'elementor' ),
+								'field_args' => [
+									'type' => 'raw_html',
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-custom-image-sizes">%s</button>', wp_create_nonce( 'elementor_clear_custom_image_sizes' ), esc_html__( 'Regenerate Custom Image Sizes', 'elementor' ) ),
+									'desc' => esc_html__( 'Regenerate custom image sizes created by Elementor.', 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
