@@ -4,17 +4,9 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( { e_global_styleguide: true } );
 		await page.close();
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( { e_global_styleguide: false } );
 	} );
 
 	test( 'Enabling Styleguide Preview user preference enabled Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
