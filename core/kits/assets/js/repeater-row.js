@@ -1,4 +1,4 @@
-import RepeaterRow from '../../../../assets/dev/js/editor/controls/repeater-row';
+const RepeaterRow = require( 'elementor-controls/repeater-row' );
 
 export default class extends RepeaterRow {
 	ui() {

@@ -1,4 +1,4 @@
-import ElementModel from '../../elements/models/element';
+const ElementModel = require( 'elementor-elements/models/element' );
 
 /**
  * @typedef {import('../../container/container')} Container

@@ -1,4 +1,4 @@
-import Element from './element';
+const Element = require( './element' );
 
 /**
  * @typedef {import('../../../editor/elements/models/base-element-model')} BaseModel
