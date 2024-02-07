@@ -1,12 +1,12 @@
 import { config as _config } from 'dotenv';
 import { resolve } from 'path';
+import { defineConfig } from '@playwright/test';
 
 _config( {
 	path: resolve( __dirname, './.env' ),
 } );
 
-/** @type {import('@playwright/test').PlaywrightTestConfig} */
-export default {
+export default defineConfig( {
 	testDir: './tests/',
 
 	timeout: 3 * 60_000,
@@ -28,9 +28,5 @@ export default {
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
 		storageState: './storageState.json',
-		user: {
-			username: process.env.ELEMENTS_REGRESSION_WP_USERNAME || 'admin',
-			password: process.env.ELEMENTS_REGRESSION_WP_PASSWORD || 'password',
-		},
 	},
-};
+} );
