@@ -113,8 +113,6 @@ jobs:
           'pluginTester2_sections'
         ]
     steps:
-      - name: Debug
-        run: echo ${{inputs.fail_fast}}
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
