@@ -126,7 +126,6 @@ export const renderLayoutApp = ( options = {
 				} }
 				onInsert={ options.onInsert }
 				hasPro={ elementor.helpers.hasPro() }
-				// EditorSessionId={ window.AI_EDITOR_SESSION_ID }
 			/>
 		</LayoutAppWrapper>,
 		rootElement,
