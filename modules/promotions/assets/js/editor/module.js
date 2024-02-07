@@ -21,7 +21,8 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerControlBehavior( behaviors, view ) {
-		if ( 'display_conditions_pro' !== view.options.model.get( 'name' ) ) {
+		const promotionsToSkip = [ 'display_conditions_pro', 'scrolling_effects_pro', 'mouse_effects_pro', 'sticky_pro' ];
+		if ( ! promotionsToSkip.includes( view.options.model.get( 'name' ) ) ) {
 			return behaviors;
 		}
 
