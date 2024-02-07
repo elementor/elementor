@@ -895,7 +895,7 @@ class Source_Local extends Source_Base {
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Delete the temporary extraction directory, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+				Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 
 				return $extracted_files;
 			}
@@ -905,7 +905,7 @@ class Source_Local extends Source_Base {
 
 				if ( is_wp_error( $import_result ) ) {
 					// Delete the temporary extraction directory, since it's now not necessary.
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+					Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 
 					return $import_result;
 				}
@@ -914,7 +914,7 @@ class Source_Local extends Source_Base {
 			}
 
 			// Delete the temporary extraction directory, since it's now not necessary.
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $path );
@@ -1412,7 +1412,6 @@ class Source_Local extends Source_Base {
 		);
 
 		printf(
-			/* translators: 1: Taxonomy slug, 2: Label text. */
 			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
 			esc_attr( self::TAXONOMY_CATEGORY_SLUG ),
 			esc_html_x( 'Filter by category', 'Template Library', 'elementor' )

@@ -381,12 +381,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'autoplay',
 			[
 				'label' => esc_html__( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'frontend_available' => true,
 			]
 		);
@@ -395,12 +394,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_hover',
 			[
 				'label' => esc_html__( 'Pause on Hover', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'condition' => [
 					'autoplay' => 'yes',
 				],
@@ -413,12 +411,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_interaction',
 			[
 				'label' => esc_html__( 'Pause on Interaction', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'condition' => [
 					'autoplay' => 'yes',
 				],
@@ -445,12 +442,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'infinite',
 			[
 				'label' => esc_html__( 'Infinite Loop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'frontend_available' => true,
 			]
 		);

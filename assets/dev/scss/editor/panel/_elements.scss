@@ -77,12 +77,17 @@
 .elementor-panel {
 
 	.elementor-element {
+		font-family: var(--e-a-font-family);
+		color: var(--e-a-color-txt);
+		line-height: 1;
 		text-align: center;
 		border: var(--e-a-border-bold);
 		border-radius: 3px;
 		cursor: move;
 		position: relative;
 		transition: var(--e-a-transition-hover);
+		width: 100%;
+		background-color: transparent;
 
 		&--promotion {
 
@@ -92,7 +97,8 @@
 			}
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-bg-hover);
 			border-color: var(--e-a-border-color-bold);
 

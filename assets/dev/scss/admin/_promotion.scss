@@ -94,7 +94,7 @@ body.rtl .e-feature-promotion {
 	.e-feature-promotion {
 		display: flex;
 		flex-direction: column;
-		justify-content: start;
+		justify-content: flex-start;
 		width: 90%;
 
 		&_data {
