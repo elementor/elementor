@@ -132,21 +132,6 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					} );
 			} );
 
-			$( '#elementor-clear-custom-image-sizes' ).on( 'click', function( event ) {
-				event.preventDefault();
-				var $thisButton = $( this );
-
-				$thisButton.removeClass( 'success' ).addClass( 'loading' );
-
-				$.post( ajaxurl, {
-					action: 'elementor_clear_custom_image_sizes',
-					_nonce: $thisButton.data( 'nonce' ),
-				} )
-					.done( function() {
-						$thisButton.removeClass( 'loading' ).addClass( 'success' );
-					} );
-			} );
-
 			$( '#elementor-library-sync-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );
