@@ -246,6 +246,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.19.2 - 2024-02-07 =
+
+* Fix: Integration script not functioning as expected in Build with AI feature
+
 = 3.19.1 - 2024-02-05 =
 
 * Tweak: Improved text-based AI capabilities within the widget type
