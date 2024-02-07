@@ -153,7 +153,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'weixin',
 						'whatsapp',
 						'wordpress',
-						'x',
+						'x-twitter',
 						'xing',
 						'yelp',
 						'youtube',

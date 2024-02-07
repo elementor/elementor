@@ -255,7 +255,7 @@ class Migrations {
 		}
 
 		foreach ( $element['settings'] as $key => $value ) {
-			if ( ! empty( $value['value'] ) && str_contains( $value['value'], ' fa-' ) ) {
+			if ( ! empty( $value['value'] ) && is_string( $value['value'] ) && str_contains( $value['value'], ' fa-' ) ) {
 				$substitute = self::fa_icon_value_migration( $value );
 				if ( is_array( $value ) && empty( array_diff_assoc( $substitute, $value ) ) ) {
 					continue;
