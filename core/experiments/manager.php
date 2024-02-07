@@ -447,7 +447,10 @@ class Manager extends Base_Object {
 			),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
-			'hidden' => false,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.20.0',
+			],
 			'dependencies' => [
 				'container',
 			],
