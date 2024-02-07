@@ -100,7 +100,7 @@ class Widget_Video extends Widget_Base {
 	 */
 	protected function get_upsale_data() {
 		return [
-			'condition' => ! Utils::has_pro(),
+			'display_condition' => ! Utils::has_pro(),
 			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( "Grab your visitors' attention", 'elementor' ),
