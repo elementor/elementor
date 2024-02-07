@@ -170,7 +170,7 @@ class Module extends BaseModule {
 					'elementor-ai-integration',
 					$remote_config['config']['remoteIntegrationUrl'],
 					[
-						'elementor-editor',
+						'elementor-ai',
 					],
 					ELEMENTOR_VERSION,
 					true
