@@ -371,7 +371,7 @@ class Manager extends Base_Object {
 				esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.17.0',
