@@ -36,10 +36,7 @@ export const setGetStarted = () => request( 'ai_set_get_started' );
 
 export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
 
-export const getTextToImageGeneration = ( prompt, promptSettings ) => request( 'ai_get_text_to_image', {
-	prompt,
-	promptSettings,
-} );
+export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_image', { payload } );
 
 export const getImageToImageGeneration = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image', {
 	prompt,

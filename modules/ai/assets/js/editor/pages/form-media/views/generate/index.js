@@ -41,7 +41,10 @@ const Generate = () => {
 
 	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType } );
 
-	const { imagesData: suggestedImages, isLoading: isPreloading } = useSuggestedImages( { selectedType: settings[ IMAGE_TYPE ] } );
+	const {
+		imagesData: suggestedImages,
+		isLoading: isPreloading,
+	} = useSuggestedImages( { selectedType: settings[ IMAGE_TYPE ] } );
 
 	const promptPlaceholder = getPromptPlaceholder( suggestedImages );
 
@@ -57,7 +60,7 @@ const Generate = () => {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		send( prompt, settings );
+		send( { prompt, settings } );
 	};
 
 	const handleCopyPrompt = ( { prompt: selectedPrompt, imageType } ) => {
@@ -170,7 +173,8 @@ const Generate = () => {
 										>
 											<ImageActions>
 												<ImageActions.UseImage onClick={ () => use( suggestedPrompt ) } fullWidth />
-												<ImageActions.CopyIcon onClick={ () => handleCopyPrompt( suggestedPrompt ) } />
+												<ImageActions.CopyIcon
+													onClick={ () => handleCopyPrompt( suggestedPrompt ) } />
 												<ImageActions.EditIcon onClick={ () => edit( suggestedPrompt ) } />
 											</ImageActions>
 										</Gallery.Image>

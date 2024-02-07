@@ -380,7 +380,7 @@ class Module extends BaseModule {
 
         $requestIds = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_edit_text( $data['payload']['input'], $data['payload']['instruction'], $context, $requestIds);
+		$result = $app->get_edit_text( $data, $context, $requestIds );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -411,7 +411,7 @@ class Module extends BaseModule {
 
         $requestIds = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_custom_code( $data['payload']['prompt'], $data['payload']['language'], $context, $requestIds );
+		$result = $app->get_custom_code( $data, $context, $requestIds );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -447,7 +447,7 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
         $requestIds = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_custom_css( $data['payload']['prompt'], $data['payload']['html_markup'], $data['payload']['element_id'], $context, $requestIds );
+		$result = $app->get_custom_css( $data, $context, $requestIds );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -488,7 +488,7 @@ class Module extends BaseModule {
 	public function ajax_ai_get_text_to_image( $data ) {
 		$this->verify_permissions( $data['editor_post_id'] );
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
@@ -499,8 +499,9 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+        $requestIds = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_text_to_image( $data['prompt'], $data['promptSettings'], $context );
+		$result = $app->get_text_to_image( $data, $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -535,12 +536,13 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+        $requestIds = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image( [
 			'prompt' => $data['prompt'],
 			'promptSettings' => $data['promptSettings'],
 			'attachment_id' => $data['image']['id'],
-		], $context );
+		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
