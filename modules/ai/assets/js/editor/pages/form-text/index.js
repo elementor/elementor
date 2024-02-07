@@ -225,7 +225,6 @@ FormText.propTypes = {
 	credits: PropTypes.number,
 	usagePercentage: PropTypes.number,
 	children: PropTypes.node,
-	sessionId: PropTypes.string,
 };
 
 export default FormText;
