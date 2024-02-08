@@ -40,7 +40,7 @@ const OutPainting = () => {
 		// The fallback instruction should be hidden for the user.
 		const finalPrompt = prompt || 'Fill based on the surroundings';
 
-		send( finalPrompt, settings, editImage, mask );
+		send( { prompt: finalPrompt, settings, image: editImage, mask } );
 	};
 
 	return (

@@ -519,15 +519,15 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['promptSettings'] ) ) {
+		if ( empty( $data['payload']['settings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
@@ -539,9 +539,9 @@ class Module extends BaseModule {
         $requestIds = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image( [
-			'prompt' => $data['prompt'],
-			'promptSettings' => $data['promptSettings'],
-			'attachment_id' => $data['image']['id'],
+			'prompt' => $data['payload']['prompt'],
+			'promptSettings' => $data['payload']['settings'],
+			'attachment_id' => $data['payload']['image']['id'],
 		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
@@ -560,11 +560,11 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['promptSettings'] ) ) {
+		if ( empty( $data['payload']['promptSettings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
@@ -573,11 +573,12 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+        $requestIds = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_upscale( [
-			'promptSettings' => $data['promptSettings'],
-			'attachment_id' => $data['image']['id'],
-		], $context );
+			'promptSettings' => $data['payload']['promptSettings'],
+			'attachment_id' => $data['payload']['image']['id'],
+		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -595,11 +596,11 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Prompt Missing' );
 		}
 
@@ -608,11 +609,12 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+        $requestIds = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_replace_background( [
-			'attachment_id' => $data['image']['id'],
-			'prompt' => $data['prompt'],
-		], $context );
+			'attachment_id' => $data['payload']['image']['id'],
+			'prompt' => $data['payload']['prompt'],
+		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -630,7 +632,7 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
@@ -639,10 +641,10 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-
+        $requestIds = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_remove_background( [
-			'attachment_id' => $data['image']['id'],
-		], $context );
+			'attachment_id' => $data['payload']['image']['id'],
+		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -660,15 +662,15 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['promptSettings'] ) ) {
+		if ( empty( $data['payload']['settings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
@@ -676,18 +678,19 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		if ( empty( $data['mask'] ) ) {
+		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Mask' );
 		}
 
 		$context = $this->get_request_context( $data );
+        $requestIds = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_mask( [
-			'prompt' => $data['prompt'],
-			'promptSettings' => $data['promptSettings'],
-			'attachment_id' => $data['image']['id'],
-			'mask' => $data['mask'],
-		], $context );
+			'prompt' => $data['payload']['prompt'],
+			'promptSettings' => $data['payload']['settings'],
+			'attachment_id' => $data['payload']['image']['id'],
+			'mask' => $data['payload']['mask'],
+		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -704,7 +707,7 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
@@ -712,16 +715,16 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		if ( empty( $data['mask'] ) ) {
+		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Expended Image' );
 		}
 
 		$context = $this->get_request_context( $data );
-
+        $requestIds = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_out_painting( [
-			'prompt' => $data['prompt'],
-			'mask' => $data['mask'],
-		], $context );
+			'prompt' => $data['payload']['prompt'],
+			'mask' => $data['payload']['mask'],
+		], $context, $requestIds );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );

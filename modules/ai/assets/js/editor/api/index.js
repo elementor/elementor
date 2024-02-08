@@ -38,37 +38,17 @@ export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedb
 
 export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_image', { payload } );
 
-export const getImageToImageGeneration = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image', {
-	prompt,
-	promptSettings,
-	image,
-} );
+export const getImageToImageGeneration = ( payload ) => request( 'ai_get_image_to_image', { payload } );
 
-export const getImageToImageMaskGeneration = ( prompt, promptSettings, image, mask ) => request( 'ai_get_image_to_image_mask', {
-	prompt,
-	promptSettings,
-	image,
-	mask,
-} );
+export const getImageToImageMaskGeneration = ( payload ) => request( 'ai_get_image_to_image_mask', { payload } );
 
-export const getImageToImageOutPainting = ( prompt, promptSettings, image, mask ) => request( 'ai_get_image_to_image_outpainting', {
-	prompt,
-	promptSettings,
-	mask,
-} );
+export const getImageToImageOutPainting = ( payload ) => request( 'ai_get_image_to_image_outpainting', { payload } );
 
-export const getImageToImageUpscale = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image_upscale', {
-	prompt,
-	promptSettings,
-	image,
-} );
+export const getImageToImageUpscale = ( payload ) => request( 'ai_get_image_to_image_upscale', { payload } );
 
-export const getImageToImageRemoveBackground = ( image ) => request( 'ai_get_image_to_image_remove_background', { image } );
+export const getImageToImageRemoveBackground = ( payload ) => request( 'ai_get_image_to_image_remove_background', { payload } );
 
-export const getImageToImageReplaceBackground = ( prompt, image ) => request( 'ai_get_image_to_image_replace_background', {
-	prompt,
-	image,
-} );
+export const getImageToImageReplaceBackground = ( payload ) => request( 'ai_get_image_to_image_replace_background', { payload } );
 
 export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_image_remove_text', { image } );
 

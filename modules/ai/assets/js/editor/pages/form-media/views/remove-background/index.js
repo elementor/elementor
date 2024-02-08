@@ -28,7 +28,7 @@ const RemoveBackground = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-		send( editImage );
+		send( { image: editImage } );
 	};
 
 	return (
@@ -50,7 +50,7 @@ const RemoveBackground = () => {
 							disabled={ isLoading }
 							onClick={ () => navigate( LOCATIONS.GENERATE ) } />
 					) : (
-						<GenerateSubmit disabled={ isLoading } >
+						<GenerateSubmit disabled={ isLoading }>
 							{ __( 'Remove Background', 'elementor' ) }
 						</GenerateSubmit>
 					) }

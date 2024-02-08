@@ -24,7 +24,10 @@ const Variations = () => {
 
 	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
 
-	const { settings, updateSettings } = usePromptSettings( { aspectRatio: initialAspectRatio, imageWeight: IMAGE_WEIGHT_DEFAULT } );
+	const { settings, updateSettings } = usePromptSettings( {
+		aspectRatio: initialAspectRatio,
+		imageWeight: IMAGE_WEIGHT_DEFAULT,
+	} );
 
 	const { data, send, isLoading: isGenerating, error } = useImageToImage();
 
@@ -37,7 +40,7 @@ const Variations = () => {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		send( prompt, settings, editImage );
+		send( { prompt, settings, image: editImage } );
 	};
 
 	return (
@@ -128,8 +131,6 @@ const Variations = () => {
 	);
 };
 
-Variations.propTypes = {
-
-};
+Variations.propTypes = {};
 
 export default Variations;

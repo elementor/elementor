@@ -29,7 +29,7 @@ const ReplaceBackground = () => {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		send( prompt, editImage );
+		send( { prompt, image: editImage } );
 	};
 
 	return (
@@ -59,7 +59,8 @@ const ReplaceBackground = () => {
 						{ data?.result ? __( 'Generate Again', 'elementor' ) : __( 'Replace Background', 'elementor' ) }
 					</GenerateSubmit>
 
-					{ data?.result && <NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
+					{ data?.result &&
+					<NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
 				</ImageForm>
 			</View.Panel>
 
