@@ -73,10 +73,24 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'description' => esc_html__( 'Gain complete freedom to design every slide with Elementor"s Pro Carousel.', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-image-carousel-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
 	}
 
@@ -381,12 +395,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'autoplay',
 			[
 				'label' => esc_html__( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'frontend_available' => true,
 			]
 		);
@@ -395,12 +408,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_hover',
 			[
 				'label' => esc_html__( 'Pause on Hover', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'condition' => [
 					'autoplay' => 'yes',
 				],
@@ -413,12 +425,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_interaction',
 			[
 				'label' => esc_html__( 'Pause on Interaction', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'condition' => [
 					'autoplay' => 'yes',
 				],
@@ -445,12 +456,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'infinite',
 			[
 				'label' => esc_html__( 'Infinite Loop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'frontend_available' => true,
 			]
 		);
