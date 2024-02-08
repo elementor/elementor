@@ -1,4 +1,4 @@
-const ElementModel = require( './element' );
+import * as ElementModel from './element';
 
 export default class Widget extends ElementModel {
 	isValidChild() {

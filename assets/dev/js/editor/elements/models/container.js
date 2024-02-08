@@ -1,4 +1,4 @@
-const ElementModel = require( './element' );
+import * as ElementModel from './element';
 
 export default class Container extends ElementModel {
 	/**

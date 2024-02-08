@@ -1,6 +1,5 @@
+import * as ControlBaseDataView from './base-data';
 import ColorPicker from '../utils/color-picker';
-
-const ControlBaseDataView = require( './base-data' );
 
 export default class extends ControlBaseDataView {
 	ui() {
