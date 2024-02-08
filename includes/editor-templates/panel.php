@@ -186,7 +186,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		</div>
 	<# } #>
 
-	<# if ( elementData.upsale_data && elementData.upsale_data.display_condition ) { #>
+	<# if ( elementData.upsale_data && elementData.upsale_data.condition ) { #>
 	<div class="elementor-nerd-box elementor-nerd-box--upsale">
 		<# if ( elementData.upsale_data.image ) { #>
 		<img class="elementor-nerd-box-icon" src="{{ elementData.upsale_data.image }}" loading="lazy" alt="{{ elementData.upsale_data.image_alt }}" />

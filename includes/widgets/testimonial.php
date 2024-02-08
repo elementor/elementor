@@ -85,7 +85,7 @@ class Widget_Testimonial extends Widget_Base {
 	 */
 	protected function get_upsale_data() {
 		return [
-			'display_condition' => ! Utils::has_pro(),
+			'condition' => ! Utils::has_pro(),
 			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'description' => esc_html__( 'Use interesting masonry layouts and other overlay features with Elementor\'s Pro Gallery widget.', 'elementor' ),
