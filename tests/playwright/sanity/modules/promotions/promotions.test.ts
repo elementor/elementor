@@ -66,7 +66,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await editor.getPreviewFrame().locator( `.elementor-element-${ heading }` ).click( { button: 'right' } );
 		await page.waitForSelector( EditorSelectors.ContextMenu.menu );
 		const saveAsGlobal = page.locator( EditorSelectors.ContextMenu.saveAsGlobal ),
-			saveAsGlobalPromotionLinkContainer = saveAsGlobal.locator('a' ),
+			saveAsGlobalPromotionLinkContainer = saveAsGlobal.locator( 'a' ),
 			saveAsGlobalHref = 'https://go.elementor.com/go-pro-global-widget-context-menu/',
 
 			notes = page.locator( EditorSelectors.ContextMenu.notes ),
