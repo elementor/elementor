@@ -470,6 +470,19 @@ class Icons_Manager {
 	}
 
 	/**
+	 * Add settings
+	 *
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
+	public function add_settings( $settings ) {
+		$settings['icons']['current_fa_version'] = self::get_current_fa_version();
+
+		return $settings;
+	}
+
+	/**
 	 * Icons Manager constructor
 	 */
 	public function __construct() {
@@ -482,6 +495,7 @@ class Icons_Manager {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 		}
 
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_settings' ] );
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fa_legacy_css' ] );
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}

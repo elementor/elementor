@@ -170,14 +170,14 @@ class Widget_Icon_List extends Widget_Base {
 					[
 						'text' => esc_html__( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas fa-xmark',
+							'value' => 'fas ' . Icons_Migrations::is_migration_required() ? 'fa-times' : 'fa-xmark',
 							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => esc_html__( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas fa-circle-dot',
+							'value' => 'fas ' . Icons_Migrations::is_migration_required() ? 'fa-dot-circle' : 'fa-circle-dot',
 							'library' => 'fa-solid',
 						],
 					],

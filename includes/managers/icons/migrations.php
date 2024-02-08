@@ -185,7 +185,7 @@ class Migrations {
 		self::update_migration_required_flags();
 
 		$success_title = sprintf(
-			/* translators: %s: Version number. */
+			/* translators: %s is the version number. */
 			esc_html__( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ),
 			Icons_Manager::get_current_fa_version()
 		);

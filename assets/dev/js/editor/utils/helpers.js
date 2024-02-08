@@ -438,7 +438,9 @@ module.exports = {
 	},
 
 	showFontAwesomeMigrationDialog() {
-		const dialogTitle = __( 'Ready for the new icon library?', 'elementor' );
+		const currentFaVersion = elementor.config.icons.current_fa_version;
+		/* translators: %s is the version number. */
+		const dialogTitle = __( 'Ready for the new Font Awesome %s icon library?', 'elementor' ).replace( '%s', currentFaVersion );
 
 		const dialogMessage = elementor.config.user.is_administrator
 			? (
