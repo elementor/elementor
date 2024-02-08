@@ -56,19 +56,28 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test( 'Context Menu Promotions - Free to Pro ', async ( { page }, testInfo ) => {
+	test( 'Context Menu Promotions - Free to Pro', async ( { page }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			heading = await editor.addWidget( 'heading' );
 
+		// Act.
 		await editor.getPreviewFrame().locator( `.elementor-element-${ heading }` ).click( { button: 'right' } );
 		await page.waitForSelector( EditorSelectors.ContextMenu.menu );
-		const saveAsGlobal = editor.getPreviewFrame().locator( `${ EditorSelectors.ContextMenu.saveAsGlobal } a` ),
-			saveAsGlobalHref = 'https://go.elementor.com/go-pro-notes-context-menu/',
-			notes = editor.getPreviewFrame().locator( `${ EditorSelectors.ContextMenu.notes } a` ),
-			notesHref = 'https://go.elementor.com/go-pro-global-widget-context-menu/';
+		const saveAsGlobal = page.locator( EditorSelectors.ContextMenu.saveAsGlobal ),
+			saveAsGlobalPromotionLinkContainer = saveAsGlobal.locator('a' ),
+			saveAsGlobalHref = 'https://go.elementor.com/go-pro-global-widget-context-menu/',
 
-		await expect.soft( notes ).toHaveAttribute( 'href', notesHref );
-		await expect.soft( saveAsGlobal ).toHaveAttribute( 'href', saveAsGlobalHref );
+			notes = page.locator( EditorSelectors.ContextMenu.notes ),
+			notesPromotionLinkContainer = notes.locator( 'a' ),
+			notesHref = 'https://go.elementor.com/go-pro-notes-context-menu/';
+
+		// Assert .
+		await expect.soft( saveAsGlobal ).toHaveCSS( 'opacity', '0.5' );
+		await expect.soft( notes ).toHaveCSS( 'opacity', '0.5' );
+
+		await expect.soft( notesPromotionLinkContainer ).toHaveAttribute( 'href', notesHref );
+		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 } );

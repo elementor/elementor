@@ -89,18 +89,22 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	toggleActionUsability( action, state ) {
-		if ( action.promotion && ! action.$item.find( 'a.elementor-context-menu-list__item__shortcut--link-fullwidth' )[ 0 ] ) {
-			this.addPromotionLink( action );
-		}
+		this.maybeAddPromotionLink( action );
 
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
 	},
 
-	addPromotionLink( action ) {
-		if ( action.promotion ) {
+	maybeAddPromotionLink( action ) {
+		if ( this.shouldAddPromotionLink( action ) ) {
 			const iconContainer = action.$item.find( 'div.elementor-context-menu-list__item__shortcut' )[ 0 ];
 			iconContainer.insertAdjacentHTML( 'beforeend', `<a href='${ action.promotion }' target="_blank" class="${ this.getSettings( 'classes.promotionLink' ) }"></a>` );
 		}
+	},
+
+	shouldAddPromotionLink( action ) {
+		return !! ( action.promotion &&
+			! action.$item.find( 'a.elementor-context-menu-list__item__shortcut--link-fullwidth' )[ 0 ] &&
+			action.$item.find( 'i.eicon-pro-icon' )[ 0 ] );
 	},
 
 	/**
