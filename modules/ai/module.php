@@ -117,7 +117,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Build with AI', 'elementor' ),
 			'description' => esc_html__( 'Tap into the potential of AI to easily create and customize containers to your specifications, right within Elementor. This feature comes packed with handy AI tools, including generation, variations, and URL references.', 'elementor' ),
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'dependencies' => [
 				'container',
 			],
@@ -163,14 +163,14 @@ class Module extends BaseModule {
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
 
 		if ( $this->get_ai_app()->is_connected() && ! empty( $config['is_get_started'] ) ) {
-			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config' );
+			$remote_config = Utils::get_cached_callback( [ $this->get_ai_app(), 'get_remote_config' ], 'ai_remote_config-' . get_current_user_id(), HOUR_IN_SECONDS );
 
 			if ( ! is_wp_error( $remote_config ) && ! empty( $remote_config['config']['remoteIntegrationUrl'] ) ) {
-				wp_enqueue_scripts(
+				wp_enqueue_script(
 					'elementor-ai-integration',
 					$remote_config['config']['remoteIntegrationUrl'],
 					[
-						'elementor-editor',
+						'elementor-ai',
 					],
 					ELEMENTOR_VERSION,
 					true

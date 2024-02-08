@@ -21,37 +21,40 @@ function PluginsTable( {
 		<Text className="e-app-import-export-plugins-table__cell-content">
 			{ cellTextProps.text }
 		</Text>
-		),
-		CellLink = ( cellLinkProps ) => (
-			<InlineLink url={ cellLinkProps.url } underline="none">
-				{ `${ __( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
-			</InlineLink>
-		),
-		getHeaders = () => {
-			if ( ! withHeader ) {
-				return [];
-			}
+	);
 
-			const headers = [ 'Plugin Name', 'Version' ];
+	const CellLink = ( cellLinkProps ) => (
+		<InlineLink url={ cellLinkProps.url } underline="none">
+			{ `${ __( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
+		</InlineLink>
+	);
 
-			if ( withStatus ) {
-				headers.splice( 1, 0, 'Status' );
-			}
+	const getHeaders = () => {
+		if ( ! withHeader ) {
+			return [];
+		}
 
-			return headers;
-		},
-		rows = plugins.map( ( { name, status, version, plugin_uri: pluginUrl } ) => {
-			const row = [
-				<CellText text={ name } key={ name } />,
-				<CellLink text={ version } url={ pluginUrl } key={ name } />,
-			];
+		const headers = [ 'Plugin Name', 'Version' ];
 
-			if ( withStatus ) {
-				row.splice( 1, 0, <CellText text={ status } key={ name } /> );
-			}
+		if ( withStatus ) {
+			headers.splice( 1, 0, 'Status' );
+		}
 
-			return row;
-		} );
+		return headers;
+	};
+
+	const rows = plugins.map( ( { name, status, version, plugin_uri: pluginUrl } ) => {
+		const row = [
+			<CellText text={ name } key={ name } />,
+			<CellLink text={ version } url={ pluginUrl } key={ name } />,
+		];
+
+		if ( withStatus ) {
+			row.splice( 1, 0, <CellText text={ status } key={ name } /> );
+		}
+
+		return row;
+	} );
 
 	return (
 		<DataTable

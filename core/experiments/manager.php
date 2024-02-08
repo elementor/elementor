@@ -158,6 +158,10 @@ class Manager extends Base_Object {
 	private function install_compare( $version ) {
 		$installs_history = Upgrade_Manager::get_installs_history();
 
+		if ( empty( $installs_history ) ) {
+			return false;
+		}
+
 		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
 
 		return version_compare(
@@ -331,9 +335,11 @@ class Manager extends Base_Object {
 			'name' => 'e_optimized_assets_loading',
 			'title' => esc_html__( 'Improved Asset Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'description' => sprintf(
+				'%1$s <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">%2$s</a>',
+				esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
+			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
@@ -343,9 +349,11 @@ class Manager extends Base_Object {
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'description' => sprintf(
+				'%1$s <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">%2$s</a>',
+				esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
+			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
@@ -358,10 +366,12 @@ class Manager extends Base_Object {
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'description' => sprintf(
+				'%1$s <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">%2$s</a>',
+				esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
+			),
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.17.0',
@@ -373,9 +383,11 @@ class Manager extends Base_Object {
 			'name' => 'additional_custom_breakpoints',
 			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' )
-						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
-						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
+			'description' => sprintf(
+				'%1$s <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">%2$s</a>',
+				esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
+			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
@@ -389,12 +401,18 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
-			'description' => sprintf( esc_html__(
-				'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
-				This experiment replaces the current section/column structure, but you\'ll still keep your existing
-				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
-				'elementor'
-			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
+			'description' => sprintf(
+				esc_html__(
+					'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
+					This experiment replaces the current section/column structure, but you\'ll still keep your existing
+					Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
+					'elementor'
+				),
+				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
+				'</a>',
+				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">',
+				'</a>'
+			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_INACTIVE,
 			'new_site' => [
@@ -403,10 +421,9 @@ class Manager extends Base_Object {
 			],
 			'messages' => [
 				'on_deactivate' => sprintf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Container-based content will be hidden from your site and may not be recoverable in all cases. %1$sLearn more%2$s', 'elementor' ),
-					'<a target="_blank" href="https://go.elementor.com/wp-dash-deactivate-container/">',
-					'</a>'
+					'%1$s <a target="_blank" href="https://go.elementor.com/wp-dash-deactivate-container/">%2$s</a>',
+					esc_html__( 'Container-based content will be hidden from your site and may not be recoverable in all cases.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' ),
 				),
 			],
 		] );
@@ -416,26 +433,24 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
 			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.11.0',
-			],
-			'default' => self::STATE_INACTIVE,
+			'default' => self::STATE_ACTIVE,
 		] );
 
 		$this->add_feature( [
 			'name' => 'container_grid',
 			'title' => esc_html__( 'Grid Container', 'elementor' ),
 			'tag' => esc_html__( 'Feature', 'elementor' ),
-			/* translators: %1$s Link open tag, %2$s: Link close tag. */
-			'description' => sprintf( esc_html__(
-				'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements. %1$sLearn more%2$s',
-				'elementor'
-			), '<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">', '</a>'),
-
+			'description' => sprintf(
+				'%1$s <a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">%2$s</a>',
+				esc_html__( 'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' ),
+			),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
-			'hidden' => false,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.20.0',
+			],
 			'dependencies' => [
 				'container',
 			],
@@ -583,8 +598,8 @@ class Manager extends Base_Object {
 		</h2>
 		<p class="e-experiment__description">
 			<?php
-			printf(
-			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+			echo sprintf(
+				/* translators: %1$s Link open tag, %2$s: Link close tag. */
 				esc_html__( 'Personalize your Elementor experience by controlling which features and experiments are active on your site. Help make Elementor better by %1$ssharing your experience and feedback with us%2$s.', 'elementor' ),
 				'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
 				'</a>'
@@ -593,12 +608,11 @@ class Manager extends Base_Object {
 		</p>
 		<p class="e-experiment__description">
 			<?php
-				printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'To use an experiment or feature on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time. %1$sLearn More.%2$s', 'elementor' ),
-					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
-					'</a>'
-				);
+			echo sprintf(
+				'%1$s <a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">%2$s</a>',
+				esc_html__( 'To use an experiment or feature on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' ),
+			);
 			?>
 		</p>
 
@@ -627,6 +641,7 @@ class Manager extends Base_Object {
 		$control_name = $this->get_feature_option_key( $feature['name'] );
 
 		$status = sprintf(
+			/* translators: %s Release status. */
 			esc_html__( 'Status: %s', 'elementor' ),
 			$this->release_statuses[ $feature['release_status'] ]
 		);

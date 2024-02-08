@@ -113,6 +113,16 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'general' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array|null Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return null;
 	}
@@ -1123,9 +1133,9 @@ abstract class Widget_Base extends Element_Base {
 		$this->add_control(
 			'deprecation_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => $message,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => $message,
 				'separator' => 'after',
 			]
 		);
