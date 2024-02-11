@@ -141,11 +141,11 @@ trait Button_Trait {
 				'options' => [
 					'left' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => "eicon-h-align-left",
+						'icon' => 'eicon-h-align-left',
 					],
 					'right' => [
 						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => "eicon-h-align-right",
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
