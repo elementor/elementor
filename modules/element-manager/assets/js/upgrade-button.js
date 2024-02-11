@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 
 export const UpgradeButton = ( props ) => {
 	return (

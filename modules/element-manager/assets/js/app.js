@@ -65,7 +65,6 @@ export const App = () => {
 	const [ promotionData, setPromotionData ] = useState( [] );
 	const { manager_permissions: managerPermissions, element_manager: elementManager } = promotionData;
 
-
 	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
 			return 0;
