@@ -113,6 +113,16 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'general' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array|null Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return null;
 	}
