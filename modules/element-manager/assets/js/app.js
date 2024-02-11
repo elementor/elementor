@@ -62,6 +62,7 @@ export const App = () => {
 	const [ noticeData, setNoticeData ] = useState( null );
 
 	const [ widgetsRoleRestrictions, setWidgetsRoleRestrictions ] = useState( null );
+	const [ promotionURLS, setPromotionURLS ] = useState( [] );
 
 	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
@@ -214,6 +215,7 @@ export const App = () => {
 			setWidgetsDisabled( appData.disabled_elements );
 			setWidgets( appData.widgets );
 			setPromotionWidgets( appData.promotion_widgets );
+			setPromotionURLS( appData.promotion_urls );
 
 			if ( appData.additional_data?.roles ) {
 				setRoles( appData.additional_data.roles );
@@ -507,8 +509,8 @@ export const App = () => {
 														<UpgradeButton
 															href={
 																promotionWidgets.length
-																	? 'https://go.elementor.com/go-pro-element-manager-permissions/'
-																	: 'https://go.elementor.com/go-pro-advanced-element-manager-permissions/'
+																	? promotionURLS.manager_permissions.pro
+																	: promotionURLS.manager_permissions.advanced
 															}
 															size={ 'small' }
 														/>
@@ -590,7 +592,7 @@ export const App = () => {
 									</FlexItem>
 									<FlexItem>
 										<UpgradeButton
-											href="https://go.elementor.com/go-pro-element-manager/"
+											href={ promotionURLS.elements_manager }
 										/>
 									</FlexItem>
 								</Flex>

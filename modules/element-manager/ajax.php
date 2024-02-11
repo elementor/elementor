@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Ajax {
 
+	const ELEMENT_MANAGER_PROMOTION_URL = 'https://go.elementor.com/go-pro-element-manager/';
+
+	const FREE_TO_PRO_PERMISSIONS_PROMOTION_URL = 'https://go.elementor.com/go-pro-element-manager-permissions/';
+
+	const PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL = 'https://go.elementor.com/go-pro-advanced-element-manager-permissions/';
+
 	public function register_endpoints() {
 		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
 		add_action( 'wp_ajax_elementor_element_manager_save_disabled_elements', [ $this, 'ajax_save_disabled_elements' ] );
@@ -57,6 +63,14 @@ class Ajax {
 				'notice_id' => $notice_id,
 				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
 			],
+			'promotion_urls' => [
+				'manager_permissions' => [
+					'pro' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
+					'advanced' =>self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
+				],
+				'elements_manager' => self::ELEMENT_MANAGER_PROMOTION_URL,
+
+			]
 		];
 
 		if ( ! Utils::has_pro() ) {
@@ -64,6 +78,8 @@ class Ajax {
 		}
 
 		$data['additional_data'] = apply_filters( 'elementor/element_manager/admin_app_data/additional_data', [] );
+		$data['promotion_urls']['manager_permissions'] = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager_permissions', $data['promotion_urls']['manager_permissions'] );
+		$data['promotion_urls']['elements_manager'] = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager', $data['promotion_urls']['elements_manager'] );
 
 		wp_send_json_success( $data );
 	}
