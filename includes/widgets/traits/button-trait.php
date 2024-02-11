@@ -136,11 +136,17 @@ trait Button_Trait {
 			'icon_align',
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'default' => 'left',
 				'options' => [
-					'left' => esc_html__( 'Before', 'elementor' ),
-					'right' => esc_html__( 'After', 'elementor' ),
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => "eicon-h-align-left",
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => "eicon-h-align-right",
+					],
 				],
 				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
 			]
