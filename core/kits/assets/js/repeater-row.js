@@ -1,4 +1,4 @@
-import * as RepeaterRow from 'elementor-controls/repeater-row';
+import { default as RepeaterRow } from 'elementor-controls/repeater-row';
 
 export default class extends RepeaterRow {
 	ui() {
