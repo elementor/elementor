@@ -410,23 +410,28 @@ module.exports = {
 			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
 			widgetData = elementor.widgetsCache[ widgetType ];
 
-		const hasControlOfType = ( controls, type, ignoreRepeaters = true ) => {
-				let has = false;
-				jQuery.each( controls, ( controlName, controlData ) => {
-					if ( type === controlData.type ) {
-						has = true;
+		const hasControlOfType = ( controls, type ) => {
+			let has = false;
+
+			jQuery.each( controls, ( controlName, controlData ) => {
+				if ( type === controlData.type ) {
+					has = true;
+					return false;
+				}
+
+				if ( controlData.is_repeater ) {
+					has = hasControlOfType( controlData.fields, type );
+
+					if ( has ) {
 						return false;
 					}
-					if ( 'repeater' === controlData.type ) {
-						has = hasControlOfType( controlData.fields, type );
-						return has && ! ignoreRepeaters;
-					}
-				} );
-				return has;
-			};
+				}
+			} );
+			return has;
+		};
 
 		if ( widgetData ) {
-			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons', false );
+			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 
 			if ( hasIconsControl ) {
 				this.showFontAwesomeMigrationDialog();
@@ -439,7 +444,7 @@ module.exports = {
 
 	showFontAwesomeMigrationDialog() {
 		const currentFaVersion = elementor.config.icons.current_fa_version;
-		/* translators: %s is the version number. */
+		/* Translators: %s is the version number. */
 		const dialogTitle = __( 'Ready for the new Font Awesome %s icon library?', 'elementor' ).replace( '%s', currentFaVersion );
 
 		const dialogMessage = elementor.config.user.is_administrator
