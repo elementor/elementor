@@ -408,32 +408,32 @@ module.exports = {
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
-			widgetData = elementor.widgetsCache[ widgetType ],
-			hasControlOfType = ( controls, type ) => {
+			widgetData = elementor.widgetsCache[ widgetType ];
+
+		const hasControlOfType = ( controls, type, ignoreRepeaters = true ) => {
 				let has = false;
 				jQuery.each( controls, ( controlName, controlData ) => {
 					if ( type === controlData.type ) {
 						has = true;
 						return false;
 					}
-					if ( controlData.is_repeater ) {
+					if ( 'repeater' === controlData.type ) {
 						has = hasControlOfType( controlData.fields, type );
-						if ( has ) {
-							return false;
-						}
+						return has && ! ignoreRepeaters;
 					}
 				} );
 				return has;
 			};
 
 		if ( widgetData ) {
-			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
+			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons', false );
 
 			if ( hasIconsControl ) {
 				this.showFontAwesomeMigrationDialog();
 				return true;
 			}
 		}
+
 		return false;
 	},
 
