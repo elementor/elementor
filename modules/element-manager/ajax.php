@@ -6,6 +6,7 @@ use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -64,11 +65,8 @@ class Ajax {
 				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
 			],
 			'promotion_urls' => [
-				'manager_permissions' => [
-					'pro' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
-					'advanced' =>self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
-				],
-				'elements_manager' => self::ELEMENT_MANAGER_PROMOTION_URL,
+				'manager_permissions' => $this->get_element_manager_permissions_promotion_urls(),
+				'elements_manager' => $this->get_element_manager_promotion_urls()
 
 			]
 		];
@@ -78,10 +76,36 @@ class Ajax {
 		}
 
 		$data['additional_data'] = apply_filters( 'elementor/element_manager/admin_app_data/additional_data', [] );
-		$data['promotion_urls']['manager_permissions'] = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager_permissions', $data['promotion_urls']['manager_permissions'] );
-		$data['promotion_urls']['elements_manager'] = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager', $data['promotion_urls']['elements_manager'] );
 
 		wp_send_json_success( $data );
+	}
+
+	private function get_element_manager_permissions_promotion_urls(): array {
+		$promotion_urls = [
+			'pro' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
+			'advanced' => self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
+		];
+
+		$filtered_urls = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager_permissions', $promotion_urls );
+
+		foreach ( $filtered_urls as $key => $url ) {
+			if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $url ) ) {
+				$filtered_urls[$key] = esc_url($url);
+			}
+		}
+
+		return $filtered_urls;
+	}
+
+	private function get_element_manager_promotion_urls(): string {
+		$url = self::ELEMENT_MANAGER_PROMOTION_URL;
+		$filtered_url = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager', $url );
+
+		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
+			$url = $filtered_url;
+		}
+
+		return esc_url( $url );
 	}
 
 	private function verify_permission() {
