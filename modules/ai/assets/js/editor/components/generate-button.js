@@ -5,7 +5,6 @@ import { useRequestIds } from '../context/requests-ids';
 
 const GenerateButton = ( props ) => {
 	const { setGenerate } = useRequestIds();
-	setGenerate();
 
 	return (
 		<Button
@@ -15,6 +14,7 @@ const GenerateButton = ( props ) => {
 			aria-label={ __( 'search', 'elementor' ) }
 			type="submit"
 			size="small"
+			onClick={ () => setGenerate() }
 			{ ...props }
 		/>
 	);

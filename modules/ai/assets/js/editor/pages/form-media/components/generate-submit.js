@@ -5,10 +5,9 @@ import { useRequestIds } from '../../../context/requests-ids';
 
 const GenerateSubmit = ( props ) => {
 	const { setGenerate } = useRequestIds();
-	setGenerate();
 
 	return (
-		<Button fullWidth size="medium" type="submit" variant="contained" { ...props }>
+		<Button fullWidth size="medium" type="submit" variant="contained" { ...props } onClick={ () => setGenerate() }>
 			{ props.children || __( 'Generate', 'elementor' ) }
 		</Button>
 	);

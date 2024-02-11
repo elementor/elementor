@@ -79,21 +79,24 @@ describe( 'FormLayout', () => {
 	const App = () => (
 		<TestThemeProvider>
 			<LayoutApp
-				onClose={ () => {} }
-				onConnect={ () => {} }
+				onClose={ () => {
+				} }
+				onConnect={ () => {
+				} }
 				onData={ onData }
-				onInsert={ () => {} }
-				onSelect={ () => {} }
+				onInsert={ () => {
+				} }
+				onSelect={ () => {
+				} }
 				onGenerate={ onGenerate }
 				mode={ 'layout' }
 				attachmentsTypes={ {} }
 				hasPro={ true }
-				editorSessionId={ 'EDITOR_SESSION_ID' }
 			/>
 		</TestThemeProvider>
 	);
 
-	const renderElement = ( ) => {
+	const renderElement = () => {
 		const props = {
 			DialogHeaderProps: {},
 			DialogContentProps: {},
@@ -102,15 +105,22 @@ describe( 'FormLayout', () => {
 
 		return render(
 			<TestThemeProvider>
-				<RemoteConfigProvider onError={ () => {} }>
+				<RemoteConfigProvider onError={ () => {
+				} }>
 					<ConfigProvider mode={ 'layout' }
 						attachmentsTypes={ {} }
-						onClose={ () => {} }
-						onConnect={ () => {} }
-						onData={ () => {} }
-						onInsert={ () => {} }
-						onSelect={ () => {} }
-						onGenerate={ () => {} }>
+						onClose={ () => {
+						} }
+						onConnect={ () => {
+						} }
+						onData={ () => {
+						} }
+						onInsert={ () => {
+						} }
+						onSelect={ () => {
+						} }
+						onGenerate={ () => {
+						} }>
 						<FormLayout { ...props } />
 					</ConfigProvider>
 				</RemoteConfigProvider>

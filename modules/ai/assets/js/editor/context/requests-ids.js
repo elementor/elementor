@@ -30,31 +30,31 @@ export function generateIds( template ) {
 }
 
 export const RequestIdsProvider = ( props ) => {
-	const generate = useRef( '' );
-	const batch = useRef( '' );
-	const request = useRef( '' );
+	const generateId = useRef( '' );
+	const batchId = useRef( '' );
+	const requestId = useRef( '' );
 
 	const setGenerate = () => {
-		generate.current = getUniqueId( 'generate' );
-		return generate.current;
+		generateId.current = getUniqueId( 'generate' );
+		return generateId.current;
 	};
 	const setBatch = () => {
-		batch.current = getUniqueId( 'batch' );
-		return batch.current;
+		batchId.current = getUniqueId( 'batch' );
+		return batchId.current;
 	};
 	const setRequest = () => {
-		request.current = getUniqueId( 'request' );
-		return request.current;
+		requestId.current = getUniqueId( 'request' );
+		return requestId.current;
 	};
 
 	return (
 		<Context.Provider
 			value={ {
-				editorSession: EDITOR_SESSION_ID,
-				session: getUniqueId( 'session' ),
-				generate: generate.current,
-				batch: batch.current,
-				request: request.current,
+				editorSessionId: EDITOR_SESSION_ID,
+				sessionId: getUniqueId( 'session' ),
+				generateId: generateId.current,
+				batchId: batchId.current,
+				requestId: requestId.current,
 				setGenerate,
 				setBatch,
 				setRequest,

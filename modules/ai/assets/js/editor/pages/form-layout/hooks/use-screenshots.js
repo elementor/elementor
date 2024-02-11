@@ -74,8 +74,8 @@ const useScreenshots = ( { onData } ) => {
 				prevGeneratedIds,
 				currentContext,
 				ids: {
-					editorSession,
-					session,
+					editorSessionId: editorSession,
+					sessionId: session,
 					generateId: generateIdRef.current,
 					batchId,
 					requestId: setRequest(),
