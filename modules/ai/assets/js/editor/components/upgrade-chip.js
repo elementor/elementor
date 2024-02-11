@@ -14,7 +14,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { UpgradeIcon, CheckedCircleIcon, AIIcon } from '@elementor/icons';
+import { CheckedCircleIcon, AIIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 

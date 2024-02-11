@@ -13,9 +13,9 @@ export default class ImageCarousel extends Content {
 		await this.page.selectOption( EditorSelectors.imageCarousel.navigationSelect, option );
 	}
 
-	async setAutoplay( option = 'no' ) {
+	async setAutoplay( option = 'false' ) {
 		await this.page.getByText( 'Additional Options' ).click();
-		await this.page.selectOption( EditorSelectors.imageCarousel.autoplaySelect, option );
+		await this.page.setChecked( EditorSelectors.imageCarousel.autoplaySelect, option );
 	}
 
 	async addImageGallery( args?: {images?: string[], metaData?: boolean} ) {
