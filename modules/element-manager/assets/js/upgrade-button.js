@@ -12,7 +12,6 @@ export const UpgradeButton = ( props ) => {
 				background: 'var(--e-a-btn-bg-accent, #93003f)',
 			} }
 		>
-			{ __( 'Upgrade Now', 'elementor' ) }
 		</Button>
 	);
 };

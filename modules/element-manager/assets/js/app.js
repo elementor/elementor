@@ -62,7 +62,9 @@ export const App = () => {
 	const [ noticeData, setNoticeData ] = useState( null );
 
 	const [ widgetsRoleRestrictions, setWidgetsRoleRestrictions ] = useState( null );
-	const [ promotionURLS, setPromotionURLS ] = useState( [] );
+	const [ promotionData, setPromotionData ] = useState( [] );
+	const { manager_permissions: managerPermissions, element_manager: elementManager } = promotionData;
+
 
 	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
@@ -215,7 +217,7 @@ export const App = () => {
 			setWidgetsDisabled( appData.disabled_elements );
 			setWidgets( appData.widgets );
 			setPromotionWidgets( appData.promotion_widgets );
-			setPromotionURLS( appData.promotion_urls );
+			setPromotionData( appData.promotion_data );
 
 			if ( appData.additional_data?.roles ) {
 				setRoles( appData.additional_data.roles );
@@ -509,10 +511,15 @@ export const App = () => {
 														<UpgradeButton
 															href={
 																promotionWidgets.length
-																	? promotionURLS.manager_permissions.pro
-																	: promotionURLS.manager_permissions.advanced
+																	? managerPermissions.pro.url
+																	: managerPermissions.advanced.url
 															}
 															size={ 'small' }
+															text={
+																promotionWidgets.length
+																	? managerPermissions.pro.text
+																	: managerPermissions.advanced.text
+															}
 														/>
 													</FlexItem>
 												) }
@@ -592,7 +599,8 @@ export const App = () => {
 									</FlexItem>
 									<FlexItem>
 										<UpgradeButton
-											href={ promotionURLS.elements_manager }
+											href={ elementManager.url }
+											text={ elementManager.text }
 										/>
 									</FlexItem>
 								</Flex>

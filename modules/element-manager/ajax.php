@@ -64,11 +64,10 @@ class Ajax {
 				'notice_id' => $notice_id,
 				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
 			],
-			'promotion_urls' => [
-				'manager_permissions' => $this->get_element_manager_permissions_promotion_urls(),
-				'elements_manager' => $this->get_element_manager_promotion_urls()
-
-			]
+			'promotion_data' => [
+				'manager_permissions' => $this->get_element_manager_permissions_promotion(),
+				'element_manager' => $this->get_element_manager_promotion(),
+			],
 		];
 
 		if ( ! Utils::has_pro() ) {
@@ -80,32 +79,52 @@ class Ajax {
 		wp_send_json_success( $data );
 	}
 
-	private function get_element_manager_permissions_promotion_urls(): array {
-		$promotion_urls = [
-			'pro' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
-			'advanced' => self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
+	private function get_element_manager_permissions_promotion(): array {
+		$promotion_data = [
+			'pro' => [
+				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+				'url' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
+			],
+			'advanced' => [
+				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+				'url' => self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
+			],
 		];
 
-		$filtered_urls = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager_permissions', $promotion_urls );
+		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager_permissions', $promotion_data );
 
-		foreach ( $filtered_urls as $key => $url ) {
-			if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $url ) ) {
-				$filtered_urls[$key] = esc_url($url);
-			}
+		foreach ( $filtered_data as $key => $data ) {
+			$filtered_data[ $key ] = $this->validate_promotion_data( $filtered_data[ $key ], $promotion_data[ $key ] );
 		}
 
-		return $filtered_urls;
+		return array_replace( $promotion_data, $filtered_data );
 	}
 
-	private function get_element_manager_promotion_urls(): string {
-		$url = self::ELEMENT_MANAGER_PROMOTION_URL;
-		$filtered_url = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager', $url );
+	private function get_element_manager_promotion(): array {
+		$promotion_data = [
+			'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'url' => self::ELEMENT_MANAGER_PROMOTION_URL,
+		];
 
-		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
-			$url = $filtered_url;
+		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager', $promotion_data );
+
+		$this->validate_promotion_data( $filtered_data, $promotion_data );
+
+		return array_replace( $promotion_data, $filtered_data );
+	}
+
+	private function validate_promotion_data( $filtered_data, $promotion_data ){
+		if ( Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data[ 'url' ] ) ) {
+			$filtered_data[ 'url' ] = esc_url( $filtered_data[ 'url' ] );
 		}
 
-		return esc_url( $url );
+		$filtered_data[ 'text' ] = $this->validate_promotion_button_text( $filtered_data[ 'text' ], $promotion_data[ 'text' ] );
+
+		return $filtered_data;
+	}
+
+	private function validate_promotion_button_text($filtered_text, $promotion_text ) {
+		return $filtered_text ?? $promotion_text;
 	}
 
 	private function verify_permission() {
