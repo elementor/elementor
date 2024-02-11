@@ -188,7 +188,7 @@ class Ai extends Library {
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
-                'requestIds' => wp_json_encode($requestIds),
+                'ids' => wp_json_encode($requestIds),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -223,7 +223,7 @@ class Ai extends Library {
 				'input' =>  $data['payload']['input'],
 				'instruction' => $data['payload']['instruction'],
 				'context' => wp_json_encode( $context ),
-				'requestIds' => wp_json_encode($requestIds),
+				'ids' => wp_json_encode($requestIds),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -238,7 +238,7 @@ class Ai extends Library {
 				'prompt' =>  $data['payload']['prompt'],
 				'language' =>  $data['payload']['language'],
 				'context' => wp_json_encode( $context ),
-				'requestIds' => wp_json_encode( $requestIds ),
+				'ids' => wp_json_encode( $requestIds ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -254,7 +254,7 @@ class Ai extends Library {
 				'html_markup' => $data['payload']['html_markup'],
 				'element_id' => $data['payload']['element_id'],
 				'context' => wp_json_encode( $context ),
-                'requestIds' => wp_json_encode( $requestIds),
+                'ids' => wp_json_encode( $requestIds),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
