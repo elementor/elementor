@@ -28,7 +28,7 @@ class Notice_Bar extends Base_Object {
 
 		$config = apply_filters( 'elementor/notice-bar/custom_promotion', $config );
 
-		if ( isset( $config['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
+		if ( isset( $config['upgrade_url'] ) && ! Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
 			$config['upgrade_url'] = esc_url( $upgrade_url );
 		}
 
