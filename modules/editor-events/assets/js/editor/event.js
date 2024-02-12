@@ -10,17 +10,17 @@ export default class Event {
 
 	setupPayload( extraData, time ) {
 		this.payload = {
-			elementor_api_id: null,
+			elementor_api_id: '',
 			userId: null,
-			subscriptionId: null,
-			url: '',
+			subscriptionId: elementor.config.editor_events?.subscription_id,
+			url: elementor.config.editor_events?.site_url,
 			extra_data: extraData,
 			siteInfo: {
-				WpVersion: '6.4.0',
-				ClientId: 'MB2AwfxjtPtzIRvkRgzPAsBL21ge4TD5',
-				AppVersion: '1.0.1',
-				UserAgent: 'WordPress/6.4.0; http://www.wp.com',
-				SiteLanguage: '',
+				WpVersion: elementor.config.editor_events?.wp_version,
+				ClientId: elementor.config.editor_events?.site_key,
+				AppVersion: elementor.config.editor_events?.elementor_version,
+				UserAgent: elementor.config.editor_events?.user_agent,
+				SiteLanguage: elementor.config.editor_events?.site_language,
 			},
 			created_at: time,
 		};
@@ -31,9 +31,9 @@ export default class Event {
 			type: 'editor_events',
 			action: 'new/log/update',
 			time,
-			schema_id: 12,
+			schema_id: 1,
 			version: 1,
-			publisher_version: '20.0',
+			publisher_version: elementor.config.editor_events?.elementor_version,
 			guid: uuidv4(),
 		};
 	}
