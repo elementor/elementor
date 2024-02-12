@@ -955,6 +955,7 @@ class Admin extends App {
 		if ( ! Hints::should_display_hint( 'image-optimization-once-media-modal' ) && ! Hints::should_display_hint( 'image-optimization-media-modal' ) ) {
 			return;
 		}
+
 		wp_register_script(
 			'media-hints',
 			$this->get_js_assets_url( 'media-hints' ),
