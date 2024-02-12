@@ -63,11 +63,14 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			title: __( 'Site Settings', 'elementor' ),
 			type: 'page',
 			callback: () => {
-				elementor.editorEvents.dispatchEvent(
-					elementor.editorEvents.types.click,
-					elementor.editorEvents.events.site_settings,
-					'hamburger menu',
-				);
+				elementor.editorEvents.dispatchEvent( {
+					action: elementor.editorEvents.action.click,
+					type: 'button',
+					section: 'topbar',
+					element_name: 'site_settings',
+					outcome: null,
+					entity: null,
+				} );
 				$e.run( 'panel/global/open', {
 					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
 				} );
