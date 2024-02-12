@@ -1,4 +1,4 @@
-( function ( data ) {
+( function() {
 	if ( ! elementorAdminHints || ! elementorAdminHints?.mediaHint ) {
 		return;
 	}
