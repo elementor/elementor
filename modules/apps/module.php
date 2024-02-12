@@ -67,7 +67,7 @@ class Module extends BaseModule {
 	}
 
 	public function add_elementor_plugin_install_action_link( $tabs ) {
-		$tabs['elementor'] = esc_html__( 'Elementor', 'elementor' );
+		$tabs['elementor'] = esc_html__( 'For Elementor', 'elementor' );
 
 		return $tabs;
 	}
