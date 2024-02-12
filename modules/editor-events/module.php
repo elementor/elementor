@@ -28,7 +28,7 @@ class Module extends BaseModule {
 			'user_agent' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
 			'site_language' => get_locale(),
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
-			'subscription_id' => 0,
+			'subscription_id' => null,
 		];
 
 		if ( $can_send_events ) {
