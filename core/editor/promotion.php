@@ -67,7 +67,7 @@ class Promotion {
 	 */
 	private function replace_promotion_url( array $promotion_data, string $url ): array {
 		if ( $this->is_valid_url( $promotion_data['action_button']['url'] ) ) {
-			$promotion_data['action_button']['url'] = esc_url($url);
+			$promotion_data['action_button']['url'] = esc_url( $url );
 		}
 
 		return $promotion_data;
