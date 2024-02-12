@@ -91,7 +91,7 @@ class Ajax {
 			],
 		];
 
-		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager_permissions', $promotion_data );
+		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/manager_permissions', $promotion_data );
 
 		foreach ( $filtered_data as $key => $data ) {
 			$filtered_data[ $key ] = $this->validate_promotion_data( $filtered_data[ $key ], $promotion_data[ $key ] );
@@ -106,7 +106,7 @@ class Ajax {
 			'url' => self::ELEMENT_MANAGER_PROMOTION_URL,
 		];
 
-		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_urls/manager', $promotion_data );
+		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/element_manager', $promotion_data );
 
 		$this->validate_promotion_data( $filtered_data, $promotion_data );
 
