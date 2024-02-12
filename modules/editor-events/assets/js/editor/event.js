@@ -31,7 +31,7 @@ export default class Event {
 	setupMetadata( time ) {
 		this.metadata = {
 			type: 'editor_events',
-			action: 'new/log/update',
+			action: 'update',
 			time,
 			schema_id: 1,
 			version: 1,
