@@ -8,20 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Validate_Promotion {
 
-	public static function domain_is_on_elementor_dot_com( $url ) {
-		$domain = parse_url( $url, PHP_URL_HOST );
-		if ( ! isset( $domain ) ) {
-			return false;
-		}
-
-		$domain_segments = explode( '.', $domain );
-
-		$is_localhost = ( 1 === count( $domain_segments ) );
-		if ( ! count( $domain_segments ) >= 2 || $is_localhost ) {
-			return false;
-		}
-
-		$root_domain = $domain_segments[ count( $domain_segments ) - 2 ] . '.' . $domain_segments[ count( $domain_segments ) - 1 ];
-		return 'elementor.com' === $root_domain;
+	public static function domain_is_on_elementor_dot_com( $url ): bool {
+		$domain = wp_parse_url( $url, PHP_URL_HOST );
+		return isset( $domain ) && str_contains( $domain, 'elementor.com' );
 	}
 }
