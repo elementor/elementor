@@ -107,6 +107,7 @@ const FormText = (
 	};
 
 	const handleCustomInstruction = async ( instruction ) => {
+		setGenerate();
 		lastRun.current = () => send( { input: resultField.current.value, instruction } );
 
 		lastRun.current();
