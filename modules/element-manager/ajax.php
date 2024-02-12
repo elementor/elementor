@@ -93,11 +93,11 @@ class Ajax {
 
 		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/manager_permissions', $promotion_data );
 
-		foreach ( $filtered_data as $key => $data ) {
-			$filtered_data[ $key ] = $this->validate_promotion_data( $filtered_data[ $key ], $promotion_data[ $key ] );
+		foreach ( $promotion_data as $key => $data ) {
+			$filtered_data[ $key ] = $this->validate_promotion_data( $filtered_data[ $key ], $data );
 		}
 
-		return array_replace( $promotion_data, $filtered_data );
+		return $filtered_data;
 	}
 
 	private function get_element_manager_promotion(): array {
@@ -108,19 +108,17 @@ class Ajax {
 
 		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/element_manager', $promotion_data );
 
-		$this->validate_promotion_data( $filtered_data, $promotion_data );
-
-		return array_replace( $promotion_data, $filtered_data );
+		return $this->validate_promotion_data( $filtered_data, $promotion_data );
 	}
 
 	private function validate_promotion_data( $filtered_data, $promotion_data ) {
-		if ( Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
-			$filtered_data['url'] = esc_url( $filtered_data['url'] );
+		if ( ! empty ( $filtered_data['url'] ) && ! Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
+			unset( $filtered_data['url'] );
 		}
 
 		$filtered_data['text'] = $filtered_data['text'] ?? $promotion_data['text'];
 
-		return $filtered_data;
+		return array_replace( $promotion_data, $filtered_data );
 	}
 
 	private function verify_permission() {
