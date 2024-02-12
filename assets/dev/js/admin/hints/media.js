@@ -5,6 +5,7 @@
 	if ( ! wp || ! wp.media || ! wp.media.view || ! wp.media.view.Attachment || ! wp.media.view.Attachment.Details ) {
 		return;
 	}
+
 	wp.media.view.Attachment.Details = wp.media.view.Attachment.Details.extend( {
 		_tmpl: `<div class="e-hint__container" style="clear:both" data-event="<%= dismissible %>">
 		<div class="elementor-control-notice elementor-control-notice-type-<%= type %>" data-display="<%= display %>">
