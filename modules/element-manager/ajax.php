@@ -112,7 +112,7 @@ class Ajax {
 	}
 
 	private function validate_promotion_data( $filtered_data, $promotion_data ) {
-		if ( ! empty ( $filtered_data['url'] ) && ! Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
+		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
 			unset( $filtered_data['url'] );
 		}
 
