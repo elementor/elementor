@@ -178,6 +178,11 @@ const EditorSelectors = {
 			editButton: 'button[aria-label="Edit result"]',
 		},
 	},
+	ContextMenu: {
+		menu: '.elementor-context-menu',
+		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
+		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
+	},
 };
 
 export default EditorSelectors;
