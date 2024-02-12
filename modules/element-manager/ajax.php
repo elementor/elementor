@@ -118,7 +118,7 @@ class Ajax {
 			$filtered_data['url'] = esc_url( $filtered_data['url'] );
 		}
 
-		$filtered_data['text'] = $filtered_data['text'] && $promotion_data['text'];
+		$filtered_data['text'] = $filtered_data['text'] ?? $promotion_data['text'];
 
 		return $filtered_data;
 	}
