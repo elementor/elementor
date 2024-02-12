@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Editor;
 
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,14 +19,7 @@ class Promotion {
 
 		$promotion_data = $this->get_promotion_data( $url );
 
-		$new_promotion_data = apply_filters( 'elementor/editor/promotion/get_elements_promotion', $promotion_data );
-
-		if ( $new_promotion_data && count( $new_promotion_data ) <= count( $promotion_data ) ) {
-			$promotion_data = array_replace( $promotion_data, $new_promotion_data );
-			$promotion_data = $this->replace_promotion_url( $promotion_data, $url );
-		}
-
-		return $promotion_data;
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data, 'elementor/editor/promotion/get_elements_promotion', 'action_button', 'url' );
 	}
 
 	/**
@@ -79,6 +72,6 @@ class Promotion {
 	 */
 	private function is_valid_url( $url ): bool {
 		return $url &&
-			Validate_Promotion::domain_is_on_elementor_dot_com( $url );
+			Filtered_Promotions_Manager::domain_is_on_elementor_dot_com( $url );
 	}
 }
