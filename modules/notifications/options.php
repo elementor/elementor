@@ -4,6 +4,7 @@ namespace Elementor\Modules\Notifications;
 class Options {
 
 	public static function has_unread_notifications() : bool {
+		return true;
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {
