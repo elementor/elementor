@@ -113,7 +113,7 @@ const useScreenshots = ( { onData } ) => {
 	const generate = ( prompt, attachments ) => {
 		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
-		generateIdRef.current = setGenerate();
+		generateIdRef.current = setGenerate().current;
 		setScreenshots( placeholders );
 
 		createScreenshots( prompt, attachments );
