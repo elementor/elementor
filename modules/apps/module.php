@@ -43,7 +43,7 @@ class Module extends BaseModule {
 			return $categories;
 		} );
 
-		// Add a Elementor Apps link to the plugin install action links.
+		// Add the Elementor Apps link to the plugin install action links.
 		add_filter( 'install_plugins_tabs', [ $this, 'add_elementor_plugin_install_action_link' ] );
 		add_action( 'install_plugins_pre_elementor', [ $this, 'maybe_open_elementor_tab' ] );
 		add_action( 'admin_print_styles-plugin-install.php', [ $this, 'add_plugins_page_styles' ] );
