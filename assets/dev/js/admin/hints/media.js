@@ -29,7 +29,7 @@
 		</div>
 	</div>`,
 		template( view ) {
-		// Get the template and parse it
+			// Get the template and parse it
 			const html = wp.media.template( 'attachment-details' )( view ); // The template to extend
 			const dom = document.createElement( 'div' );
 			dom.innerHTML = html;
