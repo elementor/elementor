@@ -33,9 +33,9 @@ class Promotion {
 	 * @return string
 	 */
 	private function get_promotion_url(): string {
-		return Utils::has_pro() ?
-			admin_url( 'admin.php?page=elementor-license' ) :
-			'https://go.elementor.com/go-pro-%s';
+		return Utils::has_pro()
+			? admin_url( 'admin.php?page=elementor-license' )
+			: 'https://go.elementor.com/go-pro-%s';
 	}
 
 	/**
