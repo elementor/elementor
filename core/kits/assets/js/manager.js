@@ -64,10 +64,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			type: 'page',
 			callback: () => {
 				elementor.editorEvents.dispatchEvent( {
-					action: elementor.editorEvents.actions.click,
-					type: elementor.editorEvents.types.button,
-					section: elementor.editorEvents.sections.topbar,
-					element_name: elementor.editorEvents.elementNames.siteSettings,
+					action: elementor.editorEvents.config.actions.click,
+					type: elementor.editorEvents.config.types.button,
+					section: elementor.editorEvents.config.sections.topbar,
+					element_name: elementor.editorEvents.config.elementNames.siteSettings,
 					outcome: null,
 					entity: null,
 				} );

@@ -1,28 +1,14 @@
 import EventsStorage from './events-storage';
+import eventsConfig from './events-config';
 import Event from './event';
 
 export default class extends elementorModules.Module {
-	actions = {
-		click: 'click',
-	};
-
-	sections = {
-		topbar: 'topbar',
-	};
-
-	elementNames = {
-		siteSettings: 'site_settings',
-	};
-
-	types = {
-		button: 'button',
-	};
-
 	onInit() {
 		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
 
+		this.config = eventsConfig;
 		window.addEventListener( 'beforeunload', this.sendEvents() );
 	}
 
