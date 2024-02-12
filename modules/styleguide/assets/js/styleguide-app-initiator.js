@@ -12,6 +12,8 @@ import { createRoot } from 'react-dom/client';
 
 		document.body.classList.add( styleguideBodyClass );
 
+		maybeCreateRoot();
+
 		styleguideRoot.render( <App /> );
 	}
 
@@ -20,6 +22,7 @@ import { createRoot } from 'react-dom/client';
 	 */
 	function unmount() {
 		styleguideRoot.unmount();
+		styleguideRoot = null;
 
 		document.body.classList.remove( styleguideBodyClass );
 	}
@@ -54,8 +57,6 @@ import { createRoot } from 'react-dom/client';
 		if ( ! event.data?.name?.startsWith( 'elementor/styleguide/preview' ) || ! getStyleguideWidget() ) {
 			return;
 		}
-
-		maybeCreateRoot();
 
 		switch ( event.data.name ) {
 			case 'elementor/styleguide/preview/show':
