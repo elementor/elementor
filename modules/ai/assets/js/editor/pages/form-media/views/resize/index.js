@@ -9,10 +9,11 @@ import { useEditImage } from '../../context/edit-image-context';
 import useResize from './hooks/use-resize';
 import useImageActions from '../../hooks/use-image-actions';
 import usePromptSettings, { IMAGE_UPSCALE } from '../../hooks/use-prompt-settings';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const Resize = () => {
 	const { editImage, width: initialEditImageWidth } = useEditImage();
-
+	const { setGenerate } = useRequestIds();
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const { settings, updateSettings } = usePromptSettings();
@@ -23,7 +24,7 @@ const Resize = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
+		setGenerate();
 		send( null, settings, editImage );
 	};
 

@@ -16,6 +16,7 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../components/prompt-library-link';
+import { useRequestIds } from '../../context/requests-ids';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -36,6 +37,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
+	const { setGenerate } = useRequestIds();
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -66,7 +68,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
-
+		setGenerate();
 		lastRun.current = () => send( { prompt } );
 
 		lastRun.current();

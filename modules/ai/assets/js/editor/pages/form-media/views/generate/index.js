@@ -23,6 +23,7 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../../../components/prompt-library-link';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const getPromptPlaceholder = ( images ) => {
 	if ( ! images?.length ) {
@@ -36,7 +37,7 @@ const getPromptPlaceholder = ( images ) => {
 
 const Generate = () => {
 	const [ prompt, setPrompt ] = useState( '' );
-
+	const { setGenerate } = useRequestIds();
 	const { initialImageType } = useGlobalSettings();
 
 	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType } );
@@ -59,7 +60,7 @@ const Generate = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
+		setGenerate();
 		send( { prompt, settings } );
 	};
 

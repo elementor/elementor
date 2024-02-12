@@ -18,6 +18,7 @@ import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
+import { useRequestIds } from '../../context/requests-ids';
 
 const promptActions = [
 	{
@@ -68,6 +69,7 @@ const FormText = (
 	} );
 
 	const [ prompt, setPrompt ] = useState( '' );
+	const { setGenerate } = useRequestIds();
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -98,7 +100,7 @@ const FormText = (
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
+		setGenerate();
 		lastRun.current = () => send( { prompt } );
 
 		lastRun.current();

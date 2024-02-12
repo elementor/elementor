@@ -28,18 +28,18 @@ const usePrompt = ( fetchData, initialState ) => {
 	const [ data, setData ] = useState( initialState );
 
 	const { setRequest, editorSessionId, sessionId, generateId, batchId } = useRequestIds();
-	const requestId = setRequest();
 
 	const send = async ( payload ) => new Promise( ( resolve, reject ) => {
 		setError( '' );
 		setIsLoading( true );
+		const requestId = setRequest();
 
 		const requestIds = {
-			editorSessionId,
-			sessionId,
-			generateId,
-			batchId,
-			requestId,
+			editorSessionId: editorSessionId.current,
+			sessionId: sessionId.current,
+			generateId: generateId.current,
+			batchId: batchId.current,
+			requestId: requestId.current,
 		};
 
 		payload = { ...payload, requestIds };

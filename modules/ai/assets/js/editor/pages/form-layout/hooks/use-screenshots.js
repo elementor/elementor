@@ -18,9 +18,9 @@ const useScreenshots = ( { onData } ) => {
 	 */
 
 	const { currentContext } = useConfig();
-	const { editorSession, session, setRequest, setBatch, setGenerate } = useRequestIds();
+	const { editorSessionId, sessionId, setRequestId, setBatchId, setGenerateId } = useRequestIds();
 	const generateIdRef = useRef( '' );
-	const batchId = setBatch();
+	const batchId = setBatchId();
 
 	const screenshotsData = [
 		useScreenshot( 0, onData ),
@@ -74,11 +74,11 @@ const useScreenshots = ( { onData } ) => {
 				prevGeneratedIds,
 				currentContext,
 				ids: {
-					editorSessionId: editorSession,
-					sessionId: session,
+					editorSessionId: editorSessionId.current,
+					sessionId: sessionId.current,
 					generateId: generateIdRef.current,
-					batchId,
-					requestId: setRequest(),
+					batchId: batchId.current,
+					requestId: setRequestId().current,
 				},
 				attachments: attachments.map( ( { type, content, label, source } ) => {
 					// Send only the data that is needed for the generation.
@@ -113,7 +113,7 @@ const useScreenshots = ( { onData } ) => {
 	const generate = ( prompt, attachments ) => {
 		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
-		generateIdRef.current = setGenerate();
+		generateIdRef.current = setGenerateId();
 		setScreenshots( placeholders );
 
 		createScreenshots( prompt, attachments );

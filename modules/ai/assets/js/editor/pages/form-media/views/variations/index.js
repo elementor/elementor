@@ -16,12 +16,13 @@ import useImageToImage from './hooks/use-image-to-image';
 import useImageActions from '../../hooks/use-image-actions';
 import { useEditImage } from '../../context/edit-image-context';
 import usePromptSettings, { IMAGE_STRENGTH, IMAGE_TYPE, IMAGE_STYLE, IMAGE_RATIO } from '../../hooks/use-prompt-settings';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const IMAGE_WEIGHT_DEFAULT = 45;
 
 const Variations = () => {
 	const [ prompt, setPrompt ] = useState( '' );
-
+	const { setGenerate } = useRequestIds();
 	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
 
 	const { settings, updateSettings } = usePromptSettings( {
@@ -39,7 +40,7 @@ const Variations = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
+		setGenerate();
 		send( { prompt, settings, image: editImage } );
 	};
 

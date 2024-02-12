@@ -17,7 +17,7 @@ export const getUniqueId = ( prefix ) => {
 	return prefix + '-' + Math.random().toString( 16 ).substr( 2, 7 );
 };
 
-const EDITOR_SESSION_ID = getUniqueId( 'editor-session' );
+window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'editor-session' );
 
 export function generateIds( template ) {
 	template.id = getUniqueId().toString();
@@ -30,31 +30,33 @@ export function generateIds( template ) {
 }
 
 export const RequestIdsProvider = ( props ) => {
+	const editorSessionId = useRef( window.EDITOR_SESSION_ID );
+	const sessionId = useRef( getUniqueId( 'session' ) );
 	const generateId = useRef( '' );
 	const batchId = useRef( '' );
 	const requestId = useRef( '' );
 
 	const setGenerate = () => {
 		generateId.current = getUniqueId( 'generate' );
-		return generateId.current;
+		return generateId;
 	};
 	const setBatch = () => {
 		batchId.current = getUniqueId( 'batch' );
-		return batchId.current;
+		return batchId;
 	};
 	const setRequest = () => {
 		requestId.current = getUniqueId( 'request' );
-		return requestId.current;
+		return requestId;
 	};
 
 	return (
 		<Context.Provider
 			value={ {
-				editorSessionId: EDITOR_SESSION_ID,
-				sessionId: getUniqueId( 'session' ),
-				generateId: generateId.current,
-				batchId: batchId.current,
-				requestId: requestId.current,
+				editorSessionId,
+				sessionId,
+				generateId,
+				batchId,
+				requestId,
 				setGenerate,
 				setBatch,
 				setRequest,
