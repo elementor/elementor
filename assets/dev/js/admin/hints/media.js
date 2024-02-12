@@ -2,7 +2,7 @@
 	if ( ! elementorAdminHints || ! elementorAdminHints?.mediaHint ) {
 		return;
 	}
-	if ( ! wp || ! wp.media || ! wp.media.view || ! wp.media.view.Attachment || ! wp.media.view.Attachment.Details ) {
+	if ( ! wp.?media.?view.?Attachment.?Details ) {
 		return;
 	}
 
