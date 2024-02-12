@@ -78,7 +78,7 @@ class Promotion {
 	 * @return bool
 	 */
 	private function is_valid_url( $url ): bool {
-		return $url
-			&& Validate_Promotion::domain_is_on_elementor_dot_com( $url );
+		return $url &&
+			Validate_Promotion::domain_is_on_elementor_dot_com( $url );
 	}
 }
