@@ -17,5 +17,4 @@ export const editorV2 = () => {
 			};
 		},
 	} );
-}
-
+};
