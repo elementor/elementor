@@ -9,19 +9,21 @@ export default class Event {
 	}
 
 	setupPayload( extraData, time ) {
+		const siteInfo = {
+			WpVersion: elementor.config.editor_events?.wp_version,
+			ClientId: elementor.config.editor_events?.site_key,
+			AppVersion: elementor.config.editor_events?.elementor_version,
+			UserAgent: elementor.config.editor_events?.user_agent,
+			SiteLanguage: elementor.config.editor_events?.site_language,
+		};
+
 		this.payload = {
 			elementor_api_id: '',
 			userId: null,
 			subscriptionId: elementor.config.editor_events?.subscription_id,
 			url: elementor.config.editor_events?.site_url,
-			extra_data: extraData,
-			siteInfo: {
-				WpVersion: elementor.config.editor_events?.wp_version,
-				ClientId: elementor.config.editor_events?.site_key,
-				AppVersion: elementor.config.editor_events?.elementor_version,
-				UserAgent: elementor.config.editor_events?.user_agent,
-				SiteLanguage: elementor.config.editor_events?.site_language,
-			},
+			extra_data: JSON.stringify( extraData ),
+			siteInfo: JSON.stringify( siteInfo ),
 			created_at: time,
 		};
 	}

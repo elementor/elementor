@@ -2,12 +2,20 @@ import EventsStorage from './events-storage';
 import Event from './event';
 
 export default class extends elementorModules.Module {
-	action = {
+	actions = {
 		click: 'click',
 	};
 
-	events = {
-		site_settings: 'site_settings',
+	sections = {
+		topbar: 'topbar',
+	};
+
+	elementNames = {
+		siteSettings: 'site_settings',
+	};
+
+	types = {
+		button: 'button',
 	};
 
 	onInit() {
@@ -23,7 +31,6 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		// Const newEvent = { type, event_id: eventId, context, timestamp: Date.now() };
 		const newEvent = new Event( data );
 
 		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, JSON.stringify( newEvent ) ) ) {
