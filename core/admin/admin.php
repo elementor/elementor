@@ -985,7 +985,7 @@ class Admin extends App {
 						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
 					] )
 				),
-			]
+			],
 		] );
 
 		wp_enqueue_script( 'media-hints' );
