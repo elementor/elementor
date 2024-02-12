@@ -13,6 +13,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Hints;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -150,6 +151,8 @@ class Admin extends App {
 
 		wp_set_script_translations( 'elementor-admin', 'elementor' );
 
+		$this->maybe_enqueue_hints();
+
 		$this->print_config();
 	}
 
@@ -180,6 +183,7 @@ class Admin extends App {
 		// It's for upgrade notice.
 		// TODO: enqueue this just if needed.
 		add_thickbox();
+
 	}
 
 	/**
@@ -945,5 +949,45 @@ class Admin extends App {
 
 	private function register_menu() {
 		$this->menus['main'] = new MainMenu();
+	}
+
+	private function maybe_enqueue_hints() {
+		if ( ! Hints::should_display_hint( 'image-optimization-once-media-modal' ) && ! Hints::should_display_hint( 'image-optimization-media-modal' ) ) {
+			return;
+		}
+		wp_register_script(
+			'media-hints',
+			$this->get_js_assets_url( 'media-hints' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		$once_dismissed = Hints::is_dismissed( 'image-optimization-once-media-modal' );
+		$content = $once_dismissed ?
+			__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
+			__( "Don't let unoptimized images be the downfall of your site's performance. Use Image Optimizer!", 'elementor' );
+
+		$dismissible = $once_dismissed ? 'image-optimization-media-modal' : 'image-optimization-once-media-modal';
+
+		wp_localize_script( 'media-hints', 'elementorAdminHints', [
+			'mediaHint' => [
+				'display' => ! $once_dismissed,
+				'type' => $once_dismissed ? 'warning' : 'info',
+				'content' => $content,
+				'icon' => true,
+				'dismissible' => $dismissible,
+				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
+				'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
+				'button_event' => $dismissible,
+				'button_data' => base64_encode(
+					json_encode( [
+						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+					] )
+				),
+			]
+		] );
+
+		wp_enqueue_script( 'media-hints' );
 	}
 }
