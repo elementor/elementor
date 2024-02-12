@@ -1,5 +1,5 @@
 ( function() {
-	if ( ! elementorAdminHints || ! elementorAdminHints?.mediaHint ) {
+	if ( ! elementorAdminHints?.mediaHint ) {
 		return;
 	}
 	if ( ! wp.?media.?view.?Attachment.?Details ) {
