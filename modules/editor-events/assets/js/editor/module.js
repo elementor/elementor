@@ -44,7 +44,8 @@ export default class extends elementorModules.Module {
 			credentials: 'omit',
 			keepalive: true,
 		} )
-			.then( EventsStorage.clear() )
-			.catch( console.error );
+			.then( () => {
+				EventsStorage.clear();
+			} );
 	}
 }
