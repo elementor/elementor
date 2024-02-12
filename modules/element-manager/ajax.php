@@ -115,7 +115,7 @@ class Ajax {
 
 	private function validate_promotion_data( $filtered_data, $promotion_data ) {
 		if ( Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
-			$filtered_data[ 'url' ] = esc_url( $filtered_data['url'] );
+			$filtered_data['url'] = esc_url( $filtered_data['url'] );
 		}
 
 		$filtered_data['text'] = $this->validate_promotion_button_text( $filtered_data['text'], $promotion_data['text'] );
