@@ -63,7 +63,7 @@ class Role_Manager extends Settings_Page {
 	 * @param string $upgrade_url
 	 * @return mixed
 	 */
-	public function replace_url( $promotion, string $upgrade_url ) {
+	private function replace_url( $promotion, string $upgrade_url ) {
 		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
 			$promotion['upgrade_url'] = $upgrade_url;
 		}
