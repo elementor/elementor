@@ -449,13 +449,16 @@ module.exports = {
 
 		const dialogMessage = elementor.config.user.is_administrator
 			? (
-				__( 'We\'ll convert existing icons on your site to the new versions when you edit a page that already contains icons.', 'elementor' ) + '<br><br>' +
+				/* Translators: %s is the version number. */
+				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
+				__( 'We\'ll convert existing icons to the new versions when you edit a page that already contains icons.', 'elementor' ) + '<br><br>' +
 				'<strong>' + __( 'Before you update, keep in mind:', 'elementor' ) + '</strong> ' +
 				'<ul><li>' + __( 'Some existing icons may look different after the update.', 'elementor' ) + '</li>' +
 				'<li>' + __( 'To ensure a smooth transition, create a backup of your site first.', 'elementor' ) + '</li>' +
 				'<li>' + __( 'This update can\'t be undone, even by rolling back to a previous version.', 'elementor' ) + '</li></ul>'
 			) : (
-				__( 'Font Awesome v6 includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ) + '<br><br>' +
+				/* Translators: %s is the version number. */
+				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
 				__( 'Contact your site admin to update the icon library.', 'elementor' )
 			);
 
