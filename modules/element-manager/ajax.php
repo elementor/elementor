@@ -20,6 +20,10 @@ class Ajax {
 
 	const PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL = 'https://go.elementor.com/go-pro-advanced-element-manager-permissions/';
 
+	private $whitelist = [
+		'text',
+		'url',
+	];
 	public function register_endpoints() {
 		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
 		add_action( 'wp_ajax_elementor_element_manager_save_disabled_elements', [ $this, 'ajax_save_disabled_elements' ] );
@@ -94,7 +98,7 @@ class Ajax {
 		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/manager_permissions', $promotion_data );
 
 		foreach ( $promotion_data as $key => $data ) {
-			$filtered_data[ $key ] = $this->validate_promotion_data( $filtered_data[ $key ], $data );
+			$filtered_data[ $key ] = $this->validate_promotion_data( $data, $filtered_data[ $key ] ?? [] );
 		}
 
 		return $filtered_data;
@@ -108,10 +112,12 @@ class Ajax {
 
 		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/element_manager', $promotion_data );
 
-		return $this->validate_promotion_data( $filtered_data, $promotion_data );
+		return $this->validate_promotion_data( $promotion_data, $filtered_data );
 	}
 
-	private function validate_promotion_data( $filtered_data, $promotion_data ) {
+	private function validate_promotion_data( $promotion_data, $filtered_data ) {
+		$filtered_data = array_intersect_key( $filtered_data, array_flip( $this->whitelist ) );
+
 		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
 			unset( $filtered_data['url'] );
 		}
