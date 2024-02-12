@@ -52,26 +52,4 @@ class Promotion {
 			],
 		];
 	}
-
-	/**
-	 * @param array $promotion_data
-	 * @param string $url
-	 * @return array
-	 */
-	private function replace_promotion_url( array $promotion_data, string $url ): array {
-		if ( $this->is_valid_url( $promotion_data['action_button']['url'] ) ) {
-			$promotion_data['action_button']['url'] = esc_url( $url );
-		}
-
-		return $promotion_data;
-	}
-
-	/**
-	 * @param $url
-	 * @return bool
-	 */
-	private function is_valid_url( $url ): bool {
-		return $url &&
-			Filtered_Promotions_Manager::domain_is_on_elementor_dot_com( $url );
-	}
 }
