@@ -1,4 +1,4 @@
-// Import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Event {
 	constructor( data ) {
@@ -36,7 +36,7 @@ export default class Event {
 			schema_id: 1,
 			version: 1,
 			publisher_version: elementor.config.editor_events?.elementor_version,
-			// Guid: uuidv4(),
+			guid: uuidv4(),
 		};
 	}
 }
