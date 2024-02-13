@@ -110,7 +110,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$this->start_popover( $element );
 		}
 
-		if ( $options['use_user_order'] ) {
+		if ( isset( $options['use_user_order'] ) && $options['use_user_order'] ) {
 			$filtered_fields = $this->sort_fields_by_user_preference( $user_args['fields_options'], $filtered_fields );
 		}
 
