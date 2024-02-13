@@ -2,7 +2,7 @@ import ModalLayout from './modal-layout';
 import { renderIconManager } from './components/icon-manager';
 import IconLibrary from './classes/icon-library';
 import Store from './classes/store';
-import { unmountComponentAtNode } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 export default class extends elementorModules.Module {
 	onInit() {
@@ -47,7 +47,7 @@ export default class extends elementorModules.Module {
 	unMountIconManager() {
 		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-		unmountComponentAtNode( containerElement );
+		createRoot( containerElement ).unmount();
 	}
 
 	loadIconLibraries() {
