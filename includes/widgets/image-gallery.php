@@ -105,7 +105,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->start_controls_section(
 			'section_gallery',
 			[
-				'label' => esc_html__( 'Image Gallery', 'elementor' ),
+				'label' => esc_html__( 'Basic Gallery', 'elementor' ),
 			]
 		);
 
