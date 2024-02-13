@@ -10,14 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Promotion {
 
-	public function __construct() {
-		add_filter( 'elementor/editor/promotion/get_elements_promotion', [ $this, 'foo' ] );
-	}
-
-	public function foo( $config ) {
-		var_dump( $config );
-	}
-
 	/**
 	 * @return array
 	 */
