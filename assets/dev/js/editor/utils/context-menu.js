@@ -16,6 +16,7 @@ module.exports = elementorModules.Module.extend( {
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
 				divider: 'elementor-context-menu-list__divider',
 				hidden: 'elementor-hidden',
+				promotionLink: 'elementor-context-menu-list__item__shortcut--link-fullwidth',
 			},
 		};
 	},
@@ -88,7 +89,22 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	toggleActionUsability( action, state ) {
+		this.maybeAddPromotionLink( action );
+
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
+	},
+
+	maybeAddPromotionLink( action ) {
+		if ( this.shouldAddPromotionLink( action ) ) {
+			const iconContainer = action.$item.find( 'div.elementor-context-menu-list__item__shortcut' )[ 0 ];
+			iconContainer.insertAdjacentHTML( 'beforeend', `<a href='${ action.promotionURL }' target="_blank" class="${ this.getSettings( 'classes.promotionLink' ) }"></a>` );
+		}
+	},
+
+	shouldAddPromotionLink( action ) {
+		return !! ( action.promotionURL &&
+			! action.$item.find( 'a.elementor-context-menu-list__item__shortcut--link-fullwidth' )[ 0 ] &&
+			action.$item.find( 'i.eicon-pro-icon' )[ 0 ] );
 	},
 
 	/**
