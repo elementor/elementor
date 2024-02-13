@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use function PHPUnit\Framework\isEmpty;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -382,8 +383,10 @@ abstract class Widget_Base extends Element_Base {
 			'upsale_data' => $this->get_upsale_data(),
 		];
 
-		$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
-		$config['upsale_data'] = Filtered_Promotions_Manager::get_filtered_promotion_data( $config['upsale_data'], $filter_name, 'upgrade_url' );
+		if ( ! isEmpty( $config['upsale_data'] ) ) {
+			$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
+			$config['upsale_data'] = Filtered_Promotions_Manager::get_filtered_promotion_data( $config['upsale_data'], $filter_name, 'upgrade_url' );
+		}
 
 		if ( isset( $config['upsale_data']['image'] ) ) {
 			$config['upsale_data']['image'] = esc_url( $config['upsale_data']['image'] );
