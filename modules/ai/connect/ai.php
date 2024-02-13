@@ -188,7 +188,7 @@ class Ai extends Library {
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -208,7 +208,7 @@ class Ai extends Library {
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -254,7 +254,7 @@ class Ai extends Library {
 				'html_markup' => $data['payload']['html_markup'],
 				'element_id' => $data['payload']['element_id'],
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -277,7 +277,7 @@ class Ai extends Library {
 				self::IMAGE_TYPE => $data['payload']['promptSettings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['promptSettings'][ self::STYLE_PRESET ],
 				self::ASPECT_RATIO => $data['payload']['promptSettings'][ self::ASPECT_RATIO ],
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -307,7 +307,7 @@ class Ai extends Library {
 				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
 				self::ASPECT_RATIO => $image_data['promptSettings'][ self::ASPECT_RATIO ],
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -338,7 +338,7 @@ class Ai extends Library {
 			[
 				self::IMAGE_RESOLUTION => $image_data['promptSettings']['upscale_to'],
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -368,7 +368,7 @@ class Ai extends Library {
 			'image/image-to-image/remove-background',
 			[
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -399,7 +399,7 @@ class Ai extends Library {
 			[
 				self::PROMPT => $image_data[ self::PROMPT ],
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -454,7 +454,7 @@ class Ai extends Library {
 				self::PROMPT => $image_data[ self::PROMPT ],
 				self::IMAGE_TYPE => '',
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -497,7 +497,7 @@ class Ai extends Library {
 				self::IMAGE_TYPE => $image_data['promptSettings'][ self::IMAGE_TYPE ] . '/' . $image_data['promptSettings'][ self::STYLE_PRESET ],
 				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
 				'context' => wp_json_encode( $context ),
-                'ids' => $request_ids,
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
