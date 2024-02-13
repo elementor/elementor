@@ -25,7 +25,7 @@ const Resize = () => {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		send( null, settings, editImage );
+		send( { promptSettings: settings, image: editImage } );
 	};
 
 	return (
