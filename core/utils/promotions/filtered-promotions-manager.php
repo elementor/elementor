@@ -18,12 +18,14 @@ class Filtered_Promotions_Manager {
 	 */
 	public static function get_filtered_promotion_data( array $promotion_data, string $filter_name, string $url_key, string $url_sub_key = '' ): array {
 		$new_promotion_data = apply_filters( $filter_name, $promotion_data );
-		if ( $new_promotion_data && count( $new_promotion_data ) <= count( $promotion_data ) ) {
-			$new_promotion_data = self::filter_invalid_url( $new_promotion_data, $url_key, $url_sub_key );
-			$promotion_data = array_replace( $promotion_data, $new_promotion_data );
+		if ( ! is_array( $new_promotion_data ) ) {
+			return $promotion_data;
 		}
 
-		return $promotion_data;
+		$new_promotion_data = array_intersect_key( $new_promotion_data, array_flip( array_keys( $promotion_data ) ) );
+
+		$new_promotion_data = self::filter_invalid_url( $new_promotion_data, $url_key, $url_sub_key );
+		return array_replace( $promotion_data, $new_promotion_data );
 	}
 
 	private static function domain_is_on_elementor_dot_com( $url ): bool {
