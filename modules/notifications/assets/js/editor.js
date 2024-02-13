@@ -1,3 +1,4 @@
+import { createRoot } from 'react-dom/client';
 import { EditorV1 } from './components/editor-v1';
 
 let isRendered = false;
@@ -7,12 +8,11 @@ const onButtonClicked = () => {
 		isRendered = true;
 
 		const container = document.createElement( 'div' );
-
 		document.body.append( container );
+		const Root = createRoot( container );
 
-		ReactDOM.render(
+		Root.render(
 			<EditorV1 />,
-			container,
 		);
 
 		return;
