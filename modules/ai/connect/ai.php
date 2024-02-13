@@ -181,7 +181,7 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_completion_text( $prompt, $context, $request_ids) {
+	public function get_completion_text( $prompt, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/completion',
@@ -215,7 +215,7 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_edit_text( $data, $context, $request_ids) {
+	public function get_edit_text( $data, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/edit',

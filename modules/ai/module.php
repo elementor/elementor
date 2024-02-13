@@ -325,9 +325,9 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $requestIds );
+		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -378,9 +378,9 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_edit_text( $data, $context, $requestIds );
+		$result = $app->get_edit_text( $data, $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -409,9 +409,9 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_custom_code( $data, $context, $requestIds );
+		$result = $app->get_custom_code( $data, $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -445,9 +445,9 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_custom_css( $data, $context, $requestIds );
+		$result = $app->get_custom_css( $data, $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -499,9 +499,9 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_text_to_image( $data, $context, $requestIds );
+		$result = $app->get_text_to_image( $data, $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -536,13 +536,13 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image( [
 			'prompt' => $data['payload']['prompt'],
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $requestIds );
+		], $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -573,12 +573,12 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_upscale( [
 			'promptSettings' => $data['payload']['promptSettings'],
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $requestIds );
+		], $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -609,12 +609,12 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_replace_background( [
 			'attachment_id' => $data['payload']['image']['id'],
 			'prompt' => $data['payload']['prompt'],
-		], $context, $requestIds );
+		], $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -641,10 +641,10 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_remove_background( [
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $requestIds );
+		], $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -683,14 +683,14 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_mask( [
 			'prompt' => $data['payload']['prompt'],
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
 			'mask' => $data['payload']['mask'],
-		], $context, $requestIds );
+		], $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -720,11 +720,11 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-        $requestIds = $this->get_request_ids( $data['payload'] );
+        $request_ids = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_out_painting( [
 			'prompt' => $data['payload']['prompt'],
 			'mask' => $data['payload']['mask'],
-		], $context, $requestIds );
+		], $context, $request_ids );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import useScreenshot from './use-screenshot';
 import { useConfig } from '../context/config';
-import { getUniqueId, useRequestIds } from '../../../context/requests-ids';
+import { useRequestIds } from '../../../context/requests-ids';
 
 const PENDING_VALUE = { isPending: true };
 
