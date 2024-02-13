@@ -62,7 +62,10 @@ const FormText = (
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
 
-	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( { result: initialValue, credits } );
+	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( {
+		result: initialValue,
+		credits,
+	} );
 
 	const [ prompt, setPrompt ] = useState( '' );
 
@@ -86,7 +89,8 @@ const FormText = (
 
 	const resultField = useRef( null );
 
-	const lastRun = useRef( () => {} );
+	const lastRun = useRef( () => {
+	} );
 
 	const autocompleteItems = 'textarea' === type ? textareaAutocomplete : textAutocomplete;
 
@@ -175,7 +179,8 @@ const FormText = (
 						{
 							promptActions.map( ( { label, icon, value } ) => (
 								<Grid item key={ label }>
-									<PromptAction label={ label } icon={ icon } onClick={ () => handleCustomInstruction( value ) } />
+									<PromptAction label={ label } icon={ icon }
+										onClick={ () => handleCustomInstruction( value ) } />
 								</Grid>
 							) )
 						}
