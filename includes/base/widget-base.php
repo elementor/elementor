@@ -383,7 +383,7 @@ abstract class Widget_Base extends Element_Base {
 			'upsale_data' => $this->get_upsale_data(),
 		];
 
-		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) )  {
+		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
 			$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
 			$config['upsale_data'] = Filtered_Promotions_Manager::get_filtered_promotion_data( $config['upsale_data'], $filter_name, 'upgrade_url' );
 		}
