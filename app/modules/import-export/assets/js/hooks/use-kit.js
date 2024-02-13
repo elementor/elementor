@@ -155,7 +155,7 @@ export default function useKit() {
 
 			setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
 		}
-	}, [ ajaxState.status ] );
+	}, [ ajaxState.status, ajaxState.response ] );
 
 	return {
 		kitState,
