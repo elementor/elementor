@@ -162,7 +162,7 @@ jobs:
         if: ${{matrix.testSuite =='elements-regression'}}
         run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
       - uses: actions/upload-artifact@v3
-        if: failure()
+        if: always()
         with:
           name: playwright-test-results-${{ matrix.testSuite }}
           path: ${{inputs.path-to-results || 'test-results/'}}
