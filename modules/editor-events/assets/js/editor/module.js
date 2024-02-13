@@ -4,11 +4,12 @@ import Event from './event';
 
 export default class extends elementorModules.Module {
 	onInit() {
+		this.config = eventsConfig;
+
 		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
 
-		this.config = eventsConfig;
 		window.addEventListener( 'beforeunload', this.sendEvents() );
 	}
 

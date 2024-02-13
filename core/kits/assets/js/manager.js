@@ -64,12 +64,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			type: 'page',
 			callback: () => {
 				elementor.editorEvents.dispatchEvent( {
-					// Action: elementor.editorEvents.config.actions.click,
-					// type: elementor.editorEvents.config.types.button,
-					// section: elementor.editorEvents.config.sections.topbar,
-					// element_name: elementor.editorEvents.config.elementNames.siteSettings,
-					// outcome: null,
-					// entity: null,
+					action: elementor.editorEvents.config.actions.click,
+					type: elementor.editorEvents.config.types.button,
+					section: elementor.editorEvents.config.sections.topbar,
+					element_name: elementor.editorEvents.config.elementNames.siteSettings,
+					outcome: null,
+					entity: null,
 				} );
 				$e.run( 'panel/global/open', {
 					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
