@@ -110,6 +110,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$this->start_popover( $element );
 		}
 
+		if ( $options['use_user_order'] ) {
+			$filtered_fields = $this->sort_fields_by_user_preference( $user_args['fields_options'], $filtered_fields );
+		}
+
 		foreach ( $filtered_fields as $field_id => $field_args ) {
 			// Add the global group args to the control
 			$field_args = $this->add_group_args_to_field( $field_id, $field_args );
@@ -588,5 +592,28 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$element->add_control( $this->get_controls_prefix() . $starter_name, $control_params );
 
 		$element->start_popover();
+	}
+
+	/**
+	 * Gets user supplied fields and factory fields, combines them with the user fields taking precedence.
+	 * It removes duplicates and returns the new array.
+	 *
+	 * @param array $user_fields control fields supplied by user
+	 * @param array  $factory_fields default control fields.
+	 *
+	 * @return array
+	 */
+	private function sort_fields_by_user_preference( $user_fields, $factory_fields ) {
+		$user_field_ids = array_keys( $user_fields );
+		$factory_field_ids = array_keys( $factory_fields );
+		$combined_ids = array_merge( $user_field_ids, $factory_field_ids );
+		$combined_ids = array_unique( $combined_ids, SORT_REGULAR );
+
+		$new_filtered_fields = [];
+		foreach ( $combined_ids as $id ) {
+			$new_filtered_fields[ $id ] = $factory_fields[ $id ];
+		}
+
+		return $new_filtered_fields;
 	}
 }

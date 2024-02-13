@@ -252,7 +252,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 */
 	final public function add_group_control( $group_name, $args = [], $options = [] ) {
 		$args['condition']['_skin'] = $this->get_id();
-		parent::add_group_control( $group_name, $args );
+		parent::add_group_control( $group_name, $args, $options );
 	}
 
 	/**
