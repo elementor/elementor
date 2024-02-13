@@ -388,19 +388,6 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return bool True if control added, False otherwise.
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
-		$ui_controls = [
-			Controls_Manager::RAW_HTML,
-			Controls_Manager::DIVIDER,
-			Controls_Manager::HEADING,
-			Controls_Manager::BUTTON,
-		];
-
-		$should_optimize_controls = $this->should_optimize_controls();
-
-		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], $ui_controls ) ) {
-			return false;
-		}
-
 		$default_options = [
 			'overwrite' => false,
 			'position' => null,
@@ -444,7 +431,21 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
-		if ( $should_optimize_controls ) {
+		if ( $this->should_optimize_controls() ) {
+			$ui_controls = [
+				Controls_Manager::RAW_HTML,
+				Controls_Manager::DIVIDER,
+				Controls_Manager::HEADING,
+				Controls_Manager::BUTTON,
+			];
+
+			if ( ! empty( $args['type'] ) && ! empty( $args['section'] ) && in_array( $args['type'], $ui_controls ) ) {
+				$args = [
+					'type' => $args['type'],
+					'section' => $args['section'],
+				];
+			}
+
 			unset(
 				$args['label_block'],
 				$args['label'],
@@ -2401,9 +2402,7 @@ abstract class Controls_Stack extends Base_Object {
 				$args = array_replace_recursive( $target_tab, $args );
 			}
 		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
-			if ( ! $this->should_optimize_controls() ) {
-				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			}
+			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		return $args;
