@@ -21,7 +21,7 @@ export default function useIntersectionObserver( callback ) {
 	}, [] );
 
 	const observe = () => {
-		if ( elements.length !== 0 && observer.current ) {
+		if ( observer.current && elements.length !== 0 ) {
 			elements.forEach( ( element ) => {
 				if ( element ) {
 					observer.current.observe( element );

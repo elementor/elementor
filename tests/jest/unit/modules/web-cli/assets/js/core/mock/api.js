@@ -27,7 +27,12 @@ export const setupMock = async () => {
 		},
 	};
 
+	if ( ! global.location ) {
+		global.location = {};
+	}
+
 	global.location = {
+		...global.location,
 		href: 'http://localhost.test:8080/wp-admin/admin.php?page=elementor-web-preview',
 		hash: 'test-hash',
 	};
