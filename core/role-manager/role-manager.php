@@ -59,6 +59,18 @@ class Role_Manager extends Settings_Page {
 	}
 
 	/**
+	 * @param $promotion
+	 * @param string $upgrade_url
+	 * @return mixed
+	 */
+	private function replace_url( $promotion, string $upgrade_url ) {
+		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
+			$promotion['upgrade_url'] = $upgrade_url;
+		}
+		return $promotion;
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access protected
 	 */
@@ -222,10 +234,11 @@ class Role_Manager extends Settings_Page {
 			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
 		];
 
-		$promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
+		$new_promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
 
-		if ( false === Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
-			$promotion['upgrade_url'] = $upgrade_url;
+		if ( ! empty( $new_promotion ) && count( $new_promotion ) <= count( $promotion ) ) {
+			$promotion = $new_promotion;
+			$promotion = $this->replace_url( $promotion, $upgrade_url );
 		}
 
 		return $promotion;
