@@ -100,7 +100,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map',
 			[
-				'label' => esc_html__( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Google Maps', 'elementor' ),
 			]
 		);
 
@@ -187,7 +187,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map_style',
 			[
-				'label' => esc_html__( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Google Maps', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
