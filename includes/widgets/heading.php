@@ -122,7 +122,7 @@ class Widget_Heading extends Widget_Base {
 		$this->start_controls_section(
 			'section_title',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Heading', 'elementor' ),
 			]
 		);
 
@@ -201,7 +201,7 @@ class Widget_Heading extends Widget_Base {
 		$this->start_controls_section(
 			'section_title_style',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Heading', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
