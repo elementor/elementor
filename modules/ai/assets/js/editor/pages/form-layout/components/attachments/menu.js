@@ -11,7 +11,7 @@ export const Menu = ( props ) => {
 	const [ selectedType, setSelectedType ] = useState( null );
 	const { direction } = useTheme();
 	const anchorRef = useRef( null );
-	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-attachment-bddadge' );
+	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-attachment-badge' );
 
 	return (
 		<>
