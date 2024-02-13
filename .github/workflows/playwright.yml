@@ -110,7 +110,8 @@ jobs:
           'pluginTester1_containers',
           'pluginTester2_containers',
           'pluginTester1_sections',
-          'pluginTester2_sections'
+          'pluginTester2_sections',
+          'promotions'
         ]
     steps:
       - name: Checkout source code
@@ -163,9 +164,9 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-test-results
-          path: ${{inputs.path-to-results || 'test-results/'}} 
-          retention-days: 2     
+          name: playwright-test-results-${{ matrix.testSuite }}
+          path: ${{inputs.path-to-results || 'test-results/'}}
+          retention-days: 2
 
   test-result:
     needs: Playwright

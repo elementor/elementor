@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 
 export const UpgradeButton = ( props ) => {
 	return (
@@ -12,7 +11,6 @@ export const UpgradeButton = ( props ) => {
 				background: 'var(--e-a-btn-bg-accent, #93003f)',
 			} }
 		>
-			{ __( 'Upgrade Now', 'elementor' ) }
 		</Button>
 	);
 };

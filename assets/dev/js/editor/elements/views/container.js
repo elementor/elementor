@@ -278,7 +278,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Add a `Save as Template` button to the context menu.
 	 *
 	 * @return {Object} groups
-	 *
 	 */
 	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
@@ -377,7 +376,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
 	 *
 	 * @return {void}
-	 *
 	 */
 	onAddButtonClick() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
