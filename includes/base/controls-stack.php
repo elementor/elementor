@@ -432,6 +432,23 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( $this->should_optimize_controls() ) {
+			$ui_controls = [
+				Controls_Manager::RAW_HTML,
+				Controls_Manager::DIVIDER,
+				Controls_Manager::HEADING,
+				Controls_Manager::BUTTON,
+				Controls_Manager::ALERT,
+				Controls_Manager::NOTICE,
+				Controls_Manager::DEPRECATED_NOTICE,
+			];
+
+			if ( ! empty( $args['type'] ) && ! empty( $args['section'] ) && in_array( $args['type'], $ui_controls ) ) {
+				$args = [
+					'type' => $args['type'],
+					'section' => $args['section'],
+				];
+			}
+
 			unset(
 				$args['label_block'],
 				$args['label'],
