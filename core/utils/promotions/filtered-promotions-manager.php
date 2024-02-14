@@ -46,7 +46,7 @@ class Filtered_Promotions_Manager {
 		} else {
 			$new_promotion_data[ $url_key ] = self::filter_invalid_url_in_flat_array( $new_promotion_data[ $url_key ], $url_sub_key );
 		}
-s
+
 		return $new_promotion_data;
 	}
 
