@@ -1,3 +1,4 @@
+import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 
 ( () => {
@@ -12,16 +13,43 @@ import { createRoot } from 'react-dom/client';
 
 		document.body.classList.add( styleguideBodyClass );
 
-		maybeCreateRoot();
+		render( <App />, getStyleguideWidget() );
+	}
 
-		styleguideRoot.render( <App /> );
+	// Support conditional rendering based on the React version.
+	// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
+	function render( app, domElement ) {
+		let renderFn;
+
+		try {
+			if ( ! styleguideRoot ) {
+				styleguideRoot = createRoot( domElement );
+			}
+
+			renderFn = () => {
+				styleguideRoot.render( app );
+			};
+		} catch ( e ) {
+			renderFn = () => {
+				// eslint-disable-next-line react/no-deprecated
+				ReactDOM.render( app, domElement );
+			};
+		}
+
+		renderFn();
 	}
 
 	/**
 	 * Remove the app from the page.
 	 */
 	function unmount() {
-		styleguideRoot.unmount();
+		try {
+			styleguideRoot.unmount();
+		} catch ( e ) {
+			// eslint-disable-next-line react/no-deprecated
+			ReactDOM.unmountComponentAtNode( getStyleguideWidget() );
+		}
+
 		styleguideRoot = null;
 
 		document.body.classList.remove( styleguideBodyClass );
@@ -35,19 +63,6 @@ import { createRoot } from 'react-dom/client';
 	 */
 	function getStyleguideWidget() {
 		return document.querySelector( '.dialog-styleguide-message' );
-	}
-
-	/**
-	 * Create root if the container element is available.
-	 */
-	function maybeCreateRoot() {
-		const widget = getStyleguideWidget();
-
-		if ( styleguideRoot || ! widget ) {
-			return;
-		}
-
-		styleguideRoot = createRoot( widget );
 	}
 
 	/**

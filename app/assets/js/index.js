@@ -1,3 +1,4 @@
+import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 
 import App from './app';
@@ -13,13 +14,33 @@ new KitLibrary();
 new SiteEditor();
 new Onboarding();
 
-const Root = createRoot( document.getElementById( 'e-app' ) );
 const AppWrapper = React.Fragment;
 
-Root.render(
+render( (
 	<AppWrapper>
 		<AppProvider>
 			<App />
 		</AppProvider>
-	</AppWrapper>,
-);
+	</AppWrapper>
+), document.getElementById( 'e-app' ) );
+
+// Support conditional rendering based on the React version.
+// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
+function render( app, domElement ) {
+	let renderFn;
+
+	try {
+		const root = createRoot( domElement );
+
+		renderFn = () => {
+			root.render( app );
+		};
+	} catch ( e ) {
+		renderFn = () => {
+			// eslint-disable-next-line react/no-deprecated
+			ReactDOM.render( app, domElement );
+		};
+	}
+
+	renderFn();
+}

@@ -1,3 +1,4 @@
+import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import App from './app';
 import { __ } from '@wordpress/i18n';
@@ -37,9 +38,8 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		const rootElement = document.createElement( 'div' );
 		document.body.append( rootElement );
-		const Root = createRoot( rootElement );
 
-		Root.render(
+		this.render( (
 			<App
 				type={ this.getOption( 'type' ) }
 				controlType={ this.getOption( 'controlType' ) }
@@ -53,8 +53,29 @@ export default class AiBehavior extends Marionette.Behavior {
 				} }
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
-			/>,
-		);
+			/>
+		), rootElement );
+	}
+
+	// Support conditional rendering based on the React version.
+	// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
+	render( app, domElement ) {
+		let renderFn;
+
+		try {
+			const root = createRoot( domElement );
+
+			renderFn = () => {
+				root.render( app );
+			};
+		} catch ( e ) {
+			renderFn = () => {
+				// eslint-disable-next-line react/no-deprecated
+				ReactDOM.render( app, domElement );
+			};
+		}
+
+		renderFn();
 	}
 
 	getAiButtonLabel() {
