@@ -1,4 +1,3 @@
-import { createRoot } from 'react-dom/client';
 import { createPreviewContainer } from './preview-container';
 import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
@@ -70,11 +69,10 @@ export const renderLayoutApp = ( options = {
 
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
-	const Root = createRoot( rootElement );
 
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
-	Root.render(
+	ReactDOM.render(
 		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
@@ -106,7 +104,7 @@ export const renderLayoutApp = ( options = {
 					previewContainer.destroy();
 					options.onClose?.();
 
-					Root.unmount();
+					ReactDOM.unmountComponentAtNode( rootElement );
 					rootElement.remove();
 
 					openPanel();
@@ -132,6 +130,7 @@ export const renderLayoutApp = ( options = {
 				editorSessionId={ EDITOR_SESSION_ID }
 			/>
 		</LayoutAppWrapper>,
+		rootElement,
 	);
 
 	options.onRenderApp?.( { previewContainer } );

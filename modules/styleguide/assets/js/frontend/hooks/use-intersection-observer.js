@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 export default function useIntersectionObserver( callback ) {
-	const observer = useRef( null );
+	let observer;
 	let elements = [];
 
 	useEffect( () => {
-		observer.current = new IntersectionObserver( ( entries ) => {
+		observer = new IntersectionObserver( ( entries ) => {
 			const intersectingArea = entries.find( ( entry ) => entry.isIntersecting );
 
 			if ( intersectingArea ) {
@@ -14,27 +14,25 @@ export default function useIntersectionObserver( callback ) {
 		}, {} );
 
 		return () => {
-			if ( observer.current ) {
-				observer.current.disconnect();
-			}
+			observer.disconnect();
 		};
 	}, [] );
 
 	const observe = () => {
-		if ( observer.current && elements.length !== 0 ) {
+		if ( elements.length !== 0 ) {
 			elements.forEach( ( element ) => {
 				if ( element ) {
-					observer.current.observe( element );
+					observer.observe( element );
 				}
 			} );
 		}
 	};
 
 	const unobserve = () => {
-		if ( observer.current && elements.length !== 0 ) {
+		if ( elements.length !== 0 ) {
 			elements.forEach( ( element ) => {
 				if ( element ) {
-					observer.current.unobserve( element );
+					observer.unobserve( element );
 				}
 			} );
 		}
