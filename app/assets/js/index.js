@@ -1,5 +1,3 @@
-import { createRoot } from 'react-dom/client';
-
 import App from './app';
 import ImportExport from '../../modules/import-export/assets/js/module';
 import KitLibrary from '../../modules/kit-library/assets/js/module';
@@ -13,13 +11,13 @@ new KitLibrary();
 new SiteEditor();
 new Onboarding();
 
-const Root = createRoot( document.getElementById( 'e-app' ) );
 const AppWrapper = React.Fragment;
 
-Root.render(
+ReactDOM.render(
 	<AppWrapper>
 		<AppProvider>
 			<App />
 		</AppProvider>
 	</AppWrapper>,
+	document.getElementById( 'e-app' ),
 );
