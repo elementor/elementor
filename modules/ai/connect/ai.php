@@ -220,7 +220,7 @@ class Ai extends Library {
 			'POST',
 			'text/edit',
 			[
-				'input' =>  $data['payload']['input'],
+				'input' => $data['payload']['input'],
 				'instruction' => $data['payload']['instruction'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
@@ -235,8 +235,8 @@ class Ai extends Library {
 			'POST',
 			'text/custom-code',
 			[
-				'prompt' =>  $data['payload']['prompt'],
-				'language' =>  $data['payload']['language'],
+				'prompt' => $data['payload']['prompt'],
+				'language' => $data['payload']['language'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,

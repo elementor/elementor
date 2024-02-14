@@ -351,13 +351,13 @@ class Module extends BaseModule {
 		return $data['context'];
 	}
 
-    private function get_request_ids( $data ) {
+	private function get_request_ids( $data ) {
 		if ( empty( $data['requestIds'] ) ) {
-		    return new \stdClass();
+			return new \stdClass();
 		}
 
 		return $data['requestIds'];
-    }
+	}
 
 	public function ajax_ai_get_edit_text( $data ) {
 		$this->verify_permissions( $data['editor_post_id'] );
