@@ -437,6 +437,9 @@ abstract class Controls_Stack extends Base_Object {
 				Controls_Manager::DIVIDER,
 				Controls_Manager::HEADING,
 				Controls_Manager::BUTTON,
+				Controls_Manager::ALERT,
+				Controls_Manager::NOTICE,
+				Controls_Manager::DEPRECATED_NOTICE,
 			];
 
 			if ( ! empty( $args['type'] ) && ! empty( $args['section'] ) && in_array( $args['type'], $ui_controls ) ) {
