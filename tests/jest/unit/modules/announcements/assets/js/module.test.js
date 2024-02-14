@@ -1,4 +1,3 @@
-import { waitFor } from '@testing-library/dom';
 import { freeMock, setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/core/mock/api';
 
 describe( 'modules/announcements/assets/js/index.js', () => {
@@ -40,12 +39,10 @@ describe( 'modules/announcements/assets/js/index.js', () => {
 		await import( 'elementor/modules/announcements/assets/js/index' );
 
 		// Assert.
-		await waitFor( () => {
-			expect( document.querySelectorAll( 'div.announcement-body-image' ).length ).toEqual( 1 );
-			expect( document.querySelectorAll( 'div.announcement-body-title' ).length ).toEqual( 1 );
-			expect( document.querySelectorAll( 'div.announcement-body-description' ).length ).toEqual( 1 );
-			expect( document.querySelectorAll( 'div.announcement-footer-container' ).length ).toEqual( 1 );
-			expect( document.querySelectorAll( 'div.announcement-footer-container a.button-item' ).length ).toEqual( 1 );
-		} );
+		expect( document.querySelectorAll( 'div.announcement-body-image' ).length ).toEqual( 1 );
+		expect( document.querySelectorAll( 'div.announcement-body-title' ).length ).toEqual( 1 );
+		expect( document.querySelectorAll( 'div.announcement-body-description' ).length ).toEqual( 1 );
+		expect( document.querySelectorAll( 'div.announcement-footer-container' ).length ).toEqual( 1 );
+		expect( document.querySelectorAll( 'div.announcement-footer-container a.button-item' ).length ).toEqual( 1 );
 	} );
 } );
