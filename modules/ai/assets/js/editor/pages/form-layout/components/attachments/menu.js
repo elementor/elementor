@@ -20,7 +20,16 @@ export const Menu = ( props ) => {
 				onClick={ () => setIsOpen( true ) }
 				color="secondary"
 			>
-				{ isOpen ? <XCircleIcon fontSize="small" /> : <PlusCircleIcon fontSize="small" /> }
+				{ ( () => {
+					if ( isOpen ) {
+						return <XCircleIcon fontSize="small" />;
+					} else if ( isViewed ) {
+						return <PlusCircleIcon fontSize="small" />;
+					}
+					return <Badge color="primary" badgeContent=" " variant="dot"><PlusCircleIcon
+						fontSize="small" /></Badge>;
+				} )() }
+
 			</IconButton>
 
 			<Popover
