@@ -448,8 +448,8 @@ module.exports = {
 		/* Translators: %s is the version number. */
 		const dialogTitle = __( 'Ready for the new Font Awesome %s icon library?', 'elementor' ).replace( '%s', currentFaVersion );
 
-		const dialogMessage = elementor.config.user.is_administrator
-			? (
+		const dialogSettings = elementor.config.user.is_administrator ? {
+			message: (
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
 				__( 'We\'ll convert existing icons to the new versions when you edit a page that already contains icons.', 'elementor' ) + ' ' +
@@ -459,34 +459,35 @@ module.exports = {
 				'<li>' + __( 'After the update, some existing icons might appear differently due to changes in the Font Awesome configuration.', 'elementor' ) + '</li>' +
 				'<li><b>' + __( 'To ensure a smooth transition, first create a backup of your entire site with your hosting provider.', 'elementor' ) + '</b></li>' +
 				'<li><b>' + __( 'This update can\'t be undone, even by rolling back to a previous Elementor version.', 'elementor' ) + '</b></li></ul>'
-			) : (
+			),
+			type: 'confirm',
+			class: 'dialog-type-confirm-large',
+			submitText: __( 'Update now', 'elementor' ),
+		} : {
+			message: (
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
 				__( 'Contact your site admin to update the icon library.', 'elementor' )
-			);
-
-		const dialogType = elementor.config.user.is_administrator ? 'confirm' : 'alert';
-
-		const dialogSubmitText = elementor.config.user.is_administrator
-			? __( 'Update now', 'elementor' )
-			: __( 'Got it', 'elementor' );
-
-		const dialogClass = elementor.config.user.is_administrator ? 'dialog-type-confirm-large' : '';
+			),
+			type: 'alert',
+			class: '',
+			submitText: __( 'Got it', 'elementor' ),
+		}
 
 		if ( ! this.fontAwesomeMigrationDialog ) {
 			const self = this;
 
-			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogType, {
+			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogSettings.type, {
 				id: 'e-fa-migration-dialog',
-				className: dialogClass,
+				className: dialogSettings.class,
 				headerMessage: dialogTitle,
-				message: dialogMessage,
+				message: dialogSettings.message,
 				position: {
 					my: 'center center',
 					at: 'center center',
 				},
 				strings: {
-					confirm: dialogSubmitText,
+					confirm: dialogSettings.submitText,
 				},
 				hide: {
 					onButtonClick: false,
