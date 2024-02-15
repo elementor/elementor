@@ -4,12 +4,14 @@ import XCircleIcon from '../../../../icons/x-circle-icon';
 import PlusCircleIcon from '../../../../icons/plus-circle-icon';
 import PropTypes from 'prop-types';
 import { AttachDialog } from './attach-dialog';
+import useIntroduction from '../../../../hooks/use-introduction';
 
 export const Menu = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ selectedType, setSelectedType ] = useState( null );
 	const { direction } = useTheme();
 	const anchorRef = useRef( null );
+	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-attachment-badge' );
 
 	return (
 		<>
@@ -17,7 +19,10 @@ export const Menu = ( props ) => {
 				size="small"
 				ref={ anchorRef }
 				disabled={ props.disabled }
-				onClick={ () => setIsOpen( true ) }
+				onClick={ () => {
+					setIsOpen( true );
+					markAsViewed();
+				} }
 				color="secondary"
 			>
 				{ ( () => {
