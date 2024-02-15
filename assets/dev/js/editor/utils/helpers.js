@@ -474,6 +474,8 @@ module.exports = {
 		const dialogClass = elementor.config.user.is_administrator ? 'dialog-type-confirm-large' : '';
 
 		if ( ! this.fontAwesomeMigrationDialog ) {
+			const self = this;
+
 			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogType, {
 				id: 'e-fa-migration-dialog',
 				className: dialogClass,
@@ -498,11 +500,11 @@ module.exports = {
 						return;
 					}
 
-					const updateButton = this.fontAwesomeMigrationDialog.getElements( 'ok' );
+					const updateButton = this.fontAwesomeMigrationDialog.getElements( 'ok' )[ 0 ];
 					const updateButtonText = updateButton.textContent;
 
 					updateButton.textContent = __( 'Updating...', 'elementor' );
-					updateButton[ 0 ].setAttribute( 'disabled', 'disabled' );
+					updateButton.setAttribute( 'disabled', 'disabled' );
 
 					const handleIconMigration = ( dialogOptions, onConfirmCallback ) => {
 						this.fontAwesomeMigrationDialog.hide();
@@ -541,10 +543,10 @@ module.exports = {
 							};
 
 							handleIconMigration( dialogOptions, () => {
-								this.fontAwesomeMigrationDialog.show();
+								self.fontAwesomeMigrationDialog.show();
 
-								updateButton[ 0 ].removeAttribute( 'disabled' );
 								updateButton.textContent = updateButtonText;
+								updateButton.removeAttribute( 'disabled' );
 							} );
 						},
 					}, true );
