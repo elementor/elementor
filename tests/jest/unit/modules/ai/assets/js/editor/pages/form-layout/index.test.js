@@ -11,6 +11,7 @@ import {
 import LayoutApp from 'elementor/modules/ai/assets/js/editor/layout-app';
 import { SCREENSHOT_LIGHT_1 } from '../../mock/data';
 import { MAX_PAGES } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/hooks/use-slider';
+import { RequestIdsProvider } from 'elementor/modules/ai/assets/js/editor/context/requests-ids';
 
 describe( 'FormLayout', () => {
 	const REGENERATE_ATTEMPTS_INCLUDING_FIRST_GENERATE = MAX_PAGES - 1;
@@ -76,45 +77,51 @@ describe( 'FormLayout', () => {
 		return SCREENSHOT_LIGHT_1;
 	};
 	const onGenerate = jest.fn();
-	const App = () => (
-		<TestThemeProvider>
-			<LayoutApp
-				onClose={ () => {} }
-				onConnect={ () => {} }
-				onData={ onData }
-				onInsert={ () => {} }
-				onSelect={ () => {} }
-				onGenerate={ onGenerate }
-				mode={ 'layout' }
-				attachmentsTypes={ {} }
-				hasPro={ true }
-				editorSessionId={ 'EDITOR_SESSION_ID' }
-			/>
-		</TestThemeProvider>
-	);
+	const App = () => ( <TestThemeProvider>
+		<LayoutApp
+			onClose={ () => {
+			} }
+			onConnect={ () => {
+			} }
+			onData={ onData }
+			onInsert={ () => {
+			} }
+			onSelect={ () => {
+			} }
+			onGenerate={ onGenerate }
+			mode={ 'layout' }
+			attachmentsTypes={ {} }
+			hasPro={ true }
+		/>
+	</TestThemeProvider> );
 
-	const renderElement = ( ) => {
+	const renderElement = () => {
 		const props = {
-			DialogHeaderProps: {},
-			DialogContentProps: {},
-			attachments: [],
+			DialogHeaderProps: {}, DialogContentProps: {}, attachments: [],
 		};
 
-		return render(
-			<TestThemeProvider>
-				<RemoteConfigProvider onError={ () => {} }>
+		return render( <TestThemeProvider>
+			<RequestIdsProvider>
+				<RemoteConfigProvider onError={ () => {
+				} }>
 					<ConfigProvider mode={ 'layout' }
 						attachmentsTypes={ {} }
-						onClose={ () => {} }
-						onConnect={ () => {} }
-						onData={ () => {} }
-						onInsert={ () => {} }
-						onSelect={ () => {} }
-						onGenerate={ () => {} }>
+						onClose={ () => {
+						} }
+						onConnect={ () => {
+						} }
+						onData={ () => {
+						} }
+						onInsert={ () => {
+						} }
+						onSelect={ () => {
+						} }
+						onGenerate={ () => {
+						} }>
 						<FormLayout { ...props } />
 					</ConfigProvider>
 				</RemoteConfigProvider>
-			</TestThemeProvider>,
-		);
+			</RequestIdsProvider>
+		</TestThemeProvider> );
 	};
 } );
