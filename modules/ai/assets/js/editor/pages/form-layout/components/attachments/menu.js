@@ -25,7 +25,6 @@ export const Menu = ( props ) => {
 				} }
 				color="secondary"
 			>
-				delete - { isOpen ? <XCircleIcon fontSize="small" /> : <PlusCircleIcon fontSize="small" /> }
 				{ ( () => {
 					if ( isOpen ) {
 						return <XCircleIcon fontSize="small" />;
