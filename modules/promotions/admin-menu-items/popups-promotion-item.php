@@ -14,7 +14,6 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 	private array $promotion_data;
 
 	public function __construct() {
-
 		$this->promotion_data = [
 			'title' => esc_html__( 'Get Popup Builder', 'elementor' ),
 			'content' => esc_html__(
@@ -28,8 +27,6 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 		];
 
 		$this->promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( $this->promotion_data, 'elementor/templates/popup', 'action_button', 'url' );
-
-
 	}
 
 	public function get_parent_slug() {
