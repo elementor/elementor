@@ -472,7 +472,7 @@ module.exports = {
 			type: 'alert',
 			class: '',
 			submitText: __( 'Got it', 'elementor' ),
-		}
+		};
 
 		if ( ! this.fontAwesomeMigrationDialog ) {
 			const self = this;
