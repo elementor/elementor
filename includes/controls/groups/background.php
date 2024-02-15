@@ -269,6 +269,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
 			],
 			'default' => 'center center',
+			'responsive' => true,
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
 			],
