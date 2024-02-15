@@ -451,16 +451,20 @@ class Icons_Manager {
 
 	public static function enqueue_fa_legacy_css() {
 		if ( Migrations::is_migration_required() ) {
-			wp_enqueue_style( 'fontawesome4' );
 			wp_enqueue_style( 'fontawesome5' );
-		} else {
-			$current_filter = current_filter();
-			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
-			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
-				self::enqueue_shim();
-			} elseif ( 'yes' === $load_shim ) {
-				self::enqueue_shim();
+		}
+
+		$should_load_fa4_shim_setting = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
+		$is_editor = 'elementor/editor/after_enqueue_styles' === current_filter();
+
+		if ( $is_editor ) {
+			self::enqueue_shim();
+		} elseif ( 'yes' === $should_load_fa4_shim_setting ) {
+			if ( Migrations::is_migration_required() ) {
+				wp_enqueue_style( 'fontawesome4' );
 			}
+
+			self::enqueue_shim();
 		}
 	}
 

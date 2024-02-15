@@ -18,7 +18,7 @@ class Migrations {
 
 	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
 
-	const FONTAWESOME_CURRENT_VERSION_OPTION = 'fontawesome_current_version';
+	const FONTAWESOME_CURRENTLY_USED_VERSION_OPTION = 'fontawesome_current_version';
 
 	/**
 	 * The latest version that requires migration.
@@ -150,30 +150,39 @@ class Migrations {
 			$is_new_plugin_installation = empty( key( Upgrade_Manager::get_installs_history() ) );
 
 			if ( $is_new_plugin_installation ) {
-				update_option( 'elementor_' . self::FONTAWESOME_CURRENT_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
+				update_option( 'elementor_' . self::FONTAWESOME_CURRENTLY_USED_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 			} else {
-				$needs_upgrade = self::get_needs_upgrade_option();
-				$latest_migration_version = get_option( 'elementor_' . self::FONTAWESOME_CURRENT_VERSION_OPTION, null );
-
-				// Check if migration is required based on get_needs_upgrade_option() or version comparison
-				$is_migration_required = null === $latest_migration_version || version_compare(
-					$latest_migration_version,
-					self::LATEST_MIGRATION_REQUIRED_VERSION,
-					'<'
-				);
-
-				$migration_required = 'yes' === $needs_upgrade || $is_migration_required;
+				$migration_required = self::check_migration_required();
 			}
-
-			/**
-			 * Is icon migration required.
-			 * @since 3.19.0
-			 * @param bool $migration_required
-			 */
-			$migration_required = apply_filters( 'elementor/icons_manager/migration_required', $migration_required );
 		}
 
-		return $migration_required;
+		return apply_filters( 'elementor/icons_manager/migration_required', $migration_required );
+	}
+
+	/**
+	 * Checks if migration is required based on DB flags or version comparison.
+	 *
+	 * @return bool True if migration is required, false otherwise.
+	 */
+	private static function check_migration_required() {
+		$needs_upgrade = self::get_needs_upgrade_option();
+
+		if ( 'yes' === $needs_upgrade ) {
+			return true;
+		}
+
+		$currently_used_version = get_option( 'elementor_' . self::FONTAWESOME_CURRENTLY_USED_VERSION_OPTION, null );
+
+		if ( null === $currently_used_version ) {
+			return true;
+		}
+
+		// Migration is required if the version currently used on the website is lower than the migration-required-version.
+		return version_compare(
+			$currently_used_version,
+			self::LATEST_MIGRATION_REQUIRED_VERSION,
+			'<'
+		);
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
@@ -215,7 +224,7 @@ class Migrations {
 	 */
 	public static function update_migration_required_flags() {
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
-		update_option( 'elementor_' . self::FONTAWESOME_CURRENT_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
+		update_option( 'elementor_' . self::FONTAWESOME_CURRENTLY_USED_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 	}
 
 	/**
