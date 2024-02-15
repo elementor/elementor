@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Settings;
 use Elementor\Utils;
 
@@ -90,13 +90,7 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 	 * @return array|null
 	 */
 	private function get_promotion_data(): ?array {
-		$promotion_data = $this->build_promotion_data_array();
-
-		$new_promotion_data = apply_filters( 'elementor/' . $this->get_name() . '/custom_promotion', $promotion_data );
-
-		return count( $new_promotion_data ) <= count( $promotion_data )
-				? $this->replace_values( $promotion_data, $new_promotion_data )
-				: $promotion_data;
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $this->build_promotion_data_array(), 'elementor/' . $this->get_name() . '/custom_promotion', 'cta_url' );
 	}
 
 	/**
@@ -111,20 +105,5 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 			'lines' => $this->get_lines(),
 			'side_note' => $this->get_side_note(),
 		];
-	}
-
-	/**
-	 * @param array $promotion_data
-	 * @param array $new_promotion_data
-	 * @return array
-	 */
-	private function replace_values( array $promotion_data, array $new_promotion_data ): array {
-		$new_promotion_data = array_replace( $promotion_data, $new_promotion_data );
-
-		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $new_promotion_data['cta_url'] ) ) {
-			$new_promotion_data['cta_url'] = $promotion_data['cta_url'];
-		}
-
-		return $new_promotion_data;
 	}
 }

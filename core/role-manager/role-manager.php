@@ -2,7 +2,7 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -56,18 +56,6 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
-	}
-
-	/**
-	 * @param $promotion
-	 * @param string $upgrade_url
-	 * @return mixed
-	 */
-	private function replace_url( $promotion, string $upgrade_url ) {
-		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
-			$promotion['upgrade_url'] = $upgrade_url;
-		}
-		return $promotion;
 	}
 
 	/**
@@ -234,14 +222,8 @@ class Role_Manager extends Settings_Page {
 			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
 		];
 
-		$new_promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion, 'elementor/role/custom_promotion', 'upgrade_url' );
 
-		if ( ! empty( $new_promotion ) && count( $new_promotion ) <= count( $promotion ) ) {
-			$promotion = $new_promotion;
-			$promotion = $this->replace_url( $promotion, $upgrade_url );
-		}
-
-		return $promotion;
 	}
 
 	/**
