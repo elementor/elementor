@@ -31,6 +31,7 @@ export const Menu = ( props ) => {
 					} else if ( isViewed ) {
 						return <PlusCircleIcon fontSize="small" />;
 					}
+
 					return <Badge color="primary" badgeContent=" " variant="dot"><PlusCircleIcon
 						fontSize="small" /></Badge>;
 				} )() }
