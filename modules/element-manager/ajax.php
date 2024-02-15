@@ -6,12 +6,19 @@ use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Validate_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Ajax {
+
+	const ELEMENT_MANAGER_PROMOTION_URL = 'https://go.elementor.com/go-pro-element-manager/';
+
+	const FREE_TO_PRO_PERMISSIONS_PROMOTION_URL = 'https://go.elementor.com/go-pro-element-manager-permissions/';
+
+	const PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL = 'https://go.elementor.com/go-pro-advanced-element-manager-permissions/';
 
 	public function register_endpoints() {
 		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
@@ -57,6 +64,31 @@ class Ajax {
 				'notice_id' => $notice_id,
 				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
 			],
+			'promotion_data' => [
+				'manager_permissions' => [
+					'pro' => $this->get_element_manager_promotion(
+						[
+							'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+							'url' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
+						],
+						'pro_permissions'
+					),
+					'advanced' => $this->get_element_manager_promotion(
+						[
+							'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+							'url' => self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
+						],
+						'advanced_permissions'
+					),
+				],
+				'element_manager' => $this->get_element_manager_promotion(
+					[
+						'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+						'url' => self::ELEMENT_MANAGER_PROMOTION_URL,
+					],
+					'element_manager'
+				),
+			],
 		];
 
 		if ( ! Utils::has_pro() ) {
@@ -66,6 +98,25 @@ class Ajax {
 		$data['additional_data'] = apply_filters( 'elementor/element_manager/admin_app_data/additional_data', [] );
 
 		wp_send_json_success( $data );
+	}
+
+	private function get_element_manager_promotion( $promotion_data, $filter_id ): array {
+
+		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/' . $filter_id . '/', $promotion_data );
+
+		return $this->validate_promotion_data( $promotion_data, $filtered_data );
+	}
+
+	private function validate_promotion_data( $promotion_data, $filtered_data ): array {
+		$filtered_data = array_intersect_key( $filtered_data, array_flip( array_keys( $promotion_data ) ) );
+
+		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
+			unset( $filtered_data['url'] );
+		}
+
+		$filtered_data['text'] = $filtered_data['text'] ?? $promotion_data['text'];
+
+		return array_replace( $promotion_data, $filtered_data );
 	}
 
 	private function verify_permission() {

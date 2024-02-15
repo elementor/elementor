@@ -43,7 +43,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 		$url = self::URL;
 		$filtered_url = apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? '';
 
-		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
+		if ( Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
 			$url = $filtered_url;
 		}
 
