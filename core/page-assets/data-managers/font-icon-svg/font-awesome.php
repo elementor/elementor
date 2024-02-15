@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.4.0
  */
 class Font_Awesome extends Base {
-	const LIBRARY_CURRENT_VERSION = '6.5.1';
-
 	protected function get_config( $icon ) {
 		preg_match( '/fa(.*) fa-/', $icon['value'], $icon_name_matches );
 
@@ -27,7 +25,7 @@ class Font_Awesome extends Base {
 
 		return [
 			'key' => $icon_key,
-			'version' => self::LIBRARY_CURRENT_VERSION,
+			'version' => Icons_Manager::ELEMENTOR_ICONS_VERSION,
 			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/v' . Icons_Manager::get_fa_version_to_load() . '/' . $icon_file_name . '.json',
 			'data' => [
 				'icon_data' => [

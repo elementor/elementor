@@ -383,6 +383,7 @@ class Icons_Manager {
 			? self::get_current_fa_version() - 1
 			: self::get_current_fa_version();
 	}
+
 	/**
 	 * on_import_migration
 	 *

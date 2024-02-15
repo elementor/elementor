@@ -18,11 +18,14 @@ class Migrations {
 
 	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
 
-	const LATEST_MIGRATION_OPTION = 'icon_manager_latest_migration';
+	const FONTAWESOME_CURRENT_VERSION_OPTION = 'fontawesome_current_version';
 
-	// The latest version that requires migration.
-	// This is needed as not every FA version update will require migration.
-	// Migration is required only when icons are removed or renamed in the newer version.
+	/**
+	 * The latest version that requires migration.
+	 * This is needed as not every FA version update will require migration.
+	 * Migration is required only when icons are removed or renamed in the newer version.
+	 * If the version defined here is higher than the current FA version used on the website, migration will be required.
+	 */
 	const LATEST_MIGRATION_REQUIRED_VERSION = '6.5.1';
 
 	public static function get_needs_upgrade_option() {
@@ -144,13 +147,13 @@ class Migrations {
 		static $migration_required = false;
 
 		if ( false === $migration_required ) {
-			$new_install = empty( key( Upgrade_Manager::get_installs_history() ) );
+			$is_new_plugin_installation = empty( key( Upgrade_Manager::get_installs_history() ) );
 
-			if ( $new_install ) {
-				update_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
+			if ( $is_new_plugin_installation ) {
+				update_option( 'elementor_' . self::FONTAWESOME_CURRENT_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 			} else {
 				$needs_upgrade = self::get_needs_upgrade_option();
-				$latest_migration_version = get_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, null );
+				$latest_migration_version = get_option( 'elementor_' . self::FONTAWESOME_CURRENT_VERSION_OPTION, null );
 
 				// Check if migration is required based on get_needs_upgrade_option() or version comparison
 				$is_migration_required = null === $latest_migration_version || version_compare(
@@ -195,7 +198,9 @@ class Migrations {
 	private function run_migration() {
 		$custom_tasks = Plugin::instance()->custom_tasks;
 
-		$custom_tasks->add_tasks_requested_to_run( [ [ 'Elementor\Core\Upgrade\Custom_Tasks', 'migrate_fa_icon_values' ] ] );
+		$custom_tasks->add_tasks_requested_to_run( [
+			[ 'Elementor\Core\Upgrade\Custom_Tasks', 'migrate_fa_icon_values' ],
+		] );
 
 		$updater = $custom_tasks->get_task_runner();
 		$callbacks = $custom_tasks->get_tasks_requested_to_run();
@@ -210,7 +215,7 @@ class Migrations {
 	 */
 	public static function update_migration_required_flags() {
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
-		update_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
+		update_option( 'elementor_' . self::FONTAWESOME_CURRENT_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 	}
 
 	/**
