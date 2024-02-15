@@ -42,7 +42,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	public static function get_url() {
 		$url = self::URL;
 		$filtered_url = apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? '';
-		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( [ 'url' => $filtered_url ], 'elementor/admin_menu/custom_promotion', 'upgrade_url' );
+		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( [ 'upgrade_url' => $filtered_url ], 'elementor/admin_menu/custom_promotion', 'upgrade_url' );
 		return $promotion_data ['upgrade_url'];
 	}
 

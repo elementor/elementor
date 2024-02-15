@@ -103,7 +103,7 @@ class Ajax {
 
 	private function get_element_manager_promotion( $promotion_data, $filter_id ): array {
 
-		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data, 'elementor/element_manager/admin_app_data/promotion_data/' . $filter_id . '/', 'url' );
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data, 'elementor/element_manager/admin_app_data/promotion_data/' . $filter_id, 'url' );
 	}
 
 	private function verify_permission() {
