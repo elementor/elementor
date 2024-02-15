@@ -462,7 +462,7 @@ module.exports = {
 			) : (
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
-				__( 'Contact your site admin to update the icon library.', 'elementor' )
+				__( 'Contact your site admin to update the icon library.', 'elementor' ) // eslint-disable-line react/jsx-indent
 			);
 
 		const dialogType = elementor.config.user.is_administrator ? 'confirm' : 'alert';
@@ -525,6 +525,7 @@ module.exports = {
 					elementorCommon.ajax.addRequest( 'icon_manager_migrate', {
 						success: () => {
 							const dialogOptions = {
+								/* Translators: %s is the version number. */
 								title: __( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ).replace( '%s', elementor.config.icons.current_fa_version ),
 								message: __( 'Elevate your designs with these new and updated icons.', 'elementor' ),
 							};
