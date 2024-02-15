@@ -21,13 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-categories"></div>
 
 	<?php
-	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
+	$get_pro_details = [
 		'link' => 'https://go.elementor.com/pro-widgets/',
 		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	] );
 
-	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data( $get_pro_details, 'elementor/editor_templates/panel_elements/custom_promotion', 'link' );
+	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data( $get_pro_details, 'elementor/editor/panel/get_pro_details', 'link' );
 	?>
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
