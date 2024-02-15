@@ -453,7 +453,7 @@ module.exports = {
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
 				__( 'We\'ll convert existing icons to the new versions when you edit a page that already contains icons.', 'elementor' ) + ' ' +
-				<a href="https://go.elementor.com/widget-font-awesome-6-update" target={ '_blank' } rel={ 'noreferrer' }>{ __( 'Learn more', 'elementor' ) }</a> + '<br><br>' +
+				'<a href="https://go.elementor.com/widget-font-awesome-6-update" target="_blank" rel="noreferrer">' + __( 'Learn more', 'elementor' ) + '</a><br><br>' +
 				'<strong>' + __( 'Before you update, keep in mind:', 'elementor' ) + '</strong> ' +
 				'<ul><li>' + __( 'Icons cannot be used on your website until you update to the new library.', 'elementor' ) + '</li>' +
 				'<li>' + __( 'After the update, some existing icons might appear differently due to changes in the Font Awesome configuration.', 'elementor' ) + '</li>' +
@@ -462,7 +462,7 @@ module.exports = {
 			) : (
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
-				__( 'Contact your site admin to update the icon library.', 'elementor' ) // eslint-disable-line react/jsx-indent
+				__( 'Contact your site admin to update the icon library.', 'elementor' )
 			);
 
 		const dialogType = elementor.config.user.is_administrator ? 'confirm' : 'alert';
