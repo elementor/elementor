@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	] );
 
-	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data( $get_pro_details, 'elementor/editor-templates/panel-elements/custom-promotion', 'link' );
+	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data( $get_pro_details, 'elementor/editor_templates/panel_elements/custom_promotion', 'link' );
 	?>
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
