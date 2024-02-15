@@ -74,6 +74,10 @@ class Module extends BaseApp {
 
 		// TODO: Find a better way to add apps page url to the admin top bar.
 		$settings['apps_url'] = admin_url( 'admin.php?page=elementor-apps' );
+		$settings['promotion'] = [
+			'text' => __( 'Get Elementor Pro', 'elementor' ),
+			'url' => 'https://go.elementor.com/pro-cta',
+		];
 
 		$current_screen = get_current_screen();
 

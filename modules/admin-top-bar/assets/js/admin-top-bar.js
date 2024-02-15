@@ -1,14 +1,18 @@
 import BarButton from './components/bar-button/bar-button';
 import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
 import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar() {
 	const actionButtonsRef = useRef();
+	const [ promoion, setPromotion ] = useState( [] );
 
 	// Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
+	useEffect( () => {
+		setPromotion( window.elementorAdminTopBarConfig.promotion );
+	}, [] );
 	useEffect( () => {
 		const adminTopBarElement = document.querySelector( '#e-admin-top-bar-root' );
 		adminTopBarElement.classList.add( 'e-admin-top-bar--active' );
@@ -42,6 +46,8 @@ export default function AdminTopBar() {
 			</div>
 
 			<div className="e-admin-top-bar__secondary-area">
+				{ ! elementorAppConfig.hasPro && <BarButton href={ promoion.url } icon="eicon-pro">{ promoion.text }</BarButton> }
+
 				<div className="e-admin-top-bar__secondary-area-buttons">
 					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Extensions', 'elementor' ) }</BarButton>
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
@@ -51,7 +57,6 @@ export default function AdminTopBar() {
 						: ''
 					}
 				</div>
-
 				<ConnectionButton />
 			</div>
 		</div>
