@@ -11,6 +11,7 @@ import {
 import LayoutApp from 'elementor/modules/ai/assets/js/editor/layout-app';
 import { SCREENSHOT_LIGHT_1 } from '../../mock/data';
 import { MAX_PAGES } from 'elementor/modules/ai/assets/js/editor/pages/form-layout/hooks/use-slider';
+import { RequestIdsProvider } from '../../../../../../../../../../modules/ai/assets/js/editor/context/requests-ids';
 
 describe( 'FormLayout', () => {
 	const REGENERATE_ATTEMPTS_INCLUDING_FIRST_GENERATE = MAX_PAGES - 1;
@@ -105,25 +106,27 @@ describe( 'FormLayout', () => {
 
 		return render(
 			<TestThemeProvider>
-				<RemoteConfigProvider onError={ () => {
-				} }>
-					<ConfigProvider mode={ 'layout' }
-						attachmentsTypes={ {} }
-						onClose={ () => {
-						} }
-						onConnect={ () => {
-						} }
-						onData={ () => {
-						} }
-						onInsert={ () => {
-						} }
-						onSelect={ () => {
-						} }
-						onGenerate={ () => {
-						} }>
-						<FormLayout { ...props } />
-					</ConfigProvider>
-				</RemoteConfigProvider>
+				<RequestIdsProvider>
+					<RemoteConfigProvider onError={ () => {
+					} }>
+						<ConfigProvider mode={ 'layout' }
+							attachmentsTypes={ {} }
+							onClose={ () => {
+						                } }
+							onConnect={ () => {
+						                } }
+							onData={ () => {
+						                } }
+							onInsert={ () => {
+						                } }
+							onSelect={ () => {
+						                } }
+							onGenerate={ () => {
+						                } }>
+							<FormLayout { ...props } />
+						</ConfigProvider>
+					</RemoteConfigProvider>
+				</RequestIdsProvider>
 			</TestThemeProvider>,
 		);
 	};

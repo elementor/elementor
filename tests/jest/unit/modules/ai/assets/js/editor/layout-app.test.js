@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LayoutApp from '../../../../../../../../modules/ai/assets/js/editor/layout-app';
 import TestThemeProvider from './mock/test-theme-provider';
 import { ajaxResponses } from './mock/elementor-common';
@@ -138,7 +138,9 @@ describe( 'LayoutApp', () => {
 		// Arrange - another generate with a new prompt
 		await clickEditPromptButton();
 
-		await addPromptAndGenerate( 'test' );
+		await act( async () => {
+			await addPromptAndGenerate( 'test' );
+		} );
 
 		// Assert
 		assertUniqueIds( {

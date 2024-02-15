@@ -31,11 +31,12 @@ export function generateIds( template ) {
 
 export const RequestIdsProvider = ( props ) => {
 	const editorSessionId = useRef( window.EDITOR_SESSION_ID );
-	const sessionId = useRef( getUniqueId( 'session' ) );
+	const sessionId = useRef( '' );
 	const generateId = useRef( '' );
 	const batchId = useRef( '' );
 	const requestId = useRef( '' );
 
+	sessionId.current = getUniqueId( 'session' );
 	const setGenerate = () => {
 		generateId.current = getUniqueId( 'generate' );
 		return generateId;
