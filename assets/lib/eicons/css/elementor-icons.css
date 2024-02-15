@@ -1847,6 +1847,10 @@
   content: "\e9c5";
 }
 
+.eicon-upgrade-crown:before {
+  content: "\e9c6";
+}
+
 .eicon-eye:before {
   content: "\e8ac";
 }
