@@ -168,7 +168,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-test-results
+          name: playwright-test-results-${{ matrix.testSuite }}
           path: ${{inputs.path-to-results || 'test-results/'}}
           retention-days: 2
 
