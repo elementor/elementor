@@ -22,6 +22,9 @@ class Promotion {
 		);
 	}
 
+	/**
+	 * @return array
+	 */
 	private function get_action_button_content(): array {
 		$has_pro = Utils::has_pro();
 		return $has_pro ? [

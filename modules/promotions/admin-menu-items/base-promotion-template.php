@@ -106,10 +106,4 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 			'side_note' => $this->get_side_note(),
 		];
 	}
-
-	/**
-	 * @param array $promotion_data
-	 * @param array $new_promotion_data
-	 * @return array
-	 */
 }
