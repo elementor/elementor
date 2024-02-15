@@ -186,22 +186,22 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		</div>
 	<# } #>
 
-	<?php if ( ! Utils::has_pro() ) : ?>
-	<# if ( elementData.upsale_data && elementData.upsale_data.description ) { #>
+	<# if ( elementData.upsale_data && elementData.upsale_data.condition ) { #>
 	<div class="elementor-nerd-box elementor-nerd-box--upsale">
 		<# if ( elementData.upsale_data.image ) { #>
-		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( '{{ elementData.upsale_data.image }}' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
-		<# } else { #>
-		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
+		<img class="elementor-nerd-box-icon" src="{{ elementData.upsale_data.image }}" loading="lazy" alt="{{ elementData.upsale_data.image_alt }}" />
 		<# } #>
 		<# if ( elementData.upsale_data.title ) { #>
-		<div class="elementor-nerd-box-title">{{ elementData.upsale_data.title }}</div>
+		<div class="elementor-nerd-box-title">{{{ elementData.upsale_data.title }}}</div>
 		<# } #>
+		<# if ( elementData.upsale_data.description ) { #>
 		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>
-		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank"><?php echo esc_html( '{{ elementData.upsale_data.upgrade_text || `Upgrade Now` }}', 'elementor' ); ?></a>
+		<# } #>
+		<# if ( elementData.upsale_data.upgrade_url && elementData.upsale_data.upgrade_text ) { #>
+		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text }}}</a>
+		<# } #>
 	</div>
 	<# } #>
-	<?php endif; ?>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">

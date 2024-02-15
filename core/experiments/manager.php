@@ -371,7 +371,7 @@ class Manager extends Base_Object {
 				esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.17.0',
@@ -433,11 +433,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
 			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.11.0',
-			],
-			'default' => self::STATE_INACTIVE,
+			'default' => self::STATE_ACTIVE,
 		] );
 
 		$this->add_feature( [
@@ -451,7 +447,10 @@ class Manager extends Base_Object {
 			),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
-			'hidden' => false,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.20.0',
+			],
 			'dependencies' => [
 				'container',
 			],

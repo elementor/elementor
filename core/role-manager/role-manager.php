@@ -2,7 +2,7 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -222,13 +222,8 @@ class Role_Manager extends Settings_Page {
 			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
 		];
 
-		$promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion, 'elementor/role/custom_promotion', 'upgrade_url' );
 
-		if ( false === Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
-			$promotion['upgrade_url'] = $upgrade_url;
-		}
-
-		return $promotion;
 	}
 
 	/**
