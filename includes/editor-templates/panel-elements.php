@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -24,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	] );
+
+	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data( $get_pro_details, 'elementor/editor-templates/panel-elements/custom-promotion', 'link' );
 	?>
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
