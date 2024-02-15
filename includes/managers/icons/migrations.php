@@ -79,7 +79,7 @@ class Migrations {
 	 *
 	 * @return array
 	 */
-	public static function get_migration_dictionary() {
+	private static function get_migration_dictionary() {
 		static $migration_dictionary = [];
 
 		if ( ! empty( $migration_dictionary ) ) {
@@ -140,7 +140,7 @@ class Migrations {
 	/**
 	 * Is an icon migration required in the site content?
 	 *
-	 * @since 3.19.0
+	 * @since 3.20.0
 	 * @return bool
 	 */
 	public static function is_migration_required() {
