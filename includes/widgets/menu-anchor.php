@@ -83,7 +83,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 		$this->start_controls_section(
 			'section_anchor',
 			[
-				'label' => esc_html__( 'Anchor', 'elementor' ),
+				'label' => esc_html__( 'Menu Anchor', 'elementor' ),
 			]
 		);
 
