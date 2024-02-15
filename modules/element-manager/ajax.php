@@ -6,7 +6,7 @@ use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -101,22 +101,7 @@ class Ajax {
 	}
 
 	private function get_element_manager_promotion( $promotion_data, $filter_id ): array {
-
-		$filtered_data = apply_filters( 'elementor/element_manager/admin_app_data/promotion_data/' . $filter_id . '/', $promotion_data );
-
-		return $this->validate_promotion_data( $promotion_data, $filtered_data );
-	}
-
-	private function validate_promotion_data( $promotion_data, $filtered_data ): array {
-		$filtered_data = array_intersect_key( $filtered_data, array_flip( array_keys( $promotion_data ) ) );
-
-		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_data['url'] ) ) {
-			unset( $filtered_data['url'] );
-		}
-
-		$filtered_data['text'] = $filtered_data['text'] ?? $promotion_data['text'];
-
-		return array_replace( $promotion_data, $filtered_data );
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data, 'elementor/element_manager/admin_app_data/promotion_data/' . $filter_id, 'url' );
 	}
 
 	private function verify_permission() {
