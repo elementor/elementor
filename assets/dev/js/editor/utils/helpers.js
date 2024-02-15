@@ -504,13 +504,13 @@ module.exports = {
 					updateButton.textContent = __( 'Updating...', 'elementor' );
 					updateButton[ 0 ].setAttribute( 'disabled', 'disabled' );
 
-					const handleIconMigration = ( dialogTitle, dialogMessage, onConfirmCallback ) => {
+					const handleIconMigration = ( dialogOptions, onConfirmCallback ) => {
 						this.fontAwesomeMigrationDialog.hide();
 
 						elementorCommon.dialogsManager.createWidget( 'alert', {
-							id: 'e-fa-migration-completed-modal',
-							headerMessage: dialogTitle,
-							message: dialogMessage,
+							id: 'e-fa-migration-confirmation',
+							headerMessage: dialogOptions.title,
+							message: dialogOptions.message,
 							position: {
 								my: 'center center',
 								at: 'center center',
@@ -524,18 +524,22 @@ module.exports = {
 
 					elementorCommon.ajax.addRequest( 'icon_manager_migrate', {
 						success: () => {
-							const dialogTitle = __( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ).replace( '%s', elementor.config.icons.current_fa_version );
-							const dialogMessage = __( 'Elevate your designs with these new and updated icons.', 'elementor' );
+							const dialogOptions = {
+								title: __( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ).replace( '%s', elementor.config.icons.current_fa_version ),
+								message: __( 'Elevate your designs with these new and updated icons.', 'elementor' ),
+							};
 
-							handleIconMigration( dialogTitle, dialogMessage, () => {
+							handleIconMigration( dialogOptions, () => {
 								location.reload();
 							} );
 						},
 						error: ( e ) => {
-							const dialogTitle = __( 'Font Awesome update failed', 'elementor' );
-							const dialogMessage = e + __( 'Please try again.', 'elementor' );
+							const dialogOptions = {
+								title: __( 'Font Awesome update failed.', 'elementor' ),
+								message: e + ' ' + __( 'Please try again.', 'elementor' ),
+							};
 
-							handleIconMigration( dialogTitle, dialogMessage, () => {
+							handleIconMigration( dialogOptions, () => {
 								this.fontAwesomeMigrationDialog.show();
 
 								updateButton[ 0 ].removeAttribute( 'disabled' );
