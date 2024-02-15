@@ -224,11 +224,7 @@ class Icons_Manager {
 	}
 
 	public static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
-		$version = Migrations::is_migration_required()
-			? self::get_current_fa_version() - 1
-			: self::get_current_fa_version();
-
-		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/v' . $version . '/' . $filename;
+		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/v' . self::get_fa_version_to_load() . '/' . $filename;
 
 		$script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 		$test_mode = defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
@@ -377,6 +373,17 @@ class Icons_Manager {
 	}
 
 	/**
+	 * Get the number of the Font Awesome version to load.
+	 * If migration is required, it will return the older version.
+	 *
+	 * @return int
+	 */
+	public static function get_fa_version_to_load() {
+		return Migrations::is_migration_required()
+			? self::get_current_fa_version() - 1
+			: self::get_current_fa_version();
+	}
+	/**
 	 * on_import_migration
 	 *
 	 * @deprecated 3.19.0 Use 'Migrations::on_import_migration' method instead.
@@ -443,10 +450,6 @@ class Icons_Manager {
 
 	public static function enqueue_fa_legacy_css() {
 		if ( Migrations::is_migration_required() ) {
-			global $wp_styles;
-
-			$aaa = $wp_styles->registered['fontawesome4'];
-
 			wp_enqueue_style( 'fontawesome4' );
 			wp_enqueue_style( 'fontawesome5' );
 		} else {

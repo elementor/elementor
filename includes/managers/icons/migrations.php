@@ -20,6 +20,9 @@ class Migrations {
 
 	const LATEST_MIGRATION_OPTION = 'icon_manager_latest_migration';
 
+	// The latest version that requires migration.
+	// This is needed as not every FA version update will require migration.
+	// Migration is required only when icons are removed or renamed in the newer version.
 	const LATEST_MIGRATION_REQUIRED_VERSION = '6.5.1';
 
 	public static function get_needs_upgrade_option() {
@@ -37,7 +40,7 @@ class Migrations {
 	 * @return array
 	 */
 	public static function fa_icon_value_migration( $value ) {
-		if ( is_string( $value ) && '' === $value ) {
+		if ( '' === $value ) {
 			return [
 				'value' => '',
 				'library' => '',
@@ -117,7 +120,7 @@ class Migrations {
 		];
 
 		// Case when old value needs migration
-		if ( ! empty( $element['settings'][ $old_control ] ) && self::is_migration_required() ) {
+		if ( ! empty( $element['settings'][ $old_control ] ) ) {
 			$new_value = self::fa_icon_value_migration( $element['settings'][ $old_control ] );
 		}
 
@@ -141,8 +144,9 @@ class Migrations {
 		static $migration_required = false;
 
 		if ( false === $migration_required ) {
-			if ( empty( key( Upgrade_Manager::get_installs_history() ) ) ) {
-				// If `get_installs_history()` is empty, Elementor was never installed on this site.
+			$new_install = empty( key( Upgrade_Manager::get_installs_history() ) );
+
+			if ( $new_install ) {
 				update_option( 'elementor_' . self::LATEST_MIGRATION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 			} else {
 				$needs_upgrade = self::get_needs_upgrade_option();
@@ -178,22 +182,11 @@ class Migrations {
 	 */
 	public function ajax_upgrade_to_current_version() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			throw new \Exception( 'Permission denied' );
+			throw new \Exception( 'Permission denied.' );
 		}
 
 		$this->run_migration();
 		self::update_migration_required_flags();
-
-		$success_title = sprintf(
-			/* translators: %s is the version number. */
-			esc_html__( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ),
-			Icons_Manager::get_current_fa_version()
-		);
-
-		return [
-			'title' => $success_title,
-			'message' => esc_html__( 'Elevate your designs with these new and updated icons.', 'elementor' ),
-		];
 	}
 
 	/**
@@ -203,17 +196,13 @@ class Migrations {
 		$custom_tasks = Plugin::instance()->custom_tasks;
 
 		$custom_tasks->add_tasks_requested_to_run( [ [ 'Elementor\Core\Upgrade\Custom_Tasks', 'migrate_fa_icon_values' ] ] );
+
 		$updater = $custom_tasks->get_task_runner();
-
 		$callbacks = $custom_tasks->get_tasks_requested_to_run();
-		$did_tasks = false;
 
-		if ( ! empty( $callbacks ) ) {
-			$updater->handle_immediately( $callbacks );
-			$did_tasks = true;
-		}
+		$updater->handle_immediately( $callbacks );
 
-		$custom_tasks->on_runner_complete( $did_tasks );
+		$custom_tasks->on_runner_complete( true );
 	}
 
 	/**
@@ -255,15 +244,21 @@ class Migrations {
 		}
 
 		foreach ( $element['settings'] as $key => $value ) {
-			if ( ! empty( $value['value'] ) && is_string( $value['value'] ) && str_contains( $value['value'], ' fa-' ) ) {
-				$substitute = self::fa_icon_value_migration( $value );
-				if ( is_array( $value ) && empty( array_diff_assoc( $substitute, $value ) ) ) {
-					continue;
-				}
+			$is_icon_control = ! empty( $value['value'] ) && is_string( $value['value'] ) && str_contains( $value['value'], ' fa-' );
 
-				$element['settings'][ $key ] = $substitute;
-				$args['do_update'] = true;
+			if ( ! $is_icon_control ) {
+				continue;
 			}
+
+			$substitute = self::fa_icon_value_migration( $value );
+			$is_value_unchanged = is_array( $value ) && empty( array_diff_assoc( $substitute, $value ) );
+
+			if ( $is_value_unchanged ) {
+				continue;
+			}
+
+			$element['settings'][ $key ] = $substitute;
+			$args['do_update'] = true;
 		}
 
 		return $element;

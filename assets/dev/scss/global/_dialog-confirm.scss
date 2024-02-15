@@ -34,11 +34,8 @@ $e-dialog-confirm-space: 20px;
 	.dialog-message {
 		min-height: 50px;
 
-		ul {
-			margin-inline-start: 1em;
-		}
-
-		li {
+		ul li {
+			list-style-position: inside;
 			list-style-type: disc;
 		}
 	}
@@ -73,9 +70,9 @@ $e-dialog-confirm-space: 20px;
 	}
 }
 
-.dialog-type-confirm-medium {
+.dialog-type-confirm-large {
 
 	.dialog-widget-content {
-		width: 600px;
+		width: 720px;
 	}
 }

@@ -1,6 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { __ } from '@wordpress/i18n';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -451,11 +452,13 @@ module.exports = {
 			? (
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
-				__( 'We\'ll convert existing icons to the new versions when you edit a page that already contains icons.', 'elementor' ) + '<br><br>' +
+				__( 'We\'ll convert existing icons to the new versions when you edit a page that already contains icons.', 'elementor' ) + ' ' +
+				<a href="https://go.elementor.com/widget-font-awesome-6-update" target={ '_blank' } rel={ 'noreferrer' }>{ __( 'Learn more', 'elementor' ) }</a> + '<br><br>' +
 				'<strong>' + __( 'Before you update, keep in mind:', 'elementor' ) + '</strong> ' +
-				'<ul><li>' + __( 'Some existing icons may look different after the update.', 'elementor' ) + '</li>' +
-				'<li>' + __( 'To ensure a smooth transition, create a backup of your site first.', 'elementor' ) + '</li>' +
-				'<li>' + __( 'This update can\'t be undone, even by rolling back to a previous version.', 'elementor' ) + '</li></ul>'
+				'<ul><li>' + __( 'Icons cannot be used on your website until you update to the new library.', 'elementor' ) + '</li>' +
+				'<li>' + __( 'After the update, some existing icons might appear differently due to changes in the Font Awesome configuration.', 'elementor' ) + '</li>' +
+				'<li><b>' + __( 'To ensure a smooth transition, first create a backup of your entire site with your hosting provider.', 'elementor' ) + '</b></li>' +
+				'<li><b>' + __( 'This update can\'t be undone, even by rolling back to a previous Elementor version.', 'elementor' ) + '</b></li></ul>'
 			) : (
 				/* Translators: %s is the version number. */
 				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
@@ -468,7 +471,7 @@ module.exports = {
 			? __( 'Update now', 'elementor' )
 			: __( 'Got it', 'elementor' );
 
-		const dialogClass = elementor.config.user.is_administrator ? 'dialog-type-confirm-medium' : '';
+		const dialogClass = elementor.config.user.is_administrator ? 'dialog-type-confirm-large' : '';
 
 		if ( ! this.fontAwesomeMigrationDialog ) {
 			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogType, {
@@ -496,32 +499,48 @@ module.exports = {
 					}
 
 					const updateButton = this.fontAwesomeMigrationDialog.getElements( 'ok' );
-					const updateButtonText = updateButton.text();
+					const updateButtonText = updateButton.textContent;
 
-					updateButton.text( __( 'Updating...', 'elementor' ) );
+					updateButton.textContent = __( 'Updating...', 'elementor' );
 					updateButton[ 0 ].setAttribute( 'disabled', 'disabled' );
 
-					elementorCommon.ajax.addRequest( 'icon_manager_migrate', {
-						success: ( response ) => {
-							this.fontAwesomeMigrationDialog.hide();
-							updateButton[ 0 ].removeAttribute( 'disabled' );
-							updateButton.text( updateButtonText );
+					const handleIconMigration = ( dialogTitle, dialogMessage, onConfirmCallback ) => {
+						this.fontAwesomeMigrationDialog.hide();
 
-							elementorCommon.dialogsManager.createWidget( 'alert', {
-								id: 'e-fa-migration-completed-modal',
-								headerMessage: response.title,
-								message: response.message,
-								position: {
-									my: 'center center',
-									at: 'center center',
-								},
-								strings: {
-									confirm: __( 'Got it', 'elementor' ),
-								},
-								onConfirm: () => {
-									location.reload();
-								},
-							} ).show();
+						elementorCommon.dialogsManager.createWidget( 'alert', {
+							id: 'e-fa-migration-completed-modal',
+							headerMessage: dialogTitle,
+							message: dialogMessage,
+							position: {
+								my: 'center center',
+								at: 'center center',
+							},
+							strings: {
+								confirm: __( 'Got it', 'elementor' ),
+							},
+							onConfirm: onConfirmCallback,
+						} ).show();
+					};
+
+					elementorCommon.ajax.addRequest( 'icon_manager_migrate', {
+						success: () => {
+							const dialogTitle = __( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ).replace( '%s', elementor.config.icons.current_fa_version );
+							const dialogMessage = __( 'Elevate your designs with these new and updated icons.', 'elementor' );
+
+							handleIconMigration( dialogTitle, dialogMessage, () => {
+								location.reload();
+							} );
+						},
+						error: ( e ) => {
+							const dialogTitle = __( 'Font Awesome update failed', 'elementor' );
+							const dialogMessage = e + __( 'Please try again.', 'elementor' );
+
+							handleIconMigration( dialogTitle, dialogMessage, () => {
+								this.fontAwesomeMigrationDialog.show();
+
+								updateButton[ 0 ].removeAttribute( 'disabled' );
+								updateButton.textContent = updateButtonText;
+							} );
 						},
 					}, true );
 				},
