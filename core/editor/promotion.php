@@ -14,7 +14,6 @@ class Promotion {
 	 * @return array
 	 */
 	public function get_elements_promotion() {
-		// For BC
 		return Filtered_Promotions_Manager::get_filtered_promotion_data(
 			$this->get_promotion_data(),
 			'elementor/editor/promotion/get_elements_promotion',
