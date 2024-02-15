@@ -461,7 +461,7 @@ class Icons_Manager {
 			self::enqueue_shim();
 		} elseif ( 'yes' === $should_load_fa4_shim_setting ) {
 			if ( Migrations::is_migration_required() ) {
-				wp_enqueue_style( 'fontawesome4' );
+				wp_enqueue_style( 'font-awesome' );
 			}
 
 			self::enqueue_shim();

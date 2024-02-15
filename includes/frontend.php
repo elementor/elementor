@@ -503,7 +503,7 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_styles' );
 
 		wp_register_style(
-			'fontawesome4',
+			'font-awesome', // Font Awesome 4 CSS for BC
 			$this->get_css_assets_url( 'fontawesome', 'assets/lib/font-awesome/css/v4/' ),
 			[],
 			'4.7.0'

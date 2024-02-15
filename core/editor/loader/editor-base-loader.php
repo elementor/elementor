@@ -190,7 +190,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		$direction_suffix = $this->config->get( 'direction_suffix' );
 
 		wp_register_style(
-			'fontawesome4',
+			'font-awesome', // Font Awesome 4 CSS for BC
 			"{$assets_url}lib/font-awesome/css/v4/fontawesome{$min_suffix}.css",
 			[],
 			'4.7.0'

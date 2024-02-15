@@ -28,6 +28,8 @@ class Migrations {
 	 */
 	const LATEST_MIGRATION_REQUIRED_VERSION = '6.5.1';
 
+	const MIGRATION_REQUIRED_TRANSIENT = 'icons_migration_required';
+
 	public static function get_needs_upgrade_option() {
 		return get_option( 'elementor_' . self::NEEDS_UPDATE_OPTION, null );
 	}
@@ -144,19 +146,24 @@ class Migrations {
 	 * @return bool
 	 */
 	public static function is_migration_required() {
-		static $migration_required = false;
+		$migration_required_transient = get_transient( 'elementor_' . self::MIGRATION_REQUIRED_TRANSIENT );
 
-		if ( false === $migration_required ) {
-			$is_new_plugin_installation = empty( key( Upgrade_Manager::get_installs_history() ) );
-
-			if ( $is_new_plugin_installation ) {
-				update_option( 'elementor_' . self::FONTAWESOME_CURRENTLY_USED_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
-			} else {
-				$migration_required = self::check_migration_required();
-			}
+		if ( false !== $migration_required_transient ) {
+			return unserialize( $migration_required_transient );
 		}
 
-		return apply_filters( 'elementor/icons_manager/migration_required', $migration_required );
+		$is_new_plugin_installation = empty( key( Upgrade_Manager::get_installs_history() ) );
+
+		if ( $is_new_plugin_installation ) {
+			update_option( 'elementor_' . self::FONTAWESOME_CURRENTLY_USED_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
+		}
+
+		$migration_required = $is_new_plugin_installation ? false : self::check_migration_required();
+		$migration_required = apply_filters( 'elementor/icons_manager/migration_required', $migration_required );
+
+		set_transient( 'elementor_' . self::MIGRATION_REQUIRED_TRANSIENT, serialize( $migration_required ), HOUR_IN_SECONDS );
+
+		return $migration_required;
 	}
 
 	/**
@@ -223,6 +230,7 @@ class Migrations {
 	 * Remove the update flag and update the latest migration flag.
 	 */
 	public static function update_migration_required_flags() {
+		delete_transient( 'elementor_' . self::MIGRATION_REQUIRED_TRANSIENT );
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 		update_option( 'elementor_' . self::FONTAWESOME_CURRENTLY_USED_VERSION_OPTION, self::LATEST_MIGRATION_REQUIRED_VERSION );
 	}
