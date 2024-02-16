@@ -206,12 +206,12 @@
 
 		a {
 			color: $e-accent;
-			font-family: 'Roboto';
-    		font-weight: 500;
+			font-family: 'Roboto', sans-serif;
+			font-weight: 500;
 			font-size: 13px;
 
 			i {
-				margin-inline-end: 10px;
+				margin-inline-end: 5px;
 			}
 
 			&:hover {
