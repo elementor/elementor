@@ -23,6 +23,7 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../../../components/prompt-library-link';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const getPromptPlaceholder = ( images ) => {
 	if ( ! images?.length ) {
@@ -36,12 +37,15 @@ const getPromptPlaceholder = ( images ) => {
 
 const Generate = () => {
 	const [ prompt, setPrompt ] = useState( '' );
-
+	const { setGenerate } = useRequestIds();
 	const { initialImageType } = useGlobalSettings();
 
 	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType } );
 
-	const { imagesData: suggestedImages, isLoading: isPreloading } = useSuggestedImages( { selectedType: settings[ IMAGE_TYPE ] } );
+	const {
+		imagesData: suggestedImages,
+		isLoading: isPreloading,
+	} = useSuggestedImages( { selectedType: settings[ IMAGE_TYPE ] } );
 
 	const promptPlaceholder = getPromptPlaceholder( suggestedImages );
 
@@ -56,8 +60,8 @@ const Generate = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
-		send( prompt, settings );
+		setGenerate();
+		send( { prompt, settings } );
 	};
 
 	const handleCopyPrompt = ( { prompt: selectedPrompt, imageType } ) => {
@@ -170,7 +174,8 @@ const Generate = () => {
 										>
 											<ImageActions>
 												<ImageActions.UseImage onClick={ () => use( suggestedPrompt ) } fullWidth />
-												<ImageActions.CopyIcon onClick={ () => handleCopyPrompt( suggestedPrompt ) } />
+												<ImageActions.CopyIcon
+													onClick={ () => handleCopyPrompt( suggestedPrompt ) } />
 												<ImageActions.EditIcon onClick={ () => edit( suggestedPrompt ) } />
 											</ImageActions>
 										</Gallery.Image>
