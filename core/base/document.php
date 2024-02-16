@@ -193,17 +193,36 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
-	public static function get_filtered_editor_panel_categories() {
+	public static function get_filtered_editor_panel_categories(): array {
 		$categories = static::get_editor_panel_categories();
 
 		foreach ( $categories as $index => $cat ) {
-			if ( isset( $cat['promotion'] ) ) {
-				$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
-					$cat['promotion'],
-					'elementor/panel/' . $index . '/custom_promotion',
-					'url'
-				);
+			if ( ! isset( $cat['promotion'] ) ) {
+				continue;
 			}
+
+			$categories = self::get_panel_category_item( $cat['promotion'], $index, $categories );
+		}
+
+		return $categories;
+	}
+
+	/**
+	 * @param $promotion
+	 * @param $index
+	 * @param array $categories
+	 *
+	 * @return array
+	 */
+	public static function get_panel_category_item( $promotion, $index, array $categories ): array {
+		if ( ! Utils::has_pro() ) {
+			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+				$promotion,
+				'elementor/panel/' . $index . '/custom_promotion',
+				'url'
+			);
+		} else {
+			unset( $categories[ $index ]['promotion'] );
 		}
 
 		return $categories;
