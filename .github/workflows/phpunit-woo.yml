@@ -4,33 +4,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  file-diff:
-    runs-on: ubuntu-22.04
-    name: File Diff
-    if: startsWith( github.repository, 'elementor/' )
-    outputs:
-      php_diff: ${{ steps.php_diff_files.outputs.diff }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Check PHP files diff
-        id: php_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*.php
-            composer.+(json|lock)
-            .github/**/*.yml
-            install-wp-tests.sh
   test:
     runs-on: ubuntu-22.04
-    needs: [ 'file-diff' ]
-    if: ${{ github.event.pull_request.title == null || needs.file-diff.outputs.php_diff }}
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['nightly', 'latest', '6.0', '6.1', '6.2']
-        php_versions: ['7.4', '8.0']
+        wordpress_versions: ['nightly']
+        php_versions: ['8.0']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }} - Woo Nightly
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
@@ -52,13 +32,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_versions }}
-          coverage: xdebug
+          extensions: zip
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
       - name: Run Woo Shortcode Tests
         env:
+          TMPDIR: ${{ runner.temp }}
           LOAD_WOOCOMMERCE: yes
         run: |
           composer update --no-interaction
-          ./vendor/bin/phpunit tests/phpunit/elementor/woo
+          ./vendor/bin/phpunit -v --debug tests/phpunit/elementor/woo

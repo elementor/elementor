@@ -11,8 +11,12 @@ class Elementor_Test_Shortcodes extends Elementor_Test_Base {
 	public function set_up() {
 		parent::set_up();
 
+		if ( getenv( 'LOAD_WOOCOMMERCE' ) !== 'yes' ) {
+			$this->markTestSkipped( 'Not testing WooCommerce Compatibility...' );
+		}
+
 		if ( ! class_exists( 'WooCommerce' ) ) {
-			$this->markTestSkipped( 'WooCommerce is not installed.' );
+			$this->fail( 'WooCommerce is not installed.' );
 		}
 	}
 

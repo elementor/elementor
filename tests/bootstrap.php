@@ -37,22 +37,43 @@ $GLOBALS['wp_tests_options'] = [
 
 copy_language_files( $_tests_dir );
 
-if ( getenv( 'LOAD_WOOCOMMERCE' ) === 'yes' ) {
-	file_put_contents( sys_get_temp_dir() . '/woocommerce.zip', file_get_contents( 'https://github.com/woocommerce/woocommerce/releases/download/nightly/woocommerce-trunk-nightly.zip' ) );
-
-	$zip = new ZipArchive;
-	$zip->open( sys_get_temp_dir() . '/woocommerce.zip' );
-	$zip->extractTo( __DIR__ . '/../tmp/wordpress/wp-content/plugins' );
-	$zip->close();
-
-	$GLOBALS['wp_tests_options']['active_plugins'][] = 'woocommerce/woocommerce.php';
-}
-
 require_once $_tests_dir . '/includes/functions.php';
 
 tests_add_filter( 'muplugins_loaded', function () {
 	// Manually load plugin
 	require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
+
+	if ( getenv( 'LOAD_WOOCOMMERCE' ) === 'yes' ) {
+		$tmp_dir = getenv( 'TMPDIR' ) ?: sys_get_temp_dir();
+		$written = file_put_contents( $tmp_dir . '/woocommerce.zip', file_get_contents( 'https://github.com/woocommerce/woocommerce/releases/download/nightly/woocommerce-trunk-nightly.zip' ) );
+
+		// Woo zip is currently at 20mb~, so if we wrote less than 5mb bail.
+		if ( ! $written || $written < 1024 * 1024 * 5 ) {
+			echo "Failed to download WooCommerce\n";
+			exit( 1 );
+		}
+
+		echo sprintf( "Downloaded WooCommerce to %s/woocommerce.zip. Size: %s\n", $tmp_dir, $written );
+
+		$zip = new ZipArchive;
+
+		if ( $zip_open = $zip->open( $tmp_dir . '/woocommerce.zip' ) ) {
+			if ( $zip->extractTo( WP_PLUGIN_DIR ) ) {
+				echo "WooCommerce extracted\n";
+				$zip->close();
+			} else {
+				echo "Failed to extract WooCommerce\n";
+				exit( 1 );
+			}
+		} else {
+			echo sprintf( "Failed to open WooCommerce zip. Error: %s\n", $zip_open );
+			exit( 1 );
+		}
+
+		$GLOBALS['wp_tests_options']['active_plugins'][] = 'woocommerce/woocommerce.php';
+
+		require WP_PLUGIN_DIR . '/woocommerce/woocommerce.php';
+	}
 } );
 
 // Removes all sql tables on shutdown
