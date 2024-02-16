@@ -212,7 +212,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array
 	 */
-	public static function get_panel_category_item( $promotion, $index, array $categories ): array {
+	private static function get_panel_category_item( $promotion, $index, array $categories ): array {
 		if ( ! Utils::has_pro() ) {
 			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$promotion,
