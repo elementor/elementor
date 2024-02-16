@@ -6,7 +6,7 @@ import _path from 'path';
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
-test.describe( 'Video tests inside a container @video', () => {
+test.describe( 'Video tests inside a container @video', async () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
@@ -38,11 +38,11 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = await page.locator( '.elementor-nerd-box--upsale' );
+		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		await editor.selectElement( videoId );
-		await promoArea.scrollIntoViewIfNeeded;
+		promoArea.scrollIntoViewIfNeeded();
 
 		// Assert
 		expect.soft( await promoArea.screenshot( {
@@ -77,7 +77,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 
-	const videos = require( _path.resolve( __dirname, `../testData/video.json` ) );
+	const videos = await import( _path.resolve( __dirname, `../testData/video.json` ) ) as JSON;
 
 	for ( const video in videos ) {
 		test( `${ video } controls and link test`, async ( { page }, testInfo ) => {
@@ -189,7 +189,7 @@ test.describe( 'Video tests inside a section', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-			column = await editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
+			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),
 			videoId = await editor.addWidget( widgets.video, columnId );
 
