@@ -197,9 +197,9 @@ abstract class Document extends Controls_Stack {
 		$categories = static::get_editor_panel_categories();
 		$has_pro = Utils::has_pro();
 
-		foreach ( $categories as $index => $cat ) {
-			if ( isset( $cat['promotion'] ) ) {
-				$categories = self::get_panel_category_item( $cat['promotion'], $index, $categories, $has_pro );
+		foreach ( $categories as $index => $category ) {
+			if ( isset( $category['promotion'] ) ) {
+				$categories = self::get_panel_category_item( $category['promotion'], $index, $categories, $has_pro );
 			}
 		}
 
