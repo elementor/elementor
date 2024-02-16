@@ -37,6 +37,17 @@ $GLOBALS['wp_tests_options'] = [
 
 copy_language_files( $_tests_dir );
 
+if ( getenv( 'LOAD_WOOCOMMERCE' ) === 'yes' ) {
+	file_put_contents( sys_get_temp_dir() . '/woocommerce.zip', file_get_contents( 'https://github.com/woocommerce/woocommerce/releases/download/nightly/woocommerce-trunk-nightly.zip' ) );
+
+	$zip = new ZipArchive;
+	$zip->open( sys_get_temp_dir() . '/woocommerce.zip' );
+	$zip->extractTo( __DIR__ . '/../tmp/wordpress/wp-content/plugins' );
+	$zip->close();
+
+	$GLOBALS['wp_tests_options']['active_plugins'][] = 'woocommerce/woocommerce.php';
+}
+
 require_once $_tests_dir . '/includes/functions.php';
 
 tests_add_filter( 'muplugins_loaded', function () {
