@@ -1,3 +1,5 @@
+@import "../../../../../assets/dev/scss/helpers/variables";
+
 //
 // Panel Controls
 //
@@ -197,6 +199,25 @@
 
 	&-title {
 		font-weight: bold;
+	}
+
+	&-promotion {
+		margin-inline-start: auto;
+
+		a {
+			color: $e-accent;
+			font-family: 'Roboto';
+    		font-weight: 500;
+			font-size: 13px;
+
+			i {
+				margin-inline-end: 10px;
+			}
+
+			&:hover {
+				color: $e-accent;
+			}
+		}
 	}
 
 	&:focus-visible {

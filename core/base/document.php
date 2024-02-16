@@ -18,6 +18,7 @@ use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -178,7 +179,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
-			'elements_categories' => static::get_editor_panel_categories(),
+			'elements_categories' => self::get_filtered_editor_panel_categories(),
 			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
@@ -190,6 +191,22 @@ abstract class Document extends Controls_Stack {
 				),
 			],
 		];
+	}
+
+	public static function get_filtered_editor_panel_categories() {
+		$categories = static::get_editor_panel_categories();
+
+		foreach ( $categories as $index => $cat ) {
+			if ( isset( $cat['promotion'] ) ) {
+				$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+					$cat['promotion'],
+					'elementor/panel/' . $index . '/custom_promotion',
+					'url'
+				);
+			}
+		}
+
+		return $categories;
 	}
 
 	/**
