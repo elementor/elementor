@@ -195,10 +195,11 @@ abstract class Document extends Controls_Stack {
 
 	public static function get_filtered_editor_panel_categories(): array {
 		$categories = static::get_editor_panel_categories();
+		$has_pro = Utils::has_pro();
 
 		foreach ( $categories as $index => $cat ) {
 			if ( isset( $cat['promotion'] ) ) {
-				$categories = self::get_panel_category_item( $cat['promotion'], $index, $categories );
+				$categories = self::get_panel_category_item( $cat['promotion'], $index, $categories, $has_pro );
 			}
 		}
 
@@ -212,8 +213,8 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array
 	 */
-	private static function get_panel_category_item( $promotion, $index, array $categories ): array {
-		if ( ! Utils::has_pro() ) {
+	private static function get_panel_category_item( $promotion, $index, array $categories, bool $has_pro ): array {
+		if ( ! $has_pro ) {
 			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$promotion,
 				'elementor/panel/' . $index . '/custom_promotion',
