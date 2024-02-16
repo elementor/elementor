@@ -108,7 +108,7 @@ class App extends BaseApp {
 				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
 				'elementor/site-editor/promotion',
 				'upgrade_url'
-			)
+			),
 		];
 	}
 

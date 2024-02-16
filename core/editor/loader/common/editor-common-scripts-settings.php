@@ -104,7 +104,7 @@ class Editor_Common_Scripts_Settings {
 					[ 'upgrade_url' => 'https://go.elementor.com/go-pro-notes/' ],
 					'elementor/panel/notes/custom_promotion',
 					'upgrade_url'
-				)
+				),
 			],
 		];
 
