@@ -95,7 +95,7 @@ export type Post = {
 	tags?: number
 }
 
-export type Window = {
+export type WindowType = Window & {
 	$e?: {
 		run: ( s: string, o: object )=> unknown
 	}

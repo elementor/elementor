@@ -5,7 +5,11 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, Window, BackboneType, ElementorType, ElementorFrontendConfig } from '../types/types';
+import { $eType, WindowType, BackboneType, ElementorType, ElementorFrontendConfig } from '../types/types';
+let $e: $eType;
+let elementor: ElementorType;
+let Backbone: BackboneType;
+let window: WindowType;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
@@ -44,8 +48,6 @@ export default class EditorPage extends BasePage {
 
 	async loadTemplate( filePath: string, updateDatesForImages = false ) {
 		let templateData = await import( filePath ) as JSON;
-		let Backbone: BackboneType;
-		let window: Window;
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
 		// Element regression tests upload images before each test.
@@ -69,14 +71,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	async cleanContent() {
-		let $e: $eType;
 		await this.page.evaluate( () => {
 			$e.run( 'document/elements/empty', { force: true } );
 		} );
 	}
 
 	async openNavigator( ) {
-		let elementor: ElementorType;
 		const isOpen = await this.previewFrame.evaluate( () =>
 			elementor.navigator.isOpen(),
 		);
@@ -87,7 +87,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	async closeNavigatorIfOpen() {
-		let elementor: ElementorType;
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
@@ -114,18 +113,10 @@ export default class EditorPage extends BasePage {
 	}
 
 	async removeElement( elementId: string ) {
-		let $e: $eType;
-		let elementor: ElementorType;
-		const getContainer = ( id: string ) => {
-			return elementor.getContainer( id );
-		};
-
 		await this.page.evaluate( ( { id } ) => {
-			if ( 'object' === typeof $e && 'run' in $e && 'function' === typeof $e.run ) {
-				$e.run( 'document/elements/delete', {
-					container: getContainer( id ),
-				} );
-			}
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
 		}, { id: elementId } );
 	}
 
@@ -153,8 +144,6 @@ export default class EditorPage extends BasePage {
 	 * @param {boolean} updateDatesForImages - flag to update dates for images
 	 */
 	async loadJsonPageTemplate( dirName: string, fileName: string, widgetSelector: string, updateDatesForImages = false ) {
-		let Backbone: BackboneType;
-		let window: Window;
 		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
 		const templateData = await import( filePath ) as JSON;
 		const pageTemplateData =
@@ -245,9 +234,6 @@ export default class EditorPage extends BasePage {
 	 * @return {Object} element;
 	 */
 	async selectElement( elementId: string ) {
-		let $e: $eType;
-		let elementor: ElementorType;
-
 		await this.page.evaluate( ( { id } ) => {
 			$e.run( 'document/elements/select', {
 				container: elementor.getContainer( id ),
@@ -561,7 +547,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	async getPageId() {
-		let elementor: ElementorType;
 		return await this.page.evaluate( () => elementor.config.initial_document.id );
 	}
 
@@ -593,9 +578,6 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async applyElementSettings( elementId: string, settings: unknown ) {
-		let $e: $eType;
-		let elementor: ElementorType;
-
 		await this.page.evaluate(
 			( args ) => $e.run( 'document/elements/settings', {
 				container: elementor.getContainer( args.elementId ),
@@ -611,11 +593,10 @@ export default class EditorPage extends BasePage {
 	 * @param {string} itemSelector
 	 */
 	async isItemInViewport( itemSelector: string ) {
-		// eslint-disable-next-line no-shadow
-		return this.page.evaluate( ( itemSelector ) => {
+		return this.page.evaluate( ( item: string ) => {
 			let isVisible = false;
 
-			const element: HTMLElement = document.querySelector( itemSelector );
+			const element: HTMLElement = document.querySelector( item );
 
 			if ( element ) {
 				const rect = element.getBoundingClientRect();

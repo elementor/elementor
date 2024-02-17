@@ -2,11 +2,11 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';
 import EditorPage from '../pages/editor-page';
-import _path from 'path';
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
+import videos from '../testData/video.json';
 
-test.describe( 'Video tests inside a container @video', async () => {
+test.describe( 'Video tests inside a container @video', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
@@ -42,7 +42,7 @@ test.describe( 'Video tests inside a container @video', async () => {
 
 		// Act.
 		await editor.selectElement( videoId );
-		promoArea.scrollIntoViewIfNeeded();
+		await promoArea.scrollIntoViewIfNeeded();
 
 		// Assert
 		expect.soft( await promoArea.screenshot( {
@@ -76,8 +76,6 @@ test.describe( 'Video tests inside a container @video', async () => {
 		// Verify that the container has an equal height to the video iFrame.
 		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
-
-	const videos = await import( _path.resolve( __dirname, `../testData/video.json` ) ) as JSON;
 
 	for ( const video in videos ) {
 		test( `${ video } controls and link test`, async ( { page }, testInfo ) => {

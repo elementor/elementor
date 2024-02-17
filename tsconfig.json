@@ -24,6 +24,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "checkJs": false,
-        "allowJs": false
+        "allowJs": false,
+        "resolveJsonModule": true
     }
 }
