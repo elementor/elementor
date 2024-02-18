@@ -85,26 +85,32 @@ class Icons_Manager {
 
 		$shared_styles = [];
 
-		foreach ( $config as $type => $icon_type ) {
+		foreach ( array_values( $config ) as $icon_type ) {
 			if ( ! isset( $icon_type['url'] ) ) {
 				continue;
 			}
+
 			$dependencies = [];
+
 			if ( ! empty( $icon_type['enqueue'] ) ) {
 				foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
 					if ( ! in_array( $font_css_url, array_keys( $shared_styles ), true ) ) {
 						$style_handle = 'elementor-icons-shared-' . count( $shared_styles );
+
 						wp_register_style(
 							$style_handle,
 							$font_css_url,
 							[],
 							$icon_type['ver']
 						);
+
 						$shared_styles[ $font_css_url ] = $style_handle;
 					}
+
 					$dependencies[] = $shared_styles[ $font_css_url ];
 				}
 			}
+
 			wp_register_style(
 				'elementor-icons-' . $icon_type['name'],
 				$icon_type['url'],
@@ -208,6 +214,7 @@ class Icons_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
+
 		// Make sure that the CSS in the 'all' file does not override FA Pro's CSS
 		if ( ! wp_script_is( 'font-awesome-pro' ) ) {
 			wp_enqueue_style(
@@ -217,6 +224,7 @@ class Icons_Manager {
 				ELEMENTOR_VERSION
 			);
 		}
+
 		wp_enqueue_style(
 			'font-awesome-4-shim',
 			self::get_fa_asset_url( 'v4-shims' ),
