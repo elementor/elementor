@@ -46,9 +46,8 @@ export default function AdminTopBar() {
 			</div>
 
 			<div className="e-admin-top-bar__secondary-area">
-				{ ! elementorAppConfig.hasPro && <BarButton href={ promoion.url } icon="eicon-pro">{ promoion.text }</BarButton> }
-
 				<div className="e-admin-top-bar__secondary-area-buttons">
+					{ ! elementorAppConfig.hasPro && <BarButton additionalClasses="accent" href={ promoion.url } icon="eicon-upgrade-crown" iconAdditionalClasses="crown-icon">{ promoion.text }</BarButton> }
 					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Extensions', 'elementor' ) }</BarButton>
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
 					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
