@@ -7,7 +7,7 @@ import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar() {
 	const actionButtonsRef = useRef();
-	const [ promoion, setPromotion ] = useState( [] );
+	const [ promotion, setPromotion ] = useState( [] );
 
 	// Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 	useEffect( () => {
@@ -47,7 +47,7 @@ export default function AdminTopBar() {
 
 			<div className="e-admin-top-bar__secondary-area">
 				<div className="e-admin-top-bar__secondary-area-buttons">
-					{ ! elementorAppConfig.hasPro && <BarButton additionalClasses="accent" href={ promoion.url } icon="eicon-upgrade-crown" iconAdditionalClasses="crown-icon">{ promoion.text }</BarButton> }
+					{ ! elementorAppConfig.hasPro && <BarButton additionalClasses="accent" href={ promotion.url } icon="eicon-upgrade-crown" iconAdditionalClasses="crown-icon">{ promotion.text }</BarButton> }
 					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Extensions', 'elementor' ) }</BarButton>
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
 					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
