@@ -26,7 +26,7 @@ export class NotesAddPanelMenuItem extends $e.modules.hookUI.After {
 					actionButton: {
 						url: hasProAndNotConnected
 							? elementorProEditorConfig.urls.connect
-							: 'https://go.elementor.com/go-pro-notes/',
+							: elementor.config.promotions.notes.upgrade_url || 'https://go.elementor.com/go-pro-notes/',
 						text: hasProAndNotConnected
 							? __( 'Connect & Activate', 'elementor' )
 							: __( 'Upgrade', 'elementor' ),
