@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 /**
  * Elementor toggle widget.
@@ -567,7 +566,7 @@ class Widget_Toggle extends Widget_Base {
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 
-		if ( ! isset( $settings['selected_icon'] ) && Icons_Migrations::is_migration_required() ) {
+		if ( ! isset( $settings['selected_icon'] ) && Icons_Manager::$migrations::is_migration_required() ) {
 			// @todo: remove when deprecated
 			// added as bc in 2.6
 			// add old default

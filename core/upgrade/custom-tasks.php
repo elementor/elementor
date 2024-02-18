@@ -2,7 +2,7 @@
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Tracker;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
+use Elementor\Icons_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -18,6 +18,6 @@ class Custom_Tasks {
 	}
 
 	public static function migrate_fa_icon_values( $updater ) {
-		Icons_Migrations::migrate_icon_values( $updater );
+		Icons_Manager::$migrations::migrate_icon_values( $updater );
 	}
 }

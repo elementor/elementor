@@ -3,11 +3,9 @@ namespace Elementor\Core\Upgrade;
 
 use Elementor\Api;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -556,7 +554,7 @@ class Upgrades {
 				continue;
 			}
 
-			$element['settings'][ $new_name ] = Icons_Migrations::fa_icon_value_migration( $element['settings'][ $old_name ] );
+			$element['settings'][ $new_name ] = Icons_Manager::$migrations::fa_icon_value_migration( $element['settings'][ $old_name ] );
 			$args['do_update'] = true;
 		}
 

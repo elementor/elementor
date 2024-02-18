@@ -10,7 +10,6 @@ use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -861,7 +860,7 @@ class Frontend extends App {
 	}
 
 	private function maybe_enqueue_icon_font( $icon_font_type ) {
-		if ( Icons_Migrations::is_migration_required() ) {
+		if ( Icons_Manager::$migrations::is_migration_required() ) {
 			Icons_Manager::enqueue_fa_legacy_css();
 			return;
 		}
@@ -878,7 +877,7 @@ class Frontend extends App {
 	}
 
 	private function enqueue_icon_fonts() {
-		if ( Icons_Migrations::is_migration_required() ) {
+		if ( Icons_Manager::$migrations::is_migration_required() ) {
 			Icons_Manager::enqueue_fa_legacy_css();
 			return;
 		}

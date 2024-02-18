@@ -40,6 +40,8 @@ class Icons_Manager {
 
 	private static $data_manager;
 
+	public static $migrations;
+
 	/**
 	 * @param $icon
 	 * @param $attributes
@@ -379,7 +381,7 @@ class Icons_Manager {
 	 * @return int
 	 */
 	public static function get_fa_version_to_load() {
-		return Migrations::is_migration_required()
+		return self::$migrations::is_migration_required()
 			? self::get_current_fa_version() - 1
 			: self::get_current_fa_version();
 	}
@@ -450,7 +452,7 @@ class Icons_Manager {
 	}
 
 	public static function enqueue_fa_legacy_css() {
-		if ( Migrations::is_migration_required() ) {
+		if ( self::$migrations::is_migration_required() ) {
 			wp_enqueue_style( 'fontawesome5' );
 		}
 
@@ -460,7 +462,7 @@ class Icons_Manager {
 		if ( $is_editor ) {
 			self::enqueue_shim();
 		} elseif ( 'yes' === $should_load_fa4_shim_setting ) {
-			if ( Migrations::is_migration_required() ) {
+			if ( self::$migrations::is_migration_required() ) {
 				wp_enqueue_style( 'font-awesome' );
 			}
 
@@ -494,8 +496,10 @@ class Icons_Manager {
 	 * Icons Manager constructor
 	 */
 	public function __construct() {
+		self::$migrations = new Migrations();
+
 		if ( is_admin() ) {
-			// @todo: remove once we deprecate fa4
+			// TODO: Remove once we deprecate FA4
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
 		}
 

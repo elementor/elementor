@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 /**
  * Elementor icon widget.
@@ -438,7 +437,7 @@ class Widget_Icon extends Widget_Base {
 			$icon_tag = 'a';
 		}
 
-		$icons_migration_required = Icons_Migrations::is_migration_required();
+		$icons_migration_required = Icons_Manager::$migrations::is_migration_required();
 
 		if ( empty( $settings['selected_icon'] ) && $icons_migration_required ) {
 			// add old default

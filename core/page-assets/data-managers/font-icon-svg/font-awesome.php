@@ -2,7 +2,6 @@
 namespace Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg;
 
 use Elementor\Icons_Manager;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

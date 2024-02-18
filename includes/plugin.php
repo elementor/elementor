@@ -26,7 +26,6 @@ use Elementor\Data\Manager as Data_Manager;
 use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -361,17 +360,6 @@ class Plugin {
 	 * @var Icons_Manager
 	 */
 	public $icons_manager;
-
-	/**
-	 * Icons Manager - Migrations.
-	 *
-	 * Holds all the functionality of icons manager migrations.
-	 *
-	 * @access public
-	 *
-	 * @var Icons_Migrations
-	 */
-	public $icons_migrations;
 
 	/**
 	 * WordPress widgets manager.
@@ -732,7 +720,6 @@ class Plugin {
 		$this->files_manager = new Files_Manager();
 		$this->assets_manager = new Assets_Manager();
 		$this->icons_manager = new Icons_Manager();
-		$this->icons_migrations = new Icons_Migrations();
 		$this->settings = new Settings();
 		$this->tools = new Tools();
 		$this->editor = new Editor();

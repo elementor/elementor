@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
 
 /**
  * Elementor icon list widget.
@@ -170,14 +169,14 @@ class Widget_Icon_List extends Widget_Base {
 					[
 						'text' => esc_html__( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas ' . ( Icons_Migrations::is_migration_required() ? 'fa-times' : 'fa-xmark' ),
+							'value' => 'fas ' . ( Icons_Manager::$migrations::is_migration_required() ? 'fa-times' : 'fa-xmark' ),
 							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => esc_html__( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas ' . ( Icons_Migrations::is_migration_required() ? 'fa-dot-circle' : 'fa-circle-dot' ),
+							'value' => 'fas ' . ( Icons_Manager::$migrations::is_migration_required() ? 'fa-dot-circle' : 'fa-circle-dot' ),
 							'library' => 'fa-solid',
 						],
 					],
@@ -726,7 +725,7 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
 
 				$this->add_inline_editing_attributes( $repeater_setting_key );
-				$migration_required = Icons_Migrations::is_migration_required();
+				$migration_required = Icons_Manager::$migrations::is_migration_required();
 				?>
 				<li <?php $this->print_render_attribute_string( 'list_item' ); ?>>
 					<?php

@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Icons_Manager\Migrations as Icons_Migrations;
-
 /**
  * Elementor social icons widget.
  *
@@ -581,7 +579,7 @@ class Widget_Social_Icons extends Widget_Base {
 			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}
 
-		$migration_required = Icons_Migrations::is_migration_required();
+		$migration_required = Icons_Manager::$migrations::is_migration_required();
 
 		?>
 		<div class="elementor-social-icons-wrapper elementor-grid">
