@@ -4,6 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Tracker;
 use Elementor\User;
@@ -330,6 +331,8 @@ class Admin_Notices extends Module {
 				'type' => 'cta',
 			],
 		];
+
+		$options = Filtered_Promotions_Manager::get_filtered_promotion_data( $options, 'elementor/notice-bar/role_manager_promote', 'button', 'url' );
 
 		$this->print_admin_notice( $options );
 
