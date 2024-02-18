@@ -6,13 +6,10 @@ import { usePageTitle } from './hooks/use-page-title/use-page-title';
 import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar() {
-	const actionButtonsRef = useRef();
-	const [ promotion, setPromotion ] = useState( [] );
+	const actionButtonsRef = useRef(),
+		promotion = window.elementorAdminTopBarConfig.promotion;
 
 	// Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
-	useEffect( () => {
-		setPromotion( window.elementorAdminTopBarConfig.promotion );
-	}, [] );
 	useEffect( () => {
 		const adminTopBarElement = document.querySelector( '#e-admin-top-bar-root' );
 		adminTopBarElement.classList.add( 'e-admin-top-bar--active' );
