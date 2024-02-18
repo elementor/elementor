@@ -31,12 +31,20 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	</div>
 	<div id="elementor-navigator__elements"></div>
 	<div id="elementor-navigator__footer">
-		<i class="eicon-ellipsis-h" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php
-			echo $is_editor_v2_active
-				? esc_html__( 'Resize structure', 'elementor' )
-				: esc_html__( 'Resize navigator', 'elementor' );
-		?></span>
+
+		<div id="elementor-navigator__footer__promotion">
+			<?php echo esc_html__( 'Access all Pro widgets', 'elementor' ); ?>.
+			<a href="https://go.elementor.com/go-pro-structure-panel/" target="_blank"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
+		</div>
+
+		<div id="elementor-navigator__footer__resize-bar">
+			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php
+				echo $is_editor_v2_active
+					? esc_html__( 'Resize structure', 'elementor' )
+					: esc_html__( 'Resize navigator', 'elementor' );
+			?></span>
+		</div>
 	</div>
 </script>
 
