@@ -10,6 +10,7 @@ let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
+let elementorFrontendConfig: ElementorFrontendConfig;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
@@ -551,7 +552,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	async getPageIdFromFrontEnd() {
-		let elementorFrontendConfig: ElementorFrontendConfig;
 		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 

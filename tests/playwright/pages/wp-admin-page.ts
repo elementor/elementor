@@ -4,6 +4,8 @@ import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
 import { $eType, ElementorType } from '../types/types';
+let elementor: ElementorType;
+let $e: $eType;
 
 /**
  * This post is used for any tests that need a post, with empty elements.
@@ -75,7 +77,6 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async setPageName() {
-		let elementor: ElementorType;
 		await this.page.locator( '#elementor-panel-footer-settings' ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
@@ -113,7 +114,6 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<EditorPage>}
 	 */
 	async useElementorCleanPost() {
-		let $e: $eType;
 		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
 		await this.waitForPanel();
