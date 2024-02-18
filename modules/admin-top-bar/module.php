@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
@@ -76,8 +77,14 @@ class Module extends BaseApp {
 		$settings['apps_url'] = admin_url( 'admin.php?page=elementor-apps' );
 		$settings['promotion'] = [
 			'text' => __( 'Upgrade Now', 'elementor' ),
-			'url' => 'https://go.elementor.com/pro-cta',
+			'url' => 'https://go.elementor.com/wp-dash-admin-top-bar-upgrade/',
 		];
+
+		$settings['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+			$settings['promotion'],
+			'elementor/admin_top_bar/go_pro_promotion',
+			'url'
+		);
 
 		$current_screen = get_current_screen();
 
