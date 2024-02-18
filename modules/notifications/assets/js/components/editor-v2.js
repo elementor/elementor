@@ -17,11 +17,11 @@ IconWithBadge.propTypes = {
 };
 
 export const editorV2 = () => {
-	const { mainMenu } = window.elementorV2.editorAppBar;
+	const { utilitiesMenu } = window.elementorV2.editorAppBar;
 
-	mainMenu.registerLink( {
+	utilitiesMenu.registerLink( {
 		id: 'app-bar-menu-item-whats-new',
-		priority: 1,
+		priority: 25,
 		useProps: () => {
 			const [ isRead, setIsRead ] = useState( ! elementorNotifications.is_unread );
 
