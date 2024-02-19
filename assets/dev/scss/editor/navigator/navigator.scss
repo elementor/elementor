@@ -74,7 +74,7 @@ body {
 	}
 
 	&__elements {
-		height: calc(100% - 80px);
+		height: calc(100% - 49px);
 		overflow: auto;
 		position: relative;
 
@@ -89,6 +89,10 @@ body {
 		> .elementor-navigator__element-section {
 			border-block-end: var(--e-a-border);
 		}
+	}
+
+	&__elements.elementor-navigator-list__promotion {
+		height: calc(100% - 80px);
 	}
 
 	&__footer {
