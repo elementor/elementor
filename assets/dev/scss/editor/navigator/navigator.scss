@@ -74,7 +74,7 @@ body {
 	}
 
 	&__elements {
-		height: calc(100% - 75px);
+		height: calc(100% - 80px);
 		overflow: auto;
 		position: relative;
 
@@ -109,8 +109,12 @@ body {
 		&__promotion {
 			font-size: 12px;
 			padding: 4px 17px;
+			line-height: 22px;
+			font-family: 'Roboto', sans-serif;
+			color: var(--e-a-bg-logo);
 
 			a {
+				font-weight: 500;
 				color: $e-accent;
 
 				&:hover {
