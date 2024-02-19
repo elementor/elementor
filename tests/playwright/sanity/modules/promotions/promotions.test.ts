@@ -88,4 +88,18 @@ test.describe( 'Promotion tests @promotions', () => {
 		// Act.
 		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
+
+	test( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdminPage = new WpAdminPage( page, testInfo ),
+			promotionContainer = '#elementor-navigator__footer';
+
+		// Act.
+		await wpAdminPage.openNewPage();
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
+	} );
 } );
