@@ -66,7 +66,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
-	test.only( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdminPage = new WpAdminPage( page, testInfo ),
 			promotionContainer = '#elementor-navigator__footer';
@@ -77,6 +77,6 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator.png` );
+		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 } );
