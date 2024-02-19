@@ -84,7 +84,7 @@ class Module extends BaseModule {
 
 			$subscription_plans[ $key ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$plan,
-				'elementor/kit_library/'. $key . '/promotion',
+				'elementor/kit_library/' . $key . '/promotion',
 				'promotion_url'
 			);
 		}
