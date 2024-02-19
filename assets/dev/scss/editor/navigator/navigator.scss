@@ -116,15 +116,6 @@ body {
 			line-height: 22px;
 			font-family: 'Roboto', sans-serif;
 			color: var(--e-a-bg-logo);
-
-			a {
-				font-weight: 500;
-				color: $e-accent;
-
-				&:hover {
-					color: $e-accent;
-				}
-			}
 		}
 	}
 }

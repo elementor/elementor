@@ -53,7 +53,7 @@ if ( ! $has_pro ) {
 		<?php if ( ! $has_pro ) : ?>
 			<div id="elementor-navigator__footer__promotion">
 				<?php echo esc_attr( $promotion_data['text'] ); ?>.
-				<a href="<?php echo esc_url( $promotion_data['url'] ); ?>" target="_blank"><?php echo esc_attr( $promotion_data['url_label'] ); ?></a>
+				<a href="<?php echo esc_url( $promotion_data['url'] ); ?>" target="_blank" class="e-link-promotion"><?php echo esc_attr( $promotion_data['url_label'] ); ?></a>
 			</div>
 		<?php endif; ?>
 
