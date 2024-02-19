@@ -42,7 +42,6 @@ module.exports = {
 				plugins: [ 'jsx' ],
 			},
 		},
-
 	},
 	overrides: [
 		{
@@ -52,9 +51,9 @@ module.exports = {
 				// 'plugin:@typescript-eslint/recommended-requiring-type-checking',
 			],
 			rules: {
-				'@typescript-eslint/await-thenable': 2,
-				'@typescript-eslint/no-var-requires': 2,
-				'@typescript-eslint/ban-ts-comment': 2,
+				'@typescript-eslint/await-thenable': 'error',
+				'@typescript-eslint/no-var-requires': 'error',
+				'@typescript-eslint/ban-ts-comment': 'error',
 			},
 			parserOptions: {
 				project: [ './tsconfig.json' ],
