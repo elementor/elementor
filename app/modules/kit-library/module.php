@@ -80,7 +80,7 @@ class Module extends BaseModule {
 
 	private function apply_filter_subscription_plans( array $subscription_plans ): array {
 		foreach ( $subscription_plans as $key => $plan ) {
-			if ( $plan[ 'promotion_url' ] == null) {
+			if ($plan['promotion_url'] == null) {
 				continue;
 			}
 			$subscription_plans[ $key ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
