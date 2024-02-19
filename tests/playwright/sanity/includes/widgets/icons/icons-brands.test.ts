@@ -32,17 +32,18 @@ async function testIcons( page, testInfo ) {
 	// Arrange.
 	const editorPage = new EditorPage( page, testInfo );
 	const frame = editorPage.getPreviewFrame();
-	await editorPage.closeNavigatorIfOpen();
 
 	const iconsType = 'icons-brands';
 
 	// Act.
+	await editorPage.closeNavigatorIfOpen();
+	await editorPage.removeWpAdminBar();
+
 	const filePath = _path.resolve( __dirname, `/${ iconsType }.json` );
 	await editorPage.loadTemplate( filePath, true );
 	await editorPage.waitForIframeToLoaded( iconsType );
 
 	await page.setViewportSize( { width: 1920, height: 3080 } );
-	await editorPage.removeWpAdminBar();
 	await editorPage.publishAndViewPage();
 
 	// Assert.
