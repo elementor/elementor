@@ -38,7 +38,6 @@ async function testIcons( wpAdmin, page, testInfo ) {
 	// Act.
 	await wpAdmin.openNewPage();
 	await editorPage.closeNavigatorIfOpen();
-	await editorPage.removeWpAdminBar();
 
 	const filePath = _path.resolve( __dirname, `/${ iconsType }.json` );
 	await editorPage.loadTemplate( filePath, true );
