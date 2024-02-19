@@ -47,8 +47,7 @@ class Module extends BaseModule {
 			new Kit_Library_Menu_Item()
 		);
 	}
-
-
+	
 	private function set_kit_library_settings() {
 		if ( ! Plugin::$instance->common ) {
 			return;
@@ -82,7 +81,7 @@ class Module extends BaseModule {
 			if ( null === $plan['promotion_url'] ) {
 				continue;
 			}
-			
+
 			$subscription_plans[ $key ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$plan,
 				'elementor/kit_library/promotion',
