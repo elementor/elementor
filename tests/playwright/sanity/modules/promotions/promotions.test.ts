@@ -80,4 +80,13 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( notesPromotionLinkContainer ).toHaveAttribute( 'href', notesHref );
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
+
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdminPage = new WpAdminPage( page, testInfo ),
+			promotionContainer = '.e-admin-top-bar__secondary-area';
+
+		// Act.
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
+	} );
 } );
