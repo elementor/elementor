@@ -14,7 +14,7 @@ test.describe( 'Icons (FA Brands)', () => {
 				e_font_icon_svg: 'inactive',
 			} );
 
-			await testIcons( page, testInfo );
+			await testIcons( wpAdmin, page, testInfo );
 		} );
 
 		await test.step( 'With the Inline Icons experiment active', async () => {
@@ -23,12 +23,12 @@ test.describe( 'Icons (FA Brands)', () => {
 				e_font_icon_svg: 'active',
 			} );
 
-			await testIcons( page, testInfo );
+			await testIcons( wpAdmin, page, testInfo );
 		} );
 	} );
 } );
 
-async function testIcons( page, testInfo ) {
+async function testIcons( wpAdmin, page, testInfo ) {
 	// Arrange.
 	const editorPage = new EditorPage( page, testInfo );
 	const frame = editorPage.getPreviewFrame();
@@ -36,6 +36,7 @@ async function testIcons( page, testInfo ) {
 	const iconsType = 'icons-brands';
 
 	// Act.
+	await wpAdmin.openNewPage();
 	await editorPage.closeNavigatorIfOpen();
 	await editorPage.removeWpAdminBar();
 
