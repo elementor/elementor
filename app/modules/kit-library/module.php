@@ -79,11 +79,12 @@ class Module extends BaseModule {
 	}
 
 	private function apply_filter_subscription_plans( array $subscription_plans ): array {
-		$plans = array_keys( $subscription_plans );
-
-		foreach ( $plans as $plan ) {
-			$subscription_plans[ $plan ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
-				$subscription_plans[ $plan ],
+		foreach ( $subscription_plans as $key => $plan ) {
+			if ( $plan[ 'promotion_url' ] == null) {
+				continue;
+			}
+			$subscription_plans[ $key ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+				$plan,
 				'elementor/kit_library/promotion',
 				'promotion_url'
 			);
