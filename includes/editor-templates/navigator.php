@@ -16,6 +16,7 @@ $promotion_data = [
 	'url' => 'https://go.elementor.com/go-pro-structure-panel/',
 ];
 $has_pro = Utils::has_pro();
+$elements_list_class = '';
 
 if ( ! $has_pro ) {
 	$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
@@ -23,6 +24,7 @@ if ( ! $has_pro ) {
 		'elementor/navigator/custom_promotion',
 		'url'
 	);
+	$elements_list_class = 'elementor-navigator-list__promotion';
 }
 
 ?>
@@ -46,7 +48,7 @@ if ( ! $has_pro ) {
 			?></span>
 		</button>
 	</div>
-	<div id="elementor-navigator__elements"></div>
+	<div id="elementor-navigator__elements" class="<?php echo esc_attr( $elements_list_class ); ?>"></div>
 	<div id="elementor-navigator__footer">
 		<?php if ( ! $has_pro ) : ?>
 			<div id="elementor-navigator__footer__promotion">
