@@ -58,7 +58,6 @@ class Module extends BaseModule {
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 
 		/** @var Kit_Library $kit_library */
-
 		$kit_library = $connect->get_app( 'kit-library' );
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
@@ -80,9 +79,10 @@ class Module extends BaseModule {
 
 	private function apply_filter_subscription_plans( array $subscription_plans ): array {
 		foreach ( $subscription_plans as $key => $plan ) {
-			if ($plan['promotion_url'] == null) {
+			if ( null === $plan['promotion_url'] ) {
 				continue;
 			}
+			
 			$subscription_plans[ $key ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$plan,
 				'elementor/kit_library/promotion',
