@@ -2,12 +2,29 @@
 namespace Elementor;
 
 use Elementor\Core\Editor\Editor;
+use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
+$promotion_data = [
+	'text' => esc_html__( 'Access all Pro widgets', 'elementor' ),
+	'url_label' => esc_html__( 'Upgrade Now', 'elementor' ),
+	'url' => 'https://go.elementor.com/go-pro-structure-panel/',
+];
+$has_pro = Utils::has_pro();
+
+if ( ! $has_pro ) {
+	$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
+		$promotion_data,
+		'elementor/navigator/custom_promotion',
+		'url'
+	);
+}
+
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
@@ -31,11 +48,12 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	</div>
 	<div id="elementor-navigator__elements"></div>
 	<div id="elementor-navigator__footer">
-
-		<div id="elementor-navigator__footer__promotion">
-			<?php echo esc_html__( 'Access all Pro widgets', 'elementor' ); ?>.
-			<a href="https://go.elementor.com/go-pro-structure-panel/" target="_blank"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-		</div>
+		<?php if ( ! $has_pro ) : ?>
+			<div id="elementor-navigator__footer__promotion">
+				<?php echo esc_attr( $promotion_data['text'] ); ?>.
+				<a href="<?php echo esc_url( $promotion_data['url'] ); ?>" target="_blank"><?php echo esc_attr( $promotion_data['url_label'] ); ?></a>
+			</div>
+		<?php endif; ?>
 
 		<div id="elementor-navigator__footer__resize-bar">
 			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
