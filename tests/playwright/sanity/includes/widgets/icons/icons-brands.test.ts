@@ -39,7 +39,7 @@ async function testIcons( wpAdmin, page, testInfo ) {
 	await wpAdmin.openNewPage();
 	await editorPage.closeNavigatorIfOpen();
 
-	const filePath = _path.resolve( __dirname, `/${ iconsType }.json` );
+	const filePath = _path.resolve( __dirname, `../../../../templates/${ iconsType }.json` );
 	await editorPage.loadTemplate( filePath, true );
 	await editorPage.waitForIframeToLoaded( iconsType );
 
