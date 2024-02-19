@@ -46,6 +46,9 @@ abstract class PageBase extends Document {
 				'theme-elements-single' => [
 					'title' => esc_html__( 'Single', 'elementor' ),
 					'active' => false,
+					'promotion' => [
+						'url' => esc_url( 'https://go.elementor.com/go-pro-section-single-widget-panel/' ),
+					],
 				],
 			]
 		);
