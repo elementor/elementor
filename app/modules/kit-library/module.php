@@ -47,7 +47,6 @@ class Module extends BaseModule {
 			new Kit_Library_Menu_Item()
 		);
 	}
-	
 	private function set_kit_library_settings() {
 		if ( ! Plugin::$instance->common ) {
 			return;
