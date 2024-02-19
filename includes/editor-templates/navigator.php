@@ -10,15 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
-$promotion_data = [
-	'text' => esc_html__( 'Access all Pro widgets', 'elementor' ),
-	'url_label' => esc_html__( 'Upgrade Now', 'elementor' ),
-	'url' => 'https://go.elementor.com/go-pro-structure-panel/',
-];
+
 $has_pro = Utils::has_pro();
 $elements_list_class = '';
 
 if ( ! $has_pro ) {
+	$promotion_data = [
+		'text' => esc_html__( 'Access all Pro widgets', 'elementor' ),
+		'url_label' => esc_html__( 'Upgrade Now', 'elementor' ),
+		'url' => 'https://go.elementor.com/go-pro-structure-panel/',
+	];
+
 	$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
 		$promotion_data,
 		'elementor/navigator/custom_promotion',
@@ -48,9 +50,14 @@ if ( ! $has_pro ) {
 			?></span>
 		</button>
 	</div>
-	<div id="elementor-navigator__elements" class="<?php echo esc_attr( $elements_list_class ); ?>"></div>
+	<div id="elementor-navigator__elements"
+		<?php if ( ! empty( $elements_list_class ) ) : ?>
+			class="<?php echo esc_attr( $elements_list_class ); ?>"
+	<?php endif; ?>
+	>
+	</div>
 	<div id="elementor-navigator__footer">
-		<?php if ( ! $has_pro ) : ?>
+		<?php if ( ! $has_pro && ! empty( $promotion_data ) ) : ?>
 			<div id="elementor-navigator__footer__promotion">
 				<?php echo esc_attr( $promotion_data['text'] ); ?>.
 				<a href="<?php echo esc_url( $promotion_data['url'] ); ?>" target="_blank" class="e-link-promotion"><?php echo esc_attr( $promotion_data['url_label'] ); ?></a>
