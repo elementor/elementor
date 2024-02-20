@@ -33,7 +33,7 @@ async function testIcons( wpAdmin, page, testInfo ) {
 	const editorPage = new EditorPage( page, testInfo );
 	const frame = editorPage.getPreviewFrame();
 
-	const iconsType = 'icons-brands';
+	const iconsType = 'icons_brands';
 
 	// Act.
 	await wpAdmin.openNewPage();
