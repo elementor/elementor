@@ -36,7 +36,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		const frame = editor.getPreviewFrame();
-		const container = await frame.locator( '.e-grid .e-con-inner' );
+		let container = frame.locator( '.e-grid .e-con-inner' );
 
 		await test.step( 'Assert gaps', async () => {
 			await page.locator( '.elementor-control-grid_gaps .elementor-link-gaps' ).first().click();
@@ -51,7 +51,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await page.waitForSelector( '#e-responsive-bar' );
 			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
 
-			const rowsMobileUnitLabel = await page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
+			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
 			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
 			// Reset desktop view
@@ -61,7 +61,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
 			// Arrange
-			const alignContentControl = await page.locator( '.elementor-control-grid_align_content' );
+			const alignContentControl = page.locator( '.elementor-control-grid_align_content' );
 
 			// Assert - Check the controls initial state
 			await expect( alignContentControl ).not.toBeVisible();
@@ -76,7 +76,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
 			// Arrange
-			const justifyContentControl = await page.locator( '.elementor-control-grid_justify_content' );
+			const justifyContentControl = page.locator( '.elementor-control-grid_justify_content' );
 
 			// Assert - Check the controls initial state
 			await expect( justifyContentControl ).not.toBeVisible();
@@ -121,7 +121,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
-			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'start' );
 			await expect( container ).toHaveCSS( 'align-content', 'start' );
 		} );
@@ -129,7 +129,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert justify align and content middle on full width', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
-			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'center' );
 			await expect( container ).toHaveCSS( 'align-content', 'center' );
 		} );
@@ -137,7 +137,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert justify align and content end on full width', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
-			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
 		} );
@@ -184,7 +184,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert correct positioning of the grid preset container when using the Add Container functionality', async () => {
 			// Assert that the first container has data-id = containerId.
-			await expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
+			expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.openAddElementSection( containerId );
 			await frame.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
@@ -193,9 +193,9 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// First container should be the new container.
 			const newContainerId = await frame.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
-			await expect( newContainerId ).not.toEqual( containerId );
+			expect( newContainerId ).not.toEqual( containerId );
 			// The second container should be the existing container.
-			await expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
+			expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.removeElement( newContainerId );
 		} );
@@ -246,7 +246,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// Act
 			const buttonID = await editor.addWidget( 'button', containerId ),
 				buttonSelector = `.elementor-element-${ buttonID }`,
-				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
 			await expect( buttonHandle ).not.toBeVisible();
@@ -261,7 +261,7 @@ test.describe( 'Container Grid tests @container', () => {
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' ),
 				buttonID = await editor.addWidget( 'button', flexContainerId ),
 				buttonSelector = `.elementor-element-${ buttonID }`,
-				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
 			await expect( buttonHandle ).toBeVisible();
@@ -275,7 +275,7 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Grid container presets', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
-		const frame = await editor.getPreviewFrame();
+		const frame = editor.getPreviewFrame();
 
 		await test.step( 'Assert preset: rows-1 columns-2', async () => {
 			await testPreset( frame, editor, 1, 2 );
@@ -314,8 +314,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		const frame = editor.getPreviewFrame(),
-			gridOutline = await frame.locator( '.e-grid-outline' ),
-			gridOutlineChildren = await frame.locator( '.e-grid-outline-item' );
+			gridOutline = frame.locator( '.e-grid-outline' ),
+			gridOutlineChildren = frame.locator( '.e-grid-outline-item' );
 
 		let gridOutlineChildrenInitialValue = 6;
 
@@ -390,7 +390,7 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			frame = editor.getPreviewFrame(),
-			gridOutline = await frame.locator( '.e-grid-outline' );
+			gridOutline = frame.locator( '.e-grid-outline' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
@@ -430,7 +430,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		const frame = editor.getPreviewFrame(),
-			emptyView = await frame.locator( '.elementor-empty-view' ),
+			emptyView = frame.locator( '.elementor-empty-view' ),
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
 
 		await test.step( 'Empty view min-height should be auto when grid-rows unit is set to custom', async () => {
@@ -493,24 +493,24 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Test grid back arrow', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
-		const frame = await editor.getPreviewFrame();
+		const frame = editor.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
 
 		await test.step( 'Assert back arrow in flex presets', async () => {
 			await frame.locator( '.flex-preset-button' ).click();
-			const backArrow = await frame.locator( '.elementor-add-section-back' );
+			const backArrow = frame.locator( '.elementor-add-section-back' );
 			await expect( backArrow ).toBeVisible();
 			await backArrow.click();
-			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
+			const selectTypeView = frame.locator( '[data-view="select-type"]' );
 			await expect( selectTypeView ).toBeVisible();
 		} );
 
 		await test.step( 'Assert back arrow in grid presets', async () => {
 			await frame.locator( '.grid-preset-button' ).click();
-			const backArrow = await frame.locator( '.elementor-add-section-back' );
+			const backArrow = frame.locator( '.elementor-add-section-back' );
 			await expect( backArrow ).toBeVisible();
 			await backArrow.click();
-			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
+			const selectTypeView = frame.locator( '[data-view="select-type"]' );
 			await expect( selectTypeView ).toBeVisible();
 		} );
 
@@ -518,7 +518,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await frame.locator( '.grid-preset-button' ).click();
 			await frame.locator( '[data-structure="2-2"]' ).click();
 			await frame.locator( '.elementor-editor-element-add' ).click();
-			const backArrow = await frame.locator( '.elementor-add-section-back' ).first();
+			const backArrow = frame.locator( '.elementor-add-section-back' ).first();
 			await expect( backArrow ).not.toBeVisible();
 		} );
 	} );
@@ -532,7 +532,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await editor.setSelectControlValue( 'container_type', 'grid' );
 
 		const frame = editor.getPreviewFrame();
-		const container = await frame.locator( '.e-grid .e-con-inner' );
+		const container = frame.locator( '.e-grid .e-con-inner' );
 
 		await test.step( 'Assert auto flow on desktop', async () => {
 			await testAutoFlowByDevice( editor, container, 'desktop' );

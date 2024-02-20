@@ -63,7 +63,7 @@ test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
 	await wpAdmin.openNewPage();
 	const buttonWidget = new ButtonWidget( page, testInfo );
 	await buttonWidget.addWidget( defaultBtnName );
-	const promoArea = await page.locator( '.elementor-nerd-box--upsale' );
+	const promoArea = page.locator( '.elementor-nerd-box--upsale' );
 
 	// Act.
 	await promoArea.scrollIntoViewIfNeeded();
