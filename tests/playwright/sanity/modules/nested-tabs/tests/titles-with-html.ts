@@ -8,7 +8,7 @@ export async function testTitlesWithHTML( page: Page, editor: EditorPage ) {
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child' ).click();
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( '<div style="display: flex; flex-direction: column;"><strong class="test-class">Tab 3</strong><div> has<br />html <br />elements</div></div>' );
 
-	const activeTab = await editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' );
+	const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' );
 
 	expect.soft( await activeTab.screenshot( {
 		type: 'png',
