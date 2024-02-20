@@ -1,7 +1,23 @@
 // Panel elements categories
 #elementor-panel-elements-categories {
 	padding-block-end: 10px;
+	position: relative;
+	flex: 1;
+	overflow-y: auto;
+
 }
+
+//#elementor-panel-get-pro-elements-sticky {
+//	position: sticky;
+//	bottom: 0;
+//	font-family: Roboto;
+//	font-size: 13px;
+//	font-weight: 500;
+//	line-height: 22px;
+//	letter-spacing: 0.10000000149011612px;
+//	text-align: center;
+//}
+
 
 .elementor-panel-category {
 	position: relative;
@@ -15,6 +31,12 @@
 		&:focus {
 			// background-color: var(--e-a-bg-hover);
 		}
+	}
+
+	.elementor-upgrade-sticky {
+		position: sticky;
+		bottom:0;
+
 	}
 
 	&.elementor-active {

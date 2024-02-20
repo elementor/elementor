@@ -39,6 +39,11 @@
 		> .ui-resizable-w {
 			display: none;
 		}
+	#elementor-panel-elements-wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		}
 	}
 
 	.ps__rail-y {
@@ -111,6 +116,29 @@
 
 	.elementor-nerd-box-icon {
 		margin-block-start: 20px;
+	}
+}
+
+#elementor-panel-get-pro-elements-sticky {
+	position: sticky;
+	bottom:0;
+	font-size: 13px;
+	font-weight: 500;
+
+	.elementor-get-pro-sticky-message {
+		height: 40px;
+		padding: 9px 35px;
+		gap: 10px;
+		background-color: #FFFFFF;
+		text-align: center;
+		margin-top: -9px;
+
+	}
+
+	a {
+		font-size: 14px;
+		font-weight: 400;
+		color: var(--e-a-btn-bg-accent);
 	}
 }
 
