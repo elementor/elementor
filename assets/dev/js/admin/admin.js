@@ -411,7 +411,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				jsonUploadWarning: {
 					shown: false
 				},
-				allowUnfilteredFiles: {
+				enableUnfilteredFiles: {
 					shown: false
 				},
 			};
@@ -441,11 +441,14 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					return;
 				}
 
-				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles && ! messages.allowUnfilteredFiles.shown ) {
+				const hasImportedFiles = $importFormFileInput[ 0 ].files.length;
+				const areUnfilteredFilesEnabled = elementorCommon.config.filesUpload.unfilteredFiles;
+
+				if ( hasImportedFiles && ! areUnfilteredFilesEnabled && ! messages.enableUnfilteredFiles.shown ) {
 					event.preventDefault();
 
 					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
-						messages.allowUnfilteredFiles.shown = true;
+						messages.enableUnfilteredFiles.shown = true;
 						$importForm.trigger( 'submit' );
 					} );
 
