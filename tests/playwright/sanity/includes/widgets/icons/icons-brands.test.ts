@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import _path from 'path';
