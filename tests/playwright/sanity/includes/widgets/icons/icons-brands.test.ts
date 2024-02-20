@@ -33,7 +33,7 @@ async function testIcons( wpAdmin, page, testInfo ) {
 	const editorPage = new EditorPage( page, testInfo );
 	const frame = editorPage.getPreviewFrame();
 
-	const iconsType = 'icons_brands';
+	const iconsType = 'icons-brands';
 
 	// Act.
 	await wpAdmin.openNewPage();
@@ -47,5 +47,5 @@ async function testIcons( wpAdmin, page, testInfo ) {
 	await editorPage.publishAndViewPage();
 
 	// Assert.
-	await expectScreenshotToMatchLocator( 'icons-brands.png', frame.locator( '.e-con-inner' ).first() );
+	await expectScreenshotToMatchLocator( `${ iconsType }.png`, frame.locator( '.e-con-inner' ).first() );
 }
