@@ -1351,25 +1351,24 @@ class Controls_Manager {
 	}
 
 	private function is_style_control( $control_data ): bool {
-		$retval = false;
+		$frontend_available = $control_data['frontend_available'] ?? false;
+		if ( $frontend_available ) {
+			return false;
+		}
+
+		if ( ! empty( $control_data['prefix_class'] ) ) {
+			return false;
+		}
+
 		if ( ! empty( $control_data['selectors'] ) ) {
-			$retval = true;
+			return true;
 		}
 
 		$render_type = $control_data['render_type'] ?? '';
 		if ( 'ui' === $render_type ) {
-			$retval = true;
+			return true;
 		}
 
-		$frontend_available = $control_data['frontend_available'] ?? false;
-		if ( $frontend_available ) {
-			$retval = false;
-		}
-
-		if ( ! empty( $control_data['prefix_class'] ) ) {
-			$retval = false;
-		}
-
-		return $retval;
+		return false;
 	}
 }
