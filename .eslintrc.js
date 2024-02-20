@@ -43,6 +43,22 @@ module.exports = {
 			},
 		},
 	},
+	overrides: [
+		{
+			files: [ '*.ts', '*.tsx' ],
+			extends: [
+				'plugin:@typescript-eslint/recommended',
+			],
+			rules: {
+				'@typescript-eslint/await-thenable': 'error',
+				'@typescript-eslint/no-var-requires': 'error',
+				'@typescript-eslint/ban-ts-comment': 'error',
+			},
+			parserOptions: {
+				project: [ './tsconfig.json' ],
+			},
+		},
+	],
 	rules: {
 		// Custom canceled rules
 		'no-var': 'off',
