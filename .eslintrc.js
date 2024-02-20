@@ -48,7 +48,6 @@ module.exports = {
 			files: [ '*.ts', '*.tsx' ],
 			extends: [
 				'plugin:@typescript-eslint/recommended',
-				// 'plugin:@typescript-eslint/recommended-requiring-type-checking',
 			],
 			rules: {
 				'@typescript-eslint/await-thenable': 'error',
