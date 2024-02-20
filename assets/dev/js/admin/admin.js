@@ -458,6 +458,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				}
 
 				messages.jsonUploadWarning.shown = false;
+				messages.enableUnfilteredFiles.shown = false;
 			} );
 		},
 
