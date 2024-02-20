@@ -7,23 +7,15 @@ test.describe( 'Icons (FA Brands)', () => {
 	test( 'All brand icons are rendering properly', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		await test.step( 'Without the Inline Icons experiment', async () => {
-			// Arrange.
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'inactive',
+		for ( const status of [ 'inactive', 'active' ] ) {
+			await test.step( `Inline Icons experiment status - ${ status }`, async () => {
+				await wpAdmin.setExperiments( {
+					e_font_icon_svg: status,
+				} );
+
+				await testIcons( wpAdmin, page, testInfo );
 			} );
-
-			await testIcons( wpAdmin, page, testInfo );
-		} );
-
-		await test.step( 'With the Inline Icons experiment active', async () => {
-			// Arrange.
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'active',
-			} );
-
-			await testIcons( wpAdmin, page, testInfo );
-		} );
+		}
 	} );
 } );
 
