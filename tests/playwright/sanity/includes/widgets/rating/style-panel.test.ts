@@ -20,7 +20,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				ratingId = await editor.addWidget( 'rating', container ),
-				ratingElement = await editor.getPreviewFrame().locator( `.elementor-element-${ ratingId } .e-rating` );
+				ratingElement = editor.getPreviewFrame().locator( `.elementor-element-${ ratingId } .e-rating` );
 
 			await test.step( 'Set widget', async () => {
 				await editor.setSliderControlValue( 'rating_scale', '5' );
@@ -36,16 +36,16 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Assert styling', async () => {
-				await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ) ).toHaveCSS( 'margin-inline-end', '30px' );
+				await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ) ).toHaveCSS( 'margin-inline-end', '30px' );
 
 				if ( 'active' === iconExperimentState ) {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'width', '50px' );
-					await expect.soft( await ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(250, 0, 0)' );
-					await expect.soft( await ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(34, 0, 255)' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'width', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(250, 0, 0)' );
+					await expect.soft( ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(34, 0, 255)' );
 				} else {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
-					await expect.soft( await ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(250, 0, 0)' );
-					await expect.soft( await ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(34, 0, 255)' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(250, 0, 0)' );
+					await expect.soft( ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(34, 0, 255)' );
 				}
 			} );
 
@@ -78,10 +78,10 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				await page.locator( `.elementor-icons-manager__tab__item__content .fa-address-card` ).first().click();
 
 				if ( 'active' === iconExperimentState ) {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'height', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'height', '50px' );
 				} else {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
 				}
 			} );
 		} );
