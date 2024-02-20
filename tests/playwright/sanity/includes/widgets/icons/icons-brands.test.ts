@@ -1,7 +1,6 @@
-import { test } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
-import {expectScreenshotToMatchLocator} from '../../../modules/nested-accordion/helper';
 import _path from 'path';
 
 test.describe( 'Icons (FA Brands)', () => {
@@ -47,5 +46,8 @@ async function testIcons( wpAdmin, page, testInfo ) {
 	await editorPage.publishAndViewPage();
 
 	// Assert.
-	await expectScreenshotToMatchLocator( `${ iconsType }.png`, frame.locator( '.e-con-inner' ).first() );
+	expect( await frame
+		.locator( '.e-con-inner' ).first()
+		.screenshot( { type: 'jpeg', quality: 90 } ) )
+		.toMatchSnapshot( `${ iconsType }.png` );
 }
