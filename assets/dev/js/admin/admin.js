@@ -198,56 +198,6 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					} );
 			} );
 
-			$( '#elementor_upgrade_fa_button' ).on( 'click', function( event ) {
-				event.preventDefault();
-				const $updateButton = $( this );
-				$updateButton.addClass( 'loading' );
-
-				elementorCommon.dialogsManager.createWidget( 'confirm', {
-					id: 'confirm_fa_migration_admin_modal',
-					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
-					headerMessage: __( 'Font Awesome 5 Migration', 'elementor' ),
-					strings: {
-						confirm: __( 'Continue', 'elementor' ),
-						cancel: __( 'Cancel', 'elementor' ),
-					},
-					defaultOption: 'confirm',
-					onConfirm: () => {
-						$updateButton.removeClass( 'error' ).addClass( 'loading' );
-
-						const {
-							_nonce,
-							action,
-							redirectUrl,
-						} = $updateButton.data();
-
-						$.post( ajaxurl, { action, _nonce } )
-							.done( function( response ) {
-								$updateButton.removeClass( 'loading' ).addClass( 'success' );
-
-								const messageElement = document.createElement( 'p' );
-								messageElement.appendChild( document.createTextNode( response.data.message ) );
-
-								$( '#elementor_upgrade_fa_button' ).parent().append( messageElement );
-
-								if ( redirectUrl ) {
-									location.href = decodeURIComponent( redirectUrl );
-
-									return;
-								}
-
-								history.go( -1 );
-							} )
-							.fail( function() {
-								$updateButton.removeClass( 'loading' ).addClass( 'error' );
-							} );
-					},
-					onCancel: () => {
-						$updateButton.removeClass( 'loading' ).addClass( 'error' );
-					},
-				} ).show();
-			} );
-
 			self.elements.$settingsTabs.on( {
 				click( event ) {
 					event.preventDefault();

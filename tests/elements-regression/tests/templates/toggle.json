@@ -32,7 +32,7 @@
                             "library": "fa-solid"
                         },
                         "selected_active_icon": {
-                            "value": "far fa-arrow-alt-circle-down",
+                            "value": "far fa-circle-down",
                             "library": "fa-regular"
                         },
                         "border_width": {

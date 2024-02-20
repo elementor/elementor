@@ -169,14 +169,14 @@ class Widget_Icon_List extends Widget_Base {
 					[
 						'text' => esc_html__( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas fa-times',
+							'value' => 'fas ' . ( Icons_Manager::$migrations::is_migration_required() ? 'fa-times' : 'fa-xmark' ),
 							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => esc_html__( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas fa-dot-circle',
+							'value' => 'fas ' . ( Icons_Manager::$migrations::is_migration_required() ? 'fa-dot-circle' : 'fa-circle-dot' ),
 							'library' => 'fa-solid',
 						],
 					],
@@ -705,8 +705,8 @@ class Widget_Icon_List extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$fallback_defaults = [
 			'fa fa-check',
-			'fa fa-times',
-			'fa fa-dot-circle-o',
+			'fa fa-xmark',
+			'fa fa-dot-circle',
 		];
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );
@@ -725,7 +725,7 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
 
 				$this->add_inline_editing_attributes( $repeater_setting_key );
-				$migration_allowed = Icons_Manager::is_migration_allowed();
+				$migration_required = Icons_Manager::$migrations::is_migration_required();
 				?>
 				<li <?php $this->print_render_attribute_string( 'list_item' ); ?>>
 					<?php
@@ -740,12 +740,12 @@ class Widget_Icon_List extends Widget_Base {
 					}
 
 					// add old default
-					if ( ! isset( $item['icon'] ) && ! $migration_allowed ) {
+					if ( ! isset( $item['selected_icon'] ) && $migration_required ) {
 						$item['icon'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-check';
 					}
 
 					$migrated = isset( $item['__fa4_migrated']['selected_icon'] );
-					$is_new = ! isset( $item['icon'] ) && $migration_allowed;
+					$is_new = ! isset( $item['icon'] );
 					if ( ! empty( $item['icon'] ) || ( ! empty( $item['selected_icon']['value'] ) && $is_new ) ) :
 						?>
 						<span class="elementor-icon-list-icon">

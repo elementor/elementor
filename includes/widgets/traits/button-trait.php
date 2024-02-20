@@ -573,7 +573,7 @@ trait Button_Trait {
 		$settings = $instance->get_settings_for_display();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = empty( $settings['icon'] );
 
 		if ( ! $is_new && empty( $settings['icon_align'] ) ) {
 			// @todo: remove when deprecated

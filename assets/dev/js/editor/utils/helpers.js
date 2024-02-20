@@ -1,6 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { __ } from '@wordpress/i18n';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -126,7 +127,12 @@ module.exports = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config.icons_update_needed ) {
+		if ( elementor.config.icons_update_needed ) {
+			this.enqueueEditorStylesheet( elementor.config.icons.legacy_library );
+			return;
+		}
+
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) ) {
 			return;
 		}
 
@@ -403,44 +409,153 @@ module.exports = {
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
 			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
-			widgetData = elementor.widgetsCache[ widgetType ],
-			hasControlOfType = ( controls, type ) => {
-				let has = false;
-				jQuery.each( controls, ( controlName, controlData ) => {
-					if ( type === controlData.type ) {
-						has = true;
+			widgetData = elementor.widgetsCache[ widgetType ];
+
+		const hasControlOfType = ( controls, type ) => {
+			let has = false;
+
+			jQuery.each( controls, ( controlName, controlData ) => {
+				if ( type === controlData.type ) {
+					has = true;
+					return false;
+				}
+
+				if ( controlData.is_repeater ) {
+					has = hasControlOfType( controlData.fields, type );
+
+					if ( has ) {
 						return false;
 					}
-					if ( controlData.is_repeater ) {
-						has = hasControlOfType( controlData.fields, type );
-						if ( has ) {
-							return false;
-						}
-					}
-				} );
-				return has;
-			};
+				}
+			} );
+			return has;
+		};
 
 		if ( widgetData ) {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
+
 			if ( hasIconsControl ) {
-				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link +
-						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
-						'&_wpnonce=' + elementor.config.tools_page_nonce +
-						'#tab-fontawesome4_migration';
-				};
-				elementor.helpers.getSimpleDialog(
-					'elementor-enable-fa5-dialog',
-					__( 'Elementor\'s New Icon Library', 'elementor' ),
-					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
-					__( 'Update', 'elementor' ),
-					onConfirm,
-				).show();
+				this.showFontAwesomeMigrationDialog();
 				return true;
 			}
 		}
+
 		return false;
+	},
+
+	showFontAwesomeMigrationDialog() {
+		const currentFaVersion = elementor.config.icons.current_fa_version;
+		/* Translators: %s is the version number. */
+		const dialogTitle = __( 'Ready for the new Font Awesome %s icon library?', 'elementor' ).replace( '%s', currentFaVersion );
+
+		const dialogSettings = elementor.config.user.is_administrator ? {
+			message: (
+				/* Translators: %s is the version number. */
+				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
+				__( 'We\'ll convert existing icons to the new versions when you edit a page that already contains icons.', 'elementor' ) + ' ' +
+				'<a href="https://go.elementor.com/widget-font-awesome-6-update" target="_blank" rel="noreferrer">' + __( 'Learn more', 'elementor' ) + '</a><br><br>' +
+				'<strong>' + __( 'Before you update, keep in mind:', 'elementor' ) + '</strong> ' +
+				'<ul><li>' + __( 'Icons cannot be used on your website until you update to the new library.', 'elementor' ) + '</li>' +
+				'<li>' + __( 'After the update, some existing icons might appear differently due to changes in the Font Awesome configuration.', 'elementor' ) + '</li>' +
+				'<li><b>' + __( 'To ensure a smooth transition, first create a backup of your entire site with your hosting provider.', 'elementor' ) + '</b></li>' +
+				'<li><b>' + __( 'This update can\'t be undone, even by rolling back to a previous Elementor version.', 'elementor' ) + '</b></li></ul>'
+			),
+			type: 'confirm',
+			class: 'dialog-type-confirm-large',
+			submitText: __( 'Update now', 'elementor' ),
+		} : {
+			message: (
+				/* Translators: %s is the version number. */
+				__( 'Font Awesome v%s includes over 1,700+ amazing icons, faster performance, and design flexibility.', 'elementor' ).replace( '%s', currentFaVersion ) + '<br><br>' +
+				__( 'Contact your site admin to update the icon library.', 'elementor' )
+			),
+			type: 'alert',
+			class: '',
+			submitText: __( 'Got it', 'elementor' ),
+		};
+
+		if ( ! this.fontAwesomeMigrationDialog ) {
+			const self = this;
+
+			this.fontAwesomeMigrationDialog = elementorCommon.dialogsManager.createWidget( dialogSettings.type, {
+				id: 'e-fa-migration-dialog',
+				className: dialogSettings.class,
+				headerMessage: dialogTitle,
+				message: dialogSettings.message,
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: dialogSettings.submitText,
+				},
+				hide: {
+					onButtonClick: false,
+				},
+				onCancel: () => {
+					this.fontAwesomeMigrationDialog.hide();
+				},
+				onConfirm: async () => {
+					if ( ! elementor.config.user.is_administrator ) {
+						this.fontAwesomeMigrationDialog.hide();
+						return;
+					}
+
+					const updateButton = this.fontAwesomeMigrationDialog.getElements( 'ok' )[ 0 ];
+					const updateButtonText = updateButton.textContent;
+
+					updateButton.textContent = __( 'Updating...', 'elementor' );
+					updateButton.setAttribute( 'disabled', 'disabled' );
+
+					const handleIconMigration = ( dialogOptions, onConfirmCallback ) => {
+						this.fontAwesomeMigrationDialog.hide();
+
+						elementorCommon.dialogsManager.createWidget( 'alert', {
+							id: 'e-fa-migration-confirmation',
+							headerMessage: dialogOptions.title,
+							message: dialogOptions.message,
+							position: {
+								my: 'center center',
+								at: 'center center',
+							},
+							strings: {
+								confirm: __( 'Got it', 'elementor' ),
+							},
+							onConfirm: onConfirmCallback,
+						} ).show();
+					};
+
+					elementorCommon.ajax.addRequest( 'icon_manager_migrate', {
+						success: () => {
+							const dialogOptions = {
+								/* Translators: %s is the version number. */
+								title: __( 'You\'re up-to-date with Font Awesome %s!', 'elementor' ).replace( '%s', elementor.config.icons.current_fa_version ),
+								message: __( 'Elevate your designs with these new and updated icons.', 'elementor' ),
+							};
+
+							handleIconMigration( dialogOptions, () => {
+								location.reload();
+							} );
+						},
+						error: ( e ) => {
+							const dialogOptions = {
+								title: __( 'Font Awesome update failed.', 'elementor' ),
+								message: e + ' ' + __( 'Please try again.', 'elementor' ),
+							};
+
+							handleIconMigration( dialogOptions, () => {
+								self.fontAwesomeMigrationDialog.show();
+
+								updateButton.textContent = updateButtonText;
+								updateButton.removeAttribute( 'disabled' );
+							} );
+						},
+					}, true );
+				},
+			} );
+		}
+
+		this.fontAwesomeMigrationDialog.show();
 	},
 
 	/**

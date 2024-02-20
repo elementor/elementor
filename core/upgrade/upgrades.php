@@ -3,7 +3,6 @@ namespace Elementor\Core\Upgrade;
 
 use Elementor\Api;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
@@ -537,12 +536,13 @@ class Upgrades {
 	 *
 	 * @return mixed
 	 */
-	public static function _migrate_icon_fa4_value( $element, $args ) {
+	public static function _migrate_fa_icon_values( $element, &$args ) {
 		$widget_id = $args['widget_id'];
 
 		if ( empty( $element['widgetType'] ) || $widget_id !== $element['widgetType'] ) {
 			return $element;
 		}
+
 		foreach ( $args['control_ids'] as $old_name => $new_name ) {
 			// exit if new value exists
 			if ( isset( $element['settings'][ $new_name ] ) ) {
@@ -554,9 +554,10 @@ class Upgrades {
 				continue;
 			}
 
-			$element['settings'][ $new_name ] = Icons_Manager::fa4_to_fa5_value_migration( $element['settings'][ $old_name ] );
+			$element['settings'][ $new_name ] = Icons_Manager::$migrations::fa_icon_value_migration( $element['settings'][ $old_name ] );
 			$args['do_update'] = true;
 		}
+
 		return $element;
 	}
 
@@ -568,7 +569,7 @@ class Upgrades {
 	public static function _v_2_6_6_fa4_migration_button( $updater ) {
 		$changes = [
 			[
-				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_icon_fa4_value' ],
+				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_fa_icon_values' ],
 				'control_ids' => [
 					'icon' => 'selected_icon',
 				],
@@ -857,6 +858,10 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_19_0_fa5_icons_migration( $updater ) {
+		add_option( 'elementor_icon_manager_needs_update', 'yes' );
+	}
+
 	private static function maybe_add_gap_control_data( $option_name ) {
 		$kit_id = get_option( $option_name );
 
@@ -947,6 +952,7 @@ class Upgrades {
 					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
 		);
 	}
+
 	/**
 	 * @param $data
 	 *

@@ -12,6 +12,7 @@ $e-dialog-confirm-space: 20px;
 	.dialog-widget-content {
 		margin: auto;
 		width: 400px;
+		max-width: 100%;
 		padding: $e-dialog-confirm-space;
 	}
 
@@ -32,6 +33,11 @@ $e-dialog-confirm-space: 20px;
 
 	.dialog-message {
 		min-height: 50px;
+
+		ul li {
+			list-style-position: inside;
+			list-style-type: disc;
+		}
 	}
 
 	.dialog-buttons-wrapper {
@@ -61,5 +67,12 @@ $e-dialog-confirm-space: 20px;
 				@extend .e-primary;
 			}
 		}
+	}
+}
+
+.dialog-type-confirm-large {
+
+	.dialog-widget-content {
+		width: 720px;
 	}
 }

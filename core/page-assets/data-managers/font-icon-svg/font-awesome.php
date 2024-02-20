@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg;
 
+use Elementor\Icons_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -11,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.4.0
  */
 class Font_Awesome extends Base {
-	const LIBRARY_CURRENT_VERSION = '5.15.3';
-
 	protected function get_config( $icon ) {
 		preg_match( '/fa(.*) fa-/', $icon['value'], $icon_name_matches );
 
@@ -24,8 +24,8 @@ class Font_Awesome extends Base {
 
 		return [
 			'key' => $icon_key,
-			'version' => self::LIBRARY_CURRENT_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/' . $icon_file_name . '.json',
+			'version' => Icons_Manager::ELEMENTOR_ICONS_VERSION,
+			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/v' . Icons_Manager::get_fa_version_to_load() . '/' . $icon_file_name . '.json',
 			'data' => [
 				'icon_data' => [
 					'name' => $icon_name,
@@ -42,12 +42,14 @@ class Font_Awesome extends Base {
 
 		$icon_name = $icon_data['name'];
 
-		$svg_data = $file_data['icons'][ $icon_name ];
+		if ( ! empty( $file_data['icons'][ $icon_name ] ) ) {
+			$svg_data = $file_data['icons'][ $icon_name ];
+		}
 
 		return [
-			'width' => $svg_data[0],
-			'height' => $svg_data[1],
-			'path' => $svg_data[4],
+			'width' => $svg_data[0] ?? '',
+			'height' => $svg_data[1] ?? '',
+			'path' => $svg_data[4] ?? '',
 			'key' => $this->get_key(),
 		];
 	}

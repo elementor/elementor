@@ -138,6 +138,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'stack-overflow',
 						'steam',
 						'telegram',
+						'threads',
 						'thumb-tack',
 						'tripadvisor',
 						'tumblr',
@@ -150,6 +151,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'weixin',
 						'whatsapp',
 						'wordpress',
+						'x-twitter',
 						'xing',
 						'yelp',
 						'youtube',
@@ -235,7 +237,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
-							'value' => 'fab fa-twitter',
+							'value' => 'fab fa-instagram',
 							'library' => 'fa-brands',
 						],
 					],
@@ -567,7 +569,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$fallback_defaults = [
 			'fa fa-facebook',
-			'fa fa-twitter',
+			'fa fa-instagram',
 			'fa fa-google-plus',
 		];
 
@@ -577,18 +579,18 @@ class Widget_Social_Icons extends Widget_Base {
 			$class_animation = ' elementor-animation-' . $settings['hover_animation'];
 		}
 
-		$migration_allowed = Icons_Manager::is_migration_allowed();
+		$migration_required = Icons_Manager::$migrations::is_migration_required();
 
 		?>
 		<div class="elementor-social-icons-wrapper elementor-grid">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
-				$is_new = empty( $item['social'] ) && $migration_allowed;
+				$is_new = empty( $item['social'] );
 				$social = '';
 
 				// add old default
-				if ( empty( $item['social'] ) && ! $migration_allowed ) {
+				if ( empty( $item['social'] ) && $migration_required ) {
 					$item['social'] = isset( $fallback_defaults[ $index ] ) ? $fallback_defaults[ $index ] : 'fa fa-wordpress';
 				}
 

@@ -67,10 +67,6 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		const model = this.model,
 			valueToMigrate = this.getValueToMigrate();
 
-		if ( ! this.isMigrationAllowed() ) {
-			return valueToMigrate;
-		}
-
 		// Bail if no migration flag or no value to migrate
 		const value = super.getControlValue();
 		if ( ! valueToMigrate ) {
@@ -134,20 +130,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				event.preventDefault();
 				event.stopPropagation();
 
-				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link +
-						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
-						'&_wpnonce=' + elementor.config.tools_page_nonce +
-						'#tab-fontawesome4_migration';
-				};
-				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
-					'elementor-enable-fa5-dialog',
-					__( 'Elementor\'s New Icon Library', 'elementor' ),
-					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
-					__( 'Update', 'elementor' ),
-					onConfirm,
-				);
-				enableMigrationDialog.show();
+				elementor.helpers.showFontAwesomeMigrationDialog();
+
 				return false;
 			}, true );
 		}
@@ -163,6 +147,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 	onRender() {
 		super.onRender();
+
 		if ( this.isMigrationAllowed() ) {
 			elementor.iconManager.loadIconLibraries();
 		}

@@ -10,7 +10,7 @@
                         "alert_title": "This is a custom alert text!",
                         "alert_description": "This is alert content!",
                         "dismiss_icon": {
-                            "value": "fas fa-times",
+                            "value": "fas fa-xmark",
                             "library": "fa-solid"
                         },
                         "border_left-width": {

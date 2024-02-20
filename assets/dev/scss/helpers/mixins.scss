@@ -109,9 +109,10 @@
 		cursor: pointer;
 	}
 
-	&:disabled {
+	&:disabled[class] {
 		background-color: var(--e-a-btn-bg-disabled);
 		color: var(--e-a-btn-color-disabled);
+		pointer-events: none;
 	}
 
 	&:not(.elementor-button-state) {

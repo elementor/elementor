@@ -12,20 +12,24 @@ class Upgrade_Utils {
 	/**
 	 *  _update_widget_settings
 	 *
-	 * @param string $widget_id  widget type id
-	 * @param Updater $updater   updater instance
-	 * @param array $changes     array containing updating control_ids, callback and other data needed by the callback
+	 * @param string  $widget_id Widget type id. Pass "*" for any widget type.
+	 * @param Updater $updater   Updater instance.
+	 * @param array   $changes   Array containing updating control_ids, callback and other data needed by the callback.
 	 *
 	 * @return bool
 	 */
 	public static function _update_widget_settings( $widget_id, $updater, $changes ) {
 		global $wpdb;
 
+		$widget_type = '*' === $widget_id
+			? 'REGEXP \'"widgetType":"[a-zA-Z_\-]+"\''
+			: 'LIKE \'%"widgetType":"' . $widget_id . '"%\'';
+
 		$post_ids = $updater->query_col(
-			'SELECT `post_id` 
-					FROM `' . $wpdb->postmeta . '` 
-					WHERE `meta_key` = "_elementor_data" 
-					AND `meta_value` LIKE \'%"widgetType":"' . $widget_id . '"%\';'
+			'SELECT `post_id`
+				FROM `' . $wpdb->postmeta . '`
+				WHERE `meta_key` = "_elementor_data"
+				AND `meta_value` ' . $widget_type . ';'
 		);
 
 		if ( empty( $post_ids ) ) {
@@ -47,12 +51,12 @@ class Upgrade_Utils {
 				continue;
 			}
 
-			// loop thru callbacks & array
+			// loop through callbacks & array
 			foreach ( $changes as $change ) {
 				$args = [
 					'do_update' => &$do_update,
 					'widget_id' => $widget_id,
-					'control_ids' => $change['control_ids'],
+					'control_ids' => $change['control_ids'] ?? null,
 				];
 
 				if ( isset( $change['prefix'] ) ) {

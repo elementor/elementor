@@ -4,7 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 
 const tabIcons = [
 	{
-		icon: 'fa-arrow-alt-circle-right',
+		icon: 'fa-circle-right',
 		activeIcon: 'fa-bookmark',
 	},
 	{

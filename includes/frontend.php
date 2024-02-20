@@ -502,10 +502,17 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_styles' );
 
 		wp_register_style(
-			'font-awesome',
-			$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/css/' ),
+			'font-awesome', // Font Awesome 4 CSS for BC
+			$this->get_css_assets_url( 'fontawesome', 'assets/lib/font-awesome/css/v4/' ),
 			[],
 			'4.7.0'
+		);
+
+		wp_register_style(
+			'fontawesome5',
+			$this->get_css_assets_url( 'fontawesome', 'assets/lib/font-awesome/css/v5/' ),
+			[],
+			'5.15.3'
 		);
 
 		wp_register_style(
@@ -853,7 +860,8 @@ class Frontend extends App {
 	}
 
 	private function maybe_enqueue_icon_font( $icon_font_type ) {
-		if ( ! Icons_Manager::is_migration_allowed() ) {
+		if ( Icons_Manager::$migrations::is_migration_required() ) {
+			Icons_Manager::enqueue_fa_legacy_css();
 			return;
 		}
 
@@ -869,7 +877,12 @@ class Frontend extends App {
 	}
 
 	private function enqueue_icon_fonts() {
-		if ( empty( $this->icon_fonts_to_enqueue ) || ! Icons_Manager::is_migration_allowed() ) {
+		if ( Icons_Manager::$migrations::is_migration_required() ) {
+			Icons_Manager::enqueue_fa_legacy_css();
+			return;
+		}
+
+		if ( empty( $this->icon_fonts_to_enqueue ) ) {
 			return;
 		}
 
