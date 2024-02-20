@@ -22,7 +22,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'accordion',
 		'icon_box',
 		'icon_list',
-		'icons_brands',
 		'star_rating',
 		'basic_gallery',
 		'counter',
@@ -38,6 +37,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'icon_hover',
 		'social_icons_hover',
 		'text_path_hover',
+		'icons_brands',
 	];
 
 	for ( const widgetType of testData ) {
