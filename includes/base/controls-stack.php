@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Frontend\Performance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -310,7 +311,16 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		return self::get_items( $this->get_stack()['controls'], $control_id );
+		$stack = $this->get_stack();
+		$controls = $stack['controls'];
+
+		if ( Performance::is_use_style_controls() ) {
+			if ( ! empty( $stack['style_controls'] ) ) {
+				$controls += $stack['style_controls'];
+			}
+		}
+
+		return self::get_items( $controls, $control_id );
 	}
 
 	/**
@@ -431,7 +441,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
-		if ( $this->should_optimize_controls() ) {
+		if ( Performance::should_optimize_controls() ) {
 			$ui_controls = [
 				Controls_Manager::RAW_HTML,
 				Controls_Manager::DIVIDER,
@@ -459,7 +469,6 @@ abstract class Controls_Stack extends Base_Object {
 				$args['separator'],
 				$args['size_units'],
 				$args['range'],
-				$args['render_type'],
 				$args['toggle'],
 				$args['ai'],
 				$args['classes'],
@@ -475,19 +484,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
-	}
-
-	private function should_optimize_controls() {
-		static $is_frontend = null;
-
-		if ( null === $is_frontend ) {
-			$is_frontend = (
-				! is_admin()
-				&& ! Plugin::$instance->preview->is_preview_mode()
-			);
-		}
-
-		return $is_frontend;
 	}
 
 	/**

@@ -9,6 +9,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Frontend\Performance;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
@@ -674,7 +675,9 @@ abstract class Base extends Base_File {
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
 
+		Performance::set_use_style_controls( true );
 		$this->render_css();
+		Performance::set_use_style_controls( false );
 
 		$name = $this->get_name();
 

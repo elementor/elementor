@@ -455,6 +455,14 @@ class Manager extends Base_Object {
 				'container',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_control_loading',
+			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**
