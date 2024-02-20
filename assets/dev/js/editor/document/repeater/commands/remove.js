@@ -59,10 +59,17 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 			// Remove from container and add to result.
 			result.push( repeaterContainer.children.splice( index, 1 ) );
 
-			collection.remove( model );
 
-			// Trigger render on widget but with the settings of the control.
-			repeaterContainer.render();
+
+			if ( 'Accordion' === container.label ) {
+				collection.remove( model );
+				const widgetContainer = container.document.$element[ 0 ];
+				const targetElement = widgetContainer.querySelectorAll( '.e-n-accordion-item' );
+				targetElement[ index ].remove();
+			} else {
+				// Trigger render on widget but with the settings of the control.
+				repeaterContainer.render();
+			}
 		} );
 
 		if ( 1 === result.length ) {
