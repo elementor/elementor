@@ -409,10 +409,10 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 
 			const messages = {
 				jsonUploadWarning: {
-					shown: false
+					shown: false,
 				},
 				enableUnfilteredFiles: {
-					shown: false
+					shown: false,
 				},
 			};
 			const originalButtonValue = $importNowButton[ 0 ].value;
