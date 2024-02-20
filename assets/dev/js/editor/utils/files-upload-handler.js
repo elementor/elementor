@@ -77,10 +77,7 @@ export default class FilesUploadHandler {
 					},
 				}, true );
 			},
-			onCancel: () => {
-
-				callback();
-			},
+			onCancel: () => callback(),
 		} );
 	}
 }
