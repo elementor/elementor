@@ -57,6 +57,7 @@ jobs:
           PATTERNS: |
             **/*
             .*/**/*
+            .wp-env.json
             !readme.txt
             !changelog.txt
       - name: Install Node.js 18.x
