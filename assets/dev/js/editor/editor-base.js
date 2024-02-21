@@ -1589,3 +1589,4 @@ export default class EditorBase extends Marionette.Application {
 		$files.attr( { type } );
 	}
 }
+

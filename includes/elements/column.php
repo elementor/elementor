@@ -841,6 +841,8 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
+
 		$this->add_responsive_control(
 			'animation',
 			[

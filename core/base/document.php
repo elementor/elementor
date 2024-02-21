@@ -18,6 +18,7 @@ use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -176,7 +177,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
-			'elements_categories' => static::get_editor_panel_categories(),
+			'elements_categories' => self::get_filtered_editor_panel_categories(),
 			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
@@ -185,6 +186,40 @@ abstract class Document extends Controls_Stack {
 				'publish_notification' => sprintf( esc_html__( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
 			],
 		];
+	}
+
+	public static function get_filtered_editor_panel_categories(): array {
+		$categories = static::get_editor_panel_categories();
+		$has_pro = Utils::has_pro();
+
+		foreach ( $categories as $index => $category ) {
+			if ( isset( $category['promotion'] ) ) {
+				$categories = self::get_panel_category_item( $category['promotion'], $index, $categories, $has_pro );
+			}
+		}
+
+		return $categories;
+	}
+
+	/**
+	 * @param $promotion
+	 * @param $index
+	 * @param array $categories
+	 *
+	 * @return array
+	 */
+	private static function get_panel_category_item( $promotion, $index, array $categories, bool $has_pro ): array {
+		if ( ! $has_pro ) {
+			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+				$promotion,
+				'elementor/panel/' . $index . '/custom_promotion',
+				'url'
+			);
+		} else {
+			unset( $categories[ $index ]['promotion'] );
+		}
+
+		return $categories;
 	}
 
 	/**

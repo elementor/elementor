@@ -18,6 +18,7 @@ import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
+import { useRequestIds } from '../../context/requests-ids';
 
 const promptActions = [
 	{
@@ -62,9 +63,13 @@ const FormText = (
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
 
-	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( { result: initialValue, credits } );
+	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( {
+		result: initialValue,
+		credits,
+	} );
 
 	const [ prompt, setPrompt ] = useState( '' );
+	const { setGenerate } = useRequestIds();
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -86,7 +91,8 @@ const FormText = (
 
 	const resultField = useRef( null );
 
-	const lastRun = useRef( () => {} );
+	const lastRun = useRef( () => {
+	} );
 
 	const autocompleteItems = 'textarea' === type ? textareaAutocomplete : textAutocomplete;
 
@@ -94,14 +100,15 @@ const FormText = (
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
-		lastRun.current = () => send( prompt );
+		setGenerate();
+		lastRun.current = () => send( { prompt } );
 
 		lastRun.current();
 	};
 
 	const handleCustomInstruction = async ( instruction ) => {
-		lastRun.current = () => send( resultField.current.value, instruction );
+		setGenerate();
+		lastRun.current = () => send( { input: resultField.current.value, instruction } );
 
 		lastRun.current();
 	};
@@ -175,7 +182,8 @@ const FormText = (
 						{
 							promptActions.map( ( { label, icon, value } ) => (
 								<Grid item key={ label }>
-									<PromptAction label={ label } icon={ icon } onClick={ () => handleCustomInstruction( value ) } />
+									<PromptAction label={ label } icon={ icon }
+										onClick={ () => handleCustomInstruction( value ) } />
 								</Grid>
 							) )
 						}

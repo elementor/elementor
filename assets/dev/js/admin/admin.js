@@ -407,14 +407,21 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				$( '#elementor-import-template-area' ).toggle();
 			} );
 
-			let messageShown = false;
+			const messages = {
+				jsonUploadWarning: {
+					shown: false,
+				},
+				enableUnfilteredFiles: {
+					shown: false,
+				},
+			};
 			const originalButtonValue = $importNowButton[ 0 ].value;
 
 			$importForm.on( 'submit', async ( event ) => {
 				$importNowButton[ 0 ].disabled = true;
 				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
 
-				if ( ! messageShown ) {
+				if ( ! messages.jsonUploadWarning.shown ) {
 					event.preventDefault();
 
 					try {
@@ -424,7 +431,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 							waitForSetViewed: true,
 						} );
 
-						messageShown = true;
+						messages.jsonUploadWarning.shown = true;
 						$importForm.trigger( 'submit' );
 					} catch ( e ) {
 						$importNowButton[ 0 ].disabled = false;
@@ -434,10 +441,14 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					return;
 				}
 
-				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+				const hasImportedFiles = $importFormFileInput[ 0 ].files.length;
+				const areUnfilteredFilesEnabled = elementorCommon.config.filesUpload.unfilteredFiles;
+
+				if ( hasImportedFiles && ! areUnfilteredFilesEnabled && ! messages.enableUnfilteredFiles.shown ) {
 					event.preventDefault();
 
 					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						messages.enableUnfilteredFiles.shown = true;
 						$importForm.trigger( 'submit' );
 					} );
 
@@ -446,7 +457,8 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					return;
 				}
 
-				messageShown = false;
+				messages.jsonUploadWarning.shown = false;
+				messages.enableUnfilteredFiles.shown = false;
 			} );
 		},
 
