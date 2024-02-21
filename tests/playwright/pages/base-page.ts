@@ -3,7 +3,6 @@ import { type Page, type TestInfo } from '@playwright/test';
 export default class BasePage {
 	readonly page: Page;
 	readonly testInfo: TestInfo;
-	readonly config: any;
 	/**
 	 * @param {import('@playwright/test').Page}     page
 	 * @param {import('@playwright/test').TestInfo} testInfo
@@ -23,19 +22,19 @@ export default class BasePage {
 		 */
 		this.testInfo = testInfo;
 
-		this.config = this.testInfo.config.projects[ 0 ].use;
+		const { baseURL, proxy } = this.testInfo.config.projects[ 0 ].use;
 
 		// If wordpress is not located on the domain's top-level (e.g:  http://local.host/test-wordpress ), playwright's `baseURL` cannot handle it.
-		if ( this.config.baseURLPrefixProxy ) {
+		if ( proxy ) {
 			this.page = new Proxy( this.page, {
 				get: ( target, key ) => {
 					switch ( key ) {
 						case 'goto':
-							return ( path: string ) => page.goto( this.config.baseURL + path );
+							return ( path: string ) => page.goto( baseURL + path );
 
 						case 'waitForNavigation': {
 							return ( args: { url?: string } ) => {
-								args = ( args.url ) ? { url: this.config.baseURL + args.url } : args;
+								args = ( args.url ) ? { url: baseURL + args.url } : args;
 
 								return page.waitForNavigation( args );
 							};
