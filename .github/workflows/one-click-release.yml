@@ -71,7 +71,9 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          npm ci
+          sed -i -e "s/image: 'mariadb'/image: 'mariadb:11.2.2-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
