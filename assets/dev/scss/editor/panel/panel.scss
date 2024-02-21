@@ -39,10 +39,11 @@
 		> .ui-resizable-w {
 			display: none;
 		}
-	#elementor-panel-elements-wrapper {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
+
+		#elementor-panel-elements-wrapper {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
 		}
 	}
 
@@ -57,7 +58,7 @@
 		// The uppercase M in `Min` is used in order to avoid SASS conflicts with CSS `min` function.
 		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
 		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
-		grid-template-columns: repeat( auto-fill, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
+		grid-template-columns: repeat( auto-fill, minmax(Min(135px, calc(50% - 5px)), 1fr) );
 
 		// Stretch a grid item to full width.
 		& > .e-responsive-panel-stretch {
@@ -65,11 +66,11 @@
 		}
 	}
 
-    // Header
-    @import "header";
+	// Header
+	@import "header";
 
-    // Categories
-    @import "categories";
+	// Categories
+	@import "categories";
 
 	// Menu
 	@import "menu";
@@ -78,10 +79,10 @@
 	@import "document-settings";
 
 	// Element Edit
-    @import "element-settings";
+	@import "element-settings";
 
-    //Footer
-    @import "footer";
+	//Footer
+	@import "footer";
 }
 
 // Panel Elements
@@ -120,25 +121,35 @@
 }
 
 #elementor-panel-get-pro-elements-sticky {
+	//display: flex;
+	//flex-direction: column;
+	//width: 100%;
 	position: sticky;
-	bottom:0;
-	font-size: 13px;
-	font-weight: 500;
+	bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	margin-block-end: -10px;
+
 
 	.elementor-get-pro-sticky-message {
-		height: 40px;
+		display: block;
 		padding: 9px 35px;
 		gap: 10px;
-		background-color: #FFFFFF;
+		background-color: var(--e-a-color-white);
+		color: var(--e-a-color-black);
 		text-align: center;
 		margin-top: -9px;
+		box-shadow: 0px -10px 14px -6px rgba(0, 0, 0, 0.05);
 
+		a {
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--e-a-btn-bg-accent);
+		}
 	}
-
-	a {
-		font-size: 14px;
-		font-weight: 400;
-		color: var(--e-a-btn-bg-accent);
+	img {
+		margin-left: 10px;
 	}
 }
 
@@ -147,6 +158,7 @@
 	margin: 0 auto;
 	font-style: unset;
 	margin-block-end: 15px;
+
 	a {
 		font-weight: bold;
 		font-style: italic;
