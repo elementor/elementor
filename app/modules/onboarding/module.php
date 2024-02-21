@@ -129,7 +129,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'You do not have permissions to perform this action.', 'elementor' ),
+				'error_message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ),
 			],
 		];
 	}
