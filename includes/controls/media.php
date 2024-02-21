@@ -253,7 +253,7 @@ class Control_Media extends Control_Base_Multiple {
 						<?php
 							Hints::get_notice_template( [
 								'type' => 'warning',
-								'content' => __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+								'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
 								'icon' => true,
 							] );
 						?>
@@ -263,9 +263,26 @@ class Control_Media extends Control_Base_Multiple {
 						<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
 							<?php
 							$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
-							$content = $once_dismissed ?
-								__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
-								__( "Don't let unoptimized images be the downfall of your site's performance. Use Image Optimizer!", 'elementor' );
+							if ( $once_dismissed ) {
+								if ( Hints::is_plugin_installed( 'image-optimization' ) ) {
+									$content = sprintf(
+										__( 'This image is large and may slow things down. <a href="%s">Activate Image Optimizer</a> to reduce size without losing quality.', 'elementor' ),
+										Hints::get_plugin_action_url( 'image-optimization' )
+									);
+								} else {
+									$content = sprintf(
+										__( 'This image is large and may slow things down. <a href="%s">Install Image Optimizer</a> to reduce size without losing quality.', 'elementor' ),
+										Hints::get_plugin_action_url( 'image-optimization' )
+									);
+								}
+							} else {
+								$content = sprintf(
+									'%1$s <a href="%2$s">%3$s</a>',
+									esc_html__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
+									Hints::get_plugin_action_url( 'image-optimization' ),
+									Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Image Optimizer!', 'elementor' ) : esc_html__( 'Install Image Optimizer!', 'elementor' )
+								);
+							}
 							$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 							Hints::get_notice_template( [
 								'display' => ! $once_dismissed,
@@ -273,11 +290,6 @@ class Control_Media extends Control_Base_Multiple {
 								'content' => $content,
 								'icon' => true,
 								'dismissible' => $dismissible,
-								'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
-								'button_event' => $dismissible,
-								'button_data' => [
-									'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-								],
 							] ); ?>
 						</div>
 					<?php } ?>
