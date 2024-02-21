@@ -3,7 +3,7 @@ namespace Elementor\Core\Editor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -26,11 +26,7 @@ class Notice_Bar extends Base_Object {
 			'upgrade_url' => $upgrade_url,
 		];
 
-		$config = apply_filters( 'elementor/notice-bar/custom_promotion', $config );
-
-		if ( isset( $config['upgrade_url'] ) && ! Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
-			$config['upgrade_url'] = esc_url( $upgrade_url );
-		}
+		$config = Filtered_Promotions_Manager::get_filtered_promotion_data( $config, 'elementor/notice-bar/custom_promotion', 'upgrade_url' );
 
 		return [
 			'muted_period' => 14,
