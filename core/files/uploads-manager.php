@@ -619,7 +619,7 @@ class Uploads_Manager extends Base_Object {
 		// we check if unfiltered file uploads are enabled or not before allowing it.
 		if ( ! self::are_unfiltered_uploads_enabled() ) {
 			$error = 'json' === $file_extension
-				? esc_html__( 'You don\'t have permission to upload JSON files. Contact the administrator.', 'elementor' )
+				? esc_html__( 'You do not have permission to upload JSON files.', 'elementor' )
 				: esc_html__( 'This file is not allowed for security reasons.', 'elementor' );
 			return new \WP_Error( Exceptions::FORBIDDEN, $error );
 		}
