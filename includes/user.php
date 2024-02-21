@@ -308,7 +308,7 @@ class User {
 	 */
 	public static function register_as_beta_tester( array $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			throw new \Exception( __( 'You do not have permissions to install plugins on this site.', 'elementor' ) );
+			throw new \Exception( __( 'You do not have permission to install plugins.', 'elementor' ) );
 		}
 
 		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
