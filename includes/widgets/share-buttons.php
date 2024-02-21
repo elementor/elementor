@@ -34,7 +34,7 @@ class Widget_Share_Buttons extends Widget_Base {
 		return 'share-buttons';
 	}
 
-	public function get_supported_networks() {
+	public static function get_supported_networks() {
 		return self::$supported_networks;
 	}
 }
