@@ -28,7 +28,7 @@ export class UpgradeElementor {
 	}
 
 	runServer() {
-		this.cmd( 'npx wp-env start' );
+		this.cmd( 'npm run wp-env start' );
 	}
 
 	installPluginFromWP() {
