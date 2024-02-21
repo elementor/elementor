@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php
 			$get_pro_details_sticky = apply_filters( 'elementor/editor/panel/get_pro_details-sticky', [
 					'link' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
-					'message' => __( 'Access all Pro widgets.', 'elementor' ),
+					'message' => __( 'Access all Pro widgets. ', 'elementor' ),
 					'button_text' => __( 'Upgrade Now', 'elementor' ),
 			] );
 			?>

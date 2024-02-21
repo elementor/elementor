@@ -121,9 +121,6 @@
 }
 
 #elementor-panel-get-pro-elements-sticky {
-	//display: flex;
-	//flex-direction: column;
-	//width: 100%;
 	position: sticky;
 	bottom: 0;
 	font-size: 14px;
@@ -132,8 +129,12 @@
 
 
 	.elementor-get-pro-sticky-message {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 40px;
 		display: block;
-		padding: 9px 35px;
+		padding: 9px min(35px, 5%);
 		gap: 10px;
 		background-color: var(--e-a-color-white);
 		color: var(--e-a-color-black);
@@ -149,7 +150,7 @@
 		}
 	}
 	img {
-		margin-left: 10px;
+		margin-left: 17px;
 	}
 }
 
