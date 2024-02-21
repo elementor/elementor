@@ -78,6 +78,7 @@ jobs:
             npm ci
             cd ./tests/playwright/upgrade-test && npm ci
             sed -i -e "s/image: 'mariadb'/image: 'mariadb:11.2.2-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
+            sed -i -e "s/image: 'mariadb'/image: 'mariadb:11.2.2-jammy'/g" ./tests/playwright/upgrade-test/node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
         env:
