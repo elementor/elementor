@@ -45,7 +45,9 @@ jobs:
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        run: npm ci
+        run: |
+          npm ci
+          sed -i -e "s/image: 'mariadb'/image: 'mariadb:11.2.2-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Build
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npx grunt build
