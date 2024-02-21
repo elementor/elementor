@@ -1,5 +1,5 @@
 {
-	"core": null,
+	"core": "6.4.3",
 	"phpVersion": "8.0",
 	"plugins": [
 		"./build"
