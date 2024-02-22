@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { deleteItemFromRepeater } from './helper';
 
-test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
+test.describe( 'Nested Accordion experiment is active @nested-elements-performance', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -33,8 +33,12 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedAccordionItemTitle = frame.locator( '.e-n-accordion-item' ),
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
+
+		// Arrange
+		await editor.addWidget( 'nested-accordion', container );
 
 		await test.step( 'Remove an item from the repeater', async () => {
 			await deleteItemFromRepeater( page, nestedAccordionItemTitle, nestedAccordionItemContent );

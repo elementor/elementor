@@ -111,7 +111,8 @@ jobs:
           'pluginTester2_containers',
           'pluginTester1_sections',
           'pluginTester2_sections',
-          'promotions'
+          'promotions',
+          'nested-elements-performance',
         ]
     steps:
       - name: Checkout source code
