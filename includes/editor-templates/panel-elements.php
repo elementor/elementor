@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<a class="elementor-button go-pro" target="_blank" href="<?php echo esc_url( $get_pro_details['link'] ); ?>"><?php echo esc_html( $get_pro_details['button_text'] ); ?></a>
 	</div>
 	<div id="elementor-panel-get-pro-elements-sticky">
-		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
+		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
 		<div class="elementor-get-pro-sticky-message"><?php echo esc_html( $get_pro_details_sticky['message'] ); ?><a class="" target="_blank" href="<?php echo esc_url( $get_pro_details_sticky['link'] ); ?>"><?php echo esc_html( $get_pro_details_sticky['button_text'] ); ?></a></div>
 	</div>
 
