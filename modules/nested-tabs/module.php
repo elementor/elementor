@@ -14,6 +14,12 @@ class Module extends \Elementor\Core\Base\Module {
 		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
 	}
 
+	public function get_widgets() {
+		return [
+			'NestedTabs',
+		];
+	}
+
 	public function get_name() {
 		return 'nested-tabs';
 	}

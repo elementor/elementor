@@ -45,7 +45,7 @@ class Widgets_Manager {
 	 * @var Widget_Base[]
 	 */
 	private $_promoted_widgets = [
-		'nested-elements' => NestedTabs::class,
+		'nested-tabs' => NestedTabs::class,
 		'nested-accordion' => Nested_Accordion::class,
 	];
 
