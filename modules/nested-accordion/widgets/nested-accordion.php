@@ -888,6 +888,17 @@ class Nested_Accordion extends Widget_Nested_Base {
 		] );
 	}
 
+	protected function get_initial_config(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_elements_performance' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_improved_repeaters' => true,
+				'target_container' => '.e-n-accordion-item',
+			] );
+		}
+
+		return parent::get_initial_config();
+	}
+
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">

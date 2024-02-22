@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test';
+import {expect, Locator, Page, test} from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
 /**
@@ -113,4 +113,18 @@ export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' )
 	await editor.activatePanelTab( 'style' );
 	await editor.openSection( 'section_header_style' );
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
+}
+
+export async function deleteItemFromRepeater( page: Page, nestedAccordionItemTitle: Locator, nestedAccordionItemContent: Locator ) {
+	// Arrange
+	const deleteItemButton = page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
+		numberOfTitles = await nestedAccordionItemTitle.count(),
+		numberOfContents = await nestedAccordionItemContent.count();
+
+	// Act
+	await deleteItemButton.last().click();
+
+	// Assert
+	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
+	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 }

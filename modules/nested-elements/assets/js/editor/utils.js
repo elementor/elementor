@@ -15,6 +15,30 @@ export function isWidgetSupportNesting( widgetType ) {
 	return widgetConfig.support_nesting;
 }
 
+export function isWidgetSupportImprovedRepeaters( widgetType ) {
+	const widgetConfig = elementor.widgetsCache[ widgetType ];
+
+	if ( ! widgetConfig ) {
+		return false;
+	}
+
+	return widgetConfig.support_improved_repeaters;
+}
+
+export function widgetNodes( widgetType ) {
+	const widgetConfig = elementor.widgetsCache[ widgetType ];
+
+	if ( ! widgetConfig ) {
+		return false;
+	}
+
+	return {
+		targetContainer: widgetConfig.target_container,
+		node: widgetConfig.node,
+	};
+}
+
+
 export function findChildContainerOrFail( container, index ) {
 	const childView = container.view.children.findByIndex( index );
 

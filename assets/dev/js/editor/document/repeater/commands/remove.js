@@ -1,3 +1,8 @@
+import {
+	isWidgetSupportNesting,
+	isWidgetPropertySupported, isWidgetSupportImprovedRepeaters, widgetNodes
+} from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
+
 export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
@@ -60,9 +65,9 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 			result.push( repeaterContainer.children.splice( index, 1 ) );
 			collection.remove( model );
 
-			if ( 'Accordion' === container.label ) {
+			if ( isWidgetSupportNesting( container.model.config.name ) && isWidgetSupportImprovedRepeaters( container.model.config.name ) ) {
 				const widgetContainer = container.document.$element[ 0 ];
-				const targetElement = widgetContainer.querySelectorAll( '.e-n-accordion-item' );
+				const targetElement = widgetContainer.querySelectorAll( widgetNodes( container.model.config.name ).targetContainer );
 				targetElement[ index ].remove();
 			} else {
 				// Trigger render on widget but with the settings of the control.
