@@ -17,20 +17,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-categories">
 	<div id="elementor-panel-categories"></div>
-			<?php
-			$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
-					'link' => 'https://go.elementor.com/pro-widgets/',
-					'message' => __( 'Get more with Elementor Pro', 'elementor' ),
-					'button_text' => __( 'Upgrade Now', 'elementor' ),
-			] );
-			?>
-			<?php
-			$get_pro_details_sticky = apply_filters( 'elementor/editor/panel/get_pro_details-sticky', [
-					'link' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
-					'message' => __( 'Access all Pro widgets. ', 'elementor' ),
-					'button_text' => __( 'Upgrade Now', 'elementor' ),
-			] );
-			?>
+	<?php
+	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
+			'link' => 'https://go.elementor.com/pro-widgets/',
+			'message' => __( 'Get more with Elementor Pro', 'elementor' ),
+			'button_text' => __( 'Upgrade Now', 'elementor' ),
+	] );
+	?>
+	<?php
+	$get_pro_details_sticky = apply_filters( 'elementor/editor/panel/get_pro_details-sticky', [
+			'link' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
+			'message' => __( 'Access all Pro widgets. ', 'elementor' ),
+			'button_text' => __( 'Upgrade Now', 'elementor' ),
+	] );
+	?>
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />

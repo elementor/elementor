@@ -106,8 +106,11 @@ test.describe( 'Promotion tests @promotions', () => {
 	test( 'Promotions - Sticky Free to Pro - Editor', async ( { page }, testInfo ) => {
 		await test.step( 'Sticky Free to Pro - Top Bar Off', async () => {
 			// Arrange.
-			const wpAdminPage = new WpAdminPage( page, testInfo ),
-				wrapperContainer = '#elementor-panel-categories',
+			const wpAdminPage = new WpAdminPage( page, testInfo );
+				await wpAdminPage.setExperiments( {
+				editor_v2: false,
+			} );
+			const wrapperContainer = '#elementor-panel-categories',
 				promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
 			// Act.
@@ -120,15 +123,15 @@ test.describe( 'Promotion tests @promotions', () => {
 			await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
 		} );
 		await test.step( 'Sticky Free to Pro - Top Bar On', async () => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				'editor_v2': true,
+			const wpAdminPage = new WpAdminPage( page, testInfo );
+			await wpAdminPage.setExperiments( {
+				editor_v2: true,
 			} );
 			const wrapperContainer = '#elementor-panel-categories',
 				promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
 			// Act.
-			await wpAdmin.openNewPage();
+			await wpAdminPage.openNewPage();
 			const parentContainer = page.locator( wrapperContainer );
 			const promoContainer = page.locator( promotionContainer );
 			await promoContainer.waitFor();
