@@ -1,3 +1,5 @@
+import { isWidgetSupportImprovedRepeaters, isWidgetSupportNesting, widgetNodes } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+
 export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const containers = historyItem.get( 'containers' ),
@@ -69,8 +71,21 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 			result.push( collection.push( rowSettingsModel, options ) );
 
 			if ( renderAfterInsert ) {
-				// Trigger render on widget but with the settings of the control.
-				repeaterContainer.render();
+				const widgetType = container.settings.get( 'widgetType' );
+
+				if ( isWidgetSupportImprovedRepeaters( widgetType ) && isWidgetSupportNesting( widgetType ) ) {
+					const domConfig = widgetNodes( widgetType ),
+						containerNode = container.document.$element.get( 0 ),
+						targetContainer = containerNode.querySelector( domConfig.targetContainer );
+
+					const html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view, settings: repeaterContainer.settings } );
+					const node = document.createElement( 'div' );
+					node.innerHTML = html;
+					targetContainer.appendChild( node.querySelector( domConfig.node ) );
+				} else {
+					// Trigger render on widget but with the settings of the control.
+					repeaterContainer.render();
+				}
 			}
 		} );
 

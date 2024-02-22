@@ -61,12 +61,30 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
+	linkContainer() {
+		const { $contentContainers, $accordionItems } = this.getDefaultElements();
+		const lastAccordionItem = $accordionItems[ $accordionItems.length - 1 ];
+		const lastContentContainer = $contentContainers[ $contentContainers.length - 1 ];
+
+		lastAccordionItem.appendChild( lastContentContainer );
+
+		this.updateListeners();
+	}
+
+	updateListeners() {
+		this.elements.$accordionTitles = this.findElement( this.getSettings( 'selectors.accordionItemTitles' ) );
+		this.elements.$accordionItems = this.findElement( this.getSettings( 'selectors.accordionItems' ) );
+		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
+	}
+
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
+		elementorFrontend.elements.$window.on( 'elementor/nested-container/created', this.linkContainer.bind( this ) );
 	}
 
 	unbindEvents() {
 		this.elements.$accordionTitles.off();
+		elementorFrontend.elements.$window.off( 'elementor/nested-accordion-link-container' );
 	}
 
 	clickListener( event ) {
