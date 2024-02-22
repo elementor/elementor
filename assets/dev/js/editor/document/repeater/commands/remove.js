@@ -63,6 +63,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			// Remove from container and add to result.
 			result.push( repeaterContainer.children.splice( index, 1 ) );
+
 			collection.remove( model );
 
 			if ( isWidgetSupportNesting( container.model.config.name ) && isWidgetSupportImprovedRepeaters( container.model.config.name ) ) {
