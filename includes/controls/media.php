@@ -266,18 +266,20 @@ class Control_Media extends Control_Base_Multiple {
 							if ( $once_dismissed ) {
 								if ( Hints::is_plugin_installed( 'image-optimization' ) ) {
 									$content = sprintf(
-										__( 'This image is large and may slow things down. <a href="%s">Activate Image Optimizer</a> to reduce size without losing quality.', 'elementor' ),
-										Hints::get_plugin_action_url( 'image-optimization' )
+										__( 'This image is large and may slow things down. %1$sActivate Image Optimizer%2$s to reduce size without losing quality.', 'elementor' ),
+										'<a href="' . Hints::get_plugin_action_url( 'image-optimization' ) . '" target="_blank">',
+										'</a>'
 									);
 								} else {
 									$content = sprintf(
-										__( 'This image is large and may slow things down. <a href="%s">Install Image Optimizer</a> to reduce size without losing quality.', 'elementor' ),
-										Hints::get_plugin_action_url( 'image-optimization' )
+										__( 'This image is large and may slow things down. %1$sInstall Image Optimizer%2$s to reduce size without losing quality.', 'elementor' ),
+										'<a href="' . Hints::get_plugin_action_url( 'image-optimization' ) . '" target="_blank">',
+										'</a>'
 									);
 								}
 							} else {
 								$content = sprintf(
-									'%1$s <a href="%2$s">%3$s</a>',
+									'%1$s <a href="%2$s" target="_blank">%3$s</a>',
 									esc_html__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
 									Hints::get_plugin_action_url( 'image-optimization' ),
 									Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Image Optimizer!', 'elementor' ) : esc_html__( 'Install Image Optimizer!', 'elementor' )
