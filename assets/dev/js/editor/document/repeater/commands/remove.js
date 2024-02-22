@@ -1,7 +1,4 @@
-import {
-	isWidgetSupportNesting,
-	isWidgetPropertySupported, isWidgetSupportImprovedRepeaters, widgetNodes
-} from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
+import { isWidgetSupportNesting, isWidgetSupportImprovedRepeaters, widgetNodes } from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
 
 export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
