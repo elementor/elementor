@@ -1,6 +1,4 @@
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-
+import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import ImportExport from '../../modules/import-export/assets/js/module';
 import KitLibrary from '../../modules/kit-library/assets/js/module';
@@ -16,31 +14,10 @@ new Onboarding();
 
 const AppWrapper = React.Fragment;
 
-render( (
+ReactUtils.render( (
 	<AppWrapper>
 		<AppProvider>
 			<App />
 		</AppProvider>
 	</AppWrapper>
 ), document.getElementById( 'e-app' ) );
-
-// Support conditional rendering based on the React version.
-// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-function render( app, domElement ) {
-	let renderFn;
-
-	try {
-		const root = createRoot( domElement );
-
-		renderFn = () => {
-			root.render( app );
-		};
-	} catch ( e ) {
-		renderFn = () => {
-			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.render( app, domElement );
-		};
-	}
-
-	renderFn();
-}

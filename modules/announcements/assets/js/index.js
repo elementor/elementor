@@ -1,5 +1,4 @@
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 import { Announcements, Overlay } from './components';
 import AnnouncementCommands from './e-component';
 
@@ -18,39 +17,18 @@ export default class AnnouncementIndex {
 
 		await $e.components.register( new AnnouncementCommands() );
 
-		this.render( (
+		const { root } = ReactUtils.render( (
 			<>
 				<Overlay />
 				<Announcements
 					announcements={ announcements }
 					unMount={ () => {
-						Root.unmount();
+						ReactUtils.unmount( root, container );
 						container.remove();
 					} }
 				/>
 			</>
 		), container );
-	}
-
-	// Support conditional rendering based on the React version.
-	// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-	render( app, domElement ) {
-		let renderFn;
-
-		try {
-			this.root = createRoot( domElement );
-
-			renderFn = () => {
-				this.root.render( app );
-			};
-		} catch ( e ) {
-			renderFn = () => {
-				// eslint-disable-next-line react/no-deprecated
-				ReactDOM.render( app, domElement );
-			};
-		}
-
-		renderFn();
 	}
 }
 

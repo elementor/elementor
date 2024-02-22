@@ -1,5 +1,4 @@
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 import { createPreviewContainer } from './preview-container';
 import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
@@ -68,12 +67,12 @@ export const renderLayoutApp = ( options = {
 
 	const { colorScheme, isRTL } = getUiConfig();
 
-	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
-
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
 
-	render( (
+	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
+
+	const { root } = ReactUtils.render( (
 		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
@@ -105,7 +104,7 @@ export const renderLayoutApp = ( options = {
 					previewContainer.destroy();
 					options.onClose?.();
 
-					Root.unmount();
+					ReactUtils.unmount( root, rootElement );
 					rootElement.remove();
 
 					openPanel();
@@ -164,24 +163,3 @@ export const importToEditor = ( {
 
 	endHistoryLog();
 };
-
-// Support conditional rendering based on the React version.
-// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-function render( app, domElement ) {
-	let renderFn;
-
-	try {
-		const root = createRoot( domElement );
-
-		renderFn = () => {
-			root.render( app );
-		};
-	} catch ( e ) {
-		renderFn = () => {
-			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.render( app, domElement );
-		};
-	}
-
-	renderFn();
-}

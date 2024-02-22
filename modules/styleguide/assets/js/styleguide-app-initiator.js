@@ -1,5 +1,4 @@
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 
 ( () => {
 	let styleguideRoot = null;
@@ -13,42 +12,15 @@ import { createRoot } from 'react-dom/client';
 
 		document.body.classList.add( styleguideBodyClass );
 
-		render( <App />, getStyleguideWidget() );
-	}
-
-	// Support conditional rendering based on the React version.
-	// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-	function render( app, domElement ) {
-		let renderFn;
-
-		try {
-			if ( ! styleguideRoot ) {
-				styleguideRoot = createRoot( domElement );
-			}
-
-			renderFn = () => {
-				styleguideRoot.render( app );
-			};
-		} catch ( e ) {
-			renderFn = () => {
-				// eslint-disable-next-line react/no-deprecated
-				ReactDOM.render( app, domElement );
-			};
-		}
-
-		renderFn();
+		const { root } = ReactUtils.render( <App />, getStyleguideWidget() );
+		styleguideRoot = root;
 	}
 
 	/**
 	 * Remove the app from the page.
 	 */
 	function unmount() {
-		try {
-			styleguideRoot.unmount();
-		} catch ( e ) {
-			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.unmountComponentAtNode( getStyleguideWidget() );
-		}
+		ReactUtils.unmount( styleguideRoot, getStyleguideWidget() );
 
 		styleguideRoot = null;
 

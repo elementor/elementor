@@ -1,11 +1,10 @@
+import PropTypes from 'prop-types';
 import {
 	Component,
 	Fragment,
 	createRef,
 } from 'react';
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import PropTypes from 'prop-types';
+import ReactUtils from 'elementor-utils/react';
 import Tab from './tab';
 import IconsGoPro from './icons-go-pro';
 
@@ -290,36 +289,14 @@ export default IconsManager;
 const renderIconManager = function( props ) {
 	const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-	return render( (
+	return ReactUtils.render( (
 		<IconsManager
 			{ ... props }
 			containerElement={ containerElement }
 		/>
 	), containerElement );
 };
-
 export { renderIconManager };
-
-// Support conditional rendering based on the React version.
-// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-function render( app, domElement ) {
-	let renderFn;
-
-	try {
-		const root = createRoot( domElement );
-
-		renderFn = () => {
-			root.render( app );
-		};
-	} catch ( e ) {
-		renderFn = () => {
-			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.render( app, domElement );
-		};
-	}
-
-	renderFn();
-}
 
 IconsManager.propTypes = {
 	activeTab: PropTypes.any,

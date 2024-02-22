@@ -1,6 +1,4 @@
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-
+import ReactUtils from 'elementor-utils/react';
 import ModalLayout from './modal-layout';
 import { renderIconManager } from './components/icon-manager';
 import IconLibrary from './classes/icon-library';
@@ -15,6 +13,7 @@ export default class extends elementorModules.Module {
 		// Fetch fa4 to fa5 migration data
 		elementor.helpers.fetchFa4ToFa5Mapping();
 		this.cache = {};
+		this.root = null;
 	}
 
 	getLayout() {
@@ -49,13 +48,7 @@ export default class extends elementorModules.Module {
 	unMountIconManager() {
 		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-		try {
-			createRoot( containerElement ).unmount();
-		} catch ( e ) {
-			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.unmountComponentAtNode( containerElement );
-		}
-
+		ReactUtils.unmount( this.root, containerElement )
 	}
 
 	loadIconLibraries() {
@@ -150,7 +143,10 @@ export default class extends elementorModules.Module {
 		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
 
 		iconManagerConfig.activeTab = activeTab;
-		return renderIconManager( iconManagerConfig );
+		const { root, render } = renderIconManager( iconManagerConfig );
+
+		this.root = root;
+		return render;
 	}
 
 	updateControlValue() {

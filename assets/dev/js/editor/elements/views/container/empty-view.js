@@ -1,5 +1,4 @@
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
 /**
@@ -42,7 +41,8 @@ export default class EmptyView extends Marionette.ItemView {
 			defaultElement = <EmptyComponent container={ container } />;
 		}
 
-		this.render( defaultElement, this.el );
+		const { root } = ReactUtils.render( defaultElement, this.el );
+		this.root = root;
 	}
 
 	onRender() {
@@ -51,33 +51,7 @@ export default class EmptyView extends Marionette.ItemView {
 		this.renderReactDefaultElement( this.ownerView.container );
 	}
 
-	// Support conditional rendering based on the React version.
-	// We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
-	render( app, domElement ) {
-		let renderFn;
-
-		try {
-			this.root = createRoot( domElement );
-
-			renderFn = () => {
-				this.root.render( app );
-			};
-		} catch ( e ) {
-			renderFn = () => {
-				// eslint-disable-next-line react/no-deprecated
-				ReactDOM.render( app, domElement );
-			};
-		}
-
-		renderFn();
-	}
-
 	onDestroy() {
-		try {
-			this.root.unmount();
-		} catch ( e ) {
-			// eslint-disable-next-line react/no-deprecated
-			ReactDOM.unmountComponentAtNode( this.el );
-		}
+		ReactUtils.unmount( this.root, this.el );
 	}
 }
