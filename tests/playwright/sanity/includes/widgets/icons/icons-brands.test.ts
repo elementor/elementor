@@ -5,20 +5,26 @@ import _path from 'path';
 
 test.describe( 'Icons (FA Brands)', () => {
 	for ( const status of [ 'inactive', 'active' ] ) {
-		test( `Inline Icons experiment status - ${ status } @test123`, async ( { page }, testInfo ) => {
+		test( `Inline Icons experiment status - ${ status }`, async ( { page }, testInfo ) => {
+			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
 			const iconsType = 'icons-brands';
 
+			// Act.
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: status,
 			} );
 
 			await wpAdmin.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
+
 			const filePath = _path.resolve( __dirname, `./template/${ iconsType }.json` );
 			await editorPage.loadTemplate( filePath, true );
+
 			await editorPage.publishAndViewPage();
+
+			// Assert.
 			const icons = page.locator( '.e-con-inner' ).first();
 			await icons.waitFor();
 			await expect.soft( icons ).toHaveScreenshot( `${ iconsType }.png` );
