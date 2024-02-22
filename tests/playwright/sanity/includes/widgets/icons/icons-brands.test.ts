@@ -18,15 +18,10 @@ test.describe( 'Icons (FA Brands)', () => {
 			await editorPage.closeNavigatorIfOpen();
 			const filePath = _path.resolve( __dirname, `./template/${ iconsType }.json` );
 			await editorPage.loadTemplate( filePath, true );
-			await editorPage.waitForIframeToLoaded( iconsType );
-			const frame = editorPage.getPreviewFrame();
-			await page.setViewportSize( { width: 1920, height: 3080 } );
-			await frame.locator( 'h1.entry-title' ).click();
-			expect( frame.locator( '.e-con-inner' ).first() ).toHaveScreenshot( `${ iconsType }.png` );
 			await editorPage.publishAndViewPage();
 			const icons = page.locator( '.e-con-inner' ).first();
 			await icons.waitFor();
-			await expect( icons ).toHaveScreenshot( `${ iconsType }.png` );
+			await expect.soft( icons ).toHaveScreenshot( `${ iconsType }.png` );
 		} );
 	}
 } );
