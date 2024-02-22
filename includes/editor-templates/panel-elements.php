@@ -23,15 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	] );
-	?>
-	<?php
 	$get_pro_details_sticky = apply_filters( 'elementor/editor/panel/get_pro_details-sticky', [
 		'link' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
 		'message' => __( 'Access all Pro widgets. ', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	] );
 	?>
-
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 		<div class="elementor-nerd-box-message"><?php echo esc_html( $get_pro_details['message'] ); ?></div>
@@ -41,7 +38,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
 		<div class="elementor-get-pro-sticky-message"><?php echo esc_html( $get_pro_details_sticky['message'] ); ?><a class="" target="_blank" href="<?php echo esc_url( $get_pro_details_sticky['link'] ); ?>"><?php echo esc_html( $get_pro_details_sticky['button_text'] ); ?></a></div>
 	</div>
-
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
@@ -94,4 +90,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-global/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 	</div>
 </script>
-
