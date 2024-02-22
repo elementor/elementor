@@ -34,6 +34,11 @@ body.elementor-apps-page {
 	.e-a-page-footer {
 		margin: 60px auto;
 		text-align: center;
+
+		p {
+			max-width: 1200px;
+			margin: auto;
+		}
 	}
 
 	.e-a-list {
