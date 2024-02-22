@@ -896,7 +896,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		] );
 	}
 
-	protected function single_content_template( ) {
+	protected function single_content_template() {
 		?>
 		<#
 		const elementUid = view.getIDInt().toString().substring( 0, 3 ) + view.collection.length;
