@@ -78,7 +78,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 						containerNode = container.document.$element.get( 0 ),
 						targetContainer = containerNode.querySelector( domConfig.targetContainer );
 
-					const html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view, settings: repeaterContainer.settings } );
+					const html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view } );
 					const node = document.createElement( 'div' );
 					node.innerHTML = html;
 					targetContainer.appendChild( node.querySelector( domConfig.node ) );
