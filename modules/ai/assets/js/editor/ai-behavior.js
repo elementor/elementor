@@ -33,10 +33,10 @@ export default class AiBehavior extends Marionette.Behavior {
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 		const isRTL = elementorCommon.config.isRTL;
 
-		window.elementorAiCurrentContext = this.getOption( 'context' );
-
 		const rootElement = document.createElement( 'div' );
 		document.body.append( rootElement );
+
+		window.elementorAiCurrentContext = this.getOption( 'context' );
 
 		const { root } = ReactUtils.render( (
 			<App
