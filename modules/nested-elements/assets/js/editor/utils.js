@@ -38,7 +38,6 @@ export function widgetNodes( widgetType ) {
 	};
 }
 
-
 export function findChildContainerOrFail( container, index ) {
 	const childView = container.view.children.findByIndex( index );
 

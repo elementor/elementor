@@ -468,9 +468,6 @@ class Manager extends Base_Object {
 				'default_active' => false,
 				'minimum_installation_version' => '3.21.0',
 			],
-			'dependencies' => [
-				'container', // Should be dependent on the Nested Elements.
-			],
 		] );
 	}
 
