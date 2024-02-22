@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "wp-env": "wp-env",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:upgrade:elementor": "ts-node  index.ts",
     "test:setup": "wp-env run cli bash elementor-config/setup.sh"
@@ -12,7 +11,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/env": "^8.11.0",
     "ts-node": "^10.9.1"
   }
 }
