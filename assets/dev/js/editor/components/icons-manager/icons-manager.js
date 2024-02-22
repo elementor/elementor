@@ -48,7 +48,7 @@ export default class extends elementorModules.Module {
 	unMountIconManager() {
 		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-		ReactUtils.unmount( this.root, containerElement )
+		ReactUtils.unmount( this.root, containerElement );
 	}
 
 	loadIconLibraries() {
