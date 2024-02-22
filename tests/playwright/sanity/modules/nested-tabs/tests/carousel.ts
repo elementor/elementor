@@ -9,7 +9,7 @@ export async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft(
 	imageCarousel: ImageCarousel ) {
 	// Act.
 	const contentContainerId = await selectDropdownContainer( editor, '', 0 ),
-		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
+		activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 	// Add images.
 	await imageCarousel.addImageGallery();
