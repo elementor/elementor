@@ -15,15 +15,12 @@ use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
-use Elementor\Modules\DynamicTags\Module as TagsModule;
-use Elementor\Utils;
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class NestedTabs extends Widget_Nested_Base {
+class Nested_Tabs extends Widget_Nested_Base {
 
 	public function get_name() {
 		return 'nested-tabs';

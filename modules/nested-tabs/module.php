@@ -16,7 +16,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 	public function get_widgets() {
 		return [
-			'NestedTabs',
+			'Nested_Tabs',
 		];
 	}
 

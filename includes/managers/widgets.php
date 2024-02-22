@@ -3,10 +3,9 @@ namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
-use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
+use Elementor\Modules\NestedTabs\Widgets\Nested_Tabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -45,7 +44,7 @@ class Widgets_Manager {
 	 * @var Widget_Base[]
 	 */
 	private $_promoted_widgets = [
-		'nested-tabs' => NestedTabs::class,
+		'nested-tabs' => Nested_Tabs::class,
 		'nested-accordion' => Nested_Accordion::class,
 	];
 
