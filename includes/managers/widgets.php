@@ -92,6 +92,7 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
+			'share-buttons',
 		];
 
 		$this->_widget_types = [];
