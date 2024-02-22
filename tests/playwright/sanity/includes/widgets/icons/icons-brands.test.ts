@@ -4,42 +4,29 @@ import EditorPage from '../../../../pages/editor-page';
 import _path from 'path';
 
 test.describe( 'Icons (FA Brands)', () => {
-	test( 'All brand icons are rendering properly', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	for ( const status of [ 'inactive', 'active' ] ) {
+		test( `Inline Icons experiment status - ${ status } @test123`, async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo );
+			const editorPage = new EditorPage( page, testInfo );
+			const iconsType = 'icons-brands';
 
-		for ( const status of [ 'inactive', 'active' ] ) {
-			await test.step( `Inline Icons experiment status - ${ status }`, async () => {
-				await wpAdmin.setExperiments( {
-					e_font_icon_svg: status,
-				} );
-
-				await testIcons( wpAdmin, page, testInfo );
+			await wpAdmin.setExperiments( {
+				e_font_icon_svg: status,
 			} );
-		}
-	} );
+
+			await wpAdmin.openNewPage();
+			await editorPage.closeNavigatorIfOpen();
+			const filePath = _path.resolve( __dirname, `./template/${ iconsType }.json` );
+			await editorPage.loadTemplate( filePath, true );
+			await editorPage.waitForIframeToLoaded( iconsType );
+			const frame = editorPage.getPreviewFrame();
+			await page.setViewportSize( { width: 1920, height: 3080 } );
+			await frame.locator( 'h1.entry-title' ).click();
+			expect( frame.locator( '.e-con-inner' ).first() ).toHaveScreenshot( `${ iconsType }.png` );
+			await editorPage.publishAndViewPage();
+			const icons = page.locator( '.e-con-inner' ).first();
+			await icons.waitFor();
+			await expect( icons ).toHaveScreenshot( `${ iconsType }.png` );
+		} );
+	}
 } );
-
-async function testIcons( wpAdmin, page, testInfo ) {
-	// Arrange.
-	const editorPage = new EditorPage( page, testInfo );
-	const frame = editorPage.getPreviewFrame();
-
-	const iconsType = 'icons-brands';
-
-	// Act.
-	await wpAdmin.openNewPage();
-	await editorPage.closeNavigatorIfOpen();
-
-	const filePath = _path.resolve( __dirname, `./template/${ iconsType }.json` );
-	await editorPage.loadTemplate( filePath, true );
-	await editorPage.waitForIframeToLoaded( iconsType );
-
-	await page.setViewportSize( { width: 1920, height: 3080 } );
-	await editorPage.publishAndViewPage();
-
-	// Assert.
-	expect( await frame
-		.locator( '.e-con-inner' ).first()
-		.screenshot( { type: 'jpeg', quality: 90 } ) )
-		.toMatchSnapshot( `${ iconsType }.png` );
-}
