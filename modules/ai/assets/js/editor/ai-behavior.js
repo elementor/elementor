@@ -31,6 +31,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		event.stopPropagation();
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
+
 		const isRTL = elementorCommon.config.isRTL;
 
 		const rootElement = document.createElement( 'div' );
