@@ -1,4 +1,9 @@
-import { isWidgetSupportNesting, isWidgetSupportImprovedRepeaters, widgetNodes } from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
+import {
+	isWidgetSupportNesting,
+	isWidgetSupportImprovedRepeaters,
+	widgetNodes,
+	shouldUseImprovedRepeaters
+} from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
 
 export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
@@ -64,10 +69,11 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			collection.remove( model );
 
-			if ( isWidgetSupportNesting( widgetType ) && isWidgetSupportImprovedRepeaters( widgetType ) ) {
-				const widgetContainer = container.document.$element[ 0 ];
-				const targetElement = widgetContainer.querySelectorAll( widgetNodes( widgetType ).targetContainer );
-				targetElement[ index ].remove();
+			if ( shouldUseImprovedRepeaters( widgetType ) ) {
+				const widgetContainer = container.view.$el[ 0 ];
+				widgetNodes( widgetType ).targetContainer.forEach( ( item ) => {
+					widgetContainer.querySelector( item ).children[ index ].remove();
+				} );
 			} else {
 				// Trigger render on widget but with the settings of the control.
 				repeaterContainer.render();

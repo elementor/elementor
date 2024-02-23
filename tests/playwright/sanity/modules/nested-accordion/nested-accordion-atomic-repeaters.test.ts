@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { deleteItemFromRepeater } from './helper';
 
-test.describe( 'Nested Accordion experiment is active @nested-elements-performance', () => {
+test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -10,7 +10,7 @@ test.describe( 'Nested Accordion experiment is active @nested-elements-performan
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
-			e_nested_elements_performance: 'active',
+			e_nested_atomic_repeaters: 'active',
 		} );
 
 		await page.close();
@@ -23,7 +23,7 @@ test.describe( 'Nested Accordion experiment is active @nested-elements-performan
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
-			e_nested_elements_performance: 'inactive',
+			e_nested_atomic_repeaters: 'inactive',
 		} );
 
 		await page.close();

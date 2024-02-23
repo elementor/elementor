@@ -112,7 +112,7 @@ jobs:
           'pluginTester1_sections',
           'pluginTester2_sections',
           'promotions',
-          'nested-elements-performance',
+          'nested-atomic-repeaters',
         ]
     steps:
       - name: Checkout source code

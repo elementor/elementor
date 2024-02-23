@@ -22,7 +22,7 @@ function getGrepInvert() {
 			/@pluginTester1_sections/,
 			/@pluginTester2_sections/,
 			/@promotions/,
-			/@nested-elements-performance/,
+			/@nested-atomic-repeaters/,
 		];
 	}
 	return [];
