@@ -888,6 +888,65 @@ class Nested_Accordion extends Widget_Nested_Base {
 		] );
 	}
 
+	protected function get_initial_config(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_improved_repeaters' => true,
+				'target_container' => [ '.e-n-accordion' ],
+				'node' => 'details',
+			] );
+		}
+
+		return parent::get_initial_config();
+	}
+
+	protected function content_template_single_repeater_item() {
+		?>
+		<#
+		const elementUid = view.getIDInt().toString().substring( 0, 3 ) + view.collection.length;
+		const itemWrapperAttributes = {
+			'id': 'e-n-accordion-item-' + elementUid,
+			'class': [ 'e-n-accordion-item', 'e-normal' ],
+		};
+		const itemTitleAttributes = {
+			'class': [ 'e-n-accordion-item-title' ],
+			'data-accordion-index': view.collection.length + 1,
+			'tabindex': -1,
+			'aria-expanded': 'false',
+			'aria-controls': 'e-n-accordion-item-' + elementUid,
+		};
+
+		const itemTitleTextAttributes = {
+			'class': [ 'e-n-accordion-item-title-text' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'items',
+			'data-binding-setting': ['item_title'],
+			'data-binding-index': view.collection.length + 1,
+		};
+
+		view.addRenderAttribute( 'details-container', itemWrapperAttributes );
+		view.addRenderAttribute( 'summary-container', itemTitleAttributes );
+		view.addRenderAttribute( 'text-container', itemTitleTextAttributes );
+		#>
+
+		<details  {{{ view.getRenderAttributeString( 'details-container' ) }}}>
+			<summary {{{ view.getRenderAttributeString( 'summary-container' ) }}}>
+				<span class="e-n-accordion-item-title-header">
+					<div {{{ view.getRenderAttributeString( 'text-container' ) }}}>{{{ data.item_title }}}</div>
+				</span>
+				<span class="e-n-accordion-item-title-icon">
+					<span class="e-opened"><i aria-hidden="true" class="fas fa-minus"></i></span>
+					<span class="e-closed"><i aria-hidden="true" class="fas fa-plus"></i></span>
+				</span>
+			</summary>
+		</details>
+		<?php
+	}
+
+	protected function supports_atomic_repeaters() {
+		return true;
+	}
+
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
