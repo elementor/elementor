@@ -85,7 +85,7 @@ export default class NestedAccordion extends Base {
 
 	unbindEvents() {
 		this.elements.$accordionTitles.off();
-		elementorFrontend.elements.$window.off( 'elementor/nested-accordion-link-container' );
+		elementorFrontend.elements.$window.off( 'elementor/nested-container/created' );
 	}
 
 	clickListener( event ) {

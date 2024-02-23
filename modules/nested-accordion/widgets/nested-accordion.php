@@ -900,7 +900,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return parent::get_initial_config();
 	}
 
-	protected function single_content_template() {
+	protected function content_template_single_repeater_item() {
 		?>
 		<#
 		const elementUid = view.getIDInt().toString().substring( 0, 3 ) + view.collection.length;

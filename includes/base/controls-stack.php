@@ -2024,10 +2024,6 @@ abstract class Controls_Stack extends Base_Object {
 		echo $this->get_render_attribute_string( $element ); // XSS ok.
 	}
 
-	protected function single_content_template() {
-		return false;
-	}
-
 	/**
 	 * Print element template.
 	 *
@@ -2073,9 +2069,6 @@ abstract class Controls_Stack extends Base_Object {
 		?>
 		<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content">
 			<?php $this->print_template_content( $template_content ); ?>
-		</script>
-		<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content-single">
-			<?php $this->single_content_template(); ?>
 		</script>
 		<?php
 	}

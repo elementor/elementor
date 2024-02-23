@@ -72,9 +72,9 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 
 			if ( renderAfterInsert ) {
 				const widgetType = container.settings.get( 'widgetType' ),
-					isExperiment = elementorCommon.config.experimentalFeatures.e_nested_elements_performance;
+					isExperimentActive = elementorCommon.config.experimentalFeatures.e_nested_elements_performance;
 
-				if ( isExperiment && isWidgetSupportImprovedRepeaters( widgetType ) && isWidgetSupportNesting( widgetType ) ) {
+				if ( isExperimentActive && isWidgetSupportImprovedRepeaters( widgetType ) && isWidgetSupportNesting( widgetType ) ) {
 					const domConfig = widgetNodes( widgetType ),
 						containerNode = container.document.$element.get( 0 ),
 						targetContainer = containerNode.querySelector( domConfig.targetContainer );

@@ -40,9 +40,9 @@ export class NestedRepeaterCreateContainer extends Base {
 		} );
 
 		const widgetType = container.settings.get( 'widgetType' ),
-			isExperiment = elementorCommon.config.experimentalFeatures.e_nested_elements_performance;
+			isExperimentActive = elementorCommon.config.experimentalFeatures.e_nested_elements_performance;
 
-		if ( isExperiment && isWidgetSupportImprovedRepeaters( widgetType ) && isWidgetSupportNesting( widgetType ) ) {
+		if ( isExperimentActive && isWidgetSupportImprovedRepeaters( widgetType ) && isWidgetSupportNesting( widgetType ) ) {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/nested-container/created' ) );
 		}
 	}
