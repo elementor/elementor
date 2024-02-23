@@ -1,8 +1,6 @@
 import {
-	isWidgetSupportNesting,
-	isWidgetSupportImprovedRepeaters,
 	widgetNodes,
-	shouldUseImprovedRepeaters
+	shouldUseImprovedRepeaters,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
 
 export class Remove extends $e.modules.editor.document.CommandHistoryBase {
