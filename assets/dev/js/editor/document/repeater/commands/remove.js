@@ -49,7 +49,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 			const collection = container.settings.get( name ),
 				model = collection.at( index ),
 				repeaterContainer = container.repeaters[ name ],
-				containerName = container.model.config.name;
+				widgetType = container.settings.get( 'widgetType' );
 
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
@@ -64,9 +64,9 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			collection.remove( model );
 
-			if ( isWidgetSupportNesting( containerName ) && isWidgetSupportImprovedRepeaters( containerName ) ) {
+			if ( isWidgetSupportNesting( widgetType ) && isWidgetSupportImprovedRepeaters( widgetType ) ) {
 				const widgetContainer = container.document.$element[ 0 ];
-				const targetElement = widgetContainer.querySelectorAll( widgetNodes( containerName ).targetContainer );
+				const targetElement = widgetContainer.querySelectorAll( widgetNodes( widgetType ).targetContainer );
 				targetElement[ index ].remove();
 			} else {
 				// Trigger render on widget but with the settings of the control.
