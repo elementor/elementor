@@ -118,4 +118,21 @@ abstract class Widget_Nested_Base extends Widget_Base {
 			$children[ $index ]->print_element();
 		}
 	}
+
+	protected function supports_atomic_repeaters() {
+		return false;
+	}
+
+	protected function content_template_single_repeater_item() {}
+
+	public function print_template() {
+		parent::print_template();
+		if ( $this->supports_atomic_repeaters() ) {
+			?>
+			<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content-single">
+				<?php $this->content_template_single_repeater_item(); ?>
+			</script>
+			<?php
+		}
+	}
 }
