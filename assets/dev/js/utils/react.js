@@ -23,6 +23,7 @@ function render( app, domElement ) {
 		appInstance = root._internal.root;
 	} catch ( e ) {
 		// eslint-disable-next-line react/no-deprecated
+		// eslint-disable-next-line react/no-render-return-value
 		appInstance = ReactDOM.render( app, domElement );
 	}
 
