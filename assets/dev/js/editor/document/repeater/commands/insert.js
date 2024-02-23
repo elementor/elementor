@@ -82,8 +82,8 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 						targetContainer = containerNode.querySelector( domConfig.targetContainer ),
 						html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view } ),
 						node = document.createElement( 'div' );
-					node.innerHTML = html;
 
+					node.innerHTML = html;
 					targetContainer.appendChild( node.querySelector( domConfig.node ) );
 				} else {
 					// Trigger render on widget but with the settings of the control.
