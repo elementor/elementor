@@ -1,4 +1,7 @@
-import { isWidgetSupportImprovedRepeaters, isWidgetSupportNesting, widgetNodes } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	shouldUseImprovedRepeaters,
+	widgetNodes,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
@@ -71,17 +74,16 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 			result.push( collection.push( rowSettingsModel, options ) );
 
 			if ( renderAfterInsert ) {
-				const widgetType = container.settings.get( 'widgetType' ),
-					isExperimentActive = elementorCommon.config.experimentalFeatures.e_nested_elements_performance;
+				const widgetType = container.settings.get( 'widgetType' );
 
-				if ( isExperimentActive && isWidgetSupportImprovedRepeaters( widgetType ) && isWidgetSupportNesting( widgetType ) ) {
+				if ( shouldUseImprovedRepeaters( widgetType ) ) {
 					const domConfig = widgetNodes( widgetType ),
 						containerNode = container.document.$element.get( 0 ),
-						targetContainer = containerNode.querySelector( domConfig.targetContainer );
-
-					const html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view } );
-					const node = document.createElement( 'div' );
+						targetContainer = containerNode.querySelector( domConfig.targetContainer ),
+						html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view } ),
+						node = document.createElement( 'div' );
 					node.innerHTML = html;
+
 					targetContainer.appendChild( node.querySelector( domConfig.node ) );
 				} else {
 					// Trigger render on widget but with the settings of the control.

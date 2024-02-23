@@ -939,6 +939,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					<span class="e-closed"><i aria-hidden="true" class="fas fa-plus"></i></span>
 				</span>
 			</summary>
+		</details>
 		<?php
 	}
 
