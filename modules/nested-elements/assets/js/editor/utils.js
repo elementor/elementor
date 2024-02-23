@@ -22,7 +22,7 @@ export function isWidgetSupportImprovedRepeaters( widgetType ) {
 		return false;
 	}
 
-	return widgetConfig.support_impoved_repeaters;
+	return widgetConfig.support_improved_repeaters;
 }
 
 export function widgetNodes( widgetType ) {
@@ -46,4 +46,10 @@ export function findChildContainerOrFail( container, index ) {
 	}
 
 	return childView.getContainer();
+}
+
+export function shouldUseImprovedRepeaters( widgetType ) {
+	return elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
+	isWidgetSupportNesting( widgetType ) &&
+	isWidgetSupportImprovedRepeaters( widgetType );
 }

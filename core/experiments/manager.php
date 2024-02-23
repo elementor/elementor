@@ -457,7 +457,7 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_nested_elements_performance',
+			'name' => 'e_nested_atomic_repeaters',
 			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Improve the performance of the Nested widgets.', 'elementor' ),
