@@ -943,6 +943,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<?php
 	}
 
+	protected function supports_atomic_repeaters() {
+		return true;
+	}
 
 	protected function content_template() {
 		?>
