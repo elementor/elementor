@@ -455,6 +455,19 @@ class Manager extends Base_Object {
 				'container',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_nested_elements_performance',
+			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Improve the performance of the Nested widgets.', 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'release_status' => self::RELEASE_STATUS_DEV,
+			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => false,
+			],
+		] );
 	}
 
 	/**

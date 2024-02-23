@@ -889,11 +889,15 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config() {
-		return array_merge( parent::get_initial_config(), [
-			'support_impoved_repeaters' => true,
-			'target_container' => '.e-n-accordion',
-			'node' => 'details',
-		] );
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_elements_performance' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_impoved_repeaters' => true,
+				'target_container'          => '.e-n-accordion',
+				'node'                      => 'details',
+			] );
+		}
+
+		return parent::get_initial_config();
 	}
 
 	protected function single_content_template() {
