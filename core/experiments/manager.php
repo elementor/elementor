@@ -466,7 +466,6 @@ class Manager extends Base_Object {
 			'default' => self::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => false,
-				'minimum_installation_version' => '3.21.0',
 			],
 		] );
 	}
