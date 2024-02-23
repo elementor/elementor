@@ -339,6 +339,7 @@ class Hints {
 			'a' => [
 				'href' => [],
 				'style' => [],
+				'target' => [],
 			],
 		];
 	}
