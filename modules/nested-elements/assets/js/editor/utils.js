@@ -51,5 +51,5 @@ export function findChildContainerOrFail( container, index ) {
 export function shouldUseImprovedRepeaters( widgetType ) {
 	return elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
 	isWidgetSupportNesting( widgetType ) &&
-	isWidgetSupportImprovedRepeaters( widgetType )
+	isWidgetSupportImprovedRepeaters( widgetType );
 }
