@@ -103,7 +103,7 @@ class Control_Gallery extends Base_Data_Control {
 					<?php
 						Hints::get_notice_template( [
 							'type' => 'warning',
-							'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+							'content' => esc_html__( 'Images marked in red don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
 							'icon' => true,
 						] );
 					?>
