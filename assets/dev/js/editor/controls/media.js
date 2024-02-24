@@ -170,7 +170,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		const checks = {
 			height: 1080,
 			width: 1920,
-			filesizeInBytes: 100000,
+			filesizeInBytes: 200000,
 		};
 
 		return Object.keys( checks ).some( ( key ) => {
