@@ -4,7 +4,7 @@ const BaseSectionsContainerView = require( 'elementor-views/base-sections-contai
 
 const Preview = BaseSectionsContainerView.extend( {
 	config: {
-		allowAddElements: true,
+		allowEdit: true,
 	},
 
 	initialize() {
@@ -87,7 +87,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	addElementFromPanel( options ) {
-		if ( ! this.config.allowAddElements || elementor.helpers.maybeDisableWidget() ) {
+		if ( ! this.config.allowEdit || elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
 
@@ -122,7 +122,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	shouldRenderAddNewSectionArea() {
-		return this.config.allowAddElements && elementor.userCan( 'design' );
+		return this.config.allowEdit && elementor.userCan( 'design' );
 	},
 
 	onRender() {

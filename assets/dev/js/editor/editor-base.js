@@ -514,10 +514,12 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		this.previewView = this.renderPreviewFromJSONModel( document.$element[ 0 ],	elementor.elementsModel );
+		this.previewView = this.createPreviewView( document.$element[ 0 ],	elementor.elementsModel );
+
+		this.renderPreview( this.previewView );
 	}
 
-	renderPreviewFromJSONModel( targetElement, model, config = {} ) {
+	createPreviewView( targetElement, model, config = {} ) {
 		const preview = new Preview( {
 			el: targetElement,
 			model,
@@ -527,14 +529,16 @@ export default class EditorBase extends Marionette.Application {
 
 		preview.$el.empty();
 
+		return preview;
+	}
+
+	renderPreview( preview ) {
 		// In order to force rendering of children
 		preview.isRendered = true;
 
 		preview._renderChildren();
 
 		preview.triggerMethod( 'render' );
-
-		return preview;
 	}
 
 	initFrontend() {
