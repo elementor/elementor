@@ -103,8 +103,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
-	test( 'Promotions - Sticky Free to Pro - Editor', async ( { page }, testInfo ) => {
-		await test.step( 'Sticky Free to Pro - Top Bar Off', async () => {
+	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page }, testInfo ) => {
 			// Arrange.
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 				await wpAdminPage.setExperiments( {
@@ -122,7 +121,9 @@ test.describe( 'Promotion tests @promotions', () => {
 			// Assert.
 			await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
 		} );
-		await test.step( 'Sticky Free to Pro - Top Bar On', async () => {
+
+	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page }, testInfo) => {
+			// Arrange.
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			await wpAdminPage.setExperiments( {
 				editor_v2: true,
@@ -138,6 +139,5 @@ test.describe( 'Promotion tests @promotions', () => {
 
 			// Assert.
 			await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
-		} );
 	} );
 } );
