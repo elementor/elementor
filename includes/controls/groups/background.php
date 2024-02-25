@@ -153,7 +153,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['background'] = [
 			'label' => esc_html__( 'Background Type', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
-			//'render_type' => 'ui',
+			'render_type' => 'ui',
 		];
 
 		$fields['gradient_notice'] = [
