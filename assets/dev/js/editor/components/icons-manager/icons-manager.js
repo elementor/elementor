@@ -143,10 +143,9 @@ export default class extends elementorModules.Module {
 		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
 
 		iconManagerConfig.activeTab = activeTab;
-		const { root, render } = renderIconManager( iconManagerConfig );
+		const { root } = renderIconManager( iconManagerConfig );
 
 		this.root = root;
-		return render;
 	}
 
 	updateControlValue() {
