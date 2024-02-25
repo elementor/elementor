@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import {expect, Locator, Page, test} from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
 /**
@@ -115,9 +115,11 @@ export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' )
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
 }
 
-export async function deleteItemFromRepeater( page: Page, nestedAccordionItemTitle: Locator, nestedAccordionItemContent: Locator ) {
+export async function deleteItemFromRepeater( editor: EditorPage, accordionID: string ) {
 	// Arrange
-	const deleteItemButton = page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
+	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
+		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
+		nestedAccordionItemContent = nestedAccordionItemTitle.locator( `.elementor-element-${ accordionID }  .e-con` ),
 		numberOfTitles = await nestedAccordionItemTitle.count(),
 		numberOfContents = await nestedAccordionItemContent.count();
 
@@ -127,4 +129,24 @@ export async function deleteItemFromRepeater( page: Page, nestedAccordionItemTit
 	// Assert
 	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
 	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
+}
+
+export async function addItemFromRepeater( editor: EditorPage, accordionID: string ) {
+	// Arrange
+	const addItemButton = editor.page.locator( '.elementor-repeater-add' ),
+		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
+		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item .e-con` ),
+		numberOfTitles = await nestedAccordionItemTitle.count(),
+		numberOfContents = await nestedAccordionItemContent.count();
+
+	// Act
+	await addItemButton.click();
+
+	console.log( accordionID, numberOfTitles, numberOfContents, `.elementor-element-${ accordionID } .e-n-accordion-item` );
+
+
+	// Assert
+	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+	await editor.page.pause();
+	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 }
