@@ -41,7 +41,6 @@
 		}
 
 		#elementor-panel-elements-wrapper {
-			flex: 1;
 			display: flex;
 			flex-direction: column;
 		}
@@ -58,7 +57,7 @@
 		// The uppercase M in `Min` is used in order to avoid SASS conflicts with CSS `min` function.
 		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
 		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
-		grid-template-columns: repeat( auto-fill, minmax(Min(135px, calc(50% - 5px)), 1fr) );
+		grid-template-columns: repeat( auto-fill, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
 
 		// Stretch a grid item to full width.
 		& > .e-responsive-panel-stretch {
@@ -66,23 +65,23 @@
 		}
 	}
 
-	// Header
-	@import "header";
+  // Header
+  @import "header";
 
-	// Categories
-	@import "categories";
+  // Categories
+  @import "categories";
 
-	// Menu
-	@import "menu";
+  // Menu
+  @import "menu";
 
-	// Document Settings
+  // Document Settings
 	@import "document-settings";
 
-	// Element Edit
+  // Element Edit
 	@import "element-settings";
 
-	//Footer
-	@import "footer";
+  //Footer
+  @import "footer";
 }
 
 // Panel Elements
