@@ -4,7 +4,6 @@ import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Promotion tests @promotions', () => {
-
 	test( 'Menu Items Promotions - screenshots', async ( { page }, testInfo ) => {
 		const wpAdminPage = new WpAdminPage( page, testInfo ),
 			promotionContainer = '.e-feature-promotion';
@@ -79,5 +78,28 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await expect.soft( notesPromotionLinkContainer ).toHaveAttribute( 'href', notesHref );
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
+	} );
+
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdminPage = new WpAdminPage( page, testInfo ),
+			promotionContainer = '.e-admin-top-bar__secondary-area';
+
+		// Act.
+		await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
+	} );
+
+	test( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdminPage = new WpAdminPage( page, testInfo ),
+			promotionContainer = '#elementor-navigator__footer';
+
+		// Act.
+		await wpAdminPage.openNewPage();
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 } );

@@ -558,7 +558,7 @@ test.describe( 'Container tests @container', () => {
 
 		const preview = editor.getPreviewFrame();
 
-		const resizers = await preview.locator( '.ui-resizable-handle.ui-resizable-e' );
+		const resizers = preview.locator( '.ui-resizable-handle.ui-resizable-e' );
 		await expect.soft( resizers ).toHaveCount( 4 );
 
 		await editor.togglePreviewMode();
@@ -604,7 +604,7 @@ test.describe( 'Container tests @container', () => {
 		// Assert.
 		// Check container settings are set as expected on frontend.
 		for ( const container of containers ) {
-			const element = await page.locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
+			const element = page.locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
 			await expect.soft( element ).toHaveCSS( 'justify-items', container.setting );
 			await expect.soft( element ).toHaveCSS( 'align-items', container.setting );
 		}
@@ -675,12 +675,12 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test container wizard', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
-		const frame = await editor.getPreviewFrame();
+		const frame = editor.getPreviewFrame();
 
 		await test.step( 'Test container type selector', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
-			const toFlex = await frame.locator( '.flex-preset-button' );
-			const toGrid = await frame.locator( '.grid-preset-button' );
+			const toFlex = frame.locator( '.flex-preset-button' );
+			const toGrid = frame.locator( '.grid-preset-button' );
 			await expect.soft( toFlex ).toBeVisible();
 			await expect.soft( toGrid ).toBeVisible();
 			await frame.locator( '.elementor-add-section-close' ).click();
@@ -708,7 +708,7 @@ test.describe( 'Container tests @container', () => {
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerSelector = '.elementor-element-edit-mode',
-			frame = await editor.getPreviewFrame();
+			frame = editor.getPreviewFrame();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -746,7 +746,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test spacer inside of the container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
-			frame = await editor.getPreviewFrame(),
+			frame = editor.getPreviewFrame(),
 			spacerSize = '200',
 			defaultSpacerSize = '50';
 
@@ -758,7 +758,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect.soft( String( spacerElementHeight ) ).toBe( defaultSpacerSize );
+			expect.soft( String( spacerElementHeight ) ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -773,7 +773,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect.soft( String( spacerElementWidth ) ).toBe( defaultSpacerSize );
+			expect.soft( String( spacerElementWidth ) ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -787,7 +787,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
+			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -807,7 +807,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
+			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -826,7 +826,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect.soft( String( spacerElementWidth ) ).toBe( spacerSize );
+			expect.soft( String( spacerElementWidth ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -846,7 +846,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
+			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 	} );
@@ -857,28 +857,28 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 
-		const desktopGapControlColumnInput = await page.locator( '.elementor-control-flex_gap input[data-setting="column"]' ),
-			tabletGapControlColumnInput = await page.locator( '.elementor-control-flex_gap_tablet input[data-setting="column"]' ),
-			mobileGapControlColumnInput = await page.locator( '.elementor-control-flex_gap_mobile input[data-setting="column"]' );
+		const desktopGapControlColumnInput = page.locator( '.elementor-control-flex_gap input[data-setting="column"]' ),
+			tabletGapControlColumnInput = page.locator( '.elementor-control-flex_gap_tablet input[data-setting="column"]' ),
+			mobileGapControlColumnInput = page.locator( '.elementor-control-flex_gap_mobile input[data-setting="column"]' );
 
 		await test.step( 'Check the control initial placeholder', async () => {
 			const gapControlPlaceholder = await desktopGapControlColumnInput.getAttribute( 'placeholder' );
-			await expect( gapControlPlaceholder ).toBe( '20' );
-			await expect( gapControlPlaceholder ).not.toBe( '[object, object]' );
+			expect( gapControlPlaceholder ).toBe( '20' );
+			expect( gapControlPlaceholder ).not.toBe( '[object, object]' );
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from desktop to tablet after value change', async () => {
 			desktopGapControlColumnInput.fill( '50' );
 			await editor.changeResponsiveView( 'tablet' );
 			const gapControlPlaceholder = await tabletGapControlColumnInput.getAttribute( 'placeholder' );
-			await expect( gapControlPlaceholder ).toBe( '50' );
+			expect( gapControlPlaceholder ).toBe( '50' );
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from tablet to mobile after value change', async () => {
 			tabletGapControlColumnInput.fill( '40' );
 			await editor.changeResponsiveView( 'mobile' );
 			const gapControlPlaceholder = await mobileGapControlColumnInput.getAttribute( 'placeholder' );
-			await expect( gapControlPlaceholder ).toBe( '40' );
+			expect( gapControlPlaceholder ).toBe( '40' );
 		} );
 	} );
 
@@ -893,7 +893,7 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setLanguage( 'he_IL' );
 
 			const editor = await wpAdmin.openNewPage(),
-				frame = await editor.getPreviewFrame();
+				frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
 				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
@@ -915,7 +915,7 @@ test.describe( 'Container tests @container', () => {
 		}
 
 		const editor = await wpAdmin.openNewPage(),
-			frame = await editor.getPreviewFrame();
+			frame = editor.getPreviewFrame();
 
 		await test.step( 'Load Template', async () => {
 			const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
