@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-nerd-box-message"><?php echo esc_html( $get_pro_details['message'] ); ?></div>
 		<a class="elementor-button go-pro" target="_blank" href="<?php echo esc_url( $get_pro_details['link'] ); ?>"><?php echo esc_html( $get_pro_details['button_text'] ); ?></a>
 	</div>
-	<?php if ( ! $has_pro  ): ?>
+	<?php if (!$has_pro): ?>
 	<div id="elementor-panel-get-pro-elements-sticky">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
 		<div class="elementor-get-pro-sticky-message"><?php echo esc_html( $promotion_data_sticky['message'] ); ?><a target="_blank" href="<?php echo esc_url( $promotion_data_sticky['url'] ); ?>"><?php echo esc_html( $promotion_data_sticky['button_text'] ); ?></a></div>
