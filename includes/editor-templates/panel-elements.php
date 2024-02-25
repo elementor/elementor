@@ -31,16 +31,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'message' => __( 'Access all Pro widgets. ', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	];
-	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data(
-			$get_pro_details,
-			'elementor/editor/panel/get_pro_details',
-			'link'
-	);
-	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data(
-			$promotion_data_sticky,
-			'elementor/editor/panel/get_pro_details-sticky',
-			'url'
-	);
+	$get_pro_details = Filtered_Promotions_Manager::get_filtered_promotion_data( $get_pro_details, 'elementor/editor/panel/get_pro_details', 'link' );
+	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data_sticky, 'elementor/editor/panel/get_pro_details-sticky', 'url' );
 	$has_pro = Utils::has_pro();
 	?>
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">

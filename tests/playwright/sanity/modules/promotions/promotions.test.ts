@@ -122,7 +122,7 @@ test.describe( 'Promotion tests @promotions', () => {
 			await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
 		} );
 
-	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page }, testInfo) => {
+	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page }, testInfo ) => {
 			// Arrange.
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			await wpAdminPage.setExperiments( {
