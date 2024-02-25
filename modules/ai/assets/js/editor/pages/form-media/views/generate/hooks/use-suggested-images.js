@@ -32,7 +32,6 @@ const useSuggestedImages = ( { selectedType } ) => {
 
 		fetch( 'https://my.elementor.com/ai/images-prompt-gallery/ai-gallery.json' )
 			.then( ( response ) => response.json() )
-			.then( ( json ) => setStateAndSessionData( json ) )
 			// eslint-disable-next-line no-console
 			.catch( ( e ) => console.log( e.message ) )
 			.finally( () => setIsLoading( false ) );
