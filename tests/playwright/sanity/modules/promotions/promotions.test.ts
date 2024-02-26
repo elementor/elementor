@@ -79,4 +79,42 @@ test.describe( 'Promotion tests @promotions', () => {
 		// Assert.
 		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
+
+	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page }, testInfo ) => {
+			// Arrange.
+			const wpAdminPage = new WpAdminPage( page, testInfo );
+				await wpAdminPage.setExperiments( {
+				editor_v2: false,
+			} );
+			const wrapperContainer = '#elementor-panel-inner',
+				promotionContainer = '#elementor-panel-get-pro-elements-sticky';
+
+			// Act.
+			await wpAdminPage.openNewPage();
+			const parentContainer = page.locator( wrapperContainer );
+			const promoContainer = page.locator( promotionContainer );
+			await promoContainer.waitFor();
+
+			// Assert.
+			await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
+		} );
+
+	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page }, testInfo ) => {
+			// Arrange.
+			const wpAdminPage = new WpAdminPage( page, testInfo );
+			await wpAdminPage.setExperiments( {
+				editor_v2: true,
+			} );
+			const wrapperContainer = '#elementor-panel-inner',
+				promotionContainer = '#elementor-panel-get-pro-elements-sticky';
+
+			// Act.
+			await wpAdminPage.openNewPage();
+			const parentContainer = page.locator( wrapperContainer );
+			const promoContainer = page.locator( promotionContainer );
+			await promoContainer.waitFor();
+
+			// Assert.
+			await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
+	} );
 } );
