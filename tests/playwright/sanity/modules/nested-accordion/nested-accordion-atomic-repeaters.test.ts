@@ -29,7 +29,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		await page.close();
 	} );
 
-	test.only( 'General Test', async ( { page }, testInfo ) => {
+	test( 'General Test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
