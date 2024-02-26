@@ -61,7 +61,20 @@ const FormText = (
 		children,
 	},
 ) => {
-	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
+	const removeRepeaterNumbers = ( inputString ) => {
+		const regex = /\s\d+\s?/g;
+		const result = inputString.replace( regex, ' ' );
+		return result;
+	};
+	const isDefaultValue = ( controlValue, defaultValue ) => {
+		if ( controlValue === defaultValue ) {
+			return true;
+		}
+
+		return removeRepeaterNumbers( controlValue ) === defaultValue;
+	};
+
+	const initialValue = isDefaultValue( getControlValue(), additionalOptions?.defaultValue ) ? '' : getControlValue();
 
 	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( {
 		result: initialValue,
