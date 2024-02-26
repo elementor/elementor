@@ -1,4 +1,4 @@
-import {expect, Locator, Page, test} from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
 /**
@@ -119,12 +119,14 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 	// Arrange
 	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
 		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
-		nestedAccordionItemContent = nestedAccordionItemTitle.locator( `.elementor-element-${ accordionID }  .e-con` ),
+		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item .e-con` ),
 		numberOfTitles = await nestedAccordionItemTitle.count(),
 		numberOfContents = await nestedAccordionItemContent.count();
 
 	// Act
 	await deleteItemButton.last().click();
+
+	await editor.page.waitForTimeout( 1000 );
 
 	// Assert
 	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
@@ -142,11 +144,9 @@ export async function addItemFromRepeater( editor: EditorPage, accordionID: stri
 	// Act
 	await addItemButton.click();
 
-	console.log( accordionID, numberOfTitles, numberOfContents, `.elementor-element-${ accordionID } .e-n-accordion-item` );
-
+	await editor.page.waitForTimeout( 1000 );
 
 	// Assert
 	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
-	await editor.page.pause();
 	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 }

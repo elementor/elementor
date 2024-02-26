@@ -29,7 +29,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		await page.close();
 	} );
 
-	test( 'General Test', async ( { page }, testInfo ) => {
+	test.only( 'General Test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -44,10 +44,6 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 
 		await test.step( 'Add an item to the repeater', async () => {
 			await addItemFromRepeater( editor, nestedAccordionID );
-		} );
-
-		await test.step( 'Add another accordion', async () => {
-
 		} );
 
 		await test.step( 'Add an item to the second accordion', async () => {
