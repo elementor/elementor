@@ -61,7 +61,11 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	linkContainer() {
+	linkContainer( details ) {
+		const athis = this;
+		const { container, name, index } = details;
+		const { $contentContainers, $accordionItems } = this.getDefaultElements();
+
 		const containers = this.findElement( this.getSettings( 'selectors.accordionContentContainers' ) );
 		const accordionItems = this.findElement( this.getSettings( 'selectors.accordionItems' ) );
 		const lastContentContainer = containers[ containers.length - 1 ];

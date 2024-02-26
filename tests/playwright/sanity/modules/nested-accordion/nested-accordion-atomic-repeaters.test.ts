@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import {addItemFromRepeater, deleteItemFromRepeater} from './helper';
+import { addItemFromRepeater, deleteItemFromRepeater } from './helper';
 
 test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
