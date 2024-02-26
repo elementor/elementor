@@ -547,7 +547,9 @@ trait Button_Trait {
 						<# } #>
 					</span>
 					<# } #>
+					<# if ( settings.text ) { #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
+					<# } #>
 				</span>
 			</a>
 		</div>
@@ -610,7 +612,9 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
+			<?php if ( ! empty( $settings['text'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<?php endif; ?>
 		</span>
 		<?php
 	}
