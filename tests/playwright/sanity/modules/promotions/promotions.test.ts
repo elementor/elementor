@@ -109,7 +109,7 @@ test.describe( 'Promotion tests @promotions', () => {
 				await wpAdminPage.setExperiments( {
 				editor_v2: false,
 			} );
-			const wrapperContainer = '#elementor-panel-categories',
+			const wrapperContainer = '#elementor-panel-inner',
 				promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
 			// Act.
@@ -128,7 +128,7 @@ test.describe( 'Promotion tests @promotions', () => {
 			await wpAdminPage.setExperiments( {
 				editor_v2: true,
 			} );
-			const wrapperContainer = '#elementor-panel-categories',
+			const wrapperContainer = '#elementor-panel-inner',
 				promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
 			// Act.
