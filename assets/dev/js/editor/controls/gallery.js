@@ -11,7 +11,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		ui.clearGallery = '.elementor-control-gallery-clear';
 		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
 		ui.status = '.elementor-control-gallery-status-title';
-		//ui.warnings = '.elementor-control-media__warnings';
+		// eslint-disable-next-line capitalized-comments
+		// ui.warnings = '.elementor-control-media__warnings';
 		ui.promotions = '.elementor-control-media__promotions';
 		ui.promotions_dismiss = '.elementor-control-media__promotions .elementor-control-notice-dismiss';
 		ui.promotions_action = '.elementor-control-media__promotions .elementor-control-notice-main-actions button';
@@ -38,7 +39,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		var images = this.getControlValue(),
 			imagesCount = images.length,
 			hasImages = !! imagesCount,
-			imagesWithoutAlt = 0,
+			// eslint-disable-next-line capitalized-comments
+			// imagesWithoutAlt = 0,
 			imagesWithoutOptimization = 0,
 			promotionsAlwaysOn = false;
 
@@ -90,7 +92,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		// Ensure all attachments are fetched before updating the warnings
 		await Promise.all( attachments ).then( () => {
-			//this.ui.warnings.toggle( !! imagesWithoutAlt );
+			// eslint-disable-next-line capitalized-comments
+			// this.ui.warnings.toggle( !! imagesWithoutAlt );
 			if ( hasPromotions ) {
 				const showHints = promotionsAlwaysOn || !! imagesWithoutOptimization;
 				this.ui.promotions.toggle( showHints );
@@ -285,6 +288,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.applySavedValue();
 
+		// eslint-disable-next-line capitalized-comments
 		// this.ui.warnings.hide();
 
 		if ( this.ui.promotions ) {
