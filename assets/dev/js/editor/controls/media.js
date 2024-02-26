@@ -105,6 +105,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			} else {
 				// eslint-disable-next-line capitalized-comments
 				// this.ui.warnings.hide();
+
+				// eslint-disable-next-line no-lonely-if
 				if ( this.ui.promotions.length ) {
 					this.ui.promotions.hide();
 				}

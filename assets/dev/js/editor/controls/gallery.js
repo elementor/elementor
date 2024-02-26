@@ -39,7 +39,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		var images = this.getControlValue(),
 			imagesCount = images.length,
 			hasImages = !! imagesCount,
-			imagesWithoutAlt = 0,
+			// eslint-disable-next-line capitalized-comments
+			// imagesWithoutAlt = 0,
 			imagesWithoutOptimization = 0,
 			promotionsAlwaysOn = false;
 
