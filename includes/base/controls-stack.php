@@ -314,10 +314,8 @@ abstract class Controls_Stack extends Base_Object {
 		$stack = $this->get_stack();
 		$controls = $stack['controls'];
 
-		if ( Performance::is_use_style_controls() ) {
-			if ( ! empty( $stack['style_controls'] ) ) {
-				$controls += $stack['style_controls'];
-			}
+		if ( Performance::is_use_style_controls() && ! empty( $stack['style_controls'] ) ) {
+			$controls += $stack['style_controls'];
 		}
 
 		return self::get_items( $controls, $control_id );
