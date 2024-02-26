@@ -61,32 +61,33 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	// eslint-disable-next-line no-unused-vars
-	linkContainer( details, this ) {
-		const { container, index } = details;
-		const { $contentContainers, $accordionItems } = this.getDefaultElements();
+	linkContainer( event ) {
+		const { container } = event.detail,
+			view = container.view.$el,
+			id = container.model.get( 'id' ),
+			currentId = this.$element.data( 'id' );
 
-		const containers = this.findElement( this.getSettings( 'selectors.accordionContentContainers' ) );
-		const accordionItems = this.findElement( this.getSettings( 'selectors.accordionItems' ) );
-		const lastContentContainer = containers[ containers.length - 1 ];
-		const lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
+		if ( id === currentId ) {
+			const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) );
+			const accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
+			const lastContentContainer = containers[ containers.length - 1 ];
+			const lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
 
-		lastAccordionItem.appendChild( lastContentContainer );
+			lastAccordionItem.appendChild( lastContentContainer );
 
-		this.updateListeners();
+			this.updateListeners( view );
+		}
 	}
 
-	updateListeners() {
-		this.elements.$accordionTitles = this.findElement( this.getSettings( 'selectors.accordionItemTitles' ) );
-		this.elements.$accordionItems = this.findElement( this.getSettings( 'selectors.accordionItems' ) );
+	updateListeners( view ) {
+		this.elements.$accordionTitles = view.find( this.getSettings( 'selectors.accordionItemTitles' ) );
+		this.elements.$accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
 	}
 
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
-		window.addEventListener( 'elementor/nested-container/created', ( e ) => {
-			this.linkContainer( e, this );
-		} );
+		window.addEventListener( 'elementor/nested-container/created', this.linkContainer.bind( this ) );
 	}
 
 	unbindEvents() {
