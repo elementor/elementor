@@ -77,7 +77,7 @@ PanelMenu.addAdminMenu = () => {
 	PanelMenu.addItem( {
 		name: 'apps',
 		icon: 'eicon-apps',
-		title: __( 'Extensions', 'elementor' ),
+		title: __( 'Addons', 'elementor' ),
 		type: 'link',
 		link: elementor.config.admin_apps_url,
 		newTab: true,
