@@ -48,7 +48,10 @@ class Widgets_Manager {
 	 * @return array
 	 */
 	private array $promoted_widgets = [
-		NestedElementsModule::EXPERIMENT_NAME => [ NestedTabs::class, Nested_Accordion::class ],
+		NestedElementsModule::EXPERIMENT_NAME => [
+			NestedTabs::class,
+			Nested_Accordion::class,
+		],
 	];
 
 	/**
@@ -671,7 +674,7 @@ class Widgets_Manager {
 	 * @param $classes
 	 * @return void
 	 */
-	public function register_promoted_active_widgets( string $experiment_name, array $classes ): void {
+	public function register_promoted_active_widgets( string $experiment_name, array $classes ) : void {
 		if ( ! Plugin::$instance->experiments->is_feature_active( $experiment_name ) || empty ( $classes ) ) {
 			return;
 		}
