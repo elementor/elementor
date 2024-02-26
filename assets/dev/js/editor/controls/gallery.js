@@ -79,7 +79,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 				const hasAlt = this.imageHasAlt( attachment );
 				if ( ! hasAlt ) {
 					$thumbnail.addClass( 'unoptimized__image' );
-					imagesWithoutAlt += hasAlt ? 0 : 1;
+					// eslint-disable-next-line capitalized-comments
+					// imagesWithoutAlt += hasAlt ? 0 : 1;
 				}
 
 				if ( hasPromotions && this.imageNotOptimized( attachment ) ) {
