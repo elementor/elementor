@@ -464,8 +464,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initElements() {
-		const ElementCollection = require( 'elementor-elements/collections/elements' );
-
 		let config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
@@ -473,10 +471,20 @@ export default class EditorBase extends Marionette.Application {
 			config = this.elements.toJSON();
 		}
 
-		this.elements = new ElementCollection( config );
+		this.elements = this.createBackboneElementsCollection( config );
 
-		this.elementsModel = new Backbone.Model( {
-			elements: this.elements,
+		this.elementsModel = this.createBackboneElementsModel( this.elements );
+	}
+
+	createBackboneElementsCollection( json ) {
+		const ElementCollection = require( 'elementor-elements/collections/elements' );
+
+		return new ElementCollection( json );
+	}
+
+	createBackboneElementsModel( elementsCollection ) {
+		return new Backbone.Model( {
+			elements: elementsCollection,
 		} );
 	}
 
@@ -506,18 +514,31 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
+		this.previewView = this.createPreviewView( document.$element[ 0 ],	elementor.elementsModel );
+
+		this.renderPreview( this.previewView );
+	}
+
+	createPreviewView( targetElement, model, config = {} ) {
+		const preview = new Preview( {
+			el: targetElement,
+			model,
+		} );
+
+		preview.setConfig( config );
 
 		preview.$el.empty();
 
+		return preview;
+	}
+
+	renderPreview( preview ) {
 		// In order to force rendering of children
 		preview.isRendered = true;
 
 		preview._renderChildren();
 
 		preview.triggerMethod( 'render' );
-
-		this.previewView = preview;
 	}
 
 	initFrontend() {
