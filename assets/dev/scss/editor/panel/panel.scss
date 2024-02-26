@@ -39,6 +39,11 @@
 		> .ui-resizable-w {
 			display: none;
 		}
+
+		#elementor-panel-elements-wrapper {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 
 	.ps__rail-y {
@@ -60,23 +65,23 @@
 		}
 	}
 
-    // Header
-    @import "header";
+  // Header
+  @import "header";
 
-    // Categories
-    @import "categories";
+  // Categories
+  @import "categories";
 
-	// Menu
-	@import "menu";
+  // Menu
+  @import "menu";
 
-	// Document Settings
-	@import "document-settings";
+  // Document Settings
+  @import "document-settings";
 
-	// Element Edit
-    @import "element-settings";
+  // Element Edit
+  @import "element-settings";
 
-    //Footer
-    @import "footer";
+  //Footer
+  @import "footer";
 }
 
 // Panel Elements
@@ -114,11 +119,44 @@
 	}
 }
 
+#elementor-panel-get-pro-elements-sticky {
+	position: sticky;
+	bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.6;
+	margin-block-end: -10px;
+
+	.elementor-get-pro-sticky-message {
+		margin-top: -14px;
+		min-height: 40px;
+		display: block;
+		padding: 9px min(35px, 5%);
+		gap: 10px;
+		background-color: var(--e-a-color-white);
+		color: var(--e-a-color-black);
+		text-align: center;
+		box-shadow: 0px -10px 14px -6px rgba(0, 0, 0, 0.05);
+
+		a {
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--e-a-btn-bg-accent);
+		}
+	}
+
+	img {
+		margin-left: 17px;
+	}
+}
+
 #elementor-panel-notice-wrapper .elementor-panel-notice {
 	width: 90%;
 	margin: 0 auto;
 	font-style: unset;
 	margin-block-end: 15px;
+
 	a {
 		font-weight: bold;
 		font-style: italic;
