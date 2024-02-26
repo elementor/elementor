@@ -61,9 +61,9 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	linkContainer( details ) {
-		const athis = this;
-		const { container, name, index } = details;
+	// eslint-disable-next-line no-unused-vars
+	linkContainer( details, this ) {
+		const { container, index } = details;
 		const { $contentContainers, $accordionItems } = this.getDefaultElements();
 
 		const containers = this.findElement( this.getSettings( 'selectors.accordionContentContainers' ) );
@@ -84,7 +84,9 @@ export default class NestedAccordion extends Base {
 
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
-		elementorFrontend.elements.$window.on( 'elementor/nested-container/created', this.linkContainer.bind( this ) );
+		window.addEventListener( 'elementor/nested-container/created', ( e ) => {
+			this.linkContainer( e, this );
+		} );
 	}
 
 	unbindEvents() {
