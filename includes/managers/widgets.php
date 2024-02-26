@@ -44,6 +44,8 @@ class Widgets_Manager {
 	 * @access private
 	 *
 	 * @var Widget_Base[]
+	 *
+	 * @return array
 	 */
 	private array $promoted_widgets = [
 		NestedElementsModule::EXPERIMENT_NAME => [ NestedTabs::class, Nested_Accordion::class ],
@@ -52,7 +54,7 @@ class Widgets_Manager {
 	/**
 	 * Init widgets.
 	 *
-	 * Initialize Elementor widgets manager. Include all the the widgets files
+	 * Initialize Elementor widgets manager. Include all the widgets files
 	 * and register each Elementor and WordPress widget.
 	 *
 	 * @since 2.0.0
@@ -669,17 +671,13 @@ class Widgets_Manager {
 	 * @param $classes
 	 * @return void
 	 */
-	public function register_promoted_active_widgets( $experiment_name, $classes ): void {
-		if ( ! Plugin::$instance->experiments->is_feature_active( $experiment_name ) ) {
+	public function register_promoted_active_widgets( string $experiment_name, array $classes ): void {
+		if ( ! Plugin::$instance->experiments->is_feature_active( $experiment_name ) || empty ( $classes ) ) {
 			return;
 		}
 
-		if ( is_array( $classes ) ) {
-			foreach ( $classes as $class_name ) {
-				$this->register( new $class_name() );
-			}
-		} else {
-			$this->register( new $classes() );
+		foreach ( $classes as $class_name ) {
+			$this->register( new $class_name() );
 		}
 	}
 }
