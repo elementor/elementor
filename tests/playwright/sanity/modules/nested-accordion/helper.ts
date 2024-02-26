@@ -126,7 +126,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 	// Act
 	await deleteItemButton.last().click();
 
-	await editor.page.waitForTimeout( 1000 );
+	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
 
 	// Assert
 	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
@@ -144,7 +144,7 @@ export async function addItemFromRepeater( editor: EditorPage, accordionID: stri
 	// Act
 	await addItemButton.click();
 
-	await editor.page.waitForTimeout( 1000 );
+	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
 
 	// Assert
 	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
