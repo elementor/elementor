@@ -17,13 +17,10 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 		$method = $reflection->getMethod( 'append_lazyload_selector' );
 		$method->setAccessible( true );
 		$lazyload = new LazyLoad();
-		
+
 		$control = [
 			'selectors' => [
 				'{{WRAPPER}}' => 'background-image: url("{{URL}}");',
-			],
-			'background_lazyload' => [
-				'active' => true,
 			],
 		];
 
@@ -41,11 +38,11 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 
 	function test_document_support_lazyload() {
 
-		//Arrange 
+		//Arrange
 		$post = $this->factory()->create_and_get_custom_post( [
 			'post_type' => 'test-document',
 		] );
-		
+
 		$document = new Document([
 			'post_id' => $post->ID
 		]);

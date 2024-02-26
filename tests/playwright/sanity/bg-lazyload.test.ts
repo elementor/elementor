@@ -11,7 +11,7 @@ test.describe( 'Background Lazy Load', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			e_lazyload: true,
+			e_lazyload_v2: true,
 		} );
 	} );
 
@@ -20,7 +20,7 @@ test.describe( 'Background Lazy Load', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			e_lazyload: false,
+			e_lazyload_v2: false,
 		} );
 	} );
 
