@@ -78,7 +78,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 
 				if ( shouldUseImprovedRepeaters( widgetType ) ) {
 					const domConfig = widgetNodes( widgetType ),
-						containerNode = container.document.$element.get( 0 ),
+						containerNode = container.view.$el[ 0 ],
 						targetContainer = containerNode.querySelector( domConfig.targetContainer ),
 						html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view } ),
 						node = document.createElement( 'div' );

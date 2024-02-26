@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { deleteItemFromRepeater } from './helper';
+import { addItemFromRepeater, deleteItemFromRepeater } from './helper';
 
 test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -32,16 +32,27 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 	test( 'General Test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
-			frame = editor.getPreviewFrame(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			nestedAccordionItemTitle = frame.locator( '.e-n-accordion-item' ),
-			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
-
+			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 		// Arrange
-		await editor.addWidget( 'nested-accordion', container );
+
+		await editor.selectElement( nestedAccordionID );
 
 		await test.step( 'Remove an item from the repeater', async () => {
-			await deleteItemFromRepeater( page, nestedAccordionItemTitle, nestedAccordionItemContent );
+			await deleteItemFromRepeater( editor, nestedAccordionID );
+		} );
+
+		await test.step( 'Add an item to the repeater', async () => {
+			await addItemFromRepeater( editor, nestedAccordionID );
+		} );
+
+		await test.step( 'Add an item to the second accordion', async () => {
+			const secondContainer = await editor.addElement( { elType: 'container' }, 'document' ),
+				secondNestedAccordionID = await editor.addWidget( 'nested-accordion', secondContainer );
+
+			await editor.selectElement( secondNestedAccordionID );
+
+			await addItemFromRepeater( editor, secondNestedAccordionID );
 		} );
 	} );
 } );

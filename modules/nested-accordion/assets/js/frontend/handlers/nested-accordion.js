@@ -61,20 +61,27 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	linkContainer() {
-		const containers = this.findElement( this.getSettings( 'selectors.accordionContentContainers' ) );
-		const accordionItems = this.findElement( this.getSettings( 'selectors.accordionItems' ) );
-		const lastContentContainer = containers[ containers.length - 1 ];
-		const lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
+	linkContainer( event ) {
+		const { container } = event.detail,
+			view = container.view.$el,
+			id = container.model.get( 'id' ),
+			currentId = this.$element.data( 'id' );
 
-		lastAccordionItem.appendChild( lastContentContainer );
+		if ( id === currentId ) {
+			const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
+				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
+				lastContentContainer = containers[ containers.length - 1 ],
+				lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
 
-		this.updateListeners();
+			lastAccordionItem.appendChild( lastContentContainer );
+
+			this.updateListeners( view );
+		}
 	}
 
-	updateListeners() {
-		this.elements.$accordionTitles = this.findElement( this.getSettings( 'selectors.accordionItemTitles' ) );
-		this.elements.$accordionItems = this.findElement( this.getSettings( 'selectors.accordionItems' ) );
+	updateListeners( view ) {
+		this.elements.$accordionTitles = view.find( this.getSettings( 'selectors.accordionItemTitles' ) );
+		this.elements.$accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
 	}
 
