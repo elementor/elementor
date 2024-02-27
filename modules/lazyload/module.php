@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'e_lazyload_v2';
+	const EXPERIMENT_NAME = 'e_lazyload';
 
 	public function get_name() {
 		return 'lazyload';
