@@ -983,7 +983,7 @@ class Element_Section extends Element_Base {
 			$this->add_responsive_control(
 				$base_control_key . '_width',
 				[
-					'label' => esc_html__( 'Width', 'elementor' ) . ' (%)',
+					'label' => esc_html__( 'Width', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ '%', 'vw', 'custom' ],
 					'default' => [
