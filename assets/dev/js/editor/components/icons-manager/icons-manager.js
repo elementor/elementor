@@ -1,4 +1,3 @@
-import ReactUtils from 'elementor-utils/react';
 import ModalLayout from './modal-layout';
 import { renderIconManager } from './components/icon-manager';
 import IconLibrary from './classes/icon-library';

@@ -26,6 +26,7 @@ function render( app, domElement ) {
 		ReactDOM.render( app, domElement );
 
 		unmountFunction = () => {
+			// eslint-disable-next-line react/no-deprecated
 			ReactDOM.unmountComponentAtNode( domElement );
 		};
 	}
