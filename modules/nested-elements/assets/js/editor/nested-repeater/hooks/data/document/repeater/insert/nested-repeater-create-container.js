@@ -45,7 +45,12 @@ export class NestedRepeaterCreateContainer extends Base {
 		const widgetType = container.settings.get( 'widgetType' );
 
 		if ( shouldUseImprovedRepeaters( widgetType ) ) {
-			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/nested-container/created' ) );
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/created', {
+					detail: {
+						container,
+					} },
+				) );
 		}
 	}
 }

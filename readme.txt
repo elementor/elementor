@@ -252,6 +252,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.19.4 - 2024-02-28 =
+
+* Fix: Widgets are not appearing in the widget panel when using various 3rd party plugins
+
+= 3.19.3 - 2024-02-26 =
+
+* Fix: Template is not importing when the Unfiltered File option is disabled ([#25071](https://github.com/elementor/elementor/issues/25071))
+
 = 3.19.2 - 2024-02-07 =
 
 * Fix: Integration script not functioning as expected in Build with AI feature
