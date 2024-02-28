@@ -8,7 +8,6 @@ use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\File_Types\Zip;
 use Elementor\Core\Utils\Exceptions;
-use Elementor\Plugin;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
