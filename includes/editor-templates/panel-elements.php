@@ -53,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
-		<# if ( promotion ) { #>
+		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
 					<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
