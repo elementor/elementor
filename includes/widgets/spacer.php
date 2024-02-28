@@ -113,14 +113,13 @@ class Widget_Spacer extends Widget_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 10,
 						'max' => 600,
 					],
 					'em' => [
-						'min' => 0.1,
 						'max' => 20,
 					],
 				],
+				'render_type' => 'template',
 				'selectors' => [
 					'{{WRAPPER}}' => '--spacer-size: {{SIZE}}{{UNIT}};',
 				],
@@ -139,6 +138,11 @@ class Widget_Spacer extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
+		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['space'] ) || empty( $settings['space']['size'] ) || 0 === $settings['space']['size'] ) {
+			return;
+		}
 		?>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>
@@ -156,6 +160,11 @@ class Widget_Spacer extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
+		<#
+		if ( '' === settings.space || '' === settings.space.size || 0 === settings.space.size ) {
+			return;
+		}
+		#>
 		<div class="elementor-spacer">
 			<div class="elementor-spacer-inner"></div>
 		</div>
