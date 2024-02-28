@@ -36,10 +36,9 @@ class Module extends BaseModule {
 
 	public function init() {
 		add_action( 'wp_head', function() {
-			if ( $this->should_lazyload() ) {
+			if ( ! $this->should_lazyload() ) {
 				return;
 			}
-
 			?>
 			<style>
 				.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
@@ -51,7 +50,7 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'wp_footer', function() {
-			if ( $this->should_lazyload() ) {
+			if ( ! $this->should_lazyload() ) {
 				return;
 			}
 			?>
