@@ -2,7 +2,7 @@ import { EditorDrawer } from './editor-drawer';
 
 let isRendered = false;
 
-export const editorOnButtonClicked = () => {
+export const editorOnButtonClicked = ( anchorPosition = 'left' ) => {
 	if ( ! isRendered ) {
 		isRendered = true;
 
@@ -11,7 +11,7 @@ export const editorOnButtonClicked = () => {
 		document.body.append( container );
 
 		ReactDOM.render(
-			<EditorDrawer />,
+			<EditorDrawer anchorPosition={ anchorPosition } />,
 			container,
 		);
 

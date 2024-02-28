@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WhatsNew } from './whats-new';
 
-export const EditorDrawer = () => {
+export const EditorDrawer = ( { anchorPosition = 'left' } ) => {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	useEffect( () => {
@@ -13,7 +13,11 @@ export const EditorDrawer = () => {
 			isOpen={ isOpen }
 			setIsOpen={ setIsOpen }
 			setIsRead={ () => document.body.classList.remove( 'e-has-notification' ) }
-			anchorPosition="left"
+			anchorPosition={ anchorPosition }
 		/>
 	);
+};
+
+EditorDrawer.propTypes = {
+	anchorPosition: PropTypes.oneOf( [ 'left', 'top', 'right', 'bottom' ] ),
 };

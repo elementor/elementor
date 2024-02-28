@@ -32,7 +32,7 @@ export const editorV2 = () => {
 					setIsRead( true );
 					elementorNotifications.is_unread = false;
 
-					editorOnButtonClicked();
+					editorOnButtonClicked( 'right' );
 				},
 			};
 		},
