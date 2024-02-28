@@ -3,6 +3,8 @@
 //
 
 .elementor-counter {
+	display: flex;
+	justify-content: center;
 
 	.elementor-counter- {
 
@@ -22,16 +24,15 @@
 			}
 
 			&prefix {
-				text-align: $end;
+				text-align: end;
 			}
 
 			&suffix {
-				text-align: $start;
+				text-align: start;
 			}
 		}
 
 		&title {
-			text-align: center;
 			font-size: 19px;
 			font-weight: 400;
 			line-height: 2.5;
