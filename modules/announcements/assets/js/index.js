@@ -9,7 +9,6 @@ export default class AnnouncementIndex {
 
 	async initAnnouncement() {
 		const container = document.getElementById( 'e-announcements-root' );
-
 		const announcements = window.elementorAnnouncementsConfig?.announcements;
 		if ( ! announcements || ! container ) {
 			return;
@@ -17,13 +16,13 @@ export default class AnnouncementIndex {
 
 		await $e.components.register( new AnnouncementCommands() );
 
-		const { root } = ReactUtils.render( (
+		const { unmount } = ReactUtils.render( (
 			<>
 				<Overlay />
 				<Announcements
 					announcements={ announcements }
 					unMount={ () => {
-						ReactUtils.unmount( root, container );
+						unmount();
 						container.remove();
 					} }
 				/>

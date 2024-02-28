@@ -72,7 +72,7 @@ export const renderLayoutApp = ( options = {
 
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
-	const { root } = ReactUtils.render( (
+	const { unmount } = ReactUtils.render( (
 		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
@@ -104,7 +104,7 @@ export const renderLayoutApp = ( options = {
 					previewContainer.destroy();
 					options.onClose?.();
 
-					ReactUtils.unmount( root, rootElement );
+					unmount();
 					rootElement.remove();
 
 					openPanel();

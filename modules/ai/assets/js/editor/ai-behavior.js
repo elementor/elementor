@@ -39,7 +39,7 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		window.elementorAiCurrentContext = this.getOption( 'context' );
 
-		const { root } = ReactUtils.render( (
+		const { unmount } = ReactUtils.render( (
 			<App
 				type={ this.getOption( 'type' ) }
 				controlType={ this.getOption( 'controlType' ) }
@@ -48,7 +48,7 @@ export default class AiBehavior extends Marionette.Behavior {
 				additionalOptions={ this.getOption( 'additionalOptions' ) }
 				controlView={ this.getOption( 'controlView' ) }
 				onClose={ () => {
-					ReactUtils.unmount( root, rootElement );
+					unmount();
 					rootElement.remove();
 				} }
 				colorScheme={ colorScheme }

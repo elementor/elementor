@@ -13,7 +13,6 @@ export default class extends elementorModules.Module {
 		// Fetch fa4 to fa5 migration data
 		elementor.helpers.fetchFa4ToFa5Mapping();
 		this.cache = {};
-		this.root = null;
 	}
 
 	getLayout() {
@@ -34,7 +33,7 @@ export default class extends elementorModules.Module {
 
 			layoutModal
 				.on( 'show', this.onPickerShow.bind( this ) )
-				.on( 'hide', this.unMountIconManager );
+				.on( 'hide', this.unMountIconManager.bind( this ) );
 		}
 		return this.layout;
 	}
@@ -46,9 +45,7 @@ export default class extends elementorModules.Module {
 	}
 
 	unMountIconManager() {
-		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
-
-		ReactUtils.unmount( this.root, containerElement );
+		this.unmount();
 	}
 
 	loadIconLibraries() {
@@ -143,9 +140,9 @@ export default class extends elementorModules.Module {
 		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
 
 		iconManagerConfig.activeTab = activeTab;
-		const { root } = renderIconManager( iconManagerConfig );
+		const { unmount } = renderIconManager( iconManagerConfig );
 
-		this.root = root;
+		this.unmount = unmount;
 	}
 
 	updateControlValue() {

@@ -8,6 +8,7 @@ use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\File_Types\Zip;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Plugin;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -590,6 +591,13 @@ class Uploads_Manager extends Base_Object {
 		$is_tmp_name_valid = empty( $file['tmp_name'] ) || realpath( $file['tmp_name'] ) !== false;
 
 		if ( ( empty( $file['name'] ) && empty( $file['tmp_name'] ) ) || ! $is_name_valid || ! $is_tmp_name_valid ) {
+			if ( ! empty( $file['name'] ) ) {
+				Plugin::$instance->logger->get_logger()->info( 'Name: ' . $file['name'] . '. Basename: ' . basename( $file['name'] ) );
+			}
+			if ( ! empty( $file['tmp_name'] ) ) {
+				Plugin::$instance->logger->get_logger()->info( 'Tmpname: ' . $file['tmp_name'] . '. Realpath: ' . realpath( $file['tmp_name'] ) );
+			}
+
 			return new \WP_Error(
 				Exceptions::FORBIDDEN,
 				esc_html__( 'This file is not allowed for security reasons.', 'elementor' )

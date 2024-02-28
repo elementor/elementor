@@ -1,7 +1,7 @@
 import ReactUtils from 'elementor-utils/react';
 
 ( () => {
-	let styleguideRoot = null;
+	let unmountUtil;
 	const styleguideBodyClass = 'e-styleguide-shown';
 
 	/**
@@ -12,18 +12,15 @@ import ReactUtils from 'elementor-utils/react';
 
 		document.body.classList.add( styleguideBodyClass );
 
-		const { root } = ReactUtils.render( <App />, getStyleguideWidget() );
-		styleguideRoot = root;
+		const { unmount } = ReactUtils.render( <App />, getStyleguideWidget() );
+		unmountUtil = unmount;
 	}
 
 	/**
 	 * Remove the app from the page.
 	 */
 	function unmount() {
-		ReactUtils.unmount( styleguideRoot, getStyleguideWidget() );
-
-		styleguideRoot = null;
-
+		unmountUtil();
 		document.body.classList.remove( styleguideBodyClass );
 	}
 
