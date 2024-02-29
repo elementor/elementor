@@ -1,5 +1,5 @@
 import Base from '../../../base';
-import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { findChildContainerOrFail, shouldUseImprovedRepeaters } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterDuplicateContainer extends Base {
 	getId() {
@@ -18,7 +18,18 @@ export class NestedRepeaterDuplicateContainer extends Base {
 			},
 		} );
 
-		container.render();
+		const widgetType = container.settings.get( 'widgetType' );
+
+		if ( shouldUseImprovedRepeaters( widgetType ) ) {
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/created', {
+					detail: {
+						container,
+					} },
+				) );
+		} else {
+			container.render();
+		}
 	}
 }
 
