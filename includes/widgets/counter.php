@@ -249,8 +249,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'toggle' => false,
-				'default' => 'center',
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
@@ -335,8 +333,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'toggle' => false,
-				'default' => 'after',
 				'options' => [
 					'before' => [
 						'title' => esc_html__( 'Before', 'elementor' ),
@@ -377,8 +373,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'toggle' => false,
-				'default' => 'center',
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),

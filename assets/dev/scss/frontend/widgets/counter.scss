@@ -5,6 +5,7 @@
 .elementor-counter {
 	display: flex;
 	justify-content: center;
+	flex-direction: column-reverse;
 
 	.elementor-counter- {
 
@@ -15,6 +16,7 @@
 				font-size: 69px;
 				font-weight: 600;
 				line-height: 1;
+				text-align: center;
 			}
 
 			&prefix {
@@ -34,6 +36,7 @@
 			font-size: 19px;
 			font-weight: 400;
 			line-height: 2.5;
+			text-align: center;
 			margin: 0;
 			padding: 0;
 		}
