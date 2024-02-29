@@ -85,7 +85,7 @@
 
 			+ .elementor-control-type-tabs,
 			&:not(.elementor-hidden-control) {
-				~ .elementor-control-separator-default {
+				+ .elementor-control-separator-default {
 					padding-block-start: 15px;
 				}
 			}

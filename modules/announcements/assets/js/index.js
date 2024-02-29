@@ -1,3 +1,4 @@
+import ReactUtils from 'elementor-utils/react';
 import { Announcements, Overlay } from './components';
 import AnnouncementCommands from './e-component';
 
@@ -12,20 +13,21 @@ export default class AnnouncementIndex {
 		if ( ! announcements || ! container ) {
 			return;
 		}
-		const unMount = () => {
-			ReactDOM.unmountComponentAtNode( container );
-			document.getElementById( 'e-announcements-root' ).remove();
-		};
 
 		await $e.components.register( new AnnouncementCommands() );
 
-		ReactDOM.render(
+		const { unmount } = ReactUtils.render( (
 			<>
 				<Overlay />
-				<Announcements announcements={ announcements } unMount={ unMount } />
-			</>,
-			container,
-		);
+				<Announcements
+					announcements={ announcements }
+					unMount={ () => {
+						unmount();
+						container.remove();
+					} }
+				/>
+			</>
+		), container );
 	}
 }
 
