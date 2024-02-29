@@ -68,7 +68,7 @@ export default class NestedAccordion extends Base {
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
-			const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
+			const containers = view.find( `${ this.getSettings( 'selectors.accordionContentContainers' ) }, ${ this.getSettings( 'selectors.accordionContent' ) }` ),
 				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
 				lastContentContainer = containers[ containers.length - 1 ],
 				lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
