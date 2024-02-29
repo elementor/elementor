@@ -245,7 +245,7 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'counter-align',
+			'counter_align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -329,7 +329,7 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'title-position',
+			'title_position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -369,7 +369,7 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'title-align',
+			'title_align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
