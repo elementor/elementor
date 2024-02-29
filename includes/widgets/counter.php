@@ -96,6 +96,9 @@ class Widget_Counter extends Widget_Base {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$start = is_rtl() ? 'right' : 'left';
+		$end = ! is_rtl() ? 'right' : 'left';
+
 		$this->start_controls_section(
 			'section_counter',
 			[
@@ -252,15 +255,15 @@ class Widget_Counter extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-flex eicon-text-align-left',
+						'icon' => "eicon-text-align-$start",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-flex eicon-text-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-flex eicon-text-align-right',
+						'icon' => "eicon-text-align-$end",
 					],
 				],
 				'selectors_dictionary' => [
@@ -376,15 +379,15 @@ class Widget_Counter extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-flex eicon-text-align-left',
+						'icon' => "eicon-text-align-$start",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-flex eicon-text-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-flex eicon-text-align-right',
+						'icon' => "eicon-text-align-$end",
 					],
 				],
 				'selectors' => [
