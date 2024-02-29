@@ -1,3 +1,4 @@
+import ReactUtils from 'elementor-utils/react';
 import { EditorDrawer } from './editor-drawer';
 
 let isRendered = false;
@@ -10,10 +11,9 @@ export const editorOnButtonClicked = ( anchorPosition = 'left' ) => {
 
 		document.body.append( container );
 
-		ReactDOM.render(
-			<EditorDrawer anchorPosition={ anchorPosition } />,
-			container,
-		);
+		ReactUtils.render( (
+			<EditorDrawer anchorPosition={ anchorPosition } />
+		), container );
 
 		return;
 	}
