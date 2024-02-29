@@ -203,10 +203,34 @@ class Widget_Counter extends Widget_Base {
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'separator' => 'before',
 				'dynamic' => [
 					'active' => true,
 				],
 				'default' => esc_html__( 'Cool Number', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'title_tag',
+			[
+				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+					'p' => 'p',
+				],
+				'default' => 'div',
+				'condition' => [
+					'title!' => '',
+				],
 			]
 		);
 
@@ -217,6 +241,38 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => esc_html__( 'Number', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'counter-align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'center',
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-flex eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-flex eicon-text-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-flex eicon-text-align-right',
+					],
+				],
+				'selectors_dictionary' => [
+					'start' => 'text-align: {{VALUE}}; --prefix-grow: 0; --suffix-grow: 1;',
+					'center' => 'text-align: {{VALUE}}; --prefix-grow: 1; --suffix-grow: 1;',
+					'end' => 'text-align: {{VALUE}}; --prefix-grow: 1; --suffix-grow: 0;',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-number-wrapper' => '{{VALUE}}',
+				],
 			]
 		);
 
@@ -274,26 +330,26 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'title-position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'toggle' => false,
-				'default' => 'column',
+				'default' => 'after',
 				'options' => [
-					'above' => [
-						'title' => esc_html__( 'Above', 'elementor' ),
+					'before' => [
+						'title' => esc_html__( 'Before', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
-					'below' => [
-						'title' => esc_html__( 'Below', 'elementor' ),
+					'after' => [
+						'title' => esc_html__( 'After', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
 				'selectors_dictionary' => [
-					'above' => 'column-reverse',
-					'below' => 'column',
+					'before' => 'column',
+					'after' => 'column-reverse',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter' => 'flex-direction: {{VALUE}};',
@@ -304,7 +360,19 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
+			'title_gap',
+			[
+				'label' => esc_html__( 'Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter' => 'gap: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'title-align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
@@ -427,16 +495,18 @@ class Widget_Counter extends Widget_Base {
 		view.addRenderAttribute( 'counter-title', 'class', 'elementor-counter-title' );
 
 		view.addInlineEditingAttributes( 'counter-title' );
+
+		const titleTag = elementor.helpers.validateHTMLTag( settings.title_tag );
 		#>
 		<div {{{ view.getRenderAttributeString( 'elementor-counter' ) }}}>
+			<# if ( settings.title ) {
+				#><{{ titleTag }} {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ settings.title }}}</{{ titleTag }}><#
+			} #>
 			<div {{{ view.getRenderAttributeString( 'counter-number' ) }}}>
 				<span {{{ view.getRenderAttributeString( 'prefix' ) }}}>{{{ settings.prefix }}}</span>
 				<span {{{ view.getRenderAttributeString( 'counter' ) }}}>{{{ settings.starting_number }}}</span>
 				<span {{{ view.getRenderAttributeString( 'suffix' ) }}}>{{{ settings.suffix }}}</span>
 			</div>
-			<# if ( settings.title ) {
-				#><div {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ settings.title }}}</div><#
-			} #>
 		</div>
 		<?php
 	}
@@ -478,16 +548,20 @@ class Widget_Counter extends Widget_Base {
 		$this->add_render_attribute( 'counter-title', 'class', 'elementor-counter-title' );
 
 		$this->add_inline_editing_attributes( 'counter-title' );
+
+		$title_tag = Utils::validate_html_tag( $settings['title_tag'] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-counter' ); ?>>
+			<?php
+			if ( $settings['title'] ) :
+				?><<?php Utils::print_validated_html_tag( $title_tag ); ?> <?php $this->print_render_attribute_string( 'counter-title' ); ?>><?php $this->print_unescaped_setting( 'title' ); ?></<?php Utils::print_validated_html_tag( $title_tag ); ?>><?php
+			endif;
+			?>
 			<div <?php $this->print_render_attribute_string( 'counter-number' ); ?>>
 				<span <?php $this->print_render_attribute_string( 'prefix' ); ?>><?php $this->print_unescaped_setting( 'prefix' ); ?></span>
 				<span <?php $this->print_render_attribute_string( 'counter' ); ?>><?php $this->print_unescaped_setting( 'starting_number' ); ?></span>
 				<span <?php $this->print_render_attribute_string( 'suffix' ); ?>><?php $this->print_unescaped_setting( 'suffix' ); ?></span>
 			</div>
-			<?php if ( $settings['title'] ) : ?>
-				<div <?php $this->print_render_attribute_string( 'counter-title' ); ?>><?php $this->print_unescaped_setting( 'title' ); ?></div>
-			<?php endif; ?>
 		</div>
 		<?php
 	}

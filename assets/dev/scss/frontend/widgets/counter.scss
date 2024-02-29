@@ -17,18 +17,16 @@
 				line-height: 1;
 			}
 
-			&prefix,
-			&suffix {
-				flex-grow: 1;
-				white-space: pre-wrap;
-			}
-
 			&prefix {
 				text-align: end;
+				flex-grow: var(--prefix-grow, 1);
+				white-space: pre-wrap;
 			}
 
 			&suffix {
 				text-align: start;
+				flex-grow: var(--suffix-grow, 1);
+				white-space: pre-wrap;
 			}
 		}
 
@@ -36,6 +34,8 @@
 			font-size: 19px;
 			font-weight: 400;
 			line-height: 2.5;
+			margin: 0;
+			padding: 0;
 		}
 	}
 }
