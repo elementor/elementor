@@ -11,10 +11,9 @@ export const editorOnButtonClicked = ( anchorPosition = 'left' ) => {
 
 		document.body.append( container );
 
-		ReactUtils.render(
-			<EditorDrawer anchorPosition={ anchorPosition } />,
-			container,
-		);
+		ReactUtils.render( (
+			<EditorDrawer anchorPosition={ anchorPosition } />
+		), container );
 
 		return;
 	}
