@@ -103,6 +103,22 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
+	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdminPage = new WpAdminPage( page, testInfo ),
+			editor = await wpAdminPage.openNewPage(),
+			promotionContainer = '#elementor-navigator__footer';
+		await editor.changeUiTheme( 'dark' );
+
+		// Act.
+		await wpAdminPage.openNewPage();
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
+	} );
+
 	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page }, testInfo ) => {
 			// Arrange.
 			const wpAdminPage = new WpAdminPage( page, testInfo );
