@@ -1,6 +1,6 @@
 import { test, expect, Locator, Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expectScreenshotToMatchLocator } from './helper';
+import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
 import { setup } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
@@ -123,31 +123,11 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 
 		await test.step( 'Add an item to the repeater', async () => {
-			// Arrange
-			const addItemButton = page.locator( '.elementor-repeater-add' ),
-				numberOfTitles = await nestedAccordionItemTitle.count(),
-				numberOfContents = await nestedAccordionItemContent.count();
-
-			// Act
-			await addItemButton.click();
-
-			// Assert
-			await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
-			await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
+			await addItemFromRepeater( editor, nestedAccordionID );
 		} );
 
 		await test.step( 'Remove an item from the repeater', async () => {
-			// Arrange
-			const deleteItemButton = page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
-				numberOfTitles = await nestedAccordionItemTitle.count(),
-				numberOfContents = await nestedAccordionItemContent.count();
-
-			// Act
-			await deleteItemButton.last().click();
-
-			// Assert
-			await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
-			await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
+			await deleteItemFromRepeater( editor, nestedAccordionID );
 		} );
 
 		await test.step( 'Duplicate an item to the repeater', async () => {

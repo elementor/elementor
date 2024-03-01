@@ -111,7 +111,8 @@ jobs:
           'pluginTester2_containers',
           'pluginTester1_sections',
           'pluginTester2_sections',
-          'promotions'
+          'promotions',
+          'nested-atomic-repeaters',
         ]
     steps:
       - name: Checkout source code
@@ -138,9 +139,7 @@ jobs:
           WP_CORE_VERSION: 'latest'
         run: node ./.github/scripts/build-wp-env.js
       - name: Install dependencies
-        run: |
-          npm ci
-          sed -i -e "s/image: 'mariadb'/image: 'mariadb:11.2.2-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
+        run: npm ci
       - name: Install WordPress environment
         run: |
           npm run start-local-server
