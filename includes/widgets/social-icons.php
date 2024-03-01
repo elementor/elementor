@@ -610,6 +610,10 @@ class Widget_Social_Icons extends Widget_Base {
 					$social = get_post_meta( $item['social_icon']['value']['id'], '_wp_attachment_image_alt', true );
 				}
 
+				if ( empty( $social ) ) {
+					continue;
+				}
+
 				$link_key = 'link_' . $index;
 
 				$this->add_render_attribute( $link_key, 'class', [
@@ -654,6 +658,10 @@ class Widget_Social_Icons extends Widget_Base {
 				var link = item.link ? item.link.url : '',
 					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
+
+				if ( ! social ) {
+					return;
+				}
 				#>
 				<span class="elementor-grid-item">
 					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
