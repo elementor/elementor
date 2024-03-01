@@ -99,7 +99,7 @@ export default class NestedAccordion extends Base {
 			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( settings.attributes.index, index + 1 );
 			element.setAttribute( 'id', `${ itemIdBase }${ index }` );
 			element.querySelector( settings.selectors.accordionItemTitlesText ).setAttribute( 'data-binding-index', index + 1 );
-			$accordionContent[ index ].setAttribute( settings.attributes.ariaLabelledBy, index + 1 );
+			$accordionContent[ index ].setAttribute( settings.attributes.ariaLabelledBy, `${ itemIdBase }${ index }` );
 		} );
 	}
 

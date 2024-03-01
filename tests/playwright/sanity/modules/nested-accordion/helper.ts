@@ -166,7 +166,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 		currentTitleText = await currentTitle.locator( '.e-n-accordion-item-title-text' ).innerText(),
 		currentContainerId = await currentTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'data-id' ),
 		currentContainerAriaLabeledBy = await currentTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'aria-labelledby' ),
-		currentContainerWidgetTitle = await currentTitle.locator( '.elementor-heading-title' ).innerText();
+		currentContainerWidgetTitle = await currentTitle.getByText( 'Add Your' ).textContent();
 
 	const cloneItemButton = editor.page.getByRole( 'button', { name: 'Duplicate' } ).nth( index );
 
@@ -180,7 +180,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 		clonedTitleText = await clonedTitle.locator( '.e-n-accordion-item-title-text' ).innerText(),
 		clonedContainerId = await clonedTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'data-id' ),
 		clonedContainerAriaLabeledBy = await clonedTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'aria-labelledby' ),
-		clonedContainerWidgetTitle = await clonedTitle.locator( '.elementor-heading-title' ).innerText();
+		clonedContainerWidgetTitle = await clonedTitle.getByText( 'Add Your' ).textContent();
 
 	await editor.getPreviewFrame().locator( `.e-n-accordion` ).waitFor();
 
@@ -189,12 +189,11 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 	await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 
 	expect( currentTitleId ).not.toEqual( clonedTitleId );
-	expect( parseInt( clonedTitleIndex ) ).not.toEqual( parseInt( currentTitleIndex ) + 1 );
+	expect( parseInt( clonedTitleIndex ) ).toEqual( parseInt( currentTitleIndex ) + 1 );
 	expect( currentTitleText ).toEqual( clonedTitleText );
 	expect( currentContainerId ).not.toEqual( clonedContainerId );
 	expect( currentContainerAriaLabeledBy ).not.toEqual( clonedContainerAriaLabeledBy );
 	expect( currentContainerWidgetTitle ).toEqual( clonedContainerWidgetTitle );
-
 	expect( currentTitleId ).toEqual( currentContainerAriaLabeledBy );
 	expect( clonedTitleId ).toEqual( clonedContainerAriaLabeledBy );
 
@@ -203,6 +202,6 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 			nextTitleIndex = await nextTitle.locator( 'summary' ).getAttribute( 'data-accordion-index' );
 
 		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( currentTitleIndex ) + 2 );
-		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( clonedTitleIndex ) + 2 );
+		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( clonedTitleIndex ) + 1 );
 	}
 }
