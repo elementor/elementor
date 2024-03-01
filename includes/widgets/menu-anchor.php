@@ -142,8 +142,6 @@ class Widget_Menu_Anchor extends Widget_Base {
 				'id' => sanitize_html_class( $anchor ),
 			]
 		);
-
-		$this->add_render_attribute( 'inner',  );
 		?>
 		<div <?php $this->print_render_attribute_string( 'inner' ); ?>></div>
 		<?php
