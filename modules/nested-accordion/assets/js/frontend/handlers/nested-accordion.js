@@ -62,7 +62,7 @@ export default class NestedAccordion extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container } = event.detail,
+		const { container, index, targetContainer } = event.detail,
 			view = container.view.$el,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
@@ -70,10 +70,11 @@ export default class NestedAccordion extends Base {
 		if ( id === currentId ) {
 			const containers = view.find( `${ this.getSettings( 'selectors.accordionContentContainers' ) }, ${ this.getSettings( 'selectors.accordionContent' ) }` ),
 				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
-				lastContentContainer = containers[ containers.length - 1 ],
-				lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
+				targetIndex = index !== undefined ? index + 1 : accordionItems.length - 1,
+				targetContentContainer = targetContainer !== undefined ? targetContainer.view.$el[ 0 ] : containers[ containers.length - 1 ],
+				targetAccordionItem = accordionItems[ targetIndex ] || accordionItems[ accordionItems.length - 1 ];
 
-			lastAccordionItem.appendChild( lastContentContainer );
+			targetAccordionItem.appendChild( targetContentContainer );
 
 			this.updateListeners( view );
 		}

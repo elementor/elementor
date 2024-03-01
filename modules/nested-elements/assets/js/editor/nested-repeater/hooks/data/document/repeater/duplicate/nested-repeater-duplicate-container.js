@@ -11,7 +11,7 @@ export class NestedRepeaterDuplicateContainer extends Base {
 	}
 
 	apply( { container, index } ) {
-		$e.run( 'document/elements/duplicate', {
+		const result = $e.run( 'document/elements/duplicate', {
 			container: findChildContainerOrFail( container, index ),
 			options: {
 				edit: false, // Not losing focus.
@@ -25,6 +25,8 @@ export class NestedRepeaterDuplicateContainer extends Base {
 				new CustomEvent( 'elementor/nested-container/created', {
 					detail: {
 						container,
+						targetContainer: result,
+						index,
 					} },
 				) );
 		} else {

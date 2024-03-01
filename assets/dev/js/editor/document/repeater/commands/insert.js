@@ -84,7 +84,14 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 						node = document.createElement( 'div' );
 
 					node.innerHTML = html;
-					targetContainer.appendChild( node.querySelector( domConfig.node ) );
+					const nodeToInsert = node.querySelector( domConfig.node );
+
+					if ( options.at ) {
+						const targetNode = targetContainer.children[ options.at ];
+						targetContainer.insertBefore( nodeToInsert, targetNode );
+					} else {
+						targetContainer.appendChild( nodeToInsert );
+					}
 				} else {
 					// Trigger render on widget but with the settings of the control.
 					repeaterContainer.render();
