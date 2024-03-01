@@ -456,7 +456,7 @@ class Widget_Text_Editor extends Widget_Base {
 		$editor_content = $this->get_settings_for_display( 'editor' );
 		$editor_content = $this->parse_text_editor( $editor_content );
 
-		if ( '' === $editor_content ) {
+		if ( empty( $editor_content ) ) {
 			return;
 		}
 
