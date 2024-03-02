@@ -477,23 +477,23 @@ class Widget_Alert extends Widget_Base {
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 
 			<?php if ( ! Utils::is_empty( $settings['alert_title'] ) ) : ?>
-				<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php $this->print_unescaped_setting( 'alert_title' ); ?></span>
+			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php $this->print_unescaped_setting( 'alert_title' ); ?></span>
 			<?php endif; ?>
 
 			<?php if ( ! Utils::is_empty( $settings['alert_description'] ) ) : ?>
-				<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php $this->print_unescaped_setting( 'alert_description' ); ?></span>
+			<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php $this->print_unescaped_setting( 'alert_description' ); ?></span>
 			<?php endif; ?>
 
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
-				<button type="button" class="elementor-alert-dismiss">
-					<?php
-					if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
-						Icons_Manager::render_icon( $settings['dismiss_icon'], [ 'aria-hidden' => 'true' ] );
-					} else { ?>
-						<span aria-hidden="true">&times;</span>
-					<?php } ?>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
-				</button>
+			<button type="button" class="elementor-alert-dismiss">
+				<?php
+				if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
+					Icons_Manager::render_icon( $settings['dismiss_icon'], [ 'aria-hidden' => 'true' ] );
+				} else { ?>
+					<span aria-hidden="true">&times;</span>
+				<?php } ?>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
+			</button>
 			<?php endif; ?>
 
 		</div>
@@ -510,52 +510,52 @@ class Widget_Alert extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-			<#
-			if ( ! settings.alert_title && ! settings.alert_description ) {
-				return;
+		<#
+		if ( ! settings.alert_title && ! settings.alert_description ) {
+			return;
+		}
+
+		view.addRenderAttribute(
+			'wrapper',
+			{
+				'class': [ 'elementor-alert', 'elementor-alert-' . settings.alert_type ],
+				'role': 'alert',
 			}
+		);
 
-			view.addRenderAttribute(
-				'wrapper',
-				{
-					'class': [ 'elementor-alert', 'elementor-alert-' . settings.alert_type ],
-					'role': 'alert',
-				}
-			);
+		view.addRenderAttribute( 'alert_title', 'class', 'elementor-alert-title' );
 
-			view.addRenderAttribute( 'alert_title', 'class', 'elementor-alert-title' );
+		view.addRenderAttribute( 'alert_description', 'class', 'elementor-alert-description' );
 
-			view.addRenderAttribute( 'alert_description', 'class', 'elementor-alert-description' );
+		view.addInlineEditingAttributes( 'alert_title', 'none' );
 
-			view.addInlineEditingAttributes( 'alert_title', 'none' );
+		view.addInlineEditingAttributes( 'alert_description' );
 
-			view.addInlineEditingAttributes( 'alert_description' );
+		var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+			migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
+		#>
+		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
 
-			var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-				migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
-			#>
-			<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
+			<# if ( settings.alert_title ) { #>
+			<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
+			<# } #>
 
-				<# if ( settings.alert_title ) { #>
-					<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
+			<# if ( settings.alert_description ) { #>
+			<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
+			<# } #>
+
+			<# if ( 'show' === settings.show_dismiss ) { #>
+			<button type="button" class="elementor-alert-dismiss">
+				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+				{{{ iconHTML.value }}}
+				<# } else { #>
+					<span aria-hidden="true">&times;</span>
 				<# } #>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
+			</button>
+			<# } #>
 
-				<# if ( settings.alert_description ) { #>
-					<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
-				<# } #>
-
-				<# if ( 'show' === settings.show_dismiss ) { #>
-					<button type="button" class="elementor-alert-dismiss">
-						<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
-						{{{ iconHTML.value }}}
-						<# } else { #>
-							<span aria-hidden="true">&times;</span>
-						<# } #>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
-					</button>
-				<# } #>
-
-			</div>
+		</div>
 		<?php
 	}
 }
