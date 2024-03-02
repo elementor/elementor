@@ -248,6 +248,78 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
+			'counter_position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-$start",
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-$end",
+					],
+					'stretch' => [
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-grow',
+					],
+				],
+				'selectors_dictionary' => [
+					'start' => 'text-align: {{VALUE}}; --prefix-grow: 0; --suffix-grow: 1; --number-grow: 0;',
+					'center' => 'text-align: {{VALUE}}; --prefix-grow: 1; --suffix-grow: 1; --number-grow: 0;',
+					'end' => 'text-align: {{VALUE}}; --prefix-grow: 1; --suffix-grow: 0; --number-grow: 0;',
+					'stretch' => '--prefix-grow: 0; --suffix-grow: 0; --number-grow: 1;',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-number-wrapper' => '{{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'counter_gap',
+			[
+				'label' => esc_html__( 'Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'counter_position',
+							'operator' => '!==',
+							'value' => 'stretch',
+						],
+						[
+							'relation' => 'or',
+							'terms' => [
+								[
+									'name' => 'prefix',
+									'operator' => '!==',
+									'value' => '',
+								],
+								[
+									'name' => 'suffix',
+									'operator' => '!==',
+									'value' => '',
+								],
+							],
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'counter_align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
@@ -266,13 +338,11 @@ class Widget_Counter extends Widget_Base {
 						'icon' => "eicon-text-align-$end",
 					],
 				],
-				'selectors_dictionary' => [
-					'start' => 'text-align: {{VALUE}}; --prefix-grow: 0; --suffix-grow: 1;',
-					'center' => 'text-align: {{VALUE}}; --prefix-grow: 1; --suffix-grow: 1;',
-					'end' => 'text-align: {{VALUE}}; --prefix-grow: 1; --suffix-grow: 0;',
-				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-counter-number-wrapper' => '{{VALUE}}',
+					'{{WRAPPER}} .elementor-counter-number' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'counter_position' => 'stretch',
 				],
 			]
 		);

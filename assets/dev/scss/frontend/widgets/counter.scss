@@ -9,9 +9,10 @@
 
 	.elementor-counter- {
 
-		&number- {
+		&number {
+			flex-grow: var(--number-grow, 0);
 
-			&wrapper {
+			&-wrapper {
 				display: flex;
 				font-size: 69px;
 				font-weight: 600;
@@ -19,13 +20,13 @@
 				text-align: center;
 			}
 
-			&prefix {
+			&-prefix {
 				text-align: end;
 				flex-grow: var(--prefix-grow, 1);
 				white-space: pre-wrap;
 			}
 
-			&suffix {
+			&-suffix {
 				text-align: start;
 				flex-grow: var(--suffix-grow, 1);
 				white-space: pre-wrap;
