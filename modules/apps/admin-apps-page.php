@@ -14,7 +14,7 @@ class Admin_Apps_Page {
 		<div class="wrap e-a-apps">
 
 			<div class="e-a-page-title">
-				<h2><?php echo esc_html__( 'Popular Addons, New Possibilities.', 'elementor' ); ?></h2>
+				<h2><?php echo esc_html__( 'Popular Add-ons, New Possibilities.', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Boost your web-creation process with add-ons, plugins, and more tools specially selected to unleash your creativity, increase productivity, and enhance your Elementor-powered website.', 'elementor' ); ?>*<br>
 					<a href="https://go.elementor.com/wp-dash-apps-about-apps-page/" target="_blank"><?php echo esc_html__( 'Learn more about this page.', 'elementor' ); ?></a>
 				</p>
