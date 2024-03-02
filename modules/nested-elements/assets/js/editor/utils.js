@@ -53,3 +53,27 @@ export function shouldUseImprovedRepeaters( widgetType ) {
 	isWidgetSupportNesting( widgetType ) &&
 	isWidgetSupportImprovedRepeaters( widgetType );
 }
+
+export function sortContainerViews( views, insertIndex ) {
+	const viewKeys = Object.keys( views ),
+		numberOfViews = viewKeys.length;
+
+	if ( insertIndex === numberOfViews - 1 ) {
+		return views;
+	}
+
+	const updatedViews = {},
+		viewObjects = Object.values( views );
+
+	for ( let loopIndex = 0; loopIndex < numberOfViews; loopIndex++ ) {
+		if ( insertIndex >= loopIndex ) {
+			updatedViews[ viewKeys[ loopIndex ] ] = viewObjects[ loopIndex ];
+		} else if ( insertIndex + 1 === loopIndex ) {
+			updatedViews[ viewKeys[ numberOfViews - 1 ] ] = viewObjects[ numberOfViews - 1 ];
+		} else {
+			updatedViews[ viewKeys[ loopIndex - 1 ] ] = viewObjects[ loopIndex - 1 ];
+		}
+	}
+
+	return updatedViews;
+}
