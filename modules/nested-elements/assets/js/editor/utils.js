@@ -54,7 +54,7 @@ export function shouldUseImprovedRepeaters( widgetType ) {
 	isWidgetSupportImprovedRepeaters( widgetType );
 }
 
-export function sortContainerViews( views, insertIndex ) {
+export function maybeSortContainerViews( views, insertIndex ) {
 	const viewKeys = Object.keys( views ),
 		numberOfViews = viewKeys.length;
 

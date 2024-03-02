@@ -1,5 +1,5 @@
 import Base from '../../../base';
-import { findChildContainerOrFail, shouldUseImprovedRepeaters, sortContainerViews } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { findChildContainerOrFail, shouldUseImprovedRepeaters, maybeSortContainerViews } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterDuplicateContainer extends Base {
 	getId() {
@@ -30,7 +30,7 @@ export class NestedRepeaterDuplicateContainer extends Base {
 					} },
 				) );
 
-			container.view.children._views = sortContainerViews( container.view.children._views, index );
+			container.view.children._views = maybeSortContainerViews( container.view.children._views, index );
 		} else {
 			container.render();
 		}
