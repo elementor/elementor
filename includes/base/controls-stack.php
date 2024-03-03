@@ -2405,7 +2405,9 @@ abstract class Controls_Stack extends Base_Object {
 				$args = array_replace_recursive( $target_tab, $args );
 			}
 		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
-			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			if ( ! Performance::should_optimize_controls() ) {
+				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
 		}
 
 		return $args;
