@@ -130,6 +130,10 @@ class Widget_Shortcode extends Widget_Base {
 	protected function render() {
 		$shortcode = $this->get_settings_for_display( 'shortcode' );
 
+		if ( empty( $shortcode ) ) {
+			return;
+		}
+
 		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>
 		<div class="elementor-shortcode"><?php echo $shortcode; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
