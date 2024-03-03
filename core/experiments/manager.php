@@ -473,7 +473,7 @@ class Manager extends Base_Object {
 			'name' => 'e_optimized_control_loading',
 			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Use this experiment to improve control loading, improve site performance by not loading style controls when not needed.', 'elementor' ),
+			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
 		] );
