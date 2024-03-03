@@ -199,7 +199,7 @@
 		margin-inline-start: auto;
 
 		a {
-			color: $e-accent;
+			color: var(--e-a-color-accent-promotion);;
 			font-family: 'Roboto', sans-serif;
 			font-weight: 500;
 			font-size: 13px;
@@ -210,7 +210,7 @@
 			}
 
 			&:hover {
-				color: $e-accent;
+				color: var(--e-a-color-accent-promotion);;
 			}
 		}
 	}
