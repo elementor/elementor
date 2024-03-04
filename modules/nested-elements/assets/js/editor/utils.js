@@ -77,3 +77,17 @@ export function maybeSortContainerViews( views, insertIndex ) {
 
 	return updatedViews;
 }
+
+export function sortViewsByModels( models, views ) {
+	const updatedViews = {};
+
+	models.forEach( ( model ) => {
+		const modelId = model.get( 'id' ),
+			viewKey = Object.keys( views ).find( ( key ) => modelId === views[ key ].$childViewContainer[ 0 ].attributes[ 'data-id' ].value );
+
+		updatedViews[ viewKey ] = views[ viewKey ];
+	} );
+
+	return updatedViews;
+}
+
