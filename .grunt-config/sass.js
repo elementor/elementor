@@ -37,13 +37,6 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'modules/lazyload/assets/scss',
-				src: 'frontend.scss',
-				dest: 'assets/css/modules/lazyload',
-				ext: '.css',
-			},
-			{
-				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',
