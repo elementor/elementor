@@ -118,7 +118,6 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					</Stack>
 				</Box>
 			) }
-			<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 			{ data.result && (
 				<CodeDisplayWrapper>
@@ -129,6 +128,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					} }>
 						{ data.result }
 					</ReactMarkdown>
+					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>

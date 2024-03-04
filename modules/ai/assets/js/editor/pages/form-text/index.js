@@ -202,7 +202,7 @@ const FormText = (
 							) )
 						}
 					</Stack>
-					<VoicePromotionAlert introductionKey="ai-context-text-promotion" />
+					<VoicePromotionAlert introductionKey="ai-context-text-promotion" sx={ { mb: 2 } } />
 
 					<Stack direction="row" alignItems="center" sx={ { my: 1 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
