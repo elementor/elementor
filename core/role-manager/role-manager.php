@@ -210,6 +210,25 @@ class Role_Manager extends Settings_Page {
 		</div>
 		<?php
 	}
+
+	public function add_custom_html_enable_control( $role_slug ) {
+		$value = 'custom-html';
+		$id = self::ROLE_MANAGER_ADVANCED . '_' . $role_slug . '_' . $value;
+		$name = 'elementor_' . self::ROLE_MANAGER_ADVANCED . '[' . $role_slug . '][]';
+
+		$advanced_options = $this->get_user_advanced_options();
+		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : [];
+		?>
+		<div class="elementor-role-control">
+			<label for="<?php echo esc_attr( $id ); ?>">
+				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked ), true ); ?>>
+				<?php echo esc_html__( 'Enable the option to use the HTML widget', 'elementor' ); ?>
+			</label>
+			<p class="elementor-role-control-warning"><strong><?php echo esc_html__( 'Heads up', 'elementor' ); ?>:</strong> <?php echo esc_html__( 'Giving broad access to edit the HTML widget can pose a security risk to your website because it enables users to run malicious scripts, etc.', 'elementor' ); ?></p>
+		</div>
+		<?php
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -322,5 +341,6 @@ class Role_Manager extends Settings_Page {
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
+		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );
 	}
 }
