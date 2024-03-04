@@ -1360,12 +1360,16 @@ class Controls_Manager {
 			return false;
 		}
 
-		if ( ! empty( $control_data['selectors'] ) ) {
+		$render_type = $control_data['render_type'] ?? '';
+		if ( 'template' === $render_type ) {
+			return false;
+		}
+
+		if ( 'ui' === $render_type ) {
 			return true;
 		}
 
-		$render_type = $control_data['render_type'] ?? '';
-		if ( 'ui' === $render_type ) {
+		if ( ! empty( $control_data['selectors'] ) ) {
 			return true;
 		}
 
