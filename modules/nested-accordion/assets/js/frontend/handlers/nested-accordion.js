@@ -62,21 +62,39 @@ export default class NestedAccordion extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container } = event.detail,
+		const { container, targetIndex } = event.detail,
 			view = container.view.$el,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
-			const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
-				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
-				lastContentContainer = containers[ containers.length - 1 ],
-				lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
+			const [ accordionItem, contentContainer ] = 'undefined' === typeof targetIndex ? this.insert( view ) : this.move( view, targetIndex );
 
-			lastAccordionItem.appendChild( lastContentContainer );
+			accordionItem.appendChild( contentContainer );
 
 			this.updateListeners( view );
 		}
+	}
+
+	insert( view ) {
+		const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
+			accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
+			contentContainer = containers[ containers.length - 1 ],
+			accordionItem = accordionItems[ accordionItems.length - 1 ];
+
+		return [ accordionItem, contentContainer ];
+	}
+
+	move( view, targetIndex ) {
+		const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
+			accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
+		const { $accordionItems, $accordionContent } = this.getDefaultElements();
+
+		if ( 'undefined' !== typeof targetIndex && targetIndex !== $accordionContent.length ) {
+			return [ $accordionItems[ targetIndex ], $accordionContent[ targetIndex ] ];
+		}
+
+		return [ accordionItem, contentContainer ] = this.insert( view );
 	}
 
 	updateListeners( view ) {

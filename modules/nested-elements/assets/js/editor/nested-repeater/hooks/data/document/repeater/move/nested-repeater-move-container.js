@@ -1,5 +1,8 @@
 import Base from '../../../base';
-import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	findChildContainerOrFail,
+	shouldUseImprovedRepeaters,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterMoveContainer extends Base {
 	getId() {
@@ -19,6 +22,16 @@ export class NestedRepeaterMoveContainer extends Base {
 				edit: false, // Not losing focus.
 			},
 		} );
+
+		const widgetType = container.settings.get( 'widgetType' );
+
+		if ( shouldUseImprovedRepeaters( widgetType ) ) {
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/created', {
+					detail: { container, targetIndex },
+				} ),
+			);
+		}
 	}
 }
 
