@@ -3,6 +3,7 @@ namespace Elementor\Modules\LazyLoad;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Frontend\Performance;
 use Elementor\Element_Base;
 use Elementor\Utils;
 
@@ -39,8 +40,11 @@ class Module extends BaseModule {
 	}
 
 	private function update_element_attributes( Element_Base $element ) {
+		Performance::set_use_style_controls( true );
 		$settings = $element->get_settings_for_display();
 		$controls = $element->get_controls();
+		Performance::set_use_style_controls( false );
+
 		$lazyload_attribute_name = 'data-e-bg-lazyload';
 
 		$controls_with_background_image = array_filter( $controls, function( $control ) {
@@ -136,7 +140,6 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
-
 			$current_document = \Elementor\Plugin::$instance->documents->get_current();
 
 			if ( ! $current_document ) {
@@ -153,7 +156,6 @@ class Module extends BaseModule {
 		} );
 
 		add_filter('elementor/files/css/selectors', function( $control, $value, $css_instance ) {
-
 			$post_id = method_exists( $css_instance, 'get_post_id' ) ? $css_instance->get_post_id() : false;
 
 			if ( ! $post_id ) {
