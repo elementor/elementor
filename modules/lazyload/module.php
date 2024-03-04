@@ -20,7 +20,7 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Lazy Load Background Images (v2)', 'elementor' ),
+			'title' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Lazy loading images that are not in the viewport improves initial page load performance and user experience. By activating this experiment all background images except the first one on your page will be lazy loaded to improve your LCP score', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
