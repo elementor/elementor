@@ -304,7 +304,6 @@ const FormLayout = ( {
 						onBack={ () => setIsPromptEditable( false ) }
 						onEdit={ () => setIsPromptEditable( true ) }
 					/>
-					<VoicePromotionAlert introductionKey="ai-context-layout-promotion" />
 
 					{
 						( screenshots.length > 0 || isLoading ) && (
@@ -339,6 +338,7 @@ const FormLayout = ( {
 											}
 										</Box>
 									</Box>
+									<VoicePromotionAlert introductionKey="ai-context-layout-promotion" />
 								</Box>
 
 								{
