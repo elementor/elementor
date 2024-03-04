@@ -693,6 +693,11 @@ class Widget_Icon_Box extends Widget_Base {
 		}
 
 		$has_icon = ! empty( $settings['icon'] );
+		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
+
+		if ( ! $has_icon && ! $has_content ) {
+			return;
+		}
 
 		if ( $has_link ) {
 			$this->add_link_attributes( 'link', $settings['link'] );
@@ -716,6 +721,7 @@ class Widget_Icon_Box extends Widget_Base {
 
 		?>
 		<div class="elementor-icon-box-wrapper">
+
 			<?php if ( $has_icon ) : ?>
 			<div class="elementor-icon-box-icon">
 				<<?php Utils::print_validated_html_tag( $html_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'icon' ); ?>>
@@ -729,18 +735,27 @@ class Widget_Icon_Box extends Widget_Base {
 				</<?php Utils::print_validated_html_tag( $html_tag ); ?>>
 			</div>
 			<?php endif; ?>
+
+			<?php if ( $has_content ) : ?>
 			<div class="elementor-icon-box-content">
-				<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
-					<<?php Utils::print_validated_html_tag( $html_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'title_text' ); ?>>
-						<?php $this->print_unescaped_setting( 'title_text' ); ?>
-					</<?php Utils::print_validated_html_tag( $html_tag ); ?>>
-				</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
+
+				<?php if ( ! Utils::is_empty( $settings['title_text'] ) ) : ?>
+					<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
+						<<?php Utils::print_validated_html_tag( $html_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'title_text' ); ?>>
+							<?php $this->print_unescaped_setting( 'title_text' ); ?>
+						</<?php Utils::print_validated_html_tag( $html_tag ); ?>>
+					</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
+				<?php endif; ?>
+
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
 					<p <?php $this->print_render_attribute_string( 'description_text' ); ?>>
 						<?php $this->print_unescaped_setting( 'description_text' ); ?>
 					</p>
 				<?php endif; ?>
+
 			</div>
+			<?php endif; ?>
+
 		</div>
 		<?php
 	}
@@ -756,10 +771,19 @@ class Widget_Icon_Box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		// For older version `settings.icon` is needed.
+		var hasIcon = settings.icon || settings.selected_icon.value;
+		var hasContent = settings.title_text || settings.description_text;
+
+		if ( ! hasIcon && ! hasContent ) {
+			return;
+		}
+
 		var hasLink = settings.link.url,
 			htmlTag = hasLink ? 'a' : 'span',
 			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
+			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
+			titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 		view.addRenderAttribute( 'icon', 'class', 'elementor-icon elementor-animation-' + settings.hover_animation );
 
@@ -774,8 +798,8 @@ class Widget_Icon_Box extends Widget_Base {
 		view.addInlineEditingAttributes( 'description_text' );
 		#>
 		<div class="elementor-icon-box-wrapper">
-			<?php // settings.icon is needed for older version ?>
-			<# if ( settings.icon || settings.selected_icon.value ) { #>
+
+			<# if ( hasIcon ) { #>
 			<div class="elementor-icon-box-icon">
 				<{{{ htmlTag }}} {{{ view.getRenderAttributeString( 'link' ) }}} {{{ view.getRenderAttributeString( 'icon' ) }}}>
 					<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
@@ -786,17 +810,25 @@ class Widget_Icon_Box extends Widget_Base {
 				</{{{ htmlTag }}}>
 			</div>
 			<# } #>
+
+			<# if ( hasContent ) { #>
 			<div class="elementor-icon-box-content">
-				<# var titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size ); #>
+
+				<# if ( settings.title_text ) { #>
 				<{{{ titleSizeTag }}} class="elementor-icon-box-title">
 					<{{{ htmlTag }}} {{{ view.getRenderAttributeString( 'link' ) }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>
 						{{{ settings.title_text }}}
 					</{{{ htmlTag }}}>
 				</{{{ titleSizeTag }}}>
+				<# } #>
+
 				<# if ( settings.description_text ) { #>
 				<p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
 				<# } #>
+
 			</div>
+			<# } #>
+
 		</div>
 		<?php
 	}
