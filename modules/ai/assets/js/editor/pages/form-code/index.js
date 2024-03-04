@@ -17,6 +17,7 @@ import {
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../components/prompt-library-link';
 import { useRequestIds } from '../../context/requests-ids';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -117,6 +118,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					</Stack>
 				</Box>
 			) }
+			<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 			{ data.result && (
 				<CodeDisplayWrapper>

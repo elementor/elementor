@@ -9,6 +9,7 @@ import { EditImageProvider } from './context/edit-image-context';
 import { GlobalActionsProvider } from './context/global-actions-context';
 import { GlobalSettingsProvider } from './context/global-settings-context';
 import PromptHistory from '../../components/prompt-history';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const initialData = {
 	isAllSaved: false,
@@ -99,6 +100,7 @@ const FormMedia = ( {
 
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
+				<VoicePromotionAlert introductionKey="ai-context-media-promotion" />
 
 				<Divider />
 

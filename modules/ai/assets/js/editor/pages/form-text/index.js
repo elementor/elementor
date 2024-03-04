@@ -19,6 +19,7 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import { useRequestIds } from '../../context/requests-ids';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const promptActions = [
 	{
@@ -165,6 +166,7 @@ const FormText = (
 							</GenerateButton>
 						</Stack>
 					</Stack>
+					<VoicePromotionAlert introductionKey="ai-context-text-promotion" />
 				</Box>
 			) }
 
