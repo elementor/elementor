@@ -340,7 +340,7 @@ class Role_Manager extends Settings_Page {
 		}
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
-		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );
+		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
 	}
 }
