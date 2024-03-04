@@ -849,6 +849,8 @@ BaseElementView = BaseContainer.extend( {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
 		} );
+
+		elementorFrontend.elements.$window.on( 'elementor/nested-container/created', this.linkDataBindings.bind( this ) );
 	},
 
 	dispatchElementLifeCycleEvent( eventType ) {
