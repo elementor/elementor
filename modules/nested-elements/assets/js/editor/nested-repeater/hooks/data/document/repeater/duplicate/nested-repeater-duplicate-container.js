@@ -27,10 +27,11 @@ export class NestedRepeaterDuplicateContainer extends Base {
 						container,
 						targetContainer: result,
 						index,
+						repeaterType: 'duplicate',
 					} },
 				) );
 
-			container.view.children._views = maybeSortContainerViews( container.view.children._views, index );
+			// container.view.children._views = maybeSortContainerViews( container.view.children._views, index );
 		} else {
 			container.render();
 		}
