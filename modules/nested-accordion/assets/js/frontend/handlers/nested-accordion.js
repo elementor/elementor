@@ -15,10 +15,15 @@ export default class NestedAccordion extends Base {
 				accordionContentContainers: '.e-n-accordion > .e-con',
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
+				accordionItemTitlesText: '.e-n-accordion-item-title-text',
 				accordionContent: '.e-n-accordion-item > .e-con',
 				accordionWrapper: '.e-n-accordion-item',
 			},
 			default_state: 'expanded',
+			attributes: {
+				index: 'data-accordion-index',
+				ariaLabelledBy: 'aria-labelledby',
+			},
 		};
 	}
 
@@ -62,21 +67,38 @@ export default class NestedAccordion extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container } = event.detail,
+		const { container, index, targetContainer } = event.detail,
 			view = container.view.$el,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
-			const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
+			const containers = view.find( `${ this.getSettings( 'selectors.accordionContentContainers' ) }, ${ this.getSettings( 'selectors.accordionContent' ) }` ),
 				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
-				lastContentContainer = containers[ containers.length - 1 ],
-				lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
+				isSpecificIndex = index !== undefined,
+				targetIndex = isSpecificIndex ? index + 1 : accordionItems.length - 1,
+				targetContentContainer = targetContainer !== undefined ? targetContainer.view.$el[ 0 ] : containers[ containers.length - 1 ],
+				targetAccordionItem = accordionItems[ targetIndex ] || accordionItems[ accordionItems.length - 1 ];
 
-			lastAccordionItem.appendChild( lastContentContainer );
+			targetAccordionItem.appendChild( targetContentContainer );
 
+			this.updateIndexValues();
 			this.updateListeners( view );
 		}
+	}
+
+	updateIndexValues() {
+		const { $accordionContent, $accordionItems } = this.getDefaultElements(),
+			settings = this.getSettings(),
+			itemIdBase = $accordionItems[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+
+		$accordionItems.each( ( index, element ) => {
+			element.setAttribute( 'id', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( settings.attributes.index, index + 1 );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( 'aria-controls', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitlesText ).setAttribute( 'data-binding-index', index + 1 );
+			$accordionContent[ index ].setAttribute( settings.attributes.ariaLabelledBy, `${ itemIdBase }${ index }` );
+		} );
 	}
 
 	updateListeners( view ) {
