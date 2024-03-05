@@ -82,10 +82,7 @@ export default class NestedAccordion extends Base {
 
 			targetAccordionItem.appendChild( targetContentContainer );
 
-			if ( isSpecificIndex ) {
-				this.updateIndexValues();
-			}
-
+			this.updateIndexValues();
 			this.updateListeners( view );
 		}
 	}
@@ -96,8 +93,9 @@ export default class NestedAccordion extends Base {
 			itemIdBase = $accordionItems[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
 
 		$accordionItems.each( ( index, element ) => {
-			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( settings.attributes.index, index + 1 );
 			element.setAttribute( 'id', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( settings.attributes.index, index + 1 );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( 'aria-controls', `${ itemIdBase }${ index }` );
 			element.querySelector( settings.selectors.accordionItemTitlesText ).setAttribute( 'data-binding-index', index + 1 );
 			$accordionContent[ index ].setAttribute( settings.attributes.ariaLabelledBy, `${ itemIdBase }${ index }` );
 		} );
