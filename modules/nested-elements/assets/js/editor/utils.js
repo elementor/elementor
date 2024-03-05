@@ -67,4 +67,3 @@ export function sortViewsByModels( container ) {
 
 	return updatedViews;
 }
-
