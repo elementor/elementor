@@ -29,7 +29,7 @@ class Role_Manager extends Settings_Page {
 		return get_option( 'elementor_' . self::ROLE_MANAGER_OPTION_NAME, [] );
 	}
 
-	private function get_role_manager_advanced_options() {
+	public function get_role_manager_advanced_options() {
 		return get_option( 'elementor_' . self::ROLE_MANAGER_ADVANCED, [] );
 	}
 
@@ -324,5 +324,7 @@ class Role_Manager extends Settings_Page {
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
+
+		add_filter( 'elementor/editor/user/restrictions', [ $this, 'get_role_manager_advanced_options' ] );
 	}
 }
