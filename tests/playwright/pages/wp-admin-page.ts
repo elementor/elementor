@@ -187,22 +187,20 @@ export default class WpAdminPage extends BasePage {
 		// Check if the language is active already.
 		await this.page.goto( '/wp-admin/options-general.php' );
 
-		if ( ! await this.page.$( 'html[lang=' + languageCheck + ']' ) ) {
+		if ( ! await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible() ) {
 			await this.page.selectOption( '#WPLANG', language );
 			await this.page.locator( '#submit' ).click();
 		}
 
 		// Install language if necessary
 		await this.page.goto( 'wp-admin/update-core.php' );
-		await this.page.waitForLoadState( 'domcontentloaded' );
+		await this.page.getByTitle( 'WordPress Updates' ).waitFor();
 
-		const hasLanguageUpdateButton = await this.page.locator( '.wrap' ).evaluate( ( element ) => {
-			return ! element?.querySelector( 'input.button[name="upgrade"]' );
-		} );
+		const hasLanguageUpdateButton = await this.page.getByRole( 'button', { name: 'Update Translations' } ).isVisible();
 
 		if ( hasLanguageUpdateButton ) {
-			await this.page.locator( 'form.upgrade input.button[name="upgrade"]' ).click();
-			await this.page.waitForLoadState( 'domcontentloaded' );
+			await this.page.getByRole( 'button', { name: 'Update Translations' } ).click();
+			await this.page.getByText( 'Go to WordPress Updates page' ).waitFor();
 		}
 
 		// Set user profile language
@@ -210,7 +208,7 @@ export default class WpAdminPage extends BasePage {
 
 		await this.page.goto( 'wp-admin/profile.php' );
 		await this.page.selectOption( '[name="locale"]', userProfileLanguage );
-		await this.page.locator( 'input#submit' ).click();
+		await this.page.getByRole( 'button', { name: 'Update Profile' } ).click();
 	}
 
 	async confirmExperimentModalIfOpen() {

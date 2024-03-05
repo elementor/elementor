@@ -31,11 +31,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
-		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
@@ -66,10 +63,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
@@ -138,9 +132,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
 
@@ -162,7 +155,10 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
+		expect.soft( await pageView.screenshot( {
+			type: 'jpeg',
+			quality: 90,
+		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
 
 		await editor.togglePreviewMode();
 
@@ -189,9 +185,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
 
@@ -227,9 +222,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Container full width and position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
 
@@ -265,9 +259,8 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.getPreviewFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
@@ -281,10 +274,8 @@ test.describe( 'Container tests @container', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 
 		// Arrange.
-		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.openNewPage();
-
-		const container = await editor.addElement( { elType: 'container' }, 'document' ),
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 
 		// Set Canvas template.
@@ -369,11 +360,8 @@ test.describe( 'Container tests @container', () => {
 		await page.waitForSelector( '.attachment-details-copy-link' );
 
 		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
-			editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' ),
+			editor = await wpAdmin.openNewPage(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
 		// Set Canvas template.
@@ -429,10 +417,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
@@ -462,9 +447,8 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
 		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
@@ -482,7 +466,7 @@ test.describe( 'Container tests @container', () => {
 
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			const editor = await createCanvasPage( page, testInfo, wpAdmin );
+			const editor = await createCanvasPage( wpAdmin );
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
 			expect.soft( await container.screenshot( {
@@ -493,7 +477,7 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setLanguage( '' );
 		}
 
-		const editor = await createCanvasPage( page, testInfo, wpAdmin );
+		const editor = await createCanvasPage( wpAdmin );
 		const container = await addContainerAndHover( editor );
 
 		expect.soft( await container.screenshot( {
@@ -504,10 +488,7 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
 
@@ -535,9 +516,8 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const breakpoints = Breakpoints.getBasic().reverse();
 		const directions = [ 'right', 'down', 'left', 'up' ];
-		const editor = new EditorPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
 	} );
@@ -549,9 +529,8 @@ test.describe( 'Container tests @container', () => {
 
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			const editor = new EditorPage( page, testInfo );
+			const editor = await wpAdmin.openNewPage();
 
-			await wpAdmin.openNewPage();
 			await editor.addElement( { elType: 'container' }, 'document' );
 			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
 		} finally {
@@ -562,10 +541,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
@@ -588,16 +564,13 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test grid container controls', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
-		const containers = [
-			{ setting: 'start', id: '' },
-			{ setting: 'center', id: '' },
-			{ setting: 'end', id: '' },
-			{ setting: 'stretch', id: '' },
-		];
+			editor = await wpAdmin.openNewPage(),
+			containers = [
+				{ setting: 'start', id: '' },
+				{ setting: 'center', id: '' },
+				{ setting: 'end', id: '' },
+				{ setting: 'stretch', id: '' },
+			];
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
@@ -636,10 +609,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Verify pasting of elements into the Container Element Add section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
@@ -700,10 +670,7 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Test container wizard', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 
 		await test.step( 'Test container type selector', async () => {
@@ -735,11 +702,8 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		// Arrange.
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
-		const containerSelector = '.elementor-element-edit-mode',
+		const editor = await wpAdmin.openNewPage(),
+			containerSelector = '.elementor-element-edit-mode',
 			frame = editor.getPreviewFrame();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
@@ -759,11 +723,9 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Convert to container does not show when only containers are on the page', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
+		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
 		await editor.addWidget( widgets.button, containerId );
 
 		await page.click( '#elementor-panel-saver-button-publish-label' );
@@ -779,11 +741,8 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Test spacer inside of the container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
-		const frame = editor.getPreviewFrame(),
+			editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame(),
 			spacerSize = '200',
 			defaultSpacerSize = '50';
 
@@ -890,9 +849,8 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Gaps Control test - Check that control placeholder', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = new EditorPage( page, testInfo );
+			editor = await wpAdmin.openNewPage();
 
-		await wpAdmin.openNewPage();
 		await editor.addElement( { elType: 'container' }, 'document' );
 
 		const desktopGapControlColumnInput = page.locator( '.elementor-control-flex_gap input[data-setting="column"]' ),
@@ -930,10 +888,7 @@ test.describe( 'Container tests @container', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 
-			const editor = new EditorPage( page, testInfo );
-
-			await wpAdmin.openNewPage();
-
+			let editor = await wpAdmin.openNewPage();
 			let frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
@@ -959,7 +914,7 @@ test.describe( 'Container tests @container', () => {
 				await wpAdmin.setLanguage( 'he_IL', '' );
 			} );
 
-			await wpAdmin.openNewPage();
+			editor = await wpAdmin.openNewPage();
 			frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
@@ -983,11 +938,8 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setLanguage( '' );
 		}
 
-		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.openNewPage();
-
-		const frame = editor.getPreviewFrame();
+		const editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame();
 
 		await test.step( 'Load Template', async () => {
 			const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
@@ -1014,10 +966,8 @@ test.describe( 'Container tests @container', () => {
 	} );
 } );
 
-async function createCanvasPage( page, testInfo, wpAdmin: WpAdminPage ) {
-	const editor = new EditorPage( page, testInfo );
-
-	await wpAdmin.openNewPage();
+async function createCanvasPage( wpAdmin: WpAdminPage ) {
+	const editor = await wpAdmin.openNewPage();
 	await editor.useCanvasTemplate();
 	return editor;
 }
@@ -1051,8 +1001,10 @@ async function captureJustifySnapShot(
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsContent = page.locator( `${ justifyControlsClass } .elementor-control-content ` );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
-	await expect.soft( justifyControlsContent )
-		.toHaveScreenshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.png` );
+	expect.soft( await justifyControlsContent.screenshot( {
+		type: 'jpeg',
+		quality: 90,
+	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
 
 	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
 }
