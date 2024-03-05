@@ -903,14 +903,19 @@ class Nested_Accordion extends Widget_Nested_Base {
 	protected function content_template_single_repeater_item() {
 		?>
 		<#
+		const elementUid = view.getIDInt().toString().substring( 0, 3 ) + view.collection.length;
+
 		const itemWrapperAttributes = {
+			'id': 'e-n-accordion-item-' + elementUid,
 			'class': [ 'e-n-accordion-item', 'e-normal' ],
 		};
 
 		const itemTitleAttributes = {
 			'class': [ 'e-n-accordion-item-title' ],
+			'data-accordion-index': view.collection.length + 1,
 			'tabindex': -1,
 			'aria-expanded': 'false',
+			'aria-controls': 'e-n-accordion-item-' + elementUid,
 		};
 
 		const itemTitleTextAttributes = {
@@ -918,6 +923,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'items',
 			'data-binding-setting': ['item_title'],
+			'data-binding-index': view.collection.length + 1,
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
