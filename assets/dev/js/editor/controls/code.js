@@ -105,7 +105,9 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 	},
 
 	isEditable() {
-		return ! elementor.userCan( 'custom-html' );
+		const isEditable = this.model.get( 'is_editable' );
+
+		return undefined !== isEditable ? isEditable : true;
 	},
 } );
 
