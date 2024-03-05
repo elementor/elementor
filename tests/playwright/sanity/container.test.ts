@@ -893,7 +893,7 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setLanguage( 'he_IL' );
 
 			let editor = await wpAdmin.openNewPage();
-			let frame = await editor.getPreviewFrame();
+			let frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
 				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
@@ -903,8 +903,8 @@ test.describe( 'Container tests @container', () => {
 			} );
 
 			await test.step( 'Rtl screenshot', async () => {
-				await expect.soft( await page.locator( 'body' ) ).toHaveClass( /rtl/ );
-				await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
+				await expect( page.locator( 'body' ) ).toHaveClass( /rtl/ );
+				await expect( editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
 
 				await editor.togglePreviewMode();
 
@@ -929,8 +929,8 @@ test.describe( 'Container tests @container', () => {
 			} );
 
 			await test.step( 'Rtl screenshot with LTR UI', async () => {
-				await expect.soft( await page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
-				await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
+				await expect( page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
+				await expect( editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
 
 				await editor.togglePreviewMode();
 
@@ -954,8 +954,8 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Ltr screenshot', async () => {
-			await expect.soft( await page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
-			await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).not.toHaveClass( /rtl/ );
+			await expect( page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
+			await expect( editor.getPreviewFrame().locator( 'body' ) ).not.toHaveClass( /rtl/ );
 
 			await editor.togglePreviewMode();
 
