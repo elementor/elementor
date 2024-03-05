@@ -515,7 +515,7 @@ export default class EditorPage extends BasePage {
 	async publishAndViewPage() {
 		await this.publishPage();
 		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
-		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.locator( '.elementor-panel-menu-item-view-page a' ).click();
 		await this.page.waitForLoadState();
 	}
 
