@@ -31,7 +31,7 @@ export class NestedRepeaterDuplicateContainer extends Base {
 					} },
 				) );
 
-			container.view.children._views = sortViewsByModels( container.model.get( 'elements' ).models, container.view.children._views );
+			container.view.children._views = sortViewsByModels( container );
 		} else {
 			container.render();
 		}

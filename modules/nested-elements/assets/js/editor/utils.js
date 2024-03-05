@@ -54,14 +54,15 @@ export function shouldUseImprovedRepeaters( widgetType ) {
 	isWidgetSupportImprovedRepeaters( widgetType );
 }
 
-export function sortViewsByModels( models, views ) {
-	const updatedViews = {};
+export function sortViewsByModels( container ) {
+	const models = container.model.get( 'elements' ).models,
+		children = container.view.children,
+		updatedViews = {};
 
-	models.forEach( ( model ) => {
-		const modelId = model.get( 'id' ),
-			viewKey = Object.keys( views ).find( ( key ) => modelId === views[ key ].$childViewContainer[ 0 ].attributes[ 'data-id' ].value );
-
-		updatedViews[ viewKey ] = views[ viewKey ];
+	models.forEach( ( model, index ) => {
+		const view = children.findByModel( model );
+		view._index = index;
+		updatedViews[ view.cid ] = view;
 	} );
 
 	return updatedViews;
