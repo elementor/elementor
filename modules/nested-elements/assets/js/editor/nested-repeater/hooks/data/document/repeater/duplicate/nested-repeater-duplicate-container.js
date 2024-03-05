@@ -21,17 +21,16 @@ export class NestedRepeaterDuplicateContainer extends Base {
 		const widgetType = container.settings.get( 'widgetType' );
 
 		if ( shouldUseImprovedRepeaters( widgetType ) ) {
+			container.view.children._views = sortViewsByModels( container );
+
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
 				new CustomEvent( 'elementor/nested-container/created', {
 					detail: {
 						container,
 						targetContainer: result,
 						index,
-						repeaterType: 'duplicate',
 					} },
 				) );
-
-			container.view.children._views = sortViewsByModels( container );
 		} else {
 			container.render();
 		}
