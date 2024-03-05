@@ -46,7 +46,7 @@ class Admin_Notices extends Module {
 		 * Filters Elementor admin notices.
 		 *
 		 * This hook can be used by external developers to manage existing
-		 * admin notice or to add new notices for Elementor addons.
+		 * admin notice or to add new notices for Elementor add-ons.
 		 *
 		 * @param array $notices A list of notice classes.
 		 */

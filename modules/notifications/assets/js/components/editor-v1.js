@@ -1,24 +1,16 @@
-import { useEffect, useState } from 'react';
-import { WhatsNew } from './whats-new';
+import { editorOnButtonClicked } from './editor-on-button-clicked';
 
-export const EditorV1 = () => {
-	const [ isOpen, setIsOpen ] = useState( true );
-	const [ isRead, setIsRead ] = useState( false );
+export const editorV1 = () => {
+	elementor.on( 'panel:init', () => {
+		if ( elementorNotifications.is_unread ) {
+			document.body.classList.add( 'e-has-notification' );
+		}
 
-	useEffect( () => {
-		elementor.on( 'elementor/editor/panel/whats-new/clicked', () => setIsOpen( true ) );
-	}, [] );
-
-	useEffect( () => {
-		document.body.classList.remove( 'e-has-notification' );
-	}, [ isRead ] );
-
-	return (
-		<WhatsNew
-			isOpen={ isOpen }
-			setIsOpen={ setIsOpen }
-			setIsRead={ setIsRead }
-			anchorPosition="left"
-		/>
-	);
+		elementor.getPanelView().getPages( 'menu' ).view.addItem( {
+			name: 'notification-center',
+			icon: 'eicon-notification',
+			title: __( 'What\'s New', 'elementor' ),
+			callback: editorOnButtonClicked,
+		}, 'navigate_from_page', 'view-page' );
+	} );
 };
