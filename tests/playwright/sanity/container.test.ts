@@ -31,8 +31,11 @@ test.describe( 'Container tests @container', () => {
 	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo ),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = new EditorPage( page, testInfo );
+
+		await wpAdmin.openNewPage();
+
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
@@ -63,8 +66,11 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo ),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = new EditorPage( page, testInfo );
+
+		await wpAdmin.openNewPage();
+
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
@@ -156,10 +162,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect.soft( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
+		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
 		await editor.togglePreviewMode();
 
@@ -590,11 +593,11 @@ test.describe( 'Container tests @container', () => {
 		await wpAdmin.openNewPage();
 
 		const containers = [
-				{ setting: 'start', id: '' },
-				{ setting: 'center', id: '' },
-				{ setting: 'end', id: '' },
-				{ setting: 'stretch', id: '' },
-			];
+			{ setting: 'start', id: '' },
+			{ setting: 'center', id: '' },
+			{ setting: 'end', id: '' },
+			{ setting: 'stretch', id: '' },
+		];
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
@@ -1046,12 +1049,10 @@ async function captureJustifySnapShot(
 	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
-	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
+	const justifyControlsContent = page.locator( `${ justifyControlsClass } .elementor-control-content ` );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
-	expect.soft( await justifyControlsContent.screenshot( {
-		type: 'jpeg',
-		quality: 90,
-	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
+	await expect.soft( justifyControlsContent )
+		.toHaveScreenshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.png` );
 
 	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
 }
