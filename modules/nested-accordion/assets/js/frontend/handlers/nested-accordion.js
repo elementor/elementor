@@ -82,7 +82,10 @@ export default class NestedAccordion extends Base {
 
 			targetAccordionItem.appendChild( targetContentContainer );
 
-			this.updateIndexValues();
+			if ( isSpecificIndex ) {
+				this.updateIndexValues();
+			}
+
 			this.updateListeners( view );
 		}
 	}

@@ -508,7 +508,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector  => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$low_specificity_accordion_item_selector => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -925,11 +925,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
-		view.addRenderAttribute( 'summary-container', itemTitleAttributes, null, true  );
-		view.addRenderAttribute( 'text-container', itemTitleTextAttributes, null, true  );
+		view.addRenderAttribute( 'summary-container', itemTitleAttributes, null, true );
+		view.addRenderAttribute( 'text-container', itemTitleTextAttributes, null, true );
 		#>
 
-		<details  {{{ view.getRenderAttributeString( 'details-container' ) }}}>
+		<details {{{ view.getRenderAttributeString( 'details-container' ) }}}>
 			<summary {{{ view.getRenderAttributeString( 'summary-container' ) }}}>
 				<span class="e-n-accordion-item-title-header">
 					<div {{{ view.getRenderAttributeString( 'text-container' ) }}}>{{{ data.item_title }}}</div>
