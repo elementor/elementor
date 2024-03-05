@@ -112,6 +112,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 			]
@@ -292,13 +295,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'faq_schema_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
 				'condition' => [
 					'faq_schema[value]' => 'yes',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -378,11 +380,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Space between Items', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'default' => [
@@ -399,11 +406,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Distance from content', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'default' => [
@@ -558,18 +570,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tabs();
 
 		$this->add_control(
-			'header_section_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_control(
 			'heading_icon_style_title',
 			[
 				'type' => Controls_Manager::HEADING,
 				'label' => esc_html__( 'Icon', 'elementor' ),
-
+				'separator' => 'before',
 			]
 		);
 
@@ -580,14 +585,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'em' => [
-						'min' => 0,
 						'max' => 10,
-						'step' => 0.1,
 					],
 					'rem' => [
-						'min' => 0,
 						'max' => 10,
-						'step' => 0.1,
 					],
 				],
 				'default' => [
@@ -608,11 +609,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 400,
 					],
 					'vw' => [
-						'min' => 0,
 						'max' => 50,
 						'step' => 0.1,
 					],
@@ -884,6 +883,65 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'role' => 'region',
 			'aria-labelledby' => $item_id,
 		] );
+	}
+
+	protected function get_initial_config(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_improved_repeaters' => true,
+				'target_container' => [ '.e-n-accordion' ],
+				'node' => 'details',
+			] );
+		}
+
+		return parent::get_initial_config();
+	}
+
+	protected function content_template_single_repeater_item() {
+		?>
+		<#
+		const elementUid = view.getIDInt().toString().substring( 0, 3 ) + view.collection.length;
+		const itemWrapperAttributes = {
+			'id': 'e-n-accordion-item-' + elementUid,
+			'class': [ 'e-n-accordion-item', 'e-normal' ],
+		};
+		const itemTitleAttributes = {
+			'class': [ 'e-n-accordion-item-title' ],
+			'data-accordion-index': view.collection.length + 1,
+			'tabindex': -1,
+			'aria-expanded': 'false',
+			'aria-controls': 'e-n-accordion-item-' + elementUid,
+		};
+
+		const itemTitleTextAttributes = {
+			'class': [ 'e-n-accordion-item-title-text' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'items',
+			'data-binding-setting': ['item_title'],
+			'data-binding-index': view.collection.length + 1,
+		};
+
+		view.addRenderAttribute( 'details-container', itemWrapperAttributes );
+		view.addRenderAttribute( 'summary-container', itemTitleAttributes );
+		view.addRenderAttribute( 'text-container', itemTitleTextAttributes );
+		#>
+
+		<details  {{{ view.getRenderAttributeString( 'details-container' ) }}}>
+			<summary {{{ view.getRenderAttributeString( 'summary-container' ) }}}>
+				<span class="e-n-accordion-item-title-header">
+					<div {{{ view.getRenderAttributeString( 'text-container' ) }}}>{{{ data.item_title }}}</div>
+				</span>
+				<span class="e-n-accordion-item-title-icon">
+					<span class="e-opened"><i aria-hidden="true" class="fas fa-minus"></i></span>
+					<span class="e-closed"><i aria-hidden="true" class="fas fa-plus"></i></span>
+				</span>
+			</summary>
+		</details>
+		<?php
+	}
+
+	protected function supports_atomic_repeaters() {
+		return true;
 	}
 
 	protected function content_template() {

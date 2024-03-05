@@ -145,6 +145,9 @@ class Settings_Layout extends Tab_Base {
 				'placeholder' => 'h1.entry-title',
 				'description' => esc_html__( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 				'label_block' => true,
+				'ai' => [
+					'active' => false,
+				],
 				'selectors' => [
 					// Hack to convert the value into a CSS selector.
 					'' => '}{{VALUE}}{display: var(--page-title-display)',
@@ -161,6 +164,9 @@ class Settings_Layout extends Tab_Base {
 				'description' => esc_html__( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 				'label_block' => true,
 				'frontend_available' => true,
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -318,6 +324,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => $default_breakpoint_config['label'],
 					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
 					'conditions' => [
 						'terms' => [
 							[
@@ -335,7 +342,6 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => $default_breakpoint_config['default_value'],
 				'frontend_available' => true,
-				'separator' => 'after',
 				'validators' => [
 					'Breakpoint' => [
 						'breakpointName' => $breakpoint_key,

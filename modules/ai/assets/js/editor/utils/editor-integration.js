@@ -1,10 +1,11 @@
+import ReactUtils from 'elementor-utils/react';
 import { createPreviewContainer } from './preview-container';
 import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
 import { startHistoryLog } from './history';
 import { __ } from '@wordpress/i18n';
-import { generateIds, getUniqueId } from './generate-ids';
 import LayoutAppWrapper from '../layout-app-wrapper';
+import { generateIds } from '../context/requests-ids';
 
 export const closePanel = () => {
 	$e.run( 'panel/close' );
@@ -45,9 +46,9 @@ const VARIATIONS_PROMPTS = [
 ];
 
 const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
-const EDITOR_SESSION_ID = `editor-session-${ getUniqueId() }`;
 
 export const renderLayoutApp = ( options = {
+	parentContainer: null,
 	mode: '',
 	at: null,
 	onClose: null,
@@ -59,7 +60,7 @@ export const renderLayoutApp = ( options = {
 } ) => {
 	closePanel();
 
-	const previewContainer = createPreviewContainer( {
+	const previewContainer = createPreviewContainer( options.parentContainer, {
 		// Create the container at the "drag widget here" area position.
 		at: options.at,
 	} );
@@ -71,7 +72,7 @@ export const renderLayoutApp = ( options = {
 
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
-	ReactDOM.render(
+	const { unmount } = ReactUtils.render( (
 		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
@@ -103,7 +104,7 @@ export const renderLayoutApp = ( options = {
 					previewContainer.destroy();
 					options.onClose?.();
 
-					ReactDOM.unmountComponentAtNode( rootElement );
+					unmount();
 					rootElement.remove();
 
 					openPanel();
@@ -126,16 +127,15 @@ export const renderLayoutApp = ( options = {
 				} }
 				onInsert={ options.onInsert }
 				hasPro={ elementor.helpers.hasPro() }
-				editorSessionId={ EDITOR_SESSION_ID }
 			/>
-		</LayoutAppWrapper>,
-		rootElement,
-	);
+		</LayoutAppWrapper>
+	), rootElement );
 
 	options.onRenderApp?.( { previewContainer } );
 };
 
 export const importToEditor = ( {
+	parentContainer,
 	at,
 	template,
 	historyTitle,
@@ -148,12 +148,12 @@ export const importToEditor = ( {
 
 	if ( replace ) {
 		$e.run( 'document/elements/delete', {
-			container: elementor.getPreviewContainer().children.at( at ),
+			container: parentContainer.children.at( at ),
 		} );
 	}
 
 	$e.run( 'document/elements/create', {
-		container: elementor.getPreviewContainer(),
+		container: parentContainer,
 		model: generateIds( template ),
 		options: {
 			at,
@@ -163,4 +163,3 @@ export const importToEditor = ( {
 
 	endHistoryLog();
 };
-

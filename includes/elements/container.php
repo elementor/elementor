@@ -373,7 +373,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
 				'separator' => 'after',
-				'frontend_available' => true,
+				'editor_available' => true,
 			];
 		}
 
@@ -432,7 +432,7 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'template',
 				'prefix_class' => 'e-con-',
-				'frontend_available' => true,
+				'editor_available' => true,
 			]
 		);
 
@@ -445,14 +445,6 @@ class Container extends Element_Base {
 					'min' => 500,
 					'max' => 1600,
 				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
-				],
 			],
 			'default' => [
 				'unit' => '%',
@@ -464,7 +456,6 @@ class Container extends Element_Base {
 				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
 				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 			],
-			'separator' => 'none',
 		];
 
 		$this->add_responsive_control(
@@ -530,12 +521,7 @@ class Container extends Element_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'description' => sprintf(
@@ -628,9 +614,9 @@ class Container extends Element_Base {
 		$this->add_control(
 			'link_note',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				'raw' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'content' => esc_html__( 'Don’t add links to elements nested in this container - it will break the layout.', 'elementor' ),
 				'condition' => [
 					'html_tag' => 'a',
 				],
@@ -700,12 +686,6 @@ class Container extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
-					'image' => [
-						'background_lazyload' => [
-							'active' => true,
-							'keys' => [ 'background_image', 'url' ],
-						],
-					],
 				],
 			]
 		);
@@ -733,10 +713,17 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
@@ -791,12 +778,6 @@ class Container extends Element_Base {
 						'selectors' => [
 							// Hack to set the `::before` content in order to render it only when there is a background overlay.
 							$background_overlay_selector => '--background-overlay: \'\';',
-						],
-					],
-					'image' => [
-						'background_lazyload' => [
-							'active' => true,
-							'keys' => [ 'background_overlay_image', 'url' ],
 						],
 					],
 				],
@@ -951,10 +932,11 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1099,7 +1081,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -1107,6 +1089,7 @@ class Container extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -1207,6 +1190,7 @@ class Container extends Element_Base {
 				[
 					'label' => esc_html__( 'Width', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%', 'vw', 'custom' ],
 					'default' => [
 						'unit' => '%',
 					],
@@ -1218,6 +1202,10 @@ class Container extends Element_Base {
 					],
 					'range' => [
 						'%' => [
+							'min' => 100,
+							'max' => 300,
+						],
+						'vw' => [
 							'min' => 100,
 							'max' => 300,
 						],
@@ -1236,9 +1224,16 @@ class Container extends Element_Base {
 				[
 					'label' => esc_html__( 'Height', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 					'range' => [
 						'px' => [
 							'max' => 500,
+						],
+						'em' => [
+							'max' => 50,
+						],
+						'rem' => [
+							'max' => 50,
 						],
 					],
 					'condition' => [
@@ -1371,9 +1366,10 @@ class Container extends Element_Base {
 		$this->add_control(
 			'position_description',
 			[
-				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'heading' => esc_html__( 'Please note!', 'elementor' ),
+				'content' => esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
 				'render_type' => 'ui',
 				'condition' => [
 					'position!' => '',
@@ -1441,7 +1437,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1480,7 +1475,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 0.1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1543,7 +1537,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1581,7 +1574,6 @@ class Container extends Element_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -1658,6 +1650,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
+
 		$this->end_controls_section();
 	}
 
@@ -1674,6 +1668,8 @@ class Container extends Element_Base {
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(
 			'animation',
@@ -1792,9 +1788,9 @@ class Container extends Element_Base {
 			$container->add_control(
 				'transform_sticky_notice',
 				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'warning',
+					'content' => esc_html__( 'Note: Avoid applying transform properties on sticky containers. Doing so might cause unexpected results.', 'elementor' ),
 				]
 			);
 		} );

@@ -1,4 +1,5 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
+import EditorPage from '../../../pages/editor-page';
 
 /**
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
@@ -98,4 +99,54 @@ export async function setIconColor( editor, state, color, context ) {
 	async function setState() {
 		await editor.page.click( '.elementor-control-header_' + state + '_' + context );
 	}
+}
+
+export async function addIcon( editor: EditorPage, page: Page, iconName: string ) {
+	await editor.activatePanelTab( 'content' );
+	await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
+	await page.locator( '#elementor-icons-manager__search input' ).fill( iconName );
+	await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
+	await page.locator( '.dialog-insert_icon' ).click();
+}
+
+export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' ) {
+	await editor.activatePanelTab( 'style' );
+	await editor.openSection( 'section_header_style' );
+	await editor.setSliderControlValue( 'icon_size', sizeInPx );
+}
+
+export async function deleteItemFromRepeater( editor: EditorPage, accordionID: string ) {
+	// Arrange
+	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
+		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
+		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item .e-con` ),
+		numberOfTitles = await nestedAccordionItemTitle.count(),
+		numberOfContents = await nestedAccordionItemContent.count();
+
+	// Act
+	await deleteItemButton.last().click();
+
+	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
+
+	// Assert
+	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
+	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
+}
+
+export async function addItemFromRepeater( editor: EditorPage, accordionID: string ) {
+	// Arrange
+	const addItemButton = editor.page.locator( '.elementor-repeater-add' ),
+		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
+		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item .e-con` ),
+		numberOfTitles = await nestedAccordionItemTitle.count(),
+		numberOfContents = await nestedAccordionItemContent.count();
+
+	// Act
+	await addItemButton.click();
+
+	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
+
+	// Assert
+	await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 }

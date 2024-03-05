@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import useScreenshot from './use-screenshot';
 import { useConfig } from '../context/config';
-import { getUniqueId } from '../../../utils/generate-ids';
+import { useRequestIds } from '../../../context/requests-ids';
 
 const PENDING_VALUE = { isPending: true };
 
@@ -17,9 +17,10 @@ const useScreenshots = ( { onData } ) => {
 	 * - requestId: a unique id for each generate request.
 	 */
 
-	const { currentContext, sessionId, editorSessionId } = useConfig();
+	const { currentContext } = useConfig();
+	const { editorSessionId, sessionId, setRequest, setBatch, setGenerate } = useRequestIds();
 	const generateIdRef = useRef( '' );
-	const batchId = `batch-${ getUniqueId() }`;
+	const batchId = setBatch();
 
 	const screenshotsData = [
 		useScreenshot( 0, onData ),
@@ -73,18 +74,19 @@ const useScreenshots = ( { onData } ) => {
 				prevGeneratedIds,
 				currentContext,
 				ids: {
-					editorSessionId,
-					sessionId,
+					editorSessionId: editorSessionId.current,
+					sessionId: sessionId.current,
 					generateId: generateIdRef.current,
-					batchId,
-					requestId: `request-${ getUniqueId() }`,
+					batchId: batchId.current,
+					requestId: setRequest().current,
 				},
-				attachments: attachments.map( ( { type, content, label } ) => {
+				attachments: attachments.map( ( { type, content, label, source } ) => {
 					// Send only the data that is needed for the generation.
 					return {
 						type,
 						content,
 						label,
+						source,
 					};
 				} ),
 			};
@@ -111,7 +113,7 @@ const useScreenshots = ( { onData } ) => {
 	const generate = ( prompt, attachments ) => {
 		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
-		generateIdRef.current = `generate-${ getUniqueId() }`;
+		generateIdRef.current = setGenerate().current;
 		setScreenshots( placeholders );
 
 		createScreenshots( prompt, attachments );

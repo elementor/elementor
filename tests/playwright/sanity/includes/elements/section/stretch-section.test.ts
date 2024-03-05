@@ -82,7 +82,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 
 	// Act.
 	await page.evaluate( () => {
-		const sectionWrap: HTMLElement = document.querySelector( 'div[data-elementor-type="wp-post"]' );
+		const sectionWrap: HTMLElement = document.querySelector( 'div[data-elementor-type="wp-page"]' );
 
 		sectionWrap.style.width = '960px';
 		sectionWrap.style.margin = '0 auto';
@@ -90,7 +90,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 		window.dispatchEvent( new Event( 'resize' ) );
 	} );
 
-	const sectionElementFE = await page.locator( `.elementor-element-${ sectionID }` );
+	const sectionElementFE = page.locator( `.elementor-element-${ sectionID }` );
 
 	// Assert (Stretched).
 	expect( await sectionElementFE.screenshot( {

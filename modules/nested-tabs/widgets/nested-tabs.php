@@ -15,9 +15,6 @@ use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
-use Elementor\Modules\DynamicTags\Module as TagsModule;
-use Elementor\Utils;
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -429,13 +426,18 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_responsive_control( 'tabs_title_space_between', [
 			'label' => esc_html__( 'Gap between tabs', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 400,
 				],
+				'em' => [
+					'max' => 40,
+				],
+				'rem' => [
+					'max' => 40,
+				],
 			],
-			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -444,13 +446,18 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_responsive_control( 'tabs_title_spacing', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 400,
 				],
+				'em' => [
+					'max' => 40,
+				],
+				'rem' => [
+					'max' => 40,
+				],
 			],
-			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -586,6 +593,7 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -900,18 +908,13 @@ class NestedTabs extends Widget_Nested_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 100,
 				],
 				'em' => [
-					'min' => 0,
 					'max' => 10,
-					'step' => 0.1,
 				],
 				'rem' => [
-					'min' => 0,
 					'max' => 10,
-					'step' => 0.1,
 				],
 			],
 			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
@@ -925,11 +928,9 @@ class NestedTabs extends Widget_Nested_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 400,
 				],
 				'vw' => [
-					'min' => 0,
 					'max' => 50,
 					'step' => 0.1,
 				],
