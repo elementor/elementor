@@ -422,12 +422,6 @@ const ContainerView = BaseElementView.extend( {
 				this.reInitEmptyView();
 			}
 
-			// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-			if ( ! this.model.get( 'isInner' ) ) {
-				this.$el[ 0 ].dataset.coreV316Plus = 'true';
-			}
-
 			this.droppableInitialize( this.container.settings );
 		} );
 	},

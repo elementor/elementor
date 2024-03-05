@@ -892,8 +892,8 @@ test.describe( 'Container tests @container', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 
-			const editor = await wpAdmin.openNewPage(),
-				frame = editor.getPreviewFrame();
+			let editor = await wpAdmin.openNewPage();
+			let frame = await editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
 				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
@@ -903,12 +903,41 @@ test.describe( 'Container tests @container', () => {
 			} );
 
 			await test.step( 'Rtl screenshot', async () => {
+				await expect.soft( await page.locator( 'body' ) ).toHaveClass( /rtl/ );
+				await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
+
 				await editor.togglePreviewMode();
 
 				expect.soft( await editor.getPreviewFrame()
 					.locator( '.e-con.e-parent>>nth=0' )
 					.screenshot( { type: 'png' } ) )
 					.toMatchSnapshot( 'container-dimensions-rtl.png' );
+			} );
+
+			await test.step( 'Set user language to English', async () => {
+				await wpAdmin.setLanguage( 'he_IL', '' );
+			} );
+
+			editor = await wpAdmin.openNewPage();
+			frame = await editor.getPreviewFrame();
+
+			await test.step( 'Load Template', async () => {
+				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
+				await editor.loadTemplate( filePath, false );
+				await frame.waitForSelector( '.e-con.e-parent >> nth=0' );
+				await editor.closeNavigatorIfOpen();
+			} );
+
+			await test.step( 'Rtl screenshot with LTR UI', async () => {
+				await expect.soft( await page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
+				await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame()
+					.locator( '.e-con.e-parent >> nth=0' )
+					.screenshot( { type: 'png' } ) )
+					.toMatchSnapshot( 'container-dimensions-rtl-with-ltr-ui.png' );
 			} );
 		} finally {
 			await wpAdmin.setLanguage( '' );
@@ -925,6 +954,9 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Ltr screenshot', async () => {
+			await expect.soft( await page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
+			await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).not.toHaveClass( /rtl/ );
+
 			await editor.togglePreviewMode();
 
 			expect.soft( await editor.getPreviewFrame()
