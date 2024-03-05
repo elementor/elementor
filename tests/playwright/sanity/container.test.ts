@@ -999,9 +999,9 @@ async function captureJustifySnapShot(
 	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
-	const justifyControlsContent = page.locator( `${ justifyControlsClass } .elementor-control-content` ).nth( 0 );
+	const justifyControlsContent = await page.locator( `${ justifyControlsClass } .elementor-control-content` ).nth( 0 );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
-	await expect.soft( justifyControlsContent.screenshot( {
+	expect.soft( justifyControlsContent.screenshot( {
 		type: 'jpeg',
 		quality: 90,
 	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
