@@ -196,10 +196,11 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( 'wp-admin/update-core.php' );
 		await this.page.locator( '.wp-current-version' ).waitFor();
 
-		const hasLanguageUpdateButton = await this.page.getByRole( 'button', { name: 'Update Translations' } ).isVisible();
+		const updateButton = this.page.locator( '.button[name="upgrade"]' ),
+			hasLanguageUpdateButton = await updateButton.isVisible();
 
 		if ( hasLanguageUpdateButton ) {
-			await this.page.getByRole( 'button', { name: 'Update Translations' } ).click();
+			await updateButton.click();
 			await this.page.waitForLoadState( 'domcontentloaded' );
 		}
 
