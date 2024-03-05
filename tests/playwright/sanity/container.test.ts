@@ -999,7 +999,7 @@ async function captureJustifySnapShot(
 	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
-	const justifyControlsContent = page.locator( `${ justifyControlsClass } .elementor-control-content` ).nth( 0 );
+	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
 	expect.soft( await justifyControlsContent.screenshot( {
 		type: 'jpeg',
