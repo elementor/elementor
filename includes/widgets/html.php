@@ -100,6 +100,7 @@ class Widget_Html extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'is_editable' => User::is_current_user_can_use_custom_html(),
 			]
 		);
 
