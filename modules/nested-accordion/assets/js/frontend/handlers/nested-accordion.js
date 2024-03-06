@@ -1,5 +1,10 @@
 import Base from 'elementor-frontend/handlers/base';
 import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboard-handler';
+import {
+	DUPLICATE,
+	MOVE,
+	CREATE,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
@@ -77,13 +82,13 @@ export default class NestedAccordion extends Base {
 			let accordionItem, contentContainer;
 
 			switch ( type ) {
-				case 'create':
+				case CREATE:
 					[ accordionItem, contentContainer ] = this.insert( view, accordionItems );
 					break;
-				case 'move':
+				case MOVE:
 					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, accordionItems );
 					break;
-				case 'duplicate':
+				case DUPLICATE:
 					[ accordionItem, contentContainer ] = this.duplicate( view, index, targetContainer, accordionItems );
 					break;
 				default:

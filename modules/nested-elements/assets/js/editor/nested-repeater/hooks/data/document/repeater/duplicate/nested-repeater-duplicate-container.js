@@ -1,5 +1,6 @@
 import Base from '../../../base';
 import {
+	DUPLICATE,
 	findChildContainerOrFail,
 	shouldUseAtomicRepeaters,
 	sortViewsByModels,
@@ -34,7 +35,7 @@ export class NestedRepeaterDuplicateContainer extends Base {
 						targetContainer: result,
 						index,
 						action: {
-							type: 'duplicate',
+							type: DUPLICATE,
 						},
 					} },
 				) );
