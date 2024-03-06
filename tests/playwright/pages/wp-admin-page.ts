@@ -172,7 +172,7 @@ export default class WpAdminPage extends BasePage {
 			await this.confirmExperimentModalIfOpen();
 		}
 
-		await this.page.click( '#submit' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
 	async setLanguage( language: string, userLanguage = null ) {
@@ -189,19 +189,19 @@ export default class WpAdminPage extends BasePage {
 
 		if ( ! await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible() ) {
 			await this.page.selectOption( '#WPLANG', language );
-			await this.page.locator( '#submit' ).click();
+			await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 		}
 
 		// Install language if necessary
 		await this.page.goto( 'wp-admin/update-core.php' );
-		await this.page.locator( '.wp-current-version' ).waitFor();
+		await this.page.getByText( 'WordPress Updates' ).waitFor();
 
 		// Set user profile language
 		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
 
 		await this.page.goto( 'wp-admin/profile.php' );
 		await this.page.selectOption( '[name="locale"]', userProfileLanguage );
-		await this.page.locator( 'input#submit' ).click();
+		await this.page.getByRole( 'button', { name: 'Update Profile' } ).click();
 	}
 
 	async confirmExperimentModalIfOpen() {
