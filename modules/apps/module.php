@@ -5,7 +5,6 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Settings;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -21,8 +20,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$admin_pointer = new Admin_Pointer();
-		$admin_pointer::add_hooks();
+		Admin_Pointer::add_hooks();
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
