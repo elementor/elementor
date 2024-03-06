@@ -1,7 +1,7 @@
 import Base from '../../../base';
 import {
 	findChildContainerOrFail,
-	shouldUseImprovedRepeaters,
+	shouldUseImprovedRepeaters, sortViewsByModels,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterMoveContainer extends Base {
@@ -14,7 +14,7 @@ export class NestedRepeaterMoveContainer extends Base {
 	}
 
 	apply( { container, sourceIndex, targetIndex } ) {
-		$e.run( 'document/elements/move', {
+		const result = $e.run( 'document/elements/move', {
 			container: findChildContainerOrFail( container, sourceIndex ),
 			target: container,
 			options: {
@@ -26,9 +26,15 @@ export class NestedRepeaterMoveContainer extends Base {
 		const widgetType = container.settings.get( 'widgetType' );
 
 		if ( shouldUseImprovedRepeaters( widgetType ) ) {
+			container.view.children._views = sortViewsByModels( container );
+
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
 				new CustomEvent( 'elementor/nested-container/created', {
-					detail: { container, targetIndex },
+					detail: {
+						container,
+						targetContainer: result,
+						index: targetIndex,
+					},
 				} ),
 			);
 		}

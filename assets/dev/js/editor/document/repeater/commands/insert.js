@@ -84,12 +84,15 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 						node = document.createElement( 'div' );
 
 					node.innerHTML = html;
-					// Insert the new node at the correct position.
-					targetContainer.insertBefore( node.querySelector( domConfig.node ), targetContainer.children[ options.at ] );
+
+					const nodeToInsert = node.querySelector( domConfig.node ),
+						targetNode = targetContainer.children[ options.at ] || null;
+
+					targetContainer.insertBefore( nodeToInsert, targetNode );
+				} else {
+					// Trigger render on widget but with the settings of the control.
+					repeaterContainer.render();
 				}
-			} else {
-				// Trigger render on widget but with the settings of the control.
-				repeaterContainer.render();
 			}
 		} );
 
