@@ -1,10 +1,5 @@
 import Base from 'elementor-frontend/handlers/base';
 import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboard-handler';
-import {
-	DUPLICATE,
-	MOVE,
-	CREATE,
-} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
@@ -72,50 +67,24 @@ export default class NestedAccordion extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container, index, targetContainer, action: { type } } = event.detail,
+		const { container, index, targetContainer } = event.detail,
 			view = container.view.$el,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
-			const accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
-			let accordionItem, contentContainer;
+			const containers = view.find( `${ this.getSettings( 'selectors.accordionContentContainers' ) }, ${ this.getSettings( 'selectors.accordionContent' ) }` ),
+				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
+				isSpecificIndex = index !== undefined,
+				targetIndex = isSpecificIndex ? index + 1 : accordionItems.length - 1,
+				targetContentContainer = targetContainer !== undefined ? targetContainer.view.$el[ 0 ] : containers[ containers.length - 1 ],
+				targetAccordionItem = accordionItems[ targetIndex ] || accordionItems[ accordionItems.length - 1 ];
 
-			switch ( type ) {
-				case CREATE:
-					[ accordionItem, contentContainer ] = this.insert( view, accordionItems );
-					break;
-				case MOVE:
-					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, accordionItems );
-					break;
-				case DUPLICATE:
-					[ accordionItem, contentContainer ] = this.duplicate( view, index, targetContainer, accordionItems );
-					break;
-				default:
-					break;
-			}
-
-			accordionItem.appendChild( contentContainer );
+			targetAccordionItem.appendChild( targetContentContainer );
 
 			this.updateIndexValues();
 			this.updateListeners( view );
 		}
-	}
-
-	insert( view, accordionItems ) {
-		const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
-			contentContainer = containers[ containers.length - 1 ],
-			accordionItem = accordionItems[ accordionItems.length - 1 ];
-
-		return [ accordionItem, contentContainer ];
-	}
-
-	move( view, index, targetContainer, accordionItems ) {
-		return [ accordionItems[ index ], targetContainer.view.$el[ 0 ] ];
-	}
-
-	duplicate( view, index, targetContainer, accordionItems ) {
-		return [ accordionItems[ index + 1 ], targetContainer.view.$el[ 0 ] ];
 	}
 
 	updateIndexValues() {
