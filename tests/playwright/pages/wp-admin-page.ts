@@ -192,10 +192,6 @@ export default class WpAdminPage extends BasePage {
 			await this.page.locator( '#submit' ).click();
 		}
 
-		// Install language if necessary
-		await this.page.goto( 'wp-admin/update-core.php' );
-		await this.page.getByText( 'WordPress Updates' ).waitFor();
-
 		// Set user profile language
 		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
 
