@@ -1,5 +1,9 @@
 import Base from '../../../base';
-import { findChildContainerOrFail, shouldUseImprovedRepeaters, sortViewsByModels } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	MOVE,
+	findChildContainerOrFail,
+	shouldUseImprovedRepeaters, sortViewsByModels,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterMoveContainer extends Base {
 	getId() {
@@ -32,7 +36,7 @@ export class NestedRepeaterMoveContainer extends Base {
 						targetContainer: result,
 						index: targetIndex,
 						action: {
-							type: 'move',
+							type: MOVE,
 						},
 					},
 				} ),
