@@ -31,9 +31,5 @@ class Home_Menu_item implements Admin_Menu_Item_With_Page {
 		return 'manage_options';
 	}
 
-	public function render() {
-		?>
-		<div>Hello Home</div>
-		<?php
-	}
+
 }
