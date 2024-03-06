@@ -1,6 +1,6 @@
-export const MOVE = 'move',
-	DUPLICATE = 'duplicate',
-	CREATE = 'create';
+export const MOVE = 'move';
+export const DUPLICATE = 'duplicate';
+export const CREATE = 'create';
 
 export function extractNestedItemTitle( container, index ) {
 	const title = container.view.model.config.defaults.elements_title;
