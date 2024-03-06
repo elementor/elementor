@@ -172,7 +172,7 @@ export default class WpAdminPage extends BasePage {
 			await this.confirmExperimentModalIfOpen();
 		}
 
-		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+		await this.page.locator( '#submit' ).click();
 	}
 
 	async setLanguage( language: string, userLanguage = null ) {
@@ -197,7 +197,7 @@ export default class WpAdminPage extends BasePage {
 
 		await this.page.goto( 'wp-admin/profile.php' );
 		await this.page.selectOption( '[name="locale"]', userProfileLanguage );
-		await this.page.getByRole( 'button', { name: 'Update Profile' } ).click();
+		await this.page.locator( '#submit' ).click();
 	}
 
 	async confirmExperimentModalIfOpen() {
