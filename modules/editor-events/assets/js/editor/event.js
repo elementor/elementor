@@ -18,21 +18,20 @@ export default class Event {
 		};
 
 		this.payload = {
-			elementor_api_id: '',
-			userId: null,
-			subscriptionId: elementor.config.editor_events?.subscription_id,
+			user_id: null,
+			subscription_id: elementor.config.editor_events?.subscription_id,
 			url: elementor.config.editor_events?.site_url,
 			extra_data: JSON.stringify( extraData ),
-			siteInfo: JSON.stringify( siteInfo ),
+			site_info: JSON.stringify( siteInfo ),
 			created_at: time,
 		};
 	}
 
 	setupMetadata( time ) {
-		this.metadata = {
+		this.event = {
 			type: 'editor_events',
 			action: 'update',
-			time,
+			event_time: time,
 			schema_id: 1,
 			version: 1,
 			publisher_version: elementor.config.editor_events?.elementor_version,
