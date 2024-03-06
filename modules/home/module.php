@@ -3,6 +3,9 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;;
+
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Apps\Admin_Pointer;
 
@@ -12,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseApp {
 
-	const PAGE_ID = 'elementor-home';
+	const PAGE_ID = 'home-screen';
 
 	public function get_name() {
 		return 'home';
@@ -20,6 +23,12 @@ class Module extends BaseApp {
 
 	public function __construct() {
 		parent::__construct();
+
+		$this->register_layout_experiment();
+
+		if ( ! $this->is_layout_active() ) {
+			return;
+		}
 
 		Admin_Pointer::add_hooks();
 
@@ -51,5 +60,19 @@ class Module extends BaseApp {
 		);
 
 		wp_set_script_translations( 'e-home-screen', 'elementor' );
+	}
+
+	private function is_layout_active() {
+		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
+	}
+
+	private function register_layout_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => static::PAGE_ID,
+			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
+			'description' => esc_html__( 'Default Elementor menu page.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 	}
 }

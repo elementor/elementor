@@ -16,11 +16,9 @@ const App = ( props ) => {
 
 const colorScheme = 'auto', // Is colorScheme available inside the wp admin area?
 	isRTL = elementorCommon.config.isRTL,
-	rootElement = document.querySelector( '.elementor_page_elementor-home #wpbody-content' );
+	rootElement = document.querySelector( '#wpbody-content' );
 
-if ( !! rootElement ) {
-	ReactDOM.render( <App // eslint-disable-line react/no-deprecated
-		colorScheme={ colorScheme }
-		isRTL={ isRTL }
-	/>, rootElement);
-}
+ReactDOM.render( <App // eslint-disable-line react/no-deprecated
+	colorScheme={ colorScheme }
+	isRTL={ isRTL }
+/>, rootElement);
