@@ -42,10 +42,14 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'announcements-app',
 			$this->get_js_assets_url( 'announcements-app' ),
-			[],
+			[
+				'wp-i18n',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'announcements-app', 'elementor' );
 
 		$this->print_config( 'announcements-app' );
 	}
@@ -90,13 +94,13 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		$raw_announcements = [
 			[
-				'title' => 'Unlock the Power of Elementor AI',
-				'description' => '<p>Design professional websites with natively integrated AI tools.</p>
+				'title' => 'Unlock the Power of Elementor AI ',
+				'description' => '<p>Design a website true to your brand with natively integrated AI tools.</p>
 				<ul>
-					<li>Boost creativity & productivity with AI-generated containers. Build layouts from scratch or existing Elementor containers. Generate containers from any layout you reference from the web!</li>
-					<li>Let AI write or edit your text, adjust its length and tone of voice. Also generate custom code that seamlessly integrates into your website.</li>
-					<li>Create one-of-a kind images, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
-					<li>Access and repurpose previously-generated text, code or image prompts with Elementor’s AI History Panel to work efficiently and ensure consistency.</li>
+					<li>Generate containers using text or any website you reference from the web and get a wireframe layout to start with. Use the container variations capability to bring the wireframe to life with design and content.</li>
+					<li>Let AI write or edit your text in the context of your brand, tone of voice and optimal length. Also generate custom code or CSS that seamlessly integrates into your website.</li>
+					<li>Create one-of-a-kind images, add, or erase content from existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Use Elementor’s AI History Panel to efficiently access previously-generated text, code or image prompts, and ensure consistency across your site.</li>
 				</ul>',
 				'media' => [
 					'type' => 'image',

@@ -14,8 +14,8 @@ class Admin_Apps_Page {
 		<div class="wrap e-a-apps">
 
 			<div class="e-a-page-title">
-				<h2><?php echo esc_html__( 'Popular Apps, New Possibilities.', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Boost your web-creation process with add-ons, plugins, and more tools specially selected to unleash your creativity, increase productivity, and enhance your Elementor-powered website.', 'elementor' ); ?><br>
+				<h2><?php echo esc_html__( 'Popular Add-ons, New Possibilities.', 'elementor' ); ?></h2>
+				<p><?php echo esc_html__( 'Boost your web-creation process with add-ons, plugins, and more tools specially selected to unleash your creativity, increase productivity, and enhance your Elementor-powered website.', 'elementor' ); ?>*<br>
 					<a href="https://go.elementor.com/wp-dash-apps-about-apps-page/" target="_blank"><?php echo esc_html__( 'Learn more about this page.', 'elementor' ); ?></a>
 				</p>
 			</div>
@@ -24,7 +24,7 @@ class Admin_Apps_Page {
 				<?php self::render_plugins_list(); ?>
 			</div>
 			<div class="e-a-page-footer">
-				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on the their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
+				<p>*<?php echo esc_html__( 'Please note that certain tools and services on this page are developed by third-party companies and are not part of Elementor\'s suite of products or support. Before using them, we recommend independently evaluating them. Additionally, when clicking on their action buttons, you may be redirected to an external website.', 'elementor' ); ?></p>
 			</div>
 		</div>
 		<?php

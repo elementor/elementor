@@ -13,14 +13,33 @@ export default class FilesUploadHandler {
 		frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-wp-media-upload' );
 	}
 
+	static getUnfilteredFilesNonAdminDialog() {
+		return elementorCommon.dialogsManager.createWidget( 'alert', {
+			id: 'e-unfiltered-files-disabled-dialog',
+			headerMessage: __( 'Sorry, you can\'t upload that file yet', 'elementor' ),
+			message: __( 'This is because JSON files may pose a security risk.', 'elementor' ) +
+				'<br><br>' +
+				__( 'To upload them anyway, ask the site administrator to enable unfiltered file uploads.', 'elementor' ),
+			strings: {
+				confirm: __( 'Got it', 'elementor' ),
+			},
+		} );
+	}
+
 	static getUnfilteredFilesNotEnabledDialog( callback ) {
+		const elementorInstance = window.elementorAdmin || window.elementor;
+
+		if ( ! elementorInstance.config.user.is_administrator ) {
+			return this.getUnfilteredFilesNonAdminDialog();
+		}
+
 		const onConfirm = () => {
 			elementorCommon.ajax.addRequest( 'enable_unfiltered_files_upload', {}, true );
 			elementorCommon.config.filesUpload.unfilteredFiles = true;
 			callback();
 		};
 
-		return elementor.helpers.getSimpleDialog(
+		return elementorInstance.helpers.getSimpleDialog(
 			'e-enable-unfiltered-files-dialog',
 			__( 'Enable Unfiltered File Uploads', 'elementor' ),
 			__( 'Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
@@ -30,6 +49,10 @@ export default class FilesUploadHandler {
 	}
 
 	static getUnfilteredFilesNotEnabledImportTemplateDialog( callback ) {
+		if ( ! ( window.elementorAdmin || window.elementor ).config.user.is_administrator ) {
+			return this.getUnfilteredFilesNonAdminDialog();
+		}
+
 		return elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'e-enable-unfiltered-files-dialog-import-template',
 			headerMessage: __( 'Enable Unfiltered File Uploads', 'elementor' ),

@@ -127,7 +127,6 @@ class Widget_Alert extends Widget_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
 				'default' => esc_html__( 'I am a description. Click the edit button to change this text.', 'elementor' ),
-				'separator' => 'none',
 				'dynamic' => [
 					'active' => true,
 				],
@@ -138,12 +137,11 @@ class Widget_Alert extends Widget_Base {
 			'show_dismiss',
 			[
 				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'return_value' => 'show',
 				'default' => 'show',
-				'options' => [
-					'show' => esc_html__( 'Show', 'elementor' ),
-					'hide' => esc_html__( 'Hide', 'elementor' ),
-				],
 			]
 		);
 

@@ -287,13 +287,6 @@ class Element_Column extends Element_Base {
 					'background' => [
 						'frontend_available' => true,
 					],
-					'image' => [
-						'background_lazyload' => [
-							'active' => true,
-							'keys' => [ 'background_image', 'url' ],
-							'selector' => '.elementor-element-populated',
-						],
-					],
 				],
 			]
 		);
@@ -367,15 +360,6 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
-				'fields_options' => [
-					'image' => [
-						'background_lazyload' => [
-							'active' => true,
-							'keys' => [ '_background_overlay', 'url' ],
-							'selector' => '.elementor-background-overlay,',
-						],
-					],
-				],
 			]
 		);
 
@@ -655,7 +639,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -840,6 +823,8 @@ class Element_Column extends Element_Base {
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(
 			'animation',

@@ -322,9 +322,10 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_position_description',
 			[
-				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'heading' => esc_html__( 'Please note!', 'elementor' ),
+				'content' => esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
 				'render_type' => 'ui',
 				'condition' => [
 					'_position!' => '',
@@ -616,6 +617,8 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
+
 		$this->add_responsive_control(
 			'_animation',
 			[
@@ -689,15 +692,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
-				'fields_options' => [
-					'image' => [
-						'background_lazyload' => [
-							'active' => true,
-							'keys' => [ '_background_image', 'url' ],
-							'selector' => '.elementor-widget-container',
-						],
-					],
-				],
 			]
 		);
 
@@ -925,10 +919,9 @@ class Widget_Common extends Widget_Base {
 				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) .
 						'<br>' .
 						sprintf(
-							/* translators: 1: Link open tag, 2: Link close tag. */
-							esc_html__( 'Explore additional Premium Shape packs and use them in your site. %1$sLearn More%2$s', 'elementor' ),
-							'<a target="_blank" href="https://go.elementor.com/mask-control">',
-							'</a>'
+							'%1$s <a target="_blank" href="https://go.elementor.com/mask-control">%2$s</a>',
+							esc_html__( 'Explore additional Premium Shape packs and use them in your site.', 'elementor' ),
+							esc_html__( 'Learn more', 'elementor' ),
 						),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [

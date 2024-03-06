@@ -72,10 +72,24 @@ class Widget_Image_Gallery extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'gallery' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'description' => esc_html__( 'Use interesting masonry layouts and other overlay features with Elementor\'s Pro Gallery widget.', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-basic-gallery-widget/',
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-basic-gallery-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
 	}
 
@@ -91,7 +105,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->start_controls_section(
 			'section_gallery',
 			[
-				'label' => esc_html__( 'Image Gallery', 'elementor' ),
+				'label' => esc_html__( 'Basic Gallery', 'elementor' ),
 			]
 		);
 
@@ -112,7 +126,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'exclude' => [ 'custom' ],
-				'separator' => 'none',
 			]
 		);
 

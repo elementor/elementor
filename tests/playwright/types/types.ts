@@ -46,9 +46,9 @@ export type LinkOptions = {
 }
 
 export type WpPage = {
-	title: string | {
-		rendered: string,
-	},
+	title: {
+		rendered?: string,
+	}
 	date?: string,
 	date_gmt?: string,
 	guid?: string,
@@ -94,3 +94,36 @@ export type Post = {
 	template?: string,
 	tags?: number
 }
+
+export type WindowType = Window & {
+	$e?: {
+		run: ( s: string, o: object )=> unknown
+	}
+	wpApiSettings?: { nonce: string }
+};
+export type BackboneType = {
+	Model: new ( o: {title: string} )=> unknown
+};
+
+export type $eType = {
+	run: ( s: string, o: object )=> unknown
+}
+
+export type ElementorType = {
+	navigator?: {
+		isOpen: ()=> unknown
+	},
+	getContainer?: ( id: string )=> unknown,
+	config?: {
+		initial_document:{
+			id: string
+		}
+	}
+}
+
+export type ElementorFrontendConfig = { post: { id: number } }
+export type el = {
+	dataset: {
+		widget_type: string
+	}
+};

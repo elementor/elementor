@@ -1,3 +1,5 @@
+@import "../../../../../assets/dev/scss/helpers/variables";
+
 //
 // Panel Controls
 //
@@ -28,6 +30,10 @@
 		font-size: var(--control-title-size);
 		line-height: 1;
 		margin-inline-end: 5px;
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	.elementor-control-spinner {
@@ -79,7 +85,7 @@
 
 			+ .elementor-control-type-tabs,
 			&:not(.elementor-hidden-control) {
-				~ .elementor-control-separator-default {
+				+ .elementor-control-separator-default {
 					padding-block-start: 15px;
 				}
 			}
@@ -177,8 +183,10 @@
 	height: 48px;
 	padding-inline: 20px;
 	width: 100%;
+	border: 0;
 	border-block-start: var(--e-a-border); //todo: remove
 	border-block-start-width: 2px;
+	background-color: transparent;
 	color: var(--e-a-color-txt-accent);
 	cursor: pointer;
 
@@ -191,6 +199,30 @@
 
 	&-title {
 		font-weight: bold;
+	}
+
+	&-promotion {
+		margin-inline-start: auto;
+
+		a {
+			color: var(--e-a-color-accent-promotion);
+			font-family: 'Roboto', sans-serif;
+			font-weight: 500;
+			font-size: 13px;
+
+			i {
+				margin-inline-end: 4px;
+				font-size: 14px;
+			}
+
+			&:hover {
+				color: var(--e-a-color-accent-promotion);
+			}
+		}
+	}
+
+	&:focus-visible {
+		color: var(--e-a-color-txt-hover);
 	}
 }
 
@@ -340,6 +372,8 @@
 
 @import "controls-utility";
 
+@import "controls/alert";
+
 @import "controls/button";
 
 @import "controls/choose";
@@ -365,6 +399,8 @@
 @import "controls/image-dimensions";
 
 @import "controls/media";
+
+@import "controls/notice";
 
 @import "controls/popover-toggle";
 

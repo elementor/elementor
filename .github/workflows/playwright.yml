@@ -2,7 +2,33 @@ name: Playwright
 
 on:
   pull_request:
-  merge_group:
+  workflow_dispatch:
+      inputs:
+        reporter:
+          required: false
+          description: 'Select a reporter'
+          type: choice
+          options:
+            - allure-playwright
+            - html
+            - blob
+            - list
+          default: allure-playwright
+        path-to-results:
+          required: false
+          description: 'Provide path to reporter files'
+          default: allure-results
+          type: choice
+          options:
+            - test-results/
+            - tests/playwright/blob-report
+            - allure-results
+        fail_fast:
+            type: boolean
+            required: true
+            description: 'Cancel tests when one of them fails'
+            default: false
+
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -67,6 +93,7 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
+      fail-fast: ${{inputs.fail_fast || true}}
       matrix:
         testSuite: [
           'ai',
@@ -83,7 +110,9 @@ jobs:
           'pluginTester1_containers',
           'pluginTester2_containers',
           'pluginTester1_sections',
-          'pluginTester2_sections'
+          'pluginTester2_sections',
+          'promotions',
+          'nested-atomic-repeaters',
         ]
     steps:
       - name: Checkout source code
@@ -129,16 +158,16 @@ jobs:
         if: ${{matrix.testSuite !='elements-regression'}}
         env:
           TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright
+        run: npm run test:playwright -- --reporter=${{inputs.reporter || 'list,github'}}
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
-        run: npm run test:playwright:elements-regression
+        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-test-results-${{ matrix.testSuite }}
-          path: test-results/
-          retention-days: 3
+          path: ${{inputs.path-to-results || 'test-results/'}}
+          retention-days: 2
 
   test-result:
     needs: Playwright

@@ -47,8 +47,6 @@ trait Button_Trait {
 	 *     @type array  $section_condition  Set of conditions to hide the controls.
 	 *     @type string $button_text  Text contained in button.
 	 *     @type string $text_control_label  Name for the label of the text control.
-	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
-	 *     @type string $alignment_default  Default alignment for the button.
 	 *     @type array $icon_exclude_inline_options  Set of icon types to exclude from icon controls.
 	 * }
 	 */
@@ -57,8 +55,6 @@ trait Button_Trait {
 			'section_condition' => [],
 			'button_default_text' => esc_html__( 'Click here', 'elementor' ),
 			'text_control_label' => esc_html__( 'Text', 'elementor' ),
-			'alignment_control_prefix_class' => 'elementor%s-align-',
-			'alignment_default' => '',
 			'icon_exclude_inline_options' => [],
 		];
 
@@ -111,6 +107,120 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_control(
+			'size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'sm',
+				'options' => self::get_button_sizes(),
+				'style_transfer' => true,
+				'condition' => array_merge( $args['section_condition'], [ 'size[value]!' => 'sm' ] ), // a workaround to hide the control, unless it's in use (not default).
+			]
+		);
+
+		$this->add_control(
+			'selected_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'condition' => $args['section_condition'],
+				'icon_exclude_inline_options' => $args['icon_exclude_inline_options'],
+			]
+		);
+
+		$this->add_control(
+			'icon_align',
+			[
+				'label' => esc_html__( 'Icon Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'default' => 'left',
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+			]
+		);
+
+		$this->add_control(
+			'icon_indent',
+			[
+				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+			]
+		);
+
+		$this->add_control(
+			'button_css_id',
+			[
+				'label' => esc_html__( 'Button ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
+				],
+				'default' => '',
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'description' => sprintf(
+					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
+					'<code>',
+					'</code>'
+				),
+				'separator' => 'before',
+				'condition' => $args['section_condition'],
+			]
+		);
+	}
+
+	/**
+	 * @since 3.4.0
+	 *
+	 * @param array $args {
+	 *     An array of values for the button adjustments.
+	 *
+	 *     @type array  $section_condition  Set of conditions to hide the controls.
+	 *     @type string $alignment_default  Default alignment for the button.
+	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
+	 * }
+	 */
+	protected function register_button_style_controls( $args = [] ) {
+		$default_args = [
+			'section_condition' => [],
+			'alignment_default' => '',
+			'alignment_control_prefix_class' => 'elementor%s-align-',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
 		$this->add_responsive_control(
 			'align',
 			[
@@ -139,101 +249,6 @@ trait Button_Trait {
 				'condition' => $args['section_condition'],
 			]
 		);
-
-		$this->add_control(
-			'size',
-			[
-				'label' => esc_html__( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'sm',
-				'options' => self::get_button_sizes(),
-				'style_transfer' => true,
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_control(
-			'selected_icon',
-			[
-				'label' => esc_html__( 'Icon', 'elementor' ),
-				'type' => Controls_Manager::ICONS,
-				'fa4compatibility' => 'icon',
-				'skin' => 'inline',
-				'label_block' => false,
-				'condition' => $args['section_condition'],
-				'icon_exclude_inline_options' => $args['icon_exclude_inline_options'],
-			]
-		);
-
-		$this->add_control(
-			'icon_align',
-			[
-				'label' => esc_html__( 'Icon Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'left',
-				'options' => [
-					'left' => esc_html__( 'Before', 'elementor' ),
-					'right' => esc_html__( 'After', 'elementor' ),
-				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
-			]
-		);
-
-		$this->add_control(
-			'icon_indent',
-			[
-				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'max' => 50,
-					],
-					'em' => [
-						'max' => 5,
-					],
-					'rem' => [
-						'max' => 5,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_control(
-			'button_css_id',
-			[
-				'label' => esc_html__( 'Button ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => true,
-				],
-				'ai' => [
-					'active' => false,
-				],
-				'default' => '',
-				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'description' => sprintf(
-					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
-					'<code>',
-					'</code>'
-				),
-				'separator' => 'before',
-				'condition' => $args['section_condition'],
-			]
-		);
-	}
-
-	protected function register_button_style_controls( $args = [] ) {
-		$default_args = [
-			'section_condition' => [],
-		];
-
-		$args = wp_parse_args( $args, $default_args );
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
@@ -357,6 +372,21 @@ trait Button_Trait {
 		);
 
 		$this->add_control(
+			'button_hover_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'hover_animation',
 			[
 				'label' => esc_html__( 'Hover Animation', 'elementor' ),
@@ -433,6 +463,10 @@ trait Button_Trait {
 
 		$settings = $instance->get_settings_for_display();
 
+		if ( empty( $settings['text'] ) && empty( $settings['selected_icon']['value'] ) ) {
+			return;
+		}
+
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
@@ -450,6 +484,8 @@ trait Button_Trait {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$instance->add_render_attribute( 'button', 'class', 'elementor-size-sm' ); // BC, to make sure the class is always present
 		}
 
 		if ( ! empty( $settings['hover_animation'] ) ) {
@@ -475,6 +511,10 @@ trait Button_Trait {
 	protected function content_template() {
 		?>
 		<#
+		if ( '' === settings.text && '' === settings.selected_icon.value ) {
+			return;
+		}
+
 		view.addRenderAttribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		view.addRenderAttribute( 'button', 'class', 'elementor-button' );
@@ -515,7 +555,9 @@ trait Button_Trait {
 						<# } #>
 					</span>
 					<# } #>
+					<# if ( settings.text ) { #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
+					<# } #>
 				</span>
 			</a>
 		</div>
@@ -578,7 +620,9 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
+			<?php if ( ! empty( $settings['text'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<?php endif; ?>
 		</span>
 		<?php
 	}

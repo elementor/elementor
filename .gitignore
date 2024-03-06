@@ -34,3 +34,8 @@ coverage/
 test-results/
 **/storageState.json
 tests/playwright/config/local.config.js
+playwright-report
+tests/playwright/blob-report
+**/allure-results
+playwright-test-results
+**/.env
