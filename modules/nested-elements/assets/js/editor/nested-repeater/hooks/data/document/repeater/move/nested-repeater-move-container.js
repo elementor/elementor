@@ -2,7 +2,7 @@ import Base from '../../../base';
 import {
 	MOVE,
 	findChildContainerOrFail,
-	shouldUseImprovedRepeaters, sortViewsByModels,
+	shouldUseAtomicRepeaters, sortViewsByModels,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterMoveContainer extends Base {
@@ -26,7 +26,7 @@ export class NestedRepeaterMoveContainer extends Base {
 
 		const widgetType = container.settings.get( 'widgetType' );
 
-		if ( shouldUseImprovedRepeaters( widgetType ) ) {
+		if ( shouldUseAtomicRepeaters( widgetType ) ) {
 			container.view.children._views = sortViewsByModels( container );
 
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
