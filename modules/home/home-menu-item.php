@@ -3,7 +3,7 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
-use Elementor\Modules\Apps\Admin_Apps_Page;
+//use Elementor\Modules\Apps\Admin_Apps_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,9 +31,5 @@ class Home_Menu_item implements Admin_Menu_Item_With_Page {
 		return 'manage_options';
 	}
 
-	public function render() {
-		?>
-		<div>Hello Home</div>
-		<?php
-	}
+	public function render() {}
 }
