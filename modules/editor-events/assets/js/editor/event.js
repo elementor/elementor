@@ -4,7 +4,7 @@ export default class Event {
 	constructor( data ) {
 		const time = Date.now();
 
-		this.setupMetadata( time );
+		this.setupEventData( time );
 		this.setupPayload( data, time );
 	}
 
@@ -27,7 +27,7 @@ export default class Event {
 		};
 	}
 
-	setupMetadata( time ) {
+	setupEventData( time ) {
 		this.event = {
 			type: 'editor_events',
 			action: 'update',
