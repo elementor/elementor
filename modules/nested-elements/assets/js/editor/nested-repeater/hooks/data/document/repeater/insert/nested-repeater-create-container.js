@@ -1,5 +1,6 @@
 import Base from '../../../base';
 import {
+	CREATE,
 	extractNestedItemTitle,
 	shouldUseImprovedRepeaters,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
@@ -49,6 +50,9 @@ export class NestedRepeaterCreateContainer extends Base {
 				new CustomEvent( 'elementor/nested-container/created', {
 					detail: {
 						container,
+						action: {
+							type: CREATE,
+						},
 					} },
 				) );
 		}

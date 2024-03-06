@@ -1,5 +1,10 @@
 import Base from '../../../base';
-import { findChildContainerOrFail, shouldUseImprovedRepeaters, sortViewsByModels } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	DUPLICATE,
+	findChildContainerOrFail,
+	shouldUseImprovedRepeaters,
+	sortViewsByModels,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterDuplicateContainer extends Base {
 	getId() {
@@ -29,6 +34,9 @@ export class NestedRepeaterDuplicateContainer extends Base {
 						container,
 						targetContainer: result,
 						index,
+						action: {
+							type: DUPLICATE,
+						},
 					} },
 				) );
 		} else {
