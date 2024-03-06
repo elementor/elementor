@@ -507,7 +507,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async publishPage() {
-		await this.page.getByRole( 'button', { name: 'Publish' } ).click();
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
 		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
 	}
@@ -520,7 +520,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async saveAndReloadPage() {
-		await this.page.getByRole( 'button', { name: 'Publish' } ).click();
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
