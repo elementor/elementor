@@ -5,6 +5,7 @@ import {
 	MOVE,
 	CREATE,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
