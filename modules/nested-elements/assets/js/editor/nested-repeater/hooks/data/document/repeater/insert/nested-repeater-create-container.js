@@ -1,6 +1,5 @@
 import Base from '../../../base';
 import {
-	CREATE,
 	extractNestedItemTitle,
 	shouldUseAtomicRepeaters,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
@@ -51,7 +50,7 @@ export class NestedRepeaterCreateContainer extends Base {
 					detail: {
 						container,
 						action: {
-							type: CREATE,
+							type: 'create',
 						},
 					} },
 				) );
