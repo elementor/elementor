@@ -189,7 +189,7 @@ export default class WpAdminPage extends BasePage {
 
 		if ( ! await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible() ) {
 			await this.page.selectOption( '#WPLANG', language );
-			await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+			await this.page.locator( '#submit' ).click();
 		}
 
 		// Install language if necessary
