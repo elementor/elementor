@@ -94,7 +94,16 @@ class Uploads_Manager extends Base_Object {
 			return $extracted;
 		}
 
-		$this->temp_unique_dirs[] = realpath( $extracted['extraction_directory'] );
+		if ( ! $this->is_absolute_path( $extracted['extraction_directory'] ) ) {
+			return new \WP_Error(
+				Exceptions::FORBIDDEN,
+				esc_html__( 'This file is not allowed for security reasons.', 'elementor' )
+			);
+		}
+
+		$this->temp_unique_dirs[] = is_executable( dirname( $extracted['extraction_directory'] ) )
+			? realpath( $extracted['extraction_directory'] )
+			: $extracted['extraction_directory'];
 
 		// If there are no extracted file names, no files passed the extraction validation.
 		if ( empty( $extracted['files'] ) ) {
@@ -294,22 +303,11 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 */
 	public function remove_temp_file_or_dir( $path ) {
-		$realpath = realpath( $path );
-		if ( false === $realpath ) {
+		if ( ! $this->is_temporary_file( $path ) ) {
 			return;
 		}
 
-		if ( is_uploaded_file( $path ) ) {
-			$this->remove_file_or_dir( $path );
-			return;
-		}
-
-		foreach ( $this->temp_unique_dirs as $temp_dir ) {
-			if ( strpos( $realpath, $temp_dir ) === 0 ) {
-				$this->remove_file_or_dir( $path );
-				break;
-			}
-		}
+		$this->remove_file_or_dir( $path );
 	}
 
 	/**
@@ -400,7 +398,9 @@ class Uploads_Manager extends Base_Object {
 		wp_mkdir_p( $unique_dir_path );
 
 		// Store uniqid and unique_dir_path pair
-		$this->temp_unique_dirs[] = realpath( $unique_dir_path );
+		$this->temp_unique_dirs[] = is_executable( dirname( $unique_dir_path ) )
+			? realpath( $unique_dir_path )
+			: $unique_dir_path;
 
 		return $unique_dir_path;
 	}
@@ -587,7 +587,7 @@ class Uploads_Manager extends Base_Object {
 	 */
 	private function validate_file( array $file, $file_extensions = [] ) {
 		$is_name_valid = empty( $file['name'] ) || basename( $file['name'] ) === $file['name'];
-		$is_tmp_name_valid = empty( $file['tmp_name'] ) || realpath( $file['tmp_name'] ) !== false;
+		$is_tmp_name_valid = empty( $file['tmp_name'] ) || $this->is_temporary_file( $file['tmp_name'] );
 
 		if ( ( empty( $file['name'] ) && empty( $file['tmp_name'] ) ) || ! $is_name_valid || ! $is_tmp_name_valid ) {
 			return new \WP_Error(
@@ -626,6 +626,68 @@ class Uploads_Manager extends Base_Object {
 
 		// Here is each file type handler's chance to run its own specific validations
 		return $file_type_handler->validate_file( $file );
+	}
+
+	/**
+	 * Checks whether the provided path is an absolute path.
+	 *
+	 * @since 3.20.0
+	 * @access private
+	 *
+	 * @param string $path
+	 * @return bool
+	 */
+	private function is_absolute_path( $path ) {
+		$realpath = realpath( $path );
+
+		if ( false === $realpath ) {
+			$path_parts = explode( DIRECTORY_SEPARATOR, $path );
+
+			foreach ( $path_parts as $part ) {
+				if ( in_array( [ '.', '..' ], $part ) ) {
+					return false;
+				}
+			}
+		}
+
+		if ( DIRECTORY_SEPARATOR === $realpath[0] ?? preg_match( '/^[a-zA-Z]:[\/\\\\]/', $path ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks whether the provided path is a temporary file.
+	 *
+	 * @since 3.20.0
+	 * @access private
+	 *
+	 * @param string $path
+	 * @return bool
+	 */
+	private function is_temporary_file( $path ) {
+		if ( ! $this->is_absolute_path( $path ) ) {
+			return false;
+		}
+
+		$realpath = is_executable( dirname( $path ) ) ? realpath( $path ) : $path;
+
+		if ( false === $realpath ) {
+			return false;
+		}
+
+		if ( is_uploaded_file( $path ) ) {
+			return true;
+		}
+
+		foreach ( $this->temp_unique_dirs as $temp_dir ) {
+			if ( strpos( $realpath, $temp_dir ) === 0 ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
