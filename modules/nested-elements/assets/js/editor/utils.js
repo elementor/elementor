@@ -53,3 +53,17 @@ export function shouldUseImprovedRepeaters( widgetType ) {
 	isWidgetSupportNesting( widgetType ) &&
 	isWidgetSupportImprovedRepeaters( widgetType );
 }
+
+export function sortViewsByModels( container ) {
+	const models = container.model.get( 'elements' ).models,
+		children = container.view.children,
+		updatedViews = {};
+
+	models.forEach( ( model, index ) => {
+		const view = children.findByModel( model );
+		view._index = index;
+		updatedViews[ view.cid ] = view;
+	} );
+
+	return updatedViews;
+}
