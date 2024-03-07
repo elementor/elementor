@@ -106,7 +106,7 @@ class Settings extends Settings_Page {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
 
-		echo '<div id="e-home-screen" data-ui-theme="'. esc_attr( $ui_theme ) . '"></div>';
+		echo '<div id="e-home-screen" data-ui-theme="' . esc_attr( $ui_theme ) . '"></div>';
 	}
 
 	/**
@@ -213,7 +213,7 @@ class Settings extends Settings_Page {
 			? esc_html__( 'Home', 'elementor' )
 			: esc_html__( 'Settings', 'elementor' );
 
-		Utils::change_submenu_first_item_label('elementor', $menu_name );
+		Utils::change_submenu_first_item_label( 'elementor', $menu_name );
 	}
 
 	/**
