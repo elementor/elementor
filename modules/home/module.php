@@ -2,8 +2,7 @@
 namespace Elementor\Modules\Home;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Base\App as BaseApp;;
-
+use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -30,7 +29,7 @@ class Module extends BaseApp {
 		}
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			$hook_suffix = "toplevel_page_elementor";
+			$hook_suffix = 'toplevel_page_elementor';
 			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_main_script' ] );
 		}, 10, 2 );
 	}
@@ -54,7 +53,7 @@ class Module extends BaseApp {
 		wp_set_script_translations( 'e-home-screen', 'elementor' );
 	}
 
-	private function is_experiment_active() {
+	public function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
 	}
 

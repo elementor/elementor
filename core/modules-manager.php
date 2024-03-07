@@ -115,7 +115,7 @@ class Modules_Manager {
 			'styleguide',
 			'apps',
 			'editor-events',
-			'home'
+			'home',
 		];
 	}
 

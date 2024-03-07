@@ -20,13 +20,13 @@ class Admin_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_parent_slug() {
-		return $this->settings_page->is_home_screen_active() ? 'elementor' : null;
+		return $this->settings_page->home_module->is_experiment_active() ? 'elementor' : null;
 	}
 
 	public function get_label() {
-		$label = $this->settings_page->is_home_screen_active() ? 'Settings' : 'Elementor';
-
-		return esc_html__( $label, 'elementor' );
+		return $this->settings_page->home_module->is_experiment_active()
+			? esc_html__( 'Settings', 'elementor' )
+			: esc_html__( 'Elementor', 'elementor' );
 	}
 
 	public function get_page_title() {
