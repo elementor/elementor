@@ -76,9 +76,6 @@ class Module extends BaseModule {
 
 		// Run optimization logic on content.
 		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_image' ] );
-
-		// Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
-		add_action( 'get_footer', [ $this, 'set_buffer' ] );
 	}
 
 	/**

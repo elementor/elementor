@@ -239,6 +239,10 @@ class User {
 		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'json-upload' );
 	}
 
+	public static function is_current_user_can_use_custom_html() {
+		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'custom-html' );
+	}
+
 	/**
 	 * Set admin notice as viewed.
 	 *
