@@ -12,7 +12,7 @@ const App = ( props ) => {
 			</LocalizationProvider>
 		</DirectionProvider>
 	);
-}
+};
 
 const isRTL = elementorCommon.config.isRTL,
 	rootElement = document.querySelector( '#e-home-screen' ),
