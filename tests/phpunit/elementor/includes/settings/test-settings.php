@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Global_CSS;
 
@@ -46,6 +47,10 @@ class Test_Settings extends Elementor_Test_Base {
 		global $submenu;
 
 		$elementor_menu = $submenu['elementor'];
+
+		var_dump( 'home screen experiment status' );
+		var_dump( Plugin::$instance->experiments->is_feature_active( 'home-screen' ) );
+		var_dump( get_option( 'elementor_experiment-home-screen' ) );
 
 		$expected_items = [
 			'elementor' => 'Settings',
