@@ -5,22 +5,22 @@ import PropTypes from 'prop-types';
 const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'default', ...props } ) => {
 	const messages = {
 		default: {
-			text: <AlertTitle>{ __( 'Unknown error. Please try again later.', 'elementor' ) }</AlertTitle>,
-			description: __( 'Error code:', 'elementor' ) + ' ' + error,
-			buttonText: __( 'Try Again', 'elementor' ),
+			text: <AlertTitle>{ __( 'There was a glitch.', 'elementor' ) }</AlertTitle>,
+			description: __( 'Wait a moment and give it another go, or try tweaking the prompt.', 'elementor' ) + ' ',
+			buttonText: __( 'Try again', 'elementor' ),
 			buttonAction: onRetry,
 		},
 		service_outage_internal: {
-			text: <AlertTitle>{ __( 'Elementor AI is temporarily unavailable', 'elementor' ) }</AlertTitle>,
-			description: __( 'Seems like we are experiencing technical difficulty. We should be up and running shortly.', 'elementor' ),
-			buttonText: __( 'Try Again', 'elementor' ),
+			text: <AlertTitle>{ __( 'There was a glitch.', 'elementor' ) }</AlertTitle>,
+			description: __( 'Wait a moment and give it another go.', 'elementor' ),
+			buttonText: __( 'Try again', 'elementor' ),
 			buttonAction: onRetry,
 		},
 		invalid_connect_data: {
-			text: <AlertTitle>{ __( 'Reconnect your account', 'elementor' ) }</AlertTitle>,
+			text: <AlertTitle>{ __( 'There was a glitch.', 'elementor' ) }</AlertTitle>,
 			description: (
 				<>
-					{ __( 'We couldn\'t connect to your account due to technical difficulties on our end. Reconnect your account to continue.', 'elementor' ) }
+					{ __( 'Try exiting Elementor and sign in again.', 'elementor' ) }
 					{ ' ' }<a href="https://elementor.com/help/disconnecting-reconnecting-your-elementor-account/" target="_blank" rel="noreferrer">{ __( 'Show me how', 'elementor' ) }</a>
 				</>
 			),
@@ -34,15 +34,15 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 			buttonAction: () => window.open( window.ElementorAiConfig.connect_url ),
 		},
 		quota_reached_trail: {
-			text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
-			description: __( 'Enjoy the free trial? Upgrade now for unlimited access to built-in image, text and custom code generators.', 'elementor' ),
-			buttonText: __( 'Upgrade', 'elementor' ),
+			text: <AlertTitle>{ __( 'Your free trial is used up.', 'elementor' ) }</AlertTitle>,
+			description: __( 'Ready to take it to the next level?', 'elementor' ),
+			buttonText: __( 'Upgrade now', 'elementor' ),
 			buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
 		},
 		quota_reached_subscription: {
-			text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
-			description: __( 'Love Elementor AI? Upgrade to continue creating with built-in image, text and custom code generators.', 'elementor' ),
-			buttonText: __( 'Upgrade', 'elementor' ),
+			text: <AlertTitle>{ __( 'Looks like you\'re out of credits.', 'elementor' ) }</AlertTitle>,
+			description: __( 'Ready to take it to the next level?', 'elementor' ),
+			buttonText: __( 'Upgrade now', 'elementor' ),
 			buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
 		},
 		rate_limit_network: {
@@ -52,6 +52,24 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		invalid_prompts: {
 			text: <AlertTitle>{ __( 'We were unable to generate that prompt.', 'elementor' ) }</AlertTitle>,
 			description: __( 'Seems like the prompt contains words that could generate harmful content. Write a different prompt to continue.', 'elementor' ),
+		},
+		service_unavailable: {
+			text: <AlertTitle>{ __( 'There was a glitch.', 'elementor' ) }</AlertTitle>,
+			description: __( 'Wait a moment and give it another go, or try tweaking the prompt.', 'elementor' ),
+			buttonText: __( 'Try again', 'elementor' ),
+			buttonAction: onRetry,
+		},
+		request_timeout_error: {
+			text: <AlertTitle>{ __( 'There was a glitch.', 'elementor' ) }</AlertTitle>,
+			description: __( 'Wait a moment and give it another go, or try tweaking the prompt.', 'elementor' ),
+			buttonText: __( 'Try again', 'elementor' ),
+			buttonAction: onRetry,
+		},
+		invalid_token: {
+			text: <AlertTitle>{ __( 'Try again', 'elementor' ) }</AlertTitle>,
+			description: __( 'Try exiting Elementor and sign in again.', 'elementor' ),
+			buttonText: __( 'Reconnect', 'elementor' ),
+			buttonAction: onRetry,
 		},
 	};
 
