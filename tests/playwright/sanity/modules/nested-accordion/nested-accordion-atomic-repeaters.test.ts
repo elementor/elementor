@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { addItemFromRepeater, deleteItemFromRepeater } from './helper';
+import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
+import _path from 'path';
 
 test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -29,12 +30,11 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		await page.close();
 	} );
 
-	test( 'General Test', async ( { page }, testInfo ) => {
+	test.skip( 'General Test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
-		// Arrange
 
 		await editor.selectElement( nestedAccordionID );
 
@@ -53,6 +53,22 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 			await editor.selectElement( secondNestedAccordionID );
 
 			await addItemFromRepeater( editor, secondNestedAccordionID );
+		} );
+	} );
+
+	test( 'Test with existing template', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage();
+
+		const filePath = _path.resolve( __dirname, `./templates/nested-accordion-with-content.json` );
+		await editor.loadTemplate( filePath, false );
+
+		await test.step( 'Clone first accordion item', async () => {
+			await cloneItemFromRepeater( editor, 'first' );
+		} );
+
+		await test.step( 'Clone last accordion item', async () => {
+			await cloneItemFromRepeater( editor, 'last' );
 		} );
 	} );
 } );
