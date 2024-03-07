@@ -303,7 +303,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 */
 	public function remove_temp_file_or_dir( $path ) {
-		if ( ! $this->is_temporary_file( $path ) ) {
+		if ( ! $this->is_absolute_path( $path ) || ! $this->is_temporary_file( $path ) ) {
 			return;
 		}
 
@@ -587,7 +587,7 @@ class Uploads_Manager extends Base_Object {
 	 */
 	private function validate_file( array $file, $file_extensions = [] ) {
 		$is_name_valid = empty( $file['name'] ) || basename( $file['name'] ) === $file['name'];
-		$is_tmp_name_valid = empty( $file['tmp_name'] ) || $this->is_temporary_file( $file['tmp_name'] );
+		$is_tmp_name_valid = empty( $file['tmp_name'] ) || $this->is_absolute_path( $file['tmp_name'] ) && $this->is_temporary_file( $file['tmp_name'] );
 
 		if ( ( empty( $file['name'] ) && empty( $file['tmp_name'] ) ) || ! $is_name_valid || ! $is_tmp_name_valid ) {
 			return new \WP_Error(
@@ -667,10 +667,6 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_temporary_file( $path ) {
-		if ( ! $this->is_absolute_path( $path ) ) {
-			return false;
-		}
-
 		$realpath = is_executable( dirname( $path ) ) ? realpath( $path ) : $path;
 
 		if ( false === $realpath ) {
