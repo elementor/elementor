@@ -9,7 +9,7 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 				<Box sx={ { display: 'flex', flexDirection: 'column', width: '85%', mb: 3 } }>
 					<Typography variant="body2">Hi!</Typography>
 					<Typography variant="h6">Welcome to Elementor</Typography>
-					<Typography variant="body2" >Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.</Typography>
+					<Typography variant="body2" >Get introduced to Elementor by watching our &ldquo;Getting Started&rdquo; video series. It will guide you through the steps needed to create your website. Then click to create your first page.</Typography>
 				</Box>
 				<Box>
 					<Button variant="contained" size="small" sx={ { mr: 1 } } href={ ctaUrl } target="_blank">
@@ -42,5 +42,3 @@ TopSection.propTypes = {
 
 };
 export default TopSection;
-
-
