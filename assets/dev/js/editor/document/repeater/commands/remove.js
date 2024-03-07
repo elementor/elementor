@@ -1,6 +1,6 @@
 import {
 	widgetNodes,
-	shouldUseImprovedRepeaters,
+	shouldUseAtomicRepeaters,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
 
 export class Remove extends $e.modules.editor.document.CommandHistoryBase {
@@ -67,7 +67,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			collection.remove( model );
 
-			if ( shouldUseImprovedRepeaters( widgetType ) ) {
+			if ( shouldUseAtomicRepeaters( widgetType ) ) {
 				const widgetContainer = container.view.$el[ 0 ];
 				widgetNodes( widgetType ).targetContainer.forEach( ( item ) => {
 					widgetContainer.querySelector( item ).children[ index ].remove();
