@@ -1,7 +1,7 @@
 import { DirectionProvider, LocalizationProvider } from '@elementor/ui';
 import { ThemeProvider } from '@elementor/ui/styles';
 
-import HomeScreen from './components/HomeScreen';
+import HomeScreen from './components/home-screen';
 
 const App = ( props ) => {
 	return (
