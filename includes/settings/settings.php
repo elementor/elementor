@@ -7,6 +7,7 @@ use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Modules\Home\Module as Home_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -83,10 +84,23 @@ class Settings extends Settings_Page {
 			esc_html__( 'Elementor', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
-			[ $this, 'display_settings_page' ],
+			[
+				$this,
+				$this->is_home_screen_active() ? 'display_home_screen' : 'display_settings_page'
+			],
 			'',
 			'58.5'
 		);
+
+		if ( $this->is_home_screen_active() ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				$admin_menu->register( 'settings', new Admin_Menu_Item( $this ) );
+			}, 0 );
+		}
+	}
+
+	public function display_home_screen() {
+		echo '<div id="e-home-screen"></div>';
 	}
 
 	/**
@@ -189,7 +203,12 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
+		$menu_name = $this->is_home_screen_active() ? 'Home' : 'Settings';
+
+		Utils::change_submenu_first_item_label(
+			'elementor',
+			esc_html__( $menu_name, 'elementor' )
+		);
 	}
 
 	/**
@@ -467,5 +486,9 @@ class Settings extends Settings_Page {
 			add_action( "add_option_{$option_name}", $clear_cache_callback );
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
+	}
+
+	public function is_home_screen_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'home-screen' );
 	}
 }

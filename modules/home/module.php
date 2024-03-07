@@ -7,7 +7,6 @@ use Elementor\Core\Base\App as BaseApp;;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Modules\Apps\Admin_Pointer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -30,16 +29,9 @@ class Module extends BaseApp {
 			return;
 		}
 
-		Admin_Pointer::add_hooks();
-
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$admin_menu->register( static::PAGE_ID, new Home_Menu_item() );
-		}, 116 );
-
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_main_script' ] );
-			}
+			$hook_suffix = "toplevel_page_elementor";
+			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_main_script' ] );
 		}, 10, 2 );
 	}
 
@@ -74,5 +66,11 @@ class Module extends BaseApp {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
+	}
+
+	public function display_home_screen() {
+		?>
+		<div id="elementor-home-screen"></div>
+		<?php
 	}
 }
