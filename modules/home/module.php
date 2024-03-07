@@ -67,10 +67,4 @@ class Module extends BaseApp {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
 	}
-
-	public function display_home_screen() {
-		?>
-		<div id="elementor-home-screen"></div>
-		<?php
-	}
 }
