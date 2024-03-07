@@ -25,7 +25,7 @@ class Module extends BaseApp {
 
 		$this->register_layout_experiment();
 
-		if ( ! $this->is_layout_active() ) {
+		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
 
@@ -54,7 +54,7 @@ class Module extends BaseApp {
 		wp_set_script_translations( 'e-home-screen', 'elementor' );
 	}
 
-	private function is_layout_active() {
+	private function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
 	}
 

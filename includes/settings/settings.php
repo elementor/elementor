@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
@@ -100,7 +101,10 @@ class Settings extends Settings_Page {
 	}
 
 	public function display_home_screen() {
-		echo '<div id="e-home-screen"></div>';
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
+
+		echo '<div id="e-home-screen" data-ui-theme="'. $ui_theme . '"></div>';
 	}
 
 	/**
