@@ -20,15 +20,17 @@ class Admin_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_parent_slug() {
-		return null;
+		return $this->settings_page->home_module->is_experiment_active() ? 'elementor' : null;
 	}
 
 	public function get_label() {
-		return esc_html__( 'Elementor', 'elementor' );
+		return $this->settings_page->home_module->is_experiment_active()
+			? esc_html__( 'Settings', 'elementor' )
+			: esc_html__( 'Elementor', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Elementor', 'elementor' );
+		return $this->get_label();
 	}
 
 	public function get_position() {
