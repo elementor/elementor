@@ -9,12 +9,12 @@ const HomeScreen = () => {
 	const [ topScreenProps ] = useState( { videoUrl: 'https://elementor.com/academy/getting-started-with-elementor/', ctaUrl: baseUrl, embedUrl: 'https://www.youtube.com/embed/icTcREd1tAg?si=MPamCEWNeRR_VdAn&amp;controls=0' } );
 
 	return (
-    	<Container sx={ { py: 4 } }>
+		<Container sx={ { py: 4 } }>
 			<Grid sx={ { display: 'grid', gap: 3 } }>
 				<TopSection
-				  ctaUrl={ topScreenProps.ctaUrl }
-				  videoUrl={ topScreenProps.videoUrl }
-				  embedUrl={ topScreenProps.embedUrl }
+				ctaUrl={ topScreenProps.ctaUrl }
+				videoUrl={ topScreenProps.videoUrl }
+				embedUrl={ topScreenProps.embedUrl }
 				/>
 				<BlockSection />
 			</Grid>
