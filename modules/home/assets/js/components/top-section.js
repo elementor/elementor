@@ -1,7 +1,9 @@
 import { Box, Paper } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
+
 import YoutubeIcon from './icons/youtube-icon';
+
 const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 	return (
 		<Paper justifyContent="space-between" alignItems="flex-start" elevation={ 0 } sx={ { display: 'flex', flexDirection: 'row', bgcolor: 'theme.palette.background.default', maxWidth: 'lg', mx: 'auto', mt: 6 } }>
@@ -41,4 +43,5 @@ TopSection.propTypes = {
 	embedUrl: PropTypes.string.isRequired,
 
 };
+
 export default TopSection;
