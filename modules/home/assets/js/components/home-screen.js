@@ -12,9 +12,9 @@ const HomeScreen = () => {
 		<Container sx={ { py: 4 } }>
 			<Grid sx={ { display: 'grid', gap: 3 } }>
 				<TopSection
-				ctaUrl={ topScreenProps.ctaUrl }
-				videoUrl={ topScreenProps.videoUrl }
-				embedUrl={ topScreenProps.embedUrl }
+					ctaUrl={ topScreenProps.ctaUrl }
+					videoUrl={ topScreenProps.videoUrl }
+					embedUrl={ topScreenProps.embedUrl }
 				/>
 				<BlockSection />
 			</Grid>
