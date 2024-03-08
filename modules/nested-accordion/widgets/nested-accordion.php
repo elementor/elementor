@@ -78,6 +78,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return '.e-n-accordion';
 	}
 
+	protected function get_default_children_container_placeholder_selector() {
+		return '.e-n-accordion-item';
+	}
+
 	protected function get_html_wrapper_class() {
 		return 'elementor-widget-n-accordion';
 	}
