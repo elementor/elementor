@@ -3,7 +3,6 @@ import { ThemeProvider } from '@elementor/ui/styles';
 import ReactUtils from 'elementor-utils/react';
 
 import HomeScreen from './components/home-screen';
-import {EditorDrawer} from "../../../notifications/assets/js/components/editor-drawer";
 
 const App = ( props ) => {
 	return (
