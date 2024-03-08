@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseApp {
 
-	const PAGE_ID = 'home-screen';
+	const PAGE_ID = 'home_screen';
 
 	public function get_name() {
 		return 'home';
