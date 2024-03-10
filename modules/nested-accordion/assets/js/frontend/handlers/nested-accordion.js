@@ -77,9 +77,6 @@ export default class NestedAccordion extends Base {
 			let accordionItem, contentContainer;
 
 			switch ( type ) {
-				case 'create':
-					[ accordionItem, contentContainer ] = this.insert( view, accordionItems );
-					break;
 				case 'move':
 					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, accordionItems );
 					break;
@@ -90,19 +87,13 @@ export default class NestedAccordion extends Base {
 					break;
 			}
 
-			accordionItem.appendChild( contentContainer );
+			if ( undefined !== accordionItem ) {
+				accordionItem.appendChild( contentContainer );
+			}
 
 			this.updateIndexValues();
 			this.updateListeners( view );
 		}
-	}
-
-	insert( view, accordionItems ) {
-		const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
-			contentContainer = containers[ containers.length - 1 ],
-			accordionItem = accordionItems[ accordionItems.length - 1 ];
-
-		return [ accordionItem, contentContainer ];
 	}
 
 	move( view, index, targetContainer, accordionItems ) {
