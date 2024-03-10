@@ -13,10 +13,10 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 					<Typography variant="body2" >Get introduced to Elementor by watching our &ldquo;Getting Started&rdquo; video series. It will guide you through the steps needed to create your website. Then click to create your first page.</Typography>
 				</Box>
 				<Box>
-					<Button variant="contained" size="small" sx={ { mr: 1 } } href={ ctaUrl } target="_blank">
+					<Button variant="contained" size="small" sx={ { mr: 1, mt: { xs: 0, sm: 1, md: 0, lg: 0, xl: 0 } } } href={ ctaUrl } target="_blank">
 						<Typography variant="button">Create a Page</Typography>
 					</Button>
-					<Button variant="outlined" color="secondary" size="small" startIcon={ <StyledYoutubeIcon /> } href={ videoUrl } target="_blank">
+					<Button variant="outlined" color="secondary" size="small" startIcon={ <StyledYoutubeIcon /> } href={ videoUrl } target="_blank" sx={ { mt: { xs: 1, sm: 1, md: 0, lg: 0, xl: 0 } } }>
 						<Typography variant="button">Watch a quick starter</Typography>
 					</Button>
 				</Box>
