@@ -8,7 +8,7 @@ const HomeScreen = () => {
 	const [ topScreenProps ] = useState( {
 		videoUrl: 'https://elementor.com/academy/getting-started-with-elementor/',
 		ctaUrl: baseUrl,
-		embedUrl: 'https://www.youtube.com/embed/icTcREd1tAg?si=MPamCEWNeRR_VdAn&amp;controls=0'
+		embedUrl: 'https://www.youtube.com/embed/icTcREd1tAg?si=MPamCEWNeRR_VdAn&amp;controls=0',
 	} );
 
 	return (
