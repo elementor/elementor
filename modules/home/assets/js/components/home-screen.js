@@ -14,11 +14,7 @@ const HomeScreen = () => {
 	return (
 		<Container sx={ { py: 3 } }>
 			<Grid sx={ { display: 'grid', gap: 3 } }>
-				<TopSection
-					ctaUrl={ topScreenProps.ctaUrl }
-					videoUrl={ topScreenProps.videoUrl }
-					embedUrl={ topScreenProps.embedUrl }
-				/>
+				<TopSection { ...topScreenProps } />
 			</Grid>
 		</Container>
 	);
