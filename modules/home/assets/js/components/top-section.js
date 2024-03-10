@@ -1,12 +1,11 @@
 import { Box, Paper } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
-
-import YoutubeIcon from './icons/youtube-icon';
+import StyledYoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 	return (
-		<Paper justifyContent="space-between" alignItems="flex-start" elevation={ 0 } sx={ { display: 'flex', flexDirection: 'row', bgcolor: 'theme.palette.background.default', maxWidth: 'lg', mx: 'auto', mt: 6 } }>
+		<Paper justifyContent="space-between" alignItems="flex-start" elevation={ 0 } sx={ { display: 'flex', flexDirection: 'row', bgcolor: 'theme.palette.background.default', mt: 6 } }>
 			<Box ml={ 4 } my={ 4 }>
 				<Box sx={ { display: 'flex', flexDirection: 'column', width: '85%', mb: 3 } }>
 					<Typography variant="body2">Hi!</Typography>
@@ -17,14 +16,13 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 					<Button variant="contained" size="small" sx={ { mr: 1 } } href={ ctaUrl } target="_blank">
 						<Typography variant="button">Create a Page</Typography>
 					</Button>
-					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ videoUrl } target="_blank">
+					<Button variant="outlined" color="secondary" size="small" startIcon={ <StyledYoutubeIcon /> } href={ videoUrl } target="_blank">
 						<Typography variant="button">Watch a quick starter</Typography>
 					</Button>
 				</Box>
 			</Box>
 			<Box my={ 4 } mr={ 4 }>
 				<iframe
-					// Defualt sizes width="560" height="315"
 					width="365" height="205"
 					src={ embedUrl }
 					title="YouTube video player" frameBorder="0"
