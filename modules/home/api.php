@@ -5,7 +5,7 @@ class API {
 
 	const HOME_SCREEN_DATA_URL = 'https://assets.stg.elementor.red/home-screen/v1/home-screen.json';
 
-	public static function get_home_screen_items( $force_request = false ) {
+	public static function get_home_screen_items( $force_request = false ): array {
 		$sorted_items = self::get_transient( '_elementor_home_screen_data' );
 
 		if ( $force_request || false === $sorted_items ) {
@@ -18,7 +18,7 @@ class API {
 		return $sorted_items;
 	}
 
-	private static function sort_items_by_type( $items ) {
+	private static function sort_items_by_type( $items ): array {
 		$sorted_items = [];
 
 		foreach ( $items as $item ) {
@@ -28,7 +28,7 @@ class API {
 		return $sorted_items;
 	}
 
-	private static function fetch_data() : array {
+	private static function fetch_data(): array {
 		$response = wp_remote_get( self::HOME_SCREEN_DATA_URL );
 
 		if ( is_wp_error( $response ) ) {
@@ -44,7 +44,7 @@ class API {
 		return $data['home-screen'];
 	}
 
-	private static function get_transient( $cache_key ) {
+	private static function get_transient( $cache_key ): array {
 		$cache = get_option( $cache_key );
 
 		if ( empty( $cache['timeout'] ) ) {
@@ -58,7 +58,7 @@ class API {
 		return json_decode( $cache['value'], true );
 	}
 
-	private static function set_transient( $cache_key, $value, $expiration = '+12 hours' ) {
+	private static function set_transient( $cache_key, $value, $expiration = '+12 hours' ): bool {
 		$data = [
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
 			'value' => json_encode( $value ),

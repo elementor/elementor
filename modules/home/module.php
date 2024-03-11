@@ -15,7 +15,7 @@ class Module extends BaseApp {
 
 	const PAGE_ID = 'home_screen';
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'home';
 	}
 
@@ -34,7 +34,7 @@ class Module extends BaseApp {
 		}, 10, 2 );
 	}
 
-	public function enqueue_editor_scripts() {
+	public function enqueue_editor_scripts(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
@@ -67,7 +67,7 @@ class Module extends BaseApp {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
 	}
 
-	private function register_layout_experiment() {
+	private function register_layout_experiment(): void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => static::PAGE_ID,
 			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
@@ -77,7 +77,7 @@ class Module extends BaseApp {
 		] );
 	}
 
-	private function get_app_js_config() : array {
+	private function get_app_js_config(): array {
 		return [
 			'data' => API::get_home_screen_items( true ),
 			'createNewPageUrl' => Plugin::$instance->documents->get_create_new_post_url( 'page' ),
