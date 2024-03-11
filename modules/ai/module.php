@@ -342,11 +342,11 @@ class Module extends BaseModule {
 
 		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
-			$feature_key = '';
 			if ( $result->get_error_data() && isset( $result->get_error_data()['feature_key'] ) ) {
 				$feature_key = $result->get_error_data()['feature_key'];
+				throw new AI_Exception( $result->get_error_message(), 0, null, $feature_key );
 			}
-			throw new AI_Exception( $result->get_error_message(), 0, null, $feature_key );
+			throw new \Exception( $result->get_error_message() );
 		}
 
 		return [
