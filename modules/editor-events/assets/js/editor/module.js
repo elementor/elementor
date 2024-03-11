@@ -19,9 +19,9 @@ export default class extends elementorModules.Module {
 		}
 
 		const newEvent = new Event( data );
-		const blob = new Blob( [ JSON.stringify( newEvent ) ], { type: 'application/json' } );
+		const eventBlob = new Blob( [ JSON.stringify( newEvent ) ], { type: 'application/json' } );
 
-		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, blob ) ) {
+		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, eventBlob ) ) {
 			return;
 		}
 
