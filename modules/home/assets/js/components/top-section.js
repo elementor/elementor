@@ -28,7 +28,7 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 					frameBorder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					allowFullScreen={ true }
-					style={ { borderRadius: '4px', height: '100%', width: '100%', display: 'flex'} }>
+					style={ { borderRadius: '4px', height: '100%', width: '100%', display: 'flex' } }>
 				</iframe>
 			</Box>
 		</Paper>
