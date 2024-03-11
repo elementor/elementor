@@ -664,7 +664,16 @@ class Manager {
 
 		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' ); // phpcs:ignore -- Nonce already verified.
 
-		$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
+		$whitelist_methods = [
+			'export_template',
+			'direct_import_template',
+		];
+
+		if ( in_array( $action, $whitelist_methods, true ) ) {
+			$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
+		} else {
+			$result = new \WP_Error( 'method_not_exists', 'Method Not exists' );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			/** @var \WP_Error $result */
