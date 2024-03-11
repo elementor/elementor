@@ -5,8 +5,8 @@ import StyledYoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 	return (
-		<Box sx={ { display: 'flex', flexDirection: { xs: 'column', md: 'row' }, backgroundColor: 'background.default', p: { xs: 1, md: 4 } } }>
-			<Box sx={ { display: 'flex', flexDirection: 'column', pr: { xs: 0, md: 3 }, pb: 1, gap: 2 } }>
+		<Box sx={ { display: 'flex', flexDirection: { xs: 'column', md: 'row' }, backgroundColor: 'background.default', p: { xs: 2, md: 4 } } }>
+			<Box sx={ { display: 'flex', flexDirection: 'column', pr: { xs: 0, md: 10 }, pb: 3, gap: 3 } }>
 				<Box sx={ { display: 'flex', flexDirection: 'column', maxWidth: '600px' } }>
 					<Typography variant="body2">Hi!</Typography>
 					<Typography variant="h6">Welcome to Elementor</Typography>
