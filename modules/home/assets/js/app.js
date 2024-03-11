@@ -9,7 +9,7 @@ const App = ( props ) => {
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
-					<HomeScreen homeScreenData={ props.homeScreenData }/>
+					<HomeScreen homeScreenData={ props.homeScreenData } />
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
