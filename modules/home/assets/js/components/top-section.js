@@ -1,4 +1,4 @@
-import { Box, Box } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import StyledYoutubeIcon from '../icons/youtube-icon';
