@@ -209,6 +209,7 @@ export default class NestedTabs extends Base {
 		elementorFrontend.elements.$window.on( 'resize', this.setTouchMode.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 		elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.changeActiveTabByKeyboard.bind( this ) );
+		elementorFrontend.elements.$window.on( 'elementor/nested-container/created', this.linkContainer.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -217,6 +218,8 @@ export default class NestedTabs extends Base {
 		this.elements.$tabContents.children().off();
 		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
+		elementorFrontend.elements.$window.off( 'elementor/nested-container/created' );
+
 	}
 
 	/**
@@ -390,5 +393,15 @@ export default class NestedTabs extends Base {
 		}
 
 		this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'false' );
+	}
+
+	linkContainer( event ) {
+		const { container, index, targetContainer, action: { type } } = event.detail,
+			view = container.view.$el;
+		this.updateListeners( view )
+	}
+
+	updateListeners( view ){
+		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ])
 	}
 }

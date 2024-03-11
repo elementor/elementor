@@ -240,6 +240,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	onButtonAddRowClick() {
+		console.time('entire');
 		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
@@ -251,6 +252,8 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.editRow( newChild );
 
 		this.toggleMinRowsClass();
+
+		console.timeEnd('entire');
 	},
 
 	onChildviewClickRemove( childView ) {
