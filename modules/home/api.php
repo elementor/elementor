@@ -4,7 +4,6 @@ namespace Elementor\Modules\Home;
 class API {
 
 	const HOME_SCREEN_DATA_URL = 'https://assets.stg.elementor.red/home-screen/v1/home-screen.json';
-//	const HOME_SCREEN_DATA_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
 
 	public static function get_home_screen_items( $force_request = false ) {
 		$home_screen_items = self::get_transient( '_elementor_home_screen_data' );
@@ -15,7 +14,30 @@ class API {
 			static::set_transient( '_elementor_home_screen_data', $home_screen_items, '+1 hour' );
 		}
 
-		return $home_screen_items;
+		$sorted_items = static::sort_items_by_type( $home_screen_items );
+
+		return $sorted_items;
+	}
+
+	private static function sort_items_by_type( $items ) {
+		$sorted_items = [];
+		$types = static::get_types( $items );
+
+		foreach ( $items as $item ) {
+			$sorted_items[ $item['type'] ][] = $item;
+		}
+
+		return $sorted_items;
+	}
+
+	private static function get_types( $items ) {
+		$types = [];
+
+		foreach ( $items as $item ) {
+			$types[] = $item['type'];
+		}
+
+		return array_unique( $types );
 	}
 
 	private static function fetch_data() : array {
