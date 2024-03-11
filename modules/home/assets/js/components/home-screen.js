@@ -5,11 +5,11 @@ import TopSection from './top-section';
 const HomeScreen = () => {
 	const videoUrl = 'https://elementor.com/academy/getting-started-with-elementor/',
 		ctaUrl = elementorAppConfig.pages_url,
-		embedUrl = 'https://www.youtube.com/embed/icTcREd1tAg?si=MPamCEWNeRR_VdAn&amp;controls=0';
+		embedUrl = 'https://www.youtube.com/embed/icTcREd1tAg?si=40E8D1hdnu26-TXM';
 
 	return (
-		<Container sx={ { py: 3 } }>
-			<Grid sx={ { display: 'grid', gap: 3 } }>
+		<Container sx={ { py: { xs: 2, md: 6 }, maxWidth: { md: '990px' } } }>
+			<Grid sx={ { display: 'grid', gap: { xs: 1, md: 3 } } }>
 				<TopSection videoUrl={ videoUrl } ctaUrl={ ctaUrl } embedUrl={ embedUrl } />
 			</Grid>
 		</Container>
