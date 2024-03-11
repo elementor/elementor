@@ -181,7 +181,7 @@ class Module extends BaseModule {
 					$this->add_response_data( true, $results );
 				}
 			} catch ( \Exception $e ) {
-				if (method_exists($e, 'get_feature_key') && $e->get_feature_key()) {
+				if ( method_exists( $e, 'get_feature_key' ) && $e->get_feature_key() ) {
 					$this->add_response_data( false, $e->getMessage(), $e->getCode(), $e->get_feature_key() );
 				} else {
 					$this->add_response_data( false, $e->getMessage(), $e->getCode() );
@@ -318,7 +318,6 @@ class Module extends BaseModule {
 	 * @return Module An instance of ajax manager.
 	 */
 	private function add_response_data( $success, $data = null, $code = 200, $feature_key = null ) {
-		error_log('feature_key1' . $feature_key);
 		$this->response_data[ $this->current_action_id ] = [
 			'success' => $success,
 			'code' => $code,

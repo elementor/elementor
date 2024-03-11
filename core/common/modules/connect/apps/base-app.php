@@ -520,7 +520,7 @@ abstract class Base_App {
 
 			// Include 'feature_key' in the error object if it exists
 			$error_data = array();
-			if ( !empty( $feature_key ) ) {
+			if ( ! empty( $feature_key ) ) {
 				$error_data['feature_key'] = $feature_key;
 			}
 

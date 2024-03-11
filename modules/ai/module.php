@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class AI_Exception extends \Exception {
 	protected $feature_key;
 
-	public function __construct($message = "", $code = 0, \Throwable $previous = null, $feature_key = '') {
-		parent::__construct($message, $code, $previous);
+	public function __construct( $message = '', $code = 0, \Throwable $previous = null, $feature_key = '' ) {
+		parent::__construct( $message, $code, $previous );
 		$this->feature_key = $feature_key;
 	}
 
@@ -346,7 +346,7 @@ class Module extends BaseModule {
 			if ( $result->get_error_data() && isset( $result->get_error_data()['feature_key'] ) ) {
 				$feature_key = $result->get_error_data()['feature_key'];
 			}
-			throw new AI_Exception( $result->get_error_message(), 0 , null, $feature_key );
+			throw new AI_Exception( $result->get_error_message(), 0, null, $feature_key );
 		}
 
 		return [
