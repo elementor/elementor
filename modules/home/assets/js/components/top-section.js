@@ -6,13 +6,13 @@ import StyledYoutubeIcon from '../icons/youtube-icon';
 const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 	return (
 		<Box sx={ { display: 'flex', flexDirection: { xs: 'column', md: 'row' }, backgroundColor: 'background.default', p: { xs: 1, md: 4 } } }>
-			<Box sx={ { pr: { xs: 0, md: 3 } } }>
-				<Box sx={ { display: 'flex', flexDirection: 'column', maxWidth: '600px', pb: 2 } }>
+			<Box sx={ { display: 'flex', flexDirection: 'column', pr: { xs: 0, md: 3 }, pb: 1, gap: 2 } }>
+				<Box sx={ { display: 'flex', flexDirection: 'column', maxWidth: '600px' } }>
 					<Typography variant="body2">Hi!</Typography>
 					<Typography variant="h6">Welcome to Elementor</Typography>
 					<Typography variant="body2" >Get introduced to Elementor by watching our &ldquo;Getting Started&rdquo; video series. It will guide you through the steps needed to create your website. Then click to create your first page.</Typography>
 				</Box>
-				<Box sx={ { display: 'flex', gap: 1, pb: 1 } }>
+				<Box sx={ { display: 'flex', gap: 1 } }>
 					<Button variant="contained" size="small" href={ ctaUrl } target="_blank" >
 						<Typography variant="button">Create a Page</Typography>
 					</Button>
