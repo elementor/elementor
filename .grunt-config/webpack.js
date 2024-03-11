@@ -130,6 +130,7 @@ const entry = {
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
+	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 };
 
 const frontendEntries = {
@@ -149,6 +150,7 @@ const externals = {
 	'@elementor/router': 'elementorAppPackages.router',
 	'@elementor/ui': 'elementorV2.ui',
 	'@elementor/icons': 'elementorV2.icons',
+	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 	'@wordpress/dom-ready': 'wp.domReady',
 	'@wordpress/components': 'wp.components',
 };

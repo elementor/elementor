@@ -1,3 +1,4 @@
+import ReactUtils from 'elementor-utils/react';
 import { createPreviewContainer } from './preview-container';
 import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
@@ -71,7 +72,7 @@ export const renderLayoutApp = ( options = {
 
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
-	ReactDOM.render(
+	const { unmount } = ReactUtils.render( (
 		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
@@ -103,7 +104,7 @@ export const renderLayoutApp = ( options = {
 					previewContainer.destroy();
 					options.onClose?.();
 
-					ReactDOM.unmountComponentAtNode( rootElement );
+					unmount();
 					rootElement.remove();
 
 					openPanel();
@@ -127,9 +128,8 @@ export const renderLayoutApp = ( options = {
 				onInsert={ options.onInsert }
 				hasPro={ elementor.helpers.hasPro() }
 			/>
-		</LayoutAppWrapper>,
-		rootElement,
-	);
+		</LayoutAppWrapper>
+	), rootElement );
 
 	options.onRenderApp?.( { previewContainer } );
 };
@@ -163,4 +163,3 @@ export const importToEditor = ( {
 
 	endHistoryLog();
 };
-
