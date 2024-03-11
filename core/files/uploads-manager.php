@@ -126,19 +126,24 @@ class Uploads_Manager extends Base_Object {
 	 * @return array|\WP_Error
 	 */
 	public function handle_elementor_upload( array $file, $allowed_file_extensions = null ) {
+		$normalized_data = [
+			'fileName' => basename( $data['fileName'] ?? '' ),
+			'fileData' => $data['fileData'] ?? null,
+		];
+
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
-		if ( isset( $file['fileData'] ) ) {
-			$file = $this->save_base64_to_tmp_file( $file, $allowed_file_extensions );
+		if ( isset( $normalized_data['fileData'] ) ) {
+			$normalized_data = $this->save_base64_to_tmp_file( $normalized_data, $allowed_file_extensions );
 		}
 
-		$validation_result = $this->validate_file( $file, $allowed_file_extensions );
+		$validation_result = $this->validate_file( $normalized_data, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
-		return $file;
+		return $normalized_data;
 	}
 
 	/**
@@ -260,7 +265,7 @@ class Uploads_Manager extends Base_Object {
 	public function remove_file_or_dir( $path ) {
 		if ( is_dir( $path ) ) {
 			$this->remove_directory_with_files( $path );
-		} else {
+		} elseif ( is_file( $path ) ) {
 			unlink( $path );
 		}
 	}
@@ -631,7 +636,7 @@ class Uploads_Manager extends Base_Object {
 		foreach ( new \RecursiveIteratorIterator( $dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST ) as $name => $item ) {
 			if ( is_dir( $name ) ) {
 				rmdir( $name );
-			} else {
+			} elseif ( is_file( $name ) ) {
 				unlink( $name );
 			}
 		}
