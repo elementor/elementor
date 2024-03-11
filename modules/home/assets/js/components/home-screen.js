@@ -1,4 +1,4 @@
-import { Container, Grid } from '@elementor/ui';
+import { Container, Box } from '@elementor/ui';
 
 import TopSection from './top-section';
 
@@ -9,9 +9,9 @@ const HomeScreen = () => {
 
 	return (
 		<Container sx={ { py: { xs: 2, md: 6 }, maxWidth: { md: '990px' } } }>
-			<Grid sx={ { display: 'grid', gap: { xs: 1, md: 3 } } }>
+			<Box sx={ { display: 'grid', gap: { xs: 1, md: 3 } } }>
 				<TopSection videoUrl={ videoUrl } ctaUrl={ ctaUrl } embedUrl={ embedUrl } />
-			</Grid>
+			</Box>
 		</Container>
 	);
 };
