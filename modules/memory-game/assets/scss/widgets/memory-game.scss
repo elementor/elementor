@@ -1,0 +1,60 @@
+.elementor-widget-memory-game {
+	font-size: 20px;
+	position: relative;
+
+	.row {
+		display: flex;
+		gap: 10px;
+		justify-content: space-between;
+		&:not(last-child) {
+			padding-bottom: 15px;
+		}
+
+		.card {
+			display: block;
+			height: 0;
+			padding-top: 40%;
+			width: 170px;
+			border-radius: 4px;
+			border: solid 5px white;
+			box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+			flex-grow: 1;
+			flex-shrink: 1;
+
+			background-color: #e5e5f7;
+			opacity: 0.8;
+			background-image:
+				linear-gradient(135deg, #444cf7 25%, transparent 25%),
+				linear-gradient(225deg, #444cf7 25%, transparent 25%),
+				linear-gradient(45deg, #444cf7 25%, transparent 25%),
+				linear-gradient(315deg, #444cf7 25%, #e5e5f7 25%);
+			background-position:  10px 0, 10px 0, 0 0, 0 0;
+			background-size: 10px 10px;
+			background-repeat: repeat;
+			transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+			cursor: pointer;
+
+			&.flip {
+				transform: scaleX(0);
+				cursor: auto;
+			}
+			&.flipped {
+				background-size: cover;
+				cursor: auto;
+			}
+			&.done {
+				border: solid 3px #0a875a;
+				transform: scale(0.9);
+				cursor: auto;
+			}
+		}
+	}
+
+	button {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%);
+	}
+}

@@ -77,6 +77,13 @@ const sass = {
 				dest: 'assets/css/modules/apps',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/memory-game/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/memory-game',
+				ext: '.css'
+			}
 		]
 	}
 };
