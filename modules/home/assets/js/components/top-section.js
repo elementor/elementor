@@ -1,9 +1,12 @@
-const TopSection = () => {
-	const data = elementorHomeScreenData?.data;
-
+const TopSection = ( props ) => {
 	return (
 		<p>Add the TopSection component here</p>
 	);
+};
+
+TopSection.propTypes = {
+	topData: PropTypes.object,
+	createNewPageUrl: PropTypes.string,
 };
 
 export default TopSection;

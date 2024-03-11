@@ -9,7 +9,7 @@ const App = ( props ) => {
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
-					<HomeScreen />
+					<HomeScreen homeScreenData={ props.homeScreenData }/>
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
@@ -23,11 +23,13 @@ const isRTL = elementorCommon.config.isRTL,
 App.propTypes = {
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
+	homeScreenData: PropTypes.object,
 };
 
 ReactUtils.render( (
 	<App
 		colorScheme={ colorScheme }
 		isRTL={ isRTL }
+		homeScreenData={ elementorHomeScreenData }
 	/>
 ), rootElement );
