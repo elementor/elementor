@@ -18,7 +18,7 @@ const App = ( props ) => {
 
 const isRTL = elementorCommon.config.isRTL,
 	rootElement = document.querySelector( '#e-home-screen' ),
-	colorScheme = rootElement?.dataset?.ui_theme || 'auto';
+	colorScheme = rootElement?.dataset?.uiTheme || 'auto';
 
 App.propTypes = {
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
