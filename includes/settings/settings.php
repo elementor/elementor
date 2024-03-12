@@ -103,10 +103,7 @@ class Settings extends Settings_Page {
 	}
 
 	public function display_home_screen() {
-		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
-		$ui_theme = $editor_preferences->get_model()->get_settings( 'ui_theme' );
-
-		echo '<div id="e-home-screen" data-ui-theme="' . esc_attr( $ui_theme ) . '"></div>';
+		echo '<div id="e-home-screen"></div>';
 	}
 
 	/**
