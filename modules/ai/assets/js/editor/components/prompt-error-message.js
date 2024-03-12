@@ -22,15 +22,8 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 	}
 
 	function getErrorMessage() {
-		let errMsg;
-		let featureKey;
-
-		if ( 'string' === typeof error ) {
-			errMsg = error;
-		} else {
-			errMsg = error.message;
-			featureKey = error.featureKey;
-		}
+		const errMsg = error.message || error;
+		const featureKey = error.extra_data?.featureKey;
 
 		const messages = {
 			default: {

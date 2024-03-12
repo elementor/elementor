@@ -515,11 +515,8 @@ abstract class Base_App {
 				}
 			}
 
-			// Check if 'feature_key' exists in the error response
-			$feature_key = isset( $body->feature_key ) ? $body->feature_key : '';
-			if ( ! empty( $feature_key ) ) {
-				$error_data['feature_key'] = $feature_key;
-				return new \WP_Error( $code, $message, $error_data );
+			if ( true === $options['with_error_data'] ) {
+				return new \WP_Error( $code, $message, $body );
 			}
 
 			return new \WP_Error( $code, $message );

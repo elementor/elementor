@@ -147,11 +147,7 @@ export default class extends elementorModules.Module {
 						if ( response.success ) {
 							options.deferred.resolve( response.data );
 						} else if ( ! response.success ) {
-							if ( response.feature_key ) {
-								options.deferred.reject( { message: response.data, featureKey: response.feature_key } );
-							} else {
-								options.deferred.reject( response.data );
-							}
+							options.deferred.reject( response.data );
 						}
 					}
 				} );
