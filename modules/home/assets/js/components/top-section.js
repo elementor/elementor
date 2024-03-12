@@ -4,4 +4,9 @@ const TopSection = () => {
 	);
 };
 
+TopSection.propTypes = {
+	topData: PropTypes.object,
+	createNewPageUrl: PropTypes.string,
+};
+
 export default TopSection;
