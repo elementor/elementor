@@ -44,7 +44,7 @@ class API {
 		return $data['home-screen'];
 	}
 
-	private static function get_transient( $cache_key ): array {
+	private static function get_transient( $cache_key ) {
 		$cache = get_option( $cache_key );
 
 		if ( empty( $cache['timeout'] ) ) {
