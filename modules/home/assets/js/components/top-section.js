@@ -1,12 +1,12 @@
-import { Box, Stack } from '@elementor/ui';
+import { Box, Paper, Stack } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import YoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 	return (
-		<Stack direction={ { xs: 'column', md: 'row' } } sx={ { backgroundColor: 'background.default', p: { xs: 2, md: 4 }, borderRadius: 1 } }>
-			<Box sx={ { display: 'flex', flexDirection: 'column', pr: { xs: 0, md: 10 }, pb: 3, gap: 3 } }>
+		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', md: 'row' }, p: { xs: 2, md: 4 }, gap: 3 } }>
+			<Stack gap={ 3 }>
 				<Box>
 					<Typography variant="body2">{ __( 'Hi!', 'elementor' ) }</Typography>
 					<Typography variant="h6">{ __( 'Welcome to Elementor', 'elementor' ) }</Typography>
@@ -16,7 +16,7 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 					<Button variant="contained" size="small" href={ ctaUrl } target="_blank" >{ __( 'Create a Page', 'elementor' ) }</Button>
 					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ videoUrl } target="_blank">{ __( 'Watch a quick starter', 'elementor' ) }</Button>
 				</Box>
-			</Box>
+			</Stack>
 			<Box component="iframe"
 				src={ embedUrl }
 				title="YouTube video player"
@@ -25,7 +25,7 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 				allowFullScreen={ true }
 				sx={ { aspectRatio: '16/9', borderRadius: 1, display: 'flex', width: '100%', maxWidth: '365px' } }>
 			</Box>
-		</Stack>
+		</Paper>
 	);
 };
 
