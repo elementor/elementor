@@ -13,7 +13,7 @@ const TopSection = ( props ) => {
 					<Typography variant="body2" >{ __( 'Get introduced to Elementor by watching our &ldquo;Getting Started&rdquo; video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ) }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button variant="contained" size="small" href={ props.createNewPageUrl }>{ __( 'Create a Page', 'elementor' ) }</Button>
+					<Button variant="contained" size="small" href={ props.createNewPageUrl } target="_blank">{ __( 'Create a Page', 'elementor' ) }</Button>
 					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ props.videoUrl } target="_blank">{ __( 'Watch a quick starter', 'elementor' ) }</Button>
 				</Box>
 			</Box>
