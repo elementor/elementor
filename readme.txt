@@ -252,62 +252,47 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.19.4 - 2024-02-28 =
+= 3.20.0 - 2024-03-11 =
 
-* Fix: Widgets are not appearing in the widget panel when using various 3rd party plugins
-
-= 3.19.3 - 2024-02-26 =
-
-* Fix: Template is not importing when the Unfiltered File option is disabled ([#25071](https://github.com/elementor/elementor/issues/25071))
-
-= 3.19.2 - 2024-02-07 =
-
-* Fix: Integration script not functioning as expected in Build with AI feature
-
-= 3.19.1 - 2024-02-05 =
-
-* Tweak: Improved text-based AI capabilities within the widget type
-* Security Fix: Addressed security weaknesses in template library mechanism
-* Fix: Improved code security enforcement in Media control
-* Fix: SVG Icons break the title layout when using Firefox and Safari browsers in Accordion widget ([#24925](https://github.com/elementor/elementor/issues/24925))
-* Fix: Missing hover state to dropdown in AI Containers modal
-
-= 3.19.0 - 2024-01-29 =
-
-* New: Generate Container Variations with AI directly from Elementor's Blocks Template Library
-* New: Introducing the 'What's New' screen - Insights on the latest features, enhancements, and updates
-* Tweak: Added responsive controls to Gradient in Background and Background Overlay ([#10247](https://github.com/elementor/elementor/issues/10247), [#6783](https://github.com/elementor/elementor/issues/6783), [#10449](https://github.com/elementor/elementor/issues/10449), [#15377](https://github.com/elementor/elementor/issues/15377), [#17000](https://github.com/elementor/elementor/issues/17000))
-* Tweak: Added caption space option in Basic Gallery and Image Carousel widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo), [#12533](https://github.com/elementor/elementor/issues/12533), [#21128](https://github.com/elementor/elementor/issues/21128))
-* Tweak: Added responsive control to Size Resolution in Testimonial widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
-* Tweak: Restricted JSON file upload privileges to admin users only for enhanced security and control
-* Tweak: Introduced the ability for admin users to grant JSON file upload permissions to non-admin users in Role Manager
-* Tweak: Raised the minimum required PHP version from 7.3 to 7.4
-* Tweak: Incorporated workflow hints within the media control to improve accessibility
-* Tweak: Incorporated workflow hints within the gallery control to improve accessibility
-* Tweak: Implemented CSS logical properties in Divider widget
-* Tweak: Removed `Size` control for new usage in Heading Widget
+* Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
+* Tweak: Resolved excessive DOM output when using Grid Container and Flexbox Container widgets
+* Tweak: Added X icon to Font Awesome icon library ([#23345](https://github.com/elementor/elementor/issues/23345))
+* Tweak: Added Threads icon to Font Awesome icon library ([#23345](https://github.com/elementor/elementor/issues/23345))
+* Tweak: Restricted HTML widget privileges to admin users only for enhanced security and control
+* Tweak: Introduced the capability for admin users to grant HTML widget usage permissions to non-admin users in the Role Manager
+* Tweak: Refined Editor's unit selection DOM output for better efficiency
+* Tweak: Implemented accessibility improvements in Dynamic Tags control
+* Tweak: Implemented accessibility improvements in widget panel sections
+* Tweak: Implemented accessibility improvements in Site Settings items
+* Tweak: Implemented accessibility improvements in the Elements panel keyboard accessible
+* Tweak: Implemented accessibility improvements in Color Picker control
+* Tweak: Implemented accessibility improvements in Site Settings header buttons
+* Tweak: Implemented accessibility improvements for actions in the History panel
+* Tweak: Implemented accessibility improvements for revisions in History panel
+* Tweak: Added semantic `<time>` wrapper for items in History panel
+* Tweak: Added semantic `<search>` wrapper to Widgets search
+* Tweak: Promoted Build with AI feature to Stable status
+* Tweak: Global Style Guide feature merged to version
+* Tweak: Promoted Inline Font Icons feature to Stable status
+* Tweak: Activated Grid Container feature by default for new sites
+* Tweak: Removed separator-none argument from all Editor controls
+* Tweak: Relocated Icon and Content Spacing controls to the Box section in Icon Box widget
+* Tweak: Relocated Image and Content Spacing controls to the Box section in Image Box widget
+* Tweak: Relocated Alignment control from Content tab to Style tab in Button widget
+* Tweak: Replaced Position select control with toggle control in Tabs widget
+* Tweak: Replaced Icon Position select control with toggle control in Button widget
+* Tweak: Hide the Border Radius control of Drop Cap in Text Editor widget
+* Tweak: Hide image controls when image is not selected in Image widget
 * Tweak: Removed `Size` control for new usage in Button Widget
-* Tweak: Removed `Progress Type` control for new usage in Progress Bar widget
-* Tweak: Added responsive control to Vertical Align in Icon Box widget
-* Tweak: Added responsive control to Image Position in Image Box widget
-* Tweak: Added All Statuses filter in Element Manager
-* Tweak: Added additional size units and custom units in all elements
-* Tweak: Limit pagination for five attempts in Build with AI modal
-* Tweak: Replaced select control with choose control for Image Position in Testimonial widget
-* Tweak: Shifted alignment controls from the Content tab to the Style tab in Heading, Icon, and Image widgets
-* Tweak: Promoted Optimized Gutenberg Loading feature to Stable status
-* Tweak: Promoted Optimize Image Loading feature to Stable status
-* Tweak: Promoted Build with AI feature to Beta status and activated for all users
-* Tweak: Optimized DOM Output feature merged to version
-* Tweak: Added new Notice control for Editor panels
-* Tweak: Added new Alert control for Editor panels
-* Fix: Deprecation notices in console log in History panel ([#19456](https://github.com/elementor/elementor/issues/19456), [#22159](https://github.com/elementor/elementor/issues/22159))
-* Fix: Dark Mode affects the link options modal in Text Editor widget ([#23477](https://github.com/elementor/elementor/issues/23477))
-* Fix: Enhanced code quality checks within the template export process
-* Fix: Added better output escaping to Image Size control attributes
-* Fix: Added better output escaping to URL controls
-* Fix: Justify items not working when grid is set to full width in Grid Container
-* Fix: Asymmetric icons are not displayed correctly in Accordion widget
-* Fix: Share copy options were not functioning properly with VideoPress integration in Video widget
+* Tweak: Replaced Dismiss Icon select control with toggle control in Alert widget
+* Tweak: Replaced Additional Options select controls with toggle controls in Image Carousel widget
+* Tweak: Added missing `title` attribute to the Editor preview iframe
+* Tweak: Added a new reference to the Extensions page from Add New Plugin screen
+* Tweak: Improved flexibility of the widget promotion area for better extendability and customization
+* Tweak: Implemented general improvements to i18n for enhanced global support
+* Tweak: Updated `eicons` library to v5.28.0
+* Tweak: Standardized section names across various Elementor widgets for uniformity and clarity
+* Fix: Compatability issues with various 3rd party plugins when Optimize Image Loading feature is activated ([#24226](https://github.com/elementor/elementor/issues/24226))
+* Fix: `install_compare()` in Experiments Manager throw an error in PHP 8.2+ if `get_installs_history()` returned an empty result
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
