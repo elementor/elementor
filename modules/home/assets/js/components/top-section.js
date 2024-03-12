@@ -3,7 +3,7 @@ import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import YoutubeIcon from '../icons/youtube-icon';
 
-const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
+const TopSection = ( { videoUrl, embedUrl } ) => {
 	return (
 		<Stack direction={ { xs: 'column', md: 'row' } } sx={ { backgroundColor: 'background.default', p: { xs: 2, md: 4 }, borderRadius: 1 } }>
 			<Box sx={ { display: 'flex', flexDirection: 'column', pr: { xs: 0, md: 10 }, pb: 3, gap: 3 } }>
