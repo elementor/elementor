@@ -33,6 +33,8 @@ TopSection.propTypes = {
 	ctaUrl: PropTypes.string.isRequired,
 	videoUrl: PropTypes.string.isRequired,
 	embedUrl: PropTypes.string.isRequired,
+	topData: PropTypes.object.isRequired,
+	createNewPageUrl: PropTypes.string.isRequired,
 };
 
 export default TopSection;
