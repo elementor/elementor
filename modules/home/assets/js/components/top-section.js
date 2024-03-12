@@ -5,7 +5,7 @@ import YoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 	return (
-		<Stack direction={ { xs: 'column', md: 'row' } } sx={ { backgroundColor: 'background.default', p: { xs: 2, md: 4 } } }>
+		<Stack direction={ { xs: 'column', md: 'row' } } sx={ { backgroundColor: 'background.default', p: { xs: 2, md: 4 }, borderRadius: 1 } }>
 			<Box sx={ { display: 'flex', flexDirection: 'column', pr: { xs: 0, md: 10 }, pb: 3, gap: 3 } }>
 				<Box>
 					<Typography variant="body2">{ __( 'Hi!', 'elementor' ) }</Typography>
@@ -23,7 +23,7 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 				frameBorder="0"
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 				allowFullScreen={ true }
-				sx={ { aspectRatio: '16/9', borderRadius: '4px', display: 'flex', height: '100%', width: '100%', maxWidth: '365px', maxHeigth: '205px' } }>
+				sx={ { aspectRatio: '16/9', borderRadius: 1, display: 'flex', width: '100%', maxWidth: '365px' } }>
 			</Box>
 		</Stack>
 	);
