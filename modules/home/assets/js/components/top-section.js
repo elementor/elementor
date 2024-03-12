@@ -13,7 +13,7 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 					<Typography variant="body2" >{ __( 'Get introduced to Elementor by watching our &ldquo;Getting Started&rdquo; video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ) }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button variant="contained" size="small" href={ ctaUrl } target="_blank" >{ __( 'Create a Page', 'elementor' ) }</Button>
+					<Button variant="contained" size="small" href={ createNewPageUrl } target="_blank" >{ __( 'Create a Page', 'elementor' ) }</Button>
 					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ videoUrl } target="_blank">{ __( 'Watch a quick starter', 'elementor' ) }</Button>
 				</Box>
 			</Box>
@@ -30,7 +30,6 @@ const TopSection = ( { ctaUrl, videoUrl, embedUrl } ) => {
 };
 
 TopSection.propTypes = {
-	ctaUrl: PropTypes.string.isRequired,
 	videoUrl: PropTypes.string.isRequired,
 	embedUrl: PropTypes.string.isRequired,
 	topData: PropTypes.object.isRequired,
