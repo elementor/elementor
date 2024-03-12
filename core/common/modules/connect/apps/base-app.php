@@ -515,7 +515,7 @@ abstract class Base_App {
 				}
 			}
 
-			if ( true === $options['with_error_data'] ) {
+			if ( isset( $options['with_error_data'] ) && true === $options['with_error_data'] ) {
 				return new \WP_Error( $code, $message, $body );
 			}
 

@@ -331,7 +331,7 @@ class Module extends BaseModule {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [
 				'message' => $result->get_error_message(),
-				'extra_data' => $result->get_error_data()
+				'extra_data' => $result->get_error_data(),
 			] );
 		}
 
