@@ -30,11 +30,11 @@ class Module extends BaseApp {
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			$hook_suffix = 'toplevel_page_elementor';
-			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_editor_scripts' ] );
+			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
 		}, 10, 2 );
 	}
 
-	public function enqueue_editor_scripts(): void {
+	public function enqueue_home_screen_scripts(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
