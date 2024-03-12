@@ -14,19 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class AI_Exception extends \Exception {
-	protected $feature_key;
-
-	public function __construct( $message = '', $code = 0, \Throwable $previous = null, $feature_key = '' ) {
-		parent::__construct( $message, $code, $previous );
-		$this->feature_key = $feature_key;
-	}
-
-	public function get_feature_key() {
-		return $this->feature_key;
-	}
-}
-
 class Module extends BaseModule {
 	const HISTORY_TYPE_ALL = 'all';
 	const HISTORY_TYPE_TEXT = 'text';
@@ -342,11 +329,7 @@ class Module extends BaseModule {
 
 		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
-			if ( $result->get_error_data() && isset( $result->get_error_data()['feature_key'] ) ) {
-				$feature_key = $result->get_error_data()['feature_key'];
-				throw new AI_Exception( $result->get_error_message(), 0, null, $feature_key );
-			}
-			throw new \Exception( $result->get_error_message() );
+			wp_send_json_error( new \WP_Error( 0, $result->get_error_message(), $result->get_error_data() ) );
 		}
 
 		return [
