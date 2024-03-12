@@ -144,6 +144,7 @@ class Ai extends Library {
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+				'with_error_data' => true,
 			]
 		);
 	}

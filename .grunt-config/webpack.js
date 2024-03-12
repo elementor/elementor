@@ -130,6 +130,7 @@ const entry = {
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
+	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 };
 
 const frontendEntries = {
