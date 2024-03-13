@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Elementor\Modules\MemoryGame\Widgets;
 
 use Elementor\Controls_Manager;
@@ -38,18 +37,10 @@ class MemoryGame extends Widget_Base {
 		// Content Tab Start
 
 		$this->start_controls_section(
-			'section_title',
+			'memory_game_content_section',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Content', 'elementor' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
-			]
-		);
-		$this->add_control(
-			'columns',
-			[
-				'label'   => esc_html__( 'Columns count', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::NUMBER,
-				'default' => 4,
 			]
 		);
 		$this->add_control(
@@ -80,6 +71,74 @@ class MemoryGame extends Widget_Base {
 				'title_field' => '{{{ card_caption }}}',
 			]
 		);
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'memory_game_style_section',
+			[
+				'label' => esc_html__( 'Style', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+		$this->add_control(
+			'card_border',
+			[
+				'label' => esc_html__( 'Border width', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .card' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'default' => [
+					'size' => 4
+				]
+			]
+		);
+		$this->add_responsive_control(
+			'gap',
+			[
+				'label' => esc_html__( 'Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 12,
+						'step' => 1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-memory-game-gap: {{SIZE}}{{UNIT}}',
+				],
+				'default' => [
+					'size' => 5
+				]
+			]
+		);
+		$this->add_responsive_control(
+			'columns',
+			[
+				'label' => esc_html__( 'Columns', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'fr' => [
+						'min' => 1,
+						'max' => 12,
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'size' => 4,
+				],
+				'mobile_default' => [
+					'size' => 2,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-memory-game-columns: {{SIZE}}',
+				],
+				'frontend_available' => true,
+			]
+		);
 
 		$this->end_controls_section();
 
@@ -106,16 +165,7 @@ class MemoryGame extends Widget_Base {
 		if ( $settings['cards'] ) {
 			$cards = $this->duplicate_and_shuffle($settings['cards']);
 			foreach ( $cards as $index => $item ) {
-				if($index % $settings['columns'] === 0) {
-					echo '<div class="row">';
-				}
 				echo '<div class="card" data-src="' . $item['card_image']['url'] . '"></div>';
-				if($index % $settings['columns'] === $settings['columns'] - 1) {
-					echo '</div>';
-				}
-			}
-			if(count($cards) % $settings['columns'] !== 0) {
-				echo '</div>';
 			}
 		}
 	}
@@ -137,18 +187,9 @@ class MemoryGame extends Widget_Base {
 			}
 		}
 		shuffleArray(duplicated);
-		_.each( duplicated, function( item, i ) {
-			if(i % settings.columns === 0) { #>
-				<div class="row">
-			<# } #>
+		_.each( duplicated, function( item, i ) { #>
 			<div class="card" data-src="{{{ item.card_image.url }}}"></div>
-			<# if(i % settings.columns === settings.columns - 1) { #>
-				</div>
-			<# }
-		});
-		if(duplicated.length % settings.column !== 0) { #>
-		</div>
-		<# }
+		<# });
 		} #>
 		<?php
 	}

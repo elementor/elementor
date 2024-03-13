@@ -1,20 +1,18 @@
 .elementor-widget-memory-game {
+	--e-memory-game-columns: 4;
+	--e-memory-game-gap: 5px;
+
 	font-size: 20px;
 	position: relative;
-
-	.row {
-		display: flex;
-		gap: 10px;
-		justify-content: space-between;
-		&:not(last-child) {
-			padding-bottom: 15px;
-		}
+	.elementor-widget-container {
+		display: grid;
+		grid-template-columns: repeat(var(--e-memory-game-columns), 1fr);
+		grid-gap: var(--e-memory-game-gap);
 
 		.card {
 			display: block;
 			height: 0;
-			padding-top: 40%;
-			width: 170px;
+			padding-top: 130%;
 			border-radius: 4px;
 			border: solid 5px white;
 			box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
@@ -50,12 +48,12 @@
 				cursor: auto;
 			}
 		}
-	}
 
-	button {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%);
+		button {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%);
+		}
 	}
 }
