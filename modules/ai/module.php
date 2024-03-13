@@ -766,10 +766,7 @@ class Module extends BaseModule {
 				throw new \Exception( $message );
 			}
 
-			wp_send_json_error( [
-				'message' => $result->get_error_message(),
-				'extra_data' => $result->get_error_data(),
-			] );
+			$this->throw_on_error( $result );
 		}
 
 		$elements = $result['text']['elements'] ?? [];
