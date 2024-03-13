@@ -329,7 +329,10 @@ class Module extends BaseModule {
 
 		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			wp_send_json_error( [
+				'message' => $result->get_error_message(),
+				'extra_data' => $result->get_error_data(),
+			] );
 		}
 
 		return [
