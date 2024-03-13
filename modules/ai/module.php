@@ -1000,7 +1000,7 @@ class Module extends BaseModule {
 	/**
 	 * @param mixed $result
 	 */
-	private function throw_on_error( mixed $result ): void {
+	private function throw_on_error( $result ): void {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [
 				'message' => $result->get_error_message(),
