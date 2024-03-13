@@ -47,29 +47,17 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await addItemFromRepeater( editor, nestedTabsID );
 		} );
 
-		await test.step( 'Add an item to the second accordion', async () => {
+		await test.step( 'Clone first tab item', async () => {
+			await cloneItemFromRepeater( editor, nestedTabsID, 0 );
+		} );
+
+		await test.step( 'Add an item to the second tabs', async () => {
 			const secondContainer = await editor.addElement( { elType: 'container' }, 'document' ),
 				secondNestedTabsID = await editor.addWidget( 'nested-tabs', secondContainer );
 
 			await editor.selectElement( secondNestedTabsID );
 
 			await addItemFromRepeater( editor, secondNestedTabsID );
-		} );
-	} );
-
-	test.only( 'Test with existing template', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.openNewPage();
-
-		// const filePath = _path.resolve( __dirname, `./templates/nested-tabs-with-nested-tabs.json` );
-		// await editor.loadTemplate( filePath, false );
-
-		const secondContainer = await editor.addElement( { elType: 'container' }, 'document' ),
-			nestedTabsID = await editor.addWidget( 'nested-tabs', secondContainer );
-
-
-		await test.step( 'Clone first accordion item', async () => {
-			await cloneItemFromRepeater( editor, nestedTabsID, 0 );
 		} );
 	} );
 } );
