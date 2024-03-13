@@ -213,6 +213,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, widget: string,
 		clonedContainerId = await nestedItemContent.nth( position + 1 ).getAttribute( 'id' ),
 		clonedContainerAriaLabeledBy = await nestedItemContent.nth( position + 1 ).getAttribute( 'aria-labelledby' );
 
+	// Assert
 	await expect( nestedItemTitle ).toHaveCount( numberOfTitles + 1 );
 	await expect( nestedItemContent ).toHaveCount( numberOfContents + 1 );
 
