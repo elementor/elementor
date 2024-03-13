@@ -396,27 +396,25 @@ export default class NestedTabs extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container} = event.detail,
-			view = container.view.$el,
+		const { container } = event.detail,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
 			this.updateIndexValues();
-			this.updateListeners( view )
+			this.updateListeners();
 		}
 	}
 
-	updateListeners( view ){
-		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ])
+	updateListeners(){
+		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ] );
 	}
 
-	updateIndexValues(){
+	updateIndexValues() {
 		const { $tabContents, $tabTitles } = this.getDefaultElements(),
 			settings = this.getSettings(),
 			itemIdBase = $tabTitles[ 0 ].getAttribute( 'id' ).slice( 0, -1 ),
 			containerIdBase = $tabContents[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
-
 
 		$tabTitles.each( ( index, element ) => {
 			const newIndex = index + 1,
@@ -431,7 +429,7 @@ export default class NestedTabs extends Base {
 			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
 			$tabContents[ index ].setAttribute( 'data-tab-index', updatedTabID );
 			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
-			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex  }` );
-		} )
+			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
+		} );
 	}
 }
