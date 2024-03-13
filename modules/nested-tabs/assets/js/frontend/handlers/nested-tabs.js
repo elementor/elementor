@@ -44,6 +44,7 @@ export default class NestedTabs extends Base {
 			selectors: {
 				widgetContainer: '.e-n-tabs',
 				tabTitle: '.e-n-tab-title',
+				tabTitleText: '.e-n-tab-title-text',
 				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
 				activeTabContentContainers: '.e-con.e-active',
@@ -397,11 +398,41 @@ export default class NestedTabs extends Base {
 
 	linkContainer( event ) {
 		const { container, index, targetContainer, action: { type } } = event.detail,
-			view = container.view.$el;
-		this.updateListeners( view )
+			view = container.view.$el,
+			id = container.model.get( 'id' ),
+			currentId = this.$element.data( 'id' );
+
+		if ( id === currentId ) {
+			this.updateIndexValues();
+			this.updateListeners( view )
+		}
 	}
 
 	updateListeners( view ){
 		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ])
+	}
+
+	updateIndexValues(){
+		const { $tabContents, $tabTitles } = this.getDefaultElements(),
+			settings = this.getSettings(),
+			itemIdBase = $tabTitles[ 0 ].getAttribute( 'id' ).slice( 0, -1 ),
+			containerIdBase = $tabContents[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+
+
+		$tabTitles.each( ( index, element ) => {
+			const newIndex = index + 1,
+				updatedTabID = itemIdBase + newIndex,
+				updatedContainerID = containerIdBase + newIndex;
+
+			element.setAttribute( 'id', updatedTabID );
+			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
+			element.setAttribute( 'data-tab-index', newIndex );
+			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
+			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'aria-controls', updatedTabID );
+			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
+			$tabContents[ index ].setAttribute( 'data-tab-index', updatedTabID );
+			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
+			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex  }` );
+		} )
 	}
 }

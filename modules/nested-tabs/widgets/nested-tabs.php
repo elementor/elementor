@@ -1235,7 +1235,15 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<#
 		const tabCount = view.collection.length + 1,
-			elementUid = view.getIDInt().toString().substring( 0, 3 ) + tabCount;
+			elementUid = view.getIDInt().toString().substring( 0, 3 ) + tabCount,
+			tabIcon = elementor.helpers.renderIcon( view, data.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
+
+		let tabActiveIcon = tabIcon,
+			tabId = 'e-n-tab-title-' + elementUid;
+
+		if ( '' !== data.tab_icon_active.value ) {
+			tabActiveIcon = elementor.helpers.renderIcon( view, data.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
+		}
 
 		const tabWrapperKey = {
 			'id': 'e-n-tab-title-' + elementUid,
@@ -1252,7 +1260,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'class': [ 'e-n-tab-icon' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'data.tab_icon', 'data.tab_icon_active' ],
+			'data-binding-setting': [ data.tab_icon.value, data.tab_icon_active.value ],
 			'data-binding-index': tabCount,
 		};
 
@@ -1265,12 +1273,14 @@ class NestedTabs extends Widget_Nested_Base {
 		};
 
 		view.addRenderAttribute( 'button-container', tabWrapperKey, null, true );
-		view.addRenderAttribute( 'tab-icon-key-container', tabIconKey, null, true );
 		view.addRenderAttribute( 'tab-title-container', tabTitleKey, null, true );
+		view.addRenderAttribute( 'tab-icon-key-container', tabIconKey, null, true );
 		#>
 
 		<button {{{ view.getRenderAttributeString( 'button-container' ) }}}>
-			<span {{{ view.getRenderAttributeString( 'tab-icon-key-container' ) }}}></span>
+			<span {{{ view.getRenderAttributeString( 'tab-icon-key-container' ) }}}>
+				{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}
+			</span>
 			<span {{{ view.getRenderAttributeString( 'tab-title-container' ) }}}>{{{ data.tab_title }}}</span>
 		</button>
 		<?php
