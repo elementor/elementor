@@ -126,24 +126,23 @@ class Uploads_Manager extends Base_Object {
 	 * @return array|\WP_Error
 	 */
 	public function handle_elementor_upload( array $data, $allowed_file_extensions = null ) {
-		$normalized_data = [
-			'fileName' => basename( $data['fileName'] ?? '' ),
-			'fileData' => $data['fileData'] ?? null,
-		];
-
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
-		if ( isset( $normalized_data['fileData'] ) ) {
-			$normalized_data = $this->save_base64_to_tmp_file( $normalized_data, $allowed_file_extensions );
+		if ( isset( $data['fileData'] ) ) {
+			$data = $this->save_base64_to_tmp_file( $data, $allowed_file_extensions );
 		}
 
-		$validation_result = $this->validate_file( $normalized_data, $allowed_file_extensions );
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+
+		$validation_result = $this->validate_file( $data, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
-		return $normalized_data;
+		return $data;
 	}
 
 	/**
@@ -502,6 +501,10 @@ class Uploads_Manager extends Base_Object {
 	 * @return array|\WP_Error
 	 */
 	private function save_base64_to_tmp_file( $file, $allowed_file_extensions = null ) {
+		if ( empty( $file['fileName'] ) || empty( $file['fileData'] ) ) {
+			return new \WP_Error( 'file_error', self::INVALID_FILE_CONTENT );
+		}
+
 		$file_extension = pathinfo( $file['fileName'], PATHINFO_EXTENSION );
 		$is_file_type_allowed = $this->is_file_type_allowed( $file_extension, $allowed_file_extensions );
 
