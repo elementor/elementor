@@ -406,7 +406,7 @@ export default class NestedTabs extends Base {
 		}
 	}
 
-	updateListeners(){
+	updateListeners() {
 		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ] );
 	}
 
