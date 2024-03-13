@@ -1,0 +1,93 @@
+$suit_colors: (
+    b: #1e1e1e,
+    r: #F44336,
+);
+
+$borderRadius: 8px;
+
+ul.elementor-card-list-items {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--e-playing-cards-gap);
+}
+
+
+.e-playing-cards-item {
+    width: 100px;
+    height: 160px;
+    box-shadow: 0px 3px 2px 2px rgba(0, 0, 0, 0.69);
+    -webkit-box-shadow: 0px 3px 2px 2px rgba(0, 0, 0, 0.69);
+    -moz-box-shadow: 0px 3px 2px 2px rgba(0, 0, 0, 0.69);
+    border-radius: $borderRadius;
+    transition: transform 0.9s ease;
+    transform-style: preserve-3d;
+    border: 1px solid #1e1e1e;
+
+    &.closed {
+        transform: rotateY(180deg);
+    }
+
+    &--color-red {
+        color: map-get($suit_colors, r)
+    }
+
+    &--color-black {
+        color: map-get($suit_colors, b)
+    }
+
+    &__back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        transform: rotateY(180deg);
+        background-color: black;
+        border-radius: $borderRadius;
+        background-size: cover;
+        background-position: center;
+    }
+
+    &__front {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 8px;
+        backface-visibility: hidden;
+        border-radius: $borderRadius;
+
+        &__frame {
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+            align-items: center;
+            font-weight: 600;
+            margin-right: auto;
+
+            &:not(:first-of-type) {
+                margin: 0 0 0 auto;
+                transform: rotate(180deg);
+            }
+
+            span:first-child {
+                font-size: 14px;
+                line-height: 12px;
+            }
+
+        }
+
+        &__center {
+            font-size: var(--e-card-symbol-size);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+}
