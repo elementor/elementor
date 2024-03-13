@@ -1,22 +1,15 @@
 import EditorSelectors from '../../selectors/editor-selectors';
 import Content from '../elementor-panel-tabs/content';
-import { expect } from '@playwright/test';
 
-export default class ButtonWidget extends Content {
-	async addWidget( buttonName: string ) {
-		await this.editorPage.addWidget( 'button' );
-		await this.editorPage.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( buttonName ) );
+export default class MemoryGameWidget extends Content {
+	async addWidget() {
+		const widgetId = await this.editorPage.addWidget( 'memory-game' );
+		return widgetId;
 	}
-
-	async setButtonId( buttonId: string, buttonName: string ) {
-		await this.page.locator( EditorSelectors.button.id ).type( buttonId );
-		await expect( this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ) ).toHaveAttribute( 'id', buttonId );
+	async selectContainer( option: string ) {
+		await this.page.selectOption( EditorSelectors.memoryGame.container, option );
 	}
-
-	async getButtonId( buttonName: string, isPublished = true ) {
-		if ( isPublished ) {
-			return await this.page.locator( EditorSelectors.button.getByName( buttonName ) ).getAttribute( 'id' );
-		}
-		return await this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ).getAttribute( 'id' );
+	async selectCard( option: string ) {
+		await this.page.selectOption( EditorSelectors.memoryGame.card, option );
 	}
 }
