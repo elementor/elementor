@@ -220,7 +220,6 @@ export default class NestedTabs extends Base {
 		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-container/created' );
-
 	}
 
 	/**
@@ -397,7 +396,7 @@ export default class NestedTabs extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container, index, targetContainer, action: { type } } = event.detail,
+		const { container} = event.detail,
 			view = container.view.$el,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
