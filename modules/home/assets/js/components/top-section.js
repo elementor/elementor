@@ -5,12 +5,12 @@ import YoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( props ) => {
 	return (
-		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', md: 'row' }, p: { xs: 2, md: 4 }, gap: 3 } }>
+		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 } } }>
 			<Stack gap={ 3 }>
 				<Box>
 					<Typography variant="body2">{ __( 'Hi!', 'elementor' ) }</Typography>
 					<Typography variant="h6">{ __( 'Welcome to Elementor', 'elementor' ) }</Typography>
-					<Typography variant="body2" >{ __( 'Get introduced to Elementor by watching our &ldquo;Getting Started&rdquo; video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ) }</Typography>
+					<Typography variant="body2" >{ __( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ) }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
 					<Button variant="contained" size="small" href={ props.createNewPageUrl } target="_blank">{ __( 'Create a Page', 'elementor' ) }</Button>
