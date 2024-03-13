@@ -183,6 +183,10 @@ const EditorSelectors = {
 		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
 		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
 	},
+	memoryGame: {
+		container: '.elementor-widget-memory-game',
+		card: '.elementor-widget-memory-game .card'
+	}
 };
 
 export default EditorSelectors;
