@@ -156,11 +156,7 @@ class MemoryGame extends Widget_Base {
 
 	public function duplicate_and_shuffle($inputArray) {
 		// Duplicate each element
-		$duplicatedArray = array_reduce($inputArray, function ($carry, $item) {
-			$carry[] = $item;
-			$carry[] = $item;
-			return $carry;
-		}, []);
+		$duplicatedArray = [$inputArray, $inputArray]
 
 		// Shuffle the duplicated array
 		shuffle($duplicatedArray);
