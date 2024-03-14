@@ -1,6 +1,7 @@
 import { Container } from '@elementor/ui';
 
 import TopSection from './top-section';
+import PromotionBar from './side-bar-promotion';
 
 const HomeScreen = ( props ) => {
 	const videoUrl = 'https://elementor.com/academy/getting-started-with-elementor/',
@@ -14,6 +15,9 @@ const HomeScreen = ( props ) => {
 				topData={ props.homeScreenData.data.top[ 0 ] }
 				createNewPageUrl={ props.homeScreenData.createNewPageUrl }
 			/>
+			<Container>
+				<PromotionBar topData={ props.homeScreenData.data.top[ 0 ] } />
+			</Container>
 		</Container>
 	);
 };
