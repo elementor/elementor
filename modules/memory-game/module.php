@@ -7,7 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Module extends \Elementor\Core\Base\Module {
+use Elementor\Core\Base\Module as BaseModule;
+
+class Module extends BaseModule {
+
+	public function __construct(...$args) {
+		parent::__construct(...$args);
+		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
+	}
 
 	public function get_widgets() {
 		return [
@@ -36,11 +44,5 @@ class Module extends \Elementor\Core\Base\Module {
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
-
-	public function __construct(...$args) {
-		parent::__construct(...$args);
-		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 	}
 }

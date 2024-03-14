@@ -29,56 +29,48 @@ class MemoryGame extends Widget_Base {
 		return [ 'basic' ];
 	}
 
-	public function get_keywords() {
-		return [ 'memory', 'game' ];
-	}
-
 	protected function register_controls() {
-
-		// Content Tab Start
 
 		$this->start_controls_section(
 			'memory_game_content_section',
 			[
 				'label' => esc_html__( 'Content', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$repeater = new Repeater();
+
 		$repeater->add_control(
 			'card_caption',
 			[
 				'type' => Controls_Manager::TEXT,
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'default' => esc_html__( 'A photo of stuff', 'elementor' ),
-				'dynamic' => [
-					'active' => true,
-				],
 			]
 		);
+
 		$repeater->add_control(
 			'card_image',
 			[
 				'label'   => esc_html__( 'Choose Image', 'elementor' ),
 				'type'    => Controls_Manager::MEDIA,
-				'dynamic' => [
-					'active' => true,
-				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
 			]
 		);
+
 		$this->add_control(
 			'cards',
 			[
 				'label'       => esc_html__( 'Cards', 'elementor' ),
-				'type'        => \Elementor\Controls_Manager::REPEATER,
+				'type'        => Controls_Manager::REPEATER,
 				'fields'      => $repeater->get_controls(),
 				'title_field' => '{{{ card_caption }}}',
 			]
 		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -88,6 +80,7 @@ class MemoryGame extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
 		$this->add_control(
 			'card_border',
 			[
@@ -102,6 +95,7 @@ class MemoryGame extends Widget_Base {
 				]
 			]
 		);
+
 		$this->add_control(
 			'card_background_color',
 			[
@@ -114,6 +108,7 @@ class MemoryGame extends Widget_Base {
 				'default' => '#444cf7'
 			]
 		);
+
 		$this->add_responsive_control(
 			'gap',
 			[
@@ -135,6 +130,7 @@ class MemoryGame extends Widget_Base {
 				]
 			]
 		);
+
 		$this->add_responsive_control(
 			'columns',
 			[

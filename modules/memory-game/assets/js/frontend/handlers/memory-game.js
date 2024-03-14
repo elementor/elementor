@@ -1,5 +1,3 @@
-import { escapeHTML } from 'elementor-frontend/utils/utils';
-
 export default class PlayingCardsHandler extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
