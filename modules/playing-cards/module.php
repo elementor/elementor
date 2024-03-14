@@ -11,14 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	public function get_name() {
-		return 'playing-cards';
-	}
-
 	public function __construct(...$args) {
 		parent::__construct(...$args);
 		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
+	}
+	
+	public function get_name() {
+		return 'playing-cards';
 	}
 
 	protected function get_widgets() {
