@@ -18,7 +18,7 @@ const TopSection = ( { ...props } ) => {
 				</Box>
 			</Stack>
 			<Box component="iframe"
-				src={ props.topData.youtube_embed_id }
+				src={ `https://www.youtube.com/embed/${ props.topData.youtube_embed_id }` }
 				title="YouTube video player"
 				frameBorder="0"
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
