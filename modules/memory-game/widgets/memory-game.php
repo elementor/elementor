@@ -102,6 +102,18 @@ class MemoryGame extends Widget_Base {
 				]
 			]
 		);
+		$this->add_control(
+			'card_background_color',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-memory-game-cover-color: {{VALUE}}',
+				],
+				'default' => '#444cf7'
+			]
+		);
 		$this->add_responsive_control(
 			'gap',
 			[

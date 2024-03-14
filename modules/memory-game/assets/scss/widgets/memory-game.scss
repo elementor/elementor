@@ -1,6 +1,7 @@
 .elementor-widget-memory-game {
 	--e-memory-game-columns: 4;
 	--e-memory-game-gap: 5px;
+	--e-memory-game-cover-color: #444cf7;
 
 	font-size: 20px;
 	position: relative;
@@ -22,10 +23,10 @@
 			background-color: #e5e5f7;
 			opacity: 0.8;
 			background-image:
-				linear-gradient(135deg, #444cf7 25%, transparent 25%),
-				linear-gradient(225deg, #444cf7 25%, transparent 25%),
-				linear-gradient(45deg, #444cf7 25%, transparent 25%),
-				linear-gradient(315deg, #444cf7 25%, #e5e5f7 25%);
+				linear-gradient(135deg, var(--e-memory-game-cover-color) 25%, transparent 25%),
+				linear-gradient(225deg, var(--e-memory-game-cover-color) 25%, transparent 25%),
+				linear-gradient(45deg, var(--e-memory-game-cover-color) 25%, transparent 25%),
+				linear-gradient(315deg, var(--e-memory-game-cover-color) 25%, #e5e5f7 25%);
 			background-position:  10px 0, 10px 0, 0 0, 0 0;
 			background-size: 10px 10px;
 			background-repeat: repeat;
