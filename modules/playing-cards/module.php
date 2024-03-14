@@ -30,8 +30,8 @@ class Module extends BaseModule {
 	public function enqueue_scripts() {
 		wp_enqueue_script(
 		  'playing-cards-frontend',
-		  $this->get_js_assets_url( 'playing-cards' ),
-		  [ 'elementor-frontend' ],
+		  $this->get_js_assets_url(  'playing-cards' ),
+		  [ 'elementor-frontend'],
 		  ELEMENTOR_VERSION,
 		  true
 		);
@@ -47,5 +47,5 @@ class Module extends BaseModule {
 	}
 
 
-	
+
 }

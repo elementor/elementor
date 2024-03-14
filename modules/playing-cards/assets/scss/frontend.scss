@@ -11,7 +11,7 @@ ul.elementor-card-list-items {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: var(--e-playing-cards-gap);
+    gap: var(--e-playing-cards-gap, 12px);
 }
 
 

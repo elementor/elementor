@@ -36,72 +36,24 @@ class CardsWidget extends Widget_Base {
 		]
 	];
 
-	/**
-	 * Get widget name.
-	 *
-	 * Retrieve playing cards widget name.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget name.
-	 */
 	public function get_name() {
 		return 'playing-cards';
 	}
 
-	/**
-	 * Get widget title.
-	 *
-	 * Retrieve playing cards widget title.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget title.
-	 */
+
 	public function get_title() {
 		return esc_html__( 'Playing cards', 'elementor' );
 	}
 
-	/**
-	 * Get widget icon.
-	 *
-	 * Retrieve playing cards widget icon.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget icon.
-	 */
 	public function get_icon() {
 		return 'eicon-number-field';
 	}
 
-	/**
-	 * Get widget keywords.
-	 *
-	 * Retrieve the list of keywords the widget belongs to.
-	 *
-	 * @since 2.1.0
-	 * @access public
-	 *
-	 * @return array Widget keywords.
-	 */
 	public function get_keywords() {
 		return [ 'playing cards', 'card', 'cards', 'play' ];
 	}
 
-	/**
-	 * Register playing cards widget controls.
-	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 */
 	protected function register_controls() {
-
 
 		$this->start_controls_section(
 			'section_cards',
@@ -120,19 +72,19 @@ class CardsWidget extends Widget_Base {
 				'placeholder' => esc_html__( 'List Item', 'elementor' ),
 				'default' => 'A',
 				'options' => [
-					'A' => esc_html__( 'A', 'elementor' ),
-					'2' => esc_html__( '2', 'elementor' ),
-					'3' => esc_html__( '3', 'elementor' ),
-					'4' => esc_html__( '4', 'elementor' ),
-					'5' => esc_html__( '5', 'elementor' ),
-					'6' => esc_html__( '6', 'elementor' ),
-					'7' => esc_html__( '7', 'elementor' ),
-					'8' => esc_html__( '8', 'elementor' ),
-					'9' => esc_html__( '9', 'elementor' ),
-					'10' => esc_html__( '10', 'elementor' ),
-					'J' => esc_html__( 'J', 'elementor' ),
-					'Q' => esc_html__( 'Q', 'elementor' ),
-					'K' => esc_html__( 'K', 'elementor' ),
+					'A' => 'A',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'J' => 'J',
+					'Q' => 'Q',
+					'K' => 'K',
 				],
 			]
 		);
@@ -150,7 +102,7 @@ class CardsWidget extends Widget_Base {
 				'options' => $card_suits_options
 			]
 		);
-		
+
 		$this->add_control(
 			'card_list',
 			[
@@ -167,9 +119,6 @@ class CardsWidget extends Widget_Base {
 			[
 				'label' => esc_html__( 'Choose back image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'dynamic' => [
-					'active' => true,
-				],
 			]
 		);
 
@@ -215,7 +164,7 @@ class CardsWidget extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space between cards', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', '%', 'rem' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -256,18 +205,10 @@ class CardsWidget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * Render playing cards widget output on the frontend.
-	 *
-	 * Written in PHP and used to generate the final HTML.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$this->add_render_attribute( 'card_list', 'class', 'elementor-card-list-items' );
-		
+
 		?>
 		<ul <?php $this->print_render_attribute_string( 'card_list' ); ?>>
 		<?php
