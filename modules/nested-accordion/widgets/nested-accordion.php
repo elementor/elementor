@@ -893,13 +893,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-accordion' ],
-				'node' => 'details',
-			] );
-		}
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'support_improved_repeaters_by_default' => true,
+			'target_container' => [ '.e-n-accordion' ],
+			'node' => 'details',
+		] );
 
 		return parent::get_initial_config();
 	}
