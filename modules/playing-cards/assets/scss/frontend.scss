@@ -1,6 +1,6 @@
-$suit_colors: (
-    b: #1e1e1e,
-    r: #F44336,
+$card_suit_colors: (
+    black_suit: #1e1e1e,
+    red_suit: #F44336,
 );
 
 $borderRadius: 8px;
@@ -31,11 +31,11 @@ ul.elementor-card-list-items {
     }
 
     &--color-red {
-        color: map-get($suit_colors, r)
+        color: map-get($card_suit_colors, red_suit)
     }
 
     &--color-black {
-        color: map-get($suit_colors, b)
+        color: map-get($card_suit_colors, black_suit)
     }
 
     &__back {
