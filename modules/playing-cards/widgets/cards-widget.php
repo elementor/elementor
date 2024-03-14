@@ -49,10 +49,6 @@ class CardsWidget extends Widget_Base {
 		return 'eicon-number-field';
 	}
 
-	public function get_keywords() {
-		return [ 'playing cards', 'card', 'cards', 'play' ];
-	}
-
 	protected function register_controls() {
 
 		$this->start_controls_section(
