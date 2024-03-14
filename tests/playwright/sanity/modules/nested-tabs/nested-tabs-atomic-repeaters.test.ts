@@ -27,7 +27,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		await page.close();
 	} );
 
-	test.only( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
+	test( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
