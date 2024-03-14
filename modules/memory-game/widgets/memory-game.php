@@ -99,48 +99,33 @@ class MemoryGame extends Widget_Base {
 		$this->add_control(
 			'card_background_color',
 			[
-				'label'      => esc_html__( 'Background Color', 'elementor' ),
-				'type'       => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}}' => '--e-memory-game-cover-color: {{VALUE}}',
 				],
-				'default'    => '#444cf7'
+				'default' => '#444cf7'
 			]
 		);
 
 		$this->add_responsive_control(
 			'gap',
 			[
-				'label'      => esc_html__( 'Gap', 'elementor' ),
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'range'      => [
-					'px'  => [
-						'max'  => 50,
+				'range' => [
+					'px' => [
+						'min' => 1,
+						'max' => 12,
 						'step' => 1,
-					],
-					'%'   => [
-						'max'  => 10,
-						'step' => 1,
-					],
-					'em'  => [
-						'max'  => 3,
-						'step' => 0.1,
-					],
-					'rem' => [
-						'max'  => 2.8,
-						'step' => 0.1,
-					],
-					'vw'  => [
-						'max'  => 5,
-						'step' => 0.2,
 					],
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}}' => '--e-memory-game-gap: {{SIZE}}{{UNIT}}',
 				],
-				'default'    => [
+				'default' => [
 					'size' => 5
 				]
 			]
