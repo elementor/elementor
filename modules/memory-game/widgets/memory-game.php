@@ -41,7 +41,7 @@ class MemoryGame extends Widget_Base {
 			'memory_game_content_section',
 			[
 				'label' => esc_html__( 'Content', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
