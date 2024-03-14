@@ -24,7 +24,6 @@ class API {
 			return [];
 		}
 
-		$data2 = wp_json_file_decode( wp_remote_retrieve_body( $response ) );
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $data['home-screen'] ) || ! is_array( $data['home-screen'] ) ) {
