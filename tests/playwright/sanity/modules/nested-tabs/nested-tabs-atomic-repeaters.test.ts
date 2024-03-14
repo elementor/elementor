@@ -8,7 +8,6 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'active',
 			'nested-elements': 'active',
 			e_nested_atomic_repeaters: 'active',
 		} );
@@ -21,7 +20,6 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
 			container: 'inactive',
 			e_nested_atomic_repeaters: 'inactive',
 		} );
@@ -29,7 +27,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		await page.close();
 	} );
 
-	test( 'General Test', async ( { page }, testInfo ) => {
+	test.only( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -39,7 +37,6 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 
 		await test.step( 'Remove an item from the repeater', async () => {
 			await deleteItemFromRepeater( editor, nestedTabsID );
-			await page.pause();
 		} );
 
 		await test.step( 'Add an item to the repeater', async () => {

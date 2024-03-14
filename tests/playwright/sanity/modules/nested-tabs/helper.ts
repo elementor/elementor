@@ -163,7 +163,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 	// Act
 	await deleteItemButton.last().click();
 
-	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ widgetID }` );
+	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	// Assert
 	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles - 1 );
@@ -181,23 +181,24 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 	// Act
 	await addItemButton.click();
 
-	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ widgetID }` );
+	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	// Assert
 	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles + 1 );
 	await expect.soft( nestedItemContent ).toHaveCount( numberOfContents + 1 );
 }
 
-export async function cloneItemFromRepeater( editor: EditorPage, widget: string, position: number ) {
+export async function cloneItemFromRepeater( editor: EditorPage, widgetID: string, position: number ) {
 	// Arrange
-	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widget } .e-n-tab-title` ),
-		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widget } .e-n-tabs-content > .e-con` ),
+	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count(),
 		cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( position );
 
 	// Act
 	await cloneItemButton.click();
+	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),
 		currentTitleId = await currentTitle.getAttribute( 'id' ),
