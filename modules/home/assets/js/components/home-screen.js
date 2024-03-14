@@ -7,7 +7,7 @@ const HomeScreen = ( props ) => {
 		embedUrl = 'https://www.youtube.com/embed/icTcREd1tAg?si=40E8D1hdnu26-TXM';
 
 	return (
-		/* Box wrapper around the Container is needed to neutralize wp-content area left-padding*/
+		// Box wrapper around the Container is needed to neutralize wp-content area left-padding
 		<Box maxWidth="xl" sx={ { pr: 1 } }>
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, py: { xs: 2, md: 6 } } }>
 				<TopSection
