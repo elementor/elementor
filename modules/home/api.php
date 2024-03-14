@@ -3,8 +3,7 @@ namespace Elementor\Modules\Home;
 
 class API {
 
-//	const HOME_SCREEN_DATA_URL = 'https://assets.elementor.com/home-screen/v1/home-screen.json';
-	const HOME_SCREEN_DATA_URL = 'https://assets.stg.elementor.red/home-screen/v1/home-screen.json';
+	const HOME_SCREEN_DATA_URL = 'https://assets.elementor.com/home-screen/v1/home-screen.json';
 
 	public static function get_home_screen_items( $force_request = false ): array {
 		$json_data = self::get_transient( '_elementor_home_screen_data' );
