@@ -3,6 +3,7 @@
 namespace Elementor\Modules\MemoryGame\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Repeater;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -43,31 +44,38 @@ class MemoryGame extends Widget_Base {
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			]
 		);
+
+		$repeater = new Repeater();
+		$repeater->add_control(
+			'card_caption',
+			[
+				'type' => Controls_Manager::TEXT,
+				'label' => esc_html__( 'Caption', 'elementor' ),
+				'default' => esc_html__( 'A photo of stuff', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+			]
+		);
+		$repeater->add_control(
+			'card_image',
+			[
+				'label'   => esc_html__( 'Choose Image', 'elementor' ),
+				'type'    => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
+			]
+		);
 		$this->add_control(
 			'cards',
 			[
 				'label'       => esc_html__( 'Cards', 'elementor' ),
 				'type'        => \Elementor\Controls_Manager::REPEATER,
-				'fields'      => [
-					[
-						'name'        => 'card_caption',
-						'label'       => esc_html__( 'Caption', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::TEXT,
-						'default'     => esc_html__( 'A photo of stuff', 'elementor' ),
-						'label_block' => true,
-					],
-					[
-						'name'    => 'card_image',
-						'label'   => esc_html__( 'Choose Image', 'elementor' ),
-						'type'    => Controls_Manager::MEDIA,
-						'dynamic' => [
-							'active' => true,
-						],
-						'default' => [
-							'url' => Utils::get_placeholder_image_src(),
-						],
-					]
-				],
+				'fields'      => $repeater->get_controls(),
 				'title_field' => '{{{ card_caption }}}',
 			]
 		);
