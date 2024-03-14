@@ -5,7 +5,7 @@ import YoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ...props } ) => {
 	return (
-		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', md: 'row' }, p: { xs: 2, md: 4 }, gap: 3 } }>
+		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 } } }>
 			<Stack gap={ 3 }>
 				<Box>
 					<Typography variant="body2">{ props.topData.title_small }</Typography>
