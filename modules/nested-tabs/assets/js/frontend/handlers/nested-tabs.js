@@ -68,6 +68,7 @@ export default class NestedTabs extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
+			$wdigetContainer: this.findElement( selectors.widgetContainer ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -97,6 +98,8 @@ export default class NestedTabs extends Base {
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
+
+		this.elements.$wdigetContainer.addClass( 'e-activated' );
 	}
 
 	deactivateActiveTab( newTabIndex ) {
