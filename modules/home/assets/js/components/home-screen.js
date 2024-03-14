@@ -3,9 +3,6 @@ import { Container, Box } from '@elementor/ui';
 import TopSection from './top-section';
 
 const HomeScreen = ( props ) => {
-	const videoUrl = 'https://elementor.com/academy/getting-started-with-elementor/',
-		embedUrl = 'https://www.youtube.com/embed/icTcREd1tAg?si=40E8D1hdnu26-TXM';
-
 	return (
 		// Box wrapper around the Container is needed to neutralize wp-content area left-padding
 		<Box maxWidth="xl" sx={ { pr: 1 } }>
