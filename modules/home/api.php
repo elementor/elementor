@@ -28,8 +28,6 @@ class API {
 		return $transformed_data;
 	}
 
-
-
 	private static function fetch_data(): array {
 		$response = wp_remote_get( self::HOME_SCREEN_DATA_URL );
 
