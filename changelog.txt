@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.20.1 - 2024-03-13 =
+
+* Fix: Radial background gradient is not working as expected in responsive mode ([#25038](https://github.com/elementor/elementor/issues/25038))
+* Fix: Tabs widget remains visible when disabled in the Element Manager
+
 = 3.20.0 - 2024-03-11 =
 
 * Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
