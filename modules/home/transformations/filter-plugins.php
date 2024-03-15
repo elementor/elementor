@@ -1,19 +1,13 @@
 <?php
 namespace Elementor\Modules\Home\Transformations;
 
-use Elementor\Modules\Home\Transformations\Base\Transformations_Base;
+use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Filter_Plugins implements Transformations_Base {
-
-	private $home_screen_data;
-
-	public function __construct( $home_screen_data ) {
-		$this->home_screen_data = $home_screen_data;
-	}
+class Filter_Plugins extends Transformations_Abstract {
 
 	public function transform(): array {
 		$this->set_add_on_installation_status();

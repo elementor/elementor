@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-interface Transformations_Base {
+interface Transformations_Interface {
 
 	public function __construct( array $home_screen_data );
 
