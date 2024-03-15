@@ -9,7 +9,7 @@ const HomeScreen = ( props ) => {
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, py: { xs: 2, md: 6 } } }>
 				<TopSection
 					topData={ props.homeScreenData.top }
-					createNewPageUrl={ props.homeScreenData.createNewPageUrl }
+					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
 			</Container>
 		</Box>
