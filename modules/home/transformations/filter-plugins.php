@@ -16,7 +16,7 @@ class Filter_Plugins extends Transformations_Abstract {
 	}
 
 	private function get_installed_plugins(): array {
-		$plugins = get_plugins();
+		$plugins = $this->wordpress_adapter->get_plugins();
 
 		return array_keys( $plugins );
 	}

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\Home\Classes;
 
-use Elementor\Modules\Home\Module;
+use Elementor\Core\Isolation\Wordpress_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -31,8 +31,9 @@ class Tranformations_Manager {
 	}
 
 	private function run_transformation( $id ): array {
+		$wordpress_adapter = new Wordpress_Adapter();
 		$class_name = '\\Elementor\\Modules\\Home\\Transformations\\' . $id;
-		$transformer = new $class_name( $this->home_screen_data );
+		$transformer = new $class_name( $this->home_screen_data, $wordpress_adapter );
 
 		return $transformer->transform();
 	}
