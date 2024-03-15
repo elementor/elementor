@@ -16,9 +16,32 @@ class Filter_Plugins implements Transformations_Base {
 	}
 
 	public function transform(): array {
-		$plugin = get_plugins();
-		$this->home_screen_data['active_plugins'] = $plugin;
+		$this->set_add_on_installation_status();
 
 		return $this->home_screen_data;
+	}
+
+	private function get_installed_plugins(): array {
+		$plugins = get_plugins();
+
+		return array_keys( $plugins );
+	}
+
+	private function set_add_on_installation_status() {
+		$add_ons = $this->home_screen_data['add_ons']['repeater'];
+		$index = 0;
+
+		foreach ( $add_ons as $add_on ) {
+			$isPlugin = array_key_exists( 'file_path', $add_on );
+			$isInstalledPlugin = $isPlugin && in_array( $add_on['file_path'], $this->get_installed_plugins() );
+
+			if ( $isInstalledPlugin ) {
+				$this->home_screen_data['add_ons']['repeater'][ $index ]['is_installed'] = true;
+			} else if ( $isPlugin ) {
+				$this->home_screen_data['add_ons']['repeater'][ $index ]['is_installed'] = false;
+			}
+
+			$index++;
+		}
 	}
 }

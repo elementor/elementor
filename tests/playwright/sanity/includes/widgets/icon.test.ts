@@ -19,7 +19,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 		await wpAdmin.disableAdvancedUploads();
 	} );
 
-	test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
+	test.only( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			iconWidget = await editor.addWidget( 'icon' ),

@@ -11,7 +11,7 @@ module.exports = async ( config: FullConfig ) => {
 	const cookies = await loginApi(
 		process.env.USERNAME || 'admin',
 		process.env.PASSWORD || 'password',
-		process.env.BASE_URL || 'http://localhost:8888',
+		process.env.BASE_URL || 'http://elementor.local',
 	);
 	await context.addCookies( cookies );
 	await page.goto( `${ baseURL }/wp-admin` );
