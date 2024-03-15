@@ -8,9 +8,7 @@ const HomeScreen = ( props ) => {
 		<Box maxWidth="xl" sx={ { pr: 1 } }>
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, py: { xs: 2, md: 6 } } }>
 				<TopSection
-					videoUrl={ videoUrl }
-					embedUrl={ embedUrl }
-					topData={ props.homeScreenData.data.top[ 0 ] }
+					topData={ props.homeScreenData.data.top }
 					createNewPageUrl={ props.homeScreenData.createNewPageUrl }
 				/>
 			</Container>
