@@ -406,6 +406,8 @@ export default class NestedTabs extends Base {
 		if ( id === currentId ) {
 			this.updateIndexValues();
 			this.updateListeners();
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 	}
 
