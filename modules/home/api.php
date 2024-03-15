@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\Home;
 
+use Elementor\Modules\Home\Classes\Tranformations_Manager;
+
 class API {
 
 	const HOME_SCREEN_DATA_URL = 'https://assets.elementor.com/home-screen/v1/home-screen.json';

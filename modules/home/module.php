@@ -4,6 +4,7 @@ namespace Elementor\Modules\Home;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Home\Classes\Tranformations_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -78,9 +79,17 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
+		$api_data = API::get_home_screen_items( true );
+		$transformers = $this->transform_home_screen_data( $api_data );
+		$filtered_data = $transformers->run_transformations();
+
 		return [
-			'data' => API::get_home_screen_items( true ),
+			'data' => $filtered_data,
 			'createNewPageUrl' => Plugin::$instance->documents->get_create_new_post_url( 'page' ),
 		];
+	}
+
+	private function transform_home_screen_data( $data ) {
+		return new Tranformations_Manager( $data );
 	}
 }
