@@ -8,15 +8,26 @@ class API {
 	const HOME_SCREEN_DATA_URL = 'https://assets.elementor.com/home-screen/v1/home-screen.json';
 
 	public static function get_home_screen_items( $force_request = false ): array {
-		$json_data = self::get_transient( '_elementor_home_screen_data' );
+		$transient_data = self::get_transient( '_elementor_home_screen_data' );
 
-		if ( $force_request || false === $json_data ) {
-			$json_data = static::fetch_data();
-			static::set_transient( '_elementor_home_screen_data', $json_data, '+1 hour' );
+		if ( $force_request || false === $transient_data ) {
+			$api_data = static::fetch_data();
+			$transformed_data = self::transform_home_screen_data( $api_data );
+			static::set_transient( '_elementor_home_screen_data', $transformed_data, '+1 hour' );
+			return $transformed_data;
 		}
 
-		return $json_data;
+		return $transient_data;
 	}
+
+	private static function transform_home_screen_data( $json_data ) {
+		$transformers = new Tranformations_Manager( $json_data );
+		$transformed_data = $transformers->run_transformations();
+
+		return $transformed_data;
+	}
+
+
 
 	private static function fetch_data(): array {
 		$response = wp_remote_get( self::HOME_SCREEN_DATA_URL );

@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tranformations_Manager {
 
 	private const TRANSFORMATIONS = [
+		'Create_New_Page_Url',
 		'Filter_Plugins',
 	];
 
