@@ -14,6 +14,7 @@ class API {
 			$api_data = static::fetch_data();
 			$transformed_data = self::transform_home_screen_data( $api_data );
 			static::set_transient( '_elementor_home_screen_data', $transformed_data, '+1 hour' );
+
 			return $transformed_data;
 		}
 
