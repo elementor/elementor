@@ -54,6 +54,10 @@ abstract class Widget_Nested_Base extends Widget_Base {
 		return '';
 	}
 
+	protected function get_default_children_container_placeholder_selector() {
+		return '';
+	}
+
 	/**
 	 * @inheritDoc
 	 *
@@ -74,6 +78,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 				'elements' => $this->get_default_children_elements(),
 				'elements_title' => $this->get_default_children_title(),
 				'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
+				'child_container_placeholder_selector' => $this->get_default_children_container_placeholder_selector(),
 				'repeater_title_setting' => $this->get_default_repeater_title_setting_key(),
 			],
 			'support_nesting' => true,

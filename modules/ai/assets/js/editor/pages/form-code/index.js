@@ -17,6 +17,7 @@ import {
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../components/prompt-library-link';
 import { useRequestIds } from '../../context/requests-ids';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -127,6 +128,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					} }>
 						{ data.result }
 					</ReactMarkdown>
+					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>

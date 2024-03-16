@@ -1,7 +1,7 @@
 import Base from '../../../base';
 import {
 	extractNestedItemTitle,
-	shouldUseImprovedRepeaters,
+	shouldUseAtomicRepeaters,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 /**
@@ -44,8 +44,16 @@ export class NestedRepeaterCreateContainer extends Base {
 
 		const widgetType = container.settings.get( 'widgetType' );
 
-		if ( shouldUseImprovedRepeaters( widgetType ) ) {
-			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/nested-container/created' ) );
+		if ( shouldUseAtomicRepeaters( widgetType ) ) {
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/created', {
+					detail: {
+						container,
+						action: {
+							type: 'create',
+						},
+					} },
+				) );
 		}
 	}
 }

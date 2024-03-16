@@ -1,6 +1,6 @@
 import { test, expect, Locator, Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expectScreenshotToMatchLocator, deleteItemFromRepeater } from './helper';
+import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater, cloneItemFromRepeater } from './helper';
 import _path from 'path';
 import { setup } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
@@ -123,21 +123,11 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 
 		await test.step( 'Add an item to the repeater', async () => {
-			// Arrange
-			const addItemButton = page.locator( '.elementor-repeater-add' ),
-				numberOfTitles = await nestedAccordionItemTitle.count(),
-				numberOfContents = await nestedAccordionItemContent.count();
-
-			// Act
-			await addItemButton.click();
-
-			// Assert
-			await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
-			await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
+			await addItemFromRepeater( editor, nestedAccordionID );
 		} );
 
 		await test.step( 'Remove an item from the repeater', async () => {
-			await deleteItemFromRepeater( page, nestedAccordionItemTitle, nestedAccordionItemContent );
+			await deleteItemFromRepeater( editor, nestedAccordionID );
 		} );
 
 		await test.step( 'Duplicate an item to the repeater', async () => {
@@ -197,6 +187,15 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			} );
 
 			await editor.setSelectControlValue( 'max_items_expended', 'one' );
+
+			await test.step( 'Add an item to the second accordion', async () => {
+				const secondContainer = await editor.addElement( { elType: 'container' }, 'document' ),
+					secondNestedAccordionID = await editor.addWidget( 'nested-accordion', secondContainer );
+
+				await editor.selectElement( secondNestedAccordionID );
+
+				await addItemFromRepeater( editor, secondNestedAccordionID );
+			} );
 		} );
 	} );
 
@@ -310,6 +309,22 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				.analyze();
 
 			expect.soft( accessibilityScanResults.violations ).toEqual( [] );
+		} );
+	} );
+
+	test( 'Test with existing template', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage();
+
+		const filePath = _path.resolve( __dirname, `./templates/nested-accordion-with-content.json` );
+		await editor.loadTemplate( filePath, false );
+
+		await test.step( 'Clone first accordion item', async () => {
+			await cloneItemFromRepeater( editor, 'first' );
+		} );
+
+		await test.step( 'Clone last accordion item', async () => {
+			await cloneItemFromRepeater( editor, 'last' );
 		} );
 	} );
 } );

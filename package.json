@@ -152,7 +152,6 @@
 		"react-markdown": "^8.0.5",
 		"react-redux": "^7.2.6",
 		"react-sketch-canvas": "^6.2.0",
-		"uuid": "^9.0.1",
 		"validator": "^13.11.0",
 		"write": "^2.0.0"
 	},

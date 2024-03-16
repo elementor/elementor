@@ -85,7 +85,7 @@
 
 			+ .elementor-control-type-tabs,
 			&:not(.elementor-hidden-control) {
-				~ .elementor-control-separator-default {
+				+ .elementor-control-separator-default {
 					padding-block-start: 15px;
 				}
 			}
@@ -205,7 +205,7 @@
 		margin-inline-start: auto;
 
 		a {
-			color: $e-accent;
+			color: var(--e-a-color-accent-promotion);
 			font-family: 'Roboto', sans-serif;
 			font-weight: 500;
 			font-size: 13px;
@@ -216,7 +216,7 @@
 			}
 
 			&:hover {
-				color: $e-accent;
+				color: var(--e-a-color-accent-promotion);
 			}
 		}
 	}
