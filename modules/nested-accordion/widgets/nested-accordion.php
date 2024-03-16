@@ -78,6 +78,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return '.e-n-accordion';
 	}
 
+	protected function get_default_children_container_placeholder_selector() {
+		return '.e-n-accordion-item';
+	}
+
 	protected function get_html_wrapper_class() {
 		return 'elementor-widget-n-accordion';
 	}
@@ -889,13 +893,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-accordion' ],
-				'node' => 'details',
-			] );
-		}
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'target_container' => [ '.e-n-accordion' ],
+			'node' => 'details',
+		] );
 
 		return parent::get_initial_config();
 	}
