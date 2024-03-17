@@ -183,7 +183,6 @@ class Admin extends App {
 		// It's for upgrade notice.
 		// TODO: enqueue this just if needed.
 		add_thickbox();
-
 	}
 
 	/**
