@@ -1,9 +1,8 @@
 import { Container, Box } from '@elementor/ui';
-
 import TopSection from './top-section';
 import PromotionBar from './side-bar-promotion';
 
-const HomeScreen = ( props ) => {
+const HomeScreen = ( props ) => {  
 
 	return (
 		// Box wrapper around the Container is needed to neutralize wp-content area left-padding
