@@ -2,8 +2,7 @@ import { Container, Box } from '@elementor/ui';
 import TopSection from './top-section';
 import PromotionBar from './side-bar-promotion';
 
-const HomeScreen = ( props ) => {  
-
+const HomeScreen = ( props ) => {
 	return (
 		// Box wrapper around the Container is needed to neutralize wp-content area left-padding
 		<Box maxWidth="xl" sx={ { pr: 1 } }>
@@ -13,8 +12,9 @@ const HomeScreen = ( props ) => {
 					createNewPageUrl={ props.homeScreenData.createNewPageUrl }
 				/>
 			</Container>
-			<Container>
-				<PromotionBar topData={ props.homeScreenData.data.side_upgrade } />
+			<Container maxWidth="xs" disableGutters={ true } sx={ { alignItems: 'space-between' } }>
+				<Container flexGrow={ 1 } disableGutters={ true } sx={ { display: 'flex', flexDirection: 'column', gap: 3, py: 3 } }></Container>
+				<PromotionBar sideData={ props.homeScreenData.data.sidebar_upgrade } />
 			</Container>
 		</Box>
 	);
