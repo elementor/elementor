@@ -8,7 +8,7 @@ import SideBarIcon from "../icons/side-bar-cta-icon";
 
 const PromotionBar = ( { ...props } ) => {
 	return (
-		<Paper elevation={ 0 } sx={ { py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: 2 } }>
+		<Paper elevation={ 0 } sx={ { p: 3, gap: 2 } }>
 			<Stack gap={ 1 } sx={ { alignItems: 'center' } }>
 				<Box component="img" src={ props.sideData.header.image } sx={ { width: '35%' } }></Box>
 				<Typography variant="h6">{ props.sideData.header.title }</Typography>
