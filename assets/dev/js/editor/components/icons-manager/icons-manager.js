@@ -2,7 +2,6 @@ import ModalLayout from './modal-layout';
 import { renderIconManager } from './components/icon-manager';
 import IconLibrary from './classes/icon-library';
 import Store from './classes/store';
-import { unmountComponentAtNode } from 'react-dom';
 
 export default class extends elementorModules.Module {
 	onInit() {
@@ -33,7 +32,7 @@ export default class extends elementorModules.Module {
 
 			layoutModal
 				.on( 'show', this.onPickerShow.bind( this ) )
-				.on( 'hide', this.unMountIconManager );
+				.on( 'hide', this.unMountIconManager.bind( this ) );
 		}
 		return this.layout;
 	}
@@ -45,9 +44,7 @@ export default class extends elementorModules.Module {
 	}
 
 	unMountIconManager() {
-		const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
-
-		unmountComponentAtNode( containerElement );
+		this.unmount();
 	}
 
 	loadIconLibraries() {
@@ -142,7 +139,9 @@ export default class extends elementorModules.Module {
 		iconManagerConfig.customIconsURL = elementor.config.customIconsURL;
 
 		iconManagerConfig.activeTab = activeTab;
-		return renderIconManager( iconManagerConfig );
+		const { unmount } = renderIconManager( iconManagerConfig );
+
+		this.unmount = unmount;
 	}
 
 	updateControlValue() {
