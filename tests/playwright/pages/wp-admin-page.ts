@@ -1,8 +1,11 @@
-import { type APIRequestContext, expect, Page } from '@playwright/test';
+import { type APIRequestContext, expect } from '@playwright/test';
 import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
+import { $eType, ElementorType } from '../types/types';
+let elementor: ElementorType;
+let $e: $eType;
 
 /**
  * This post is used for any tests that need a post, with empty elements.
@@ -24,8 +27,8 @@ export default class WpAdminPage extends BasePage {
 		}
 
 		await this.page.waitForSelector( 'text=Log In' );
-		await this.page.fill( 'input[name="log"]', this.config.user.username );
-		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
+		await this.page.fill( 'input[name="log"]', process.env.USERNAME );
+		await this.page.fill( 'input[name="pwd"]', process.env.PASSWORD );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}

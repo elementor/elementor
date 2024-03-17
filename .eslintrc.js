@@ -43,6 +43,22 @@ module.exports = {
 			},
 		},
 	},
+	overrides: [
+		{
+			files: [ '*.ts', '*.tsx' ],
+			extends: [
+				'plugin:@typescript-eslint/recommended',
+			],
+			rules: {
+				'@typescript-eslint/await-thenable': 'error',
+				'@typescript-eslint/no-var-requires': 'error',
+				'@typescript-eslint/ban-ts-comment': 'error',
+			},
+			parserOptions: {
+				project: [ './tsconfig.json' ],
+			},
+		},
+	],
 	rules: {
 		// Custom canceled rules
 		'no-var': 'off',
@@ -92,7 +108,7 @@ module.exports = {
 		} ],
 		'react/react-in-jsx-scope': 'off',
 		'react/prop-types': 'error',
-		'react/no-deprecated': 'warn', // Temporary until we remove the deprecated components
+		'react/no-deprecated': 'error',
 		'babel/semi': 1,
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 		'jsdoc/require-returns-description': 'off', // We prefer self-explanatory method names

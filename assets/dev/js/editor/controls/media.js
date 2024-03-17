@@ -13,7 +13,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
-		ui.warnings = '.elementor-control-media__warnings';
+		// eslint-disable-next-line capitalized-comments
+		// ui.warnings = '.elementor-control-media__warnings';
 		ui.promotions = '.elementor-control-media__promotions';
 		ui.promotions_dismiss = '.elementor-control-media__promotions .elementor-control-notice-dismiss';
 		ui.promotions_action = '.elementor-control-media__promotions .elementor-control-notice-main-actions button';
@@ -92,7 +93,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			if ( attachmentId ) {
 				const dismissPromotionEventName = this.getDismissPromotionEventName();
 				const handleHints = ( attachment ) => {
-					this.ui.warnings.toggle( ! this.imageHasAlt( attachment ) );
+					// eslint-disable-next-line capitalized-comments
+					// this.ui.warnings.toggle( ! this.imageHasAlt( attachment ) );
 					if ( this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( dismissPromotionEventName ) ) {
 						const alwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
 						const showHint = alwaysOn || this.imageNotOptimized( attachment );
@@ -101,7 +103,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				};
 				wp.media.attachment( attachmentId ).fetch().then( handleHints );
 			} else {
-				this.ui.warnings.hide();
+				// eslint-disable-next-line capitalized-comments
+				// this.ui.warnings.hide();
+
+				// eslint-disable-next-line no-lonely-if
 				if ( this.ui.promotions.length ) {
 					this.ui.promotions.hide();
 				}

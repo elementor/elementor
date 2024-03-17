@@ -91,16 +91,35 @@ body {
 		}
 	}
 
+	&__elements.elementor-navigator-list__promotion {
+		height: calc(100% - 80px);
+	}
+
 	&__footer {
 		position: absolute;
 		width: 100%;
 		left: 0;
 		bottom: 0;
 		text-align: center;
-		border-block-start: var(--e-a-border);
 
-		.elementor-navigator-docked & {
-			display: none;
+		&__resize-bar {
+			border-block-start: var(--e-a-border);
+
+			.elementor-navigator-docked & {
+				display: none;
+			}
+		}
+
+		&__promotion {
+			font-size: 12px;
+			padding: 4px 17px;
+			line-height: 22px;
+			font-family: 'Roboto', sans-serif;
+			color: var(--e-a-bg-logo);
+
+			a {
+				color: var(--e-a-color-accent-promotion);
+			}
 		}
 	}
 }

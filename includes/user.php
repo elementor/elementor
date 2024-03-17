@@ -239,6 +239,10 @@ class User {
 		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'json-upload' );
 	}
 
+	public static function is_current_user_can_use_custom_html() {
+		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'custom-html' );
+	}
+
 	/**
 	 * Set admin notice as viewed.
 	 *
@@ -308,7 +312,7 @@ class User {
 	 */
 	public static function register_as_beta_tester( array $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
-			throw new \Exception( __( 'You do not have permissions to install plugins on this site.', 'elementor' ) );
+			throw new \Exception( __( 'You do not have permission to install plugins.', 'elementor' ) );
 		}
 
 		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
