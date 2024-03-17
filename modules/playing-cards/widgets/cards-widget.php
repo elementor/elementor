@@ -166,6 +166,14 @@ class CardsWidget extends Widget_Base {
 						'min' => 0,
 						'max' => 200,
 					],
+					'%' => [
+						0,
+						100
+					],
+					'rem' => [
+						0,
+						10
+					]
 				],
 				'default' => [
 					'size' => 12,
