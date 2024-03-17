@@ -15,7 +15,7 @@ const HomeScreen = ( props ) => {
 				/>
 			</Container>
 			<Container>
-				<PromotionBar topData={ props.homeScreenData.data.top } />
+				<PromotionBar topData={ props.homeScreenData.data.side_upgrade } />
 			</Container>
 		</Box>
 	);
