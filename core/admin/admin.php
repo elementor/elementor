@@ -966,8 +966,17 @@ class Admin extends App {
 
 		$once_dismissed = Hints::is_dismissed( 'image-optimization-once-media-modal' );
 		$content = $once_dismissed ?
-			__( 'Whoa! This image is quite large and might slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
-			__( "Don't let unoptimized images be the downfall of your site's performance. Use Image Optimizer!", 'elementor' );
+			sprintf("%1\$s <a href='%2\$s' class='e-btn-1' target='_blank'>%3\$s</a> %4\$s",
+				__( 'This image is large and may slow things down.', 'elementor' ),
+				Hints::get_plugin_action_url( 'image-optimization' ),
+				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' ),
+				__( 'to reduce size without losing quality.', 'elementor' )
+			) :
+			sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+				__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
+				Hints::get_plugin_action_url( 'image-optimization' ),
+				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
+			);
 
 		$dismissible = $once_dismissed ? 'image-optimization-media-modal' : 'image-optimization-once-media-modal';
 
@@ -979,12 +988,11 @@ class Admin extends App {
 				'icon' => true,
 				'dismissible' => $dismissible,
 				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
-				'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
 					json_encode( [
 						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-					] )
+					] ),
 				),
 			],
 		] );
