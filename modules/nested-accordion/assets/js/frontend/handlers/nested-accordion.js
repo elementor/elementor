@@ -93,6 +93,8 @@ export default class NestedAccordion extends Base {
 
 			this.updateIndexValues();
 			this.updateListeners( view );
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 	}
 
