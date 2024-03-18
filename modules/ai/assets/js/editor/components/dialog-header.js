@@ -36,7 +36,7 @@ const DialogHeader = ( props ) => {
 
 					<IconButton
 						size="small"
-						aria-label="close"
+						aria-label="Close"
 						onClick={ props.onClose }
 						sx={ { '&.MuiButtonBase-root': { mr: -1 } } }
 					>
