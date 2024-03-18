@@ -35,7 +35,7 @@ const PromptHistoryUpgrade = ( { variant, historyType } ) => {
 
 			<Button
 				variant="contained"
-				color="accent"
+				color="promotion"
 				size="small"
 				href={ actionUrl }
 				target="_blank"
@@ -46,7 +46,7 @@ const PromptHistoryUpgrade = ( { variant, historyType } ) => {
 					alignSelf: 'center',
 
 					'&:hover': {
-						color: 'accent.contrastText',
+						color: 'promotion.contrastText',
 					},
 				} }
 			>
