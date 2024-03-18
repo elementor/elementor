@@ -10,6 +10,10 @@ const alertConfigs = [
 			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 95% of your Elementor AI plan.', 'elementor' ),
 			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 95% of the free trial.', 'elementor' ),
 		},
+		description: {
+			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature, you can still use other AI features.', 'elementor' ),
+		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-95-limit-reach/',
 			[ KEY_NO_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-free-95-limit-reach/',
@@ -22,6 +26,10 @@ const alertConfigs = [
 			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 80% of your Elementor AI plan.', 'elementor' ),
 			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 80% of the free trial.', 'elementor' ),
 		},
+		description: {
+			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature, you can still use other AI features.', 'elementor' ),
+		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
 			[ KEY_NO_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-free-80-limit-reach/',
@@ -30,7 +38,9 @@ const alertConfigs = [
 	},
 ];
 
-const UpgradeButton = ( props ) => <Button color="inherit" { ...props }>{ __( 'Upgrade', 'elementor' ) }</Button>;
+const UpgradeButton = ( props ) => <Button color="inherit" variant="outlined" sx={ { border: '2px solid' } } { ...props }>
+	{ __( 'Upgrade now', 'elementor' ) }
+</Button>;
 
 const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props } ) => {
 	const config = alertConfigs.find( ( { threshold } ) => usagePercentage >= threshold );
@@ -40,7 +50,7 @@ const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props 
 	}
 
 	const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
-	const { title, url, color } = config;
+	const { title, description, url, color } = config;
 	const handleUpgradeClick = () => window.open( url[ subscriptionType ], '_blank' );
 
 	return (
@@ -51,7 +61,7 @@ const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props 
 			{ ...props }
 		>
 			<AlertTitle>{ title[ subscriptionType ] }</AlertTitle>
-			{ __( 'Get maximum access.', 'elementor' ) }
+			{ description[ subscriptionType ] }
 		</Alert>
 	);
 };
