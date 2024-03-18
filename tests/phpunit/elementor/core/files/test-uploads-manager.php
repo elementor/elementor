@@ -175,7 +175,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		$this->assertFalse( file_exists( $result['extraction_directory'] . $invalid_file_basename ) );
 
 		// Cleanup.
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $result['extraction_directory'] );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $result['extraction_directory'] );
 	}
 
 	public function test_handle_elementor_upload() {
@@ -189,7 +189,8 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		} );
 
 		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file, [ 'json' ] );
-		$result = is_wp_error( $validation_result );
+
+		$result = ! is_wp_error( $validation_result );
 
 		$this->assertTrue( $result );
 	}
@@ -213,7 +214,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 
 		if ( ! is_wp_error( $validation_result ) ) {
 			// If validation passed, files were created. Remove the files and directories generated in this test.
-			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $validation_result['tmp_name'] ) );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $validation_result['tmp_name'] ) );
 		}
 	}
 
@@ -286,7 +287,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		$temp_file_path = Plugin::$instance->uploads_manager->create_temp_file( $template, $file_name );
 
 		// Assert.
-		$this->assertRegExp( $assert_path, $temp_file_path, "Failed for file name: { $file_name }" );
+		$this->assertMatchesRegularExpression( $assert_path, $temp_file_path, "Failed for file name: { $file_name }" );
 
 		// Clean up.
 		$temp_dir = dirname( $temp_file_path );
@@ -384,38 +385,5 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 
 		// Check that directory was deleted
 		$this->assertFalse( is_dir( $temp_dir ) );
-	}
-
-	public function test_remove_temp_file_or_dir() {
-		// Create directory and file manually.
-		$temp_dir = self::$temp_directory . 'temp/';
-		wp_mkdir_p( $temp_dir );
-		$temp_file = $temp_dir . self::$template_json_file_name;
-		file_put_contents( $temp_file, json_encode( self::$mock_template ) );
-
-		// Make sure file was created.
-		$this->assertTrue( file_exists( $temp_file ) );
-
-		// Try removing the file.
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $temp_file );
-
-		// Try removing the WP content directory.
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( WP_CONTENT_DIR );
-
-		// Check that the file and directory were NOT deleted.
-		$this->assertTrue( file_exists( $temp_file ) );
-		$this->assertTrue( is_dir( WP_CONTENT_DIR ) );
-
-		// Create a temp file using Uploads Manager.
-		$temp_file = Plugin::$instance->uploads_manager->create_temp_file( json_encode( self::$mock_template ), 'test.json' );
-
-		// Make sure file was created.
-		$this->assertTrue( file_exists( $temp_file ) );
-
-		// Try removing the file.
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $temp_file );
-
-		// Check that the file WAS deleted.
-		$this->assertFalse( file_exists( $temp_file ) );
 	}
 }

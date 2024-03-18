@@ -1,17 +1,23 @@
-import { Container, Grid } from '@elementor/ui';
+import { Container, Box } from '@elementor/ui';
 
 import TopSection from './top-section';
-import BlockSection from './block-section';
 
-const HomeScreen = () => {
+const HomeScreen = ( props ) => {
 	return (
-		<Container sx={ { py: 4 } }>
-			<Grid sx={ { display: 'grid', gap: 3 } }>
-				<TopSection />
-				<BlockSection />
-			</Grid>
-		</Container>
+		// Box wrapper around the Container is needed to neutralize wp-content area left-padding
+		<Box sx={ { pr: 1 } }>
+			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, py: { xs: 2, md: 6 } } }>
+				<TopSection
+					topData={ props.homeScreenData.data.top }
+					createNewPageUrl={ props.homeScreenData.createNewPageUrl }
+				/>
+			</Container>
+		</Box>
 	);
+};
+
+HomeScreen.propTypes = {
+	homeScreenData: PropTypes.object,
 };
 
 export default HomeScreen;
