@@ -1,9 +1,24 @@
-import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import {
+	ThemeProvider,
+	DirectionProvider,
+	Dialog,
+	DialogHeader,
+	DialogTitle,
+	DialogHeaderGroup,
+	Chip, IconButton, DialogContent, DialogContentText, DialogActions, Button,
+} from '@elementor/ui';
+import EditIcon from './icons/edit-icon';
+import { SearchIcon } from '@elementor/icons';
+import ExpandDiagonalIcon from './icons/expand-diagonal-icon';
 import PropTypes from 'prop-types';
 import PageContent from './page-content';
 import { onConnect } from './helpers';
 import { RequestIdsProvider } from './context/requests-ids';
 
+DialogHeaderGroup.propTypes = {
+	gutterLeftAuto: PropTypes.bool,
+	children: PropTypes.node,
+};
 const App = ( props ) => {
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
