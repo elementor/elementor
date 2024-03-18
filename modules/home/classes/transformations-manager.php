@@ -14,7 +14,7 @@ class Transformations_Manager {
 		'Filter_Plugins',
 	];
 
-	public array $home_screen_data;
+	protected array $home_screen_data;
 
 	protected Wordpress_Adapter $wordpress_adapter;
 
