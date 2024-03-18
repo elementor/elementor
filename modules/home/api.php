@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\Home;
 
-use Elementor\Modules\Home\Classes\Tranformations_Manager;
+use Elementor\Modules\Home\Classes\Transformations_Manager;
 
 class API {
 
@@ -22,7 +22,7 @@ class API {
 	}
 
 	private static function transform_home_screen_data( $json_data ): array {
-		$transformers = new Tranformations_Manager( $json_data );
+		$transformers = new Transformations_Manager( $json_data );
 
 		return $transformers->get_data();
 	}

@@ -29,10 +29,8 @@ class Filter_Plugins extends Transformations_Abstract {
 			$is_plugin = array_key_exists( 'file_path', $add_on );
 			$is_installed_plugin = $is_plugin && in_array( $add_on['file_path'], $this->get_installed_plugins() );
 
-			if ( $is_installed_plugin ) {
-				$this->home_screen_data['add_ons']['repeater'][ $index ]['is_installed'] = true;
-			} else if ( $is_plugin ) {
-				$this->home_screen_data['add_ons']['repeater'][ $index ]['is_installed'] = false;
+			if ( $is_plugin ) {
+				$this->home_screen_data['add_ons']['repeater'][ $index ]['is_installed'] = $is_installed_plugin;
 			}
 
 			$index++;

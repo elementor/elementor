@@ -8,11 +8,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class Test_Filter_Plugins extends Elementor_Test_Base {
 
+	private $wordpress_adapter;
+
 	public function test_filter_plugins() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
-		$wordpress_adapter = $this->mock_installed_plugins();
-		$transformation = new Filter_Plugins( $data, $wordpress_adapter );
+		$transformation = new Filter_Plugins( $data, $this->wordpress_adapter );
 
 		// Act
 		$transformed_data = $transformation->transform();
@@ -22,7 +23,7 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 		$this->assertTrue( $transformed_data === $expected_data );
 	}
 
-	public function mock_home_screen_data() {
+	private function mock_home_screen_data() {
 		return [
 			'add_ons' => [
 				'repeater' => [
@@ -50,7 +51,7 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 		];
 	}
 
-	public function mock_home_screen_data_transformed() {
+	private function mock_home_screen_data_transformed() {
 		return [
 			'add_ons' => [
 				'repeater' => [
@@ -80,7 +81,7 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 		];
 	}
 
-	public function installed_plugins() {
+	private function installed_plugins() {
 		return [
 			'elementor/elementor.php' => [
 				'Name' => 'Elementor',
@@ -93,14 +94,12 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 		];
 	}
 
-	/**
-	 * @return (Wordpress_Adapter_Interface&MockObject)|MockObject
-	 */
-	public function mock_installed_plugins() {
+	public function setUp(): void {
+		parent::setUp();
 		$plugin_array = $this->installed_plugins();
 		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
 		$wordpress_adapter_mock->method( 'get_plugins' )->willReturn( $plugin_array );
 
-		return $wordpress_adapter_mock;
+		$this->wordpress_adapter = $wordpress_adapter_mock;
 	}
 }

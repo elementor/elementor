@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Tranformations_Manager {
+class Transformations_Manager {
 
 	private const TRANSFORMATIONS = [
 		'Create_New_Page_Url',
