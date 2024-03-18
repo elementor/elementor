@@ -21,11 +21,10 @@ class API {
 		return $transient_data;
 	}
 
-	private static function transform_home_screen_data( $json_data ) {
+	private static function transform_home_screen_data( $json_data ): array {
 		$transformers = new Tranformations_Manager( $json_data );
-		$transformed_data = $transformers->run_transformations();
 
-		return $transformed_data;
+		return $transformers->get_data();
 	}
 
 	private static function fetch_data(): array {

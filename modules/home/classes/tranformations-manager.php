@@ -14,27 +14,33 @@ class Tranformations_Manager {
 		'Filter_Plugins',
 	];
 
-	public $home_screen_data;
+	public array $home_screen_data;
+
+	protected Wordpress_Adapter $wordpress_adapter;
 
 	public function __construct( $home_screen_data ) {
 		$this->home_screen_data = $home_screen_data;
+		$this->wordpress_adapter = new Wordpress_Adapter();
+
+		$this->run_transformations();
 	}
 
-	public function run_transformations(): array {
+	private function run_transformations(): void {
 		$transformations = self::TRANSFORMATIONS;
 
 		foreach ( $transformations as $transformation ) {
 			$this->home_screen_data = $this->run_transformation( $transformation );
 		}
-
-		return $this->home_screen_data;
 	}
 
 	private function run_transformation( $id ): array {
-		$wordpress_adapter = new Wordpress_Adapter();
 		$class_name = '\\Elementor\\Modules\\Home\\Transformations\\' . $id;
-		$transformer = new $class_name( $this->home_screen_data, $wordpress_adapter );
+		$transformer = new $class_name( $this->home_screen_data, $this->wordpress_adapter );
 
 		return $transformer->transform();
+	}
+
+	public function get_data(): array {
+		return $this->home_screen_data;
 	}
 }

@@ -6,8 +6,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 interface Transformations_Interface {
-
-	public function __construct( array $home_screen_data, array $wordpress_adapter );
-
 	public function transform(): array;
 }
