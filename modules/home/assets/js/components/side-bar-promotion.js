@@ -12,7 +12,7 @@ const PromotionBar = ( { ...props } ) => {
 				<Box component="img" src={ props.sideData.header.image } sx={ { width: '130px' } }></Box>
 				<Typography variant="h6">{ props.sideData.header.title }</Typography>
 				<Typography variant="body2">{ props.sideData.header.description }</Typography>
-				<Button variant="contained" size="medium" color="promotion" href={ props.sideData.cta.url } startIcon={ <Box component="img" src={ props.sideData.cta.image } sx={ { width: "16px" } }></Box> } target="_blank" sx={ { maxWidth: 'fit-content' } }>{ props.sideData.cta.label }</Button>
+				<Button variant="contained" size="medium" color="promotion" href={ props.sideData.cta.url } startIcon={ <Box component="img" src={ props.sideData.cta.image } sx={ { width: '16px' } }></Box> } target="_blank" sx={ { maxWidth: 'fit-content' } }>{ props.sideData.cta.label }</Button>
 			</Stack>
 			<List sx={ { alignItems: 'flex-start' } }>
 				{
