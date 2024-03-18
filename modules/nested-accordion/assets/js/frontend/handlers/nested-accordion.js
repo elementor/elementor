@@ -73,15 +73,16 @@ export default class NestedAccordion extends Base {
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
-			const accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
+			const { $accordionItems } = this.getDefaultElements();
+
 			let accordionItem, contentContainer;
 
 			switch ( type ) {
 				case 'move':
-					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, accordionItems );
+					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, $accordionItems );
 					break;
 				case 'duplicate':
-					[ accordionItem, contentContainer ] = this.duplicate( view, index, targetContainer, accordionItems );
+					[ accordionItem, contentContainer ] = this.duplicate( view, index, targetContainer, $accordionItems );
 					break;
 				default:
 					break;
