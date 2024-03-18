@@ -33,7 +33,7 @@ const DialogHeader = ( { onClose, children } ) => (
 
 				<IconButton
 					size="small"
-					aria-label="Close"
+					aria-label="close"
 					onClick={ onClose }
 					sx={ { '&.MuiButtonBase-root': { mr: -1 } } }
 				>

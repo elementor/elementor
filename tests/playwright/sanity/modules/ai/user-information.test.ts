@@ -32,7 +32,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.locator( 'input[name="prompt"]' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
 		await test.step( 'Free user has exceeded the quota with 80% usage', async () => {
@@ -50,7 +50,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.getByText( 'You’ve used over 80% of the free trial.' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
 		await test.step( 'Free user has exceeded the quota with 95% usage', async () => {
@@ -68,7 +68,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.getByText( 'You’ve used over 95% of the free trial.' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
 		await test.step( 'Paid user has exceeded the quota with 80% usage', async () => {
@@ -86,7 +86,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.getByText( 'You’ve used over 80% of your Elementor AI plan.' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
 		await test.step( 'Paid user has exceeded the quota with 95% usage', async () => {
@@ -104,7 +104,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.getByText( 'You’ve used over 95% of your Elementor AI plan.' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
 		await test.step( 'No connected', async () => {
@@ -122,7 +122,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.getByText( 'By clicking "Connect", I approve the' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 
 		await test.step( 'Connected but no get started', async () => {
@@ -144,7 +144,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( page.getByText( 'Get Started' ) ).toBeEnabled();
 
-			await page.locator( 'button[aria-label="Close"]' ).click();
+			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
 	} );
 } );

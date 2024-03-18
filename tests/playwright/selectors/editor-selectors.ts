@@ -150,7 +150,7 @@ const EditorSelectors = {
 	},
 	ai: {
 		aiButton: '.e-ai-button',
-		aiDialogCloseButton: '.MuiDialog-container button[aria-label="Close"]',
+		aiDialogCloseButton: '.MuiDialog-container button[aria-label="close"]',
 		promptInput: 'input[name="prompt"]',
 		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
 
