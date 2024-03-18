@@ -123,7 +123,7 @@ class Library extends \WP_CLI_Command {
 
 		if ( isset( $tmp_path ) ) {
 			// Remove the temporary file, now that we're done with it.
-			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $file );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $file );
 		}
 	}
 

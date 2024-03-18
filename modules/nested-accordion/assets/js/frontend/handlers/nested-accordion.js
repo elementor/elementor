@@ -15,10 +15,15 @@ export default class NestedAccordion extends Base {
 				accordionContentContainers: '.e-n-accordion > .e-con',
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
+				accordionItemTitlesText: '.e-n-accordion-item-title-text',
 				accordionContent: '.e-n-accordion-item > .e-con',
 				accordionWrapper: '.e-n-accordion-item',
 			},
 			default_state: 'expanded',
+			attributes: {
+				index: 'data-accordion-index',
+				ariaLabelledBy: 'aria-labelledby',
+			},
 		};
 	}
 
@@ -62,21 +67,57 @@ export default class NestedAccordion extends Base {
 	}
 
 	linkContainer( event ) {
-		const { container } = event.detail,
+		const { container, index, targetContainer, action: { type } } = event.detail,
 			view = container.view.$el,
 			id = container.model.get( 'id' ),
 			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
-			const containers = view.find( this.getSettings( 'selectors.accordionContentContainers' ) ),
-				accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) ),
-				lastContentContainer = containers[ containers.length - 1 ],
-				lastAccordionItem = accordionItems[ accordionItems.length - 1 ];
+			const accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
+			let accordionItem, contentContainer;
 
-			lastAccordionItem.appendChild( lastContentContainer );
+			switch ( type ) {
+				case 'move':
+					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, accordionItems );
+					break;
+				case 'duplicate':
+					[ accordionItem, contentContainer ] = this.duplicate( view, index, targetContainer, accordionItems );
+					break;
+				default:
+					break;
+			}
 
+			if ( undefined !== accordionItem ) {
+				accordionItem.appendChild( contentContainer );
+			}
+
+			this.updateIndexValues();
 			this.updateListeners( view );
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
+	}
+
+	move( view, index, targetContainer, accordionItems ) {
+		return [ accordionItems[ index ], targetContainer.view.$el[ 0 ] ];
+	}
+
+	duplicate( view, index, targetContainer, accordionItems ) {
+		return [ accordionItems[ index + 1 ], targetContainer.view.$el[ 0 ] ];
+	}
+
+	updateIndexValues() {
+		const { $accordionContent, $accordionItems } = this.getDefaultElements(),
+			settings = this.getSettings(),
+			itemIdBase = $accordionItems[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+
+		$accordionItems.each( ( index, element ) => {
+			element.setAttribute( 'id', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( settings.attributes.index, index + 1 );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( 'aria-controls', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitlesText ).setAttribute( 'data-binding-index', index + 1 );
+			$accordionContent[ index ].setAttribute( settings.attributes.ariaLabelledBy, `${ itemIdBase }${ index }` );
+		} );
 	}
 
 	updateListeners( view ) {

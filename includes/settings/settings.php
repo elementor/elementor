@@ -2,11 +2,13 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Modules\Home\Module as Home_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -59,6 +61,8 @@ class Settings extends Settings_Page {
 
 	const ADMIN_MENU_PRIORITY = 10;
 
+	public Home_Module $home_module;
+
 	/**
 	 * Register admin menu.
 	 *
@@ -83,10 +87,23 @@ class Settings extends Settings_Page {
 			esc_html__( 'Elementor', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
-			[ $this, 'display_settings_page' ],
+			[
+				$this,
+				$this->home_module->is_experiment_active() ? 'display_home_screen' : 'display_settings_page',
+			],
 			'',
 			'58.5'
 		);
+
+		if ( $this->home_module->is_experiment_active() ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				$admin_menu->register( 'settings', new Admin_Menu_Item( $this ) );
+			}, 0 );
+		}
+	}
+
+	public function display_home_screen() {
+		echo '<div id="e-home-screen"></div>';
 	}
 
 	/**
@@ -189,7 +206,11 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
+		$menu_name = $this->home_module->is_experiment_active()
+			? esc_html__( 'Home', 'elementor' )
+			: esc_html__( 'Settings', 'elementor' );
+
+		Utils::change_submenu_first_item_label( 'elementor', $menu_name );
 	}
 
 	/**
@@ -437,6 +458,8 @@ class Settings extends Settings_Page {
 	 */
 	public function __construct() {
 		parent::__construct();
+
+		$this->home_module = new Home_Module();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
