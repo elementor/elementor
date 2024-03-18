@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Transformations_Abstract implements Transformations_Interface {
+abstract class Transformations_Abstract {
 	/**
 	 * @var array
 	 */
