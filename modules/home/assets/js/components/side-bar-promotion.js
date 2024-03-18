@@ -23,9 +23,8 @@ const PromotionBar = ( { ...props } ) => {
 								<SideBarCheckIcon />
 								<ListItemText variant="body2">{ item.title }</ListItemText>
 							</ListItem>
-								)
-						},
-					)
+						);
+					} )
 				}
 			</List>
 		</Paper>
