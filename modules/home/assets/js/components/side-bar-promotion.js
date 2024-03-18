@@ -19,7 +19,7 @@ const PromotionBar = ( { ...props } ) => {
 				{
 					props.sideData.repeater.map( ( item, index ) => {
 						return (
-							<ListItem key={ index } sx={ { px: 0, gap: 2 } }>
+							<ListItem key={ index } sx={ { p: 0, gap: 1 } }>
 								<SideBarCheckIcon />
 								<ListItemText variant="body2">{ item.title }</ListItemText>
 							</ListItem>
