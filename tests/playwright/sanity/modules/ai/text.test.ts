@@ -92,7 +92,7 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByText( 'Use text' ) ).toHaveCount( 1 );
 			await expect( page.getByText( 'Hello World' ) ).toHaveCount( 1 );
 
-			await page.locator( 'button[aria-label="close"]' ).click();
+			await page.locator( 'button[aria-label="Close"]' ).click();
 		} );
 	} );
 } );
