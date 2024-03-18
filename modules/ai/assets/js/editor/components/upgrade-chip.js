@@ -18,8 +18,6 @@ import { CheckedCircleIcon, AIIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
-// Test.
-
 const StyledContent = styled( Paper )( ( { theme } ) => ( {
 	position: 'relative',
 	'[data-popper-placement="top"] &': {
