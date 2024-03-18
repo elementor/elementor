@@ -182,7 +182,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			// The file was created from remote or library request, it also should be removed.
 			if ( $url ) {
-				Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $zip_path ) );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $zip_path ) );
 			}
 
 			\WP_CLI::success( 'Kit imported successfully' );
@@ -194,7 +194,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			] );
 
 			if ( $url ) {
-				Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $zip_path ) );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $zip_path ) );
 			}
 
 			\WP_CLI::error( $error->getMessage() );

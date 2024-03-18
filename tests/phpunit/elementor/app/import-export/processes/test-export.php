@@ -47,7 +47,7 @@ class Test_Export extends Elementor_Test_Base {
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
 		unregister_post_type( 'tests' );
 
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__fails_when_no_runners_are_registered() {
@@ -111,7 +111,7 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( $kit_data, $site_settings_file );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__export_taxonomies() {
@@ -167,7 +167,7 @@ class Test_Export extends Elementor_Test_Base {
 		unregister_post_type( 'tests' );
 		unregister_taxonomy( 'tests_tax' );
 
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__export_templates() {
@@ -186,7 +186,7 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertFalse( is_dir( $extracted_zip_path . 'templates' ) );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__export_elementor_content() {
@@ -308,7 +308,7 @@ class Test_Export extends Elementor_Test_Base {
 		}
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	private function register_post_type( $key, $plural_label ) {
@@ -349,6 +349,6 @@ class Test_Export extends Elementor_Test_Base {
 		}
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 }
