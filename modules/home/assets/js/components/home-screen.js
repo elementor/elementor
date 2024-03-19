@@ -8,8 +8,8 @@ const HomeScreen = ( props ) => {
 		<Box sx={ { pr: 1 } }>
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', pt: { xs: 2, md: 6 }, pb: 2 } }>
 				<TopSection
-					topData={ props.homeScreenData.data.top }
-					createNewPageUrl={ props.homeScreenData.createNewPageUrl }
+					topData={ props.homeScreenData.top }
+					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
 			</Container>
 			<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
