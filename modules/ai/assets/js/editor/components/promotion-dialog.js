@@ -3,10 +3,10 @@ import { __ } from '@wordpress/i18n';
 import useIntroduction from '../hooks/use-introduction';
 
 const PromotionDialog = ( props ) => {
-	const { isViewed, markAsViewed } = useIntroduction( props.introductionKey );
-	if ( ! isViewed ) {
-		return null;
-	}
+// 	Const { isViewed, markAsViewed } = useIntroduction( props.introductionKey );
+// 	if ( ! isViewed ) {
+// 		return null;
+// 	}
 
 	return (
 		<Paper
@@ -31,11 +31,11 @@ const PromotionDialog = ( props ) => {
 				<DialogActions>
 					<Button
 						onClick={ () => {
-							markAsViewed();
+							// MarkAsViewed();
 							props.onClose();
 						} } color="secondary">{ __( 'Not Now' ) }</Button>
 					<Button onClick={ () => {
-						markAsViewed();
+						// MarkAsViewed();
 						props.onClick();
 					} } variant="contained">{ __( 'Try it now' ) }</Button>
 				</DialogActions>
