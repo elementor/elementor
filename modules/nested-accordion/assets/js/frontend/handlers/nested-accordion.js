@@ -121,10 +121,8 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	updateListeners( view ) {
-		this.elements.$accordionTitles = view.find( this.getSettings( 'selectors.accordionItemTitles' ) );
-		this.elements.$accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
-		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
+	updateListeners() {
+		elementorFrontend.elementsHandlxer.runReadyTrigger( this.$element[ 0 ] );
 	}
 
 	bindEvents() {
@@ -134,7 +132,6 @@ export default class NestedAccordion extends Base {
 
 	unbindEvents() {
 		this.elements.$accordionTitles.off();
-		elementorFrontend.elements.$window.off( 'elementor/nested-container/created' );
 	}
 
 	clickListener( event ) {
