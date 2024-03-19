@@ -1,6 +1,7 @@
 import { Container, Box } from '@elementor/ui';
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
+import GetStarted from './get-started-section';
 
 const HomeScreen = ( props ) => {
 	return (
@@ -11,9 +12,11 @@ const HomeScreen = ( props ) => {
 					topData={ props.homeScreenData.top }
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
-				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
+				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
 					{ /* Placeholder container to ensure layout until other components are added */ }
-					<Container maxWidth="md"></Container>
+					<Container maxWidth="md" disableGutters={ true }>
+						<GetStarted getStartedData={ props.homeScreenData.get_started } />
+					</Container>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
 						<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
 					</Container>
