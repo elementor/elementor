@@ -4,7 +4,6 @@ namespace Elementor\Modules\Ai\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Modules\Ai\Module;
 use Elementor\Utils as ElementorUtils;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -564,13 +563,6 @@ class Ai extends Library {
 			$context['features'] = [
 				'subscriptions' => [ 'Pro' ],
 			];
-		}
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
-			$context['features'] = [
-				'supportedFeatures' => [ 'Grid' ],
-			];
-			var_dump('asas ', $context); // This will print the content of $context
 		}
 
 		$metadata = [
