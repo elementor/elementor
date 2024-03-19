@@ -78,9 +78,6 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
-		return [
-			'data' => API::get_home_screen_items( true ),
-			'createNewPageUrl' => Plugin::$instance->documents->get_create_new_post_url( 'page' ),
-		];
+		return API::get_home_screen_items();
 	}
 }
