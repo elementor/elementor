@@ -15,6 +15,8 @@ class Module extends BaseApp {
 
 	const PAGE_ID = 'home_screen';
 
+	static private bool $is_home_screen_scripts_enqueued = false;
+
 	public function get_name(): string {
 		return 'home';
 	}
@@ -35,7 +37,7 @@ class Module extends BaseApp {
 	}
 
 	public function enqueue_home_screen_scripts(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'manage_options' ) || static::$is_home_screen_scripts_enqueued ) {
 			return;
 		}
 
@@ -61,6 +63,8 @@ class Module extends BaseApp {
 			'elementorHomeScreenData',
 			$this->get_app_js_config()
 		);
+
+		static::$is_home_screen_scripts_enqueued = true;
 	}
 
 	public function is_experiment_active(): bool {
