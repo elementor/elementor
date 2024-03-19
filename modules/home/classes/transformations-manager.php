@@ -21,16 +21,16 @@ class Transformations_Manager {
 	public function __construct( $home_screen_data ) {
 		$this->home_screen_data = $home_screen_data;
 		$this->wordpress_adapter = new Wordpress_Adapter();
-
-		$this->run_transformations();
 	}
 
-	private function run_transformations(): void {
+	public function run_transformations(): array {
 		$transformations = self::TRANSFORMATIONS;
 
 		foreach ( $transformations as $transformation ) {
 			$this->home_screen_data = $this->run_transformation( $transformation );
 		}
+
+		return $this->home_screen_data;
 	}
 
 	private function run_transformation( $id ): array {
@@ -38,9 +38,5 @@ class Transformations_Manager {
 		$transformer = new $class_name( $this->home_screen_data, $this->wordpress_adapter );
 
 		return $transformer->transform();
-	}
-
-	public function get_data(): array {
-		return $this->home_screen_data;
 	}
 }
