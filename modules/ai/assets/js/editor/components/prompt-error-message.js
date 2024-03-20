@@ -3,27 +3,28 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'default', ...props } ) => {
-	function getQuotaReachedTrailMessage( featureKey ) {
-		const messageByFeature = {
-			default: {
+	function getQuotaReachedTrailMessage( featureName ) {
+		if ( ! featureName ) {
+			return {
 				text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
 				description: __( 'Enjoy the free trial? Upgrade now for unlimited access to built-in image, text and custom code generators.', 'elementor' ),
 				buttonText: __( 'Upgrade', 'elementor' ),
 				buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
-			},
-			text: {
-				text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
-				description: __( 'Enjoy generating texts? Upgrade now for unlimited access.', 'elementor' ),
-				buttonText: __( 'Upgrade', 'elementor' ),
-				buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/text', '_blank' ),
-			},
+			};
+		}
+
+		return {
+			text: <AlertTitle>{ __( 'Your free trial is up!', 'elementor' ) }</AlertTitle>,
+			// Translators: %s is the feature name.
+			description: sprintf( __( 'Upgrade now to keep using %s', 'elementor' ), featureName ),
+			buttonText: __( 'Upgrade now', 'elementor' ),
+			buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
 		};
-		return messageByFeature[ featureKey ] || messageByFeature.default;
 	}
 
 	function getErrorMessage() {
 		const errMsg = error.message || error;
-		const featureKey = error.extra_data?.featureKey;
+		const featureName = error.extra_data?.featureName;
 
 		const messages = {
 			default: {
@@ -55,7 +56,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 				buttonText: __( 'Connect', 'elementor' ),
 				buttonAction: () => window.open( window.ElementorAiConfig.connect_url ),
 			},
-			quota_reached_trail: getQuotaReachedTrailMessage( featureKey ),
+			quota_reached_trail: getQuotaReachedTrailMessage( featureName ),
 			quota_reached_subscription: {
 				text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
 				description: __( 'Love Elementor AI? Upgrade to continue creating with built-in image, text and custom code generators.', 'elementor' ),

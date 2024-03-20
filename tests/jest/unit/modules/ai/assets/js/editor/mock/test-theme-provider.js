@@ -18,7 +18,7 @@ export default class TestThemeProvider extends React.Component {
 	render() {
 		const theme = createTheme( {
 			palette: {
-				accent: {
+				promotion: {
 					main: '#E3D026',
 					light: '#E9DB5D',
 					dark: '#A29415',

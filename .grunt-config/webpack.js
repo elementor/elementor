@@ -126,6 +126,7 @@ const entry = {
 	'editor-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/editor.js' ),
 	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
+	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
