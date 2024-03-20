@@ -9,13 +9,16 @@ abstract class Transformations_Abstract {
 	/**
 	 * @var array
 	 */
-	protected $home_screen_data;
+	protected array $home_screen_data ;
 
 	protected $wordpress_adapter;
 
-	public function __construct( $home_screen_data, $wordpress_adapter ) {
-		$this->home_screen_data = $home_screen_data;
-		$this->wordpress_adapter = $wordpress_adapter;
+	protected bool $has_pro;
+
+	public function __construct( $args ) {
+		$this->home_screen_data = $args['home_screen_data'] ?? [];
+		$this->wordpress_adapter = $args['wordpress_adapter'] ?? null;
+		$this->has_pro = $args['has_pro'] ?? false;
 	}
 
 	abstract public function transform(): array;
