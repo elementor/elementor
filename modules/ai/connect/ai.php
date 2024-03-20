@@ -559,20 +559,20 @@ class Ai extends Library {
 		}
 
 		$context['currentContext'] = $data['currentContext'];
-		$context['features'] = [];
+		$context['features'] = [
+			'supportedFeatures' => []
+		];
 
 		if ( ElementorUtils::has_pro() ) {
 			$context['features']['subscriptions'] = [ 'Pro' ];
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
-			$context['features']['supportedFeatures'] = [ 'Grid' ];
+			$context['features']['supportedFeatures'][] = 'Grid';
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
-			if (!in_array('Nest_Elements', $context['features']['supportedFeatures'])) {
-				$context['features']['supportedFeatures'][] = 'Nested_Elements';
-			}
+			$context['features']['supportedFeatures'][] = 'NestedElements';
 		}
 
 		$metadata = [
