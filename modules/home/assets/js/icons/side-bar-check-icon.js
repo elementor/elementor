@@ -11,8 +11,4 @@ const SideBarCheckIcon = ( props ) => {
 	);
 };
 
-SideBarCheckIcon.propTypes = {
-	url: PropTypes.object.isRequired,
-};
-
 export default SideBarCheckIcon;

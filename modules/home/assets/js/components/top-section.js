@@ -31,7 +31,6 @@ const TopSection = ( { ...props } ) => {
 
 TopSection.propTypes = {
 	topData: PropTypes.object.isRequired,
-	createNewPageUrl: PropTypes.string.isRequired,
 };
 
 export default TopSection;

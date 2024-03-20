@@ -78,6 +78,6 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
-		return API::get_home_screen_items();
+		return API::get_home_screen_items( true );
 	}
 }

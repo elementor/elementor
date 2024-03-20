@@ -3,6 +3,8 @@ import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
 
 const HomeScreen = ( props ) => {
+	const hasSidebarUpgrade = props.homeScreenData.hasOwnProperty( 'sidebar_upgrade' );
+
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
@@ -11,12 +13,14 @@ const HomeScreen = ( props ) => {
 					topData={ props.homeScreenData.top }
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
-				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
-					{ /* Placeholder container to ensure layout until other components are added */ }
-					<Container maxWidth="md"></Container>
-					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
+			</Container>
+			<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
+				{ /* Placeholder container to ensure layout until other components are added*/ }
+				<Container maxWidth="md"></Container>
+				<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
+					{ hasSidebarUpgrade &&
 						<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
-					</Container>
+					}
 				</Container>
 			</Container>
 		</Box>
