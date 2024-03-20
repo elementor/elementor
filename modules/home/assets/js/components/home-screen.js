@@ -3,6 +3,8 @@ import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
 
 const HomeScreen = ( props ) => {
+	const hasSidebarUpgrade = props.homeScreenData.hasOwnProperty( 'sidebar_upgrade' );
+
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
@@ -15,7 +17,9 @@ const HomeScreen = ( props ) => {
 					{ /* Placeholder container to ensure layout until other components are added */ }
 					<Container maxWidth="md"></Container>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
-						<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+						{ hasSidebarUpgrade &&
+							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+						}
 					</Container>
 				</Container>
 			</Container>
