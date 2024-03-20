@@ -131,7 +131,7 @@
 		"@elementor/locations": "0.7.2",
 		"@elementor/query": "0.2.0",
 		"@elementor/store": "0.7.1",
-		"@elementor/ui": "1.7.2",
+		"@elementor/ui": "1.7.6",
 		"@lodder/grunt-postcss": "^3.1.1",
 		"@reach/router": "1.3.4",
 		"@reduxjs/toolkit": "^1.8.3",

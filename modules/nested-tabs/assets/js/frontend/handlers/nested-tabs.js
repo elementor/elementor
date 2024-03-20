@@ -222,7 +222,6 @@ export default class NestedTabs extends Base {
 		this.elements.$tabContents.children().off();
 		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
-		elementorFrontend.elements.$window.off( 'elementor/nested-container/created' );
 	}
 
 	/**
@@ -406,6 +405,8 @@ export default class NestedTabs extends Base {
 		if ( id === currentId ) {
 			this.updateIndexValues();
 			this.updateListeners();
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 	}
 
