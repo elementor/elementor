@@ -42,7 +42,7 @@
 	}
 
 	&__title {
-		@include margin-end(10px);
+		margin-inline-end: 10px;
 	}
 }
 
@@ -79,7 +79,7 @@
 
 				&-justify {
 					.elementor-star-rating__title {
-						@include margin-end( auto );
+						margin-inline-end: auto;
 					}
 				}
 			}
