@@ -10,7 +10,7 @@ const GetStarted = ( { ...props } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Typography variant="h6">{ props.getStartedData.header.title }</Typography>
-			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', sm: 'repeat(2, 1fr)', xs: 'repeat(1, 1fr)' }, alignItems: 'flex-start', gap: 3 } }>
+			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, alignItems: 'flex-start', gap: { xs: 3, md: 2 } } }>
 				{
 					props.getStartedData.repeater.map( ( item, index ) => {
 						return (
