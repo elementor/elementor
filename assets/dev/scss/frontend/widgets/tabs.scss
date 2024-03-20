@@ -14,14 +14,14 @@
 		.elementor-tab-desktop-title {
 
 			&.elementor-active {
-				@include border-end-property(style, none);
+				border-inline-end-style: none;
 
 				&:before,
 				&:after {
 					height: 999em;
 					width: 0;
 					@include end(0);
-					@include border-end-property(style, solid);
+					border-inline-end-style: solid;
 				}
 
 				&:before {
@@ -72,7 +72,7 @@
 	}
 
 	.elementor-tabs {
-		text-align: $start;
+		text-align: start;
 	}
 
 	.elementor-tabs-wrapper {
