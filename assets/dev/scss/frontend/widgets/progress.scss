@@ -3,7 +3,7 @@
 //
 
 .elementor-widget-progress {
-	text-align: $start;
+	text-align: start;
 }
 
 .elementor-progress-wrapper {
@@ -28,11 +28,11 @@
 .elementor-progress-text {
 	flex-grow: 1;
 	@include ellipsis;
-	@include padding-start(15px);
+	padding-inline-start: 15px;
 }
 
 .elementor-progress-percentage {
-	@include padding-end(15px);
+	padding-inline-end: 15px;
 }
 
 .elementor-widget-progress {
@@ -76,7 +76,7 @@
 @media (max-width: $screen-mobile-max) {
 
 	.elementor-progress-text {
-		@include padding-start(10px);
+		padding-inline-start: 10px;
 	}
 }
 
