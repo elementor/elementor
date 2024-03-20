@@ -5,12 +5,12 @@ import ListItemButton from '@elementor/ui/ListItemButton';
 import Link from '@elementor/ui/Link';
 
 const GetStarted = ( { ...props } ) => {
-	console.log(props)
+	// Will be replaced with a backend solution
 	const adminUrl = elementorAppConfig.admin_url;
 	return (
-		<Paper elevation={ 0 } sx={ { p: 3 } }>
+		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Typography variant="h6">{ props.getStartedData.header.title }</Typography>
-			<List sx={ { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' } }>
+			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', sm: 'repeat(2, 1fr)', xs: 'repeat(1, 1fr)' }, alignItems: 'flex-start', gap: 3 } }>
 				{
 					props.getStartedData.repeater.map( ( item, index ) => {
 						return (
