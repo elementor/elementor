@@ -106,7 +106,7 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
+			<Chip color="promotion" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -144,14 +144,14 @@ const UpgradeChip = ( {
 
 					<Button
 						variant="contained"
-						color="accent"
+						color="promotion"
 						size="small"
 						href={ actionUrl }
 						target="_blank"
 						startIcon={ <AIIcon /> }
 						sx={ {
 							'&:hover': {
-								color: 'accent.contrastText',
+								color: 'promotion.contrastText',
 							},
 						} }
 					>
