@@ -2,17 +2,16 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
 use Elementor\Modules\Home\Transformations\Remove_Sidebar_Upgrade_For_Pro_Users;
-use ElementorEditorTesting\Elementor_Test_Base;
+use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
+class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends PHPUnit_TestCase {
 
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
 		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
-			'home_screen_data' => $original_data,
-			'has_pro' => false,
+			'home_screen_data' => $original_data
 		] );
 
 		// Act
@@ -25,9 +24,10 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 	public function test_transform__pro_plugin() {
 		// Arrange
 		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
-			'home_screen_data' => $this->mock_home_screen_data(),
-			'has_pro' => true,
+			'home_screen_data' => $this->mock_home_screen_data()
 		] );
+
+		$transformation->has_pro = true;
 
 		// Act
 		$transformed_data = $transformation->transform();

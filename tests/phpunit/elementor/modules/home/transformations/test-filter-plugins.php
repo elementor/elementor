@@ -3,10 +3,9 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Home\Transformations\Filter_Plugins;
-use ElementorEditorTesting\Elementor_Test_Base;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Filter_Plugins extends Elementor_Test_Base {
+class Test_Filter_Plugins extends PHPUnit_TestCase {
 
 	private $wordpress_adapter;
 

@@ -13,12 +13,9 @@ abstract class Transformations_Abstract {
 
 	protected $wordpress_adapter;
 
-	protected bool $has_pro;
-
 	public function __construct( $args ) {
 		$this->home_screen_data = $args['home_screen_data'] ?? [];
 		$this->wordpress_adapter = $args['wordpress_adapter'] ?? null;
-		$this->has_pro = $args['has_pro'] ?? false;
 	}
 
 	abstract public function transform(): array;

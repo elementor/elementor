@@ -2,7 +2,6 @@
 namespace Elementor\Modules\Home\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Modules\Announcements\Classes\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -31,15 +30,11 @@ class Transformations_Manager {
 	public function run_transformations(): array {
 		$transformations = self::TRANSFORMATIONS;
 
-		foreach ( $transformations as $transformation ) {
-			$this->home_screen_data = $this->run_transformation( $transformation );
+		foreach ( $transformations as $transformation_id ) {
+			$this->home_screen_data = $this->transformation_classes[ $transformation_id ]->transform();
 		}
 
 		return $this->home_screen_data;
-	}
-
-	private function run_transformation( $transformation_id ): array {
-		return $this->transformation_classes[ $transformation_id ]->transform();
 	}
 
 	private function get_transformation_classes(): array {
@@ -50,7 +45,6 @@ class Transformations_Manager {
 		$arguments = [
 			'home_screen_data' => $this->home_screen_data,
 			'wordpress_adapter' => $this->wordpress_adapter,
-			'has_pro' => Utils::has_pro(),
 		];
 
 		foreach ( $transformations as $transformation_id ) {
