@@ -30,11 +30,8 @@ const StyledPopper = styled( Popper )( ( { theme } ) => ( {
 	},
 } ) );
 
-export default function AiPromotionInfotip( { anchor, content } ) {
-	// 	Const { isViewed, markAsViewed } = useIntroduction( props.introductionKey );
-// 	if ( ! isViewed ) {
-// 		return null;
-// 	}
+export default function AiPromotionInfotip( { anchor, content, closeFunction } ) {
+	const focusIndicator = React.useRef( null );
 
 	const positionRef = React.useRef( {
 		x: 0,
@@ -58,35 +55,52 @@ export default function AiPromotionInfotip( { anchor, content } ) {
 
 	React.useEffect( () => {
 		showTooltip();
+		focusIndicator.current.focus();
 	}, [] );
 
 	return (
-		<Tooltip
-			arrow
-			open={ true }
-			title={ content }
-			placement="right"
-			PopperComponent={ StyledPopper }
-			PopperProps={ {
-				popperRef,
-				anchorEl: {
-					getBoundingClientRect: () => {
-						return new DOMRect(
-							positionRef.current.x,
-							positionRef.current.y,
-							positionRef.current.width,
-							positionRef.current.height,
-						);
+		<>
+			<Tooltip
+				arrow
+				open={ true }
+				title={ content }
+				placement="right"
+				PopperComponent={ StyledPopper }
+				PopperProps={ {
+					popperRef,
+					anchorEl: {
+						getBoundingClientRect: () => {
+							return new DOMRect(
+								positionRef.current.x,
+								positionRef.current.y,
+								positionRef.current.width,
+								positionRef.current.height,
+							);
+						},
 					},
-				},
-			} }
-		>
-			<div style={ { display: 'none' } }></div>
-		</Tooltip>
+				} }
+			>
+				<div style={ { display: 'none' } }></div>
+			</Tooltip>
+			<input
+				style={ {
+					width: 0,
+					height: 0,
+					padding: 0,
+					margin: 0,
+					outline: 0,
+					border: 0,
+					opacity: 0,
+				} }
+				onBlur={ () => closeFunction() }
+				ref={ focusIndicator }
+			/>
+		</>
 	);
 }
 
 AiPromotionInfotip.propTypes = {
 	anchor: PropTypes.element.isRequired,
 	content: PropTypes.object.isRequired,
+	closeFunction: PropTypes.func.isRequired,
 };

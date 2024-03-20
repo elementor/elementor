@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import AiPromotionInfotip from './components/ai-promotion-infotip';
 import AiPromotionInfotipContent from './components/ai-promotion-infotip-content';
 import { ClickAwayListener, ThemeProvider } from '@elementor/ui';
+import useIntroduction from './hooks/use-introduction';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -136,30 +137,34 @@ export default class AiBehavior extends Marionette.Behavior {
 			if ( ! promotionTexts ) {
 				return;
 			}
+			const { isViewed, markAsViewed } = useIntroduction( `ai_promotion_infotip_${ controlType }` );
+			if ( ! isViewed ) {
+				return;
+			}
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 
 			const { unmount } = ReactUtils.render( (
 				<ThemeProvider>
-					<ClickAwayListener disableReactTree onClickAway={ () => {
-						alert( 'a' );
-						unmount();
-					} }>
-						<div style={ { position: 'relative' } }>
-							<AiPromotionInfotip anchor={ $button[ 0 ] }
-								content={ <AiPromotionInfotipContent
-									header={ promotionTexts.header }
-									contentText={ promotionTexts.contentText }
-									onClose={ () => {
-										unmount();
-									} }
-									onClick={ () => {
-										unmount();
-										$button.trigger( 'click' );
-									} } /> }
-							/>
-						</div>
-					</ClickAwayListener>
+					<AiPromotionInfotip anchor={ $button[ 0 ] }
+						content={ <AiPromotionInfotipContent
+							header={ promotionTexts.header }
+							contentText={ promotionTexts.contentText }
+							introductionKey={ `ai_promotion_infotip_${ controlType }` }
+							onClose={ () => {
+								markAsViewed();
+								unmount();
+							} }
+							onClick={ () => {
+								markAsViewed();
+								unmount();
+								$button.trigger( 'click' );
+							} } /> }
+						closeFunction={ () => {
+							unmount();
+						} }
+
+					/>
 				</ThemeProvider>
 			), rootElement );
 		}, 1000 );
