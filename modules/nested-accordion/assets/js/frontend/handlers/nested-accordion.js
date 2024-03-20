@@ -17,7 +17,8 @@ export default class NestedAccordion extends Base {
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionItemTitlesText: '.e-n-accordion-item-title-text',
 				accordionContent: '.e-n-accordion-item > .e-con',
-				accordionWrapper: '.e-n-accordion-item',
+				directAccordionItems: '& > .e-n-accordion-item',
+				directAccordionItemTitles: '& > .e-n-accordion-item > .e-n-accordion-item-title',
 			},
 			default_state: 'expanded',
 			attributes: {
@@ -121,8 +122,10 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	updateListeners() {
-		elementorFrontend.elementsHandlxer.runReadyTrigger( this.$element[ 0 ] );
+	updateListeners( view ) {
+		this.elements.$accordionTitles = view.find( this.getSettings( 'selectors.accordionItemTitles' ) );
+		this.elements.$accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
+		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
 	}
 
 	bindEvents() {
@@ -136,16 +139,19 @@ export default class NestedAccordion extends Base {
 
 	clickListener( event ) {
 		event.preventDefault();
+		this.elements = this.getDefaultElements();
 
 		const settings = this.getSettings(),
-			accordionItem = event?.currentTarget?.closest( settings.selectors.accordionWrapper ),
+			accordionItem = event?.currentTarget?.closest( settings.selectors.accordionItems ),
+			accordion = event?.currentTarget?.closest( settings.selectors.accordion ),
 			itemSummary = accordionItem.querySelector( settings.selectors.accordionItemTitles ),
 			accordionContent = accordionItem.querySelector( settings.selectors.accordionContent ),
 			{ max_items_expended: maxItemsExpended } = this.getElementSettings(),
-			{ $accordionTitles, $accordionItems } = this.elements;
+			directAccordionItems = accordion.querySelectorAll( settings.selectors.directAccordionItems ),
+			directAccordionItemTitles = accordion.querySelectorAll( settings.selectors.directAccordionItemTitles );
 
 		if ( 'one' === maxItemsExpended ) {
-			this.closeAllItems( $accordionItems, $accordionTitles );
+			this.closeAllItems( directAccordionItems, directAccordionItemTitles );
 		}
 
 		if ( ! accordionItem.open ) {
@@ -201,9 +207,9 @@ export default class NestedAccordion extends Base {
 		accordionItem.style.height = accordionItem.style.overflow = '';
 	}
 
-	closeAllItems( $items, $titles ) {
-		$titles.each( ( index, title ) => {
-			this.closeAccordionItem( $items[ index ], title );
+	closeAllItems( items, titles ) {
+		titles.forEach( ( title, index ) => {
+			this.closeAccordionItem( items[ index ], title );
 		} );
 	}
 
