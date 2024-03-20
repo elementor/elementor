@@ -560,7 +560,7 @@ class Ai extends Library {
 
 		$context['currentContext'] = $data['currentContext'];
 		$context['features'] = [
-			'supportedFeatures' => []
+			'supportedFeatures' => [],
 		];
 
 		if ( ElementorUtils::has_pro() ) {
