@@ -9,7 +9,7 @@ abstract class Transformations_Abstract {
 	/**
 	 * @var array
 	 */
-	protected array $home_screen_data ;
+	protected array $home_screen_data;
 
 	protected $wordpress_adapter;
 
