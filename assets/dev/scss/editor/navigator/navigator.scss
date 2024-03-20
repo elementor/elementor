@@ -116,6 +116,10 @@ body {
 			line-height: 22px;
 			font-family: 'Roboto', sans-serif;
 			color: var(--e-a-bg-logo);
+
+			a {
+				color: var(--e-a-color-accent-promotion);
+			}
 		}
 	}
 }

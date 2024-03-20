@@ -1,5 +1,5 @@
 import {
-	shouldUseImprovedRepeaters,
+	shouldUseAtomicRepeaters,
 	widgetNodes,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
@@ -76,7 +76,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 			if ( renderAfterInsert ) {
 				const widgetType = container.settings.get( 'widgetType' );
 
-				if ( shouldUseImprovedRepeaters( widgetType ) ) {
+				if ( shouldUseAtomicRepeaters( widgetType ) ) {
 					const domConfig = widgetNodes( widgetType ),
 						containerNode = container.view.$el[ 0 ],
 						targetContainer = containerNode.querySelector( domConfig.targetContainer ),
@@ -84,7 +84,11 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 						node = document.createElement( 'div' );
 
 					node.innerHTML = html;
-					targetContainer.appendChild( node.querySelector( domConfig.node ) );
+
+					const nodeToInsert = node.querySelector( domConfig.node ),
+						targetNode = targetContainer.children[ options.at ] || null;
+
+					targetContainer.insertBefore( nodeToInsert, targetNode );
 				} else {
 					// Trigger render on widget but with the settings of the control.
 					repeaterContainer.render();

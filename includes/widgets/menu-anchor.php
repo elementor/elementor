@@ -131,11 +131,17 @@ class Widget_Menu_Anchor extends Widget_Base {
 	protected function render() {
 		$anchor = $this->get_settings_for_display( 'anchor' );
 
-		if ( ! empty( $anchor ) ) {
-			$this->add_render_attribute( 'inner', 'id', sanitize_html_class( $anchor ) );
+		if ( empty( $anchor ) ) {
+			return;
 		}
 
-		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );
+		$this->add_render_attribute(
+			'inner',
+			[
+				'class' => 'elementor-menu-anchor',
+				'id' => sanitize_html_class( $anchor ),
+			]
+		);
 		?>
 		<div <?php $this->print_render_attribute_string( 'inner' ); ?>></div>
 		<?php
@@ -151,7 +157,20 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<div class="elementor-menu-anchor"{{{ settings.anchor ? ' id="' + settings.anchor + '"' : '' }}}></div>
+		<#
+		if ( '' === settings.anchor ) {
+			return;
+		}
+
+		view.addRenderAttribute(
+			'inner', 
+			{
+				'class': 'elementor-menu-anchor',
+				'id': settings.anchor,
+			}
+		);
+		#>
+		<div {{{ view.getRenderAttributeString( 'inner' ) }}}></div>
 		<?php
 	}
 

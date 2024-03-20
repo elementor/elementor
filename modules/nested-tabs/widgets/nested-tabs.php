@@ -1219,6 +1219,77 @@ class NestedTabs extends Widget_Nested_Base {
 		<?php
 	}
 
+	protected function get_initial_config(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_improved_repeaters' => true,
+				'target_container' => [ '.e-n-tabs-heading' ],
+				'node' => 'button',
+			] );
+		}
+
+		return parent::get_initial_config();
+	}
+
+	protected function content_template_single_repeater_item() {
+		?>
+		<#
+		const tabCount = view.collection.length + 1,
+			elementUid = view.getIDInt().toString().substring( 0, 3 ) + tabCount,
+			tabIcon = elementor.helpers.renderIcon( view, data.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
+
+		let tabActiveIcon = tabIcon,
+			tabId = 'e-n-tab-title-' + elementUid;
+
+		if ( '' !== data.tab_icon_active.value ) {
+			tabActiveIcon = elementor.helpers.renderIcon( view, data.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
+		}
+
+		const tabWrapperKey = {
+			'id': 'e-n-tab-title-' + elementUid,
+			'class': [ 'e-n-tab-title' ],
+			'data-tab-index': tabCount,
+			'role': 'tab',
+			'aria-selected': 1 === tabCount ? 'true' : 'false',
+			'tabindex': 1 === tabCount ? '0' : '-1',
+			'aria-controls': 'e-n-tab-content-' + elementUid,
+			'style': '--n-tabs-title-order: ' + tabCount + ';',
+		};
+
+		const tabIconKey = {
+			'class': [ 'e-n-tab-icon' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'tabs',
+			'data-binding-setting': [ data.tab_icon.value, data.tab_icon_active.value ],
+			'data-binding-index': tabCount,
+		};
+
+		const tabTitleKey = {
+			'class': [ 'e-n-tab-title-text' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'tabs',
+			'data-binding-setting': [ 'tab_title' ],
+			'data-binding-index': tabCount,
+		};
+
+		view.addRenderAttribute( 'button-container', tabWrapperKey, null, true );
+		view.addRenderAttribute( 'tab-title-container', tabTitleKey, null, true );
+		view.addRenderAttribute( 'tab-icon-key-container', tabIconKey, null, true );
+		#>
+
+		<button {{{ view.getRenderAttributeString( 'button-container' ) }}}>
+			<span {{{ view.getRenderAttributeString( 'tab-icon-key-container' ) }}}>
+				{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}
+			</span>
+			<span {{{ view.getRenderAttributeString( 'tab-title-container' ) }}}>{{{ data.tab_title }}}</span>
+		</button>
+		<?php
+	}
+
+	protected function supports_atomic_repeaters() {
+		return true;
+	}
+
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>

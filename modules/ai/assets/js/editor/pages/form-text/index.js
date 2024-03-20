@@ -19,6 +19,7 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import { useRequestIds } from '../../context/requests-ids';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const promptActions = [
 	{
@@ -201,6 +202,7 @@ const FormText = (
 							) )
 						}
 					</Stack>
+					<VoicePromotionAlert introductionKey="ai-context-text-promotion" sx={ { mb: 2 } } />
 
 					<Stack direction="row" alignItems="center" sx={ { my: 1 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
