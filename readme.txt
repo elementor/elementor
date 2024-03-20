@@ -25,10 +25,10 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 = PIXEL-PERFECT WEBSITES =
 Gain full control over your website’s design and layout with Elementor’s Page Builder. Drag elements to the canvas, and position them to achieve your desired page structure, and functionality.
 
-Leverage Flexbox and CSS Grid Containers to create  professional, lightweight, and responsive layouts. Use Elementor’s Nested Elements to elevate your design and unlock more freedom by nesting elements within other elements, such as placing widgets within the content area of Tabs or Accordions.
+Leverage Flexbox and CSS Grid Containers to create professional, lightweight, and responsive layouts. Use Elementor’s Nested Elements to elevate your design and unlock more freedom by nesting elements within other elements, such as placing widgets within the content area of Tabs or Accordions.
 
 = ADVANCED CAPABILITIES =
-With Elementor’s robust features and over 40 free widgets, you can create unique websites. Use advanced design capabilities, such as uploading SVG files, applying masks, box shadows, gradient backgrounds, headline effect, shape dividers, built-in CSS controls, and more.
+With Elementor’s robust features and over 40 free widgets, you can create unique websites. Use advanced design capabilities, such as uploading SVG files, applying masks, box shadows, gradient backgrounds, headline effects, shape dividers, built-in CSS controls, and more.
 
 = FULL WEBSITE KITS AND TEMPLATE LIBRARY =
 Save time, or find inspiration with designer-made website kits and templates. Apply a [Full Website Kit](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/) to get a website in a snap, including the Homepage, Service Page, and more. Use the library to import Single Pages, Blocks, or Popup templates. Or create and export your own templates and import them to another website to create reusable blueprints.
@@ -36,7 +36,7 @@ Save time, or find inspiration with designer-made website kits and templates. Ap
 = FULLY RESPONSIVE =
 Adjust the content and presentation of your website per device. With [Custom Breakpoints](https://go.elementor.com/wp-repo-description-tab-pro-features-custom-breakpoints/), adjust your website’s design for an ideal experience on every device. Display content based on device type, set alignment, spacing, layout, order, etc.
 
-= OVER 40+ FREE WIDGETS =
+= 40+ FREE WIDGETS =
 Elementor includes 40+ free widgets for professional and engaging websites:
 
 - **Heading**. Add eye-catching headlines.
@@ -99,7 +99,7 @@ Join a global community that helps each other achieve their goals. Get answers, 
 Elementor is open-source, Therefore developers have full access to documentation about the Editor’s code components including hooks, integrations and controllers. This includes a [developer's website](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/), [Developers Docs](https://go.elementor.com/wp-repo-description-tab-developers-developers-docs-2/), [Developers Blog](https://go.elementor.com/wp-repo-description-tab-developers-developers-blog/), [GitHub](https://go.elementor.com/wp-repo-description-tab-github-repo/), [Add-on Developers Newsletter](https://go.elementor.com/wp-repo-description-tab-newsletter-addon-newsletter/), and more.
 
 = TRANSLATED TO 63+ LANGUAGES, INCLUDES RTL SUPPORT =
-Elementor supports multiple languages and typographies and is RTL compatible, with Editor translations to [over 63 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/) OOTB. E Elementor is also compatible with WPML, Polylang, TranslatePress, Weglot, and more.
+Elementor supports multiple languages and typographies and is RTL compatible, with Editor translations to [over 63 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/) OOTB. Elementor is also compatible with WPML, Polylang, TranslatePress, Weglot, and more.
 If you would like to contribute, add a new language via [translate.wordpress.org](https://translate.wordpress.org). See our guide on [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-help-center-translate/).
 
 = ELEVATE YOUR WEBSITE WITH ELEMENTOR PRO =
