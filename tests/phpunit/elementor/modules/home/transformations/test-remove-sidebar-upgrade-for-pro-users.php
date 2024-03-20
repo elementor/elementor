@@ -37,15 +37,6 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 		$this->assertTrue( $transformed_data === $expected_data );
 	}
 
-	private function mock_home_screen_data_transformed() {
-		return [
-			'misc' => [
-				'Name' => 'Microsoft',
-				'Version' => 'Windows',
-			],
-		];
-	}
-
 	private function mock_home_screen_data() {
 		return [
 			'sidebar_upgrade' => [
@@ -56,6 +47,15 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 					'key' => 'value',
 				],
 			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_home_screen_data_transformed() {
+		return [
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
