@@ -10,7 +10,7 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 
 	private $wordpress_adapter;
 
-	public function test_filter_plugins() {
+	public function test_transform() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
 

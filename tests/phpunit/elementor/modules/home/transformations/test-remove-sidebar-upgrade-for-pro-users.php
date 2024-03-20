@@ -6,7 +6,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 
-	public function test_core_plugin() {
+	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
@@ -22,7 +22,7 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 		$this->assertTrue( $transformed_data === $original_data );
 	}
 
-	public function test_pro_plugin() {
+	public function test_transform_pro_plugin() {
 		// Arrange
 		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
 			'home_screen_data' => $this->mock_home_screen_data(),

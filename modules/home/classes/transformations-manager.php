@@ -25,7 +25,7 @@ class Transformations_Manager {
 	public function __construct( $home_screen_data ) {
 		$this->home_screen_data = $home_screen_data;
 		$this->wordpress_adapter = new Wordpress_Adapter();
-		$this->transformation_classes = $this->set_transformation_classes();
+		$this->transformation_classes = $this->get_transformation_classes();
 	}
 
 	public function run_transformations(): array {
@@ -42,7 +42,7 @@ class Transformations_Manager {
 		return $this->transformation_classes[ $transformation_id ]->transform();
 	}
 
-	private function set_transformation_classes(): array {
+	private function get_transformation_classes(): array {
 		$classes = [];
 
 		$transformations = self::TRANSFORMATIONS;
