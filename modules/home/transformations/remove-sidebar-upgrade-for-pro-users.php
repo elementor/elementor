@@ -12,8 +12,7 @@ class Remove_Sidebar_Upgrade_For_Pro_Users extends Transformations_Abstract {
 
 	public bool $has_pro;
 
-	public function __construct( $args )
-	{
+	public function __construct( $args ) {
 		parent::__construct( $args );
 
 		$this->has_pro = Utils::has_pro();
