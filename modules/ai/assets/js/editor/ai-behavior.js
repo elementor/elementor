@@ -1,7 +1,9 @@
 import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
-import PromotionDialog from './components/promotion-dialog';
+import AiPromotionInfotip from './components/ai-promotion-infotip';
+import AiPromotionInfotipContent from './components/ai-promotion-infotip-content';
+import { ClickAwayListener, ThemeProvider } from '@elementor/ui';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -71,21 +73,21 @@ export default class AiBehavior extends Marionette.Behavior {
 		switch ( controlType ) {
 			case 'textarea':
 				return {
-					header: "Writer's block? Never again!",
-					contentText: 'Elementor AI can draft your initial content and help you beat the blank page.',
+					header: __( "Writer's block? Never again!", 'elementor' ),
+					contentText: __( 'Elementor AI can draft your initial content and help you beat the blank page.', 'elementor' ),
 				};
 			case 'media':
 				return {
-					header: 'Unleash your creativity.',
-					contentText: `With Elementor AI, you can generate any image you'd like for your website.`,
+					header: __( 'Unleash your creativity.', 'elementor' ),
+					contentText: __( `With Elementor AI, you can generate any image you'd like for your website.`, 'elementor' ),
 				};
 			case 'code':
 				return {
-					header: 'Let the elves take care of it.',
-					contentText: 'Elementor AI can help you write code faster and more efficiently.',
+					header: __( 'Let the elves take care of it.', 'elementor' ),
+					contentText: __( 'Elementor AI can help you write code faster and more efficiently.', 'elementor' ),
 				};
 			default:
-				return {};
+				return null;
 		}
 	}
 
@@ -125,33 +127,41 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		setTimeout( () => {
 			const rootBox = $button[ 0 ].getBoundingClientRect();
-			const promotionRootElement = this.createRootElementRelativeToAiButton( rootBox );
+			if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
+				return;
+			}
 
 			const controlType = this.view.model.get( 'type' );
 			const promotionTexts = this.getPromotionTexts( controlType );
+			if ( ! promotionTexts ) {
+				return;
+			}
+			const rootElement = document.createElement( 'div' );
+			document.body.append( rootElement );
 
-			document.body.appendChild( promotionRootElement );
 			const { unmount } = ReactUtils.render( (
-				<PromotionDialog introductionKey={ `ai-promotion-${ controlType }` }
-					header={ promotionTexts.header }
-					contentText={ promotionTexts.contentText }
-					onClose={ () => {
+				<ThemeProvider>
+					<ClickAwayListener disableReactTree onClickAway={ () => {
+						alert( 'a' );
 						unmount();
-					} }
-					onClick={ () => {
-						unmount();
-						$button.trigger( 'click' );
-					} }
-				/>
-			), promotionRootElement );
+					} }>
+						<div style={ { position: 'relative' } }>
+							<AiPromotionInfotip anchor={ $button[ 0 ] }
+								content={ <AiPromotionInfotipContent
+									header={ promotionTexts.header }
+									contentText={ promotionTexts.contentText }
+									onClose={ () => {
+										unmount();
+									} }
+									onClick={ () => {
+										unmount();
+										$button.trigger( 'click' );
+									} } /> }
+							/>
+						</div>
+					</ClickAwayListener>
+				</ThemeProvider>
+			), rootElement );
 		}, 1000 );
-	}
-
-	createRootElementRelativeToAiButton( rootBox ) {
-		const promotionRootElement = document.createElement( 'div' );
-		promotionRootElement.style.position = 'absolute';
-		promotionRootElement.style.top = ( rootBox.top - 30 ) + 'px';
-		promotionRootElement.style.left = ( rootBox.left + rootBox.width + 30 ) + 'px';
-		return promotionRootElement;
 	}
 }
