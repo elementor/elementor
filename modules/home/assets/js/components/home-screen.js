@@ -1,19 +1,25 @@
-import { Container, Grid } from '@elementor/ui';
-
+import { Container, Box } from '@elementor/ui';
 import TopSection from './top-section';
-import BlockSection from './block-section';
+import SideBarPromotion from './sidebar-promotion';
 
 const HomeScreen = ( props ) => {
 	return (
-		<Container sx={ { py: 4 } }>
-			<Grid sx={ { display: 'grid', gap: 3 } }>
+		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
+		<Box sx={ { pr: 1 } }>
+			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, pt: { xs: 2, md: 6 }, pb: 2 } }>
 				<TopSection
-					topData={ props.homeScreenData.data.top[ 0 ] }
-					createNewPageUrl={ props.homeScreenData.createNewPageUrl }
+					topData={ props.homeScreenData.top }
+					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
-				<BlockSection />
-			</Grid>
-		</Container>
+				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
+					{ /* Placeholder container to ensure layout until other components are added */ }
+					<Container maxWidth="md"></Container>
+					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
+						<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+					</Container>
+				</Container>
+			</Container>
+		</Box>
 	);
 };
 

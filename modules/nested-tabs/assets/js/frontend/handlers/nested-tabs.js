@@ -44,6 +44,7 @@ export default class NestedTabs extends Base {
 			selectors: {
 				widgetContainer: '.e-n-tabs',
 				tabTitle: '.e-n-tab-title',
+				tabTitleText: '.e-n-tab-title-text',
 				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
 				activeTabContentContainers: '.e-con.e-active',
@@ -67,6 +68,7 @@ export default class NestedTabs extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
+			$wdigetContainer: this.findElement( selectors.widgetContainer ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -96,6 +98,8 @@ export default class NestedTabs extends Base {
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
+
+		this.elements.$wdigetContainer.addClass( 'e-activated' );
 	}
 
 	deactivateActiveTab( newTabIndex ) {
@@ -209,6 +213,7 @@ export default class NestedTabs extends Base {
 		elementorFrontend.elements.$window.on( 'resize', this.setTouchMode.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 		elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.changeActiveTabByKeyboard.bind( this ) );
+		elementorFrontend.elements.$window.on( 'elementor/nested-container/created', this.linkContainer.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -390,5 +395,45 @@ export default class NestedTabs extends Base {
 		}
 
 		this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'false' );
+	}
+
+	linkContainer( event ) {
+		const { container } = event.detail,
+			id = container.model.get( 'id' ),
+			currentId = this.$element.data( 'id' );
+
+		if ( id === currentId ) {
+			this.updateIndexValues();
+			this.updateListeners();
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
+		}
+	}
+
+	updateListeners() {
+		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ] );
+	}
+
+	updateIndexValues() {
+		const { $tabContents, $tabTitles } = this.getDefaultElements(),
+			settings = this.getSettings(),
+			itemIdBase = $tabTitles[ 0 ].getAttribute( 'id' ).slice( 0, -1 ),
+			containerIdBase = $tabContents[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+
+		$tabTitles.each( ( index, element ) => {
+			const newIndex = index + 1,
+				updatedTabID = itemIdBase + newIndex,
+				updatedContainerID = containerIdBase + newIndex;
+
+			element.setAttribute( 'id', updatedTabID );
+			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
+			element.setAttribute( 'data-tab-index', newIndex );
+			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
+			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'aria-controls', updatedTabID );
+			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
+			$tabContents[ index ].setAttribute( 'data-tab-index', updatedTabID );
+			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
+			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
+		} );
 	}
 }

@@ -1,31 +1,30 @@
 <?php
 namespace Elementor\Modules\Home;
 
+use Elementor\Modules\Home\Classes\Transformations_Manager;
+
 class API {
 
 	const HOME_SCREEN_DATA_URL = 'https://assets.elementor.com/home-screen/v1/home-screen.json';
 
 	public static function get_home_screen_items( $force_request = false ): array {
-		$sorted_items = self::get_transient( '_elementor_home_screen_data' );
+		$transient_data = self::get_transient( '_elementor_home_screen_data' );
 
-		if ( $force_request || false === $sorted_items ) {
-			$unsorted_items = static::fetch_data();
-			$sorted_items = static::sort_items_by_type( $unsorted_items );
+		if ( $force_request || false === $transient_data ) {
+			$api_data = static::fetch_data();
+			$transformed_data = self::transform_home_screen_data( $api_data );
+			static::set_transient( '_elementor_home_screen_data', $transformed_data, '+1 hour' );
 
-			static::set_transient( '_elementor_home_screen_data', $sorted_items, '+1 hour' );
+			return $transformed_data;
 		}
 
-		return $sorted_items;
+		return $transient_data;
 	}
 
-	private static function sort_items_by_type( $items ): array {
-		$sorted_items = [];
+	private static function transform_home_screen_data( $json_data ): array {
+		$transformers = new Transformations_Manager( $json_data );
 
-		foreach ( $items as $item ) {
-			$sorted_items[ $item['type'] ][] = $item;
-		}
-
-		return $sorted_items;
+		return $transformers->run_transformations();
 	}
 
 	private static function fetch_data(): array {

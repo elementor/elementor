@@ -1,4 +1,4 @@
-import { type Page, type Frame } from '@playwright/test';
+import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
@@ -150,4 +150,79 @@ export async function isTabTitleVisible( context: Page | Frame, positionIndex: n
 	}
 
 	return true;
+}
+
+export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ) {
+	// Arrange
+	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
+		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
+		numberOfTitles = await nestedItemTitle.count(),
+		numberOfContents = await nestedItemContent.count();
+
+	// Act
+	await deleteItemButton.last().click();
+
+	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
+
+	// Assert
+	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles - 1 );
+	await expect.soft( nestedItemContent ).toHaveCount( numberOfContents - 1 );
+}
+
+export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
+	// Arrange
+	const addItemButton = editor.page.locator( '.elementor-repeater-add' ),
+		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
+		numberOfTitles = await nestedItemTitle.count(),
+		numberOfContents = await nestedItemContent.count();
+
+	// Act
+	await addItemButton.click();
+
+	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
+
+	// Assert
+	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles + 1 );
+	await expect.soft( nestedItemContent ).toHaveCount( numberOfContents + 1 );
+}
+
+export async function cloneItemFromRepeater( editor: EditorPage, widgetID: string, position: number ) {
+	// Arrange
+	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
+		numberOfTitles = await nestedItemTitle.count(),
+		numberOfContents = await nestedItemContent.count(),
+		cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( position );
+
+	// Act
+	await cloneItemButton.click();
+	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
+
+	const currentTitle = nestedItemTitle.nth( position ),
+		currentTitleId = await currentTitle.getAttribute( 'id' ),
+		currentTitleIndex = await currentTitle.getAttribute( 'data-tab-index' ),
+		currentTitleText = await currentTitle.locator( '.e-n-tab-title-text' ).innerText(),
+		currentContainerId = await nestedItemContent.nth( position ).getAttribute( 'id' ),
+		currentContainerAriaLabeledBy = await nestedItemContent.nth( position ).getAttribute( 'aria-labelledby' );
+
+	const clonedItem = nestedItemTitle.nth( position + 1 ),
+		clonedTitleId = await clonedItem.getAttribute( 'id' ),
+		clonedTitleIndex = await clonedItem.getAttribute( 'data-tab-index' ),
+		clonedTitleText = await clonedItem.locator( '.e-n-tab-title-text' ).innerText(),
+		clonedContainerId = await nestedItemContent.nth( position + 1 ).getAttribute( 'id' ),
+		clonedContainerAriaLabeledBy = await nestedItemContent.nth( position + 1 ).getAttribute( 'aria-labelledby' );
+
+	// Assert
+	await expect( nestedItemTitle ).toHaveCount( numberOfTitles + 1 );
+	await expect( nestedItemContent ).toHaveCount( numberOfContents + 1 );
+
+	expect( currentTitleId ).not.toEqual( clonedTitleId );
+	expect( parseInt( clonedTitleIndex ) ).toEqual( parseInt( currentTitleIndex ) + 1 );
+	expect( currentTitleText ).toEqual( clonedTitleText );
+	expect( currentContainerId ).not.toEqual( clonedContainerId );
+	expect( currentContainerAriaLabeledBy ).not.toEqual( clonedContainerAriaLabeledBy );
+	expect( currentTitleId ).toEqual( currentContainerAriaLabeledBy );
+	expect( clonedTitleId ).toEqual( clonedContainerAriaLabeledBy );
 }
