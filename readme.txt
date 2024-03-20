@@ -170,13 +170,22 @@ To improve the user experience, Elementor may use the following 3rd party servic
 
 https://www.youtube.com/watch?v=9EZ159ryFNs
 
-= Installation =
+= Install Elementor within WordPress =
 
-1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Pages > Add New
-4. Press the 'Edit with Elementor' button.
-5. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
+1. Visit the plugins page within your dashboard and select ‘Add New’.
+2. Search for ‘Elementor’.
+3. Activate the plugin through the 'Plugins' menu in WordPress.
+
+= Install Elementor Manually =
+
+2. Extract the zip file and drop the contents in the `wp-content/plugins/` directory of your WordPress installation via FTP.
+3. Activate the plugin through the 'Plugins' menu in WordPress.
+
+= After Activation =
+
+1. Go to Pages > Add New
+2. Press the 'Edit with Elementor' button.
+3. Now you can drag and drop widgets from the left panel onto the content area, as well as add new sections and columns that make up the page structure.
 
 For documentation and tutorials visit our [Knowledge Base](https://elementor.com/help/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
