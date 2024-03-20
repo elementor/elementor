@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { SvgIcon } from '@elementor/ui';
-import { PropTypes } from 'prop-types';
 
 const SideBarCheckIcon = ( props ) => {
 	return (
