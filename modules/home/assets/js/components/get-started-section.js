@@ -10,11 +10,11 @@ const GetStarted = ( { ...props } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Typography variant="h6">{ props.getStartedData.header.title }</Typography>
-			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, alignItems: 'flex-start', gap: { xs: 3, md: 2 } } }>
+			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, alignItems: 'center', gap: 2 } }>
 				{
 					props.getStartedData.repeater.map( ( item, index ) => {
 						return (
-							<ListItemButton key={ index } alignItems="flex-start" href={ `${ adminUrl }${ item.file_path }` } target="_blank" sx={ { gap: 0.5, p: 0, '&:hover': { background: 'none' }, minWidth: 150 } }>
+							<ListItemButton key={ index } alignItems="flex-start" href={ `${ adminUrl }${ item.file_path }` } target="_blank" sx={ { gap: 0.5, p: 0, '&:hover': { background: 'none' } } }>
 								<Box component="img" src={ props.getStartedData.header.image }></Box>
 								<Box>
 									<ListItemText variant="subtitle1" sx={ { my: 0 } }>{ item.title }</ListItemText>
