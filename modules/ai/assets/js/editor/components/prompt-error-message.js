@@ -29,7 +29,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		const messages = {
 			default: {
 				text: <AlertTitle>{ __( 'There was a glitch.', 'elementor' ) }</AlertTitle>,
-				description: __( 'Wait a moment and give it another go, or try tweaking the prompt.', 'elementor' ) + ' ',
+				description: __( 'Wait a moment and give it another go, or try tweaking the prompt.', 'elementor' ),
 				buttonText: __( 'Try again', 'elementor' ),
 				buttonAction: onRetry,
 			},
