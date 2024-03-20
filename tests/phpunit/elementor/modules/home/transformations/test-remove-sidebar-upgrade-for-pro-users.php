@@ -12,7 +12,6 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 
 		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
 			'home_screen_data' => $original_data,
-			'wordpress_adapter' => [],
 			'has_pro' => false,
 		] );
 
@@ -27,7 +26,6 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends Elementor_Test_Base {
 		// Arrange
 		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
 			'home_screen_data' => $this->mock_home_screen_data(),
-			'wordpress_adapter' => [],
 			'has_pro' => true,
 		] );
 
