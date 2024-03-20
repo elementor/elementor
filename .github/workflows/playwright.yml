@@ -44,7 +44,7 @@ jobs:
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
         uses: technote-space/get-diff-action@v6
@@ -60,14 +60,14 @@ jobs:
             !readme.txt
             !changelog.txt
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
-      - name: Restore NPM Cache
-        uses: actions/cache/restore@v3
-        with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+      # - name: Restore NPM Cache
+      #   uses: actions/cache/restore@v3
+      #   with:
+      #     path: ~/.npm
+      #     key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npm ci
@@ -76,13 +76,13 @@ jobs:
         run: npx grunt build
       - name: Cache node modules
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Save build to cache
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ./build/*
           key: playwright-build-${{ github.sha }}
@@ -116,19 +116,19 @@ jobs:
         ]
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Restore NPM from cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-npm
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Restore build from cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-build
         with:
           path: ./build/*
@@ -162,7 +162,7 @@ jobs:
       - name: Run element regression tests
         if: ${{matrix.testSuite =='elements-regression'}}
         run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-test-results-${{ matrix.testSuite }}
