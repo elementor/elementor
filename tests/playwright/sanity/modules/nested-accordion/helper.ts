@@ -124,7 +124,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 		numberOfContents = await nestedAccordionItemContent.count();
 
 	// Act
-	await deleteItemButton.last().click();
+	await deleteItemButton.nth( 1 ).click();
 
 	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
 
@@ -204,4 +204,8 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( currentTitleIndex ) + 2 );
 		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( clonedTitleIndex ) + 1 );
 	}
+}
+
+export async function isolatedIdNumber( idPrefix: string, itemID: string ) {
+	return Number( itemID.replace( idPrefix, '' ) );
 }
