@@ -33,7 +33,7 @@ export class NestedRepeaterRemoveContainer extends Base {
 
 		if ( shouldUseAtomicRepeaters( widgetType ) ) {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-				new CustomEvent( 'elementor/nested-container/created', {
+				new CustomEvent( 'elementor/nested-container/atomic-repeater', {
 					detail: {
 						container,
 						action: {
