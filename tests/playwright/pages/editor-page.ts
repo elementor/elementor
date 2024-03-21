@@ -916,4 +916,8 @@ export default class EditorPage extends BasePage {
 			admin.remove();
 		}, adminBar );
 	}
+
+	async isolatedIdNumber( idPrefix: string, itemID: string ) {
+		return Number( itemID.replace( idPrefix, '' ) );
+	}
 }

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, isolatedIdNumber } from './helper';
+import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
@@ -44,8 +44,8 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 				secondItemId = await accordionItems.nth( 1 ).getAttribute( 'id' ),
 				thirdItemId = await accordionItems.nth( 2 ).getAttribute( 'id' );
 
-			expect( await isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await isolatedIdNumber( idPrefix, firstItemID ) + 1 );
-			expect( await isolatedIdNumber( idPrefix, thirdItemId ) ).toBe( await isolatedIdNumber( idPrefix, secondItemId ) + 1 );
+			expect( await editor.isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, firstItemID ) + 1 );
+			expect( await editor.isolatedIdNumber( idPrefix, thirdItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, secondItemId ) + 1 );
 		} );
 
 		await test.step( 'Remove an item from the repeater', async () => {
@@ -59,7 +59,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 				firstItemID = await accordionItems.nth( 0 ).getAttribute( 'id' ),
 				secondItemId = await accordionItems.nth( 1 ).getAttribute( 'id' );
 
-			expect( await isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await isolatedIdNumber( idPrefix, firstItemID ) + 1 );
+			expect( await editor.isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, firstItemID ) + 1 );
 		} );
 
 		await test.step( 'Add an item to the repeater', async () => {

@@ -205,7 +205,3 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( clonedTitleIndex ) + 1 );
 	}
 }
-
-export async function isolatedIdNumber( idPrefix: string, itemID: string ) {
-	return Number( itemID.replace( idPrefix, '' ) );
-}

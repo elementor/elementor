@@ -1,6 +1,7 @@
-import { test } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
+import {isolatedIdNumber} from "../nested-accordion/helper";
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -35,8 +36,30 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 
 		await editor.selectElement( nestedTabsID );
 
+		await test.step( 'Check that items have following IDs', async () => {
+			const tabs = editor.getPreviewFrame().locator( `.elementor-element-${ nestedTabsID }` ),
+				tabsItems = tabs.locator( '.e-n-tab-title' ),
+				idPrefix = 'e-n-tab-title-',
+				firstItemID = await tabsItems.nth( 0 ).getAttribute( 'id' ),
+				secondItemId = await tabsItems.nth( 1 ).getAttribute( 'id' ),
+				thirdItemId = await tabsItems.nth( 2 ).getAttribute( 'id' );
+
+			expect( await editor.isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, firstItemID ) + 1 );
+			expect( await editor.isolatedIdNumber( idPrefix, thirdItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, secondItemId ) + 1 );
+		} );
+
 		await test.step( 'Remove an item from the repeater', async () => {
 			await deleteItemFromRepeater( editor, nestedTabsID );
+		} );
+
+		await test.step( 'Check that items have following IDs after Item removal', async () => {
+			const tabs = editor.getPreviewFrame().locator( `.elementor-element-${ nestedTabsID }` ),
+				tabsItems = tabs.locator( '.e-n-tab-title' ),
+				idPrefix = 'e-n-tab-title-',
+				firstItemID = await tabsItems.nth( 0 ).getAttribute( 'id' ),
+				secondItemId = await tabsItems.nth( 1 ).getAttribute( 'id' );
+
+			expect( await editor.isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, firstItemID ) + 1 );
 		} );
 
 		await test.step( 'Add an item to the repeater', async () => {
