@@ -18,7 +18,7 @@ jobs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -35,13 +35,13 @@ jobs:
     name: Qunit - Test
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: cache-node-modules
         with:

@@ -23,13 +23,13 @@ jobs:
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Restore NPM Cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
@@ -38,12 +38,12 @@ jobs:
       - name: Build
         run: npx grunt build
       - name: Cache node modules
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Save build to cache
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: ./build/*
           key: playwright-build-${{ github.sha }}
@@ -54,19 +54,19 @@ jobs:
     needs: [build-plugin]
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Restore NPM from cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-npm
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Restore build from cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: restore-build
         with:
           path: ./build/*

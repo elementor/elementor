@@ -19,7 +19,7 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -44,13 +44,13 @@ jobs:
     if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-node-modules
         with:
@@ -71,7 +71,7 @@ jobs:
     if: ${{ needs.file-diff.outputs.php_diff || github.event.pull_request.title == null }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
         with:

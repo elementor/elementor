@@ -59,12 +59,12 @@ jobs:
             .*/**/*
             !readme.txt
             !changelog.txt
-      - name: Install Node.js 18.x
+      - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       # - name: Restore NPM Cache
-      #   uses: actions/cache/restore@v3
+      #   uses: actions/cache/restore@v4
       #   with:
       #     path: ~/.npm
       #     key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
@@ -167,6 +167,7 @@ jobs:
         with:
           name: playwright-test-results-${{ matrix.testSuite }}
           path: ${{inputs.path-to-results || 'test-results/'}}
+          if-no-files-found: ignore
           retention-days: 2
 
   test-result:

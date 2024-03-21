@@ -19,7 +19,7 @@ jobs:
           checks: 'JS-Lint,PHP-Lint,Qunit - Test,Lighthouse test - WP latest on PHP 7.4,PHPUnit - Test Results'
       - name: Checkout master branch
         if: github.event_name == 'repository_dispatch' && github.event.action == 'new-release'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
@@ -32,12 +32,12 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/sync-developer-edition-branch.sh"
       - name: Checkout developer-edition branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: developer-edition
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Compare last tag to developer-edition head
@@ -91,12 +91,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout developer-edition branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: developer-edition
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Install Dependencies

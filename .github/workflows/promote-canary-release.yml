@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout develop branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Bump version
@@ -35,12 +35,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Merge develop -> master
@@ -51,7 +51,7 @@ jobs:
           target_branch: master
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Checkout updated master branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master

@@ -20,7 +20,7 @@ jobs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Get Configuration
@@ -36,7 +36,7 @@ jobs:
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Get next release branch
@@ -44,7 +44,7 @@ jobs:
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Checkout next release branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.RELEASE_BRANCH }}
           token: ${{ secrets.MAINTAIN_TOKEN }}
@@ -76,11 +76,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - name: Get next release branch
@@ -88,7 +88,7 @@ jobs:
         with:
           INPUT_VERSION: ${{ github.event.inputs.version }}
       - name: Checkout next release branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}
@@ -104,7 +104,7 @@ jobs:
           UPDATE_VERSIONS_SCRIPT_PATH: "./.github/scripts/update-version-elementor-php.sh"
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Upload zip file to GitHub actions artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
