@@ -20,7 +20,7 @@ const ExternalLinksSection = ( { ...props } ) => {
 									index < props.externalLinksData.length - 1 && <Divider />
 								}
 							</>
-						)
+						);
 					} )
 				}
 			</List>
