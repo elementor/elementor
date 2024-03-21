@@ -12,9 +12,9 @@ const ExternalLinksSection = ( { ...props } ) => {
 					props.externalLinksData.map( ( item, index ) => {
 						return (
 							<>
-								<ListItemButton key={ index } href={ item.url } target="_blank" sx={ { gap: 1, px: 0 } }>
-									<Box component="img" src={ item.image } sx={ { width: '24px' } }></Box>
-									<ListItemText variant="body1">{ item.label }</ListItemText>
+								<ListItemButton key={ index } href={ item.url } target="_blank" sx={ { '&:hover': { background: 'none' }, gap: 1, px: 0 } }>
+									<Box component="img" src={ item.image } sx={ { width: '38px' } }></Box>
+									<ListItemText variant="body1" sx={ { color: 'text.secondary' } }>{ item.label }</ListItemText>
 								</ListItemButton>
 								{
 									index < props.externalLinksData.length - 1 && <Divider />
