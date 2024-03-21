@@ -79,7 +79,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ~/.npm
-          key: npm-pw-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          key: npm-pw-${{ runner.os }}-${{ github.sha}}
       - name: Save build to cache
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache/save@v4
@@ -126,7 +126,7 @@ jobs:
         id: restore-npm
         with:
           path: ~/.npm
-          key: npm-pw-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          key: npm-pw-${{ runner.os }}-${{ github.sha}}
       - name: Restore build from cache
         uses: actions/cache/restore@v4
         id: restore-build
