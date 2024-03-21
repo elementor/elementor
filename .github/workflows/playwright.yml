@@ -79,13 +79,13 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          key: npm-pw-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Save build to cache
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache/save@v4
         with:
           path: ./build/*
-          key: playwright-build-${{ github.sha }}
+          key: playwright-build123-${{ github.sha }}
 
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
@@ -117,29 +117,29 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      - name: Install Node.js 18.x
+      - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Restore NPM from cache
         uses: actions/cache/restore@v4
         id: restore-npm
         with:
           path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          key: npm-pw-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Restore build from cache
         uses: actions/cache/restore@v4
         id: restore-build
         with:
           path: ./build/*
-          key: playwright-build-${{ github.sha }}
+          key: playwright-build123-${{ github.sha }}
       - name: Update wp-env.json file
         env:
           PHP_VERSION: '8.0'
           WP_CORE_VERSION: 'latest'
         run: node ./.github/scripts/build-wp-env.js
-      - name: Install dependencies
-        run: npm ci
+      # - name: Install dependencies
+      #   run: npm ci
       - name: Install WordPress environment
         run: |
           npm run start-local-server
