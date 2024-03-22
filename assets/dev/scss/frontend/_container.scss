@@ -51,7 +51,7 @@
 	&,
 	[dir="ltr"]:is( .swiper, .swiper-container ) .swiper-slide > & {
 		--margin-block-start: var(--margin-top);
-		--margin-block-end: var(--margin-top);
+		--margin-block-end: var(--margin-bottom);
 		--margin-inline-start: var(--margin-left);
 		--margin-inline-end: var(--margin-right);
 		--padding-inline-start: var(--padding-left);
