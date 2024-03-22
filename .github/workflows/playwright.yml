@@ -64,8 +64,15 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
+      - name: Restore node_modules from cache
+        uses: actions/cache/restore@v4
+        id: restore-npm
+        with:
+          path: ./node_modules
+          key: npm-pw-${{ runner.os }}-${{ github.sha}}
+          fail-on-cache-miss: false
       - name: Install dependencies
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff || steps.restore-npm.outputs.cache-hit !=true
         run: npm ci
       - name: Cache node modules
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
@@ -118,7 +125,7 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      - name: Restore NPM from cache
+      - name: Restore node_modules from cache
         uses: actions/cache/restore@v4
         id: restore-npm
         with:
