@@ -72,7 +72,7 @@ jobs:
           key: npm-pw-${{ runner.os }}-test
           fail-on-cache-miss: false
       - name: debug
-        run: echo ${{ steps.restore-npm.outputs.cache-hit }}
+        run: echo ${{ steps.restore-npm.outputs.cache-hit !=true }}
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff || steps.restore-npm.outputs.cache-hit !=true
         run: npm ci
