@@ -130,7 +130,7 @@ export default class NestedAccordion extends Base {
 
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
-		elementorFrontend.elements.$window.on( 'elementor/nested-container/created', this.linkContainer.bind( this ) );
+		elementorFrontend.elements.$window.on( 'elementor/nested-container/atomic-repeater', this.linkContainer.bind( this ) );
 	}
 
 	unbindEvents() {
