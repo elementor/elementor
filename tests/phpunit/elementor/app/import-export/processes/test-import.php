@@ -618,7 +618,7 @@ class Test_Import extends Elementor_Test_Base {
 		}
 
 		// Cleanup
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $import_process_tmp_dir );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $import_process_tmp_dir );
 	}
 
 	// Assertions for imported taxonomies and imported Elementor content by testing the terms of every Elementor post.

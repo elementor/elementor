@@ -29,7 +29,7 @@ export class NestedRepeaterMoveContainer extends Base {
 			container.view.children._views = sortViewsByModels( container );
 
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-				new CustomEvent( 'elementor/nested-container/created', {
+				new CustomEvent( 'elementor/nested-container/atomic-repeater', {
 					detail: {
 						container,
 						targetContainer: result,

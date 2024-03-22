@@ -482,7 +482,7 @@ class Manager {
 		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
 
 		if ( is_wp_error( $upload_result ) ) {
-			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
 
 			return $upload_result;
 		}
@@ -493,7 +493,7 @@ class Manager {
 		$import_result = $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
 
 		// Remove the temporary directory generated for the stream-uploaded file.
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
 
 		return $import_result;
 	}
@@ -664,7 +664,16 @@ class Manager {
 
 		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' ); // phpcs:ignore -- Nonce already verified.
 
-		$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
+		$whitelist_methods = [
+			'export_template',
+			'direct_import_template',
+		];
+
+		if ( in_array( $action, $whitelist_methods, true ) ) {
+			$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
+		} else {
+			$result = new \WP_Error( 'method_not_exists', 'Method Not exists' );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			/** @var \WP_Error $result */
