@@ -72,6 +72,12 @@ jobs:
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npm ci
+      - name: Cache node modules
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        uses: actions/cache/save@v4
+        with:
+          path: ./node_modules
+          key: npm-pw-${{ runner.os }}-${{ github.sha}}
       - name: Build
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npx grunt build
@@ -125,12 +131,12 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      # - name: Restore NPM from cache
-      #   uses: actions/cache/restore@v4
-      #   id: restore-npm
-      #   with:
-      #     path: ~/.npm
-      #     key: npm-pw-${{ runner.os }}-${{ github.sha}}
+      - name: Restore NPM from cache
+        uses: actions/cache/restore@v4
+        id: restore-npm
+        with:
+          path: ./node_modules
+          key: npm-pw-${{ runner.os }}-${{ github.sha}}
       - name: Restore build from cache
         uses: actions/cache/restore@v4
         id: restore-build
