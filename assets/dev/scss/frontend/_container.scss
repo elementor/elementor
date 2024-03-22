@@ -48,8 +48,7 @@
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
-	&,
-	body [dir="ltr"] & {
+	& {
 		--margin-block-start: var(--margin-top);
 		--margin-block-end: var(--margin-bottom);
 		--margin-inline-start: var(--margin-left);
@@ -64,8 +63,7 @@
 		--border-inline-end-width: var(--border-right-width);
 	}
 
-	body.rtl &,
-	body [dir="rtl"] & {
+	body.rtl & {
 		--padding-inline-start: var(--padding-right);
 		--padding-inline-end: var(--padding-left);
 		--margin-inline-start: var(--margin-right);

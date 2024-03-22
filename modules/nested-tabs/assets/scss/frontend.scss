@@ -96,16 +96,14 @@
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 
-	&,
-	body [dir="ltr"] & {
+	& {
 		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-left);
 		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-right);
 		--n-tabs-title-padding-block-start: var(--n-tabs-title-padding-top);
 		--n-tabs-title-padding-block-end: var(--n-tabs-title-padding-bottom);
 	}
 
-	body.rtl &,
-	body [dir="rtl"] & {
+	body.rtl & {
 		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-right);
 		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-left);
 	}
