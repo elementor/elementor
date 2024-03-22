@@ -71,6 +71,8 @@ jobs:
           path: ./node_modules
           key: npm-pw-${{ runner.os }}-${{ github.sha}}
           fail-on-cache-miss: false
+      - name: debug
+        run: echo ${{steps.restore-npm.outputs.cache-hit}}
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff || steps.restore-npm.outputs.cache-hit !=true
         run: npm ci
