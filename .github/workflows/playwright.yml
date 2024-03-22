@@ -64,11 +64,6 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      # - name: Restore NPM Cache
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     path: ~/.npm
-      #     key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npm ci
@@ -81,12 +76,6 @@ jobs:
       - name: Build
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npx grunt build
-      # - name: Cache node modules
-      #   if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: ~/.npm
-      #     key: npm-pw-${{ runner.os }}-${{ github.sha}}
       - name: Save build to cache
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache/save@v4
@@ -103,29 +92,27 @@ jobs:
       fail-fast: ${{inputs.fail_fast || true}}
       matrix:
         testSuite: [
-           'ai',
-          # 'onBoarding',
-          # 'video',
-          # 'elements-regression',
-          # 'default',
-          # 'nested-tabs',
-          # 'reverse-columns',
-          # 'container',
-          # 'nested-accordion',
-          # 'styleguide_image_link',
-          # 'rating',
-          # 'pluginTester1_containers',
-          # 'pluginTester2_containers',
-          # 'pluginTester1_sections',
-          # 'pluginTester2_sections',
-          # 'promotions',
-          # 'nested-atomic-repeaters',
+          'ai',
+          'onBoarding',
+          'video',
+          'elements-regression',
+          'default',
+          'nested-tabs',
+          'reverse-columns',
+          'container',
+          'nested-accordion',
+          'styleguide_image_link',
+          'rating',
+          'pluginTester1_containers',
+          'pluginTester2_containers',
+          'pluginTester1_sections',
+          'pluginTester2_sections',
+          'promotions',
+          'nested-atomic-repeaters',
         ]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      - name: debug
-        run: ls -al
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
@@ -143,8 +130,6 @@ jobs:
         with:
           path: ./build/*
           key: playwright-build123-${{ github.sha }}
-      - name: debug
-        run: ls -al
       - name: Update wp-env.json file
         env:
           PHP_VERSION: '8.0'
