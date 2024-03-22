@@ -93,18 +93,18 @@ class Admin_Apps_Page {
 
 		if ( static::is_plugin_installed( $app['file_path'] ) ) {
 			if ( current_user_can( 'activate_plugins' ) ) {
-				$app['action_label'] = 'Activate';
+				$app['action_label'] = __( 'Activate', 'elementor' );
 				$app['action_url'] = static::get_activate_plugin_url( $app['file_path'] );
 			} else {
-				$app['action_label'] = 'Cannot Activate';
+				$app['action_label'] = __( 'Cannot Activate', 'elementor' );
 				$app['action_url'] = '#';
 			}
 		} else {
 			if ( current_user_can( 'install_plugins' ) ) {
-				$app['action_label'] = 'Install';
+				$app['action_label'] = __( 'Install', 'elementor' );
 				$app['action_url'] = static::get_install_plugin_url( $app['file_path'] );
 			} else {
-				$app['action_label'] = 'Cannot Install';
+				$app['action_label'] = __( 'Cannot Install', 'elementor' );
 				$app['action_url'] = '#';
 			}
 		}
@@ -126,10 +126,10 @@ class Admin_Apps_Page {
 		}
 
 		if ( current_user_can( 'activate_plugins' ) ) {
-			$app['action_label'] = 'Activate';
+			$app['action_label'] = __( 'Activate', 'elementor' );
 			$app['action_url'] = static::get_activate_plugin_url( $app['file_path'] );
 		} else {
-			$app['action_label'] = 'Cannot Activate';
+			$app['action_label'] = __( 'Cannot Activate', 'elementor' );
 			$app['action_url'] = '#';
 		}
 
