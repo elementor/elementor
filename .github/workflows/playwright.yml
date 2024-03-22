@@ -64,22 +64,14 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      - name: Restore node_modules from cache
-        uses: actions/cache/restore@v4
-        id: restore-npm
-        with:
-          path: ./node_modules
-          key: npm-pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          fail-on-cache-miss: false
       - name: Install dependencies
-        if: ${{ steps.restore-npm.outputs.cache-hit != 'true' }}
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npm ci
       - name: Cache node modules
-        if: ${{ steps.restore-npm.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
           path: ./node_modules
-          key: npm-pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: npm-pw-${{ runner.os }}-${{ github.sha }}
       - name: Build
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npx grunt build
@@ -130,7 +122,7 @@ jobs:
         id: restore-npm
         with:
           path: ./node_modules
-          key: npm-pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: npm-pw-${{ runner.os }}-${{ github.sha }}
       - name: Restore build from cache
         uses: actions/cache/restore@v4
         id: restore-build
