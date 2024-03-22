@@ -74,7 +74,6 @@ jobs:
       - name: debug
         run: echo ${{ steps.restore-npm.outputs.cache-hit }}
       - name: Install dependencies
-        #if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff || !steps.restore-npm.outputs.cache-hit
         if: ${{ steps.restore-npm.outputs.cache-hit != 'true' }}
         run: npm ci
       - name: Cache node modules
@@ -145,8 +144,6 @@ jobs:
           PHP_VERSION: '8.0'
           WP_CORE_VERSION: 'latest'
         run: node ./.github/scripts/build-wp-env.js
-      # - name: Install dependencies
-      #   run: npm ci
       - name: Install WordPress environment
         run: |
           npm run start-local-server
