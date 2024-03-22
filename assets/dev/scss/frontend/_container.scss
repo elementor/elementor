@@ -49,7 +49,7 @@
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
 	&,
-	[dir="ltr"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+	body [dir="ltr"] & {
 		--margin-block-start: var(--margin-top);
 		--margin-block-end: var(--margin-bottom);
 		--margin-inline-start: var(--margin-left);
@@ -65,7 +65,7 @@
 	}
 
 	body.rtl &,
-	[dir="rtl"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+	body [dir="rtl"] & {
 		--padding-inline-start: var(--padding-right);
 		--padding-inline-end: var(--padding-left);
 		--margin-inline-start: var(--margin-right);
