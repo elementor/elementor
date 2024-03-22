@@ -164,6 +164,8 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
 
+          
+
   test-result:
     needs: Playwright
     if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
