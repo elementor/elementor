@@ -75,10 +75,10 @@ jobs:
         run: echo ${{ steps.restore-npm.outputs.cache-hit }}
       - name: Install dependencies
         #if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff || !steps.restore-npm.outputs.cache-hit
-        if: ${{ steps.restore-npm.outputs.cache-hit !=true }}
+        if: ${{ steps.restore-npm.outputs.cache-hit != 'true' }}
         run: npm ci
       - name: Cache node modules
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        if: ${{ steps.restore-npm.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
           path: ./node_modules
