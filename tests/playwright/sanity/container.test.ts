@@ -63,8 +63,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.openNewPage();
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
@@ -417,8 +417,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.openNewPage();
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
@@ -488,8 +488,8 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.openNewPage();
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' ),
+		const editor = await wpAdmin.openNewPage(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
 
 		// Act.
@@ -517,7 +517,6 @@ test.describe( 'Container tests @container', () => {
 		const breakpoints = Breakpoints.getBasic().reverse();
 		const directions = [ 'right', 'down', 'left', 'up' ];
 		const editor = await wpAdmin.openNewPage();
-
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
 	} );
@@ -530,7 +529,6 @@ test.describe( 'Container tests @container', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await wpAdmin.openNewPage();
-
 			await editor.addElement( { elType: 'container' }, 'document' );
 			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
 		} finally {
@@ -541,8 +539,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.openNewPage();
-		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
@@ -609,8 +607,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Verify pasting of elements into the Container Element Add section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.openNewPage();
-		const containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
+		const editor = await wpAdmin.openNewPage(),
+			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
 

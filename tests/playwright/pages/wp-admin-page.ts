@@ -172,7 +172,7 @@ export default class WpAdminPage extends BasePage {
 			await this.confirmExperimentModalIfOpen();
 		}
 
-		await this.page.locator( '#submit' ).click();
+		await this.page.click( '#submit' );
 	}
 
 	async setLanguage( language: string, userLanguage = null ) {
