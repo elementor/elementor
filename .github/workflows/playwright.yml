@@ -71,8 +71,6 @@ jobs:
           path: ./node_modules
           key: npm-pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           fail-on-cache-miss: false
-      - name: debug
-        run: echo ${{ steps.restore-npm.outputs.cache-hit }}
       - name: Install dependencies
         if: ${{ steps.restore-npm.outputs.cache-hit != 'true' }}
         run: npm ci
