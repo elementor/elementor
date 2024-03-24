@@ -14,7 +14,7 @@ const ExternalLinksSection = ( { ...props } ) => {
 							<>
 								<ListItemButton key={ index } href={ item.url } target="_blank" sx={ { '&:hover': { background: 'none' }, gap: 2, px: 0, py: 2 } }>
 									<Box component="img" src={ item.image } sx={ { width: '38px' } }></Box>
-									<ListItemText variant="body1" sx={ { color: 'text.secondary' } }>{ item.label }</ListItemText>
+									<ListItemText sx={ { color: 'text.secondary' } } primary={ item.label } />
 								</ListItemButton>
 								{
 									index < props.externalLinksData.length - 1 && <Divider />
