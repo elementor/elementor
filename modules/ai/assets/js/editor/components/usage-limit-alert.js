@@ -8,11 +8,11 @@ const alertConfigs = [
 		threshold: 95,
 		title: {
 			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 95% of your Elementor AI plan.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 95% of the free trial.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used 95% of credits for this AI feature.', 'elementor' ),
 		},
 		description: {
 			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature, you can still use other AI features.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-95-limit-reach/',
@@ -24,11 +24,27 @@ const alertConfigs = [
 		threshold: 80,
 		title: {
 			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 80% of your Elementor AI plan.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 80% of the free trial.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used 80% of credits for this AI feature.', 'elementor' ),
 		},
 		description: {
 			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature, you can still use other AI features.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
+		},
+		url: {
+			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
+			[ KEY_NO_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-free-80-limit-reach/',
+		},
+		color: 'warning',
+	},
+	{
+		threshold: 75,
+		title: {
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 70% of your Elementor AI plan.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( ' You’ve used 70% of credits for this AI feature.', 'elementor' ),
+		},
+		description: {
+			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
