@@ -22,7 +22,7 @@ const SideBarPromotion = ( { ...props } ) => {
 						return (
 							<ListItem key={ index } sx={ { p: 0, gap: 1 } }>
 								<SideBarCheckIcon />
-								<ListItemText primaryTypographyProps={ { variant: 'body2' } }>{ item.title }</ListItemText>
+								<ListItemText primaryTypographyProps={ { variant: 'body2' } } primary={ item.title } />
 							</ListItem>
 						);
 					} )
