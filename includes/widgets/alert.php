@@ -458,13 +458,13 @@ class Widget_Alert extends Widget_Base {
 			return;
 		}
 
-		$this->add_render_attribute(
-			'wrapper',
-			[
-				'class' => [ 'elementor-alert', 'elementor-alert-' . $settings['alert_type'] ],
-				'role' => 'alert',
-			]
-		);
+		$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert' );
+
+		if ( ! empty( $settings['alert_type'] ) ) {
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert-' . $settings['alert_type'] );
+		}
+
+		$this->add_render_attribute( 'wrapper', 'role', 'alert' );
 
 		$this->add_render_attribute( 'alert_title', 'class', 'elementor-alert-title' );
 
@@ -515,13 +515,13 @@ class Widget_Alert extends Widget_Base {
 			return;
 		}
 
-		view.addRenderAttribute(
-			'wrapper',
-			{
-				'class': [ 'elementor-alert', 'elementor-alert-' . settings.alert_type ],
-				'role': 'alert',
-			}
-		);
+		view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert' );
+
+		if ( ! settings.alert_type ) {
+			view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert-' . settings.alert_type );
+		}
+
+		view.addRenderAttribute( 'wrapper', 'role', 'alert' );
 
 		view.addRenderAttribute( 'alert_title', 'class', 'elementor-alert-title' );
 
