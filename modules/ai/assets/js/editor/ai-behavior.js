@@ -148,6 +148,7 @@ export default class AiBehavior extends Marionette.Behavior {
 						unmount();
 					} }
 					colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+					isRTL={ elementorCommon.config.isRTL }
 				/>
 			), rootElement );
 		}, 1000 );
