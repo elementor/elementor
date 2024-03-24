@@ -21,7 +21,7 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 				>
 					<AiPromotionInfotip anchor={ anchor[ 0 ] }
 						focusOutListener={ focusOutListener }
-						content={ <AiPromotionInfotipContent
+						content={ ( <AiPromotionInfotipContent
 							focusOutListener={ focusOutListener }
 							header={ header }
 							contentText={ contentText }
@@ -36,7 +36,7 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 								unmountAction();
 								anchor.trigger( 'click' );
 							} }
-						/> }
+						/> ) }
 					/>
 				</FocusOutListener>
 			</ThemeProvider>
