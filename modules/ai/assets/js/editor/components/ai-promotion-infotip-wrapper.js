@@ -12,14 +12,6 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 		return;
 	}
 
-	const { isViewedInThisEditorSession, markAsViewedInSession } = useIntroduction( `ai_promotion_introduction_editor_session_${ EDITOR_SESSION_ID }` );
-
-	if ( isViewedInThisEditorSession ) {
-		return;
-	}
-
-	markAsViewedInSession();
-
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>

@@ -129,6 +129,12 @@ export default class AiBehavior extends Marionette.Behavior {
 			return;
 		}
 
+		const editorSessionKey = sessionStorage.getItem( 'ai_promotion_introduction_editor_session_key' );
+		if ( ! editorSessionKey ) {
+			sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', EDITOR_SESSION_ID );
+		} else if ( editorSessionKey === EDITOR_SESSION_ID ) {
+			return;
+		}
 		setTimeout( () => {
 			const rootBox = $button[ 0 ].getBoundingClientRect();
 			if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
