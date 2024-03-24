@@ -77,7 +77,7 @@ export default class AiBehavior extends Marionette.Behavior {
 			case 'media':
 				return {
 					header: __( 'Unleash your creativity.', 'elementor' ),
-					contentText: __( `With Elementor AI, you can generate any image you'd like for your website.`, 'elementor' ),
+					contentText: __( 'With Elementor AI, you can generate any image you would like for your website.', 'elementor' ),
 				};
 			case 'code':
 				return {
