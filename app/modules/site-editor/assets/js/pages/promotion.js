@@ -10,7 +10,7 @@ import Text from 'elementor-app/ui/atoms/text';
 import './promotion.scss';
 
 export default function Promotion() {
-	const promotionUrl = 'https://go.elementor.com/go-pro-theme-builder/',
+	const promotionUrl = elementorAppConfig.promotion.upgrade_url || 'https://go.elementor.com/go-pro-theme-builder/',
 		PromotionHoverElement = ( props ) => {
 			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
 			return (

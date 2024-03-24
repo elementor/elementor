@@ -1,3 +1,4 @@
+import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 
@@ -38,20 +39,22 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		window.elementorAiCurrentContext = this.getOption( 'context' );
 
-		ReactDOM.render( <App
-			type={ this.getOption( 'type' ) }
-			controlType={ this.getOption( 'controlType' ) }
-			getControlValue={ this.getOption( 'getControlValue' ) }
-			setControlValue={ this.getOption( 'setControlValue' ) }
-			additionalOptions={ this.getOption( 'additionalOptions' ) }
-			controlView={ this.getOption( 'controlView' ) }
-			onClose={ () => {
-				ReactDOM.unmountComponentAtNode( rootElement );
-				rootElement.remove();
-			} }
-			colorScheme={ colorScheme }
-			isRTL={ isRTL }
-		/>, rootElement );
+		const { unmount } = ReactUtils.render( (
+			<App
+				type={ this.getOption( 'type' ) }
+				controlType={ this.getOption( 'controlType' ) }
+				getControlValue={ this.getOption( 'getControlValue' ) }
+				setControlValue={ this.getOption( 'setControlValue' ) }
+				additionalOptions={ this.getOption( 'additionalOptions' ) }
+				controlView={ this.getOption( 'controlView' ) }
+				onClose={ () => {
+					unmount();
+					rootElement.remove();
+				} }
+				colorScheme={ colorScheme }
+				isRTL={ isRTL }
+			/>
+		), rootElement );
 	}
 
 	getAiButtonLabel() {

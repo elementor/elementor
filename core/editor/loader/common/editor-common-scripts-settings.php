@@ -13,6 +13,7 @@ use Elementor\Shapes;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -98,6 +99,13 @@ class Editor_Common_Scripts_Settings {
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
 			],
 			'editor_events' => EditorEventsModule::get_editor_events_config(),
+			'promotions' => [
+				'notes' => Filtered_Promotions_Manager::get_filtered_promotion_data(
+					[ 'upgrade_url' => 'https://go.elementor.com/go-pro-notes/' ],
+					'elementor/panel/notes/custom_promotion',
+					'upgrade_url'
+				),
+			],
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {

@@ -75,3 +75,14 @@
 		align-items: center;
 	}
 }
+
+
+.e-link-promotion {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 500;
+	color: $e-accent;
+
+	&:hover {
+		color: $e-accent;
+	}
+}

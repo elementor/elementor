@@ -80,9 +80,9 @@ class Control_Notice extends Base_UI_Control {
 				<# } #>
 			</div>
 			<# if ( data.dismissible ) { #>
-			<button class="elementor-control-notice-dismiss">
+			<button class="elementor-control-notice-dismiss tooltip-target" data-tooltip="<?php echo esc_attr__( 'Don’t show again.', 'elementor' ); ?>">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this notice.', 'elementor' ); ?></span>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Don’t show again.', 'elementor' ); ?></span>
 			</button>
 			<# } #>
 		</div>

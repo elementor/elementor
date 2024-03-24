@@ -115,7 +115,7 @@ trait Button_Trait {
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 				'style_transfer' => true,
-				'condition' => $args['section_condition'],
+				'condition' => array_merge( $args['section_condition'], [ 'size[value]!' => 'sm' ] ), // a workaround to hide the control, unless it's in use (not default).
 			]
 		);
 
@@ -136,11 +136,17 @@ trait Button_Trait {
 			'icon_align',
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'default' => 'left',
 				'options' => [
-					'left' => esc_html__( 'Before', 'elementor' ),
-					'right' => esc_html__( 'After', 'elementor' ),
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
 				],
 				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
 			]
@@ -457,6 +463,10 @@ trait Button_Trait {
 
 		$settings = $instance->get_settings_for_display();
 
+		if ( empty( $settings['text'] ) && empty( $settings['selected_icon']['value'] ) ) {
+			return;
+		}
+
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
@@ -474,6 +484,8 @@ trait Button_Trait {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$instance->add_render_attribute( 'button', 'class', 'elementor-size-sm' ); // BC, to make sure the class is always present
 		}
 
 		if ( ! empty( $settings['hover_animation'] ) ) {
@@ -499,6 +511,10 @@ trait Button_Trait {
 	protected function content_template() {
 		?>
 		<#
+		if ( '' === settings.text && '' === settings.selected_icon.value ) {
+			return;
+		}
+
 		view.addRenderAttribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		view.addRenderAttribute( 'button', 'class', 'elementor-button' );
@@ -539,7 +555,9 @@ trait Button_Trait {
 						<# } #>
 					</span>
 					<# } #>
+					<# if ( settings.text ) { #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
+					<# } #>
 				</span>
 			</a>
 		</div>
@@ -602,7 +620,9 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
+			<?php if ( ! empty( $settings['text'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<?php endif; ?>
 		</span>
 		<?php
 	}

@@ -1,4 +1,4 @@
-import ElementModel from '../../elements/models/element';
+import { default as ElementModel } from 'elementor-elements/models/element';
 
 /**
  * @typedef {import('../../container/container')} Container

@@ -4,6 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Tracker;
 use Elementor\User;
@@ -46,7 +47,7 @@ class Admin_Notices extends Module {
 		 * Filters Elementor admin notices.
 		 *
 		 * This hook can be used by external developers to manage existing
-		 * admin notice or to add new notices for Elementor addons.
+		 * admin notice or to add new notices for Elementor add-ons.
 		 *
 		 * @param array $notices A list of notice classes.
 		 */
@@ -330,6 +331,8 @@ class Admin_Notices extends Module {
 				'type' => 'cta',
 			],
 		];
+
+		$options = Filtered_Promotions_Manager::get_filtered_promotion_data( $options, 'core/admin/notice_role_manager_promote', 'button', 'url' );
 
 		$this->print_admin_notice( $options );
 

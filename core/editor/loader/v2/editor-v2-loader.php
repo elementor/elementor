@@ -35,6 +35,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	const LIBS = [
 		self::ENV_PACKAGE,
+		'editor-app-bar-ui',
 		'icons',
 		'locations',
 		'query',

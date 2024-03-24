@@ -72,12 +72,12 @@ jobs:
           path: ./build/*
           key: playwright-build-${{ github.sha }}
       - name: Install dependencies
-        run: | 
+        run: |
             npm ci
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
-        env: 
+        env:
           ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
       - name: Setup playwright tests
         run: cd ./tests/playwright/upgrade-test && npm run test:setup
@@ -104,4 +104,4 @@ jobs:
         if: ${{ needs.run-upgrade-test.result != 'success' && needs.run-upgrade-test.result != 'skipped' }}
         run: exit 1
 
- 
+

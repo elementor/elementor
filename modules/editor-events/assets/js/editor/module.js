@@ -1,15 +1,11 @@
 import EventsStorage from './events-storage';
+import eventsConfig from './events-config';
+import Event from './event';
 
 export default class extends elementorModules.Module {
-	types = {
-		click: 'click',
-	};
-
-	events = {
-		site_settings: 'site_settings',
-	};
-
 	onInit() {
+		this.config = eventsConfig;
+
 		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
@@ -17,14 +13,15 @@ export default class extends elementorModules.Module {
 		window.addEventListener( 'beforeunload', this.sendEvents() );
 	}
 
-	dispatchEvent( type, eventId, context ) {
+	dispatchEvent( data ) {
 		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
 
-		const newEvent = { type, event_id: eventId, context, timestamp: Date.now() };
+		const newEvent = new Event( data );
+		const eventBlob = new Blob( [ JSON.stringify( newEvent ) ], { type: 'application/json' } );
 
-		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, JSON.stringify( newEvent ) ) ) {
+		if ( navigator.sendBeacon( elementor.config.editor_events.data_system_url, eventBlob ) ) {
 			return;
 		}
 
@@ -44,7 +41,8 @@ export default class extends elementorModules.Module {
 			credentials: 'omit',
 			keepalive: true,
 		} )
-			.then( EventsStorage.clear() )
-			.catch( console.error );
+			.then( () => {
+				EventsStorage.clear();
+			} );
 	}
 }

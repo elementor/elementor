@@ -129,9 +129,6 @@ class Group_Control_Background extends Group_Control_Base {
 				'unit' => '%',
 			],
 		];
-		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
-			$location_device_args[ $breakpoint_name ] = $location_device_defaults;
-		}
 
 		$angel_device_args = [];
 		$angel_device_defaults = [
@@ -139,8 +136,16 @@ class Group_Control_Background extends Group_Control_Base {
 				'unit' => 'deg',
 			],
 		];
+
+		$position_device_args = [];
+		$position_device_defaults = [
+			'default' => 'center center',
+		];
+
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$location_device_args[ $breakpoint_name ] = $location_device_defaults;
 			$angel_device_args[ $breakpoint_name ] = $angel_device_defaults;
+			$position_device_args[ $breakpoint_name ] = $position_device_defaults;
 		}
 
 		$fields = [];
@@ -269,6 +274,8 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
 			],
 			'default' => 'center center',
+			'device_args' => $position_device_args,
+			'responsive' => true,
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
 			],

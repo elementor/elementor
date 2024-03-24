@@ -27,7 +27,9 @@ export default class FilesUploadHandler {
 	}
 
 	static getUnfilteredFilesNotEnabledDialog( callback ) {
-		if ( ! elementor.config.user.is_administrator ) {
+		const elementorInstance = window.elementorAdmin || window.elementor;
+
+		if ( ! elementorInstance.config.user.is_administrator ) {
 			return this.getUnfilteredFilesNonAdminDialog();
 		}
 
@@ -37,7 +39,7 @@ export default class FilesUploadHandler {
 			callback();
 		};
 
-		return elementor.helpers.getSimpleDialog(
+		return elementorInstance.helpers.getSimpleDialog(
 			'e-enable-unfiltered-files-dialog',
 			__( 'Enable Unfiltered File Uploads', 'elementor' ),
 			__( 'Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
@@ -47,7 +49,7 @@ export default class FilesUploadHandler {
 	}
 
 	static getUnfilteredFilesNotEnabledImportTemplateDialog( callback ) {
-		if ( ! elementor.config.user.is_administrator ) {
+		if ( ! ( window.elementorAdmin || window.elementor ).config.user.is_administrator ) {
 			return this.getUnfilteredFilesNonAdminDialog();
 		}
 

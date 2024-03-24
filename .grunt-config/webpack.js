@@ -126,10 +126,12 @@ const entry = {
 	'editor-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/editor.js' ),
 	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
+	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
+	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 };
 
 const frontendEntries = {
@@ -149,6 +151,7 @@ const externals = {
 	'@elementor/router': 'elementorAppPackages.router',
 	'@elementor/ui': 'elementorV2.ui',
 	'@elementor/icons': 'elementorV2.icons',
+	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 	'@wordpress/dom-ready': 'wp.domReady',
 	'@wordpress/components': 'wp.components',
 };

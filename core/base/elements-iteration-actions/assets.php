@@ -79,8 +79,8 @@ class Assets extends Base {
 				$this->page_assets[ $assets_type ] = [];
 			}
 
-			foreach ( $new_assets[ $assets_type ] as $asset_name ) {
-				if ( ! isset( $this->page_assets[ $assets_type ][ $asset_name ] ) ) {
+			foreach ( $assets_type_data as $asset_name ) {
+				if ( ! in_array( $asset_name, $this->page_assets[ $assets_type ], true ) ) {
 					$this->page_assets[ $assets_type ][] = $asset_name;
 				}
 			}

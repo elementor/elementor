@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\Promotions\AdminMenuItems\Interfaces\Promotion_Menu_Item;
 use Elementor\Settings;
 
@@ -49,11 +49,7 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 			'upgrade_url' => $this->get_cta_url(),
 		];
 
-		$config = apply_filters( 'elementor/' . $this->get_name() . '/custom_promotion', $config );
-
-		if ( isset( $config['upgrade_url'] ) && false === Validate_Promotion::domain_is_on_elementor_dot_com( $config['upgrade_url'] ) ) {
-			$config['upgrade_url'] = esc_url( $this->get_cta_url() );
-		}
+		$config = Filtered_Promotions_Manager::get_filtered_promotion_data( $config, 'elementor/' . $this->get_name() . '/custom_promotion', 'upgrade_url' );
 
 		$description = $config['description'] ?? $this->get_promotion_description() ?? '';
 

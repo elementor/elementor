@@ -2,12 +2,33 @@
 namespace Elementor;
 
 use Elementor\Core\Editor\Editor;
+use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
+
+$has_pro = Utils::has_pro();
+$elements_list_class = '';
+
+if ( ! $has_pro ) {
+	$promotion_data = [
+		'text' => esc_html__( 'Access all Pro widgets', 'elementor' ),
+		'url_label' => esc_html__( 'Upgrade Now', 'elementor' ),
+		'url' => 'https://go.elementor.com/go-pro-structure-panel/',
+	];
+
+	$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
+		$promotion_data,
+		'elementor/navigator/custom_promotion',
+		'url'
+	);
+	$elements_list_class = 'elementor-navigator-list__promotion';
+}
+
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
@@ -29,14 +50,28 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 			?></span>
 		</button>
 	</div>
-	<div id="elementor-navigator__elements"></div>
+	<div id="elementor-navigator__elements"
+		<?php if ( ! empty( $elements_list_class ) ) : ?>
+			class="<?php echo esc_attr( $elements_list_class ); ?>"
+	<?php endif; ?>
+	>
+	</div>
 	<div id="elementor-navigator__footer">
-		<i class="eicon-ellipsis-h" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php
-			echo $is_editor_v2_active
-				? esc_html__( 'Resize structure', 'elementor' )
-				: esc_html__( 'Resize navigator', 'elementor' );
-		?></span>
+		<?php if ( ! $has_pro && ! empty( $promotion_data ) ) : ?>
+			<div id="elementor-navigator__footer__promotion">
+				<?php echo esc_attr( $promotion_data['text'] ); ?>.
+				<a href="<?php echo esc_url( $promotion_data['url'] ); ?>" target="_blank" class="e-link-promotion"><?php echo esc_attr( $promotion_data['url_label'] ); ?></a>
+			</div>
+		<?php endif; ?>
+
+		<div id="elementor-navigator__footer__resize-bar">
+			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php
+				echo $is_editor_v2_active
+					? esc_html__( 'Resize structure', 'elementor' )
+					: esc_html__( 'Resize navigator', 'elementor' );
+			?></span>
+		</div>
 	</div>
 </script>
 

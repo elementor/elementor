@@ -326,6 +326,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => $default_breakpoint_config['label'],
 					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
 					'conditions' => [
 						'terms' => [
 							[
@@ -343,7 +344,6 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => $default_breakpoint_config['default_value'],
 				'frontend_available' => true,
-				'separator' => 'after',
 				'validators' => [
 					'Breakpoint' => [
 						'breakpointName' => $breakpoint_key,
