@@ -123,17 +123,18 @@ export default class AiBehavior extends Marionette.Behavior {
 			$button,
 		);
 
+		const controlType = this.view.model.get( 'type' );
+		const promotionTexts = this.getPromotionTexts( controlType );
+		if ( ! promotionTexts ) {
+			return;
+		}
+
 		setTimeout( () => {
 			const rootBox = $button[ 0 ].getBoundingClientRect();
 			if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
 				return;
 			}
 
-			const controlType = this.view.model.get( 'type' );
-			const promotionTexts = this.getPromotionTexts( controlType );
-			if ( ! promotionTexts ) {
-				return;
-			}
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 
@@ -146,6 +147,7 @@ export default class AiBehavior extends Marionette.Behavior {
 					unmountAction={ () => {
 						unmount();
 					} }
+					colorScheme={ ?? }
 				/>
 			), rootElement );
 		}, 1000 );

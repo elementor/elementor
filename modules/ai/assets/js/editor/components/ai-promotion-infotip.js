@@ -56,31 +56,29 @@ export default function AiPromotionInfotip( { anchor, content, focusOutListener 
 	}, [] );
 
 	return (
-		<>
-			<Tooltip
-				arrow
-				open={ true }
-				title={ content }
-				placement="right"
-				PopperComponent={ StyledPopper }
-				PopperProps={ {
-					onClick: () => focusOutListener.reset(),
-					popperRef,
-					anchorEl: {
-						getBoundingClientRect: () => {
-							return new DOMRect(
-								positionRef.current.x,
-								positionRef.current.y,
-								positionRef.current.width,
-								positionRef.current.height,
-							);
-						},
+		<Tooltip
+			arrow
+			open={ true }
+			title={ content }
+			placement="right"
+			PopperComponent={ StyledPopper }
+			PopperProps={ {
+				onClick: () => focusOutListener.reset(),
+				popperRef,
+				anchorEl: {
+					getBoundingClientRect: () => {
+						return new DOMRect(
+							positionRef.current.x,
+							positionRef.current.y,
+							positionRef.current.width,
+							positionRef.current.height,
+						);
 					},
-				} }
-			>
-				<div style={ { display: 'none' } }></div>
-			</Tooltip>
-		</>
+				},
+			} }
+		>
+			<div style={ { display: 'none' } }></div>
+		</Tooltip>
 	);
 }
 

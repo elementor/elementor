@@ -5,7 +5,7 @@ import { ThemeProvider } from '@elementor/ui';
 import useIntroduction from '../hooks/use-introduction';
 import { FocusOutListener, useFocusOutListener } from '../helpers/focus-out-listener';
 
-const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, unmountAction } ) => {
+const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, unmountAction, colorScheme } ) => {
 	const focusOutListener = useFocusOutListener();
 	const { isViewed, markAsViewed } = useIntroduction( `ai_promotion_introduction_${ controlType }` );
 	if ( isViewed ) {
@@ -21,7 +21,7 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 	markAsViewedInSession();
 
 	return (
-		<ThemeProvider>
+		<ThemeProvider colorScheme={ colorScheme }>
 			<FocusOutListener
 				listener={ focusOutListener }
 				onFocusOut={ () => unmountAction() }
@@ -34,12 +34,12 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 						contentText={ contentText }
 						onClose={ () => {
 							markAsViewed();
-							focusOutListener.disable();
+							focusOutListener.remove();
 							unmountAction();
 						} }
 						onClick={ () => {
 							markAsViewed();
-							focusOutListener.disable();
+							focusOutListener.remove();
 							unmountAction();
 							anchor.trigger( 'click' );
 						} }
@@ -56,6 +56,7 @@ AiPromotionInfotipWrapper.propTypes = {
 	contentText: PropTypes.string,
 	controlType: PropTypes.string,
 	unmountAction: PropTypes.func,
+	colorScheme: PropTypes.string,
 };
 
 export default AiPromotionInfotipWrapper;

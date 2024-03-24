@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 export function FocusOutListener( { children, listener, onFocusOut } ) {
-	const { indicatorRef, reset, disable, runAction } = listener;
+	const { indicatorRef, reset, remove, runAction } = listener;
 
 	React.useEffect( () => {
 		reset();
 
 		return () => {
-			disable();
+			remove();
 		};
 	}, [] );
 
@@ -25,7 +25,7 @@ export function FocusOutListener( { children, listener, onFocusOut } ) {
 					border: 0,
 					opacity: 0,
 				} }
-				onFocus={ disable }
+				onFocus={ remove }
 				onBlur={ () => runAction( onFocusOut ) }
 				ref={ indicatorRef }
 			/>
@@ -38,7 +38,7 @@ export function useFocusOutListener() {
 	const indicatorRef = React.useRef( null );
 
 	const reset = () => indicatorRef.current?.focus();
-	const disable = () => clearTimeout( focusOutTimeout.current );
+	const remove = () => clearTimeout( focusOutTimeout.current );
 	const runAction = ( callback ) => {
 		focusOutTimeout.current = setTimeout( callback, 250 );
 	};
@@ -46,7 +46,7 @@ export function useFocusOutListener() {
 	return {
 		indicatorRef,
 		reset,
-		disable,
+		remove,
 		runAction,
 	};
 }
