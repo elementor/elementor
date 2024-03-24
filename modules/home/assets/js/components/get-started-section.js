@@ -17,7 +17,7 @@ const GetStarted = ( { ...props } ) => {
 							<ListItemButton key={ index } alignItems="flex-start" href={ `${ adminUrl }${ item.file_path }` } target="_blank" sx={ { gap: 1, p: 0, '&:hover': { background: 'none' }, maxWidth: '150px' } }>
 								<Box component="img" src={ props.getStartedData.header.image } sx={ { pt: 0.5 } }></Box>
 								<Box>
-									<ListItemText variant="subtitle1" sx={ { my: 0 } }>{ item.title }</ListItemText>
+									<ListItemText primary={ item.title } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
 									<Link variant="body2" color="text.tertiary" underline="hover">{ item.title_small }</Link>
 								</Box>
 							</ListItemButton>
