@@ -1,17 +1,9 @@
-import {
-	ThemeProvider,
-	DirectionProvider,
-	DialogHeaderGroup,
-} from '@elementor/ui';
+import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import PageContent from './page-content';
 import { onConnect } from './helpers';
 import { RequestIdsProvider } from './context/requests-ids';
 
-DialogHeaderGroup.propTypes = {
-	gutterLeftAuto: PropTypes.bool,
-	children: PropTypes.node,
-};
 const App = ( props ) => {
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
