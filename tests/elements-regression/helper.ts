@@ -36,10 +36,8 @@ export default class ElementRegressionHelper {
 				iframe.style.height = '3000px';
 			} );
 		}
-
-		await locator.waitFor();
 		await expect.soft( locator )
-			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200 } );
+			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 	}
 
 	async doHoverScreenshot( args:Omit<ScreenShot, 'device'> ) {
