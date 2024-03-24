@@ -147,7 +147,7 @@ export default class AiBehavior extends Marionette.Behavior {
 					unmountAction={ () => {
 						unmount();
 					} }
-					colorScheme={ ?? }
+					colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
 				/>
 			), rootElement );
 		}, 1000 );
