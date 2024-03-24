@@ -11,6 +11,15 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 	if ( isViewed ) {
 		return;
 	}
+
+	const { isViewedInThisEditorSession, markAsViewedInSession } = useIntroduction( `ai_promotion_introduction_editor_session_${ EDITOR_SESSION_ID }` );
+
+	if ( isViewedInThisEditorSession ) {
+		return;
+	}
+
+	markAsViewedInSession();
+
 	return (
 		<ThemeProvider>
 			<FocusOutListener
