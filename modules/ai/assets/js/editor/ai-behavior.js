@@ -1,10 +1,7 @@
 import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
-import AiPromotionInfotip from './components/ai-promotion-infotip';
-import AiPromotionInfotipContent from './components/ai-promotion-infotip-content';
-import { ClickAwayListener, ThemeProvider } from '@elementor/ui';
-import useIntroduction from './hooks/use-introduction';
+import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -137,35 +134,19 @@ export default class AiBehavior extends Marionette.Behavior {
 			if ( ! promotionTexts ) {
 				return;
 			}
-			const { isViewed, markAsViewed } = useIntroduction( `ai_promotion_infotip_${ controlType }` );
-			if ( ! isViewed ) {
-				return;
-			}
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 
 			const { unmount } = ReactUtils.render( (
-				<ThemeProvider>
-					<AiPromotionInfotip anchor={ $button[ 0 ] }
-						content={ <AiPromotionInfotipContent
-							header={ promotionTexts.header }
-							contentText={ promotionTexts.contentText }
-							introductionKey={ `ai_promotion_infotip_${ controlType }` }
-							onClose={ () => {
-								markAsViewed();
-								unmount();
-							} }
-							onClick={ () => {
-								markAsViewed();
-								unmount();
-								$button.trigger( 'click' );
-							} } /> }
-						closeFunction={ () => {
-							unmount();
-						} }
-
-					/>
-				</ThemeProvider>
+				<AiPromotionInfotipWrapper
+					anchor={ $button }
+					header={ promotionTexts.header }
+					contentText={ promotionTexts.contentText }
+					controlType={ controlType }
+					unmountAction={ () => {
+						unmount();
+					} }
+				/>
 			), rootElement );
 		}, 1000 );
 	}

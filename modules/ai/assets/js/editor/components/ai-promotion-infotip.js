@@ -30,9 +30,7 @@ const StyledPopper = styled( Popper )( ( { theme } ) => ( {
 	},
 } ) );
 
-export default function AiPromotionInfotip( { anchor, content, closeFunction } ) {
-	const focusIndicator = React.useRef( null );
-
+export default function AiPromotionInfotip( { anchor, content, focusOutListener } ) {
 	const positionRef = React.useRef( {
 		x: 0,
 		y: 0,
@@ -55,7 +53,6 @@ export default function AiPromotionInfotip( { anchor, content, closeFunction } )
 
 	React.useEffect( () => {
 		showTooltip();
-		focusIndicator.current.focus();
 	}, [] );
 
 	return (
@@ -67,6 +64,7 @@ export default function AiPromotionInfotip( { anchor, content, closeFunction } )
 				placement="right"
 				PopperComponent={ StyledPopper }
 				PopperProps={ {
+					onClick: () => focusOutListener.reset(),
 					popperRef,
 					anchorEl: {
 						getBoundingClientRect: () => {
@@ -82,19 +80,6 @@ export default function AiPromotionInfotip( { anchor, content, closeFunction } )
 			>
 				<div style={ { display: 'none' } }></div>
 			</Tooltip>
-			<input
-				style={ {
-					width: 0,
-					height: 0,
-					padding: 0,
-					margin: 0,
-					outline: 0,
-					border: 0,
-					opacity: 0,
-				} }
-				onBlur={ () => closeFunction() }
-				ref={ focusIndicator }
-			/>
 		</>
 	);
 }
@@ -102,5 +87,5 @@ export default function AiPromotionInfotip( { anchor, content, closeFunction } )
 AiPromotionInfotip.propTypes = {
 	anchor: PropTypes.element.isRequired,
 	content: PropTypes.object.isRequired,
-	closeFunction: PropTypes.func.isRequired,
+	focusOutListener: PropTypes.object.isRequired,
 };

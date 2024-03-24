@@ -23,11 +23,9 @@ const AiPromotionInfotipContent = ( props ) => {
 			<CardActions disableSpacing sx={ { justifyContent: 'flex-end', gap: 1 } } >
 				<Button
 					onClick={ () => {
-						markAsViewed();
 						props.onClose();
 					} } color="secondary">{ __( 'Not Now', 'elementor' ) }</Button>
 				<Button onClick={ () => {
-					markAsViewed();
 					props.onClick();
 				} } variant="contained">{ __( 'Try it now', 'elementor' ) }</Button>
 			</CardActions>
