@@ -1,6 +1,7 @@
 import { Container, Box } from '@elementor/ui';
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
+import Addons from './addons-section';
 
 const HomeScreen = ( props ) => {
 	const hasSidebarUpgrade = props.homeScreenData.hasOwnProperty( 'sidebar_upgrade' );
@@ -11,11 +12,12 @@ const HomeScreen = ( props ) => {
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, pt: { xs: 2, md: 6 }, pb: 2 } }>
 				<TopSection
 					topData={ props.homeScreenData.top }
-					createNewPageUrl={ props.homeScreenData.create_new_page_url }
+					// createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
-				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
-					{ /* Placeholder container to ensure layout until other components are added */ }
-					<Container maxWidth="md"></Container>
+				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
+					<Container disableGutters={ true } maxWidth="md">
+						<Addons addonsData={ props.homeScreenData.add_ons } />
+					</Container>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
 						{ hasSidebarUpgrade &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
