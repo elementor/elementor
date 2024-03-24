@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-const FocusOutContext = React.createContext( {} );
-
 export function FocusOutListener( { children, listener, onFocusOut } ) {
 	const { indicatorRef, reset, disable, runAction } = listener;
 
@@ -52,3 +50,9 @@ export function useFocusOutListener() {
 		runAction,
 	};
 }
+
+FocusOutListener.propTypes = {
+	children: PropTypes.node,
+	listener: PropTypes.object,
+	onFocusOut: PropTypes.func,
+};
