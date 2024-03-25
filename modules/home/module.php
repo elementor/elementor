@@ -15,7 +15,7 @@ class Module extends BaseApp {
 
 	const PAGE_ID = 'home_screen';
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'home';
 	}
 
@@ -30,11 +30,15 @@ class Module extends BaseApp {
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			$hook_suffix = 'toplevel_page_elementor';
-			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_main_script' ] );
+			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
 		}, 10, 2 );
 	}
 
-	public function enqueue_main_script() {
+	public function enqueue_home_screen_scripts(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
@@ -51,13 +55,19 @@ class Module extends BaseApp {
 		);
 
 		wp_set_script_translations( 'e-home-screen', 'elementor' );
+
+		wp_localize_script(
+			'e-home-screen',
+			'elementorHomeScreenData',
+			$this->get_app_js_config()
+		);
 	}
 
-	public function is_experiment_active() {
+	public function is_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
 	}
 
-	private function register_layout_experiment() {
+	private function register_layout_experiment(): void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => static::PAGE_ID,
 			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
@@ -65,5 +75,9 @@ class Module extends BaseApp {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
+	}
+
+	private function get_app_js_config(): array {
+		return API::get_home_screen_items();
 	}
 }

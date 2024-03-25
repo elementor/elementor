@@ -4,6 +4,7 @@ namespace Elementor\Modules\Ai\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Modules\Ai\Module;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -144,6 +145,7 @@ class Ai extends Library {
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+				'with_error_data' => true,
 			]
 		);
 	}
@@ -557,11 +559,20 @@ class Ai extends Library {
 		}
 
 		$context['currentContext'] = $data['currentContext'];
+		$context['features'] = [
+			'supportedFeatures' => [],
+		];
 
 		if ( ElementorUtils::has_pro() ) {
-			$context['features'] = [
-				'subscriptions' => [ 'Pro' ],
-			];
+			$context['features']['subscriptions'] = [ 'Pro' ];
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
+			$context['features']['supportedFeatures'][] = 'Grid';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
+			$context['features']['supportedFeatures'][] = 'NestedElements';
 		}
 
 		$metadata = [
