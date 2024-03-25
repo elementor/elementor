@@ -21,10 +21,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
-      - name: Install Node.js 18.x
+      - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Get release branch
         env:
           INPUT_VERSION: ${{ github.event.inputs.version }}
@@ -53,10 +53,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
-      - name: Install Node.js 18.x
+      - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Bump version
         id: bump_version_step
         run: |
@@ -94,10 +94,10 @@ jobs:
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
-      - name: Install Node.js 18.x
+      - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Merge develop -> master
         uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
         with:
