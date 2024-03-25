@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 
 const AiPromotionInfotipContent = ( props ) => {
 	return (
-		<Card sx={ { width: 300 } }>
+		<Card sx={ { width: 300 } } elevation={ 0 }>
 			<CardHeader subheader="ELEMENTOR AI" />
 			<CardContent>
 				<Typography variant="subtitle2" color="text.secondary">

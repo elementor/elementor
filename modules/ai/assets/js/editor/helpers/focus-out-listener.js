@@ -6,9 +6,7 @@ export function FocusOutListener( { children, listener, onFocusOut } ) {
 	React.useEffect( () => {
 		reset();
 
-		return () => {
-			remove();
-		};
+		return remove();
 	}, [] );
 
 	return (
@@ -24,6 +22,7 @@ export function FocusOutListener( { children, listener, onFocusOut } ) {
 					outline: 0,
 					border: 0,
 					opacity: 0,
+					position: 'fixed',
 				} }
 				onFocus={ remove }
 				onBlur={ () => runAction( onFocusOut ) }
