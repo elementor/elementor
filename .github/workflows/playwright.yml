@@ -75,7 +75,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ./build/*
-          key: playwright-build123-${{ github.sha }}
+          key: playwright-build-v4-${{ github.sha }}
 
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
