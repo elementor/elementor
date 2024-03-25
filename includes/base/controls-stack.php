@@ -1408,6 +1408,44 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Fast condition key parsing logic
+	 *
+	 * @param string $condition_key Condition Key
+	 *
+	 * @return array Result array containing Condition key (string), Condition sub key (string) and whether the condition is negated (bool)
+	 */
+	private static function parse_condition_key( string $condition_key ): array {
+		// Check for negation
+		$is_negative_condition = substr( $condition_key, -1 ) === '!';
+		if ( $is_negative_condition ) {
+			// Remove ! for further processing
+			$condition_key = substr( $condition_key, 0, -1 );
+		}
+
+    	$condition_sub_key = '';
+
+		// Check for negation
+		if ( substr( $condition_key, -1 ) === '!' ) {
+			$is_negative_condition = true;
+
+			// Remove ! for further processing
+			$condition_key = substr( $condition_key, 0, -1 );
+		}
+
+     	// Check for brackets
+    	if ( strrpos( $condition_key, ']' ) === ( strlen( $condition_key ) - 1 ) && ( $pos = strpos( $condition_key, '[' ) ) !== false ) {
+        	$pure_condition_key = substr( $condition_key, 0, $pos );
+
+			// Remove the last char and get the key
+        	$condition_sub_key = substr( $condition_key, $pos + 1, -1 );
+    	} else {
+        	$pure_condition_key = $condition_key;
+    	}
+
+		return [ $pure_condition_key, $condition_sub_key, $is_negative_condition ];
+	}
+
+	/**
 	 * Whether the control is visible or not.
 	 *
 	 * Used to determine whether the control is visible or not.
@@ -1437,27 +1475,24 @@ abstract class Controls_Stack extends Base_Object {
 			$controls = $this->get_controls();
 		}
 
-		foreach ( $control['condition'] as $condition_key => $condition_value ) {
-			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
+		$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
+		$control_responsive = isset( $control['responsive'] );
 
-			$pure_condition_key = $condition_key_parts[1];
-			$condition_sub_key = $condition_key_parts[2];
-			$is_negative_condition = ! ! $condition_key_parts[3];
+		foreach ( $control['condition'] as $condition_key => $condition_value ) {
+			list( $pure_condition_key, $condition_sub_key, $is_negative_condition ) = self::parse_condition_key( $condition_key );
 
 			if ( ! isset( $values[ $pure_condition_key ] ) || null === $values[ $pure_condition_key ] ) {
 				return false;
 			}
 
-			$are_control_and_condition_responsive = isset( $control['responsive'] ) && ! empty( $controls[ $pure_condition_key ]['responsive'] );
+			$are_control_and_condition_responsive = $control_responsive && ! empty( $controls[ $pure_condition_key ]['responsive'] );
 			$condition_name_to_check = $pure_condition_key;
 
 			if ( $are_control_and_condition_responsive ) {
-				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
-
 				$condition_name_to_check = $pure_condition_key . $device_suffix;
 
 				// If the control is not desktop, and a conditioning control for the corresponding device exists, use it.
-				$instance_value = $values[ $pure_condition_key . $device_suffix ] ?? $values[ $pure_condition_key ];
+				$instance_value = $values[ $condition_name_to_check ] ?? $values[ $pure_condition_key ];
 			} else {
 				$instance_value = $values[ $pure_condition_key ];
 			}
