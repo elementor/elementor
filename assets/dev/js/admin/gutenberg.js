@@ -38,8 +38,12 @@
 
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
+				let editorButtonParent = self.cache.$gutenberg.find( '.block-editor-writing-flow' );
+				if ( ! editorButtonParent.length ) {
+					editorButtonParent = self.cache.$gutenberg.find( '.is-desktop-preview' );
+				}
 
-				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.is-desktop-preview' );
+				self.cache.$gurenbergBlockList = editorButtonParent;
 				self.cache.$gurenbergBlockList.append( self.cache.$editorPanel );
 
 				self.cache.$editorPanelButton = self.cache.$editorPanel.find( '#elementor-go-to-edit-page-link' );
