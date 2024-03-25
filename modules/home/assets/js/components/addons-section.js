@@ -15,12 +15,12 @@ const Addons = ( { ...props } ) => {
 				<Typography variant="h6">{ props.addonsData.header.title }</Typography>
 				<Typography variant="body" color="text.secondary">{ props.addonsData.header.description }</Typography>
 			</Box>
-			<List sx={ { display: 'grid', gridTemplateColumns: { md: `repeat(${ cardsPerRow }, 1fr)`, xs: 'repeat(2, 1fr)' }, gap: { md: 9, xs: 7 } } }>
+			<List sx={ { display: 'grid', gridTemplateColumns: { md: `repeat(${ cardsPerRow }, 1fr)`, xs: 'repeat(1, 1fr)' }, gap: 2 } }>
 				{
-					props.addonsData.repeater.map( ( item, index ) => {
+					props.addonsData.repeater.map( ( item ) => {
 						return (
-							<Card key={ index } elevation={ 0 } sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: 1, borderRadius: 1, borderColor: 'action.focus', alignItems: 'stretch', alignContent: 'stretch' } }>
-								<CardContent sx={ { display: 'flex', flexDirection: 'column', flexGrow: 1, gap: 3, justifyContent: 'space-between', alignItems: 'stretch', alignContent: 'stretch' } }>
+							<Card key={ item.title } elevation={ 0 } sx={ { display: 'flex', border: 1, borderRadius: 1, borderColor: 'action.focus' } }>
+								<CardContent sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 3 } }>
 									<Box>
 										<CardMedia image={ item.image } sx={ { height: '58px', width: '58px', mb: 3 } } />
 										<Box>
