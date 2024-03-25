@@ -6,9 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Transformations_Abstract {
-	/**
-	 * @var Wordpress_Adapter
- 	 */
+
 	protected $wordpress_adapter;
 
 	public function __construct( $args ) {
