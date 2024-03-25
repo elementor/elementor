@@ -48,7 +48,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 80% of the free trial.' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You’ve used 80% of credits for this AI feature.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
