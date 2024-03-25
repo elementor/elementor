@@ -199,7 +199,7 @@ export default class WpAdminPage extends BasePage {
 
 	async setUserLanguage( language: string ) {
 		await this.page.goto( 'wp-admin/profile.php' );
-		await this.page.selectOption( '[name="locale"]',language );
+		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
 	}
 
