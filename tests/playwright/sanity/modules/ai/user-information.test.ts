@@ -2,8 +2,10 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import {
 	userInformationMock,
+	freeUserInformationExceededQuota75Mock,
 	freeUserInformationExceededQuota80Mock,
 	freeUserInformationExceededQuota95Mock,
+	paidUserInformationExceededQuota75Mock,
 	paidUserInformationExceededQuota80Mock,
 	paidUserInformationExceededQuota95Mock,
 	userInformationNoConnectedMock,
@@ -31,6 +33,24 @@ test.describe( 'AI @ai', () => {
 			} );
 
 			await expect( page.locator( 'input[name="prompt"]' ) ).toHaveCount( 1 );
+
+			await page.locator( 'button[aria-label="close"]' ).click();
+		} );
+
+		await test.step( 'Free user has exceeded the quota with 75% usage', async () => {
+			await page.click( '.e-ai-button' );
+
+			await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
+				const requestPostData = route.request().postData();
+
+				if ( requestPostData.includes( 'ai_get_user_information' ) ) {
+					await route.fulfill( {
+						json: freeUserInformationExceededQuota75Mock,
+					} );
+				}
+			} );
+
+			await expect( page.getByText( 'You’ve used 75% of credits for this AI feature.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -66,7 +86,25 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 95% of the free trial.' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You’ve used 95% of credits for this AI feature.' ) ).toHaveCount( 1 );
+
+			await page.locator( 'button[aria-label="close"]' ).click();
+		} );
+
+		await test.step( 'Paid user has exceeded the quota with 75% usage', async () => {
+			await page.click( '.e-ai-button' );
+
+			await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
+				const requestPostData = route.request().postData();
+
+				if ( requestPostData.includes( 'ai_get_user_information' ) ) {
+					await route.fulfill( {
+						json: paidUserInformationExceededQuota75Mock,
+					} );
+				}
+			} );
+
+			await expect( page.getByText( 'You’ve used over 75% of your Elementor AI plan.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );

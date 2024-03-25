@@ -39,8 +39,8 @@ const alertConfigs = [
 	{
 		threshold: 75,
 		title: {
-			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 70% of your Elementor AI plan.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( ' You’ve used 70% of credits for this AI feature.', 'elementor' ),
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 75% of your Elementor AI plan.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( ' You’ve used 75% of credits for this AI feature.', 'elementor' ),
 		},
 		description: {
 			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
@@ -59,7 +59,7 @@ const UpgradeButton = ( props ) => <Button color="inherit" variant="outlined" sx
 </Button>;
 
 const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props } ) => {
-	const config = alertConfigs.findLast( ( { threshold } ) => usagePercentage >= threshold );
+	const config = alertConfigs.find( ( { threshold } ) => usagePercentage >= threshold );
 
 	if ( ! config ) {
 		return null;
