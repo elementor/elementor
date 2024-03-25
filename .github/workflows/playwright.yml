@@ -119,7 +119,7 @@ jobs:
         id: restore-build
         with:
           path: ./build/*
-          key: playwright-build123-${{ github.sha }}
+          key: playwright-build-v4-${{ github.sha }}
       - name: Update wp-env.json file
         env:
           PHP_VERSION: '8.0'
