@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { SvgIcon } from '@elementor/ui';
-import { PropTypes } from 'prop-types';
 
 const SideBarCheckIcon = ( props ) => {
 	return (
@@ -9,10 +8,6 @@ const SideBarCheckIcon = ( props ) => {
 			<path fillRule="evenodd" clipRule="evenodd" d="M17.3213 9.69424C17.6142 9.98713 17.6142 10.462 17.3213 10.7549L12.3732 15.703C12.0803 15.9959 11.6054 15.9959 11.3125 15.703L8.83851 13.2289C8.54562 12.936 8.54562 12.4612 8.83851 12.1683C9.1314 11.8754 9.60628 11.8754 9.89917 12.1683L11.8429 14.112L16.2606 9.69424C16.5535 9.40135 17.0284 9.40135 17.3213 9.69424Z" fill="#93003F" />
 		</SvgIcon>
 	);
-};
-
-SideBarCheckIcon.propTypes = {
-	url: PropTypes.object.isRequired,
 };
 
 export default SideBarCheckIcon;
