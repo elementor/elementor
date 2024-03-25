@@ -48,11 +48,25 @@
 	margin-inline-end: var(--bc-margin-inline-end, var(--margin-inline-end));
 	margin-block-end: var(--bc-margin-block-end, var(--margin-block-end));
 	margin-inline-start: var(--bc-margin-inline-start, var(--margin-inline-start));
-	padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
-	padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
+	padding-inline-start: var(--padding-inline-start);
+	padding-inline-end: var(--padding-inline-end);
 	z-index: var(--z-index);
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
+
+	&,
+	[dir="ltr"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+		--padding-inline-start: var(--padding-left);
+		--padding-inline-end: var(--padding-right);
+		--padding-block-start: var(--padding-top);
+		--padding-block-end: var(--padding-bottom);
+	}
+
+	body.rtl &,
+	[dir="rtl"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+		--padding-inline-start: var(--padding-right);
+		--padding-inline-end: var(--padding-left);
+	}
 
 	&.e-flex {
 		--flex-direction: column;
@@ -258,25 +272,5 @@
 	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: wrap;
-	}
-}
-
-// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-// LTR/RTL corrections for physical Css properties.
-.e-con {
-	--bc-margin-block-start: var(--margin-top);
-	--bc-margin-block-end: var(--margin-bottom);
-	--bc-margin-inline-start: var(--margin-left);
-	--bc-margin-inline-end: var(--margin-right);
-	--bc-padding-block-start: var(--padding-top);
-	--bc-padding-block-end: var(--padding-bottom);
-	--bc-padding-inline-start: var(--padding-left);
-	--bc-padding-inline-end: var(--padding-right);
-
-	[dir="rtl"] & {
-		--bc-margin-inline-start: var(--margin-right);
-		--bc-margin-inline-end: var(--margin-left);
-		--bc-padding-inline-start: var(--padding-right);
-		--bc-padding-inline-end: var(--padding-left);
 	}
 }

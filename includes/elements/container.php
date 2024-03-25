@@ -132,16 +132,6 @@ class Container extends Element_Base {
 				$is_nested_class_name,
 			],
 		] );
-
-		if ( $this->get_data( 'isInner' ) ) {
-			return;
-		}
-
-		// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-		$this->add_render_attribute( '_wrapper', [
-			'data-core-v316-plus' => 'true',
-		] );
 	}
 
 	/**
@@ -1348,6 +1338,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		$padding_logical = '"--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $this->logical_dimensions_inline_start; --padding-inline-end: $this->logical_dimensions_inline_end;"';
+
 		$this->add_responsive_control(
 			'padding',
 			[
@@ -1355,7 +1347,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $this->logical_dimensions_inline_start; --padding-inline-end: $this->logical_dimensions_inline_end;",
+					'{{WRAPPER}}' => "--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
 				],
 			]
 		);

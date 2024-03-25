@@ -46,8 +46,7 @@
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
 	--n-tabs-color-secondary-fallback: #54595F;
-	--n-tabs-default-padding-block: 15px;
-	--n-tabs-default-padding-inline: 35px;
+	--n-tabs-default-padding: 15px;
 	--n-tabs-background-color: transparent;
 	--n-tabs-display: flex;
 	--n-tabs-direction: column;
@@ -83,10 +82,10 @@
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
 	--n-tabs-title-order: initial;
-	--n-tabs-title-padding-block-start: var(--n-tabs-default-padding-block);
-	--n-tabs-title-padding-inline-end: var(--n-tabs-default-padding-inline);
-	--n-tabs-title-padding-block-end: var(--n-tabs-default-padding-block);
-	--n-tabs-title-padding-inline-start: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-top: var(--n-tabs-default-padding);
+	--n-tabs-title-padding-bottom: var(--n-tabs-default-padding);
+	--n-tabs-title-padding-left: var(--n-tabs-default-padding);
+	--n-tabs-title-padding-right: var(--n-tabs-default-padding);
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 	--n-tabs-icon-color: var(--e-global-color-secondary, var(--n-tabs-color-secondary-fallback));
@@ -95,6 +94,20 @@
 	--n-tabs-icon-gap: 5px;
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
+
+	&,
+	[dir="ltr"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-left);
+		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-right);
+		--n-tabs-title-padding-block-start: var(--n-tabs-title-padding-top);
+		--n-tabs-title-padding-block-end: var(--n-tabs-title-padding-bottom);
+	}
+
+	body.rtl &,
+	[dir="rtl"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-right);
+		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-left);
+	}
 
 	.e-n-tabs {
 		display: var(--n-tabs-display);

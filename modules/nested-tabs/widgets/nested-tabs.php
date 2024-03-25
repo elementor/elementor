@@ -77,8 +77,6 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
-		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
-		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 		$heading_selector_non_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
 		$heading_selector_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
 		$heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
@@ -685,7 +683,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: $logical_dimensions_inline_end; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: $logical_dimensions_inline_start;",
+					'{{WRAPPER}}' => "--n-tabs-title-padding-top: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};",
 				],
 			]
 		);
@@ -1066,7 +1064,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$content_selector => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: $logical_dimensions_inline_end; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start;",
+					$content_selector => "--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};",
 				],
 			]
 		);
