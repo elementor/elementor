@@ -59,7 +59,7 @@ const UpgradeButton = ( props ) => <Button color="inherit" variant="outlined" sx
 </Button>;
 
 const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props } ) => {
-	const config = alertConfigs.find( ( { threshold } ) => usagePercentage >= threshold );
+	const config = alertConfigs.findLast( ( { threshold } ) => usagePercentage >= threshold );
 
 	if ( ! config ) {
 		return null;
