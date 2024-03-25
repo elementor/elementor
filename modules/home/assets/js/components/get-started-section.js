@@ -14,7 +14,7 @@ const GetStarted = ( { ...props } ) => {
 				{
 					props.getStartedData.repeater.map( ( item, index ) => {
 						return (
-							<ListItemButton key={ index } alignItems="flex-start" href={ `${ adminUrl }${ item.file_path }` } target="_blank" sx={ { gap: 1, p: 0, '&:hover': { background: 'none' }, maxWidth: '150px' } }>
+							<ListItemButton key={ index } alignItems="flex-start" href={ `${ adminUrl }${ item.file_path }` } target="_blank" sx={ { gap: 1, p: 0, '&:hover': { backgroundColor: 'initial' }, maxWidth: '150px' } }>
 								<Box component="img" src={ props.getStartedData.header.image } sx={ { pt: 0.5 } }></Box>
 								<Box>
 									<ListItemText primary={ item.title } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
