@@ -12,7 +12,7 @@ const alertConfigs = [
 		},
 		description: {
 			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-95-limit-reach/',
@@ -28,7 +28,7 @@ const alertConfigs = [
 		},
 		description: {
 			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
@@ -44,7 +44,7 @@ const alertConfigs = [
 		},
 		description: {
 			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',

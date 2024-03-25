@@ -16,7 +16,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		return {
 			// Translators: %s is the feature name.
 			text: <AlertTitle>{ sprintf( __( 'You\'ve used all AI credits for %s.', 'elementor' ), featureName.toLowerCase() ) }</AlertTitle>,
-			description: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, code, Images, containers, etc.)', 'elementor' ),
+			description: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 			buttonText: __( 'Upgrade now', 'elementor' ),
 			buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
 		};
