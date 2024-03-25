@@ -12,7 +12,7 @@ const ExternalLinksSection = ( { ...props } ) => {
 					props.externalLinksData.map( ( item, index ) => {
 						return (
 							<>
-								<ListItemButton key={ index } href={ item.url } target="_blank" sx={ { '&:hover': { background: 'none' }, gap: 2, px: 0, py: 2 } }>
+								<ListItemButton key={ index } href={ item.url } target="_blank" sx={ { '&:hover': { backgroundColor: 'initial' }, gap: 2, px: 0, py: 2 } }>
 									<Box component="img" src={ item.image } sx={ { width: '38px' } }></Box>
 									<ListItemText sx={ { color: 'text.secondary' } } primary={ item.label } />
 								</ListItemButton>
