@@ -14,16 +14,16 @@ const HomeScreen = ( props ) => {
 					topData={ props.homeScreenData.top }
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
-				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
-					<Container maxWidth="md" disableGutters={ true }>
+				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
+					<Box sx={ { flex: 1 } }>
 						<GetStarted getStartedData={ props.homeScreenData.get_started } />
-					</Container>
-					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
+					</Box>
+					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' } } }>
 						{ hasSidebarUpgrade &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
 						}
 					</Container>
-				</Container>
+				</Box>
 			</Container>
 		</Box>
 	);
