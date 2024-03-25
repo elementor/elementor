@@ -184,19 +184,22 @@ export default class WpAdminPage extends BasePage {
 			languageCheck = 'en_US';
 		}
 
-		// Check if the language is active already.
 		await this.page.goto( '/wp-admin/options-general.php' );
 
-		if ( ! await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible() ) {
+		const isLanguageActive = await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible();
+
+		if ( ! isLanguageActive ) {
 			await this.page.selectOption( '#WPLANG', language );
 			await this.page.locator( '#submit' ).click();
 		}
 
-		// Set user profile language
 		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
+		await this.setUserLanguage( userProfileLanguage );
+	}
 
+	async setUserLanguage( language: string ) {
 		await this.page.goto( 'wp-admin/profile.php' );
-		await this.page.selectOption( '[name="locale"]', userProfileLanguage );
+		await this.page.selectOption( '[name="locale"]',language );
 		await this.page.locator( '#submit' ).click();
 	}
 
