@@ -1392,7 +1392,7 @@ class Container extends Element_Base {
 		);
 
 		// TODO: Copied from `common.php` - Extract to group control.
-		$this->add_control(
+		$this->add_responsive_control(
 			'position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
