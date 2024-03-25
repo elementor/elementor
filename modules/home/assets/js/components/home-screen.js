@@ -1,6 +1,8 @@
 import { Container, Box } from '@elementor/ui';
+
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
+import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
 
 const HomeScreen = ( props ) => {
@@ -22,6 +24,7 @@ const HomeScreen = ( props ) => {
 						{ hasSidebarUpgrade &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
 						}
+						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Container>
 				</Box>
 			</Container>
