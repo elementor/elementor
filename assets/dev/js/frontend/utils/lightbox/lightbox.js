@@ -920,7 +920,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
 			videoType = 'vimeo';
 			apiProvider = elementorFrontend.utils.vimeo;
-		} else if ( videoURL.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+		} else if ( videoURL.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com|youtube-nocookie\.com)/ ) ) {
 			videoType = 'youtube';
 			apiProvider = elementorFrontend.utils.youtube;
 		}
