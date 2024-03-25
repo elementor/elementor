@@ -15,7 +15,7 @@ const HomeScreen = ( props ) => {
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
 				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
-					<Container disableGutters={ true }>
+					<Container maxWidth="md" disableGutters={ true }>
 						<GetStarted getStartedData={ props.homeScreenData.get_started } />
 					</Container>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
