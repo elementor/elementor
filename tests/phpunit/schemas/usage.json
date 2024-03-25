@@ -969,6 +969,15 @@
 									],
 									"title": "Generator Tag",
 									"default": ""
+								},
+								"lottie_should_run_expressions": {
+									"$id": "#/usages/settings/advanced/lottie_should_run_expressions",
+									"title": "Lottie Run Expressions",
+									"enum": [
+										"",
+										"1"
+									],
+									"default": ""
 								}
 							},
 							"additionalProperties": false
