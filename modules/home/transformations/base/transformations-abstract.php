@@ -7,16 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Transformations_Abstract {
 	/**
-	 * @var array
-	 */
-	protected array $home_screen_data;
-
+	 * @var Wordpress_Adapter
+ 	*/
 	protected $wordpress_adapter;
 
 	public function __construct( $args ) {
-		$this->home_screen_data = $args['home_screen_data'] ?? [];
 		$this->wordpress_adapter = $args['wordpress_adapter'] ?? null;
 	}
 
-	abstract public function transform(): array;
+	abstract public function transform( array $home_screen_data ): array;
 }
