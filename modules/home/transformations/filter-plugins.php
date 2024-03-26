@@ -26,9 +26,9 @@ class Filter_Plugins extends Transformations_Abstract {
 
 		foreach ( $add_ons as $add_on ) {
 			$is_plugin = array_key_exists( 'file_path', $add_on );
-			$is_installed_plugin = $is_plugin && in_array( $add_on['file_path'], $this->get_installed_plugins() );
 
 			if ( $is_plugin ) {
+				$is_installed_plugin = in_array( $add_on['file_path'], $this->get_installed_plugins() );
 				$add_ons[ $index ]['is_installed'] = $is_installed_plugin;
 			}
 
