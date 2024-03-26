@@ -14,9 +14,9 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		}
 
 		return {
-			text: <AlertTitle>{ __( 'Your free trial is up!', 'elementor' ) }</AlertTitle>,
 			// Translators: %s is the feature name.
-			description: sprintf( __( 'Upgrade now to keep using %s', 'elementor' ), featureName ),
+			text: <AlertTitle>{ sprintf( __( 'You\'ve used all AI credits for %s.', 'elementor' ), featureName.toLowerCase() ) }</AlertTitle>,
+			description: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 			buttonText: __( 'Upgrade now', 'elementor' ),
 			buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
 		};
