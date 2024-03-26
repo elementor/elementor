@@ -65,6 +65,7 @@ class Test_Tracker extends Elementor_Test_Base {
 			'switch_editor_loader_method' => '',
 			'enable_unfiltered_file_uploads' => '1',
 			'google_font' => '1',
+			'optimized_gutenberg_loading' => '1',
 			'font_display' => 'block',
 			'font_awesome_support' => 'yes',
 			'meta_generator_tag' => '1',
