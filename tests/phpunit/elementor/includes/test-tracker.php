@@ -48,6 +48,8 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( 'elementor_google_font', '1' );
 
+		update_option( 'elementor_optimized_gutenberg_loading', '1' );
+
 		update_option( 'elementor_font_display', 'block' );
 
 		update_option( 'elementor_meta_generator_tag', '1' );
