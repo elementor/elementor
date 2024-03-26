@@ -8,7 +8,8 @@ import CardContent from '@elementor/ui/CardContent';
 import CardMedia from '@elementor/ui/CardMedia';
 
 const Addons = ( { ...props } ) => {
-	const cardsPerRow = 3 === props.addonsData.repeater.length ? 3 : 2;
+	const addonsArray = props.addonsData.repeater.filter( ( item ) => false === item.is_installed );
+	const cardsPerRow = 3 === addonsArray.length ? 3 : 2;
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Box>
@@ -17,7 +18,7 @@ const Addons = ( { ...props } ) => {
 			</Box>
 			<List sx={ { display: 'grid', gridTemplateColumns: { md: `repeat(${ cardsPerRow }, 1fr)`, xs: 'repeat(1, 1fr)' }, gap: 2 } }>
 				{
-					props.addonsData.repeater.map( ( item ) => {
+					addonsArray.map( ( item ) => {
 						return (
 							<Card key={ item.title } elevation={ 0 } sx={ { display: 'flex', border: 1, borderRadius: 1, borderColor: 'action.focus' } }>
 								<CardContent sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 3 } }>
