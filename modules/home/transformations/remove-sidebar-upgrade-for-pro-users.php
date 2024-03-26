@@ -18,11 +18,11 @@ class Remove_Sidebar_Upgrade_For_Pro_Users extends Transformations_Abstract {
 		$this->has_pro = Utils::has_pro();
 	}
 
-	public function transform(): array {
+	public function transform( array $home_screen_data ): array {
 		if ( $this->has_pro ) {
-			unset( $this->home_screen_data['sidebar_upgrade'] );
+			unset( $home_screen_data['sidebar_upgrade'] );
 		}
 
-		return $this->home_screen_data;
+		return $home_screen_data;
 	}
 }
