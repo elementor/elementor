@@ -140,6 +140,7 @@
 		"@wordpress/element": "^5.22.0",
 		"acorn": "^8.7.1",
 		"core-js": "^3.24.1",
+		"dompurify": "^3.0.10",
 		"grunt-cli": "^1.4.3",
 		"html-to-image": "^1.11.11",
 		"mime": "^3.0.0",
