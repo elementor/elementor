@@ -10,11 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	/**
-	 * @var string The experiment name.
-	 */
-	const EXPERIMENT_NAME = 'e_image_loading_optimization';
-
-	/**
 	 * @var int Minimum square-pixels threshold.
 	 */
 	private $min_priority_img_pixels = 50000;
@@ -34,28 +29,6 @@ class Module extends BaseModule {
 	 */
 	public function get_name() {
 		return 'image-loading-optimization';
-	}
-
-	/**
-	 * Get experimental data.
-	 *
-	 * @return array Experimental settings.
-	 */
-	public static function get_experimental_data() {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Optimize Image Loading', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => sprintf(
-				/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
-				esc_html__( 'Applying %1$s on LCP image and %2$s on images below the fold to improve performance scores.', 'elementor' ),
-				'<code>fetchpriority="high"</code>',
-				'<code>loading="lazy"</code>'
-			),
-			'generator_tag' => true,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-		];
 	}
 
 	/**
