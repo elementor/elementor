@@ -432,11 +432,7 @@ class Manager extends Base_Object {
 				esc_html__( 'Learn more', 'elementor' ),
 			),
 			'release_status' => self::RELEASE_STATUS_BETA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.20.0',
-			],
+			'default' => self::STATE_ACTIVE,
 			'dependencies' => [
 				'container',
 			],
