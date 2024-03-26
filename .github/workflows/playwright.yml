@@ -114,14 +114,14 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Debug
-        run: | 
-          echo ${{ needs.build-plugin.outputs.artifact_name }}
-          ls -al
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
+      - name: Debug
+        run: | 
+          echo ${{ needs.build-plugin.outputs.artifact_name }}
+          ls -al
       - name: Update wp-env.json file
         env:
           PHP_VERSION: '8.0'
