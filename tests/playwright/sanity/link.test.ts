@@ -13,11 +13,11 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 		{ title: 'image-box', selector: EditorSelectors.imageBox.link, linkTo: false },
 		{ title: 'image-carousel', selector: EditorSelectors.imageCarousel.link, linkTo: true },
 		{ title: 'social-icons', selector: EditorSelectors.socialIcons.link, linkTo: false },
-		// { title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
+		{ title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
 	];
 
 	for ( const widget in data ) {
-		test( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
+		test.only( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
 			const link = 'https://elementor.com/';
 			const customAttributes = { key: 'mykey', value: 'myValue' };
 			const wpAdmin = new WpAdminPage( page, testInfo );
@@ -26,6 +26,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			const contentTab = new Content( page, testInfo );
 
 			await editor.addWidget( data[ widget ].title );
+
 			if ( 'image-carousel' === data[ widget ].title ) {
 				await imageCarousel.addImageGallery();
 				await imageCarousel.setAutoplay();
