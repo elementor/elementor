@@ -31,7 +31,7 @@ class Transformations_Manager {
 		$transformations = self::TRANSFORMATIONS;
 
 		foreach ( $transformations as $transformation_id ) {
-			$this->home_screen_data = $this->transformation_classes[ $transformation_id ]->transform();
+			$this->home_screen_data = $this->transformation_classes[ $transformation_id ]->transform( $this->home_screen_data );
 		}
 
 		return $this->home_screen_data;
@@ -43,7 +43,6 @@ class Transformations_Manager {
 		$transformations = self::TRANSFORMATIONS;
 
 		$arguments = [
-			'home_screen_data' => $this->home_screen_data,
 			'wordpress_adapter' => $this->wordpress_adapter,
 		];
 
