@@ -164,7 +164,7 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	private static function is_optimized_gutenberg_loading_enabled() {
-		$optimized_gutenberg_loading = get_option( 'optimized_gutenberg_loading', '1' );
+		$optimized_gutenberg_loading = get_option( 'elementor_optimized_gutenberg_loading', '1' );
 
 		return $optimized_gutenberg_loading;
 	}
