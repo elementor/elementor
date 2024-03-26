@@ -176,7 +176,9 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		// Add link attributes.
 		if ( url ) {
 			newText = `<a href="${ escapeHTML( url ) }" rel="${ rel }" target="${ target }">${ escapeHTML( newText ) }</a>`;
-			newText = DOMPurify.sanitize( newText );
+			newText = DOMPurify.sanitize( newText, {
+				ADD_ATTR: [ 'target' ],
+			} );
 		}
 
 		// Set the text.
