@@ -9,7 +9,7 @@ import CardMedia from '@elementor/ui/CardMedia';
 
 const Addons = ( { ...props } ) => {
 	const domain = elementorAppConfig.admin_url.replace( 'wp-admin/', '' );
-	const addonsArray = props.addonsData.repeater.filter( ( item ) => false === item.is_installed );
+	const addonsArray = props.addonsData.repeater.filter( ( item ) => true !== item?.is_installed );
 	const cardsPerRow = 3 === addonsArray.length ? 3 : 2;
 
 	return (

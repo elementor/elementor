@@ -1,4 +1,4 @@
-import { Container, Box } from '@elementor/ui';
+import { Container, Box, Stack } from '@elementor/ui';
 
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
@@ -18,10 +18,10 @@ const HomeScreen = ( props ) => {
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
-					<Container maxWidth="md" disableGutters={ true } sx={ { display: 'flex', flexDirection: 'column', gap: 3 } }>
+					<Stack sx={ { flex: 1, gap: 3 } }>
 						<GetStarted getStartedData={ props.homeScreenData.get_started } />
 						<Addons addonsData={ props.homeScreenData.add_ons } />
-					</Container>
+					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarUpgrade &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
