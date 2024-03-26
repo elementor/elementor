@@ -19,7 +19,7 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 					listener={ focusOutListener }
 					onFocusOut={ () => unmountAction() }
 				>
-					<AiPromotionInfotip anchor={ anchor[ 0 ] }
+					<AiPromotionInfotip anchor={ anchor }
 						focusOutListener={ focusOutListener }
 						content={ ( <AiPromotionInfotipContent
 							focusOutListener={ focusOutListener }
@@ -34,7 +34,7 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 								markAsViewed();
 								focusOutListener.remove();
 								unmountAction();
-								anchor.trigger( 'click' );
+								anchor.click();
 							} }
 						/> ) }
 					/>

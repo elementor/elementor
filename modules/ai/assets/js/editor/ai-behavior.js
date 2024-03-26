@@ -146,7 +146,7 @@ export default class AiBehavior extends Marionette.Behavior {
 
 			const { unmount } = ReactUtils.render( (
 				<AiPromotionInfotipWrapper
-					anchor={ $button }
+					anchor={ $button[ 0 ] }
 					header={ promotionTexts.header }
 					contentText={ promotionTexts.contentText }
 					controlType={ controlType }
