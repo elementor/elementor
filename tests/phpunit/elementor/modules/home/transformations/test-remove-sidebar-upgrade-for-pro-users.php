@@ -10,12 +10,10 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
-		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
-			'home_screen_data' => $original_data
-		] );
+		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [] );
 
 		// Act
-		$transformed_data = $transformation->transform();
+		$transformed_data = $transformation->transform( $original_data );
 
 		// Assert
 		$this->assertTrue( $transformed_data === $original_data );
@@ -23,14 +21,14 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends PHPUnit_TestCase {
 
 	public function test_transform__pro_plugin() {
 		// Arrange
-		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [
-			'home_screen_data' => $this->mock_home_screen_data()
-		] );
+		$original_data = $this->mock_home_screen_data();
+
+		$transformation = new Remove_Sidebar_Upgrade_For_Pro_Users( [] );
 
 		$transformation->has_pro = true;
 
 		// Act
-		$transformed_data = $transformation->transform();
+		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data_transformed();
 
 		// Assert

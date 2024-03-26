@@ -24,7 +24,7 @@ const useScreenshot = ( type, onData ) => {
 				return createdScreenshot;
 			} )
 			.catch( ( err ) => {
-				setError( err.message || err );
+				setError( err.extra_data ? err : err.message || err );
 
 				throw err;
 			} )
