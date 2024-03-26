@@ -133,29 +133,14 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->register_experiments();
-
 		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_footer', [ $this, 'print_admin_js_template' ] );
-
 		add_action( 'wp_enqueue_scripts', [ $this, 'dequeue_assets' ], 999 );
 	}
 
-	public function register_experiments() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'block_editor_assets_optimize',
-			'title' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
-			'description' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'generator_tag' => true,
-		] );
-	}
-
 	public function dequeue_assets() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'block_editor_assets_optimize' ) ) {
+		if ( ! static::is_optimized_gutenberg_loading_enabled() ) {
 			return;
 		}
 
@@ -167,6 +152,21 @@ class Module extends BaseModule {
 		wp_dequeue_style( 'wp-block-library-theme' );
 		wp_dequeue_style( 'wc-block-style' );
 		wp_dequeue_style( 'wc-blocks-style' );
+	}
+
+	/**
+	 * Check whether the "optimized gutenberg loading" settings is enabled.
+	 *
+	 * The 'optimized_gutenberg_loading' option can be enabled/disabled from the Elementor settings.
+	 * For BC, when the option has not been saved in the database, the default '1' value is returned.
+	 *
+	 * @since 3.21.0
+	 * @access public
+	 */
+	private static function is_optimized_gutenberg_loading_enabled() {
+		$optimized_gutenberg_loading = get_option( 'optimized_gutenberg_loading', '1' );
+
+		return $optimized_gutenberg_loading;
 	}
 
 	private static function should_dequeue_gutenberg_assets() : bool {
