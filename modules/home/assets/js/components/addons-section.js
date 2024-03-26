@@ -10,7 +10,7 @@ import CardMedia from '@elementor/ui/CardMedia';
 const Addons = ( { ...props } ) => {
 	const addonsArray = props.addonsData.repeater.filter( ( item ) => false === item.is_installed );
 	const cardsPerRow = 3 === addonsArray.length ? 3 : 2;
-	
+
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Box>
