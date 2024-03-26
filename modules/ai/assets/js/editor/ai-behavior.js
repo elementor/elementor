@@ -1,6 +1,7 @@
 import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
+import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -66,6 +67,28 @@ export default class AiBehavior extends Marionette.Behavior {
 		return isDefaultValue ? this.getOption( 'buttonLabel' ) : this.getOption( 'editButtonLabel' );
 	}
 
+	getPromotionTexts( controlType ) {
+		switch ( controlType ) {
+			case 'textarea':
+				return {
+					header: __( "Writer's block? Never again!", 'elementor' ),
+					contentText: __( 'Elementor AI can draft your initial content and help you beat the blank page.', 'elementor' ),
+				};
+			case 'media':
+				return {
+					header: __( 'Unleash your creativity.', 'elementor' ),
+					contentText: __( 'With Elementor AI, you can generate any image you would like for your website.', 'elementor' ),
+				};
+			case 'code':
+				return {
+					header: __( 'Let the elves take care of it.', 'elementor' ),
+					contentText: __( 'Elementor AI can help you write code faster and more efficiently.', 'elementor' ),
+				};
+			default:
+				return null;
+		}
+	}
+
 	onRender() {
 		const isPromotion = ! this.config.is_get_started;
 		const buttonLabel = this.getAiButtonLabel();
@@ -99,5 +122,41 @@ export default class AiBehavior extends Marionette.Behavior {
 		$wrap.after(
 			$button,
 		);
+
+		const controlType = this.view.model.get( 'type' );
+		const promotionTexts = this.getPromotionTexts( controlType );
+		if ( ! promotionTexts ) {
+			return;
+		}
+
+		const editorSessionValue = sessionStorage.getItem( 'ai_promotion_introduction_editor_session_key' );
+		if ( ! editorSessionValue || editorSessionValue !== EDITOR_SESSION_ID ) {
+			sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', EDITOR_SESSION_ID );
+		} else {
+			return;
+		}
+		setTimeout( () => {
+			const rootBox = $button[ 0 ].getBoundingClientRect();
+			if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
+				return;
+			}
+
+			const rootElement = document.createElement( 'div' );
+			document.body.append( rootElement );
+
+			const { unmount } = ReactUtils.render( (
+				<AiPromotionInfotipWrapper
+					anchor={ $button[ 0 ] }
+					header={ promotionTexts.header }
+					contentText={ promotionTexts.contentText }
+					controlType={ controlType }
+					unmountAction={ () => {
+						unmount();
+					} }
+					colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+					isRTL={ elementorCommon.config.isRTL }
+				/>
+			), rootElement );
+		}, 1000 );
 	}
 }
