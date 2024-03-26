@@ -22,7 +22,7 @@ const HomeScreen = ( props ) => {
 						<GetStarted getStartedData={ props.homeScreenData.get_started } />
 						<Addons addonsData={ props.homeScreenData.add_ons } />
 					</Box>
-					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' } } }>
+					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarUpgrade &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
 						}
