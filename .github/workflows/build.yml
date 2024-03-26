@@ -5,10 +5,14 @@ on:
   pull_request:
   merge_group:
   workflow_call:
+    outputs:
+      artifact_name: 
+        value: ${{ jobs.run.outputs.artifact_name }}
   push:
     branches:
       - 'main'
       - '3.*'
+      
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 # concurrency:
@@ -19,6 +23,8 @@ jobs:
   run:
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -51,9 +57,3 @@ jobs:
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: elementor
-      - name: Save build to cache
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        uses: actions/cache/save@v4
-        with:
-          path: ./elementor/*
-          key: playwright-build-v4-${{ github.sha }}
