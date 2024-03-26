@@ -20,6 +20,7 @@ const HomeScreen = ( props ) => {
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
 					<Box sx={ { flex: 1 } }>
 						<GetStarted getStartedData={ props.homeScreenData.get_started } />
+						<Addons addonsData={ props.homeScreenData.add_ons } />
 					</Box>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' } } }>
 						{ hasSidebarUpgrade &&
