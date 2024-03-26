@@ -102,7 +102,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
 				],
-				'style_transfer' => true,
+				'prefix_class' => 'elementor-alert-'
 			]
 		);
 
@@ -460,10 +460,6 @@ class Widget_Alert extends Widget_Base {
 
 		$this->add_render_attribute( 'alert_wrapper', 'class', 'elementor-alert' );
 
-		if ( ! empty( $settings['alert_type'] ) ) {
-			$this->add_render_attribute( 'alert_wrapper', 'class', 'elementor-alert-' . $settings['alert_type'] );
-		}
-
 		$this->add_render_attribute( 'alert_wrapper', 'role', 'alert' );
 
 		$this->add_render_attribute( 'alert_title', 'class', 'elementor-alert-title' );
@@ -516,10 +512,6 @@ class Widget_Alert extends Widget_Base {
 		}
 
 		view.addRenderAttribute( 'alert_wrapper', 'class', 'elementor-alert' );
-
-		if ( ! settings.alert_type ) {
-			view.addRenderAttribute( 'alert_wrapper', 'class', 'elementor-alert-' . settings.alert_type );
-		}
 
 		view.addRenderAttribute( 'alert_wrapper', 'role', 'alert' );
 
