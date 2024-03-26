@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.20.3 - 2024-03-26 =
+
+* Fix: Edit with Elementor button is missing for pages that had been previously edited with Elementor when using WordPress 6.5 ([#25495](https://github.com/elementor/elementor/issues/25495), [#25496](https://github.com/elementor/elementor/issues/25496))
+* Security Fix: Improved code security enforcement in Text Path Widget
+
 = 3.20.2 - 2024-03-20 =
 
 * Fix: Media file is not allowed to be uploaded within the editor ([#25077](https://github.com/elementor/elementor/issues/25077), [#25187](https://github.com/elementor/elementor/issues/25187))
