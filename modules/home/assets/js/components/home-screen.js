@@ -18,10 +18,10 @@ const HomeScreen = ( props ) => {
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
-					<Box sx={ { flex: 1 } }>
+					<Container maxWidth="md" disableGutters={ true } sx={ { display: 'flex', flexDirection: 'column', gap: 3 } }>
 						<GetStarted getStartedData={ props.homeScreenData.get_started } />
 						<Addons addonsData={ props.homeScreenData.add_ons } />
-					</Box>
+					</Container>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarUpgrade &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
