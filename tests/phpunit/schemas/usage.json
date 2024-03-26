@@ -1049,16 +1049,6 @@
 								"font_display": "auto"
 							},
 							"experiments": {
-								"e_optimized_assets_loading": {
-									"default": "inactive",
-									"state": "default",
-									"tags": [
-										{
-											"type": "default",
-											"label": "Performance"
-										}
-									]
-								},
 								"e_optimized_css_loading": {
 									"default": "inactive",
 									"state": "default",
