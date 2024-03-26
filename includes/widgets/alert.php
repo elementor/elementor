@@ -102,7 +102,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
 				],
-				'prefix_class' => 'elementor-alert-'
+				'prefix_class' => 'elementor-alert-',
 			]
 		);
 
