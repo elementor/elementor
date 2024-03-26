@@ -11,15 +11,15 @@ const ExternalLinksSection = ( { ...props } ) => {
 				{
 					props.externalLinksData.map( ( item, index ) => {
 						return (
-							<>
-								<ListItemButton key={ item.label } href={ item.url } target="_blank" sx={ { '&:hover': { backgroundColor: 'initial' }, gap: 2, px: 0, py: 2 } }>
+							<Box key={ item.label }>
+								<ListItemButton href={ item.url } target="_blank" sx={ { '&:hover': { backgroundColor: 'initial' }, gap: 2, px: 0, py: 2 } }>
 									<Box component="img" src={ item.image } sx={ { width: '38px' } }></Box>
 									<ListItemText sx={ { color: 'text.secondary' } } primary={ item.label } />
 								</ListItemButton>
 								{
 									( index < props.externalLinksData.length - 1 ) && <Divider />
 								}
-							</>
+							</Box>
 						);
 					} )
 				}
