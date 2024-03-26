@@ -121,6 +121,7 @@ jobs:
       - name: Debug
         run: | 
           echo ${{ needs.build-plugin.outputs.artifact_name }}
+          pwd
           ls -al
       - name: Update wp-env.json file
         env:
