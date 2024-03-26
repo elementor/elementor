@@ -155,9 +155,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Check whether the "optimized gutenberg loading" settings is enabled.
+	 * Check whether the "Optimized Gutenberg Loading" settings is enabled.
 	 *
-	 * The 'optimized_gutenberg_loading' option can be enabled/disabled from the Elementor settings.
+	 * The 'elementor_optimized_gutenberg_loading' option can be enabled/disabled from the Elementor settings.
 	 * For BC, when the option has not been saved in the database, the default '1' value is returned.
 	 *
 	 * @since 3.21.0
