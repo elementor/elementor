@@ -41,7 +41,7 @@ jobs:
             | tr -d '[[:space:]]')
           export PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}"
           export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
-          grunt build
+          npx grunt build
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
@@ -55,5 +55,5 @@ jobs:
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache/save@v4
         with:
-          path: ./build/*
+          path: ./elementor/*
           key: playwright-build-v4-${{ github.sha }}
