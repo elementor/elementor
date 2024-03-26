@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
   merge_group:
+  workflow_call:
   push:
     branches:
       - 'main'
@@ -25,11 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Cache node modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-npm-${{ hashFiles('**/package-lock.json') }}
+          cache: 'npm'
       - name: Install Dependencies
         run: npm ci
       - name: Build and Deploy
@@ -54,3 +51,9 @@ jobs:
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: elementor
+      - name: Save build to cache
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        uses: actions/cache/save@v4
+        with:
+          path: ./build/*
+          key: playwright-build-v4-${{ github.sha }}
