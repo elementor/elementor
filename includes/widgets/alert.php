@@ -454,7 +454,7 @@ class Widget_Alert extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		if ( Utils::is_empty( $settings['alert_title'] ) ) {
+		if ( Utils::is_empty( $settings['alert_title'] ) && Utils::is_empty( $settings['alert_description'] ) ) {
 			return;
 		}
 
@@ -507,7 +507,7 @@ class Widget_Alert extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		if ( ! settings.alert_title ) {
+		if ( ! settings.alert_title && ! settings.alert_description ) {
 			return;
 		}
 
