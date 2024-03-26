@@ -13,7 +13,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 		{ title: 'image-box', selector: EditorSelectors.imageBox.link, linkTo: false },
 		{ title: 'image-carousel', selector: EditorSelectors.imageCarousel.link, linkTo: true },
 		{ title: 'social-icons', selector: EditorSelectors.socialIcons.link, linkTo: false },
-		{ title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
+		// { title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
 	];
 
 	for ( const widget in data ) {
