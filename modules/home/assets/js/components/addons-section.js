@@ -8,6 +8,7 @@ import CardContent from '@elementor/ui/CardContent';
 import CardMedia from '@elementor/ui/CardMedia';
 
 const Addons = ( { ...props } ) => {
+	const domain = elementorAppConfig.admin_url.replace( 'wp-admin/', '' );
 	const addonsArray = props.addonsData.repeater.filter( ( item ) => false === item.is_installed );
 	const cardsPerRow = 3 === addonsArray.length ? 3 : 2;
 
@@ -31,7 +32,7 @@ const Addons = ( { ...props } ) => {
 										</Box>
 									</Box>
 									<CardActions sx={ { p: 0 } }>
-										<Button variant="outlined" size="small" color="promotion" href={ item.url } target="_blank" sx={ { maxWidth: 'fit-content' } }>{ item.button_label }</Button>
+										<Button variant="outlined" size="small" color="promotion" href={ item.url } target="_blank">{ item.button_label }</Button>
 									</CardActions>
 								</CardContent>
 							</Card>
@@ -39,7 +40,7 @@ const Addons = ( { ...props } ) => {
 					} )
 				}
 			</List>
-			<Link variant="body2" color="info.main" underline="none">{ props.addonsData.footer.label }</Link>
+			<Link variant="body2" color="info.main" underline="none" href={ `${ domain }${ props.addonsData.footer.file_path }` }>{ props.addonsData.footer.label }</Link>
 		</Paper>
 	);
 };
