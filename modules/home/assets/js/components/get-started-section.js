@@ -17,7 +17,7 @@ const GetStarted = ( { ...props } ) => {
 								<Box component="img" src={ props.getStartedData.header.image }></Box>
 								<Box>
 									<ListItemText primary={ item.title } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
-									<ListItemText primary={ item.title_small } primaryTypographyProps={ { variant: 'body2', color: 'text.tertiary', '&:hover': { borderBottom: 1, borderColor: 'text.tertiary' } } } sx={ { '&:hover': { borderBottom: 1, borderColor: 'text.tertiary', maxWidth: 'fit-content' } } } />
+									<ListItemText primary={ item.title_small } primaryTypographyProps={ { variant: 'body2', color: 'text.tertiary' } } sx={ { '&:hover': { borderBottom: 1, borderColor: 'text.tertiary', maxWidth: 'fit-content' } } } />
 								</Box>
 							</ListItemButton>
 						);
