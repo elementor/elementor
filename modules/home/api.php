@@ -15,7 +15,7 @@ class API {
 			static::set_transient( '_elementor_home_screen_data', $home_screen_data, '+1 hour' );
 		}
 
-		return $home_screen_data;
+		return self::transform_home_screen_data( $home_screen_data );
 	}
 
 	private static function transform_home_screen_data( $json_data ): array {
