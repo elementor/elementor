@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
-      artifact_name: elementor_build-${{github.event.pull_request.id}}
+      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
@@ -68,5 +68,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         with:
-          name: elementor_build-${{github.event.pull_request.id}}
+          name: ${{ env.PLUGIN_FOLDER_FILENAME}}
           path: elementor

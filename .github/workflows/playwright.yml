@@ -1,7 +1,7 @@
 name: Playwright
 
 on:
-  #pull_request:
+  pull_request:
   workflow_dispatch:
       inputs:
         reporter:
@@ -28,11 +28,6 @@ on:
             required: true
             description: 'Cancel tests when one of them fails'
             default: false
-  workflow_run:
-    workflows: [Build]
-    types:
-      - completed
-
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -40,14 +35,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # build-plugin:
-  #   if: ${{github.event.workflow_dispatch}}
-  #   uses: ./.github/workflows/build.yml
+  build-plugin:
+    uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    #if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    needs: [build-plugin]
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       fail-fast: ${{inputs.fail_fast || true}}
       matrix:
@@ -80,38 +74,11 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      # - name: Download build artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: ${{ needs.build-plugin.outputs.artifact_name }}
-      #     path: ./build
-      - name: 'Download artifact'
-        uses: actions/github-script@v6
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          script: |
-            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: context.payload.workflow_run.id,
-            });
-            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "elementor_build-${{github.event.pull_request.id}}"
-            })[0];
-            let download = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            let fs = require('fs');
-            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/pr_number.zip`, Buffer.from(download.data));
-
-      - name: 'Unzip artifact'
-        run: unzip elementor_build-${{github.event.pull_request.id}} -d build
-      - name: Debug
-        run: | 
-          pwd
-          ls -al
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
       - name: Update wp-env.json file
         env:
           PHP_VERSION: '8.0'
