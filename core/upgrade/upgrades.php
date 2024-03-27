@@ -857,7 +857,7 @@ class Upgrades {
 		}
 	}
 
-	public static function _v_3_21_0_move_gutenberg_loading_to_settings() {
+	public static function _v_3_21_0_add_optimized_gutenberg_loading_settings() {
 		add_option( 'optimized_gutenberg_loading', '1' );
 	}
 

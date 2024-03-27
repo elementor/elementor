@@ -161,12 +161,10 @@ class Module extends BaseModule {
 	 * For BC, when the option has not been saved in the database, the default '1' value is returned.
 	 *
 	 * @since 3.21.0
-	 * @access public
+	 * @access private
 	 */
-	private static function is_optimized_gutenberg_loading_enabled() {
-		$optimized_gutenberg_loading = get_option( 'elementor_optimized_gutenberg_loading', '1' );
-
-		return $optimized_gutenberg_loading;
+	private static function is_optimized_gutenberg_loading_enabled() : bool {
+		return (bool) get_option( 'elementor_optimized_gutenberg_loading', '1' );
 	}
 
 	private static function should_dequeue_gutenberg_assets() : bool {
