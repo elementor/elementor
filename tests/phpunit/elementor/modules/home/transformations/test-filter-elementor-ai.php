@@ -43,18 +43,18 @@ class Test_Filter_Elementor_AI extends PHPUnit_TestCase {
 			'add_ons' => [
 				'repeater' => [
 					[
-						'Name' => 'Elementor',
-						'Version' => '3.0.0',
+						'title' => 'Elementor',
+						'version' => '3.0.0',
 						'file_path' => 'elementor/elementor.php',
 					],
 					[
-						'Name' => 'Something Else',
-						'Version' => '3.0.0',
+						'title' => 'Something Else',
+						'version' => '3.0.0',
 						'file_path' => 'some/thing.php',
 					],
 					[
-						'Name' => 'Elementor AI',
-						'Version' => '3.0.0',
+						'title' => 'Elementor AI',
+						'version' => '3.0.0',
 						'url' => 'elementor/elementor.php',
 					],
 				],
@@ -71,13 +71,13 @@ class Test_Filter_Elementor_AI extends PHPUnit_TestCase {
 			'add_ons' => [
 				'repeater' => [
 					[
-						'Name' => 'Elementor',
-						'Version' => '3.0.0',
+						'title' => 'Elementor',
+						'version' => '3.0.0',
 						'file_path' => 'elementor/elementor.php',
 					],
 					[
-						'Name' => 'Something Else',
-						'Version' => '3.0.0',
+						'title' => 'Something Else',
+						'version' => '3.0.0',
 						'file_path' => 'some/thing.php',
 					],
 				],
