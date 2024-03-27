@@ -68,9 +68,11 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		self.editor.setValue( self.getControlValue(), -1 ); // -1 =  move cursor to the start
 
-		self.editor.on( 'change', function() {
-			self.setValue( self.editor.getValue() );
-		} );
+		if ( this.isEditable() ) {
+			self.editor.on( 'change', function() {
+				self.setValue( self.editor.getValue() );
+			} );
+		}
 
 		if ( 'html' === self.model.attributes.language ) {
 			// Remove the `doctype` annotation
@@ -100,6 +102,12 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 	onDestroy() {
 		elementor.panel.$el.off( 'resize.aceEditor' );
+	},
+
+	isEditable() {
+		const isEditable = this.model.get( 'is_editable' );
+
+		return undefined !== isEditable ? isEditable : true;
 	},
 } );
 

@@ -162,9 +162,9 @@ export default class Content {
 		return options;
 	}
 
-	async verifySrcParams( src: string,
+	verifySrcParams( src: string,
 		expectedValues: { q: string; t: string; z: string; output: string; iwloc: string; }, player: string ) {
-		const videoOptions: any = this.parseSrc( src );
+		const videoOptions: Record< string, string | number> = this.parseSrc( src );
 		if ( 'vimeo' === player ) {
 			videoOptions.start = src.split( '#' )[ 1 ];
 		}

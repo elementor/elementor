@@ -5,11 +5,17 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
+import { $eType, WindowType, BackboneType, ElementorType, ElementorFrontendConfig } from '../types/types';
+let $e: $eType;
+let elementor: ElementorType;
+let Backbone: BackboneType;
+let window: WindowType;
+let elementorFrontendConfig: ElementorFrontendConfig;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
-	postId: string;
-	constructor( page: Page, testInfo: TestInfo, cleanPostId = null ) {
+	postId: number | null;
+	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
@@ -26,7 +32,7 @@ export default class EditorPage extends BasePage {
 		const month = date.toLocaleString( 'default', { month: '2-digit' } );
 		const data = JSON.stringify( templateData );
 		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
-		return JSON.parse( updatedData );
+		return JSON.parse( updatedData ) as JSON;
 	}
 	/*
 	 * Upload SVG in the Media Library. Expects media library to be open.
@@ -42,7 +48,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async loadTemplate( filePath: string, updateDatesForImages = false ) {
-		let templateData = require( filePath );
+		let templateData = await import( filePath ) as JSON;
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
 		// Element regression tests upload images before each test.
@@ -71,7 +77,7 @@ export default class EditorPage extends BasePage {
 		} );
 	}
 
-	async openNavigator() {
+	async openNavigator( ) {
 		const isOpen = await this.previewFrame.evaluate( () =>
 			elementor.navigator.isOpen(),
 		);
@@ -103,7 +109,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<*>} Element ID
 	 */
-	async addElement( model: any, container = null, isContainerASection = false ) {
+	async addElement( model: unknown, container: null | string = null, isContainerASection = false ): Promise<string> {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
@@ -140,7 +146,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async loadJsonPageTemplate( dirName: string, fileName: string, widgetSelector: string, updateDatesForImages = false ) {
 		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
-		const templateData = require( filePath );
+		const templateData = await import( filePath ) as JSON;
 		const pageTemplateData =
 		{
 			content: templateData,
@@ -229,7 +235,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Object} element;
 	 */
 	async selectElement( elementId: string ) {
-		await this.page.evaluate( async ( { id } ) => {
+		await this.page.evaluate( ( { id } ) => {
 			$e.run( 'document/elements/select', {
 				container: elementor.getContainer( id ),
 			} );
@@ -508,7 +514,7 @@ export default class EditorPage extends BasePage {
 
 	async publishAndViewPage() {
 		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
 		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
 		await this.page.waitForLoadState();
 	}
@@ -537,7 +543,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async editCurrentPage() {
 		const postId = await this.getPageIdFromFrontEnd();
-		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
+		expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
 		await this.gotoPostId( postId );
 	}
 
@@ -571,7 +577,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async applyElementSettings( elementId: string, settings: any ) {
+	async applyElementSettings( elementId: string, settings: unknown ) {
 		await this.page.evaluate(
 			( args ) => $e.run( 'document/elements/settings', {
 				container: elementor.getContainer( args.elementId ),
@@ -587,11 +593,10 @@ export default class EditorPage extends BasePage {
 	 * @param {string} itemSelector
 	 */
 	async isItemInViewport( itemSelector: string ) {
-		// eslint-disable-next-line no-shadow
-		return this.page.evaluate( ( itemSelector ) => {
+		return this.page.evaluate( ( item: string ) => {
 			let isVisible = false;
 
-			const element: HTMLElement = document.querySelector( itemSelector );
+			const element: HTMLElement = document.querySelector( item );
 
 			if ( element ) {
 				const rect = element.getBoundingClientRect();
@@ -654,7 +659,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async setSwitcherControlValue( controlId: string, setState = true ) {
 		const controlSelector = '.elementor-control-' + controlId,
-			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
 			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
 
 		if ( currentState !== Boolean( setState ) ) {
@@ -858,7 +863,7 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Do an @Axe-Core Accessibility test.
 	 *
-	 * @param          page
+	 * @param {Page}   page
 	 * @param {string} selector
 	 *
 	 * @return {Promise<void>}
@@ -868,13 +873,13 @@ export default class EditorPage extends BasePage {
 			.include( selector )
 			.analyze();
 
-		await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
+		expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 	}
 
 	async removeClasses( className: string ) {
 		await this.page.evaluate( async ( _class ) => {
 			await new Promise( ( resolve1 ) => {
-				var elems = document.querySelectorAll( `.${ _class }` );
+				const elems = document.querySelectorAll( `.${ _class }` );
 
 				[].forEach.call( elems, function( el: HTMLElement ) {
 					el.classList.remove( _class );
@@ -910,5 +915,9 @@ export default class EditorPage extends BasePage {
 			const admin = document.getElementById( selector );
 			admin.remove();
 		}, adminBar );
+	}
+
+	async isolatedIdNumber( idPrefix: string, itemID: string ) {
+		return Number( itemID.replace( idPrefix, '' ) );
 	}
 }

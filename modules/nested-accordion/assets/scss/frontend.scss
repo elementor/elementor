@@ -80,17 +80,16 @@
 
 					span {
 						height: var(--n-accordion-icon-size);
-						width: fit-content;
-						font-size: var(--n-accordion-icon-size);
+						width: auto;
 
 						& > i {
 							color: var(--n-accordion-icon-normal-color);
+							font-size: var(--n-accordion-icon-size);
 						}
 
 						& > svg {
 							fill: var(--n-accordion-icon-normal-color);
-							height: auto;
-							width: inherit;
+							height: var(--n-accordion-icon-size);
 						}
 					}
 				}

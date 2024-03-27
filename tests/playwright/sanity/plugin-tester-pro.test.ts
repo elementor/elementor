@@ -4,6 +4,13 @@ import wpAdminPage from '../pages/wp-admin-page';
 import WpEnvCli from '../assets/wp-env-cli';
 
 const pluginList1 = [
+	'essential-addons-for-elementor-lite',
+	'jetsticky-for-elementor',
+	'jetgridbuilder',
+	'the-plus-addons-for-elementor-page-builder',
+	'stratum',
+	'bdthemes-prime-slider-lite',
+	'wunderwp',
 	'addon-elements-for-elementor-page-builder',
 	'addons-for-elementor',
 	'anywhere-elementor',
@@ -32,13 +39,16 @@ const pluginList2 = [
 	'skyboot-custom-icons-for-elementor',
 	'sticky-header-effects-for-elementor',
 	'timeline-widget-addon-for-elementor',
-	'unlimited-elements-for-elementor',
-	'visibility-logic-elementor',
+	// 'unlimited-elements-for-elementor',
+	// 'visibility-logic-elementor',
 	'ht-mega-for-elementor',
 	'jetgridbuilder',
 	'jetsticky-for-elementor',
 	'tutor-lms-elementor-addons',
 	'code-block-for-elementor',
+	'jetwidgets-for-elementor',
+	'envato-elements',
+	'happy-elementor-addons',
 ];
 
 test.describe( `Plugin tester tests: containers`, () => {
@@ -93,6 +103,9 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
+			if ( 'happy-elementor-addons' === plugin ) {
+				await page.goto( '/law-firm-about/?elementor' );
+			}
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
 			await editorPage.closeNavigatorIfOpen();
@@ -159,6 +172,9 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
+			if ( 'happy-elementor-addons' === plugin ) {
+				await page.goto( '/law-firm-about/?elementor' );
+			}
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
 			await editorPage.closeNavigatorIfOpen();

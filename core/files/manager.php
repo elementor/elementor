@@ -128,6 +128,17 @@ class Manager {
 		do_action( 'elementor/core/files/clear_cache' );
 	}
 
+	public function clear_custom_image_sizes() {
+		$upload_info = wp_upload_dir();
+		$upload_dir = $upload_info['basedir'] . '/' . BFITHUMB_UPLOAD_DIR;
+
+		$path = $upload_dir . '/*';
+
+		foreach ( glob( $path ) as $file_path ) {
+			unlink( $file_path );
+		}
+	}
+
 	/**
 	 * Register Ajax Actions
 	 *

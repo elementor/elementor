@@ -19,6 +19,7 @@ import { ProWidgetsNotice } from './components/pro-widgets-notice';
 import { ATTACHMENT_TYPE_URL } from './components/attachments';
 import AttachDialog from './components/attachments/attach-dialog';
 import isURL from 'validator/lib/isURL';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
@@ -209,6 +210,7 @@ const FormLayout = ( {
 		} );
 
 		setAttachments( items );
+		setShouldRenderWebApp( false );
 		setIsPromptEditable( true );
 	};
 
@@ -280,6 +282,7 @@ const FormLayout = ( {
 							} } />
 					) }
 					<PromptForm
+						shouldResetPrompt={ shouldRenderWebApp }
 						ref={ promptInputRef }
 						isActive={ isPromptFormActive }
 						isLoading={ isLoading }
@@ -335,6 +338,7 @@ const FormLayout = ( {
 											}
 										</Box>
 									</Box>
+									<VoicePromotionAlert introductionKey="ai-context-layout-promotion" />
 								</Box>
 
 								{

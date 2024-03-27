@@ -4,17 +4,9 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( { e_global_styleguide: true } );
 		await page.close();
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( { e_global_styleguide: false } );
 	} );
 
 	test( 'Enabling Styleguide Preview user preference enabled Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
@@ -58,8 +50,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		] );
 
 		// Assert.
-		await expect( userPreferencesStyleguideSwitcherBeforeClick ).toBeFalsy();
-		await expect( userPreferencesStyleguideSwitcherAfterClick ).toBeTruthy();
+		expect( userPreferencesStyleguideSwitcherBeforeClick ).toBeFalsy();
+		expect( userPreferencesStyleguideSwitcherAfterClick ).toBeTruthy();
 
 		// Global Colors.
 		// Act.
@@ -69,7 +61,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert.
-		await expect( siteSettingsColorsStyleguideSwitcherIsChecked ).toBeTruthy();
+		expect( siteSettingsColorsStyleguideSwitcherIsChecked ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
 
 		// Global Typography.
@@ -87,7 +79,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
 		// Assert 2.
-		await expect( siteSettingsTypographyStyleguideSwitcherIsChecked ).toBeTruthy();
+		expect( siteSettingsTypographyStyleguideSwitcherIsChecked ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
 	} );
 
@@ -124,7 +116,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		] );
 
 		// Assert.
-		await expect( userPreferencesStyleguideSwitcherIsChecked ).toBeFalsy();
+		expect( userPreferencesStyleguideSwitcherIsChecked ).toBeFalsy();
 
 		// Global Colors.
 		// Act.
@@ -134,7 +126,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert.
-		await expect( siteSettingsColorsStyleguideSwitcherIsChecked ).toBeFalsy();
+		expect( siteSettingsColorsStyleguideSwitcherIsChecked ).toBeFalsy();
 		await expect( styleguidePreviewDialog ).toBeHidden();
 
 		// Global Typography.
@@ -151,7 +143,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
 		// Assert 2.
-		await expect( siteSettingsTypographyStyleguideSwitcherIsChecked ).toBeFalsy();
+		expect( siteSettingsTypographyStyleguideSwitcherIsChecked ).toBeFalsy();
 		await expect( styleguidePreviewDialog ).toBeHidden();
 	} );
 
@@ -163,9 +155,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert switcher is off and Styleguide Modal is hidden.
-		await expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeFalsy();
+		expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeFalsy();
 		await expect( styleguidePreviewDialog ).toBeHidden();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
@@ -175,9 +167,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 
 		// Assert switcher is on and Styleguide Modal is visible.
-		await expect( siteSettingsStyleguideSwitcherAfterClick ).toBeTruthy();
+		expect( siteSettingsStyleguideSwitcherAfterClick ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 	} );
 
 	test( 'Enabling Styleguide Preview at Global Typography shows the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
@@ -188,9 +180,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert switcher is off and Styleguide Modal is hidden.
-		await expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeFalsy();
+		expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeFalsy();
 		await expect( styleguidePreviewDialog ).toBeHidden();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
@@ -200,9 +192,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
 		// Assert switcher is on and Styleguide Modal is visible.
-		await expect( siteSettingsStyleguideSwitcherAfterClick ).toBeTruthy();
+		expect( siteSettingsStyleguideSwitcherAfterClick ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 	} );
 
 	test( 'Disabling Styleguide Preview at Global Colors hides the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
@@ -210,12 +202,12 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
-		const styleguidePreviewDialog = await editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
+		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert switcher is off and Styleguide Modal is hidden.
-		await expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
+		expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
@@ -225,9 +217,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 
 		// Assert switcher is on and Styleguide Modal is visible.
-		await expect( siteSettingsStyleguideSwitcherAfterClick ).toBeFalsy();
+		expect( siteSettingsStyleguideSwitcherAfterClick ).toBeFalsy();
 		await expect( styleguidePreviewDialog ).toBeHidden();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 	} );
 
 	test( 'Disabling Styleguide Preview at Global Typography hides the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
@@ -238,9 +230,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert switcher is off and Styleguide Modal is hidden.
-		await expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
+		expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
@@ -250,9 +242,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
 		// Assert switcher is on and Styleguide Modal is visible.
-		await expect( siteSettingsStyleguideSwitcherAfterClick ).toBeFalsy();
+		expect( siteSettingsStyleguideSwitcherAfterClick ).toBeFalsy();
 		await expect( styleguidePreviewDialog ).toBeHidden();
-		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
+		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 	} );
 
 	test( 'Clicks on color trigger picker state and active state', async ( { page }, testInfo ) => {
@@ -260,21 +252,21 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
 		const primaryColor = editor.getPreviewFrame().getByText( /Primary#[A-Fa-f0-9]{6}/i );
-		const picker = await page.locator( '.pcr-button' ).first();
+		const picker = page.locator( '.pcr-button' ).first();
 
 		// Act 1. Click on color in preview.
 		await primaryColor.click();
 
 		// Assert 1.
 		await expect( primaryColor ).toHaveClass( /active/ );
-		await expect( await page.getByText( 'Color Picker' ).first().isVisible() ).toBeTruthy();
+		expect( await page.getByText( 'Color Picker' ).first().isVisible() ).toBeTruthy();
 
 		// Act 2. click on color again everything should stay the same.
 		await primaryColor.click();
 
 		// Assert 2.
 		await expect( primaryColor ).toHaveClass( /active/ );
-		await expect( await page.getByText( 'Color Picker' ).first().isVisible() ).toBeTruthy();
+		expect( await page.getByText( 'Color Picker' ).first().isVisible() ).toBeTruthy();
 
 		// Act 3. Click picker after already active.
 		await picker.click();
@@ -288,21 +280,21 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
 
 		const secondaryFont = editor.getPreviewFrame().getByText( 'Secondary' + fontsContentText );
-		const picker = await page.locator( '.elementor-control-popover-toggle-toggle-label' ).nth( 1 );
+		const picker = page.locator( '.elementor-control-popover-toggle-toggle-label' ).nth( 1 );
 
 		// Act 1. Click on font in preview.
 		await secondaryFont.click();
 
 		// Assert 1.
 		await expect( secondaryFont ).toHaveClass( /active/ );
-		await expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
+		expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
 
 		// Act 2. click on font again nothing happens.
 		await secondaryFont.click();
 
 		// Assert 2.
 		await expect( secondaryFont ).toHaveClass( /active/ );
-		await expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
+		expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
 
 		// Arrange 3.
 		await secondaryFont.click();
@@ -318,7 +310,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
 
-		const input = await page.locator( '.elementor-repeater-fields' ).nth( 2 );
+		const input = page.locator( '.elementor-repeater-fields' ).nth( 2 );
 
 		// Act - Click on font in preview.
 		await input.click();
@@ -333,7 +325,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
-		const input = await page.locator( '.elementor-repeater-fields' ).nth( 1 );
+		const input = page.locator( '.elementor-repeater-fields' ).nth( 1 );
 
 		// Act - Change title.
 		await input.click();
@@ -348,8 +340,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
-		const picker = await page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.pcr-button' );
-		const addButton = await page.getByRole( 'button', { name: 'Add Color' } );
+		const picker = page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.pcr-button' );
+		const addButton = page.getByRole( 'button', { name: 'Add Color' } );
 
 		// Act.
 		await addButton.click();
@@ -358,11 +350,11 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await picker.click();
 
 		// Assert
-		await expect( await editor.getPreviewFrame().getByText( /New Item #1#594833/i ).count() ).toEqual( 1 );
+		expect( await editor.getPreviewFrame().getByText( /New Item #1#594833/i ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = await page.locator( '.elementor-repeater-fields' ).nth( 4 ).getByText( 'Reorder Remove' );
-		const remove = await listItem.locator( '.eicon-trash-o' );
+		const listItem = page.locator( '.elementor-repeater-fields' ).nth( 4 ).getByText( 'Reorder Remove' );
+		const remove = listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.
 		await listItem.hover();
@@ -371,24 +363,24 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		// Assert 2
 		const number = await editor.getPreviewFrame().getByText( /New Item #1#/i ).count();
-		await expect( number ).toEqual( 0 );
+		expect( number ).toEqual( 0 );
 	} );
 
 	test( 'Adding and removing new fonts', async ( { page }, testInfo ) => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
-		const addButton = await page.getByRole( 'button', { name: 'Add Style' } );
+		const addButton = page.getByRole( 'button', { name: 'Add Style' } );
 
 		// Act.
 		await addButton.click();
 
 		// Assert
 		const customFontsCount = await page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).count();
-		await expect( await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count() ).toEqual( 1 );
+		expect( await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = await page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().getByText( 'Edit Remove Reorder' );
-		const remove = await listItem.locator( '.eicon-trash-o' );
+		const listItem = page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().getByText( 'Edit Remove Reorder' );
+		const remove = listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.
 		await listItem.hover();
@@ -397,7 +389,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		// Assert 2
 		const number = await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count();
-		await expect( number ).toEqual( 0 );
+		expect( number ).toEqual( 0 );
 	} );
 
 	test( 'Changed color in picker to reflect in styleguide', async ( { page }, testInfo ) => {
@@ -405,7 +397,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 		const secondaryColor = editor.getPreviewFrame().getByText( /Secondary#[A-Fa-f0-9]{6}/i );
 
-		const picker = await page.locator( '.elementor-repeater-fields' ).nth( 1 ).locator( '.pcr-button' );
+		const picker = page.locator( '.elementor-repeater-fields' ).nth( 1 ).locator( '.pcr-button' );
 		// Act.
 		await picker.click();
 		await page.locator( '.pcr-result' ).nth( 1 ).fill( '#594833' );
@@ -419,17 +411,17 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
 
 		const textFont = editor.getPreviewFrame().getByText( 'Text' + fontsContentText );
-		const picker = await page.locator( '.elementor-repeater-fields' ).nth( 2 ).locator( '.eicon-edit' ).first();
+		const picker = page.locator( '.elementor-repeater-fields' ).nth( 2 ).locator( '.eicon-edit' ).first();
 
 		// Act.
 		await picker.click();
-		const select = await page.locator( '.elementor-repeater-fields' ).nth( 2 ).getByRole( 'combobox', { name: 'Style' } );
+		const select = page.locator( '.elementor-repeater-fields' ).nth( 2 ).getByRole( 'combobox', { name: 'Style' } );
 		await select.selectOption( { label: 'Italic' } );
-		const select2 = await page.locator( '.elementor-repeater-fields' ).nth( 2 ).getByRole( 'combobox', { name: 'Decoration' } );
+		const select2 = page.locator( '.elementor-repeater-fields' ).nth( 2 ).getByRole( 'combobox', { name: 'Decoration' } );
 		await select2.selectOption( { label: 'Underline' } );
 
 		// Assert
-		const content = await textFont.locator( 'p' ).nth( 1 );
+		const content = textFont.locator( 'p' ).nth( 1 );
 		await expect( content ).toHaveCSS( 'font-style', 'italic' );
 		await expect( content ).toHaveCSS( 'text-decoration-line', 'underline' );
 	} );
@@ -464,8 +456,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
-		const fontsButton = await editor.getPreviewFrame().getByRole( 'button', { name: 'Fonts' } );
-		const colorButton = await editor.getPreviewFrame().getByRole( 'button', { name: 'Colors' } );
+		const fontsButton = editor.getPreviewFrame().getByRole( 'button', { name: 'Fonts' } );
+		const colorButton = editor.getPreviewFrame().getByRole( 'button', { name: 'Colors' } );
 
 		// Act.
 		await fontsButton.click();

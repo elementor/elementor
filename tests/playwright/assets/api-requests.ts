@@ -1,7 +1,9 @@
 import fs from 'fs';
 import _path from 'path';
 import { APIRequest, type APIRequestContext } from '@playwright/test';
-import { Image, StorageState, WpPage } from '../types/types';
+import { Image, StorageState, Post, WpPage } from '../types/types';
+import axios from 'axios';
+import FormData from 'form-data';
 const headers = {
 	'X-WP-Nonce': process.env.WP_REST_NONCE,
 };
@@ -53,11 +55,11 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 		pagesDraft = await getPages( request, 'draft' ),
 		pages = [ ...pagesPublished, ...pagesDraft ];
 
-	const ids = pages
-		.filter( ( page: WpPage ) => page.title?.rendered?.includes( 'Playwright Test Page' ) )
+	const pageIds = pages
+		.filter( ( page: WpPage ) => page.title.rendered.includes( 'Playwright Test Page' ) )
 		.map( ( page: WpPage ) => page.id );
 
-	for ( const id of ids ) {
+	for ( const id of pageIds ) {
 		await deletePage( request, id );
 	}
 }
@@ -90,17 +92,11 @@ async function _delete( request: APIRequestContext, entity: string, id: string )
 }
 
 export async function deletePost( request: APIRequestContext, postId: string ) {
-	const response = await request.delete( '/index.php', {
-		params: { rest_route: `/wp/v2/posts/${ postId }` },
-		headers,
-	} );
+	await _delete( request, 'posts', postId );
+}
 
-	if ( ! response.ok() ) {
-		throw new Error( `
-			Failed to delete a post: ${ response.status() }.
-			${ await response.text() }
-		` );
-	}
+export async function deletePage( request: APIRequestContext, pageId: string ) {
+	await _delete( request, 'pages', pageId );
 }
 
 async function get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
@@ -122,10 +118,60 @@ async function get( request: APIRequestContext, entity: string, status: string =
 	return data;
 }
 
+export async function create( request: APIRequestContext, entity: string, data: Post ) {
+	const response = await request.post( '/index.php', {
+		params: { rest_route: `/wp/v2/${ entity }` },
+		headers,
+		multipart: data,
+	} );
+
+	if ( ! response.ok() ) {
+		throw new Error( `
+			Failed to create a ${ entity }: ${ response.status() }.
+			${ await response.text() }
+		` );
+	}
+	const { id } = await response.json();
+
+	return id;
+}
+
+export async function getPosts( request: APIRequestContext, status: string = 'publish' ) {
+	return await get( request, 'posts', status );
+}
+
 export async function getPages( request: APIRequestContext, status: string = 'publish' ) {
 	return await get( request, 'pages', status );
 }
 
-export async function deletePage( request: APIRequestContext, id: string ) {
-	await _delete( request, 'pages', id );
+export async function loginApi( user: string, pw: string, url: string ) {
+	const data = new FormData();
+	data.append( 'log', user );
+	data.append( 'pwd', pw );
+	data.append( 'wp-submit', 'Log In' );
+	data.append( 'redirect_to', `${ url }/wp-admin/` );
+	data.append( 'testcookie', '1' );
+
+	const config = {
+		method: 'post',
+		maxBodyLength: Infinity,
+		url: `${ url }/wp-login.php`,
+		data,
+	};
+
+	const response = await axios.request( config );
+
+	const cookies: Array<{name: string, value: string, domain: string, path: string}> = [];
+	const domain = new URL( url );
+
+	response.headers[ 'set-cookie' ].forEach( ( cookie ) => {
+		const data1 = cookie.split( ';' )[ 0 ].split( '=' );
+		const obj = { name: data1[ 0 ], value: data1[ 1 ], domain: domain.hostname, path: '/' };
+		cookies.push( obj );
+	} );
+
+	if ( response.status !== 200 ) {
+		throw new Error( JSON.stringify( response.data ) );
+	}
+	return cookies;
 }

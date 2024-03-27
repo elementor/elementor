@@ -36,7 +36,6 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 
 	// Act.
 	await publishButton.click();
-	await page.waitForLoadState( 'networkidle' );
 
 	// Assert.
 	await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, {

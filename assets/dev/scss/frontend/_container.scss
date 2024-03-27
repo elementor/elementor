@@ -1,10 +1,10 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
-	--border-block-start-width: 0px;
-	--border-inline-end-width: 0px;
-	--border-block-end-width: 0px;
-	--border-inline-start-width: 0px;
+	--border-top-width: 0px;
+	--border-right-width: 0px;
+	--border-bottom-width: 0px;
+	--border-left-width: 0px;
 	--border-style: initial;
 	--border-color: initial;
 	--container-widget-width: 100%;
@@ -19,14 +19,14 @@
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
-	--margin-block-start: 0px;
-	--margin-inline-end: 0px;
-	--margin-block-end: 0px;
-	--margin-inline-start: 0px;
-	--padding-block-start: var(--container-default-padding-block-start, 10px);
-	--padding-inline-end: var(--container-default-padding-inline-end, 10px);
-	--padding-block-end: var(--container-default-padding-block-end, 10px);
-	--padding-inline-start: var(--container-default-padding-inline-start, 10px);
+	--margin-top: 0px;
+	--margin-right: 0px;
+	--margin-bottom: 0px;
+	--margin-left: 0px;
+	--padding-top: var(--container-default-padding-top, 10px);
+	--padding-right: var(--container-default-padding-right, 10px);
+	--padding-bottom: var(--container-default-padding-bottom, 10px);
+	--padding-left: var(--container-default-padding-left, 10px);
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -44,15 +44,40 @@
 	min-height: var(--min-height);
 	height: var(--height);
 	border-radius: var(--border-radius);
-	margin-block-start: var(--bc-margin-block-start, var(--margin-block-start));
-	margin-inline-end: var(--bc-margin-inline-end, var(--margin-inline-end));
-	margin-block-end: var(--bc-margin-block-end, var(--margin-block-end));
-	margin-inline-start: var(--bc-margin-inline-start, var(--margin-inline-start));
-	padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
-	padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
 	z-index: var(--z-index);
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
+
+	& {
+		--margin-block-start: var(--margin-top);
+		--margin-block-end: var(--margin-bottom);
+		--margin-inline-start: var(--margin-left);
+		--margin-inline-end: var(--margin-right);
+		--padding-inline-start: var(--padding-left);
+		--padding-inline-end: var(--padding-right);
+		--padding-block-start: var(--padding-top);
+		--padding-block-end: var(--padding-bottom);
+		--border-block-start-width: var(--border-top-width);
+		--border-block-end-width: var(--border-bottom-width);
+		--border-inline-start-width: var(--border-left-width);
+		--border-inline-end-width: var(--border-right-width);
+	}
+
+	body.rtl & {
+		--padding-inline-start: var(--padding-right);
+		--padding-inline-end: var(--padding-left);
+		--margin-inline-start: var(--margin-right);
+		--margin-inline-end: var(--margin-left);
+		--border-inline-start-width: var(--border-right-width);
+		--border-inline-end-width: var(--border-left-width);
+	}
+
+	margin-block-start: var(--margin-block-start);
+	margin-inline-end: var(--margin-inline-end);
+	margin-block-end: var(--margin-block-end);
+	margin-inline-start: var(--margin-inline-start);
+	padding-inline-start: var(--padding-inline-start);
+	padding-inline-end: var(--padding-inline-end);
 
 	&.e-flex {
 		--flex-direction: column;
@@ -65,8 +90,8 @@
 	&-full,
 	& > .e-con-inner {
 		text-align: var(--text-align);
-		padding-block-start: var(--bc-padding-block-start, var(--padding-block-start));
-		padding-block-end: var(--bc-padding-block-end, var(--padding-block-end));
+		padding-block-start: var(--padding-block-start);
+		padding-block-end: var(--padding-block-end);
 	}
 
 	&-full.e-flex,
@@ -146,8 +171,8 @@
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		// Default top-level containers to be centered.
-		--margin-inline-end: auto;
-		--margin-inline-start: auto;
+		--margin-left: auto;
+		--margin-right: auto;
 
 		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
 		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
@@ -169,10 +194,10 @@
 		border-inline-end-width: var(--border-inline-end-width);
 		border-block-end-width: var(--border-block-end-width);
 		border-inline-start-width: var(--border-inline-start-width);
-		top: calc(0px - var(--border-block-start-width));
-		left: calc(0px - var(--border-inline-start-width));
-		width: max(calc(100% + var(--border-inline-end-width) + var(--border-inline-start-width)), 100%);
-		height: max(calc(100% + var(--border-block-start-width) + var(--border-block-end-width)), 100%);
+		top: calc(0px - var(--border-top-width));
+		left: calc(0px - var(--border-left-width));
+		width: max(calc(100% + var(--border-left-width) + var(--border-right-width)), 100%);
+		height: max(calc(100% + var(--border-top-width) + var(--border-bottom-width)), 100%);
 	}
 
 	// Background overlay.
@@ -258,25 +283,5 @@
 	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: wrap;
-	}
-}
-
-// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-// LTR/RTL corrections for physical Css properties.
-.e-con {
-	--bc-margin-block-start: var(--margin-top);
-	--bc-margin-block-end: var(--margin-bottom);
-	--bc-margin-inline-start: var(--margin-left);
-	--bc-margin-inline-end: var(--margin-right);
-	--bc-padding-block-start: var(--padding-top);
-	--bc-padding-block-end: var(--padding-bottom);
-	--bc-padding-inline-start: var(--padding-left);
-	--bc-padding-inline-end: var(--padding-right);
-
-	[dir="rtl"] & {
-		--bc-margin-inline-start: var(--margin-right);
-		--bc-margin-inline-end: var(--margin-left);
-		--bc-padding-inline-start: var(--padding-right);
-		--bc-padding-inline-end: var(--padding-left);
 	}
 }

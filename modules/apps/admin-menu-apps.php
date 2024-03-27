@@ -19,11 +19,11 @@ class Admin_Menu_Apps implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Apps', 'elementor' );
+		return esc_html__( 'Add-ons', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Apps', 'elementor' );
+		return esc_html__( 'Add-ons', 'elementor' );
 	}
 
 	public function get_capability() {

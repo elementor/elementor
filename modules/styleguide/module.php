@@ -2,7 +2,6 @@
 namespace Elementor\Modules\Styleguide;
 
 use Elementor\Core\Base\Module as Base_Module;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Modules\Styleguide\Controls\Switcher;
 
@@ -14,8 +13,6 @@ class Module extends Base_Module {
 
 	const ASSETS_HANDLE = 'elementor-styleguide';
 	const ASSETS_SRC = 'styleguide';
-
-	const EXPERIMENT_NAME = 'e_global_styleguide';
 
 	/**
 	 * Initialize the Container-Converter module.
@@ -48,20 +45,6 @@ class Module extends Base_Module {
 	 */
 	public function get_name() {
 		return 'styleguide';
-	}
-
-	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Global Style Guide', 'elementor' ),
-			'description' => esc_html__( 'Display a live preview of changes to global colors and fonts in a sleek style guide from the site’s settings. You will be able to toggle between the style guide and the page to see your changes in action.', 'elementor' ),
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-		];
 	}
 
 	/**

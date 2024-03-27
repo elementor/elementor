@@ -14,7 +14,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { UpgradeIcon, CheckedCircleIcon, AIIcon } from '@elementor/icons';
+import { CheckedCircleIcon, AIIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
@@ -106,7 +106,7 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
+			<Chip color="promotion" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -144,14 +144,14 @@ const UpgradeChip = ( {
 
 					<Button
 						variant="contained"
-						color="accent"
+						color="promotion"
 						size="small"
 						href={ actionUrl }
 						target="_blank"
 						startIcon={ <AIIcon /> }
 						sx={ {
 							'&:hover': {
-								color: 'accent.contrastText',
+								color: 'promotion.contrastText',
 							},
 						} }
 					>

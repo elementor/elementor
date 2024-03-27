@@ -10,7 +10,7 @@ test.describe( 'Context menu', () => {
 		const editorPage = new EditorPage( page, testInfo );
 		const wpAdminPage = new WpAdminPage( page, testInfo );
 		const contextMenu = new ContextMenu( page, testInfo );
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await page.locator( EditorSelectors.widgetsPanelIcon ).click();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Edit Heading' );
@@ -21,7 +21,7 @@ test.describe( 'Context menu', () => {
 		const editorPage = new EditorPage( page, testInfo );
 		const wpAdminPage = new WpAdminPage( page, testInfo );
 		const contextMenu = new ContextMenu( page, testInfo );
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await page.locator( EditorSelectors.widgetsPanelIcon ).click();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Duplicate' );
@@ -32,7 +32,7 @@ test.describe( 'Context menu', () => {
 		const editorPage = new EditorPage( page, testInfo );
 		const wpAdminPage = new WpAdminPage( page, testInfo );
 		const contextMenu = new ContextMenu( page, testInfo );
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await page.locator( EditorSelectors.widgetsPanelIcon ).click();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Copy' );
@@ -47,7 +47,7 @@ test.describe( 'Context menu', () => {
 		const styleTab = new Style( page, testInfo );
 		const headingSelector = '.elementor-heading-title';
 
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await styleTab.setColorPicker( 'heading', '#E46E6E' );
 		await expect( editorPage.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
@@ -60,7 +60,7 @@ test.describe( 'Context menu', () => {
 		const wpAdminPage = new WpAdminPage( page, testInfo );
 		const contextMenu = new ContextMenu( page, testInfo );
 
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await page.locator( EditorSelectors.widgetsPanelIcon ).click();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Navigator' );
@@ -72,7 +72,7 @@ test.describe( 'Context menu', () => {
 		const wpAdminPage = new WpAdminPage( page, testInfo );
 		const contextMenu = new ContextMenu( page, testInfo );
 
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await page.locator( EditorSelectors.widgetsPanelIcon ).click();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Delete' );
@@ -84,7 +84,7 @@ test.describe( 'Context menu', () => {
 		const wpAdminPage = new WpAdminPage( page, testInfo );
 		const contextMenu = new ContextMenu( page, testInfo );
 
-		await wpAdminPage.openNewPage( '', false );
+		await wpAdminPage.openNewPage();
 		await editorPage.addWidget( 'heading' );
 		await page.locator( EditorSelectors.widgetsPanelIcon ).click();
 		await contextMenu.openContextMenu( 'heading' );

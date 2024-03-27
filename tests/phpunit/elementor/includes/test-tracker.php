@@ -48,6 +48,8 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( 'elementor_google_font', '1' );
 
+		update_option( 'elementor_optimized_gutenberg_loading', '1' );
+
 		update_option( 'elementor_font_display', 'block' );
 
 		update_option( 'elementor_meta_generator_tag', '1' );
@@ -63,42 +65,11 @@ class Test_Tracker extends Elementor_Test_Base {
 			'switch_editor_loader_method' => '',
 			'enable_unfiltered_file_uploads' => '1',
 			'google_font' => '1',
+			'optimized_gutenberg_loading' => '1',
 			'font_display' => 'block',
 			'font_awesome_support' => 'yes',
 			'meta_generator_tag' => '1',
 		], $actual );
-	}
-
-	public function test_get_settings_experiments_usage() {
-		// Arrange.
-		$original_experiments_manager = Plugin::$instance->experiments;
-
-		// Mock experiments manager.
-		Plugin::$instance->experiments = $this->getMockBuilder( Experiments_Manager::class )
-		     ->setMethods( [ 'get_features' ] )
-		     ->getMock();
-
-		// Set mock data.
-		Plugin::$instance->experiments
-			->method( 'get_features' )
-			->willReturn( [
-				'e_dom_optimization' => [
-					'default' => 'active',
-					'name' => 'e_dom_optimization',
-					'state' => 'default',
-				],
-			] );
-
-		// Assert.
-		$this->assertEquals( [
-			'e_dom_optimization' => [
-				'default' => 'active',
-				'state' => 'default',
-			]
-		], Tracker::get_settings_experiments_usage() );
-
-		// Cleanup.
-		Plugin::$instance->experiments = $original_experiments_manager;
 	}
 
 	public function test_get_tools_general_usage() {

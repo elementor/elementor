@@ -15,6 +15,29 @@ export function isWidgetSupportNesting( widgetType ) {
 	return widgetConfig.support_nesting;
 }
 
+export function isWidgetSupportAtomicRepeaters( widgetType ) {
+	const widgetConfig = elementor.widgetsCache[ widgetType ];
+
+	if ( ! widgetConfig ) {
+		return false;
+	}
+
+	return widgetConfig.support_improved_repeaters;
+}
+
+export function widgetNodes( widgetType ) {
+	const widgetConfig = elementor.widgetsCache[ widgetType ];
+
+	if ( ! widgetConfig ) {
+		return false;
+	}
+
+	return {
+		targetContainer: widgetConfig.target_container,
+		node: widgetConfig.node,
+	};
+}
+
 export function findChildContainerOrFail( container, index ) {
 	const childView = container.view.children.findByIndex( index );
 
@@ -23,4 +46,24 @@ export function findChildContainerOrFail( container, index ) {
 	}
 
 	return childView.getContainer();
+}
+
+export function shouldUseAtomicRepeaters( widgetType ) {
+	return elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
+		isWidgetSupportNesting( widgetType ) &&
+		isWidgetSupportAtomicRepeaters( widgetType );
+}
+
+export function sortViewsByModels( container ) {
+	const models = container.model.get( 'elements' ).models,
+		children = container.view.children,
+		updatedViews = {};
+
+	models.forEach( ( model, index ) => {
+		const view = children.findByModel( model );
+		view._index = index;
+		updatedViews[ view.cid ] = view;
+	} );
+
+	return updatedViews;
 }

@@ -375,7 +375,11 @@ abstract class Settings_Page {
 					'type' => 'checkbox',
 					'value' => 'yes',
 					'default' => '',
-					'sub_desc' => esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', esc_html__( 'Learn more.', 'elementor' ) ),
+					'sub_desc' => sprintf(
+						'%1$s <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">%2$s</a>',
+						esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ),
+						esc_html__( 'Learn more', 'elementor' )
+					),
 				],
 				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 			],

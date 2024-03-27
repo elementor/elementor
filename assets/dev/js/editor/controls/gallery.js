@@ -11,7 +11,11 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		ui.clearGallery = '.elementor-control-gallery-clear';
 		ui.galleryThumbnails = '.elementor-control-gallery-thumbnails';
 		ui.status = '.elementor-control-gallery-status-title';
-		ui.warnings = '.elementor-control-media__warnings';
+		// eslint-disable-next-line capitalized-comments
+		// ui.warnings = '.elementor-control-media__warnings';
+		ui.promotions = '.elementor-control-media__promotions';
+		ui.promotions_dismiss = '.elementor-control-media__promotions .elementor-control-notice-dismiss';
+		ui.promotions_action = '.elementor-control-media__promotions .elementor-control-notice-main-actions button';
 
 		return ui;
 	},
@@ -21,6 +25,8 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
 			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick',
+			'click @ui.promotions_dismiss': 'onPromotionDismiss',
+			'click @ui.promotions_action': 'onPromotionAction',
 			'keyup @ui.galleryThumbnails': 'onGalleryThumbnailsKeyPress',
 		} );
 	},
@@ -29,11 +35,16 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.initRemoveDialog();
 	},
 
-	applySavedValue() {
+	async applySavedValue() {
 		var images = this.getControlValue(),
 			imagesCount = images.length,
 			hasImages = !! imagesCount,
-			imagesWithoutAlt = 0;
+			// eslint-disable-next-line capitalized-comments
+			// imagesWithoutAlt = 0,
+			imagesWithoutOptimization = 0,
+			promotionsAlwaysOn = false;
+
+		const hasPromotions = this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( this.getDismissPromotionEventName() );
 
 		this.$el
 			.toggleClass( 'elementor-gallery-has-images', hasImages )
@@ -46,47 +57,71 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		/* Translators: %s: Selected images count. */
 		this.ui.status.text( hasImages ? sprintf( __( '%s Images Selected', 'elementor' ), imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
+		if ( hasPromotions ) {
+			promotionsAlwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
+		}
 		if ( ! hasImages ) {
 			return;
 		}
 
-		this.getControlValue().forEach( ( image ) => {
-			var $thumbnail = jQuery( '<div>', { class: 'elementor-control-gallery-thumbnail' } );
+		const attachments = [];
 
-			$thumbnail.css( 'background-image', 'url(' + image.url + ')' );
+		this.getControlValue().forEach( ( image, thumbIndex ) => {
+			const $thumbnail = jQuery( '<img>', {
+				class: 'elementor-control-gallery-thumbnail',
+				src: image.url,
+				alt: 'gallery-thumbnail-' + thumbIndex,
+			} );
 
 			$galleryThumbnails.append( $thumbnail );
 
-			imagesWithoutAlt += this.imageHasAlt( image.id ) ? 0 : 1;
+			const handleHints = ( attachment ) => {
+				const hasAlt = this.imageHasAlt( attachment );
+				if ( ! hasAlt ) {
+					$thumbnail.addClass( 'unoptimized__image' );
+					// eslint-disable-next-line capitalized-comments
+					// imagesWithoutAlt += hasAlt ? 0 : 1;
+				}
+
+				if ( hasPromotions && this.imageNotOptimized( attachment ) ) {
+					imagesWithoutOptimization += 1;
+				}
+			};
+
+			attachments.push( wp.media.attachment( image.id ).fetch().then( handleHints ) );
 		} );
 
-		this.ui.warnings.text(
-			imagesWithoutAlt > 0
-				? sprintf(
-					/* Translators: %s: The number of images that don’t contain ALT text. */
-					__( 'These %s images don’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
-					imagesWithoutAlt,
-				)
-				: '',
-		);
+		// Ensure all attachments are fetched before updating the warnings
+		await Promise.all( attachments ).then( () => {
+			// eslint-disable-next-line capitalized-comments
+			// this.ui.warnings.toggle( !! imagesWithoutAlt );
+			if ( hasPromotions ) {
+				const showHints = promotionsAlwaysOn || !! imagesWithoutOptimization;
+				this.ui.promotions.toggle( showHints );
+			}
+		} );
 	},
 
 	hasImages() {
 		return !! this.getControlValue().length;
 	},
 
-	imageHasAlt( attachmentId ) {
-		const attachment = wp.media.attachment( attachmentId ),
-			attachmentAlt = attachment.attributes?.alt?.trim() || '',
-			changedAlt = attachment.changed?.alt?.trim() || '',
-			hasAttachmentAlt = !! attachmentAlt,
-			hasChangedAlt = !! changedAlt,
-			missingAlt =
-				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
-				( ! hasAttachmentAlt && hasChangedAlt ) ||
-				( hasAttachmentAlt && ! hasChangedAlt );
+	imageHasAlt( attachment ) {
+		const attachmentAlt = attachment?.alt?.trim() || '';
+		return !! attachmentAlt;
+	},
 
-		return ! missingAlt;
+	imageNotOptimized( attachment ) {
+		const checks = {
+			height: 1080,
+			width: 1920,
+			filesizeInBytes: 100000,
+		};
+
+		return Object.keys( checks ).some( ( key ) => {
+			const value = attachment[ key ] || false;
+			return value && value > checks[ key ];
+		} );
 	},
 
 	openFrame( action ) {
@@ -196,6 +231,51 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.applySavedValue();
 	},
 
+	onPromotionDismiss() {
+		this.dismissPromotion( this.getDismissPromotionEventName() );
+	},
+
+	getDismissPromotionEventName() {
+		const $promotions = this.ui.promotions;
+		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
+		// Remove listener
+		$dismissButton.off( 'click' );
+		return $dismissButton[ 0 ]?.dataset?.event || false;
+	},
+
+	hidePromotion( eventName = null ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( ! eventName ) {
+			eventName = this.getDismissPromotionEventName();
+		}
+		// Prevent opening the same promotion again in current editor session.
+		elementor.config.user.dismissed_editor_notices.push( eventName );
+	},
+
+	onPromotionAction( event ) {
+		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		if ( actionURL ) {
+			window.open( actionURL, '_blank' );
+		}
+		this.hidePromotion();
+	},
+
+	dismissPromotion( eventName ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( eventName ) {
+			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
+				data: {
+					dismissId: eventName,
+				},
+			} );
+
+			// Prevent opening the same promotion again in current editor session.
+			elementor.config.user.dismissed_editor_notices.push( eventName );
+		}
+	},
+
 	onBeforeDestroy() {
 		if ( this.frame ) {
 			this.frame.off();
@@ -209,7 +289,12 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.applySavedValue();
 
-		this.ui.warnings.text( '' );
+		// eslint-disable-next-line capitalized-comments
+		// this.ui.warnings.hide();
+
+		if ( this.ui.promotions ) {
+			this.ui.promotions.hide();
+		}
 	},
 
 	initRemoveDialog() {

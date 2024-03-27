@@ -13,7 +13,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
-		ui.warnings = '.elementor-control-media__warnings';
+		// eslint-disable-next-line capitalized-comments
+		// ui.warnings = '.elementor-control-media__warnings';
+		ui.promotions = '.elementor-control-media__promotions';
+		ui.promotions_dismiss = '.elementor-control-media__promotions .elementor-control-notice-dismiss';
+		ui.promotions_action = '.elementor-control-media__promotions .elementor-control-notice-main-actions button';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 		ui.mediaInputImageSize = '.e-image-size-select';
 
@@ -25,6 +29,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
 			'change @ui.mediaInputImageSize': 'onMediaInputImageSizeChange',
+			'click @ui.promotions_dismiss': 'onPromotionDismiss',
+			'click @ui.promotions_action': 'onPromotionAction',
 		} );
 	},
 
@@ -83,8 +89,28 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			.toggleClass( 'e-media-empty', ! value )
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 
-		if ( 'image' === mediaType && attachmentId ) {
-			this.ui.warnings.text( this.imageHasAlt( attachmentId ) ? '' : __( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ) );
+		if ( 'image' === mediaType ) {
+			if ( attachmentId ) {
+				const dismissPromotionEventName = this.getDismissPromotionEventName();
+				const handleHints = ( attachment ) => {
+					// eslint-disable-next-line capitalized-comments
+					// this.ui.warnings.toggle( ! this.imageHasAlt( attachment ) );
+					if ( this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( dismissPromotionEventName ) ) {
+						const alwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
+						const showHint = alwaysOn || this.imageNotOptimized( attachment );
+						this.ui.promotions.toggle( showHint );
+					}
+				};
+				wp.media.attachment( attachmentId ).fetch().then( handleHints );
+			} else {
+				// eslint-disable-next-line capitalized-comments
+				// this.ui.warnings.hide();
+
+				// eslint-disable-next-line no-lonely-if
+				if ( this.ui.promotions.length ) {
+					this.ui.promotions.hide();
+				}
+			}
 		}
 	},
 
@@ -138,22 +164,65 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
-
-		this.ui.warnings.text( '' );
 	},
 
-	imageHasAlt( attachmentId ) {
-		const attachment = wp.media.attachment( attachmentId ),
-			attachmentAlt = attachment.attributes?.alt?.trim() || '',
-			changedAlt = attachment.changed?.alt?.trim() || '',
-			hasAttachmentAlt = !! attachmentAlt,
-			hasChangedAlt = !! changedAlt,
-			missingAlt =
-				( ! hasAttachmentAlt && ! hasChangedAlt ) ||
-				( ! hasAttachmentAlt && hasChangedAlt ) ||
-				( hasAttachmentAlt && ! hasChangedAlt );
+	imageHasAlt( attachment ) {
+		const attachmentAlt = attachment?.alt?.trim() || '';
+		return !! attachmentAlt;
+	},
 
-		return ! missingAlt;
+	imageNotOptimized( attachment ) {
+		const checks = {
+			height: 1080,
+			width: 1920,
+			filesizeInBytes: 100000,
+		};
+
+		return Object.keys( checks ).some( ( key ) => {
+			const value = attachment[ key ] || false;
+			return value && value > checks[ key ];
+		} );
+	},
+
+	getDismissPromotionEventName() {
+		const $promotions = this.ui.promotions;
+		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
+		// Remove listener
+		$dismissButton.off( 'click' );
+		return $dismissButton[ 0 ]?.dataset?.event || false;
+	},
+
+	onPromotionDismiss() {
+		this.dismissPromotion( this.getDismissPromotionEventName() );
+	},
+
+	onPromotionAction( event ) {
+		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		if ( actionURL ) {
+			window.open( actionURL, '_blank' );
+		}
+		this.hidePromotion();
+	},
+
+	dismissPromotion( eventName ) {
+		this.hidePromotion( eventName );
+		if ( eventName ) {
+			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
+				data: {
+					dismissId: eventName,
+				},
+			} );
+		}
+	},
+
+	hidePromotion( eventName = null ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( ! eventName ) {
+			eventName = this.getDismissPromotionEventName();
+		}
+		// Prevent opening the same promotion again in current editor session.
+		elementor.config.user.dismissed_editor_notices.push( eventName );
 	},
 
 	onMediaInputImageSizeChange() {

@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';
 import EditorPage from '../pages/editor-page';
-import _path from 'path';
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
+import videos from '../testData/video.json';
 
 test.describe( 'Video tests inside a container @video', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -25,6 +25,29 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
+	} );
+
+	test( 'Verify Video Promotions', async ( { browser }, testInfo ) => {
+		// Arrange.
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
+		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
+
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const videoId = await editor.addWidget( widgets.video, containerId );
+		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+
+		// Act.
+		await editor.selectElement( videoId );
+		await promoArea.scrollIntoViewIfNeeded();
+
+		// Assert
+		expect.soft( await promoArea.screenshot( {
+			type: 'png',
+		} ) ).toMatchSnapshot( 'video-widget-sidebar-promotion.png' );
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
@@ -53,8 +76,6 @@ test.describe( 'Video tests inside a container @video', () => {
 		// Verify that the container has an equal height to the video iFrame.
 		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
-
-	const videos = require( _path.resolve( __dirname, `../testData/video.json` ) );
 
 	for ( const video in videos ) {
 		test( `${ video } controls and link test`, async ( { page }, testInfo ) => {
@@ -166,7 +187,7 @@ test.describe( 'Video tests inside a section', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-			column = await editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
+			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),
 			videoId = await editor.addWidget( widgets.video, columnId );
 

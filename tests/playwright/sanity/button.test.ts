@@ -25,6 +25,7 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 		editor = await wpAdmin.useElementorCleanPost();
 
 	await editor.addWidget( 'button' );
+	await editor.activatePanelTab( 'style' );
 
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
@@ -54,4 +55,21 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	await buttonWidget.setButtonId( buttonId, defaultBtnName );
 	await editor.publishAndViewPage();
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
+} );
+
+test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
+	// Arrange.
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	await wpAdmin.openNewPage();
+	const buttonWidget = new ButtonWidget( page, testInfo );
+	await buttonWidget.addWidget( defaultBtnName );
+	const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+
+	// Act.
+	await promoArea.scrollIntoViewIfNeeded();
+
+	// Assert
+	expect.soft( await promoArea.screenshot( {
+		type: 'png',
+	} ) ).toMatchSnapshot( 'button-widget-sidebar-promotion.png' );
 } );

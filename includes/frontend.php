@@ -537,26 +537,12 @@ class Frontend extends App {
 
 		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
-		$frontend_dependencies = [];
-
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			// If The Dom Optimization feature is disabled, register the legacy CSS
-			wp_register_style(
-				'elementor-frontend-legacy',
-				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
-				[],
-				ELEMENTOR_VERSION
-			);
-
-			$frontend_dependencies[] = 'elementor-frontend-legacy';
-		}
 
 		wp_register_style(
 			'elementor-frontend',
 			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			$frontend_dependencies,
+			[],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 

@@ -2,7 +2,7 @@ import { getImageToImageMaskGeneration } from '../../../../../api';
 import useImagePrompt from '../../../hooks/use-image-prompt';
 
 const useInPainting = ( initialValue ) => {
-	const fetchAction = ( prompt, promptSettings, image, mask ) => getImageToImageMaskGeneration( prompt, promptSettings, image, mask );
+	const fetchAction = ( payload ) => getImageToImageMaskGeneration( payload );
 
 	return useImagePrompt( fetchAction, initialValue );
 };

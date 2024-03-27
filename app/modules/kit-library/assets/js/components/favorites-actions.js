@@ -24,7 +24,8 @@ export default function FavoritesActions( props ) {
 
 	return (
 		props.isFavorite
-			? <Button
+			? (
+				<Button
 					text={ __( 'Remove from Favorites', 'elementor' ) }
 					hideText={ true }
 					icon="eicon-heart"
@@ -34,8 +35,9 @@ export default function FavoritesActions( props ) {
 						! isLoading && removeFromFavorites.mutate( props.id );
 						eventTracking( props?.name, props?.source, 'uncheck' );
 					} }
-			/>
-			: <Button
+				/>
+			) : (
+				<Button
 					text={ __( 'Add to Favorites', 'elementor' ) }
 					hideText={ true }
 					icon="eicon-heart-o"
@@ -45,7 +47,8 @@ export default function FavoritesActions( props ) {
 						! isLoading && addToFavorites.mutate( props.id );
 						eventTracking( props?.name, props?.source, 'check', props?.index, props?.queryParams );
 					} }
-			/>
+				/>
+			)
 	);
 }
 

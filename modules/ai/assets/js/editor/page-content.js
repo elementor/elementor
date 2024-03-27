@@ -27,7 +27,16 @@ const PageContent = (
 		controlView,
 		additionalOptions,
 	} ) => {
-	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
+	const {
+		isLoading,
+		isConnected,
+		isGetStarted,
+		connectUrl,
+		fetchData,
+		hasSubscription,
+		credits,
+		usagePercentage,
+	} = useUserInfo();
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {

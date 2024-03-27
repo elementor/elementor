@@ -28,7 +28,6 @@ export default class ArgsObject extends InstanceType {
 	 * @param {{}}     args
 	 *
 	 * @throws {Error}
-	 *
 	 */
 	requireArgument( property, args = this.args ) {
 		if ( ! Object.prototype.hasOwnProperty.call( args, property ) ) {
@@ -46,7 +45,6 @@ export default class ArgsObject extends InstanceType {
 	 * @param {{}}     args
 	 *
 	 * @throws {Error}
-	 *
 	 */
 	requireArgumentType( property, type, args = this.args ) {
 		this.requireArgument( property, args );
@@ -66,7 +64,6 @@ export default class ArgsObject extends InstanceType {
 	 * @param {{}}     args
 	 *
 	 * @throws {Error}
-	 *
 	 */
 	requireArgumentInstance( property, instance, args = this.args ) {
 		this.requireArgument( property, args );
@@ -86,7 +83,6 @@ export default class ArgsObject extends InstanceType {
 	 * @param {{}}     args
 	 *
 	 * @throws {Error}
-	 *
 	 */
 	requireArgumentConstructor( property, type, args = this.args ) {
 		this.requireArgument( property, args );

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -97,7 +98,55 @@ class Control_Gallery extends Base_Data_Control {
 						</button>
 					</div>
 				</div>
-				<div class="elementor-control-media__warnings elementor-descriptor" role="alert"></div>
+				<?php if ( ! Hints::should_display_hint( 'image-optimization-once' ) && ! Hints::should_display_hint( 'image-optimization' ) ) { ?>
+				<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
+					<?php
+						Hints::get_notice_template( [
+							'type' => 'warning',
+							'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+							'icon' => true,
+						] );
+					?>
+				</div>
+				<?php } ?>
+				<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) :
+					$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
+					if ( $once_dismissed ) {
+						if ( Hints::is_plugin_installed( 'image-optimization' ) ) {
+							$content = sprintf(
+								__( 'This image is large and may slow things down. %1$sActivate Image Optimizer%2$s to reduce size without losing quality.', 'elementor' ),
+								'<a href="' . Hints::get_plugin_action_url( 'image-optimization' ) . '" target="_blank">',
+								'</a>'
+							);
+						} else {
+							$content = sprintf(
+								__( 'This image is large and may slow things down. %1$sInstall Image Optimizer%2$s to reduce size without losing quality.', 'elementor' ),
+								'<a href="' . Hints::get_plugin_action_url( 'image-optimization' ) . '" target="_blank">',
+								'</a>'
+							);
+						}
+					} else {
+						$content = sprintf(
+							'%1$s <a href="%2$s" target="_blank">%3$s</a>',
+							esc_html__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
+							Hints::get_plugin_action_url( 'image-optimization' ),
+							Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Image Optimizer!', 'elementor' ) : esc_html__( 'Install Image Optimizer!', 'elementor' )
+						);
+					}
+					$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
+					?>
+					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
+						<?php
+							Hints::get_notice_template( [
+								'display' => ! $once_dismissed,
+								'type' => $once_dismissed ? 'warning' : 'info',
+								'content' => $content,
+								'icon' => true,
+								'dismissible' => $dismissible,
+							] );
+						?>
+					</div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<?php
@@ -117,7 +166,6 @@ class Control_Gallery extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'separator' => 'none',
 			'dynamic' => [
 				'categories' => [ TagsModule::GALLERY_CATEGORY ],
 				'returnType' => 'object',

@@ -21,7 +21,7 @@ export const ProWidgetsNotice = () => {
 			<Alert
 				severity="info"
 				variant="filled"
-				color="accent"
+				color="promotion"
 				onClose={ () => markAsViewed( ) }
 				icon={ <LockIcon /> }
 				sx={ {
@@ -43,7 +43,7 @@ export const ProWidgetsNotice = () => {
 						} }
 					>
 						<Typography
-							variant="body2"
+							variant="subtitle2"
 							component="span"
 							sx={ {
 								paddingInlineEnd: 1,
@@ -57,15 +57,8 @@ export const ProWidgetsNotice = () => {
 					<Button
 						variant="outlined"
 						size="small"
-						href="https://go.elementor.com/upgrade-pro/"
-						target="_blank"
-						sx={ {
-							color: 'accent.contrastText',
-							borderColor: 'accent.contrastText',
-							'&:hover': {
-								borderColor: 'accent.contrastText',
-							},
-						} }
+						onClick={ () => window.open( 'https://go.elementor.com/upgrade-pro/', '_blank' ) }
+						color="inherit"
 					>
 						{ __( 'Go Pro', 'elementor' ) }
 					</Button>

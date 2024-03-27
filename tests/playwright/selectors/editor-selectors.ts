@@ -86,7 +86,7 @@ const EditorSelectors = {
 		},
 		addGalleryBtn: 'button.elementor-control-gallery-add',
 		navigationSelect: '.elementor-control-navigation select',
-		autoplaySelect: 'select[data-setting="autoplay"]',
+		autoplaySelect: 'input[data-setting="autoplay"]',
 		autoplaySpeedLabel: 'Autoplay Speed',
 		autoplaySpeedInp: '[data-setting="autoplay_speed"]',
 		autoplayToggle: '.elementor-switch-handle',
@@ -177,6 +177,11 @@ const EditorSelectors = {
 			restoreButton: 'button[aria-label="Restore"]',
 			editButton: 'button[aria-label="Edit result"]',
 		},
+	},
+	ContextMenu: {
+		menu: '.elementor-context-menu',
+		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
+		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
 	},
 };
 

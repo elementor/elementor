@@ -4,14 +4,18 @@
 		&__wrapper {
 			display: flex;
 			align-items: center;
+			text-align: start;
+			width: 100%;
 			border: var(--e-a-border);
 			border-radius: var(--e-a-border-radius);
 			padding: 10px 15px;
 			margin-block-end: 10px;
 			font-size: 11px;
 			transition: var(--e-a-transition-hover);
-
-			&:hover {
+			background-color: transparent;
+	
+			&:hover,
+			&:focus {
 				background-color: var(--e-a-bg-hover);
 			}
 		}

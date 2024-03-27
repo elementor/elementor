@@ -1,5 +1,7 @@
+import ReactUtils from 'elementor-utils/react';
+
 ( () => {
-	let styleguideWidget;
+	let unmountCallback;
 	const styleguideBodyClass = 'e-styleguide-shown';
 
 	/**
@@ -10,15 +12,15 @@
 
 		document.body.classList.add( styleguideBodyClass );
 
-		ReactDOM.render( <App />, styleguideWidget );
+		const { unmount: unmountUtil } = ReactUtils.render( <App />, getStyleguideWidget() );
+		unmountCallback = unmountUtil;
 	}
 
 	/**
 	 * Remove the app from the page.
 	 */
 	function unmount() {
-		ReactDOM.unmountComponentAtNode( styleguideWidget );
-
+		unmountCallback();
 		document.body.classList.remove( styleguideBodyClass );
 	}
 
@@ -29,9 +31,7 @@
 	 * @return {Object|null}
 	 */
 	function getStyleguideWidget() {
-		styleguideWidget = document.querySelector( '.dialog-styleguide-message' );
-
-		return styleguideWidget;
+		return document.querySelector( '.dialog-styleguide-message' );
 	}
 
 	/**

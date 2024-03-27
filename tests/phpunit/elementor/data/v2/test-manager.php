@@ -292,6 +292,7 @@ class Test_Manager extends Data_Test_Base {
 			'site-navigation/recent-posts' => 'site-navigation/recent-posts',
 			'site-navigation/add-new-post' => 'site-navigation/add-new-post',
 			'site-navigation/duplicate-post' => 'site-navigation/duplicate-post',
+			'site-navigation/homepage' => 'site-navigation/homepage',
 		], $this->manager->command_formats );
 	}
 }

@@ -201,7 +201,7 @@ class Module extends BaseModule {
 	 */
 	public function download_file() {
 		if ( ! current_user_can( $this->capability ) ) {
-			wp_die( esc_html__( 'You don\'t have permissions to download this file', 'elementor' ) );
+			wp_die( esc_html__( 'You do not have permission to download this file.', 'elementor' ) );
 		}
 
 		$reports_info = self::get_allowed_reports();

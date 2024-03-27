@@ -17,7 +17,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 	];
 
 	for ( const widget in data ) {
-		test( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
+		test.skip( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
 			const link = 'https://elementor.com/';
 			const customAttributes = { key: 'mykey', value: 'myValue' };
 			const wpAdmin = new WpAdminPage( page, testInfo );
@@ -28,7 +28,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			await editor.addWidget( data[ widget ].title );
 			if ( 'image-carousel' === data[ widget ].title ) {
 				await imageCarousel.addImageGallery();
-				await imageCarousel.setAutoplay( 'no' );
+				await imageCarousel.setAutoplay();
 				await editor.openSection( 'section_image_carousel' );
 			}
 

@@ -77,6 +77,8 @@ class Module extends BaseModule {
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 		] );
 
+		wp_set_script_translations( 'e-element-manager-app', 'elementor' );
+
 		wp_enqueue_style( 'wp-components' );
 		wp_enqueue_style( 'wp-format-library' );
 	}

@@ -124,7 +124,9 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_size` and `image_custom_dimension`.
 				'default' => 'large',
-				'separator' => 'none',
+				'condition' => [
+					'image[url]!' => '',
+				],
 			]
 		);
 
@@ -139,6 +141,9 @@ class Widget_Image extends Widget_Base {
 					'custom' => esc_html__( 'Custom Caption', 'elementor' ),
 				],
 				'default' => 'none',
+				'condition' => [
+					'image[url]!' => '',
+				],
 			]
 		);
 
@@ -150,6 +155,7 @@ class Widget_Image extends Widget_Base {
 				'default' => '',
 				'placeholder' => esc_html__( 'Enter your image caption', 'elementor' ),
 				'condition' => [
+					'image[url]!' => '',
 					'caption_source' => 'custom',
 				],
 				'dynamic' => [
@@ -169,6 +175,9 @@ class Widget_Image extends Widget_Base {
 					'file' => esc_html__( 'Media File', 'elementor' ),
 					'custom' => esc_html__( 'Custom URL', 'elementor' ),
 				],
+				'condition' => [
+					'image[url]!' => '',
+				],
 			]
 		);
 
@@ -181,6 +190,7 @@ class Widget_Image extends Widget_Base {
 					'active' => true,
 				],
 				'condition' => [
+					'image[url]!' => '',
 					'link_to' => 'custom',
 				],
 				'show_label' => false,
@@ -205,6 +215,7 @@ class Widget_Image extends Widget_Base {
 					'no' => esc_html__( 'No', 'elementor' ),
 				],
 				'condition' => [
+					'image[url]!' => '',
 					'link_to' => 'file',
 				],
 			]
@@ -379,6 +390,7 @@ class Widget_Image extends Widget_Base {
 					'{{WRAPPER}} img' => 'object-position: {{VALUE}};',
 				],
 				'condition' => [
+					'height[size]!' => '',
 					'object-fit' => 'cover',
 				],
 			]
@@ -530,6 +542,7 @@ class Widget_Image extends Widget_Base {
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 				'condition' => [
+					'image[url]!' => '',
 					'caption_source!' => 'none',
 				],
 			]
@@ -690,10 +703,6 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
-		}
-
 		$has_caption = $this->has_caption( $settings );
 
 		$link = $this->get_link_url( $settings );
@@ -711,9 +720,6 @@ class Widget_Image extends Widget_Base {
 				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
 			}
 		} ?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-		<?php } ?>
 			<?php if ( $has_caption ) : ?>
 				<figure class="wp-caption">
 			<?php endif; ?>
@@ -732,9 +738,6 @@ class Widget_Image extends Widget_Base {
 			<?php if ( $has_caption ) : ?>
 				</figure>
 			<?php endif; ?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			</div>
-		<?php } ?>
 		<?php
 	}
 
@@ -803,10 +806,6 @@ class Widget_Image extends Widget_Base {
 				link_url = settings.image.url;
 			}
 
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			<?php } ?>
-
 			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
@@ -833,11 +832,6 @@ class Widget_Image extends Widget_Base {
 			if ( hasCaption() ) {
 				#></figure><#
 			}
-
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				#></div><#
-			<?php } ?>
-
 		} #>
 		<?php
 	}
