@@ -15,7 +15,7 @@ export function isWidgetSupportNesting( widgetType ) {
 	return widgetConfig.support_nesting;
 }
 
-export function isWidgetSupportImprovedRepeaters( widgetType ) {
+export function isWidgetSupportAtomicRepeaters( widgetType ) {
 	const widgetConfig = elementor.widgetsCache[ widgetType ];
 
 	if ( ! widgetConfig ) {
@@ -48,10 +48,10 @@ export function findChildContainerOrFail( container, index ) {
 	return childView.getContainer();
 }
 
-export function shouldUseImprovedRepeaters( widgetType ) {
+export function shouldUseAtomicRepeaters( widgetType ) {
 	return elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-	isWidgetSupportNesting( widgetType ) &&
-	isWidgetSupportImprovedRepeaters( widgetType );
+		isWidgetSupportNesting( widgetType ) &&
+		isWidgetSupportAtomicRepeaters( widgetType );
 }
 
 export function sortViewsByModels( container ) {

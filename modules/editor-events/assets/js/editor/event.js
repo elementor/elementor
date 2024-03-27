@@ -1,41 +1,20 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export default class Event {
 	constructor( data ) {
-		const time = Date.now();
-
-		this.setupEventData( time );
-		this.setupPayload( data, time );
+		this.user_id = null;
+		this.subscription_id = elementor.config.editor_events?.subscription_id;
+		this.url = elementor.config.editor_events?.site_url;
+		this.extra_data = JSON.stringify( data );
+		this.site_info = JSON.stringify( this.getSiteInfo() );
+		this.created_at = Date.now();
 	}
 
-	setupPayload( extraData, time ) {
-		const siteInfo = {
+	getSiteInfo() {
+		return {
 			WpVersion: elementor.config.editor_events?.wp_version,
 			ClientId: elementor.config.editor_events?.site_key,
 			AppVersion: elementor.config.editor_events?.elementor_version,
 			UserAgent: elementor.config.editor_events?.user_agent,
 			SiteLanguage: elementor.config.editor_events?.site_language,
-		};
-
-		this.payload = {
-			user_id: null,
-			subscription_id: elementor.config.editor_events?.subscription_id,
-			url: elementor.config.editor_events?.site_url,
-			extra_data: JSON.stringify( extraData ),
-			site_info: JSON.stringify( siteInfo ),
-			created_at: time,
-		};
-	}
-
-	setupEventData( time ) {
-		this.event = {
-			type: 'editor_events',
-			action: 'update',
-			event_time: time,
-			schema_id: 1,
-			version: 1,
-			publisher_version: elementor.config.editor_events?.elementor_version,
-			guid: uuidv4(),
 		};
 	}
 }

@@ -108,7 +108,7 @@ export const ProTemplateIndicator = () => {
 
 					>
 						<Chip
-							color="accent"
+							color="promotion"
 							variant="outlined"
 							size="small"
 							label={ __( 'Pro', 'elementor' ) }
@@ -123,7 +123,7 @@ export const ProTemplateIndicator = () => {
 
 						<Button
 							variant="contained"
-							color="accent"
+							color="promotion"
 							size="small"
 							href={ actionUrl }
 							target="_blank"

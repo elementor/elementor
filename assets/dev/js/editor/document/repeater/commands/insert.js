@@ -1,5 +1,5 @@
 import {
-	shouldUseImprovedRepeaters,
+	shouldUseAtomicRepeaters,
 	widgetNodes,
 } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
@@ -76,7 +76,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 			if ( renderAfterInsert ) {
 				const widgetType = container.settings.get( 'widgetType' );
 
-				if ( shouldUseImprovedRepeaters( widgetType ) ) {
+				if ( shouldUseAtomicRepeaters( widgetType ) ) {
 					const domConfig = widgetNodes( widgetType ),
 						containerNode = container.view.$el[ 0 ],
 						targetContainer = containerNode.querySelector( domConfig.targetContainer ),

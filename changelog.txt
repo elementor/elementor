@@ -1,5 +1,62 @@
 == Changelog ==
 
+= 3.20.3 - 2024-03-26 =
+
+* Fix: Edit with Elementor button is missing for pages that had been previously edited with Elementor when using WordPress 6.5 ([#25495](https://github.com/elementor/elementor/issues/25495), [#25496](https://github.com/elementor/elementor/issues/25496))
+* Security Fix: Improved code security enforcement in Text Path Widget
+
+= 3.20.2 - 2024-03-20 =
+
+* Fix: Media file is not allowed to be uploaded within the editor ([#25077](https://github.com/elementor/elementor/issues/25077), [#25187](https://github.com/elementor/elementor/issues/25187))
+
+= 3.20.1 - 2024-03-13 =
+
+* Fix: Radial background gradient is not working as expected in responsive mode ([#25038](https://github.com/elementor/elementor/issues/25038))
+* Fix: Tabs widget remains visible when disabled in the Element Manager
+
+= 3.20.0 - 2024-03-11 =
+
+* Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
+* Tweak: Resolved excessive DOM output when using Grid Container and Flexbox Container widgets
+* Tweak: Added X icon to Font Awesome icon library ([#23345](https://github.com/elementor/elementor/issues/23345))
+* Tweak: Added Threads icon to Font Awesome icon library ([#23345](https://github.com/elementor/elementor/issues/23345))
+* Tweak: Restricted HTML widget privileges to admin users only for enhanced security and control
+* Tweak: Introduced the capability for admin users to grant HTML widget usage permissions to non-admin users in the Role Manager
+* Tweak: Refined Editor's unit selection DOM output for better efficiency
+* Tweak: Implemented accessibility improvements in Dynamic Tags control
+* Tweak: Implemented accessibility improvements in widget panel sections
+* Tweak: Implemented accessibility improvements in Site Settings items
+* Tweak: Implemented accessibility improvements in the Elements panel keyboard accessible
+* Tweak: Implemented accessibility improvements in Color Picker control
+* Tweak: Implemented accessibility improvements in Site Settings header buttons
+* Tweak: Implemented accessibility improvements for actions in the History panel
+* Tweak: Implemented accessibility improvements for revisions in History panel
+* Tweak: Added semantic `<time>` wrapper for items in History panel
+* Tweak: Added semantic `<search>` wrapper to Widgets search
+* Tweak: Promoted Build with AI feature to Stable status
+* Tweak: Global Style Guide feature merged to version
+* Tweak: Promoted Inline Font Icons feature to Stable status
+* Tweak: Activated Grid Container feature by default for new sites
+* Tweak: Removed separator-none argument from all Editor controls
+* Tweak: Relocated Icon and Content Spacing controls to the Box section in Icon Box widget
+* Tweak: Relocated Image and Content Spacing controls to the Box section in Image Box widget
+* Tweak: Relocated Alignment control from Content tab to Style tab in Button widget
+* Tweak: Replaced Position select control with toggle control in Tabs widget
+* Tweak: Replaced Icon Position select control with toggle control in Button widget
+* Tweak: Hide the Border Radius control of Drop Cap in Text Editor widget
+* Tweak: Hide image controls when image is not selected in Image widget
+* Tweak: Removed `Size` control for new usage in Button Widget
+* Tweak: Replaced Dismiss Icon select control with toggle control in Alert widget
+* Tweak: Replaced Additional Options select controls with toggle controls in Image Carousel widget
+* Tweak: Added missing `title` attribute to the Editor preview iframe
+* Tweak: Added a new reference to the Extensions page from Add New Plugin screen
+* Tweak: Improved flexibility of the widget promotion area for better extendability and customization
+* Tweak: Implemented general improvements to i18n for enhanced global support
+* Tweak: Updated `eicons` library to v5.28.0
+* Tweak: Standardized section names across various Elementor widgets for uniformity and clarity
+* Fix: Compatability issues with various 3rd party plugins when Optimize Image Loading feature is activated ([#24226](https://github.com/elementor/elementor/issues/24226))
+* Fix: `install_compare()` in Experiments Manager throw an error in PHP 8.2+ if `get_installs_history()` returned an empty result
+
 = 3.19.4 - 2024-02-28 =
 
 * Fix: Widgets are not appearing in the widget panel when using various 3rd party plugins
