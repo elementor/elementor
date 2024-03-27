@@ -13,7 +13,7 @@ export const VoicePromotionAlert = ( props ) => {
 		<Box sx={ { mt: 2, ...props.sx } } alignItems="top">
 			<Alert severity="info" variant="standard" icon={ <BulbIcon sx={ { alignSelf: 'flex-start' } } /> } onClose={ markAsViewed }
 			>
-				{ __( 'Get improved results from AI by adding some personal context. Go to Site Settings > AI Context to get started.' ) }
+				{ __( 'Get improved results from AI by adding some personal context. Go to Site Settings > AI Context to get started.', 'elementor' ) }
 			</Alert>
 		</Box>
 	);
