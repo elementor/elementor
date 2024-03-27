@@ -1,4 +1,4 @@
-name: Build plugin
+name: Build
 
 on:
   workflow_dispatch:
@@ -6,16 +6,16 @@ on:
   workflow_call:
     outputs:
       artifact_name: 
-        value: ${{ jobs.run.outputs.artifact_name }}
+        value: ${{ jobs.build-plugin.outputs.artifact_name }}
       changelog_diff: 
-        value: ${{ jobs.run.outputs.changelog_diff }}
+        value: ${{ jobs.build-plugin.outputs.changelog_diff }}
   push:
     branches:
       - 'main'
       - '3.*'
 
 jobs:
-  run:
+  build-plugin:
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
