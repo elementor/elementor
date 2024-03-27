@@ -10,6 +10,8 @@ class API {
 	public static function get_home_screen_items( $force_request = false ): array {
 		$home_screen_data = self::get_transient( '_elementor_home_screen_data' );
 
+		$force_request = apply_filters( 'home_screen_data_force_request', $force_request );
+
 		if ( $force_request || false === $home_screen_data ) {
 			$home_screen_data = static::fetch_data();
 			static::set_transient( '_elementor_home_screen_data', $home_screen_data, '+1 hour' );
