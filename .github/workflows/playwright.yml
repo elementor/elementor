@@ -46,6 +46,7 @@ jobs:
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     #if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       fail-fast: ${{inputs.fail_fast || true}}
