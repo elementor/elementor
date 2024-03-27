@@ -36,6 +36,7 @@ concurrency:
 
 jobs:
   build-plugin:
+    name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
