@@ -38,50 +38,11 @@ concurrency:
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
-    # runs-on: ubuntu-latest
-    # if: startsWith( github.repository, 'elementor/' )
-    # outputs:
-    #   changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-    # steps:
-    #   - name: Checkout source code
-    #     uses: actions/checkout@v4
-    #   - name: Check if this is only a changelog PR
-    #     id: changelog_diff_files
-    #     uses: technote-space/get-diff-action@v6
-    #     with:
-    #       # PATTERNS are:
-    #       # Everything: **/*
-    #       # Everything in directories starting with a period: .*/**/*
-    #       # Not readme.txt: !readme.txt
-    #       # Not changelog.txt: !changelog.txt
-    #       PATTERNS: |
-    #         **/*
-    #         .*/**/*
-    #         !readme.txt
-    #         !changelog.txt
-    #   - name: Install Node.js 20.x
-    #     uses: actions/setup-node@v4
-    #     with:
-    #       node-version: 20.x
-    #       cache: 'npm'
-    #   - name: Install dependencies
-    #     if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-    #     run: npm ci
-    #   - name: Build
-    #     if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-    #     run: npx grunt build
-    #   - name: Save build to cache
-    #     if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-    #     uses: actions/cache/save@v4
-    #     with:
-    #       path: ./build/*
-    #       key: playwright-build-v4-${{ github.sha }}
-
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    #if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       fail-fast: ${{inputs.fail_fast || true}}
       matrix:
