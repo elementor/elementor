@@ -43,7 +43,7 @@ class Filter_Plugins extends Transformations_Abstract {
 
 			$is_installed_plugin = in_array( $add_on['file_path'], $this->installed_plugins );
 
-			if ( $is_installed_plugin ) {
+			if ( ! $is_installed_plugin ) {
 				$transformed_add_ons[] = $add_on;
 			}
 		}

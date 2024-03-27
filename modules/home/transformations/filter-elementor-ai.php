@@ -3,7 +3,6 @@ namespace Elementor\Modules\Home\Transformations;
 
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
