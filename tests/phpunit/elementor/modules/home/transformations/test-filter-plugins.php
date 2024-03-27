@@ -14,12 +14,11 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 		$data = $this->mock_home_screen_data();
 
 		$transformation = new Filter_Plugins( [
-			'home_screen_data' => $data,
 			'wordpress_adapter' => $this->wordpress_adapter,
 		] );
 
 		// Act
-		$transformed_data = $transformation->transform();
+		$transformed_data = $transformation->transform( $data );
 		$expected_data = $this->mock_home_screen_data_transformed();
 
 		// Assert
