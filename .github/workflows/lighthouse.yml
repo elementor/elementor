@@ -34,13 +34,6 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      # - name: Restore build from cache
-      #   if: matrix.wpCoreVersion != 'master'
-      #   uses: actions/cache/restore@v4
-      #   id: restore-build
-      #   with:
-      #     path: ./build/*
-      #     key: ${{ github.sha }}
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:

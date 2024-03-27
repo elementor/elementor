@@ -17,39 +17,6 @@ concurrency:
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
-  # build-plugin:
-  #   name: Build plugin
-  #   runs-on: ubuntu-latest
-  #   if: startsWith( github.repository, 'elementor/' )
-  #   outputs:
-  #     changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
-  #     - name: Install Node.js 20.x
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20.x
-  #     - name: Restore NPM Cache
-  #       uses: actions/cache/restore@v4
-  #       with:
-  #         path: ~/.npm
-  #         key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Build
-  #       run: npx grunt build
-  #     - name: Cache node modules
-  #       uses: actions/cache/save@v4
-  #       with:
-  #         path: ~/.npm
-  #         key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-  #     - name: Save build to cache
-  #       uses: actions/cache/save@v4
-  #       with:
-  #         path: ./build/*
-  #         key: playwright-build-${{ github.sha }}
-
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest
