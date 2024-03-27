@@ -857,10 +857,6 @@ class Upgrades {
 		}
 	}
 
-	public static function _v_3_21_0_add_optimized_gutenberg_loading_settings() {
-		add_option( 'optimized_gutenberg_loading', '1' );
-	}
-
 	private static function maybe_add_gap_control_data( $option_name ) {
 		$kit_id = get_option( $option_name );
 
