@@ -31,19 +31,23 @@ class Filter_Plugins extends Transformations_Abstract {
 	}
 
 	private function get_add_ons_installation_status( array $add_ons ): array {
-		$index = 0;
+		$transformed_add_ons = [];
 
 		foreach ( $add_ons as $add_on ) {
 			$is_plugin = array_key_exists( 'file_path', $add_on );
 
-			if ( $is_plugin ) {
-				$is_installed_plugin = in_array( $add_on['file_path'], $this->installed_plugins );
-				$add_ons[ $index ]['is_installed'] = $is_installed_plugin;
+			if ( ! $is_plugin ) {
+				$transformed_add_ons[] = $add_on;
+				continue;
 			}
 
-			$index++;
+			$is_installed_plugin = in_array( $add_on['file_path'], $this->installed_plugins );
+
+			if ( $is_installed_plugin ) {
+				$transformed_add_ons[] = $add_on;
+			}
 		}
 
-		return $add_ons;
+		return $transformed_add_ons;
 	}
 }
