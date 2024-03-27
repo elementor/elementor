@@ -36,8 +36,30 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 
 		await editor.selectElement( nestedAccordionID );
 
+		await test.step( 'Check that items have following IDs', async () => {
+			const accordion = editor.getPreviewFrame().locator( `.elementor-element-${ nestedAccordionID }` ),
+				accordionItems = accordion.locator( '.e-n-accordion-item' ),
+				idPrefix = 'e-n-accordion-item-',
+				firstItemID = await accordionItems.nth( 0 ).getAttribute( 'id' ),
+				secondItemId = await accordionItems.nth( 1 ).getAttribute( 'id' ),
+				thirdItemId = await accordionItems.nth( 2 ).getAttribute( 'id' );
+
+			expect( await editor.isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, firstItemID ) + 1 );
+			expect( await editor.isolatedIdNumber( idPrefix, thirdItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, secondItemId ) + 1 );
+		} );
+
 		await test.step( 'Remove an item from the repeater', async () => {
 			await deleteItemFromRepeater( editor, nestedAccordionID );
+		} );
+
+		await test.step( 'Check that items have following IDs after Item removal', async () => {
+			const accordion = editor.getPreviewFrame().locator( `.elementor-element-${ nestedAccordionID }` ),
+				accordionItems = accordion.locator( '.e-n-accordion-item' ),
+				idPrefix = 'e-n-accordion-item-',
+				firstItemID = await accordionItems.nth( 0 ).getAttribute( 'id' ),
+				secondItemId = await accordionItems.nth( 1 ).getAttribute( 'id' );
+
+			expect( await editor.isolatedIdNumber( idPrefix, secondItemId ) ).toBe( await editor.isolatedIdNumber( idPrefix, firstItemID ) + 1 );
 		} );
 
 		await test.step( 'Add an item to the repeater', async () => {
