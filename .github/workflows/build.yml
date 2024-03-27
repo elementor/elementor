@@ -16,6 +16,7 @@ on:
 
 jobs:
   build-plugin:
+    name: Build plugin
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
