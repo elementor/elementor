@@ -58,16 +58,9 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 			'add_ons' => [
 				'repeater' => [
 					[
-						'Name' => 'Elementor',
-						'Version' => '3.0.0',
-						'file_path' => 'elementor/elementor.php',
-						'is_installed' => true,
-					],
-					[
 						'Name' => 'Something Else',
 						'Version' => '3.0.0',
 						'file_path' => 'some/thing.php',
-						'is_installed' => false,
 					],
 					[
 						'Name' => 'Elementor AI',
