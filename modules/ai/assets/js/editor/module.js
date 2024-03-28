@@ -1,10 +1,59 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
+import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
+import ReactUtils from 'elementor-utils/react';
+import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
+		window.$e.commands.on( 'run:after', ( component, command, args ) => {
+			switch ( command ) {
+				case 'document/elements/create':
+					this.onCreateContainer( args );
+					break;
+			}
+		} );
+	}
+
+	onCreateContainer( args ) {
+		if ( args.container.type !== 'container' ) {
+			return;
+		}
+
+		// If ( ! shouldShowPromotionIntroduction() ) {
+		// 	return;
+		// }
+
+		const element = args.container.view.$el[ 0 ];
+		const rootBox = element.getBoundingClientRect();
+		if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
+			return;
+		}
+
+		setTimeout( () => {
+			const rootElement = document.createElement( 'div' );
+			document.body.append( rootElement );
+
+			const { unmount } = ReactUtils.render( (
+				<AiPromotionInfotipWrapper
+					anchor={ element }
+					clickAction={ () => {
+						window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
+					} }
+					header={ 'Give your workflow a boost.' }
+					contentText={ 'Use the AI pink button to generate any layout you’d need for your site’s design.' }
+					controlType={ 'container' }
+					unmountAction={ () => {
+						unmount();
+					} }
+					colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+					isRTL={ elementorCommon.config.isRTL }
+					placement={ 'bottom' }
+				/>
+			), rootElement );
+		}, 3000 );
 	}
 
 	registerControlBehavior( behaviors, view ) {
