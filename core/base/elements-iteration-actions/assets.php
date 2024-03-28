@@ -31,7 +31,7 @@ class Assets extends Base {
 
 	public function is_action_needed() {
 		// No need to evaluate in preview mode, will be made in the saving process.
-		if ( ! $this->is_active_page_assets_mode() ) {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return false;
 		}
 
@@ -139,12 +139,6 @@ class Assets extends Base {
 		return $assets;
 	}
 
-	private function is_active_page_assets_mode() {
-		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-
-		return ! Plugin::$instance->preview->is_preview_mode() && $is_optimized_mode;
-	}
-
 	private function get_document_assets() {
 		$document_id = $this->document->get_post()->ID;
 
@@ -166,7 +160,7 @@ class Assets extends Base {
 		parent::__construct( $document );
 
 		// No need to enable assets in preview mode, all assets will be loaded by default by the assets loader.
-		if ( ! $this->is_active_page_assets_mode() ) {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return;
 		}
 
