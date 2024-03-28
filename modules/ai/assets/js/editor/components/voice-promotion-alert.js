@@ -5,7 +5,7 @@ import useIntroduction from '../hooks/use-introduction';
 
 export const VoicePromotionAlert = ( props ) => {
 	const { isViewed, markAsViewed } = useIntroduction( props.introductionKey );
-	if ( ! isViewed ) {
+	if ( isViewed ) {
 		return null;
 	}
 
