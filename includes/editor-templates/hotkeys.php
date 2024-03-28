@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Editor\Editor;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -185,7 +186,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 					</div>
 				</li>
 
-				<?php if ( Plugin::$instance->experiments->is_feature_active( 'notes' ) ) : ?>
+				<?php if ( Utils::has_pro() ) : ?>
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Notes', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
