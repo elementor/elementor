@@ -155,4 +155,22 @@ test.describe( 'Promotion tests @promotions', () => {
 		// Assert.
 		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
 	} );
+
+	test( 'Promotion text behavior on resizing the structure panel', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			navigatorPanel = page.locator( '#elementor-navigator' );
+
+		// Act.
+		for ( let i = 0; i < 20; i++ ) {
+			await editor.addElement( { elType: 'container' }, 'document' );
+		}
+
+		await navigatorPanel.locator( '.elementor-navigator__element-container' ).nth( 0 ).click();
+		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
+
+		// Assert.
+		await expect( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
+	} );
 } );
