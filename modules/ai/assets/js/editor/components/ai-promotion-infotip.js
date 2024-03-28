@@ -30,7 +30,7 @@ const StyledPopper = styled( Popper )( ( { theme } ) => ( {
 	},
 } ) );
 
-export default function AiPromotionInfotip( { anchor, content, focusOutListener } ) {
+export default function AiPromotionInfotip( { anchor, content, focusOutListener, placement } ) {
 	const positionRef = React.useRef( {
 		x: 0,
 		y: 0,
@@ -60,7 +60,7 @@ export default function AiPromotionInfotip( { anchor, content, focusOutListener 
 			arrow
 			open={ true }
 			title={ content }
-			placement="right"
+			placement={ placement || 'top' }
 			PopperComponent={ StyledPopper }
 			PopperProps={ {
 				onClick: () => focusOutListener.reset(),
@@ -86,4 +86,5 @@ AiPromotionInfotip.propTypes = {
 	anchor: PropTypes.element.isRequired,
 	content: PropTypes.object.isRequired,
 	focusOutListener: PropTypes.object.isRequired,
+	placement: PropTypes.string,
 };
