@@ -34,18 +34,14 @@ class Filter_Plugins extends Transformations_Abstract {
 		$transformed_add_ons = [];
 
 		foreach ( $add_ons as $add_on ) {
-			$is_plugin = array_key_exists( 'file_path', $add_on );
+			$file_path = $add_on['file_path'] ?? '';
+			$is_installed_plugin = in_array( $file_path, $this->installed_plugins );
 
-			if ( ! $is_plugin ) {
-				$transformed_add_ons[] = $add_on;
+			if ( $is_installed_plugin ) {
 				continue;
 			}
 
-			$is_installed_plugin = in_array( $add_on['file_path'], $this->installed_plugins );
-
-			if ( ! $is_installed_plugin ) {
-				$transformed_add_ons[] = $add_on;
-			}
+			$transformed_add_ons[] = $add_on;
 		}
 
 		return $transformed_add_ons;
