@@ -28,6 +28,8 @@ body {
 
 	&__inner {
 		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 
 	&__header {
@@ -74,7 +76,7 @@ body {
 	}
 
 	&__elements {
-		height: calc(100% - 49px);
+		flex-grow: 1;
 		overflow: auto;
 		position: relative;
 
@@ -91,12 +93,7 @@ body {
 		}
 	}
 
-	&__elements.elementor-navigator-list__promotion {
-		height: calc(100% - 80px);
-	}
-
 	&__footer {
-		position: absolute;
 		width: 100%;
 		left: 0;
 		bottom: 0;
