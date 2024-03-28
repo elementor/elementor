@@ -118,8 +118,8 @@ class Model extends BaseModel {
 				'label' => esc_html__( 'Lightbox in the Editor', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
-				'label_on' => esc_html__( 'On', 'textdomain' ),
-				'label_off' => esc_html__( 'Off', 'textdomain' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
 				'description' => esc_html__( 'Open images in Lightbox when clicking images in the editor.', 'elementor' ),
 			]
 		);
