@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transformations_Manager {
 
+	private static $cached_data = [];
+
 	private const TRANSFORMATIONS = [
 		'Create_New_Page_Url',
 		'Filter_Plugins',
@@ -28,11 +30,17 @@ class Transformations_Manager {
 	}
 
 	public function run_transformations(): array {
+		if ( ! empty( self::$cached_data ) ) {
+			return self::$cached_data;
+		}
+
 		$transformations = self::TRANSFORMATIONS;
 
 		foreach ( $transformations as $transformation_id ) {
-			$this->home_screen_data = $this->transformation_classes[ $transformation_id ]->transform();
+			$this->home_screen_data = $this->transformation_classes[ $transformation_id ]->transform( $this->home_screen_data );
 		}
+
+		self::$cached_data = $this->home_screen_data;
 
 		return $this->home_screen_data;
 	}
@@ -43,7 +51,6 @@ class Transformations_Manager {
 		$transformations = self::TRANSFORMATIONS;
 
 		$arguments = [
-			'home_screen_data' => $this->home_screen_data,
 			'wordpress_adapter' => $this->wordpress_adapter,
 		];
 

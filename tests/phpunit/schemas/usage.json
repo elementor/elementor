@@ -952,6 +952,15 @@
 										"optional"
 									]
 								},
+								"optimized_gutenberg_loading": {
+									"$id": "#/usages/settings/advanced/optimized_gutenberg_loading",
+									"title": "Optimized Gutenberg Loading",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
+								},
 								"load_fa4_shim": {
 									"$id": "#/usages/settings/advanced/load_fa4_shim",
 									"enum": [
@@ -1049,16 +1058,6 @@
 								"font_display": "auto"
 							},
 							"experiments": {
-								"e_optimized_assets_loading": {
-									"default": "inactive",
-									"state": "default",
-									"tags": [
-										{
-											"type": "default",
-											"label": "Performance"
-										}
-									]
-								},
 								"e_optimized_css_loading": {
 									"default": "inactive",
 									"state": "default",

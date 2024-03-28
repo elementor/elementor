@@ -9,7 +9,7 @@ const SideBarPromotion = ( { ...props } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3 } }>
 			<Stack gap={ 1.5 } sx={ { alignItems: 'center', textAlign: 'center', pb: 4 } }>
-				<Box component="img" src={ props.sideData.header.image } sx={ { width: '130px' } }></Box>
+				<Box component="img" src={ props.sideData.header.image }></Box>
 				<Box>
 					<Typography variant="h6">{ props.sideData.header.title }</Typography>
 					<Typography variant="body2" color="text.secondary">{ props.sideData.header.description }</Typography>
@@ -22,7 +22,7 @@ const SideBarPromotion = ( { ...props } ) => {
 						return (
 							<ListItem key={ index } sx={ { p: 0, gap: 1 } }>
 								<SideBarCheckIcon />
-								<ListItemText variant="body2">{ item.title }</ListItemText>
+								<ListItemText primaryTypographyProps={ { variant: 'body2' } } primary={ item.title } />
 							</ListItem>
 						);
 					} )

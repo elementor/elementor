@@ -386,6 +386,18 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . esc_html__( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
+							'optimized_gutenberg_loading' => [
+								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
+								],
+							],
 						],
 					],
 				],

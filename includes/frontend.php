@@ -466,7 +466,11 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			$this->get_elementor_frontend_dependencies(),
+			[
+				'elementor-frontend-modules',
+				'elementor-waypoints',
+				'jquery-ui-position',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -582,18 +586,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
-
-		if ( ! $this->is_improved_assets_loading() ) {
-			wp_enqueue_script(
-				'preloaded-modules',
-				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
-				[
-					'elementor-frontend',
-				],
-				ELEMENTOR_VERSION,
-				true
-			);
-		}
 
 		$this->print_config();
 
@@ -1533,34 +1525,6 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
-	}
-
-	private function is_improved_assets_loading() {
-		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-	}
-
-	private function get_elementor_frontend_dependencies() {
-		$dependencies = [
-			'elementor-frontend-modules',
-			'elementor-waypoints',
-			'jquery-ui-position',
-		];
-
-		if ( ! $this->is_improved_assets_loading() ) {
-			wp_register_script(
-				'swiper',
-				$this->get_js_assets_url( 'swiper', $this->e_swiper_asset_path ),
-				[],
-				$this->e_swiper_version,
-				true
-			);
-
-			$dependencies[] = 'swiper';
-			$dependencies[] = 'share-link';
-			$dependencies[] = 'elementor-dialog';
-		}
-
-		return $dependencies;
 	}
 
 	private function is_optimized_css_mode() {
