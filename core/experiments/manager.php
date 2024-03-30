@@ -340,6 +340,8 @@ class Manager extends Base_Object {
 				esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
+			static::TYPE_HIDDEN => true,
+			'mutable' => false,
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
@@ -446,11 +448,7 @@ class Manager extends Base_Object {
 				esc_html__( 'Learn more', 'elementor' ),
 			),
 			'release_status' => self::RELEASE_STATUS_BETA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.20.0',
-			],
+			'default' => self::STATE_ACTIVE,
 			'dependencies' => [
 				'container',
 			],
