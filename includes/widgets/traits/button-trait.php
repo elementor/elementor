@@ -217,7 +217,7 @@ trait Button_Trait {
 			'section_condition' => [],
 			'alignment_default' => '',
 			'alignment_control_prefix_class' => 'elementor%s-align-',
-			'content_align_default' => '',
+			'content_alignment_default' => '',
 		];
 
 		$args = wp_parse_args( $args, $default_args );
@@ -277,7 +277,7 @@ trait Button_Trait {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'default' => $args['content_align_default'],
+				'default' => $args['content_alignment_default'],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
 				],
