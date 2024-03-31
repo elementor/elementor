@@ -3,20 +3,22 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Home\Transformations\Filter_Plugins;
-use ElementorEditorTesting\Elementor_Test_Base;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Filter_Plugins extends Elementor_Test_Base {
+class Test_Filter_Plugins extends PHPUnit_TestCase {
 
 	private $wordpress_adapter;
 
-	public function test_filter_plugins() {
+	public function test_transform() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
-		$transformation = new Filter_Plugins( $data, $this->wordpress_adapter );
+
+		$transformation = new Filter_Plugins( [
+			'wordpress_adapter' => $this->wordpress_adapter,
+		] );
 
 		// Act
-		$transformed_data = $transformation->transform();
+		$transformed_data = $transformation->transform( $data );
 		$expected_data = $this->mock_home_screen_data_transformed();
 
 		// Assert

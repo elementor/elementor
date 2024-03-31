@@ -49,9 +49,7 @@ export function findChildContainerOrFail( container, index ) {
 }
 
 export function shouldUseAtomicRepeaters( widgetType ) {
-	return elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-		isWidgetSupportNesting( widgetType ) &&
-		isWidgetSupportAtomicRepeaters( widgetType );
+	return isWidgetSupportNesting( widgetType ) && isWidgetSupportAtomicRepeaters( widgetType );
 }
 
 export function sortViewsByModels( container ) {

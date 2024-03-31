@@ -1,8 +1,14 @@
-import { Container, Box } from '@elementor/ui';
+import { Container, Box, Stack } from '@elementor/ui';
+
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
+import Addons from './addons-section';
+import ExternalLinksSection from './external-links-section';
+import GetStarted from './get-started-section';
 
 const HomeScreen = ( props ) => {
+	const hasSidebarUpgrade = props.homeScreenData.hasOwnProperty( 'sidebar_upgrade' );
+
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
@@ -11,13 +17,18 @@ const HomeScreen = ( props ) => {
 					topData={ props.homeScreenData.top }
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
-				<Container disableGutters={ true } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' } }>
-					{ /* Placeholder container to ensure layout until other components are added */ }
-					<Container maxWidth="md"></Container>
-					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { md: '305px' } } }>
-						<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
+					<Stack sx={ { flex: 1, gap: 3 } }>
+						<GetStarted getStartedData={ props.homeScreenData.get_started } />
+						<Addons addonsData={ props.homeScreenData.add_ons } />
+					</Stack>
+					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
+						{ hasSidebarUpgrade &&
+							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+						}
+						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Container>
-				</Container>
+				</Box>
 			</Container>
 		</Box>
 	);
