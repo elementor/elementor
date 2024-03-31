@@ -946,10 +946,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<?php
 	}
 
-	protected function supports_atomic_repeaters() {
-		return true;
-	}
-
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
