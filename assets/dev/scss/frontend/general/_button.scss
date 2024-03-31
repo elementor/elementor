@@ -23,7 +23,6 @@
 	}
 
 	&-icon {
-		flex-grow: 0;
 		order: 5;
 		svg {
 			width: 1em;
@@ -36,7 +35,6 @@
 	}
 
 	&-text {
-		flex-grow: 1;
 		order: 10;
 		display: inline-block;
 	}
