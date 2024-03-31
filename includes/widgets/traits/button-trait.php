@@ -208,8 +208,9 @@ trait Button_Trait {
 	 *     An array of values for the button adjustments.
 	 *
 	 *     @type array  $section_condition  Set of conditions to hide the controls.
-	 *     @type string $alignment_default  Default alignment for the button.
-	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
+	 *     @type string $alignment_default  Default position for the button.
+	 *     @type string $alignment_control_prefix_class  Prefix class name for the button position control.
+	 *     @type string $content_alignment_default  Default alignment for the button content.
 	 * }
 	 */
 	protected function register_button_style_controls( $args = [] ) {
