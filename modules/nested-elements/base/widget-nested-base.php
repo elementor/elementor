@@ -128,7 +128,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 
 	public function print_template() {
 		parent::print_template();
-		if ( $this->get_initial_config()[ 'support_improved_repeaters' ] ?? false ) {
+		if ( $this->get_initial_config()['support_improved_repeaters'] ?? false ) {
 			?>
 			<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content-single">
 				<?php $this->content_template_single_repeater_item(); ?>
