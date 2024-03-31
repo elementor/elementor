@@ -1,7 +1,8 @@
 import { Box, Paper, Typography } from '@elementor/ui';
 import List from '@elementor/ui/List';
+import ListItem from '@elementor/ui/ListItem';
 import ListItemText from '@elementor/ui/ListItemText';
-import ListItemButton from '@elementor/ui/ListItemButton';
+import Link from '@elementor/ui/Link';
 
 const GetStarted = ( { ...props } ) => {
 	// Will be replaced with a backend solution
@@ -13,13 +14,13 @@ const GetStarted = ( { ...props } ) => {
 				{
 					props.getStartedData.repeater.map( ( item ) => {
 						return (
-							<ListItemButton key={ item.title } alignItems="flex-start" href={ `${ adminUrl }${ item.file_path }` } target="_blank" sx={ { gap: 1, p: 0, '&:hover': { backgroundColor: 'initial' }, maxWidth: '150px' } }>
+							<ListItem key={ item.title } alignItems="flex-start" sx={ { gap: 1, p: 0, maxWidth: '150px' } }>
 								<Box component="img" src={ props.getStartedData.header.image }></Box>
 								<Box>
 									<ListItemText primary={ item.title } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
-									<ListItemText primary={ item.title_small } primaryTypographyProps={ { variant: 'body2', color: 'text.tertiary' } } sx={ { '&:hover': { borderBottom: 1, borderColor: 'text.tertiary', maxWidth: 'fit-content' } } } />
+									<Link variant="body2" color="text.tertiary" underline="hover" href={ `${ adminUrl }${ item.file_path }` } target="_blank">{ item.title_small }</Link>
 								</Box>
-							</ListItemButton>
+							</ListItem>
 						);
 					} )
 				}
