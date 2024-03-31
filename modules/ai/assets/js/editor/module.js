@@ -22,15 +22,18 @@ export default class Module extends elementorModules.editor.utils.Module {
 			return;
 		}
 
-		// If ( ! shouldShowPromotionIntroduction() ) {
-		// 	return;
-		// }
+		if ( ! shouldShowPromotionIntroduction() ) {
+			return;
+		}
 
 		const element = args.container.view.$el[ 0 ];
 		const rootBox = element.getBoundingClientRect();
+
 		if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
 			return;
 		}
+
+		const { x: canvasOffsetX, y: canvasOffsetY } = document.querySelector( '#elementor-preview-iframe' ).getBoundingClientRect();
 
 		setTimeout( () => {
 			const rootElement = document.createElement( 'div' );
@@ -43,7 +46,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 						window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
 					} }
 					header={ 'Give your workflow a boost.' }
-					contentText={ 'Use the AI pink button to generate any layout you’d need for your site’s design.' }
+					contentText={ 'Build containers with AI and generate any layout you’d need for your site’s design.' }
 					controlType={ 'container' }
 					unmountAction={ () => {
 						unmount();
@@ -51,9 +54,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 					colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
 					isRTL={ elementorCommon.config.isRTL }
 					placement={ 'bottom' }
+					offset={ { x: canvasOffsetX, y: canvasOffsetY } }
 				/>
 			), rootElement );
-		}, 3000 );
+		}, 1000 );
 	}
 
 	registerControlBehavior( behaviors, view ) {
