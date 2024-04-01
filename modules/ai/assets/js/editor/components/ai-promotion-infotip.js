@@ -60,7 +60,7 @@ export default function AiPromotionInfotip( { anchor, content, focusOutListener,
 			arrow
 			open={ true }
 			title={ content }
-			placement={ placement || 'top' }
+			placement={ placement || 'left' }
 			PopperComponent={ StyledPopper }
 			PopperProps={ {
 				onClick: () => focusOutListener.reset(),
