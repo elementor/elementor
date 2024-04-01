@@ -1,35 +1,8 @@
-import { createRoot } from 'react-dom/client';
-import { EditorV1 } from './components/editor-v1';
+import { editorV1 } from './components/editor-v1';
+import { editorV2 } from './components/editor-v2';
 
-let isRendered = false;
-
-const onButtonClicked = () => {
-	if ( ! isRendered ) {
-		isRendered = true;
-
-		const container = document.createElement( 'div' );
-		document.body.append( container );
-		const Root = createRoot( container );
-
-		Root.render(
-			<EditorV1 />,
-		);
-
-		return;
-	}
-
-	elementor.trigger( 'elementor/editor/panel/whats-new/clicked' );
-};
-
-elementor.on( 'panel:init', () => {
-	if ( elementorNotifications.is_unread ) {
-		document.body.classList.add( 'e-has-notification' );
-	}
-
-	elementor.getPanelView().getPages( 'menu' ).view.addItem( {
-		name: 'notification-center',
-		icon: 'eicon-notification',
-		title: __( 'What\'s New', 'elementor' ),
-		callback: onButtonClicked,
-	}, 'navigate_from_page', 'view-page' );
-} );
+if ( window?.elementorV2?.editorAppBar ) {
+	editorV2();
+} else {
+	editorV1();
+}

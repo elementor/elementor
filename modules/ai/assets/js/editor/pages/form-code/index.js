@@ -16,6 +16,8 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../components/prompt-library-link';
+import { useRequestIds } from '../../context/requests-ids';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -36,6 +38,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
+	const { setGenerate } = useRequestIds();
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -47,7 +50,8 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 		},
 	] );
 
-	const lastRun = useRef( () => {} );
+	const lastRun = useRef( () => {
+	} );
 
 	let autocompleteItems = codeHtmlAutocomplete;
 	let promptLibraryLink = '';
@@ -65,8 +69,8 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
-
-		lastRun.current = () => send( prompt );
+		setGenerate();
+		lastRun.current = () => send( { prompt } );
 
 		lastRun.current();
 	};
@@ -101,7 +105,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						/>
 					</Box>
 
-					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } >
+					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt }>
 						<PromptLibraryLink libraryLink={ promptLibraryLink } />
 					</PromptSuggestions> }
 
@@ -117,11 +121,14 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 			{ data.result && (
 				<CodeDisplayWrapper>
-					<ReactMarkdown components={ { code: ( props ) => (
-						<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
-					) } }>
+					<ReactMarkdown components={ {
+						code: ( props ) => (
+							<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
+						),
+					} }>
 						{ data.result }
 					</ReactMarkdown>
+					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>

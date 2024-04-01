@@ -1,7 +1,7 @@
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 
 ( () => {
-	let styleguideRoot = null;
+	let unmountCallback;
 	const styleguideBodyClass = 'e-styleguide-shown';
 
 	/**
@@ -12,18 +12,15 @@ import { createRoot } from 'react-dom/client';
 
 		document.body.classList.add( styleguideBodyClass );
 
-		maybeCreateRoot();
-
-		styleguideRoot.render( <App /> );
+		const { unmount: unmountUtil } = ReactUtils.render( <App />, getStyleguideWidget() );
+		unmountCallback = unmountUtil;
 	}
 
 	/**
 	 * Remove the app from the page.
 	 */
 	function unmount() {
-		styleguideRoot.unmount();
-		styleguideRoot = null;
-
+		unmountCallback();
 		document.body.classList.remove( styleguideBodyClass );
 	}
 
@@ -35,19 +32,6 @@ import { createRoot } from 'react-dom/client';
 	 */
 	function getStyleguideWidget() {
 		return document.querySelector( '.dialog-styleguide-message' );
-	}
-
-	/**
-	 * Create root if the container element is available.
-	 */
-	function maybeCreateRoot() {
-		const widget = getStyleguideWidget();
-
-		if ( styleguideRoot || ! widget ) {
-			return;
-		}
-
-		styleguideRoot = createRoot( widget );
 	}
 
 	/**

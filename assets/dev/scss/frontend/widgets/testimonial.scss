@@ -48,11 +48,11 @@
 		&.elementor-testimonial-image-position-aside {
 
 			.elementor-testimonial-image {
-				@include padding-end(15px);
+				padding-inline-end: 15px;
 			}
 
 			.elementor-testimonial-details {
-				text-align: $start;
+				text-align: start;
 			}
 		}
 

@@ -1,11 +1,11 @@
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 import AdminTopBar from './admin-top-bar';
 
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 const adminTopBarElement = document.getElementById( 'e-admin-top-bar-root' );
 
-createRoot( adminTopBarElement ).render(
+ReactUtils.render( (
 	<AppWrapper>
 		<AdminTopBar />
-	</AppWrapper>,
-);
+	</AppWrapper>
+), adminTopBarElement );

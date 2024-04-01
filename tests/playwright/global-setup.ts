@@ -1,5 +1,6 @@
 import { chromium, request, type FullConfig } from '@playwright/test';
 import { cleanUpTestPages, createApiContext, createDefaultMedia, deleteDefaultMedia, loginApi } from './assets/api-requests';
+import { WindowType } from './types/types';
 
 module.exports = async ( config: FullConfig ) => {
 	const { baseURL, headless } = config.projects[ 0 ].use;
@@ -17,7 +18,7 @@ module.exports = async ( config: FullConfig ) => {
 	const storageState = await page.context().storageState( { path: './storageState.json' } );
 
 	// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
-	// @ts-ignore
+	let window: WindowType;
 	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
 	process.env.STORAGE_STATE = JSON.stringify( storageState );
 	process.env.BASE_URL = baseURL;

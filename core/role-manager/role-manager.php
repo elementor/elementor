@@ -2,7 +2,7 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -29,7 +29,7 @@ class Role_Manager extends Settings_Page {
 		return get_option( 'elementor_' . self::ROLE_MANAGER_OPTION_NAME, [] );
 	}
 
-	private function get_role_manager_advanced_options() {
+	public function get_role_manager_advanced_options() {
 		return get_option( 'elementor_' . self::ROLE_MANAGER_ADVANCED, [] );
 	}
 
@@ -56,18 +56,6 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
-	}
-
-	/**
-	 * @param $promotion
-	 * @param string $upgrade_url
-	 * @return mixed
-	 */
-	private function replace_url( $promotion, string $upgrade_url ) {
-		if ( ! Validate_Promotion::domain_is_on_elementor_dot_com( $promotion['upgrade_url'] ) ) {
-			$promotion['upgrade_url'] = $upgrade_url;
-		}
-		return $promotion;
 	}
 
 	/**
@@ -210,6 +198,25 @@ class Role_Manager extends Settings_Page {
 		</div>
 		<?php
 	}
+
+	public function add_custom_html_enable_control( $role_slug ) {
+		$value = 'custom-html';
+		$id = self::ROLE_MANAGER_ADVANCED . '_' . $role_slug . '_' . $value;
+		$name = 'elementor_' . self::ROLE_MANAGER_ADVANCED . '[' . $role_slug . '][]';
+
+		$advanced_options = $this->get_user_advanced_options();
+		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : [];
+		?>
+		<div class="elementor-role-control">
+			<label for="<?php echo esc_attr( $id ); ?>">
+				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked ), true ); ?>>
+				<?php echo esc_html__( 'Enable the option to use the HTML widget', 'elementor' ); ?>
+			</label>
+			<p class="elementor-role-control-warning"><strong><?php echo esc_html__( 'Heads up', 'elementor' ); ?>:</strong> <?php echo esc_html__( 'Giving broad access to edit the HTML widget can pose a security risk to your website because it enables users to run malicious scripts, etc.', 'elementor' ); ?></p>
+		</div>
+		<?php
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -234,14 +241,8 @@ class Role_Manager extends Settings_Page {
 			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
 		];
 
-		$new_promotion = apply_filters( 'elementor/role/custom_promotion', $promotion );
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion, 'elementor/role/custom_promotion', 'upgrade_url' );
 
-		if ( ! empty( $new_promotion ) && count( $new_promotion ) <= count( $promotion ) ) {
-			$promotion = $new_promotion;
-			$promotion = $this->replace_url( $promotion, $upgrade_url );
-		}
-
-		return $promotion;
 	}
 
 	/**
@@ -321,6 +322,9 @@ class Role_Manager extends Settings_Page {
 		}
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
+		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
+
+		add_filter( 'elementor/editor/user/restrictions', [ $this, 'get_role_manager_advanced_options' ] );
 	}
 }

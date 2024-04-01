@@ -3,10 +3,18 @@ import AddSectionView from './add-section/independent';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
+	config: {
+		allowEdit: true,
+	},
+
 	initialize() {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+	},
+
+	setConfig( config ) {
+		this.config = Object.assign( this.config, config );
 	},
 
 	getChildViewContainer() {
@@ -79,7 +87,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	addElementFromPanel( options ) {
-		if ( elementor.helpers.maybeDisableWidget() ) {
+		if ( ! this.config.allowEdit || elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
 
@@ -113,10 +121,14 @@ const Preview = BaseSectionsContainerView.extend( {
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	},
 
+	shouldRenderAddNewSectionArea() {
+		return this.config.allowEdit && elementor.userCan( 'design' );
+	},
+
 	onRender() {
 		this.$el.html( this.$childViewContainer );
 
-		if ( elementor.userCan( 'design' ) ) {
+		if ( this.shouldRenderAddNewSectionArea() ) {
 			const addNewSectionView = new AddSectionView();
 
 			addNewSectionView.render();

@@ -90,7 +90,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 		window.dispatchEvent( new Event( 'resize' ) );
 	} );
 
-	const sectionElementFE = await page.locator( `.elementor-element-${ sectionID }` );
+	const sectionElementFE = page.locator( `.elementor-element-${ sectionID }` );
 
 	// Assert (Stretched).
 	expect( await sectionElementFE.screenshot( {

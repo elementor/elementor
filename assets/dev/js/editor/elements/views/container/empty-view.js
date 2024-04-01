@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import ReactUtils from 'elementor-utils/react';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
 /**
@@ -10,11 +10,6 @@ export default class EmptyView extends Marionette.ItemView {
 	template = '<div></div>';
 
 	className = 'elementor-empty-view';
-
-	constructor( options ) {
-		super( options );
-		this.root = createRoot( this.el );
-	}
 
 	initialize( options ) {
 		super.initialize( options );
@@ -41,7 +36,8 @@ export default class EmptyView extends Marionette.ItemView {
 			defaultElement = <EmptyComponent container={ container } />;
 		}
 
-		this.root.render( defaultElement );
+		const { unmount } = ReactUtils.render( defaultElement, this.el );
+		this.unmount = unmount;
 	}
 
 	onRender() {
@@ -51,6 +47,6 @@ export default class EmptyView extends Marionette.ItemView {
 	}
 
 	onDestroy() {
-		this.root.unmount();
+		this.unmount();
 	}
 }

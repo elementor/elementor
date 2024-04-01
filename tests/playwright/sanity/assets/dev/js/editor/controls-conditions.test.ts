@@ -63,13 +63,13 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	// Select Image
 	await page.click( '.button.media-button' );
 
-	const backgroundPositionControl = await page.locator( '.elementor-control-background_position_mobile' );
+	const backgroundPositionControl = page.locator( '.elementor-control-background_position_mobile' );
 
 	await expect( backgroundPositionControl ).toBeVisible();
 
 	await page.selectOption( '.elementor-control-background_size_mobile >> select', 'initial' );
 
-	const customBackgroundSizeControl = await page.locator( '.elementor-control-background_bg_width_mobile' );
+	const customBackgroundSizeControl = page.locator( '.elementor-control-background_bg_width_mobile' );
 
 	await expect( customBackgroundSizeControl ).toBeVisible();
 } );

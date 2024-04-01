@@ -529,7 +529,7 @@ export const App = () => {
 								<tbody>
 									{ sortedAndFilteredWidgets.map( ( widget ) => {
 										return (
-											<tr key={ widget.name }>
+											<tr key={ widget.name } data-key-id={ widget.name }>
 												<td>
 													<i
 														style={ {

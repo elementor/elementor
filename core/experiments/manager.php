@@ -340,6 +340,8 @@ class Manager extends Base_Object {
 				esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
+			static::TYPE_HIDDEN => true,
+			'mutable' => false,
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
@@ -446,14 +448,32 @@ class Manager extends Base_Object {
 				esc_html__( 'Learn more', 'elementor' ),
 			),
 			'release_status' => self::RELEASE_STATUS_BETA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.20.0',
-			],
+			'default' => self::STATE_ACTIVE,
 			'dependencies' => [
 				'container',
 			],
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_nested_atomic_repeaters',
+			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Improve the performance of the Nested widgets.', 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'release_status' => self::RELEASE_STATUS_DEV,
+			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => false,
+			],
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_control_loading',
+			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 

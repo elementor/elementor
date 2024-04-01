@@ -5,7 +5,7 @@
 	padding: 15px;
 	border-left: 5px solid transparent;
 	position: relative;
-	text-align: $start;
+	text-align: start;
 
 	.elementor-alert-title {
 		display: block;
@@ -44,26 +44,34 @@
 			}
 		}
 	}
+}
 
-	&.elementor-alert-info {
+.elementor-alert-info {
+	.elementor-alert {
 		color: $info-text;
 		background-color: $info-bg;
 		border-color: $info-border;
 	}
+}
 
-	&.elementor-alert-success {
+.elementor-alert-success {
+	.elementor-alert {
 		color: $success-text;
 		background-color: $success-bg;
 		border-color: $success-border;
 	}
+}
 
-	&.elementor-alert-warning {
+.elementor-alert-warning {
+	.elementor-alert {
 		color: $warning-text;
 		background-color: $warning-bg;
 		border-color: $warning-border;
 	}
+}
 
-	&.elementor-alert-danger {
+.elementor-alert-danger {
+	.elementor-alert {
 		color: $danger-text;
 		background-color: $danger-bg;
 		border-color: $danger-border;

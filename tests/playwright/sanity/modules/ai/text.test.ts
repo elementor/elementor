@@ -64,7 +64,7 @@ test.describe( 'AI @ai', () => {
 
 			await newPromptButton.click();
 
-			await expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
+			expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
 			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
 			await generateTextButton.click();
 
