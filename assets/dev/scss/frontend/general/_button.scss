@@ -20,6 +20,7 @@
 	&-content-wrapper {
 		display: flex;
 		justify-content: center;
+		gap: 5px;
 	}
 
 	&-icon {
@@ -71,12 +72,10 @@
 
 	.elementor-align-icon- {
 		&right {
-			margin-left: 5px;
 			order: getValueByDirection( 15, 5 );
 		}
 
 		&left {
-			margin-right: 5px;
 			order: getValueByDirection( 5, 15 );
 		}
 	}
