@@ -124,10 +124,6 @@ abstract class Widget_Nested_Base extends Widget_Base {
 		}
 	}
 
-	protected function supports_atomic_repeaters() {
-		return false;
-	}
-
 	protected function content_template_single_repeater_item() {}
 
 	public function print_template() {
