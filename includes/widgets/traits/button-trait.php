@@ -11,6 +11,7 @@ use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Widget_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -491,6 +492,12 @@ trait Button_Trait {
 		if ( ! empty( $settings['hover_animation'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
+
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+
+		if ( $optimized_markup ) {
+			$instance->add_render_attribute( 'button', 'class', 'elementor-button-content-wrapper' );
+		}
 		?>
 		<div <?php $instance->print_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php $instance->print_render_attribute_string( 'button' ); ?>>
@@ -538,6 +545,12 @@ trait Button_Trait {
 			view.addRenderAttribute( 'button', 'class', 'elementor-animation-' + settings.hover_animation );
 		}
 
+		const optimized_markup = elementorCommon.config.experimentalFeatures.e_optimized_markup;
+
+		if ( optimized_markup ) {
+			view.addRenderAttribute( 'button', 'class', 'elementor-button-content-wrapper' );
+		}
+
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 		view.addInlineEditingAttributes( 'text', 'none' );
 		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
@@ -545,7 +558,10 @@ trait Button_Trait {
 		#>
 		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
 			<a {{{ view.getRenderAttributeString( 'button' ) }}}>
+				<# if ( ! optimized_markup ) { #>
 				<span class="elementor-button-content-wrapper">
+				<# } #>
+
 					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
 						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
@@ -558,7 +574,10 @@ trait Button_Trait {
 					<# if ( settings.text ) { #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
 					<# } #>
+
+				<# if ( ! optimized_markup ) { #>
 				</span>
+				<# } #>
 			</a>
 		</div>
 		<?php
@@ -592,10 +611,13 @@ trait Button_Trait {
 			$settings['icon_align'] = $instance->get_settings( 'icon_align' );
 		}
 
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+
+		if ( ! $optimized_markup ) {
+			$instance->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
+		}
+
 		$instance->add_render_attribute( [
-			'content-wrapper' => [
-				'class' => 'elementor-button-content-wrapper',
-			],
 			'icon-align' => [
 				'class' => [
 					'elementor-button-icon',
@@ -610,7 +632,10 @@ trait Button_Trait {
 		// TODO: replace the protected with public
 		//$instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
+		<?php if ( ! $optimized_markup ) : ?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
+		<?php endif; ?>
+
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
 				<?php if ( $is_new || $migrated ) :
@@ -623,7 +648,10 @@ trait Button_Trait {
 			<?php if ( ! empty( $settings['text'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
 			<?php endif; ?>
+
+		<?php if ( ! $optimized_markup ) : ?>
 		</span>
+		<?php endif; ?>
 		<?php
 	}
 
