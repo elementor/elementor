@@ -20,14 +20,14 @@ class Generate_Sidebar_Upgrade extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
 		foreach ( $home_screen_data['sidebar_upgrade'] as $index => $item ) {
-			if ( $item['header'] === "" ) {
-				unset( $home_screen_data['sidebar_upgrade'][$index] );
+			if ( $item['header']['title'] === "" ) {
+				unset( $home_screen_data['sidebar_upgrade'] );
 				break;
 			}
 			if ( $this->has_pro && $item['license'][0] === 'free' ) {
 				unset( $home_screen_data['sidebar_upgrade'][$index] );
 				break;
-			} elseif ( ! $this->has_pro && $item['license'].length() > 1 ) {
+			} elseif ( ! $this->has_pro && count( $item['license'] ) > 1 ) {
 				unset( $home_screen_data['sidebar_upgrade'][ $index ] );
 				break;
 			}
