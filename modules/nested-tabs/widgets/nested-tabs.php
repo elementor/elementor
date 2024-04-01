@@ -1284,10 +1284,6 @@ class NestedTabs extends Widget_Nested_Base {
 		<?php
 	}
 
-	protected function supports_atomic_repeaters() {
-		return true;
-	}
-
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
