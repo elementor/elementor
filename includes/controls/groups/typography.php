@@ -304,12 +304,15 @@ class Group_Control_Typography extends Group_Control_Base {
 						'max' => 1000,
 					],
 				],
-				'default' => '',
 				'condition' => [
 					'font_family' => $font_variables_conditions['weight'],
 				],
 				'responsive' => true,
 				'selector_value' => 'font-weight: {{SIZE}};',
+			];
+
+			$fields['font_weight']['condition'] = [
+				'font_family!' => $font_variables_conditions['weight'],
 			];
 		}
 
@@ -323,7 +326,6 @@ class Group_Control_Typography extends Group_Control_Base {
 						'max' => 150,
 					],
 				],
-				'default' => '',
 				'condition' => [
 					'font_family' => $font_variables_conditions['width'],
 				],
@@ -331,6 +333,10 @@ class Group_Control_Typography extends Group_Control_Base {
 				'selector_value' => 'font-stretch: {{SIZE}}%;',
 			];
 		}
+
+		$fields['font_style']['condition'] = [
+			'font_family!' => array_keys( $font_variables ),
+		];
 
 		return $fields;
 	}
