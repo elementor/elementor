@@ -15,6 +15,7 @@ class Transformations_Manager {
 		'Create_New_Page_Url',
 		'Filter_Plugins',
 		'Remove_Sidebar_Upgrade_For_Pro_Users',
+		'Create_Site_Settings_Url',
 	];
 
 	protected array $home_screen_data;
