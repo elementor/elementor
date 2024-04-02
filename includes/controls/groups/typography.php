@@ -275,16 +275,6 @@ class Group_Control_Typography extends Group_Control_Base {
 	}
 
 	private function add_font_variables_fields( $fields ): array {
-		$font_variables = [
-			'Alfa Slab One' => [
-				'weight',
-				'width',
-			],
-			'Caveat' => [
-				'width',
-			],
-		];
-
 		$font_variables = $this->get_font_variables();
 
 		if ( empty( $font_variables ) ) {
