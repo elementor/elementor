@@ -149,7 +149,13 @@ trait Button_Trait {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
 			]
 		);
 
@@ -173,7 +179,13 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
 			]
 		);
 
