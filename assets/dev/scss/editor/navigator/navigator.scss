@@ -110,10 +110,12 @@ body {
 		&__promotion {
 			font-size: 12px;
 			padding: 4px 17px;
-			line-height: 18px;
 			font-family: 'Roboto', sans-serif;
 			color: var(--e-a-bg-logo);
 			min-height: 30px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
 			a {
 				color: var(--e-a-color-accent-promotion);
