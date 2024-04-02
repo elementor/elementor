@@ -9,10 +9,8 @@ export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		window.$e.commands.on( 'run:after', ( component, command, args ) => {
-			switch ( command ) {
-				case 'document/elements/create':
-					this.onCreateContainer( args );
-					break;
+			if ( 'document/elements/create' === command ) {
+				this.onCreateContainer( args );
 			}
 		} );
 	}
@@ -45,8 +43,8 @@ export default class Module extends elementorModules.editor.utils.Module {
 					clickAction={ () => {
 						window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
 					} }
-					header={ 'Give your workflow a boost.' }
-					contentText={ 'Build containers with AI and generate any layout you’d need for your site’s design.' }
+					header={ __( 'Give your workflow a boost.', 'elementor' ) }
+					contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
 					controlType={ 'container' }
 					unmountAction={ () => {
 						unmount();
