@@ -24,7 +24,7 @@ const HomeScreen = ( props ) => {
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarUpgrade &&
-							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade[ 0 ] } />
+							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
 						}
 						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Container>

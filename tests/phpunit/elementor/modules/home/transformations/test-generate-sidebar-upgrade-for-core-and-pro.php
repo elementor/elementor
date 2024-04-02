@@ -1,16 +1,16 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Modules\Home\Transformations\Generate_Sidebar_Upgrade;
+use Elementor\Modules\Home\Transformations\Generate_Sidebar_Upgrade_For_Core_And_Pro;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
+class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
-		$transformation = new Generate_Sidebar_Upgrade( [] );
+		$transformation = new Generate_Sidebar_Upgrade_For_Core_And_Pro( [] );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -24,8 +24,7 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
-		$transformation = new Generate_Sidebar_Upgrade( [] );
-
+		$transformation = new Generate_Sidebar_Upgrade_For_Core_And_Pro( [] );
 		$transformation->has_pro = true;
 
 		// Act
@@ -40,7 +39,7 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_home_screen_data_empty();
 
-		$transformation = new Generate_Sidebar_Upgrade( [] );
+		$transformation = new Generate_Sidebar_Upgrade_For_Core_And_Pro( [] );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -63,10 +62,12 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 					'license' => [
 						'free'
 					],
-					],
-				['header' => [
-					'title' => 'value',
+					'show' => 'true',
 				],
+				[
+					'header' => [
+						'title' => 'value',
+					],
 					'thing' => [
 						'key' => 'value',
 					],
@@ -75,7 +76,8 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 						"essential-essential-oct2023",
 						"advanced-empty"
 					],
-					],
+					'show' => 'true',
+				],
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
@@ -97,8 +99,10 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 					'license' => [
 						'free'
 					],
+					'show' => 'false',
 				],
-				['header' => [
+				[
+					'header' => [
 					'title' => 'value',
 				],
 					'thing' => [
@@ -109,8 +113,55 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 						"essential-essential-oct2023",
 						"advanced-empty"
 					],
+					'show' => 'false',
 				],
 			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+
+	private function mock_home_screen_data_transformed_core() {
+		return [
+			'sidebar_upgrade' =>
+				[
+					'header' => [
+						'title' => 'value',
+					],
+					'thing' => [
+						'key' => 'value',
+					],
+					'license' => [
+						'free'
+					],
+					'show' => 'true',
+				],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+				],
+		];
+	}
+
+	private function mock_home_screen_data_transformed_pro() {
+		return [
+			'sidebar_upgrade' => [
+					'header' => [
+						'title' => 'value',
+					],
+					'thing' => [
+						'key' => 'value',
+					],
+					'license' => [
+						"essential-empty",
+						"essential-essential-oct2023",
+						"advanced-empty"
+					],
+					'show' => 'true',
+				],
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
@@ -126,50 +177,5 @@ class Test_Generate_Sidebar_Upgrade extends PHPUnit_TestCase {
 			],
 		];
 	}
-
-	private function mock_home_screen_data_transformed_core() {
-		return [
-			'sidebar_upgrade' => [
-				[
-					'header' => [
-						'title' => 'value',
-					],
-					'thing' => [
-						'key' => 'value',
-					],
-					'license' => [
-						'free'
-					],
-				],
-			],
-			'misc' => [
-				'Name' => 'Microsoft',
-				'Version' => 'Windows',
-			],
-		];
-	}
-
-	private function mock_home_screen_data_transformed_pro() {
-		return [
-			'sidebar_upgrade' => [
-				[
-					'header' => [
-						'title' => 'value',
-					],
-					'thing' => [
-						'key' => 'value',
-					],
-					'license' => [
-						"essential-empty",
-						"essential-essential-oct2023",
-						"advanced-empty"
-					],
-				],
-			],
-			'misc' => [
-				'Name' => 'Microsoft',
-				'Version' => 'Windows',
-			],
-		];
-	}
 }
+
