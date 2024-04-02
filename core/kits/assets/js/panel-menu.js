@@ -10,14 +10,27 @@ PanelMenu.groups = null;
 
 PanelMenu.createGroupItems = ( groupName ) => {
 	const tabs = $e.components.get( 'panel/global' ).getTabs(),
-		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group );
+		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group ),
+		queryString = window.location.search,
+		urlParams = new URLSearchParams( queryString ),
+		activeTab = urlParams.get( 'active_tab' );
 
-	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
+	// var hasFoundActiveTab = false;
+
+	return groupTabs.map( ( [ tabId, tabConfig ], index ) => {
+		if ( activeTab === tabId ) {
+			// hasFoundActiveTab = true;
+			setTimeout( () => $e.route( 'panel/global/' + tabId ) );
+		}
+
 		return {
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
-			callback: () => $e.route( 'panel/global/' + tabId ),
+			callback: () => {
+				$e.route( 'panel/global/' + tabId );
+				// _replaceParam( 'active_tab', tabId );
+			},
 		};
 	} );
 };
@@ -61,3 +74,15 @@ PanelMenu.getGroups = () => {
 
 	return PanelMenu.groups;
 };
+
+function _replaceParam( key, value ) {
+	const url = new URL( window.location.href );
+
+	if ( value ) {
+		url.searchParams.set( key, value );
+	} else {
+		url.searchParams.delete( key );
+	}
+
+	history.pushState( null, '', url.toString() );
+}

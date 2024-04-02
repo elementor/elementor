@@ -29,5 +29,18 @@ export default class extends Marionette.Behavior {
 
 	onClickBack() {
 		$e.run( 'panel/global/back' );
+		_replaceParam( 'active_tab', '' );
 	}
+}
+
+function _replaceParam( key, value ) {
+	const url = new URL( window.location.href );
+
+	if ( value ) {
+		url.searchParams.set( key, value );
+	} else {
+		url.searchParams.delete( key );
+	}
+
+	history.pushState( null, '', url.toString() );
 }
