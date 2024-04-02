@@ -534,11 +534,15 @@ trait Button_Trait {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-button-content-wrapper' );
 		}
 		?>
+		<?php if ( ! $optimized_markup ) : ?>
 		<div <?php $instance->print_render_attribute_string( 'wrapper' ); ?>>
+		<?php endif; ?>
 			<a <?php $instance->print_render_attribute_string( 'button' ); ?>>
 				<?php $this->render_text( $instance ); ?>
 			</a>
+		<?php if ( ! $optimized_markup ) : ?>
 		</div>
+		<?php endif; ?>
 		<?php
 	}
 
@@ -591,7 +595,9 @@ trait Button_Trait {
 		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 		migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 		#>
+		<# if ( ! optimized_markup ) { #>
 		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
+		<# } #>
 			<a {{{ view.getRenderAttributeString( 'button' ) }}}>
 				<# if ( ! optimized_markup ) { #>
 				<span class="elementor-button-content-wrapper">
@@ -614,7 +620,9 @@ trait Button_Trait {
 				</span>
 				<# } #>
 			</a>
+		<# if ( ! optimized_markup ) { #>
 		</div>
+		<# } #>
 		<?php
 	}
 
