@@ -17,44 +17,44 @@ const GetStarted = ( { ...props } ) => {
 			{
 				title: 'Site Settings',
 				title_small: 'Customize',
-				url: 'admin.php?page=elementor_custom_icons',
+				url: `post.php?<post>&action=elementor&active-document=5`,
 				is_relative_url: false,
-				title_small_color: 'promotion.main'
+				title_small_color: 'promotion.main',
 			},
 			{
 				title: 'Site Logo',
 				title_small: 'Customize',
 				url: 'post.php?<post>&action=elementor&active-document=5&active_tab=settings-site-identity',
 				is_relative_url: false,
-				title_small_color: 'promotion.main'
+				title_small_color: 'promotion.main',
 			},
 			{
 				title: 'Global Colors',
 				title_small: 'Customize',
 				url: 'post.php?<post>&action=elementor&active-document=5&active_tab=global-colors',
 				is_relative_url: false,
-				title_small_color: 'promotion.main'
+				title_small_color: 'promotion.main',
 			},
 			{
 				title: 'Global Fonts',
 				title_small: 'Customize',
 				url: 'post.php?<post>&action=elementor&active-document=5&active_tab=global-fonts',
 				is_relative_url: false,
-				title_small_color: 'promotion.main'
+				title_small_color: 'promotion.main',
 			},
 			{
 				title: 'Custom Icons',
 				title_small: 'Customize',
 				url: 'admin.php?page=elementor_custom_icons',
 				is_relative_url: false,
-				title_small_color: 'promotion.main'
+				title_small_color: 'promotion.main',
 			},
 			{
 				title: 'Theme Builder',
 				title_small: 'Customize',
 				url: 'admin.php?page=elementor-app',
 				is_relative_url: false,
-				title_small_color: 'promotion.main'
+				title_small_color: 'promotion.main',
 			},
 			{
 				title: 'Popups',
@@ -67,7 +67,7 @@ const GetStarted = ( { ...props } ) => {
 				title_small: 'Customize',
 				url: 'admin.php?page=elementor_custom_fonts',
 				is_relative_url: true,
-			}
+			},
 		];
 
 	const getItemHref = ( item ) => {
