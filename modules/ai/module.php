@@ -297,8 +297,9 @@ class Module extends BaseModule {
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_prompt_enhanced( $data['prompt'] );
+		$result = $app->get_image_prompt_enhanced( $data['prompt'], [], $request_ids );
 		$this->throw_on_error( $result );
 
 		return [
