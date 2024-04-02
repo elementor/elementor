@@ -13,14 +13,14 @@ PanelMenu.createGroupItems = ( groupName ) => {
 		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group ),
 		queryString = window.location.search,
 		urlParams = new URLSearchParams( queryString ),
-		activeTab = urlParams.get( 'active_tab' );
+		givenActiveTab = urlParams.get( 'active_tab' );
 
-	let hasFoundActiveTab = null;
+	let actualActiveTab = null;
 	setTimeout( updateTabParam );
 
 	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
-		if ( activeTab === tabId ) {
-			hasFoundActiveTab = activeTab;
+		if ( givenActiveTab === tabId ) {
+			actualActiveTab = givenActiveTab;
 		}
 
 		return {
@@ -32,8 +32,8 @@ PanelMenu.createGroupItems = ( groupName ) => {
 	} );
 
 	function updateTabParam() {
-		if ( hasFoundActiveTab ) {
-			$e.route( 'panel/global/' + hasFoundActiveTab );
+		if ( actualActiveTab ) {
+			$e.route( 'panel/global/' + actualActiveTab );
 		}
 
 		_replaceParam( 'active_tab', '' );
