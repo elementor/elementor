@@ -15,24 +15,29 @@ PanelMenu.createGroupItems = ( groupName ) => {
 		urlParams = new URLSearchParams( queryString ),
 		activeTab = urlParams.get( 'active_tab' );
 
-	// var hasFoundActiveTab = false;
+	let hasFoundActiveTab = null;
+	setTimeout( updateTabParam );
 
-	return groupTabs.map( ( [ tabId, tabConfig ], index ) => {
+	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
 		if ( activeTab === tabId ) {
-			// hasFoundActiveTab = true;
-			setTimeout( () => $e.route( 'panel/global/' + tabId ) );
+			hasFoundActiveTab = activeTab;
 		}
 
 		return {
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
-			callback: () => {
-				$e.route( 'panel/global/' + tabId );
-				// _replaceParam( 'active_tab', tabId );
-			},
+			callback: () => $e.route( 'panel/global/' + tabId ),
 		};
 	} );
+
+	function updateTabParam() {
+		if ( hasFoundActiveTab ) {
+			$e.route( 'panel/global/' + hasFoundActiveTab );
+		}
+
+		_replaceParam( 'active_tab', '' );
+	}
 };
 
 PanelMenu.initGroups = () => {
@@ -75,7 +80,7 @@ PanelMenu.getGroups = () => {
 	return PanelMenu.groups;
 };
 
-function _replaceParam( key, value ) {
+function _replaceParam( key, value = null ) {
 	const url = new URL( window.location.href );
 
 	if ( value ) {
