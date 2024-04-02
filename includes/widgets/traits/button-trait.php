@@ -152,7 +152,7 @@ trait Button_Trait {
 					$args['section_condition'],
 					[
 						'text!' => '',
-						'selected_icon[value]!' => ''
+						'selected_icon[value]!' => '',
 					]
 				),
 			]
@@ -182,7 +182,7 @@ trait Button_Trait {
 					$args['section_condition'],
 					[
 						'text!' => '',
-						'selected_icon[value]!' => ''
+						'selected_icon[value]!' => '',
 					]
 				),
 			]
