@@ -23,7 +23,7 @@ class Generate_Sidebar_Upgrade_For_Core_And_Pro extends Transformations_Abstract
 			if ( $this->has_pro && 'free' === $item['license'][0] ) {
 				unset( $home_screen_data['sidebar_upgrade'][ $index ] );
 				break;
-			} elseif ( ! $this->has_pro &&  1 < count( $item['license'] ) ) {
+			} elseif ( ! $this->has_pro && 1 < count( $item['license'] ) ) {
 				unset( $home_screen_data['sidebar_upgrade'][ $index ] );
 				break;
 			}
