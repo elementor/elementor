@@ -38,7 +38,7 @@ const GetStarted = ( { ...props } ) => {
 			{
 				title: 'Global Fonts',
 				title_small: 'Customize',
-				url: 'post.php?<post>&action=elementor&active-document=5&active_tab=global-fonts',
+				url: 'post.php?<post>&action=elementor&active-document=5&active_tab=global-typography',
 				is_relative_url: false,
 				title_small_color: 'promotion.main',
 			},
@@ -89,7 +89,7 @@ const GetStarted = ( { ...props } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Typography variant="h6">{ props.getStartedData.header.title }</Typography>
-			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, gap: { md: 9, xs: 7 } } }>
+			<List className="get-started-list" sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, gap: { md: 9, xs: 7 } } }>
 				{ repeater.map( ( item ) => (
 					<ListItem key={ item.title } alignItems="flex-start" sx={ { gap: 1, p: 0, maxWidth: '150px' } }>
 						<Box component="img" src={ props.getStartedData.header.image }></Box>
