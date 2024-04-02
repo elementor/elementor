@@ -96,6 +96,9 @@ class Widget_Counter extends Widget_Base {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$start = is_rtl() ? 'right' : 'left';
+		$end = ! is_rtl() ? 'right' : 'left';
+
 		$this->start_controls_section(
 			'section_counter',
 			[
@@ -139,7 +142,6 @@ class Widget_Counter extends Widget_Base {
 					'active' => false,
 				],
 				'default' => '',
-				'placeholder' => 1,
 			]
 		);
 
@@ -155,7 +157,6 @@ class Widget_Counter extends Widget_Base {
 					'active' => false,
 				],
 				'default' => '',
-				'placeholder' => esc_html__( 'Plus', 'elementor' ),
 			]
 		);
 
@@ -205,11 +206,258 @@ class Widget_Counter extends Widget_Base {
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
+				'separator' => 'before',
 				'dynamic' => [
 					'active' => true,
 				],
 				'default' => esc_html__( 'Cool Number', 'elementor' ),
-				'placeholder' => esc_html__( 'Cool Number', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'title_tag',
+			[
+				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+					'p' => 'p',
+				],
+				'default' => 'div',
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_counter_style',
+			[
+				'label' => esc_html__( 'Counter', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_position',
+			[
+				'label' => esc_html__( 'Title Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'before' => [
+						'title' => esc_html__( 'Before', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'after' => [
+						'title' => esc_html__( 'After', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-$start",
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-$end",
+					],
+				],
+				'selectors_dictionary' => [
+					'before' => 'flex-direction: column;',
+					'after' => 'flex-direction: column-reverse;',
+					'start' => 'flex-direction: row;',
+					'end' => 'flex-direction: row-reverse;',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter' => '{{VALUE}}',
+				],
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_horizontal_alignment',
+			[
+				'label' => esc_html__( 'Title Horizontal Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-$start",
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-$end",
+					],
+				],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-title' => 'justify-content: {{VALUE}};',
+				],
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_vertical_alignment',
+			[
+				'label' => esc_html__( 'Title Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Middle', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'end' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-title' => 'align-items: {{VALUE}};',
+				],
+				'condition' => [
+					'title!' => '',
+					'title_position' => [ 'start', 'end' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_gap',
+			[
+				'label' => esc_html__( 'Title Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter' => 'gap: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'title!' => '',
+					'title_position' => [ '', 'before', 'after' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'number_position',
+			[
+				'label' => esc_html__( 'Number Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-$start",
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-$end",
+					],
+					'stretch' => [
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-grow',
+					],
+				],
+				'selectors_dictionary' => [
+					'start' => 'text-align: {{VALUE}}; --counter-prefix-grow: 0; --counter-suffix-grow: 1; --counter-number-grow: 0;',
+					'center' => 'text-align: {{VALUE}}; --counter-prefix-grow: 1; --counter-suffix-grow: 1; --counter-number-grow: 0;',
+					'end' => 'text-align: {{VALUE}}; --counter-prefix-grow: 1; --counter-suffix-grow: 0; --counter-number-grow: 0;',
+					'stretch' => '--counter-prefix-grow: 0; --counter-suffix-grow: 0; --counter-number-grow: 1;',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-number-wrapper' => '{{VALUE}}',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'number_alignment',
+			[
+				'label' => esc_html__( 'Number Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-text-align-$start",
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-text-align-$end",
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-number' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'number_position' => 'stretch',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'number_gap',
+			[
+				'label' => esc_html__( 'Number Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'number_position',
+							'operator' => '!==',
+							'value' => 'stretch',
+						],
+						[
+							'relation' => 'or',
+							'terms' => [
+								[
+									'name' => 'prefix',
+									'operator' => '!==',
+									'value' => '',
+								],
+								[
+									'name' => 'suffix',
+									'operator' => '!==',
+									'value' => '',
+								],
+							],
+						],
+					],
+				],
 			]
 		);
 
@@ -271,6 +519,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'title!' => '',
+				],
 			]
 		);
 
@@ -285,6 +536,9 @@ class Widget_Counter extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'title!' => '',
+				],
 			]
 		);
 
@@ -296,6 +550,9 @@ class Widget_Counter extends Widget_Base {
 					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
 				],
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
+				'condition' => [
+					'title!' => '',
+				],
 			]
 		);
 
@@ -304,6 +561,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'title_stroke',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
+				'condition' => [
+					'title!' => '',
+				],
 			]
 		);
 
@@ -312,6 +572,9 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
+				'condition' => [
+					'title!' => '',
+				],
 			]
 		);
 
@@ -328,21 +591,45 @@ class Widget_Counter extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# view.addRenderAttribute( 'counter-title', {
-			'class': 'elementor-counter-title'
-		} );
+		<#
+		view.addRenderAttribute( 'elementor-counter', 'class', 'elementor-counter' );
+
+		view.addRenderAttribute( 'counter-number', 'class', 'elementor-counter-number-wrapper' );
+
+		view.addRenderAttribute(
+			'counter',
+			{
+				'class': 'elementor-counter-number',
+				'data-duration': settings.duration,
+				'data-to-value': settings.ending_number,
+				'data-from-value': settings.starting_number,
+			}
+		);
+
+		if ( settings.thousand_separator ) {
+			const delimiter = settings.thousand_separator_char ? settings.thousand_separator_char : ',';
+			view.addRenderAttribute( 'counter', 'data-delimiter', delimiter );
+		}
+
+		view.addRenderAttribute( 'prefix', 'class', 'elementor-counter-number-prefix' );
+
+		view.addRenderAttribute( 'suffix', 'class', 'elementor-counter-number-suffix' );
+
+		view.addRenderAttribute( 'counter-title', 'class', 'elementor-counter-title' );
 
 		view.addInlineEditingAttributes( 'counter-title' );
+
+		const titleTag = elementor.helpers.validateHTMLTag( settings.title_tag );
 		#>
-		<div class="elementor-counter">
-			<div class="elementor-counter-number-wrapper">
-				<span class="elementor-counter-number-prefix">{{{ settings.prefix }}}</span>
-				<span class="elementor-counter-number" data-duration="{{ settings.duration }}" data-to-value="{{ settings.ending_number }}" data-delimiter="{{ settings.thousand_separator ? settings.thousand_separator_char || ',' : '' }}">{{{ settings.starting_number }}}</span>
-				<span class="elementor-counter-number-suffix">{{{ settings.suffix }}}</span>
-			</div>
+		<div {{{ view.getRenderAttributeString( 'elementor-counter' ) }}}>
 			<# if ( settings.title ) {
-				#><div {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ settings.title }}}</div><#
+				#><{{ titleTag }} {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ settings.title }}}</{{ titleTag }}><#
 			} #>
+			<div {{{ view.getRenderAttributeString( 'counter-number' ) }}}>
+				<span {{{ view.getRenderAttributeString( 'prefix' ) }}}>{{{ settings.prefix }}}</span>
+				<span {{{ view.getRenderAttributeString( 'counter' ) }}}>{{{ settings.starting_number }}}</span>
+				<span {{{ view.getRenderAttributeString( 'suffix' ) }}}>{{{ settings.suffix }}}</span>
+			</div>
 		</div>
 		<?php
 	}
@@ -358,31 +645,46 @@ class Widget_Counter extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		$this->add_render_attribute( 'counter', [
-			'class' => 'elementor-counter-number',
-			'data-duration' => $settings['duration'],
-			'data-to-value' => $settings['ending_number'],
-			'data-from-value' => $settings['starting_number'],
-		] );
+		$this->add_render_attribute( 'elementor-counter', 'class', 'elementor-counter' );
+
+		$this->add_render_attribute( 'counter-number', 'class', 'elementor-counter-number-wrapper' );
+
+		$this->add_render_attribute(
+			'counter',
+			[
+				'class' => 'elementor-counter-number',
+				'data-duration' => $settings['duration'],
+				'data-to-value' => $settings['ending_number'],
+				'data-from-value' => $settings['starting_number'],
+			]
+		);
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {
 			$delimiter = empty( $settings['thousand_separator_char'] ) ? ',' : $settings['thousand_separator_char'];
 			$this->add_render_attribute( 'counter', 'data-delimiter', $delimiter );
 		}
 
+		$this->add_render_attribute( 'prefix', 'class', 'elementor-counter-number-prefix' );
+
+		$this->add_render_attribute( 'suffix', 'class', 'elementor-counter-number-suffix' );
+
 		$this->add_render_attribute( 'counter-title', 'class', 'elementor-counter-title' );
 
 		$this->add_inline_editing_attributes( 'counter-title' );
+
+		$title_tag = Utils::validate_html_tag( $settings['title_tag'] );
 		?>
-		<div class="elementor-counter">
-			<div class="elementor-counter-number-wrapper">
-				<span class="elementor-counter-number-prefix"><?php $this->print_unescaped_setting( 'prefix' ); ?></span>
+		<div <?php $this->print_render_attribute_string( 'elementor-counter' ); ?>>
+			<?php
+			if ( $settings['title'] ) :
+				?><<?php Utils::print_validated_html_tag( $title_tag ); ?> <?php $this->print_render_attribute_string( 'counter-title' ); ?>><?php $this->print_unescaped_setting( 'title' ); ?></<?php Utils::print_validated_html_tag( $title_tag ); ?>><?php
+			endif;
+			?>
+			<div <?php $this->print_render_attribute_string( 'counter-number' ); ?>>
+				<span <?php $this->print_render_attribute_string( 'prefix' ); ?>><?php $this->print_unescaped_setting( 'prefix' ); ?></span>
 				<span <?php $this->print_render_attribute_string( 'counter' ); ?>><?php $this->print_unescaped_setting( 'starting_number' ); ?></span>
-				<span class="elementor-counter-number-suffix"><?php $this->print_unescaped_setting( 'suffix' ); ?></span>
+				<span <?php $this->print_render_attribute_string( 'suffix' ); ?>><?php $this->print_unescaped_setting( 'suffix' ); ?></span>
 			</div>
-			<?php if ( $settings['title'] ) : ?>
-				<div <?php $this->print_render_attribute_string( 'counter-title' ); ?>><?php $this->print_unescaped_setting( 'title' ); ?></div>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
