@@ -929,8 +929,11 @@ class Element_Column extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 
-		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+		$overlay_background = $settings['background_overlay_background'] ?? '';
+		$overlay_hover_background = $settings['background_overlay_hover_background'] ?? '';
+
+		$has_background_overlay = in_array( $overlay_background, [ 'classic', 'gradient' ], true ) ||
+								  in_array( $overlay_hover_background, [ 'classic', 'gradient' ], true );
 
 		$column_wrap_classes = [ 'elementor-widget-wrap' ];
 
