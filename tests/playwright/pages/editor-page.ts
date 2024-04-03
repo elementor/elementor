@@ -95,6 +95,15 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
+	async hideAiPromotion() {
+		await this.getPreviewFrame().evaluate( () => {
+			const style = document.createElement( 'style' );
+			style.id = 'ai-promotion-style';
+			document.head.appendChild( style );
+			style.innerHTML = '[test-id=ai-promotion-infotip-wrapper] { display: none; }';
+		} );
+	}
+
 	async ensurePanelLoaded() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );

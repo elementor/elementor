@@ -56,6 +56,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const helper = new ElementRegressionHelper( page, testInfo );
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
+			await editorPage.hideAiPromotion();
 
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );

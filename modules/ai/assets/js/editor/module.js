@@ -39,6 +39,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 			const { unmount } = ReactUtils.render( (
 				<AiPromotionInfotipWrapper
+					test-id="ai-promotion-infotip-wrapper"
 					anchor={ element }
 					clickAction={ () => {
 						window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
