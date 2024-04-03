@@ -274,5 +274,15 @@ export default class WpAdminPage extends BasePage {
 		await promoContainer.waitFor();
 		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
+
+	/**
+	 * Logout from the WordPress admin.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async logout() {
+		await this.page.goto( '/wp-login.php?action=logout' );
+		await this.page.locator( 'a' ).click();
+	}
 }
 
