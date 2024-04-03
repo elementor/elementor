@@ -60,10 +60,9 @@ const SiteSettingsListItem = ( { item, image } ) => {
 						<DialogContentText>({ __( 'or rename it later', 'elementor' ) })</DialogContentText>
 						<TextField
 							onChange={ handleChange }
+							fullWidth
+							placeholder={ __( 'New Page', 'elementor' ) }
 						>
-							<span>
-								Placeholder
-							</span>
 						</TextField>
 					</DialogContent>
 
