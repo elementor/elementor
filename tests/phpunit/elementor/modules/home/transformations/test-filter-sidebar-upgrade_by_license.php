@@ -110,8 +110,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data_transformed_core() {
 		return [
-			'sidebar_upgrade' =>
-				[
+			'sidebar_upgrade' => [
 					'thing' => [
 						'key' => 'value',
 					],
@@ -119,7 +118,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'free'
 					],
 					'show' => 'true',
-				],
+			],
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
@@ -137,7 +136,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'pro'
 					],
 					'show' => 'true',
-				],
+			],
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
