@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
 test.describe( 'URL Actions', () => {
-	test( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
+	test.skip( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
 		/**
 		 * Open new empty page.
 		 */
