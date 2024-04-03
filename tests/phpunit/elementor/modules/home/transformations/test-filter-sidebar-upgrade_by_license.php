@@ -66,9 +66,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
-						"essential-empty",
-						"essential-essential-oct2023",
-						"advanced-empty"
+						"pro"
 					],
 					'show' => 'true',
 				],
@@ -97,9 +95,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
-						"essential-empty",
-						"essential-essential-oct2023",
-						"advanced-empty"
+						"pro"
 					],
 					'show' => 'false',
 				],
@@ -138,9 +134,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
-						"essential-empty",
-						"essential-essential-oct2023",
-						"advanced-empty"
+						"pro"
 					],
 					'show' => 'true',
 				],
