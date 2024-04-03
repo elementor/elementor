@@ -1,5 +1,6 @@
 body {
 	--e-editor-navigator-width: 240px;
+	--e-editor-navigator-promotion-height: 30px;
 }
 
 #elementor-navigator {
@@ -95,8 +96,6 @@ body {
 
 	&__footer {
 		width: 100%;
-		left: 0;
-		bottom: 0;
 		text-align: center;
 
 		&__resize-bar {
@@ -112,8 +111,10 @@ body {
 			padding: 4px 17px;
 			font-family: 'Roboto', sans-serif;
 			color: var(--e-a-bg-logo);
-			min-height: 30px;
-			line-height: 18px;
+			min-height: var(--e-editor-navigator-promotion-height);
+			display: flex;
+			justify-content: center;
+			align-items: center;
 
 			a {
 				color: var(--e-a-color-accent-promotion);
@@ -334,5 +335,9 @@ body {
 				opacity: .5;
 			}
 		}
+	}
+
+	&__promotion-text {
+		line-height: 18px;
 	}
 }
