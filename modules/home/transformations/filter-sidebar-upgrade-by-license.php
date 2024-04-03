@@ -37,6 +37,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 			unset( $home_screen_data['sidebar_upgrade'] );
 			return $home_screen_data;
 		}
+
 		$home_screen_data['sidebar_upgrade'] = reset( $new_sidebar_upgrade );
 
 		return $home_screen_data;
