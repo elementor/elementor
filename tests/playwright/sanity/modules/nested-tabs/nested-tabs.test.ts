@@ -55,9 +55,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
 		await editor.loadTemplate( filePath, false );
 		await frame.waitForSelector( '.e-n-tabs' );
-		await editor.hideAiPromotion();
 
 		await test.step( 'Keyboard handling inside the Editor', async () => {
+			await editor.hideAiPromotion();
 			const tabTitleOne = frame.locator( '.e-n-tab-title >> nth=0' ),
 				tabTitleTwo = frame.locator( '.e-n-tab-title >> nth=1' ),
 				tabTitleThree = frame.locator( '.e-n-tab-title >> nth=2' ),
@@ -67,7 +67,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 			// Assert.
 			await frame.locator( '.page-header' ).click();
-			await editor.hideAiPromotion();
 
 			await page.keyboard.press( 'Tab' );
 			await expect( tabTitleOne ).toBeFocused();
