@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
 test.describe( 'URL Actions', () => {
-	test.skip( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
+	test( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
 		/**
 		 * Open new empty page.
 		 */
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		const wpMediaAddButtonSelector = '.button.media-button';
 
@@ -33,10 +33,10 @@ test.describe( 'URL Actions', () => {
 		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
-		const previousImage = await page.$( '[aria-label*="mountain-image"]' );
+		const previousImage = page.getByRole( 'checkbox', { name: 'Picsum ID: 684' } );
 
 		if ( previousImage ) {
-			await page.click( '[aria-label="mountain-image"]' );
+			await previousImage.nth( 0 ).click();
 		} else {
 			await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 			await page.waitForSelector( 'text=mountain-image.jpeg' );
@@ -104,7 +104,7 @@ test.describe( 'URL Actions', () => {
 		}
 
 		// Select the mountain image to add to the gallery.
-		await page.click( '[aria-label="mountain-image"]' );
+		await previousImage.nth( 0 ).click();
 
 		// Create the gallery.
 		await page.click( wpMediaAddButtonSelector );
@@ -175,22 +175,5 @@ test.describe( 'URL Actions', () => {
 		await page.reload();
 		// Test that the lightbox was NOT OPENED on this page.
 		await expect( frontendSinglelightboxImage ).not.toBeVisible();
-
-		/**
-		 * Cleanup - change the page back to draft.
-		 */
-		await page.goto( `/wp-admin/post.php?post=${ editor.postId }&action=elementor` );
-
-		// Save as a draft
-		await page.evaluate( () => {
-			$e.run( 'document/elements/settings', {
-				container: elementor.documents.getCurrent().container,
-				settings: {
-					post_status: 'draft',
-				},
-			} );
-
-			$e.run( 'document/save/draft' );
-		} );
 	} );
 } );
