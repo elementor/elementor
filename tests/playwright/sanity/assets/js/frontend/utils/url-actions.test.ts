@@ -36,7 +36,7 @@ test.describe( 'URL Actions', () => {
 		const mountainImageName = 'Picsum ID: 684',
 			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-		if ( await previousImage.isVisible() ) {
+		if ( await previousImage.nth( 0 ).isVisible() ) {
 			await previousImage.nth( 0 ).click();
 		} else {
 			await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
@@ -130,17 +130,12 @@ test.describe( 'URL Actions', () => {
 		await expect( slideshowLightboxImage.first() ).toBeVisible();
 
 		// Save the page so we can run the front end tests.
-		await page.evaluate( () => $e.run( 'document/save/default' ) );
-
-		const frontendSlug = '/?p=' + editor.postId;
-
-		// Go to the front end of the test page.
-		await page.goto( frontendSlug );
+		await editor.publishAndViewPage();
 
 		/**
 		 * Get the action hash from the image, go to the page URL with the hash and check that the lightbox is triggered.
 		 */
-		const frontendMountainImageElement = await page.$( '.elementor-widget-image a[href*="mountain-image"]' );
+		const frontendMountainImageElement = page.locator( '.elementor-widget-image a' ).nth( 0 );
 
 		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'data-e-action-hash' );
 

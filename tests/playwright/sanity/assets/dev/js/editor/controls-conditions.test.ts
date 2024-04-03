@@ -54,7 +54,7 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	const mountainImageName = 'Picsum ID: 684',
 		previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-	if ( await previousImage.isVisible() ) {
+	if ( await previousImage.nth( 0 ).isVisible() ) {
 		await previousImage.nth( 0 ).click();
 	} else {
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
