@@ -51,7 +51,7 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	await page.waitForTimeout( 1000 );
 
 	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
-	await page.locator( 'text=mountain-image.jpeg' ).waitFor();
+	await page.locator( 'text=mountain-image.jpeg' ).nth( 0 ).waitFor();
 
 	// Select Image
 	await page.click( '.button.media-button' );
