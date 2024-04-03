@@ -66,7 +66,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
-						"pro"
+						'pro'
 					],
 					'show' => 'true',
 				],
@@ -95,7 +95,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
-						"pro"
+						'pro'
 					],
 					'show' => 'false',
 				],
@@ -134,7 +134,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
-						"pro"
+						'pro'
 					],
 					'show' => 'true',
 				],
