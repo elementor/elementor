@@ -30,14 +30,14 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data_transformed_pro();
-
+		var_dump($transformed_data);
 		// Assert
 		$this->assertTrue( $transformed_data === $expected_data );
 	}
 
-	public function test_transform__core_empty() {
+	public function test_transform__core_show_is_false() {
 		// Arrange
-		$original_data = $this->mock_home_screen_data_empty();
+		$original_data = $this->mock_home_screen_data_show_is_false();
 
 		$transformation = new Generate_Sidebar_Upgrade_For_Core_And_Pro( [] );
 
@@ -53,9 +53,6 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 		return [
 			'sidebar_upgrade' => [
 				[
-					'header' => [
-					'title' => 'value',
-					],
 					'thing' => [
 						'key' => 'value',
 					],
@@ -65,9 +62,6 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 					'show' => 'true',
 				],
 				[
-					'header' => [
-						'title' => 'value',
-					],
 					'thing' => [
 						'key' => 'value',
 					],
@@ -86,15 +80,12 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 		];
 	}
 
-	private function mock_home_screen_data_empty() {
+	private function mock_home_screen_data_show_is_false() {
 		return [
 			'sidebar_upgrade' => [
 				[
-					'header' => [
-						'title' => '',
-					],
 					'thing' => [
-						'key' => '',
+						'key' => 'value',
 					],
 					'license' => [
 						'free'
@@ -102,9 +93,6 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 					'show' => 'false',
 				],
 				[
-					'header' => [
-					'title' => 'value',
-				],
 					'thing' => [
 						'key' => 'value',
 					],
@@ -128,9 +116,6 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 		return [
 			'sidebar_upgrade' =>
 				[
-					'header' => [
-						'title' => 'value',
-					],
 					'thing' => [
 						'key' => 'value',
 					],
@@ -149,9 +134,6 @@ class Test_Generate_Sidebar_Upgrade_For_Core_And_Pro extends PHPUnit_TestCase {
 	private function mock_home_screen_data_transformed_pro() {
 		return [
 			'sidebar_upgrade' => [
-					'header' => [
-						'title' => 'value',
-					],
 					'thing' => [
 						'key' => 'value',
 					],

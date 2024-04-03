@@ -19,21 +19,25 @@ class Generate_Sidebar_Upgrade_For_Core_And_Pro extends Transformations_Abstract
 	}
 
 	public function transform( array $home_screen_data ): array {
+		$new_sidebar_upgrade = [];
+
 		foreach ( $home_screen_data['sidebar_upgrade'] as $index => $item ) {
-			if ( $this->has_pro && 'free' === $item['license'][0] ) {
-				unset( $home_screen_data['sidebar_upgrade'][ $index ] );
-				break;
-			} elseif ( ! $this->has_pro && 1 < count( $item['license'] ) ) {
-				unset( $home_screen_data['sidebar_upgrade'][ $index ] );
-				break;
+			$has_pro_json_free = $this->has_pro && 'free' === $item['license'][0];
+			$not_pro_json_pro = ! $this->has_pro && 1 < count( $item['license'] );
+			$should_not_show = isset( $item['show'] ) && 'false' === $item['show'];
+
+			if ( $has_pro_json_free || $not_pro_json_pro || $should_not_show ) {
+				continue;
 			}
+			$new_sidebar_upgrade[] = $item;
+
 		}
 
-		$home_screen_data['sidebar_upgrade'] = array_values( $home_screen_data['sidebar_upgrade'] );
-		$home_screen_data['sidebar_upgrade'] = $home_screen_data['sidebar_upgrade'][0];
-		if ( $home_screen_data['sidebar_upgrade']['show'] && 'false' === $home_screen_data['sidebar_upgrade']['show'] ) {
+		if ( empty( $new_sidebar_upgrade ) ) {
 			unset( $home_screen_data['sidebar_upgrade'] );
+			return $home_screen_data;
 		}
+		$home_screen_data['sidebar_upgrade'] = reset( $new_sidebar_upgrade );
 
 		return $home_screen_data;
 	}
