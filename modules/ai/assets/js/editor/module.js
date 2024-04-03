@@ -16,7 +16,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	onCreateContainer( args ) {
-		if ( args.container.id !== 'document' ) {
+		if ( args.container.id !== 'document' || args.model.elType !== 'container' ) {
 			return;
 		}
 
