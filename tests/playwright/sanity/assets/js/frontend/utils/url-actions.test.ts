@@ -36,7 +36,7 @@ test.describe( 'URL Actions', () => {
 		const mountainImageName = 'Picsum ID: 684',
 			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-		if ( previousImage ) {
+		if ( !! previousImage ) {
 			await previousImage.nth( 0 ).click();
 		} else {
 			await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
