@@ -30,6 +30,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data_transformed_pro();
+
 		// Assert
 		$this->assertEquals( $transformed_data, $expected_data );
 	}
