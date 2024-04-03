@@ -7,6 +7,9 @@ import Link from '@elementor/ui/Link';
 const GetStarted = ( { ...props } ) => {
 	// Will be replaced with a backend solution
 	const adminUrl = elementorAppConfig.admin_url;
+
+	console.log( props );
+
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Typography variant="h6">{ props.getStartedData[ 0 ].header.title }</Typography>
@@ -24,6 +27,13 @@ const GetStarted = ( { ...props } ) => {
 						);
 					} )
 				}
+				<ListItem key={ 'testing_123456' } alignItems="flex-start" sx={ { gap: 1, p: 0, maxWidth: '150px' } }>
+					<Box component="img" src={ props.getStartedData[ 0 ].header.image }></Box>
+					<Box>
+						<ListItemText primary={ 'Site Settings' } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
+						<Link variant="body2" color="text.tertiary" underline="hover" href={ `#` } target="_blank">{ 'Customize' }</Link>
+					</Box>
+				</ListItem>
 			</List>
 		</Paper>
 	);

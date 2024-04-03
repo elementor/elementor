@@ -61,8 +61,6 @@ class Module extends BaseApp {
 			'elementorHomeScreenData',
 			$this->get_app_js_config()
 		);
-
-		var_dump($this->get_app_js_config());
 	}
 
 	public function is_experiment_active(): bool {

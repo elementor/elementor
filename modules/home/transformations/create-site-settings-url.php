@@ -11,21 +11,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
-//		$home_screen_data['create_new_page_url'] = Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		$existing_elementor_page = $this->get_elementor_page();
+		$site_settings_url = ! empty( $existing_elementor_page ) ?
+			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
+			Plugin::$instance->documents->get_create_new_post_url( 'page' );
 
-
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$t = $this->get_elementor_page();
-
-		var_dump( $kit );
-		var_dump( $this->get_elementor_edit_url( $t->ID ) );die();
+		$home_screen_data['get_started']['testing_site_settings_url_123'] = [
+			'new_page' => empty( $existing_elementor_page ),
+			'url' => $site_settings_url,
+		];
 
 		return $home_screen_data;
 	}
 
 	private function get_elementor_edit_url( int $post_id ) {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$document = Plugin::$instance->documents->get( $post_id );
-		return $document->get_edit_url();
+
+		return add_query_arg( [ 'active-document' => $active_kit_id ], $document->get_edit_url() );
 	}
 
 	private function get_elementor_page() {
