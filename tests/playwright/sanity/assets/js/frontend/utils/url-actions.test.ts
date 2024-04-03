@@ -33,7 +33,8 @@ test.describe( 'URL Actions', () => {
 		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
-		const previousImage = page.getByRole( 'checkbox', { name: 'Picsum ID: 684' } );
+		const mountainImageName = 'Picsum ID: 684',
+			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
 		if ( previousImage ) {
 			await previousImage.nth( 0 ).click();
