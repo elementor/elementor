@@ -32,16 +32,8 @@ test.describe( 'URL Actions', () => {
 		// Takes time to load the media library assets.
 		await page.waitForTimeout( 1000 );
 
-		// Check if previous image is already uploaded.
-		const mountainImageName = 'Picsum ID: 684',
-			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
-
-		if ( !! previousImage ) {
-			await previousImage.nth( 0 ).click();
-		} else {
-			await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
-			await page.waitForSelector( 'text=mountain-image.jpeg' );
-		}
+		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
+		await page.waitForSelector( 'text=mountain-image.jpeg' );
 
 		// Select the image.
 		await page.click( wpMediaAddButtonSelector );
@@ -105,7 +97,9 @@ test.describe( 'URL Actions', () => {
 		}
 
 		// Select the mountain image to add to the gallery.
-		await previousImage.nth( 0 ).click();
+		const mountainImageName = 'Picsum ID: 684';
+
+		await page.getByRole( 'checkbox', { name: mountainImageName } ).nth( 0 ).click();
 
 		// Create the gallery.
 		await page.click( wpMediaAddButtonSelector );
