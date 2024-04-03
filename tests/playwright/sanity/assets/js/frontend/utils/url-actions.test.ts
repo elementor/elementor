@@ -33,7 +33,7 @@ test.describe( 'URL Actions', () => {
 		await page.waitForTimeout( 1000 );
 
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
-		await page.waitForSelector( 'text=mountain-image.jpeg' );
+		await page.locator( 'text=mountain-image.jpeg' ).waitFor();
 
 		// Select the image.
 		await page.click( wpMediaAddButtonSelector );
