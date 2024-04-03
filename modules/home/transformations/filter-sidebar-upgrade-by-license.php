@@ -23,7 +23,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 
 		foreach ( $home_screen_data['sidebar_upgrade'] as $index => $item ) {
 			$has_pro_json_free = $this->has_pro && 'free' === $item['license'][0];
-			$not_pro_json_pro = ! $this->has_pro && 1 < count( $item['license'] );
+			$not_pro_json_pro = ! $this->has_pro && 'pro' === $item['license'][0];
 			$should_not_show = isset( $item['show'] ) && 'false' === $item['show'];
 
 			if ( $has_pro_json_free || $not_pro_json_pro || $should_not_show ) {
