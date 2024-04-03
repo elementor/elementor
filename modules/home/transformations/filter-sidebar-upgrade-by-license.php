@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Generate_Sidebar_Upgrade_For_Core_And_Pro extends Transformations_Abstract {
+class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 	public bool $has_pro;
 
 	public function __construct( $args ) {
