@@ -55,6 +55,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
 		await editor.loadTemplate( filePath, false );
 		await frame.waitForSelector( '.e-n-tabs' );
+		await editor.hideAiPromotion();
 
 		await test.step( 'Keyboard handling inside the Editor', async () => {
 			const tabTitleOne = frame.locator( '.e-n-tab-title >> nth=0' ),
