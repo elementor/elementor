@@ -14,7 +14,9 @@ test.describe( 'Lighthouse tests', () => {
 		await editorPage.loadTemplate( filePath, true );
 		await editorPage.publishPage();
 		await wpAdmin.logout();
+
 		await page.goto( `/?post_id=${ pageId }` );
+		await page.locator( '.elementor-widget-accordion' ).waitFor();
 
 		await playAudit( {
 			page,
