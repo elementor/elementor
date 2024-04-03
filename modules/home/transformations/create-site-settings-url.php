@@ -11,20 +11,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
+		if ( empty( $home_screen_data['get_started'] ) ) {
+			return $home_screen_data;
+		}
+
 		$existing_elementor_page = $this->get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page ) ?
 			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
 			Plugin::$instance->documents->get_create_new_post_url( 'page' );
 
-		$home_screen_data['get_started'][0]['repeater'][] = [
-			'title' => 'Site Settings',
-			'title_small' => 'Customize',
-			'url' => $site_settings_url,
-			'is_relative_url' => false,
-			'title_small_color' => 'promotion.main',
-			'new_page' => empty( $existing_elementor_page ),
-			'type' => 'site_settings',
-		];
+		$home_screen_data['get_started'][0]['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url ) {
+			if ( 'Site Settings' !== $repeater_item['title'] ) {
+				return $repeater_item;
+			}
+
+			$repeater_item['url'] = $site_settings_url;
+			$repeater_item['new_page'] = empty( $existing_elementor_page );
+			$repeater_item['type'] = 'site_settings';
+
+			return $repeater_item;
+		}, $home_screen_data['get_started'][0]['repeater'] );
 
 		return $home_screen_data;
 	}
