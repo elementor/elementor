@@ -67,6 +67,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 			// Assert.
 			await frame.locator( '.page-header' ).click();
+			await editor.hideAiPromotion();
 
 			await page.keyboard.press( 'Tab' );
 			await expect( tabTitleOne ).toBeFocused();
