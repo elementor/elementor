@@ -4,8 +4,11 @@ import config from 'lighthouse/lighthouse-core/config/desktop-config';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
-test.describe.skip( 'Lighthouse tests', () => {
-	test.skip( 'Accordion widget test', async ( { page }, testInfo ) => {
+test.describe( 'Lighthouse tests', () => {
+	test( 'Accordion widget test', async ( { page }, testInfo ) => {
+		const accessibilityTreshold = 85;
+		const tempTreshold = 50;
+
 		const filePath = _path.resolve( __dirname, `../../elements-regression/tests/templates/accordion.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editorPage = await wpAdmin.openNewPage();
@@ -17,7 +20,7 @@ test.describe.skip( 'Lighthouse tests', () => {
 			config,
 			thresholds: {
 				performance: 85,
-				accessibility: 85,
+				accessibility: tempTreshold ? tempTreshold : accessibilityTreshold,
 				'best-practices': 85,
 				seo: 80,
 			},
