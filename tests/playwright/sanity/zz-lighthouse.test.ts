@@ -16,7 +16,7 @@ test.describe( 'Lighthouse tests', () => {
 		await wpAdmin.logout();
 
 		await page.goto( `/?p=${ pageId }` );
-		await page.locator( '.elementor-widget-accordion' ).waitFor();
+		await page.locator( '.elementor-widget-accordion' ).nth( 0 ).waitFor();
 
 		await playAudit( {
 			page,
