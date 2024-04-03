@@ -27,5 +27,7 @@ test.describe( 'Lighthouse tests', () => {
 			},
 			port: parseInt( process.env.DEBUG_PORT ),
 		} );
+
+		await wpAdmin.login();
 	} );
 } );
