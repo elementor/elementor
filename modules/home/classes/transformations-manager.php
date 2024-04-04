@@ -15,7 +15,7 @@ class Transformations_Manager {
 		'Create_New_Page_Url',
 		'Filter_Plugins',
 		'Remove_Sidebar_Upgrade_For_Pro_Users',
-		'Filter_Elementor_AI',
+		'Filter_Condition_Introduction_Meta',
 	];
 
 	protected array $home_screen_data;
