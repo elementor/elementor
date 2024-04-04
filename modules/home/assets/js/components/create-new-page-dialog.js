@@ -34,8 +34,9 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 		<Dialog
 			open={ open }
 			onClose={ handleDialogClose }
-			aria-labelledby="alert-dialog-title"
-			aria-describedby="alert-dialog-description"
+			maxWidth="xs"
+			width="xs"
+			fullWidth
 		>
 			<DialogHeader>
 				<DialogHeaderGroup>
@@ -45,7 +46,9 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 
 			<DialogContent dividers>
 				<DialogContentText sx={ { mb: 2 } }>
-					{ __( 'To proceed, please name your first page (or rename it later)', 'elementor' ) }
+					{ __( 'To proceed, please name your first page,', 'elementor' ) }
+					<br />
+					{ __( 'or rename it later.', 'elementor' ) }
 				</DialogContentText>
 				<TextField
 					onChange={ handleChange }
