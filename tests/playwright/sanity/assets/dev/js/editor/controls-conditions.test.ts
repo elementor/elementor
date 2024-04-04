@@ -51,10 +51,11 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	await page.waitForTimeout( 1000 );
 
 	// Check if previous image is already uploaded.
-	const previousImage = await page.$( '[aria-label="mountain-image"]' );
+	const mountainImageName = 'Picsum ID: 684',
+		previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-	if ( previousImage ) {
-		await page.click( '[aria-label="mountain-image"]' );
+	if ( await previousImage.nth( 0 ).isVisible() ) {
+		await previousImage.nth( 0 ).click();
 	} else {
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 		await page.waitForSelector( 'text=ATTACHMENT DETAILS' );
