@@ -1,5 +1,4 @@
 import { Container, Box, Stack } from '@elementor/ui';
-
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
 import Addons from './addons-section';
@@ -23,9 +22,9 @@ const HomeScreen = ( props ) => {
 						<Addons addonsData={ props.homeScreenData.add_ons } />
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
-						{/*{ hasSidebarUpgrade &&*/}
-						{/*	<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />*/}
-						{/*}*/}
+						{ hasSidebarUpgrade &&
+							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+						}
 						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Container>
 				</Box>
