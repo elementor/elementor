@@ -50,14 +50,16 @@ const SiteSettingsListItem = ( { item, image } ) => {
 					aria-labelledby="alert-dialog-title"
 					aria-describedby="alert-dialog-description"
 				>
-					<DialogHeader onClose={ handlePopupClose }>
+					<DialogHeader>
 						<DialogHeaderGroup>
-							<DialogTitle>{ __( 'To proceed, please name your first page', 'elementor' ) }</DialogTitle>
+							<DialogTitle>{ __( 'Name your page', 'elementor' ) }</DialogTitle>
 						</DialogHeaderGroup>
 					</DialogHeader>
 
 					<DialogContent dividers>
-						<DialogContentText>({ __( 'or rename it later', 'elementor' ) })</DialogContentText>
+						<DialogContentText sx={ { mb: 2 } }>
+							{ __( 'To proceed, please make your first page (or rename it later)', 'elementor' ) }
+						</DialogContentText>
 						<TextField
 							onChange={ handleChange }
 							fullWidth
@@ -67,7 +69,7 @@ const SiteSettingsListItem = ( { item, image } ) => {
 					</DialogContent>
 
 					<DialogActions>
-						<Button onClick={ handlePopupClose } color="primary">{ __( 'Cancel', 'elementor' ) }</Button>
+						<Button onClick={ handlePopupClose } color="secondary">{ __( 'Cancel', 'elementor' ) }</Button>
 						<Button onClick={ handlePopupClose } variant="contained"
 							href={ pageName ? item.url + '&' + pageName : item.url }>{ __( 'Save', 'elementor' ) }</Button>
 					</DialogActions>
