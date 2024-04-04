@@ -18,18 +18,19 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 		$this->has_pro = Utils::has_pro();
 	}
 
+	private function valid_item( $item ) {
+		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
+		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
+		return $has_pro_json_not_free || $is_not_pro_json_not_pro;
+	}
+
 	public function transform( array $home_screen_data ): array {
 		$new_get_started = [];
 
 		foreach ( $home_screen_data['get_started'] as $index => $item ) {
-			$has_pro_json_free = $this->has_pro && 'free' === $item['license'][0];
-			$not_pro_json_pro = ! $this->has_pro && 'pro' === $item['license'][0];
-
-			if ( $has_pro_json_free || $not_pro_json_pro ) {
-				continue;
+			if ( $this->valid_item( $item ) ) {
+				$new_get_started[] = $item;
 			}
-			$new_get_started[] = $item;
-
 		}
 
 		$home_screen_data['get_started'] = reset( $new_get_started );

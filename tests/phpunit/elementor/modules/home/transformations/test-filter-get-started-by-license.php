@@ -64,15 +64,14 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data_transformed_core() {
 		return [
-			'get_started' =>
-				[
+			'get_started' => [
 					'thing' => [
 						'key' => 'value',
 					],
 					'license' => [
 						'free'
 					],
-				],
+			],
 			'misc' => [
 				'Name' => 'Microsoft',
 				'Version' => 'Windows',
