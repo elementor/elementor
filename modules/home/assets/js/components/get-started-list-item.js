@@ -12,9 +12,13 @@ import DialogTitle from '@elementor/ui/DialogTitle';
 import Box from '@elementor/ui/Box';
 import TextField from '@elementor/ui/TextField';
 
-const SiteSettingsListItem = ( { item, image } ) => {
+const GetStartedListItem = ( { item, image } ) => {
 	const [ open, setOpen ] = React.useState( false );
 	const [ pageName, setPageName ] = React.useState( '' );
+
+	// Will be replaced with a backend solution
+	const adminUrl = elementorAppConfig.admin_url;
+	const url = item.is_relative_url ? adminUrl + item.url : item.url;
 
 	const handlePopupOpen = ( event ) => {
 		if ( ! item.new_page ) {
@@ -40,7 +44,7 @@ const SiteSettingsListItem = ( { item, image } ) => {
 			<Box component="img" src={ image }></Box>
 			<Box>
 				<ListItemText primary={ item.title } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
-				<Link variant="body2" color="text.tertiary" underline="hover" href={ item.url } target="_blank" onClick={ handlePopupOpen }>{ item.title_small }</Link>
+				<Link variant="body2" color="text.tertiary" underline="hover" href={ url } target="_blank" onClick={ handlePopupOpen }>{ item.title_small }</Link>
 			</Box>
 
 			{ item.new_page &&
@@ -78,14 +82,15 @@ const SiteSettingsListItem = ( { item, image } ) => {
 	);
 };
 
-export default SiteSettingsListItem;
+export default GetStartedListItem;
 
-SiteSettingsListItem.propTypes = {
+GetStartedListItem.propTypes = {
 	item: PropTypes.shape( {
 		title: PropTypes.string.isRequired,
 		title_small: PropTypes.string.isRequired,
 		url: PropTypes.string.isRequired,
 		new_page: PropTypes.bool,
+		is_relative_url: PropTypes.bool,
 	} ).isRequired,
 	image: PropTypes.string,
 };
