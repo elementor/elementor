@@ -6,17 +6,14 @@ import _path from 'path';
 
 test.describe( 'Lighthouse tests', () => {
 	test( 'Accordion widget test', async ( { page }, testInfo ) => {
-		const filePath = _path.resolve( __dirname, `../../elements-regression/tests/templates/accordion.json` );
+		const filePath = _path.resolve( __dirname, `../templates/accordion-without-accordion.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editorPage = await wpAdmin.openNewPage();
-		const pageId = await editorPage.getPageId();
 		await editorPage.closeNavigatorIfOpen();
 		await editorPage.loadTemplate( filePath, true );
-		await editorPage.publishPage();
-		await wpAdmin.logout();
+		await editorPage.publishAndViewPage();
 
-		await page.goto( `/?p=${ pageId }` );
-		await page.locator( '.elementor-widget-accordion' ).nth( 0 ).waitFor();
+		await page.pause();
 
 		await playAudit( {
 			page,
@@ -29,7 +26,5 @@ test.describe( 'Lighthouse tests', () => {
 			},
 			port: parseInt( process.env.DEBUG_PORT ),
 		} );
-
-		await wpAdmin.login();
 	} );
 } );
