@@ -17,7 +17,7 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 		setOpen( isOpen );
 	}, [ isOpen ] );
 
-	const handlePopupClose = () => {
+	const handleDialogClose = () => {
 		setOpen( false );
 		closedDialogCallback();
 	};
@@ -33,7 +33,7 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 	return (
 		<Dialog
 			open={ open }
-			onClose={ handlePopupClose }
+			onClose={ handleDialogClose }
 			aria-labelledby="alert-dialog-title"
 			aria-describedby="alert-dialog-description"
 		>
@@ -56,9 +56,8 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 			</DialogContent>
 
 			<DialogActions>
-				<Button onClick={ handlePopupClose } color="secondary">{ __( 'Cancel', 'elementor' ) }</Button>
-				<Button onClick={ handlePopupClose } variant="contained"
-					href={ pageName ? url + '&' + pageName : url }>{ __( 'Save', 'elementor' ) }</Button>
+				<Button onClick={ handleDialogClose } color="secondary">{ __( 'Cancel', 'elementor' ) }</Button>
+				<Button variant="contained" href={ pageName ? url + '&' + pageName : url }>{ __( 'Save', 'elementor' ) }</Button>
 			</DialogActions>
 		</Dialog>
 	);
