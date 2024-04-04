@@ -202,6 +202,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
+			'render_type' => 'template',
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_horizontal', [
@@ -1282,10 +1283,6 @@ class NestedTabs extends Widget_Nested_Base {
 			<span {{{ view.getRenderAttributeString( 'tab-title-container' ) }}}>{{{ data.tab_title }}}</span>
 		</button>
 		<?php
-	}
-
-	protected function supports_atomic_repeaters() {
-		return true;
 	}
 
 	protected function content_template() {
