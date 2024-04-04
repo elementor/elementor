@@ -19,13 +19,13 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
 		$site_settings_url_config = $this->get_site_settings_url_config();
 
-		$home_screen_data['get_started'][0]['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url_config ) {
+		$home_screen_data['get_started']['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url_config ) {
 			if ( 'Site Settings' !== $repeater_item['title'] ) {
 				return $repeater_item;
 			}
 
 			return array_merge( $repeater_item, $site_settings_url_config );
-		}, $home_screen_data['get_started'][0]['repeater'] );
+		}, $home_screen_data['get_started']['repeater'] );
 
 		return $home_screen_data;
 	}
