@@ -8,7 +8,7 @@ test.describe( 'URL Actions', () => {
 		 */
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		const wpMediaAddButtonSelector = '.button.media-button';
 
@@ -33,10 +33,11 @@ test.describe( 'URL Actions', () => {
 		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
-		const previousImage = await page.$( '[aria-label*="mountain-image"]' );
+		const mountainImageName = 'Picsum ID: 684',
+			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-		if ( previousImage ) {
-			await page.click( '[aria-label="mountain-image"]' );
+		if ( await previousImage.nth( 0 ).isVisible() ) {
+			await previousImage.nth( 0 ).click();
 		} else {
 			await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 			await page.waitForSelector( 'text=mountain-image.jpeg' );
@@ -104,7 +105,7 @@ test.describe( 'URL Actions', () => {
 		}
 
 		// Select the mountain image to add to the gallery.
-		await page.click( '[aria-label="mountain-image"]' );
+		await previousImage.nth( 0 ).click();
 
 		// Create the gallery.
 		await page.click( wpMediaAddButtonSelector );
@@ -129,17 +130,12 @@ test.describe( 'URL Actions', () => {
 		await expect( slideshowLightboxImage.first() ).toBeVisible();
 
 		// Save the page so we can run the front end tests.
-		await page.evaluate( () => $e.run( 'document/save/default' ) );
-
-		const frontendSlug = '/?p=' + editor.postId;
-
-		// Go to the front end of the test page.
-		await page.goto( frontendSlug );
+		await editor.publishAndViewPage();
 
 		/**
 		 * Get the action hash from the image, go to the page URL with the hash and check that the lightbox is triggered.
 		 */
-		const frontendMountainImageElement = await page.$( '.elementor-widget-image a[href*="mountain-image"]' );
+		const frontendMountainImageElement = page.locator( '.elementor-widget-image a' ).nth( 0 );
 
 		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'data-e-action-hash' );
 
@@ -175,22 +171,5 @@ test.describe( 'URL Actions', () => {
 		await page.reload();
 		// Test that the lightbox was NOT OPENED on this page.
 		await expect( frontendSinglelightboxImage ).not.toBeVisible();
-
-		/**
-		 * Cleanup - change the page back to draft.
-		 */
-		await page.goto( `/wp-admin/post.php?post=${ editor.postId }&action=elementor` );
-
-		// Save as a draft
-		await page.evaluate( () => {
-			$e.run( 'document/elements/settings', {
-				container: elementor.documents.getCurrent().container,
-				settings: {
-					post_status: 'draft',
-				},
-			} );
-
-			$e.run( 'document/save/draft' );
-		} );
 	} );
 } );
