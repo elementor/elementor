@@ -79,6 +79,11 @@ export default class AiBehavior extends Marionette.Behavior {
 					header: __( 'Unleash your creativity.', 'elementor' ),
 					contentText: __( 'With Elementor AI, you can generate any image you would like for your website.', 'elementor' ),
 				};
+			case 'media-edit':
+				return {
+					header: __( 'Unleash your creativity.', 'elementor' ),
+					contentText: __( 'With Elementor AI, you can edit images for your website.', 'elementor' ),
+				};
 			case 'code':
 				return {
 					header: __( 'Let the elves take care of it.', 'elementor' ),
@@ -87,6 +92,13 @@ export default class AiBehavior extends Marionette.Behavior {
 			default:
 				return null;
 		}
+	}
+
+	isMediaPlaceholder( controlType ) {
+		if ( controlType !== 'media' ) {
+			return false;
+		}
+		return this.view.options.container.settings.get( this.view.model.get( 'name' ) )?.url?.includes( 'elementor/assets/images/placeholder.png' );
 	}
 
 	onRender() {
@@ -123,7 +135,11 @@ export default class AiBehavior extends Marionette.Behavior {
 			$button,
 		);
 
-		const controlType = this.view.model.get( 'type' );
+		let controlType = this.view.model.get( 'type' );
+
+		if ( 'media' === controlType && ! this.isMediaPlaceholder( controlType ) ) {
+			controlType = 'media-edit';
+		}
 		const promotionTexts = this.getPromotionTexts( controlType );
 		if ( ! promotionTexts ) {
 			return;
