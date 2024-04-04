@@ -20,7 +20,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
 			Plugin::$instance->documents->get_create_new_post_url( 'page' );
 
-		$home_screen_data['get_started'][0]['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url ) {
+		$home_screen_data['get_started'][0]['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url, $existing_elementor_page ) {
 			if ( 'Site Settings' !== $repeater_item['title'] ) {
 				return $repeater_item;
 			}
