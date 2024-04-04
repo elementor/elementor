@@ -30,7 +30,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		return $home_screen_data;
 	}
 
-	private function get_site_settings_url_config() {
+	private function get_site_settings_url_config() : array {
 		$existing_elementor_page = $this->get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page ) ?
 			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
@@ -38,24 +38,28 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
 		return [
 			'new_page' => empty( $existing_elementor_page ),
-			'url' => $site_settings_url,
+			'url' => esc_url( $site_settings_url ),
 			'type' => static::URL_TYPE,
 		];
 	}
 
-	private function get_elementor_edit_url( int $post_id ) {
+	private function get_elementor_edit_url( int $post_id ) : string {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return '';
+		}
 
 		return add_query_arg( [ 'active-document' => $active_kit_id ], $document->get_edit_url() );
 	}
 
 	private function get_elementor_page() {
-		$args = array(
+		$args = [
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
-		);
+		];
 		$pages = get_pages( $args );
 
 		if ( empty( $pages ) ) {
@@ -63,6 +67,11 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		}
 
 		$home_page_id = get_option( 'page_on_front' );
+		$show_page_on_front = 'page' === get_option( 'show_on_front' );
+
+		if ( ! $show_page_on_front ) {
+			return $pages[0];
+		}
 
 		foreach ( $pages as $page ) {
 			if ( (string) $page->ID === $home_page_id ) {
