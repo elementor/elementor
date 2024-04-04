@@ -15,6 +15,10 @@ test.describe( 'Lighthouse tests', () => {
 		await editorPage.publishPage();
 		await wpAdmin.logout();
 
+		input::-webkit-input-placeholder, input::-moz-placeholder, input::-ms-placeholder, input::placeholder {
+			color:red;
+		}
+
 		await page.goto( `/?p=${ pageId }` );
 		await page.locator( '.elementor-widget-accordion' ).nth( 0 ).waitFor();
 
