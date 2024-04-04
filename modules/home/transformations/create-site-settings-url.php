@@ -32,9 +32,9 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
 	private function get_site_settings_url_config() : array {
 		$existing_elementor_page = $this->get_elementor_page();
-		$site_settings_url = ! empty( $existing_elementor_page ) ?
-			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
-			Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		$site_settings_url = ! empty( $existing_elementor_page )
+			? $this->get_elementor_edit_url( $existing_elementor_page->ID )
+			: Plugin::$instance->documents->get_create_new_post_url( 'page' );
 
 		return [
 			'new_page' => empty( $existing_elementor_page ),
