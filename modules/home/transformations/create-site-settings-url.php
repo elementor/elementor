@@ -30,7 +30,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		return $home_screen_data;
 	}
 
-	private function get_site_settings_url_config() : array {
+	private function get_site_settings_url_config(): array {
 		$existing_elementor_page = $this->get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page )
 			? $this->get_elementor_edit_url( $existing_elementor_page->ID )
@@ -43,7 +43,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		];
 	}
 
-	private function get_elementor_edit_url( int $post_id ) : string {
+	private function get_elementor_edit_url( int $post_id ): string {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$document = Plugin::$instance->documents->get( $post_id );
 
