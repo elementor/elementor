@@ -96,12 +96,8 @@ export default class EditorPage extends BasePage {
 	}
 
 	async hideAiPromotion() {
-		await this.getPreviewFrame().evaluate( () => {
-			const style = document.createElement( 'style' );
-			style.id = 'ai-promotion-style';
-			document.head.appendChild( style );
-			style.innerHTML = '[test-id=ai-promotion-infotip-wrapper] { display: none; }';
-		} );
+		// @ts-expect-error Property 'EDITOR_SESSION_ID' exists on window from ai.
+		sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', window.EDITOR_SESSION_ID );
 	}
 
 	async ensurePanelLoaded() {

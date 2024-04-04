@@ -48,7 +48,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
-
+		await editor.hideAiPromotion();
 		await editor.addWidget( 'button' );
 
 		// Load template.
@@ -57,7 +57,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await frame.waitForSelector( '.e-n-tabs' );
 
 		await test.step( 'Keyboard handling inside the Editor', async () => {
-			await editor.hideAiPromotion();
 			const tabTitleOne = frame.locator( '.e-n-tab-title >> nth=0' ),
 				tabTitleTwo = frame.locator( '.e-n-tab-title >> nth=1' ),
 				tabTitleThree = frame.locator( '.e-n-tab-title >> nth=2' ),
