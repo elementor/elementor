@@ -2,6 +2,7 @@ import ListItem from '@elementor/ui/ListItem';
 import ListItemText from '@elementor/ui/ListItemText';
 import Link from '@elementor/ui/Link';
 import Box from '@elementor/ui/Box';
+
 import CreateNewPageDialog from './create-new-page-dialog';
 
 const GetStartedListItem = ( { item, image } ) => {
