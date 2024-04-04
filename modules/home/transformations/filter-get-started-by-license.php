@@ -1,5 +1,5 @@
 <?php
-namespace elementor\modules\home\transformations;
+namespace Elementor\Modules\Home\Transformations;
 
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Utils;
