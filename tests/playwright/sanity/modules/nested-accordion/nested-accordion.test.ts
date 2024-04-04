@@ -6,7 +6,7 @@ import { setup } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
-	const atomicExperimentStateCases = [ false, true ];
+	const atomicExperimentStateCases = [ false, true ]; // Todo: remove once experiment is merged
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
@@ -33,8 +33,8 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		await page.close();
 	} );
 
-	for ( const atomicExperimentState of atomicExperimentStateCases ) {
-		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' );
+	for ( const atomicExperimentState of atomicExperimentStateCases ) { // Todo: remove once experiment is merged
+		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' ); // Todo: remove once experiment is merged AND UPDATE TITLES
 
 		test( 'Nested-accordion should not appear in widgets panel: ' + testTitleSuffix, async ( { page }, testInfo ) => {
 			// Arrange
@@ -64,7 +64,7 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 } );
 
 test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
-	const atomicExperimentStateCases = [ false, true ];
+	const atomicExperimentStateCases = [ false, true ]; // Todo: remove once experiment is merged
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
@@ -91,8 +91,8 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await page.close();
 	} );
 
-	for ( const atomicExperimentState of atomicExperimentStateCases ) {
-		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' );
+	for ( const atomicExperimentState of atomicExperimentStateCases ) { // Todo: remove once experiment is merged
+		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' ); // Todo: remove once experiment is merged AND UPDATE TITLES
 
 		test( 'General Test: ' + testTitleSuffix, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );

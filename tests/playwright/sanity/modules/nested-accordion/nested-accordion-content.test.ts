@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, setTitleHorizontalAlignment } from './helper';
 
 test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
-	const atomicExperimentStateCases = [ false, true ];
+	const atomicExperimentStateCases = [ false, true ]; // Todo: remove once experiment is merged
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
@@ -30,8 +30,8 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await page.close();
 	} );
 
-	for ( const atomicExperimentState of atomicExperimentStateCases ) {
-		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' );
+	for ( const atomicExperimentState of atomicExperimentStateCases ) { // Todo: remove once experiment is merged
+		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' ); // Todo: remove once experiment is merged AND UPDATE TITLES
 
 		test( 'Nested Accordion Title Icon and Text Vertical Alignment: ' + testTitleSuffix, async ( { browser }, testInfo ) => {
 			const page = await browser.newPage(),

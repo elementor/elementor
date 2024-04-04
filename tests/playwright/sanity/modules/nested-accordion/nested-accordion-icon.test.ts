@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
-	const atomicExperimentStateCases = [ true, false ];
+	const atomicExperimentStateCases = [ true, false ]; // Todo: remove once experiment is merged
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
@@ -31,8 +31,8 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		await page.close();
 	} );
 
-	for ( const atomicExperimentState of atomicExperimentStateCases ) {
-		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' );
+	for ( const atomicExperimentState of atomicExperimentStateCases ) { // Todo: remove once experiment is merged
+		const testTitleSuffix = 'Atomic experiment ' + ( atomicExperimentState ? 'active' : 'inactive' ); // Todo: remove once experiment is merged AND UPDATE TITLES
 
 		test( 'Nested Accordion Title Icon and Text No Overlap: ' + testTitleSuffix, async ( { browser }, testInfo ) => {
 			let url;
