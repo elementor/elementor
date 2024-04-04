@@ -8,7 +8,7 @@ test.describe( 'URL Actions', () => {
 		 */
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		const editor = await wpAdmin.openNewPage();
+		const editor = await wpAdmin.useElementorCleanPost();
 
 		const wpMediaAddButtonSelector = '.button.media-button';
 
@@ -141,6 +141,8 @@ test.describe( 'URL Actions', () => {
 		 * Get the action hash from the image, go to the page URL with the hash and check that the lightbox is triggered.
 		 */
 		const frontendMountainImageElement = page.locator( '.elementor-widget-image a' ).nth( 0 );
+
+		await frontendMountainImageElement.waitFor( { state: 'visible' } );
 
 		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'data-e-action-hash' );
 
