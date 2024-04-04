@@ -6,14 +6,12 @@ import _path from 'path';
 
 test.describe( 'Lighthouse tests', () => {
 	test( 'Accordion widget test', async ( { page }, testInfo ) => {
-		const filePath = _path.resolve( __dirname, `../templates/accordion-without-accordion.json` );
+		const filePath = _path.resolve( __dirname, `../templates/accordion-without-adminbar.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editorPage = await wpAdmin.openNewPage();
 		await editorPage.closeNavigatorIfOpen();
 		await editorPage.loadTemplate( filePath, true );
 		await editorPage.publishAndViewPage();
-
-		await page.pause();
 
 		await playAudit( {
 			page,
