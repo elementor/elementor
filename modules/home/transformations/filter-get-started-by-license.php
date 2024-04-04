@@ -4,7 +4,6 @@ namespace elementor\modules\home\transformations;
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Utils;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
