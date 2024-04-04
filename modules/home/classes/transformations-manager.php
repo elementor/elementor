@@ -14,8 +14,8 @@ class Transformations_Manager {
 	private const TRANSFORMATIONS = [
 		'Create_New_Page_Url',
 		'Filter_Plugins',
-		'Remove_Sidebar_Upgrade_For_Pro_Users',
 		'Filter_Get_Started_By_License',
+		'Filter_Sidebar_Upgrade_By_License',
 	];
 
 	protected array $home_screen_data;
