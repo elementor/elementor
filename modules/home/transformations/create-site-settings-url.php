@@ -43,7 +43,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		];
 	}
 
-	private function get_elementor_edit_url( int $post_id ) : string {
+	private function get_elementor_edit_url( int $post_id ): string {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$document = Plugin::$instance->documents->get( $post_id );
 
