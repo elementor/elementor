@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@elementor/ui';
+import { Paper, Typography } from '@elementor/ui';
 import List from '@elementor/ui/List';
 import GetStartedListItem from './get-started-list-item';
 
