@@ -4,7 +4,7 @@ import config from 'lighthouse/lighthouse-core/config/desktop-config';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
-test.describe( 'Lighthouse tests', () => {
+test.describe( 'Lighthouse tests', () => { // test
 	test( 'Accordion widget test', async ( { page }, testInfo ) => {
 		const filePath = _path.resolve( __dirname, `../templates/accordion-without-adminbar.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo );
