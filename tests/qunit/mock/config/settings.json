@@ -11,12 +11,19 @@
 				"label": "Preferences",
 				"name": "preferences"
 			},
+			"editor_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Editor",
+				"name": "editor_heading"
+			},
 			"ui_theme": {
 				"type": "select",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "UI Theme",
-				"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
+				"label": "Editor Theme",
+				"description": "Set light or dark mode, or use Auto Detect to sync it with your operating system setting.",
 				"default": "auto",
 				"options": {
 					"auto": "Auto Detect",
@@ -25,11 +32,31 @@
 				},
 				"name": "ui_theme"
 			},
+			"panel_width": {
+				"type": "slider",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Panel Width (px)",
+				"default": {
+					"size": "300"
+				},
+				"name": "panel_width"
+			},
+			"preview_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Preview",
+				"separator": "before",
+				"name": "preview_heading"
+			},
 			"edit_buttons": {
 				"type": "switcher",
 				"tab": "settings",
 				"section": "preferences",
 				"label": "Editing Handles",
+				"label_on": "Show",
+				"label_off": "Hide",
 				"description": "Show editing handles when hovering over the element edit button.",
 				"name": "edit_buttons",
 				"default": ""
@@ -39,8 +66,53 @@
 				"tab": "settings",
 				"section": "preferences",
 				"label": "Enable Lightbox In Editor",
+				"label_on": "On",
+				"label_off": "Off",
+				"description": "Open images in Lightbox when clicking images in the editor.",
 				"default": "yes",
 				"name": "lightbox_in_editor"
+			},
+			"enable_styleguide_preview": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Style Guide Preview",
+				"label_on": "On",
+				"label_off": "Off",
+				"description": "Switch between the content area and style guide to preview your changes to global colors and fonts.",
+				"default": "yes",
+				"name": "enable_styleguide_preview"
+			},
+			"responsive_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Responsive View",
+				"separator": "before",
+				"name": "responsive_heading"
+			},
+			"show_hidden_elements": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Hidden Elements",
+				"label_on": "Show",
+				"label_off": "Hide",
+				"name": "show_hidden_elements"
+			},
+			"default_device_view": {
+				"type": "select",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Default Device View",
+				"default": "default",
+				"options": {
+					"default": "Default",
+					"mobile": "Mobile",
+					"tablet": "Tablet",
+					"desktop": "Desktop"
+				},
+				"name": "default_device_view"
 			}
 		},
 		"tabs": {

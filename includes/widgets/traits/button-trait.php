@@ -148,7 +148,13 @@ trait Button_Trait {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
 			]
 		);
 
@@ -170,10 +176,15 @@ trait Button_Trait {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
 			]
 		);
 
@@ -208,8 +219,9 @@ trait Button_Trait {
 	 *     An array of values for the button adjustments.
 	 *
 	 *     @type array  $section_condition  Set of conditions to hide the controls.
-	 *     @type string $alignment_default  Default alignment for the button.
-	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
+	 *     @type string $alignment_default  Default position for the button.
+	 *     @type string $alignment_control_prefix_class  Prefix class name for the button position control.
+	 *     @type string $content_alignment_default  Default alignment for the button content.
 	 * }
 	 */
 	protected function register_button_style_controls( $args = [] ) {
@@ -217,6 +229,7 @@ trait Button_Trait {
 			'section_condition' => [],
 			'alignment_default' => '',
 			'alignment_control_prefix_class' => 'elementor%s-align-',
+			'content_alignment_default' => '',
 		];
 
 		$args = wp_parse_args( $args, $default_args );
@@ -224,29 +237,63 @@ trait Button_Trait {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left'    => [
 						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
+						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
+						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
 						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
+						'icon' => 'eicon-h-align-right',
 					],
 					'justify' => [
-						'title' => esc_html__( 'Justified', 'elementor' ),
-						'icon' => 'eicon-text-align-justify',
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-h-align-stretch',
 					],
 				],
 				'prefix_class' => $args['alignment_control_prefix_class'],
 				'default' => $args['alignment_default'],
 				'condition' => $args['section_condition'],
+			]
+		);
+
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
+		$this->add_responsive_control(
+			'content_align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start'    => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-text-align-{$start}",
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-text-align-{$end}",
+					],
+					'space-between' => [
+						'title' => esc_html__( 'Space between', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'default' => $args['content_alignment_default'],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
+				],
+				'condition' => array_merge( $args['section_condition'], [ 'align' => 'justify' ] ),
 			]
 		);
 

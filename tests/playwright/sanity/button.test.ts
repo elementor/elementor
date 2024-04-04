@@ -30,7 +30,7 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	const widget = editor.getPreviewFrame().locator( EditorSelectors.widget ),
-		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]',
+		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Position") label[data-tooltip="Center"]',
 		alignCenterClassRegex = /elementor-align-center/;
 
 	// Act
