@@ -153,3 +153,4 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		];
 	}
 }
+
