@@ -34,13 +34,23 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		$existing_elementor_page = $this->get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page )
 			? $this->get_elementor_edit_url( $existing_elementor_page->ID )
-			: Plugin::$instance->documents->get_create_new_post_url( 'page' );
+			: $this->get_elementor_create_new_page_url();
 
 		return [
 			'new_page' => empty( $existing_elementor_page ),
 			'url' => $site_settings_url,
 			'type' => static::URL_TYPE,
 		];
+	}
+
+	private function get_elementor_create_new_page_url(): string {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		if ( empty( $active_kit_id ) ) {
+			return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		}
+
+		return add_query_arg( [ 'active-document' => $active_kit_id ], Plugin::$instance->documents->get_create_new_post_url( 'page' ) );
 	}
 
 	private function get_elementor_edit_url( int $post_id ): string {
