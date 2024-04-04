@@ -28,6 +28,10 @@ test.describe( 'Lighthouse tests', () => {
 			},
 			port: parseInt( process.env.DEBUG_PORT ),
 		} );
+	} );
+
+	test( 'Reset toolbar settings', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.showAdminBar();
 	} );
