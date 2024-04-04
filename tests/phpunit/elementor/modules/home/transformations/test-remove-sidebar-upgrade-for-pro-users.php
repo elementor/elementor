@@ -61,4 +61,4 @@ class Test_Remove_Sidebar_Upgrade_For_Pro_Users extends PHPUnit_TestCase {
 		];
 	}
 }
-//
+

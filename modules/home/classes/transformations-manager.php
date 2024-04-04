@@ -15,7 +15,7 @@ class Transformations_Manager {
 		'Create_New_Page_Url',
 		'Filter_Plugins',
 		'Filter_Get_Started_By_License',
-		'Filter_Sidebar_Upgrade_By_License',
+//		'Filter_Sidebar_Upgrade_By_License',
 	];
 
 	protected array $home_screen_data;
