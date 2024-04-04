@@ -722,14 +722,7 @@ class Admin extends App {
 			wp_die( $document ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-		$active_document = Utils::get_super_global_value( $_GET, 'active-document' ) ?? null;
-		$edit_url = $document->get_edit_url();
-
-		if ( $active_document ) {
-			$edit_url = add_query_arg( 'active-document', $active_document, $edit_url );
-		}
-
-		wp_redirect( $edit_url );
+		wp_redirect( $document->get_edit_url() );
 
 		die;
 	}
