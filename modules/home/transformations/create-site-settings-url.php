@@ -66,12 +66,13 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 			return null;
 		}
 
-		$home_page_id = get_option( 'page_on_front' );
 		$show_page_on_front = 'page' === get_option( 'show_on_front' );
 
 		if ( ! $show_page_on_front ) {
 			return $pages[0];
 		}
+
+		$home_page_id = get_option( 'page_on_front' );
 
 		foreach ( $pages as $page ) {
 			if ( (string) $page->ID === $home_page_id ) {
