@@ -16,19 +16,19 @@ const SiteSettingsListItem = ( { item, image } ) => {
 	const [ open, setOpen ] = React.useState( false );
 	const [ pageName, setPageName ] = React.useState( '' );
 
-	const handlePopupOpen = ( e ) => {
+	const handlePopupOpen = ( event ) => {
 		if ( ! item.new_page ) {
 			return;
 		}
 
-		e.preventDefault();
+		event.preventDefault();
 		setOpen( true );
 	};
 
 	const handlePopupClose = () => setOpen( false );
 
-	const handleChange = ( e ) => {
-		const encodedPostTitle = encodeURIComponent( e.target.value );
+	const handleChange = ( event ) => {
+		const encodedPostTitle = encodeURIComponent( event.target.value );
 		const postData = { post_title: encodedPostTitle };
 		const urlParams = new URLSearchParams( postData );
 
@@ -58,7 +58,7 @@ const SiteSettingsListItem = ( { item, image } ) => {
 
 					<DialogContent dividers>
 						<DialogContentText sx={ { mb: 2 } }>
-							{ __( 'To proceed, please make your first page (or rename it later)', 'elementor' ) }
+							{ __( 'To proceed, please name your first page (or rename it later)', 'elementor' ) }
 						</DialogContentText>
 						<TextField
 							onChange={ handleChange }

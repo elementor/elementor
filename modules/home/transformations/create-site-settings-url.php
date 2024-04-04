@@ -10,30 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
+	const URL_TYPE = 'site_settings';
+
 	public function transform( array $home_screen_data ): array {
 		if ( empty( $home_screen_data['get_started'] ) ) {
 			return $home_screen_data;
 		}
 
-//		$existing_elementor_page = $this->get_elementor_page();
-		$existing_elementor_page = null;
-		$site_settings_url = ! empty( $existing_elementor_page ) ?
-			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
-			Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		$site_settings_url_config = $this->get_site_settings_url_config();
 
-		$home_screen_data['get_started'][0]['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url, $existing_elementor_page ) {
+		$home_screen_data['get_started'][0]['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url_config ) {
 			if ( 'Site Settings' !== $repeater_item['title'] ) {
 				return $repeater_item;
 			}
 
-			$repeater_item['url'] = $site_settings_url;
-			$repeater_item['new_page'] = empty( $existing_elementor_page );
-			$repeater_item['type'] = 'site_settings';
-
-			return $repeater_item;
+			return array_merge( $repeater_item, $site_settings_url_config );
 		}, $home_screen_data['get_started'][0]['repeater'] );
 
 		return $home_screen_data;
+	}
+
+	private function get_site_settings_url_config() {
+		$existing_elementor_page = $this->get_elementor_page();
+		$site_settings_url = ! empty( $existing_elementor_page ) ?
+			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
+			Plugin::$instance->documents->get_create_new_post_url( 'page' );
+
+		return [
+			'new_page' => empty( $existing_elementor_page ),
+			'url' => $site_settings_url,
+			'type' => static::URL_TYPE,
+		];
 	}
 
 	private function get_elementor_edit_url( int $post_id ) {
