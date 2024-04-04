@@ -15,7 +15,8 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 			return $home_screen_data;
 		}
 
-		$existing_elementor_page = $this->get_elementor_page();
+//		$existing_elementor_page = $this->get_elementor_page();
+		$existing_elementor_page = null;
 		$site_settings_url = ! empty( $existing_elementor_page ) ?
 			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
 			Plugin::$instance->documents->get_create_new_post_url( 'page' );
