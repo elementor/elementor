@@ -97,7 +97,7 @@ export default class EditorPage extends BasePage {
 
 	async hideAiPromotion() {
 		// @ts-expect-error Property 'EDITOR_SESSION_ID' exists on window from ai.
-		sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', window.EDITOR_SESSION_ID );
+		window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', window.EDITOR_SESSION_ID );
 	}
 
 	async ensurePanelLoaded() {
