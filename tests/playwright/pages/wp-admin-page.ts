@@ -274,5 +274,16 @@ export default class WpAdminPage extends BasePage {
 		await promoContainer.waitFor();
 		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
-}
 
+	async hideAdminBar() {
+		await this.page.goto( '/wp-admin/profile.php' );
+		await this.page.locator( '#admin_bar_front' ).uncheck();
+		await this.page.locator( '#submit' ).click();
+	}
+
+	async showAdminBar() {
+		await this.page.goto( '/wp-admin/profile.php' );
+		await this.page.locator( '#admin_bar_front' ).check();
+		await this.page.locator( '#submit' ).click();
+	}
+}
