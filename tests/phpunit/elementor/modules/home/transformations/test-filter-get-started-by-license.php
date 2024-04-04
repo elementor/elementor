@@ -96,4 +96,3 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 		];
 	}
 }
-//
