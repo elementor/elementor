@@ -94,6 +94,14 @@ export default class AiBehavior extends Marionette.Behavior {
 		}
 	}
 
+	isMediaEditMode() {
+		const previewElement = this.$el.find( '.elementor-control-media__preview' );
+		if ( ! previewElement ) {
+			return false;
+		}
+		return ! previewElement[ 0 ]?.style.backgroundImage?.includes( 'elementor/assets/images/placeholder.png' );
+	}
+
 	onRender() {
 		const isPromotion = ! this.config.is_get_started;
 		const buttonLabel = this.getAiButtonLabel();
@@ -130,7 +138,7 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		let controlType = this.view.model.get( 'type' );
 
-		if ( 'media' === controlType && ! this.$el.find( '.elementor-control-media__preview' )[ 0 ].style.backgroundImage.includes( 'elementor/assets/images/placeholder.png' ) ) {
+		if ( 'media' === controlType && this.isMediaEditMode() ) {
 			controlType = 'media-edit';
 		}
 		const promotionTexts = this.getPromotionTexts( controlType );
