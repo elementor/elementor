@@ -20,12 +20,8 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
 		$introduction_meta_conditions = $this->get_introduction_meta_conditions( $home_screen_data );
-
-		foreach ( $introduction_meta_conditions as $add_on_title => $introduction_meta_value ) {
-			if ( ! empty( $this->introduction_meta_data[ $introduction_meta_value ] ) ) {
-				unset( $home_screen_data['add_ons']['repeater'][ $add_on_title ] );
-			}
-		}
+		$active_addons = $this->get_active_addons( $introduction_meta_conditions );
+		$home_screen_data['add_ons']['repeater'] = $this->get_filtered_addons( $home_screen_data, $active_addons );
 
 		return $home_screen_data;
 	}
@@ -42,5 +38,31 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 		}
 
 		return $conditions;
+	}
+
+	private function get_active_addons( $conditions ) {
+		$active_addons = [];
+
+		foreach ( $conditions as $add_on_title => $introduction_meta_value ) {
+			if ( ! empty( $this->introduction_meta_data[ $introduction_meta_value ] ) ) {
+				$active_addons[] = $add_on_title;
+			}
+		}
+
+		return $active_addons;
+	}
+
+	private function get_filtered_addons( $home_screen_data, $active_addons ) {
+		$add_ons = $home_screen_data['add_ons']['repeater'];
+		$transformed_add_ons = [];
+		$index = 0;
+
+		foreach( $add_ons as $add_on ) {
+			if ( ! in_array( $add_on['title'], $active_addons ) ) {
+				$transformed_add_ons[] = $add_on;
+			}
+		}
+
+		return $transformed_add_ons;
 	}
 }
