@@ -16,9 +16,14 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 			$this->get_elementor_edit_url( $existing_elementor_page->ID ) :
 			Plugin::$instance->documents->get_create_new_post_url( 'page' );
 
-		$home_screen_data['get_started']['testing_site_settings_url_123'] = [
-			'new_page' => empty( $existing_elementor_page ),
+		$home_screen_data['get_started'][0]['repeater'][] = [
+			'title' => 'Site Settings',
+			'title_small' => 'Customize',
 			'url' => $site_settings_url,
+			'is_relative_url' => false,
+			'title_small_color' => 'promotion.main',
+			'new_page' => empty( $existing_elementor_page ),
+			'type' => 'site_settings',
 		];
 
 		return $home_screen_data;

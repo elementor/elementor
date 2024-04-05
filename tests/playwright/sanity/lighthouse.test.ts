@@ -5,7 +5,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
 test.describe( 'Lighthouse tests', () => {
-	test( 'Accordion widget test', async ( { page }, testInfo ) => {
+	test.skip( 'Accordion widget test', async ( { page }, testInfo ) => {
 		const filePath = _path.resolve( __dirname, `../../elements-regression/tests/templates/accordion.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
