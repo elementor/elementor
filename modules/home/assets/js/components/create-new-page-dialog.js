@@ -23,9 +23,8 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 	};
 
 	const handleChange = ( event ) => {
-		const encodedPostTitle = encodeURIComponent( event.target.value );
-		const postData = { post_title: encodedPostTitle };
-		const urlParams = new URLSearchParams( postData );
+		const urlParams = new URLSearchParams();
+		urlParams.append( 'post_data[post_title]', event.target.value );
 
 		setPageName( urlParams.toString() );
 	};
