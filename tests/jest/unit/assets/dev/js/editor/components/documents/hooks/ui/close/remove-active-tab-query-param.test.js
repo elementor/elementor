@@ -19,7 +19,7 @@ describe( `$e.run( 'editor/documents/close' ) -- RemoveActiveTabQueryParam`, () 
 		RemoveActiveTabQueryParam = new HookClass();
 	} );
 
-	it( 'Should remove the query param when closing the `active-document`', async () => {
+	it( 'Should remove the query param', async () => {
 		// Arrange.
 		window.location = new URL( 'http://localhost/?active-document=1&active-tab=global-typography&other-param=test#hash' );
 
@@ -27,6 +27,6 @@ describe( `$e.run( 'editor/documents/close' ) -- RemoveActiveTabQueryParam`, () 
 		runHook( RemoveActiveTabQueryParam, { id: 3, previous_active_document_id: 3 } );
 
 		// Assert.
-		expect( window.location.href ).toBe( 'http://localhost/?other-param=test#hash' );
+		expect( window.location.href ).toBe( 'http://localhost/?active-document=1&other-param=test#hash' );
 	} );
 } );
