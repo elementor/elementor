@@ -9,7 +9,7 @@ export class RemoveActiveTabQueryParamBack extends $e.modules.hookUI.After {
 		return 'remove-active-tab-query-param-back';
 	}
 
-	apply( args ) {
+	apply() {
 		const activeTab = getQueryParam( 'active-tab' );
 
 		if ( activeTab ) {

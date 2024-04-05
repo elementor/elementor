@@ -19,7 +19,7 @@ export class SwitchToActiveTab extends $e.modules.hookUI.After {
 		return true;
 	}
 
-	async apply() {
+	apply() {
 		this.constructor.calledOnce = true;
 
 		try {
