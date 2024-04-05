@@ -695,7 +695,6 @@ class Admin extends App {
 		}
 
 		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
-		$post_data['post_title'] = urldecode( Utils::get_super_global_value( $_GET, 'post_title' ) ) ?? null;
 
 		/**
 		 * Create new post meta data.
