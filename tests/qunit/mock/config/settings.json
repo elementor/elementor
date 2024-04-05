@@ -19,17 +19,26 @@
 				"name": "editor_heading"
 			},
 			"ui_theme": {
-				"type": "select",
+				"type": "choose",
 				"tab": "settings",
 				"section": "preferences",
 				"label": "Editor Theme",
 				"description": "Set light or dark mode, or use Auto Detect to sync it with your operating system setting.",
 				"default": "auto",
 				"options": {
-					"auto": "Auto Detect",
-					"light": "Light",
-					"dark": "Dark"
-				},
+					"light": {
+						"title": "Light",
+						"icon": "eicon-light-mode"
+					},
+					"dark": {
+						"title": "Dark",
+						"icon": "eicon-dark-mode"
+					},
+					"auto": {
+						"title": "Auto Detect",
+						"icon": "eicon-header"
+					}
+				},	
 				"name": "ui_theme"
 			},
 			"panel_width": {
