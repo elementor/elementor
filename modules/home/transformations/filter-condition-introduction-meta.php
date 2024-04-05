@@ -15,7 +15,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 	public function __construct( $args ) {
 		parent::__construct( $args );
 
-		$this->introduction_meta_data = User::get_introduction_meta();
+		$this->introduction_meta_data = User::get_introduction_meta() ?? [];
 	}
 
 	public function transform( array $home_screen_data ): array {

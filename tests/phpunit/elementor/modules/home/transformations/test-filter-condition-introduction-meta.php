@@ -1,20 +1,18 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Modules\Home\Transformations\Filter_Elementor_AI;
+use Elementor\Modules\Home\Transformations\Filter_Condition_Introduction_Meta;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Filter_Elementor_AI extends PHPUnit_TestCase {
-
-	private $wordpress_adapter;
+class Test_Filter_Condition_Introduction_Meta extends PHPUnit_TestCase {
 
 	public function test_transform_ai_inactive() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
-		$transformation = new Filter_Elementor_AI( [] );
+		$transformation = new Filter_Condition_Introduction_Meta( [] );
 
-		$transformation->is_ai_active = false;
+		$transformation->introduction_meta_data = [];
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -26,9 +24,11 @@ class Test_Filter_Elementor_AI extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
-		$transformation = new Filter_Elementor_AI( [] );
+		$transformation = new Filter_Condition_Introduction_Meta( [] );
 
-		$transformation->is_ai_active = true;
+		$transformation->introduction_meta_data = [
+			'ai_get_started' => true
+		];
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -56,6 +56,10 @@ class Test_Filter_Elementor_AI extends PHPUnit_TestCase {
 						'title' => 'Elementor AI',
 						'version' => '3.0.0',
 						'url' => 'elementor/elementor.php',
+						'condition' => [
+							'key' => 'introduction_meta',
+							'value' => 'ai_get_started',
+						],
 					],
 				],
 			],
