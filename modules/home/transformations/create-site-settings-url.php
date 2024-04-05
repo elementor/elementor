@@ -30,6 +30,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 		return $home_screen_data;
 	}
 
+
 	private function get_site_settings_url_config(): array {
 		$existing_elementor_page = $this->get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page )
