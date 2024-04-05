@@ -32,6 +32,8 @@ class Module extends BaseApp {
 			$hook_suffix = 'toplevel_page_elementor';
 			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
 		}, 10, 2 );
+
+		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
 	}
 
 	public function enqueue_home_screen_scripts(): void {
@@ -65,6 +67,16 @@ class Module extends BaseApp {
 
 	public function is_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID );
+	}
+
+	public function add_active_document_to_edit_link( $edit_link ) {
+		$active_document = Utils::get_super_global_value( $_GET, 'active-document' ) ?? null;
+
+		if ( $active_document ) {
+			return add_query_arg( 'active-document', $active_document, $edit_link );
+		}
+
+		return $edit_link;
 	}
 
 	private function register_layout_experiment(): void {
