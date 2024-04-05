@@ -71,9 +71,14 @@ class Module extends BaseApp {
 
 	public function add_active_document_to_edit_link( $edit_link ) {
 		$active_document = Utils::get_super_global_value( $_GET, 'active-document' ) ?? null;
+		$active_tab = Utils::get_super_global_value( $_GET, 'active-tab' ) ?? null;
 
 		if ( $active_document ) {
-			return add_query_arg( 'active-document', $active_document, $edit_link );
+			$edit_link = add_query_arg( 'active-document', $active_document, $edit_link );
+		}
+
+		if ( $active_tab ) {
+			$edit_link = add_query_arg( 'active-tab', $active_tab, $edit_link );
 		}
 
 		return $edit_link;
