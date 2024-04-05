@@ -26,7 +26,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 		return $home_screen_data;
 	}
 
-	private function get_introduction_meta_conditions( $home_screen_data ) {
+	private function get_introduction_meta_conditions( $home_screen_data ): array {
 		$add_ons = $home_screen_data['add_ons']['repeater'];
 
 		$conditions = [];
@@ -40,7 +40,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 		return $conditions;
 	}
 
-	private function get_activated_addons( $conditions ) {
+	private function get_activated_addons( $conditions ): array {
 		$active_addons = [];
 
 		foreach ( $conditions as $add_on_title => $introduction_meta_value ) {
@@ -52,11 +52,11 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 		return $active_addons;
 	}
 
-	private function get_inactive_addons( $home_screen_data, $active_addons ) {
+	private function get_inactive_addons( $home_screen_data, $active_addons ): array {
 		$add_ons = $home_screen_data['add_ons']['repeater'];
 		$inactive_add_ons = [];
 
-		foreach( $add_ons as $add_on ) {
+		foreach ( $add_ons as $add_on ) {
 			if ( ! in_array( $add_on['title'], $active_addons ) ) {
 				$inactive_add_ons[] = $add_on;
 			}
