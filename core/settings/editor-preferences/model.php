@@ -53,17 +53,34 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'editor_heading',
+			[
+				'label' => esc_html__( 'Editor', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_control(
 			'ui_theme',
 			[
-				'label' => esc_html__( 'UI Theme', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
-				'default' => 'auto',
+				'label' => esc_html__( 'Editor Theme', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'auto' => esc_html__( 'Auto Detect', 'elementor' ),
-					'light' => esc_html__( 'Light', 'elementor' ),
-					'dark' => esc_html__( 'Dark', 'elementor' ),
+					'light' => [
+						'title' => esc_html__( 'Light', 'elementor' ),
+						'icon' => 'eicon-light-mode',
+					],
+					'dark' => [
+						'title' => esc_html__( 'Dark', 'elementor' ),
+						'icon' => 'eicon-dark-mode',
+					],
+					'auto' => [
+						'title' => esc_html__( 'Auto Detect', 'elementor' ),
+						'icon' => 'eicon-header',
+					],
 				],
+				'default' => 'auto',
+				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your operating system setting.', 'elementor' ),
 			]
 		);
 
@@ -85,10 +102,21 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'preview_heading',
+			[
+				'label' => esc_html__( 'Preview', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'edit_buttons',
 			[
 				'label' => esc_html__( 'Editing Handles', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'description' => esc_html__( 'Show editing handles when hovering over the element edit button.', 'elementor' ),
 			]
 		);
@@ -96,16 +124,31 @@ class Model extends BaseModel {
 		$this->add_control(
 			'lightbox_in_editor',
 			[
-				'label' => esc_html__( 'Enable Lightbox In Editor', 'elementor' ),
+				'label' => esc_html__( 'Lightbox in the Editor', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'description' => esc_html__( 'Open images in Lightbox when clicking images in the editor.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'enable_styleguide_preview',
+			[
+				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => 'yes',
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors and fonts.', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'responsive_heading',
 			[
-				'label' => esc_html__( 'Responsive Preview', 'elementor' ),
+				'label' => esc_html__( 'Responsive View', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
@@ -150,19 +193,6 @@ class Model extends BaseModel {
 					'all_posts' => esc_html__( 'All Posts', 'elementor' ),
 					'dashboard' => esc_html__( 'WP Dashboard', 'elementor' ),
 				],
-			]
-		);
-
-		$this->add_control(
-			'enable_styleguide_preview',
-			[
-				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors and fonts.', 'elementor' ),
-				'separator' => 'before',
-				'label_off' => esc_html__( 'Off', 'elementor' ),
-				'label_on' => esc_html__( 'On', 'elementor' ),
-				'default' => 'yes',
 			]
 		);
 
