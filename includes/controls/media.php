@@ -261,7 +261,7 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 					<?php */ ?>
 
-					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) || Hints::should_display_hint( 'image-optimization' ) ) { ?>
+					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) /*|| Hints::should_display_hint( 'image-optimization' ) */ ) : ?>
 					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
 						<?php
 						$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
@@ -282,7 +282,7 @@ class Control_Media extends Control_Base_Multiple {
 							],
 						] ); ?>
 					</div>
-					<?php } ?>
+					<?php endif; ?>
 
 				</div>
 			<# } /* endif isViewable() */ else { #>
