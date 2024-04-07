@@ -269,9 +269,9 @@ class Control_Media extends Control_Base_Multiple {
 							'type' => 'info',
 							'content' => __( 'Don’t let unoptimized images be the downfall of your site’s performance. Use Image Optimizer!', 'elementor' ),
 							'icon' => true,
-							'dismissible' => 'image-optimization-once',
+							'dismissible' => 'image_optimizer_hint',
 							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
-							'button_event' => 'image-optimization-once',
+							'button_event' => 'image_optimizer_hint',
 							'button_data' => [
 								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
 							],
