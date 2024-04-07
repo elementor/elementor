@@ -252,31 +252,26 @@ class Control_Media extends Control_Base_Multiple {
 					<?php /* ?>
 					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 						<?php
-							Hints::get_notice_template( [
-								'type' => 'warning',
-								'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
-								'icon' => true,
-							] );
+						Hints::get_notice_template( [
+							'type' => 'warning',
+							'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+							'icon' => true,
+						] );
 						?>
 					</div>
 					<?php */ ?>
 
-					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) /*|| Hints::should_display_hint( 'image-optimization' ) */ ) : ?>
+					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
 					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
 						<?php
-						$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
-						$content = $once_dismissed ?
-							__( 'This image is large and may slow things down. Use Image Optimizer to reduce size without losing quality.', 'elementor' ) :
-							__( 'Don’t let unoptimized images be the downfall of your site’s performance. Use Image Optimizer!', 'elementor' );
-						$dismissible = $once_dismissed ? 'image_optimizer_hint' : 'image-optimization-once';
 						Hints::get_notice_template( [
-							'display' => ! $once_dismissed,
-							'type' => $once_dismissed ? 'warning' : 'info',
-							'content' => $content,
+							'display' => ! Hints::is_dismissed( 'image-optimization' ),
+							'type' => 'info',
+							'content' => __( 'Don’t let unoptimized images be the downfall of your site’s performance. Use Image Optimizer!', 'elementor' ),
 							'icon' => true,
-							'dismissible' => $dismissible,
+							'dismissible' => 'image-optimization-once',
 							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
-							'button_event' => $dismissible,
+							'button_event' => 'image-optimization-once',
 							'button_data' => [
 								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
 							],
