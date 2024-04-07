@@ -250,7 +250,7 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 
 					<?php /* ?>
-					<div class="elementor-control-media__warnings elementor-descriptor" role="alert" style="display: none;">
+					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 						<?php
 							Hints::get_notice_template( [
 								'type' => 'warning',
@@ -262,7 +262,7 @@ class Control_Media extends Control_Base_Multiple {
 					<?php */ ?>
 
 					<?php if ( Hints::should_display_hint( 'image-optimization-once' ) /*|| Hints::should_display_hint( 'image-optimization' ) */ ) : ?>
-					<div class="elementor-control-media__promotions elementor-descriptor" role="alert" style="display: none;">
+					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
 						<?php
 						$once_dismissed = Hints::is_dismissed( 'image-optimization-once' );
 						$content = $once_dismissed ?
