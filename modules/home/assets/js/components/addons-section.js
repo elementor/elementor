@@ -23,9 +23,9 @@ const Addons = ( { ...props } ) => {
 					addonsArray.map( ( item ) => {
 						return (
 							<Card key={ item.title } elevation={ 0 } sx={ { display: 'flex', border: 1, borderRadius: 1, borderColor: 'action.focus' } }>
-								<CardContent sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 3 } }>
+								<CardContent sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 3, p: 3 } }>
 									<Box>
-										<CardMedia image={ item.image } sx={ { height: '58px', width: '58px', mb: 3 } } />
+										<CardMedia image={ item.image } sx={ { height: '58px', width: '58px', mb: 2 } } />
 										<Box>
 											<Typography variant="subtitle2">{ item.title }</Typography>
 											<Typography variant="body2" color="text.secondary">{ item.description }</Typography>

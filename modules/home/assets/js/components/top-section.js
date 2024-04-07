@@ -9,7 +9,7 @@ const TopSection = ( { ...props } ) => {
 			<Stack gap={ 3 } justifyContent="center">
 				<Box>
 					<Typography variant="h6">{ props.topData.title }</Typography>
-					<Typography variant="body2" color="text.secondary">{ props.topData.description }</Typography>
+					<Typography variant="body2" color="secondary">{ props.topData.description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
 					<Button variant="contained" size="small" href={ props.createNewPageUrl } target="_blank">{ props.topData.button_create_page_title }</Button>
