@@ -95,11 +95,6 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async hideAiPromotion() {
-		// @ts-expect-error Property 'EDITOR_SESSION_ID' exists on window from ai.
-		window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', window.EDITOR_SESSION_ID );
-	}
-
 	async ensurePanelLoaded() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
