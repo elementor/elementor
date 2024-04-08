@@ -16,7 +16,7 @@ const Addons = ( { ...props } ) => {
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
 			<Box>
 				<Typography variant="h6">{ props.addonsData.header.title }</Typography>
-				<Typography variant="body" color="text.secondary">{ props.addonsData.header.description }</Typography>
+				<Typography variant="body2" color="text.secondary">{ props.addonsData.header.description }</Typography>
 			</Box>
 			<List sx={ { display: 'grid', gridTemplateColumns: { md: `repeat(${ cardsPerRow }, 1fr)`, xs: 'repeat(1, 1fr)' }, gap: 2 } }>
 				{
