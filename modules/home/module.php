@@ -94,7 +94,7 @@ class Module extends BaseApp {
 		return API::get_home_screen_items();
 	}
 
-	public static function get_elementor_settings_page_param(): string {
+	public static function get_elementor_settings_page_id(): string {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID )
 			? 'settings'
 			: Settings::PAGE_ID;
