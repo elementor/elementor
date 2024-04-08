@@ -4,6 +4,7 @@ namespace Elementor\Modules\Home;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Settings;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -91,5 +92,11 @@ class Module extends BaseApp {
 
 	private function get_app_js_config(): array {
 		return API::get_home_screen_items();
+	}
+
+	public static function get_elementor_settings_page_param(): string {
+		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID )
+			? 'settings'
+			: Settings::PAGE_ID;
 	}
 }
