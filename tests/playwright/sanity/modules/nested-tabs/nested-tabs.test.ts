@@ -48,6 +48,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
+
 		await editor.addWidget( 'button' );
 
 		// Load template.
