@@ -5,8 +5,7 @@ import Box from '@elementor/ui/Box';
 
 import CreateNewPageDialog from './create-new-page-dialog';
 
-const GetStartedListItem = ( { item, image } ) => {
-	const adminUrl = elementorAppConfig.admin_url;
+const GetStartedListItem = ( { item, image, adminUrl } ) => {
 	const url = item.is_relative_url ? adminUrl + item.url : item.url;
 
 	const [ isOpen, openDialog ] = React.useState( false );
@@ -43,5 +42,7 @@ GetStartedListItem.propTypes = {
 		is_relative_url: PropTypes.bool,
 		title_small_color: PropTypes.string,
 	} ).isRequired,
+
+	adminUrl: PropTypes.string.isRequired,
 	image: PropTypes.string,
 };
