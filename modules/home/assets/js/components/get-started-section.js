@@ -24,5 +24,5 @@ const GetStarted = ( { ...props } ) => {
 export default GetStarted;
 
 GetStarted.propTypes = {
-	getStartedData: PropTypes.object.isRequired
+	getStartedData: PropTypes.object.isRequired,
 };
