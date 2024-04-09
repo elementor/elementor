@@ -27,7 +27,6 @@ const GetStartedListItem = ( { item, image } ) => {
 				<ListItemText primary={ item.title } primaryTypographyProps={ { variant: 'subtitle1' } } sx={ { my: 0 } } />
 				<Link variant="body2" color={ ( item.title_small_color ) ? item.title_small_color : 'text.tertiary' } underline="hover" href={ url } target="_blank" onClick={ handleLinkClick }>{ item.title_small }</Link>
 			</Box>
-
 			{ item.new_page && <CreateNewPageDialog url={ url } isOpen={ isOpen } closedDialogCallback={ () => openDialog( false ) } /> }
 		</ListItem>
 	);
