@@ -13,7 +13,7 @@ const GetStarted = ( { ...props } ) => {
 			<List sx={ { display: 'grid', gridTemplateColumns: { md: 'repeat(4, 1fr)', xs: 'repeat(2, 1fr)' }, columnGap: { md: 9, xs: 7 }, rowGap: 3 } }>
 				{
 					props.getStartedData.repeater.map( ( item ) => {
-						return ( <GetStartedListItem key={ item.title } item={ item } image={ item.image } hasSidebarUpgrade={ props.hasSidebarUpgrade } /> );
+						return ( <GetStartedListItem key={ item.title } item={ item } image={ item.image } /> );
 					} )
 				}
 			</List>
@@ -24,6 +24,5 @@ const GetStarted = ( { ...props } ) => {
 export default GetStarted;
 
 GetStarted.propTypes = {
-	getStartedData: PropTypes.object.isRequired,
-	hasSidebarUpgrade: PropTypes.bool.isRequired,
+	getStartedData: PropTypes.object.isRequired
 };
