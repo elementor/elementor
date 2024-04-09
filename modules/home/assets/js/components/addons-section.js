@@ -8,7 +8,7 @@ import CardContent from '@elementor/ui/CardContent';
 import CardMedia from '@elementor/ui/CardMedia';
 
 const Addons = ( { ...props } ) => {
-	const domain = elementorAppConfig.admin_url.replace( 'wp-admin/', '' );
+	const domain = props.adminUrl.replace( 'wp-admin/', '' );
 	const addonsArray = props.addonsData.repeater;
 	const cardsPerRow = 3 === addonsArray.length ? 3 : 2;
 
@@ -49,4 +49,5 @@ export default Addons;
 
 Addons.propTypes = {
 	addonsData: PropTypes.object.isRequired,
+	adminUrl: PropTypes.string.isRequired,
 };
