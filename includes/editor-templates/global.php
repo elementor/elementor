@@ -40,11 +40,10 @@ function echo_select_your_structure_title() {
 				<i class="eicon-plus"></i>
 			</div>
 			<# if ( 'loop-item' !== elementor.documents.getCurrent()?.config?.type || elementorCommon.config.experimentalFeatures[ 'container' ] ) {
-				if ( 'loop-item' === elementor.documents.getCurrent()?.config?.type && elementor.config.document.settings.settings?.source?.includes( 'taxonomy' ) ) { #>
-					<div class="hidden elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
-				<# } else { #>
-					<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
-				<# } #>
+				const additionalClass = 'loop-item' === elementor.documents.getCurrent()?.config?.type && elementor.config.document.settings.settings?.source?.includes( 'taxonomy' )
+					? 'elementor-edit-hidden'
+					: ''; #>
+					<div class="{{ additionalClass }} elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 					<i class="eicon-folder"></i>
 				</div>
 			<# } #>
