@@ -109,6 +109,10 @@
 			color: var(--e-a-btn-color);
 		}
 	}
+
+	&.hidden {
+		display: none;
+	}
 }
 
 .elementor-add-section-drag-title,
