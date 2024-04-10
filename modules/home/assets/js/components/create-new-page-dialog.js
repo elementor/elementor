@@ -59,7 +59,7 @@ const CreateNewPageDialog = ( { url, isOpen, closedDialogCallback } ) => {
 
 			<DialogActions>
 				<Button onClick={ handleDialogClose } color="secondary">{ __( 'Cancel', 'elementor' ) }</Button>
-				<Button variant="contained" href={ pageName ? url + '&' + pageName : url }>{ __( 'Save', 'elementor' ) }</Button>
+				<Button variant="contained" href={ pageName ? url + '&' + pageName : url } target="_blank">{ __( 'Save', 'elementor' ) }</Button>
 			</DialogActions>
 		</Dialog>
 	);
