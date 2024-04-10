@@ -169,6 +169,18 @@ class Module extends BaseModule {
 		wp_dequeue_style( 'wc-blocks-style' );
 	}
 
+	/**
+	 * Check whether the "Optimized Gutenberg Loading" settings is enabled.
+	 *
+	 * The 'elementor_optimized_gutenberg_loading' option can be enabled/disabled from the Elementor settings.
+	 *
+	 * @since 3.21.0
+	 * @access private
+	 */
+	private static function is_optimized_gutenberg_loading_enabled() : bool {
+		return '1' === get_option( 'elementor_optimized_gutenberg_loading', '1' );
+	}
+
 	private static function should_dequeue_gutenberg_assets() : bool {
 		$post = get_post();
 
