@@ -250,6 +250,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.20.4 - 2024-04-10 =
+
+* Fix: Image prompt enhancement not functioning as expected in AI Images
+
 = 3.20.3 - 2024-03-26 =
 
 * Fix: Edit with Elementor button is missing for pages that had been previously edited with Elementor when using WordPress 6.5 ([#25495](https://github.com/elementor/elementor/issues/25495), [#25496](https://github.com/elementor/elementor/issues/25496))
