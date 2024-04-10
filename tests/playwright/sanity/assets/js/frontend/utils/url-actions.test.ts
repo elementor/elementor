@@ -8,7 +8,7 @@ test.describe( 'URL Actions', () => {
 		 */
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		const wpMediaAddButtonSelector = '.button.media-button';
 

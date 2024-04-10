@@ -185,7 +185,7 @@ test.describe( 'Video tests inside a section', () => {
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
 			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),

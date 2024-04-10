@@ -4,7 +4,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 test.describe( 'Device mode', () => {
 	test( 'Correct device mode is returned on Desktop', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( 'heading', container );
