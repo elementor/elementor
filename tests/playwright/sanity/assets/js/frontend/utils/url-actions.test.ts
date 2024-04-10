@@ -25,7 +25,7 @@ test.describe( 'URL Actions', () => {
 		}, null );
 
 		// Upload Image
-		const imageMediaControl = await page.locator( '.elementor-control-preview-area' );
+		const imageMediaControl = page.locator( '.elementor-control-preview-area' );
 		await imageMediaControl.click( { delay: 500, clickCount: 2 } );
 		await page.click( 'text=Media Library' );
 		await page.waitForSelector( 'text=Insert Media' );
@@ -33,10 +33,11 @@ test.describe( 'URL Actions', () => {
 		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
-		const previousImage = await page.$( '[aria-label*="mountain-image"]' );
+		const mountainImageName = 'Picsum ID: 684',
+			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-		if ( previousImage ) {
-			await page.click( '[aria-label="mountain-image"]' );
+		if ( await previousImage.nth( 0 ).isVisible() ) {
+			await previousImage.nth( 0 ).click();
 		} else {
 			await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 			await page.waitForSelector( 'text=mountain-image.jpeg' );
@@ -46,11 +47,11 @@ test.describe( 'URL Actions', () => {
 		await page.click( wpMediaAddButtonSelector );
 
 		// Get the image's source.
-		const mountainImg = await editor.getPreviewFrame().locator( '.elementor-widget-image img[src*="mountain-image"]' );
+		const mountainImg = editor.getPreviewFrame().locator( '.elementor-widget-image img[src*="mountain-image"]' );
 		const src = await mountainImg.getAttribute( 'src' );
 
 		// Test that the image has been successfully inserted into the page.
-		await expect( src ).toContain( 'mountain-image' );
+		expect( src ).toContain( 'mountain-image' );
 
 		// Click on the image to open the lightbox.
 		await mountainImg.click();
@@ -104,7 +105,7 @@ test.describe( 'URL Actions', () => {
 		}
 
 		// Select the mountain image to add to the gallery.
-		await page.click( '[aria-label="mountain-image"]' );
+		await previousImage.nth( 0 ).click();
 
 		// Create the gallery.
 		await page.click( wpMediaAddButtonSelector );
@@ -139,7 +140,9 @@ test.describe( 'URL Actions', () => {
 		/**
 		 * Get the action hash from the image, go to the page URL with the hash and check that the lightbox is triggered.
 		 */
-		const frontendMountainImageElement = await page.$( '.elementor-widget-image a[href*="mountain-image"]' );
+		const frontendMountainImageElement = page.locator( '.elementor-widget-image a' ).nth( 0 );
+
+		await frontendMountainImageElement.waitFor( { state: 'visible' } );
 
 		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'data-e-action-hash' );
 
