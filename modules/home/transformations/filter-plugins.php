@@ -36,15 +36,15 @@ class Filter_Plugins extends Transformations_Abstract {
 	private function get_install_plugin_url( $plugin_path ) {
 		$slug = dirname( $plugin_path );
 		$nonce_url = $this->wordpress_adapter->wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
-		return $this->removeAndAmpFromUrl( $nonce_url );
+		return $this->removeAmpersandFromUrl( $nonce_url );
 	}
 
 	private function get_activate_plugin_url( $plugin_path ) {
 		$nonce_url = $this->wordpress_adapter->wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_path );
-		return $this->removeAndAmpFromUrl( $nonce_url );
+		return $this->removeAmpersandFromUrl( $nonce_url );
 	}
 
-	private function removeAndAmpFromUrl( $url ) {
+	private function removeAmpersandFromUrl( $url ) {
 		return str_replace( '&amp;', '&', $url );
 	}
 
