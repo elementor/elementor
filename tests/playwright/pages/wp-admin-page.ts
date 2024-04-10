@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
-import { $eType, ElementorType } from '../types/types';
+import { $eType, ElementorType, WindowType } from '../types/types';
 let elementor: ElementorType;
 let $e: $eType;
 
@@ -250,6 +250,13 @@ export default class WpAdminPage extends BasePage {
 		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
+		let window: WindowType;
+		await this.page.evaluate( () => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore editor session is on the window object
+			const editorSessionId = window.EDITOR_SESSION_ID;
+			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
+		} );
 	}
 
 	async editWithElementor() {
