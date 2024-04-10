@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
-import { $eType, ElementorType, WindowType } from '../types/types';
+import { ElementorType, WindowType } from '../types/types';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
