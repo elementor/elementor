@@ -6,4 +6,12 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function get_plugins(): array {
 		return get_plugins();
 	}
+
+	public function is_plugin_active( $plugin_path ): bool {
+		return is_plugin_active( $plugin_path );
+	}
+
+	public function wp_nonce_url( $url, $action ): string {
+		return wp_nonce_url( $url, $action );
+	}
 }
