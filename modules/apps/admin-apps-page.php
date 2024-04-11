@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\Apps;
 
+use Elementor\Core\Isolation\Elementor_Adapter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -8,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Apps_Page {
 
 	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
+
+	private static ?Elementor_Adapter $elementor_adapter = null;
 
 	public static function render() {
 		?>
@@ -39,6 +43,10 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
+		if ( ! self::$elementor_adapter ) {
+			self::$elementor_adapter = new Elementor_Adapter();
+		}
+
 		$apps = static::get_remote_apps();
 
 		return static::filter_apps( $apps );
@@ -87,14 +95,14 @@ class Admin_Apps_Page {
 	}
 
 	private static function filter_wporg_app( $app ) {
-		if ( static::is_plugin_activated( $app['file_path'] ) ) {
+		if ( self::$elementor_adapter->is_plugin_activated( $app['file_path'] ) ) {
 			return null;
 		}
 
-		if ( static::is_plugin_installed( $app['file_path'] ) ) {
+		if ( self::$elementor_adapter->is_plugin_installed( $app['file_path'] ) ) {
 			if ( current_user_can( 'activate_plugins' ) ) {
 				$app['action_label'] = 'Activate';
-				$app['action_url'] = static::get_activate_plugin_url( $app['file_path'] );
+				$app['action_url'] = self::$elementor_adapter->get_activate_plugin_url( $app['file_path'] );
 			} else {
 				$app['action_label'] = 'Cannot Activate';
 				$app['action_url'] = '#';
@@ -102,7 +110,7 @@ class Admin_Apps_Page {
 		} else {
 			if ( current_user_can( 'install_plugins' ) ) {
 				$app['action_label'] = 'Install';
-				$app['action_url'] = static::get_install_plugin_url( $app['file_path'] );
+				$app['action_url'] = self::$elementor_adapter->get_install_plugin_url( $app['file_path'] );
 			} else {
 				$app['action_label'] = 'Cannot Install';
 				$app['action_url'] = '#';
@@ -117,17 +125,17 @@ class Admin_Apps_Page {
 	}
 
 	private static function filter_ecom_app( $app ) {
-		if ( static::is_plugin_activated( $app['file_path'] ) ) {
+		if ( self::$elementor_adapter->is_plugin_activated( $app['file_path'] ) ) {
 			return null;
 		}
 
-		if ( ! static::is_plugin_installed( $app['file_path'] ) ) {
+		if ( ! self::$elementor_adapter->is_plugin_installed( $app['file_path'] ) ) {
 			return $app;
 		}
 
 		if ( current_user_can( 'activate_plugins' ) ) {
 			$app['action_label'] = 'Activate';
-			$app['action_url'] = static::get_activate_plugin_url( $app['file_path'] );
+			$app['action_url'] = self::$elementor_adapter->get_activate_plugin_url( $app['file_path'] );
 		} else {
 			$app['action_label'] = 'Cannot Activate';
 			$app['action_url'] = '#';
@@ -144,26 +152,6 @@ class Admin_Apps_Page {
 
 	private static function is_elementor_pro_installed() {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
-	}
-
-	private static function is_plugin_installed( $file_path ) {
-		$installed_plugins = get_plugins();
-
-		return isset( $installed_plugins[ $file_path ] );
-	}
-
-	private static function is_plugin_activated( $file_path ) {
-		return is_plugin_active( $file_path );
-	}
-
-	private static function get_activate_plugin_url( $file_path ) {
-		return wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $file_path );
-	}
-
-	private static function get_install_plugin_url( $file_path ) {
-		$slug = dirname( $file_path );
-
-		return wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
 	}
 
 	private static function render_plugin_item( $plugin ) {

@@ -33,30 +33,6 @@ class Filter_Plugins extends Transformations_Abstract {
 		return 'link' !== $add_on['type'];
 	}
 
-	private function is_plugin_installed( $plugin_path ) {
-		return in_array( $plugin_path, $this->installed_plugins );
-	}
-
-	private function is_plugin_activated( $plugin_path ) {
-		return $this->wordpress_adapter->is_plugin_active( $plugin_path );
-	}
-
-	private function get_install_plugin_url( $plugin_path ) {
-		$slug = dirname( $plugin_path );
-		$admin_url = $this->wordpress_adapter->self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug );
-		$nonce_url = $this->wordpress_adapter->wp_nonce_url( $admin_url, 'install-plugin_' . $slug );
-		return $this->removeAmpersandFromUrl( $nonce_url );
-	}
-
-	private function get_activate_plugin_url( $plugin_path ) {
-		$nonce_url = $this->wordpress_adapter->wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_path );
-		return $this->removeAmpersandFromUrl( $nonce_url );
-	}
-
-	private function removeAmpersandFromUrl( $url ) {
-		return str_replace( '&amp;', '&', $url );
-	}
-
 	private function get_add_ons_installation_status( array $add_ons ): array {
 		$transformed_add_ons = [];
 
@@ -75,7 +51,7 @@ class Filter_Plugins extends Transformations_Abstract {
 	private function get_plugin_installation_status( $add_on ): string {
 		$plugin_path = $add_on['file_path'];
 
-		if ( ! $this->is_plugin_installed( $plugin_path ) ) {
+		if ( ! $this->elementor_adapter->is_plugin_installed( $plugin_path ) ) {
 
 			if ( 'wporg' === $add_on['type'] ) {
 				return 'not-installed-wporg';
@@ -84,7 +60,7 @@ class Filter_Plugins extends Transformations_Abstract {
 			return 'not-installed-not-wporg';
 		}
 
-		if ( $this->is_plugin_activated( $plugin_path ) ) {
+		if ( $this->elementor_adapter->is_plugin_activated( $plugin_path ) ) {
 			return 'activated';
 		}
 
@@ -102,11 +78,11 @@ class Filter_Plugins extends Transformations_Abstract {
 			case 'not-installed-not-wporg':
 				break;
 			case 'not-installed-wporg':
-				$add_on['url'] = $this->get_install_plugin_url( $add_on['file_path'] );
+				$add_on['url'] = $this->elementor_adapter->get_install_plugin_url( $add_on['file_path'] );
 				$add_on['target'] = '_self';
 				break;
 			case 'installed-not-activated':
-				$add_on['url'] = $this->get_activate_plugin_url( $add_on['file_path'] );
+				$add_on['url'] = $this->elementor_adapter->get_activate_plugin_url( $add_on['file_path'] );
 				$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
 				$add_on['target'] = '_self';
 				break;
