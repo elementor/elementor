@@ -3,14 +3,8 @@ import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
-import { $eType, ElementorType, WindowType } from '../types/types';
+import { ElementorType, WindowType } from '../types/types';
 let elementor: ElementorType;
-let $e: $eType;
-
-/**
- * This post is used for any tests that need a post, with empty elements.
- */
-const CLEAN_POST_ID: number = 1;
 
 export default class WpAdminPage extends BasePage {
 	async gotoDashboard() {
@@ -106,25 +100,6 @@ export default class WpAdminPage extends BasePage {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
 		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
 		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
-	}
-
-	/**
-	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
-	 *
-	 * @return {Promise<EditorPage>}
-	 */
-	async useElementorCleanPost() {
-		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
-
-		await this.waitForPanel();
-
-		await this.closeAnnouncementsIfVisible();
-
-		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
-
-		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-
-		return editor;
 	}
 
 	async skipTutorial() {
