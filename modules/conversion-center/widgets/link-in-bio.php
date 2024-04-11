@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter\Widgets;
 
+use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render_Strategy;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
@@ -75,7 +76,8 @@ class Link_In_Bio extends Widget_Base {
 
 
 	protected function render() {
-		$settings = $this->get_settings_for_display();
+		$render_strategy = new Core_Render_Strategy();
 
+		$render_strategy->render( $this );
 	}
 }
