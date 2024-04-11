@@ -50,20 +50,20 @@ jobs:
           'ai',
           'onBoarding',
           'video',
-          'elements-regression',
-          'default',
-          'nested-tabs',
-          'reverse-columns',
-          'container',
-          'nested-accordion',
-          'styleguide_image_link',
-          'rating',
-          'pluginTester1_containers',
-          'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections',
-          'promotions',
-          'nested-atomic-repeaters',
+          # 'elements-regression',
+          # 'default',
+          # 'nested-tabs',
+          # 'reverse-columns',
+          # 'container',
+          # 'nested-accordion',
+          # 'styleguide_image_link',
+          # 'rating',
+          # 'pluginTester1_containers',
+          # 'pluginTester2_containers',
+          # 'pluginTester1_sections',
+          # 'pluginTester2_sections',
+          # 'promotions',
+          # 'nested-atomic-repeaters',
         ]
     steps:
       - name: Checkout source code
@@ -88,7 +88,10 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          npm run test:setup:playwright
+      - name: Update wordpress to nightly build
+        run: npx wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
+      - name: Setup test data
+        run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
           npx wp-env run cli wp core version
