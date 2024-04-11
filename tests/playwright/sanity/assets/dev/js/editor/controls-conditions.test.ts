@@ -7,7 +7,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'heading' );
 

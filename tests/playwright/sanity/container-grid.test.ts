@@ -24,7 +24,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
 			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -274,7 +274,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Grid container presets', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 
 		await test.step( 'Assert preset: rows-1 columns-2', async () => {
@@ -304,7 +304,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid outline', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Arrange.
@@ -388,7 +388,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid outline multiple controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
 			gridOutline = frame.locator( '.e-grid-outline' );
 
@@ -420,7 +420,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Check empty view min height', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
@@ -492,7 +492,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid back arrow', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
 
@@ -525,7 +525,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.closeNavigatorIfOpen();
@@ -549,7 +549,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test Empty View should show', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
@@ -571,7 +571,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test Empty View should not distorse preview', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		let containerId;
 		let gridRowsControl;
@@ -612,7 +612,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test Empty View should not distorse preview on tablet', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		let containerId;
 		await test.step( 'Arrange', async () => {
