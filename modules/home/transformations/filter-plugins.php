@@ -68,6 +68,7 @@ class Filter_Plugins extends Transformations_Abstract {
 					: $add_on['url'];
 
 				$add_on['url'] = $plugin_url;
+				$add_on['target'] = '_self';
 
 				$transformed_add_ons[] = $add_on;
 				continue;
@@ -81,6 +82,7 @@ class Filter_Plugins extends Transformations_Abstract {
 
 			$add_on['url'] = $this->get_activate_plugin_url( $plugin_path );
 			$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
+			$add_on['target'] = '_self';
 
 			$transformed_add_ons[] = $add_on;
 		}
