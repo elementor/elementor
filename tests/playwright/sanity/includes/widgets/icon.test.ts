@@ -21,7 +21,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 
 	test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			iconWidget = await editor.addWidget( 'icon' ),
 			iconSelector = '.elementor-element-' + iconWidget + ' .elementor-icon';
 		const contentTab = new Content( page, testInfo );
