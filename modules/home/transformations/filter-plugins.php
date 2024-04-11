@@ -29,6 +29,14 @@ class Filter_Plugins extends Transformations_Abstract {
 		return array_keys( $plugins );
 	}
 
+	private function is_plugin( $add_on ) {
+		return 'link' !== $add_on['type'];
+	}
+
+	private function is_plugin_installed( $plugin_path ) {
+		return in_array( $plugin_path, $this->installed_plugins );
+	}
+
 	private function is_plugin_activated( $plugin_path ) {
 		return $this->wordpress_adapter->is_plugin_active( $plugin_path );
 	}
@@ -53,40 +61,57 @@ class Filter_Plugins extends Transformations_Abstract {
 		$transformed_add_ons = [];
 
 		foreach ( $add_ons as $add_on ) {
-			$is_plugin = 'link' !== $add_on['type'];
 
-			if ( ! $is_plugin ) {
+			if ( $this->is_plugin( $add_on ) ) {
+				$transformed_add_ons[] = $this->handle_plugin_add_on( $add_on );
+			} else {
 				$transformed_add_ons[] = $add_on;
-				continue;
 			}
-
-			$plugin_path = $add_on['file_path'];
-			$is_installed_plugin = in_array( $plugin_path, $this->installed_plugins );
-
-			if ( ! $is_installed_plugin ) {
-
-				if ( 'wporg' === $add_on['type'] ) {
-					$add_on['url'] = $this->get_install_plugin_url( $plugin_path );
-					$add_on['target'] = '_self';
-				}
-
-				$transformed_add_ons[] = $add_on;
-				continue;
-			}
-
-			$is_active_plugin = $this->is_plugin_activated( $plugin_path );
-
-			if ( $is_active_plugin ) {
-				continue;
-			}
-
-			$add_on['url'] = $this->get_activate_plugin_url( $plugin_path );
-			$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
-			$add_on['target'] = '_self';
-
-			$transformed_add_ons[] = $add_on;
 		}
 
 		return $transformed_add_ons;
+	}
+
+	private function get_plugin_installation_status( $add_on ): string {
+		$plugin_path = $add_on['file_path'];
+
+		if ( ! $this->is_plugin_installed( $plugin_path ) ) {
+
+			if ( 'wporg' === $add_on['type'] ) {
+				return 'not-installed-wporg';
+			}
+
+			return 'not-installed-not-wporg';
+		}
+
+		if ( $this->is_plugin_activated( $plugin_path ) ) {
+			return 'activated';
+		}
+
+		return 'installed-not-activated';
+	}
+
+	private function handle_plugin_add_on( $add_on ): array {
+		$installation_status = $this->get_plugin_installation_status( $add_on );
+
+		if ( 'activated' === $installation_status ) {
+			return $add_on;
+		}
+
+		switch ( $this->get_plugin_installation_status( $add_on ) ) {
+			case 'not-installed-not-wporg':
+				break;
+			case 'not-installed-wporg':
+				$add_on['url'] = $this->get_install_plugin_url( $add_on['file_path'] );
+				$add_on['target'] = '_self';
+				break;
+			case 'installed-not-activated':
+				$add_on['url'] = $this->get_activate_plugin_url( $add_on['file_path'] );
+				$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
+				$add_on['target'] = '_self';
+				break;
+		}
+
+		return $add_on;
 	}
 }
