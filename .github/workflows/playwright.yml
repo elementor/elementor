@@ -2,6 +2,8 @@ name: Playwright
 
 on:
   pull_request:
+  schedule:
+    - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
       inputs:
         reporter:
@@ -88,7 +90,11 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          npm run test:setup:playwright
+      - name: Update wordpress to nightly build
+        if: ${{ github.event_name == 'schedule' }}
+        run: npx wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
+      - name: Setup test data
+        run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
           npx wp-env run cli wp core version
@@ -123,6 +129,25 @@ jobs:
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
+      - name: Send slack message
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+          PAYLOAD: |
+            {
+              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
       - name: Check Playwright matrix status
         if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
         run: exit 1
