@@ -70,13 +70,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 			'add_ons' => [
 				'repeater' => [
 					[
-						'Name' => 'Elementor',
-						'Version' => '3.0.0',
-						'file_path' => 'elementor/elementor.php',
-						'url' => 'https://elementor.com',
-						'type' => 'wporg'
-					],
-					[
 						'Name' => 'Elementor Pro',
 						'Version' => '3.0.0',
 						'file_path' => 'elementor-pro/elementor-pro.php',
