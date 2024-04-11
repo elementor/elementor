@@ -21,8 +21,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 		$transformed_data = $transformation->transform( $data );
 		$expected_data = $this->mock_home_screen_data_transformed();
 
-		var_dump( $transformed_data );
-
 		// Assert
 		$this->assertTrue( $transformed_data === $expected_data );
 	}
@@ -55,7 +53,7 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 					[
 						'Name' => 'Elementor AI',
 						'Version' => '3.0.0',
-						'url' => 'elementor/elementor.php',
+						'url' => 'elementor-ai/elementor-ai.php',
 						'type' => 'link',
 					],
 				],
@@ -75,7 +73,7 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 						'Name' => 'Elementor',
 						'Version' => '3.0.0',
 						'file_path' => 'elementor/elementor.php',
-						'url' => 'http://domain.ext/wp-admin/elementor/elementor.php?nonce=123',
+						'url' => 'nonce_url',
 						'type' => 'wporg',
 						'button_label' => 'Activate',
 						'target' => '_self'
@@ -84,14 +82,15 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 						'Name' => 'Something Else',
 						'Version' => '3.0.0',
 						'file_path' => 'some/thing.php',
-						'url' => 'http://domain.ext/wp-admin/some/thing.php?nonce=123',
+						'url' => 'nonce_url',
 						'type' => 'wporg',
 						'target' => '_self'
 					],
 					[
 						'Name' => 'Elementor AI',
 						'Version' => '3.0.0',
-						'url' => 'elementor/elementor.php',
+						'url' => 'elementor-ai/elementor-ai.php',
+						'type' => 'link'
 					],
 				],
 			],
@@ -130,17 +129,9 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 			[ 'elementor-pro/elementor-pro.php', true ]
 		] );
 
-		$wordpress_adapter_mock->method( 'self_admin_url' )->willReturnMap( [
-			[ 'elementor/elementor.php', 'http://domain.ext/wp-admin/elementor/elementor.php' ],
-			[ 'elementor-pro/elementor-pro.php', 'http://domain.ext/wp-admin/elementor-pro/elementor-pro.php' ],
-			[ 'some/thing.php', 'http://domain.ext/wp-admin/some/thing.php' ]
-		] );
+		$wordpress_adapter_mock->method( 'self_admin_url' )->willReturn( 'admin_url' );
 
-		$wordpress_adapter_mock->method( 'wp_nonce_url' )->willReturnMap( [
-			[ 'http://domain.ext/wp-admin/elementor/elementor.php', 'http://domain.ext/wp-admin/elementor/elementor.php?nonce=123' ],
-			[ 'http://domain.ext/wp-admin/elementor-pro/elementor-pro.php', 'http://domain.ext/wp-admin/elementor-pro/elementor-pro.php?nonce=123' ],
-			[ 'http://domain.ext/wp-admin/some/thing.php', 'http://domain.ext/wp-admin/some/thing.php?nonce=123' ]
-		] );
+		$wordpress_adapter_mock->method( 'wp_nonce_url' )->willReturn( 'nonce_url' );
 
 		$this->wordpress_adapter = $wordpress_adapter_mock;
 	}
