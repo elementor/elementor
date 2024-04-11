@@ -1,20 +1,20 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Modules\Home\Transformations\Filter_Plugins;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Plugins extends PHPUnit_TestCase {
 
-	private $wordpress_adapter;
+	private $elementor_adapter;
 
 	public function test_transform() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
 
 		$transformation = new Filter_Plugins( [
-			'wordpress_adapter' => $this->wordpress_adapter,
+			'elementor_adapter' => $this->elementor_adapter
 		] );
 
 		// Act
@@ -73,8 +73,15 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 						'Name' => 'Elementor',
 						'Version' => '3.0.0',
 						'file_path' => 'elementor/elementor.php',
-						'url' => 'nonce_url',
-						'type' => 'wporg',
+						'url' => 'https://elementor.com',
+						'type' => 'wporg'
+					],
+					[
+						'Name' => 'Elementor Pro',
+						'Version' => '3.0.0',
+						'file_path' => 'elementor-pro/elementor-pro.php',
+						'url' => 'elementor-pro/elementor-pro.php?activate=true&nonce=123',
+						'type' => 'ecom',
 						'button_label' => 'Activate',
 						'target' => '_self'
 					],
@@ -82,7 +89,7 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 						'Name' => 'Something Else',
 						'Version' => '3.0.0',
 						'file_path' => 'some/thing.php',
-						'url' => 'nonce_url',
+						'url' => 'some/thing.php?nonce=123',
 						'type' => 'wporg',
 						'target' => '_self'
 					],
@@ -101,38 +108,37 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 		];
 	}
 
-	private function installed_plugins() {
-		return [
-			'elementor/elementor.php' => [
-				'Name' => 'Elementor',
-				'Version' => '3.0.0'
-			],
-			'elementor-pro/elementor-pro.php' => [
-				'Name' => 'Elementor Pro',
-				'Version' => '3.0.0'
-			],
-		];
-	}
-
 	public function setUp(): void {
 		parent::setUp();
-		$plugin_array = $this->installed_plugins();
 
-		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )
-			->setMethods( [ 'get_plugins', 'is_plugin_active', 'wp_nonce_url', 'self_admin_url' ] )
+		$elementor_adapter_mock = $this->getMockBuilder( Elementor_Adapter::class )
+			->setMethods( [ 'is_plugin_installed', 'is_plugin_activated', 'get_install_plugin_url', 'get_activate_plugin_url' ] )
 			->getMock();
 
-		$wordpress_adapter_mock->method( 'get_plugins' )->willReturn( $plugin_array );
+//		$elementor_adapter_mock->method( 'removeAmpersandFromUrl' )->willReturn( 'some/url' );
 
-		$wordpress_adapter_mock->method( 'is_plugin_active' )->willReturnMap( [
-			[ 'elementor/elementor.php', false ],
-			[ 'elementor-pro/elementor-pro.php', true ]
+		$elementor_adapter_mock->method( 'is_plugin_installed' )->willReturnMap( [
+			[ 'elementor/elementor.php', true ],
+			[ 'elementor-pro/elementor-pro.php', true ],
+			[ 'some/thing.php', false ]
 		] );
 
-		$wordpress_adapter_mock->method( 'self_admin_url' )->willReturn( 'admin_url' );
+		$elementor_adapter_mock->method( 'is_plugin_activated' )->willReturnMap( [
+			[ 'elementor/elementor.php', true ],
+			[ 'elementor-pro/elementor-pro.php', false ]
+		] );
 
-		$wordpress_adapter_mock->method( 'wp_nonce_url' )->willReturn( 'nonce_url' );
+		$elementor_adapter_mock->method( 'get_install_plugin_url' )->willReturnMap( [
+			[ 'elementor/elementor.php', 'elementor/elementor.php?nonce=123' ],
+			[ 'elementor-pro/elementor-pro.php', 'elementor-pro/elementor-pro.php?nonce=123' ],
+			[ 'some/thing.php', 'some/thing.php?nonce=123' ]
+		] );
 
-		$this->wordpress_adapter = $wordpress_adapter_mock;
+		$elementor_adapter_mock->method( 'get_activate_plugin_url' )->willReturnMap( [
+			[ 'elementor/elementor.php', 'elementor/elementor.php?activate=true&nonce=123' ],
+			[ 'elementor-pro/elementor-pro.php', 'elementor-pro/elementor-pro.php?activate=true&nonce=123' ]
+		] );
+
+		$this->elementor_adapter = $elementor_adapter_mock;
 	}
 }

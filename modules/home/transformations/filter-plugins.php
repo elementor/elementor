@@ -9,27 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Filter_Plugins extends Transformations_Abstract {
 
-	private array $installed_plugins;
-
-	public function __construct( $args ) {
-		parent::__construct( $args );
-
-		$this->installed_plugins = $this->get_installed_plugins();
-	}
-
 	public function transform( array $home_screen_data ): array {
 		$home_screen_data['add_ons']['repeater'] = $this->get_add_ons_installation_status( $home_screen_data['add_ons']['repeater'] );
 
 		return $home_screen_data;
 	}
 
-	private function get_installed_plugins(): array {
-		$plugins = $this->wordpress_adapter->get_plugins();
-
-		return array_keys( $plugins );
-	}
-
-	private function is_plugin( $add_on ) {
+	private function is_plugin( $add_on ): bool {
 		return 'link' !== $add_on['type'];
 	}
 
