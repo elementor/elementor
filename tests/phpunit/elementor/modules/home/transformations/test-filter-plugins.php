@@ -115,8 +115,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 			->setMethods( [ 'is_plugin_installed', 'is_plugin_activated', 'get_install_plugin_url', 'get_activate_plugin_url' ] )
 			->getMock();
 
-//		$elementor_adapter_mock->method( 'removeAmpersandFromUrl' )->willReturn( 'some/url' );
-
 		$elementor_adapter_mock->method( 'is_plugin_installed' )->willReturnMap( [
 			[ 'elementor/elementor.php', true ],
 			[ 'elementor-pro/elementor-pro.php', true ],

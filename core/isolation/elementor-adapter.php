@@ -6,7 +6,7 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 	public Wordpress_Adapter $wordpress_adapter;
 
 	public function __construct() {
-		$this->wordpress_adapter = new( Wordpress_Adapter::class );
+		$this->wordpress_adapter = new Wordpress_Adapter();
 	}
 
 	public function is_plugin_installed( $plugin_path ): bool {
