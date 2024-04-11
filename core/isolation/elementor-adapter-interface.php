@@ -11,5 +11,5 @@ interface Elementor_Adapter_Interface {
 
 	public function get_activate_plugin_url( $plugin_path ): string;
 
-	public function removeAmpersandFromUrl( $url ): string;
+	public function remove_ampersand_from_url( $url ): string;
 }

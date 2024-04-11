@@ -23,15 +23,15 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 		$slug = dirname( $plugin_path );
 		$admin_url = $this->wordpress_adapter->self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug );
 		$nonce_url = $this->wordpress_adapter->wp_nonce_url( $admin_url, 'install-plugin_' . $slug );
-		return $this->removeAmpersandFromUrl( $nonce_url );
+		return $this->remove_ampersand_from_url( $nonce_url );
 	}
 
-	public function get_activate_plugin_url($plugin_path ): string {
+	public function get_activate_plugin_url( $plugin_path ): string {
 		$nonce_url = $this->wordpress_adapter->wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_path );
-		return $this->removeAmpersandFromUrl( $nonce_url );
+		return $this->remove_ampersand_from_url( $nonce_url );
 	}
 
-	public function removeAmpersandFromUrl($url ): string {
+	public function remove_ampersand_from_url( $url ): string {
 		return str_replace( '&amp;', '&', $url );
 	}
 }
