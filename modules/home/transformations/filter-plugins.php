@@ -63,12 +63,11 @@ class Filter_Plugins extends Transformations_Abstract {
 			$is_installed_plugin = in_array( $plugin_path, $this->installed_plugins );
 
 			if ( ! $is_installed_plugin ) {
-				$plugin_url = 'wporg' === $add_on['type']
-					? $this->get_install_plugin_url( $plugin_path )
-					: $add_on['url'];
 
-				$add_on['url'] = $plugin_url;
-				$add_on['target'] = '_self';
+				if( 'wporg' === $add_on['type'] ) {
+					$add_on['url'] = $this->get_install_plugin_url( $plugin_path );
+					$add_on['target'] = '_self';
+				}
 
 				$transformed_add_ons[] = $add_on;
 				continue;
