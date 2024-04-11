@@ -14,4 +14,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function wp_nonce_url( $url, $action ): string {
 		return wp_nonce_url( $url, $action );
 	}
+
+	public function self_admin_url( $path ): string {
+		return self_admin_url( $path );
+	}
 }

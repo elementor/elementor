@@ -35,7 +35,8 @@ class Filter_Plugins extends Transformations_Abstract {
 
 	private function get_install_plugin_url( $plugin_path ) {
 		$slug = dirname( $plugin_path );
-		$nonce_url = $this->wordpress_adapter->wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
+		$admin_url = $this->wordpress_adapter->self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug );
+		$nonce_url = $this->wordpress_adapter->wp_nonce_url( $admin_url, 'install-plugin_' . $slug );
 		return $this->removeAmpersandFromUrl( $nonce_url );
 	}
 
@@ -64,7 +65,7 @@ class Filter_Plugins extends Transformations_Abstract {
 
 			if ( ! $is_installed_plugin ) {
 
-				if( 'wporg' === $add_on['type'] ) {
+				if ( 'wporg' === $add_on['type'] ) {
 					$add_on['url'] = $this->get_install_plugin_url( $plugin_path );
 					$add_on['target'] = '_self';
 				}
