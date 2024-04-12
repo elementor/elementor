@@ -323,10 +323,9 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .your-class' => 'color: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-link-in-bio-heading' => 'color: {{VALUE}}',
+				],
 			]
 		);
 
@@ -353,10 +352,9 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .your-class' => 'color: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-link-in-bio-title' => 'color: {{VALUE}}',
+				],
 			]
 		);
 
@@ -383,10 +381,9 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .your-class' => 'color: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-link-in-bio-description' => 'color: {{VALUE}}',
+				],
 			]
 		);
 
@@ -415,10 +412,9 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .your-class' => 'color: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-link-in-bio-icon' => 'color: {{VALUE}}',
+				],
 			]
 		);
 
@@ -546,7 +542,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-	
+
 		$this->add_control(
 			'cta_links_corners',
 			[
