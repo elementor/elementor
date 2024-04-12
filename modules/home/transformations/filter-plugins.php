@@ -19,10 +19,6 @@ class Filter_Plugins extends Transformations_Abstract {
 		return 'link' !== $add_on['type'];
 	}
 
-	private function remove_ampersand_from_url( $url ): string {
-		return str_replace( '&amp;', '&', $url );
-	}
-
 	private function get_add_ons_installation_status( array $add_ons ): array {
 		$transformed_add_ons = [];
 
@@ -69,12 +65,12 @@ class Filter_Plugins extends Transformations_Abstract {
 				break;
 			case 'not-installed-wporg':
 				$installation_url = $this->plugin_status_adapter->get_install_plugin_url( $add_on['file_path'] );
-				$add_on['url'] = $this->remove_ampersand_from_url( $installation_url );
+				$add_on['url'] = html_entity_decode( $installation_url );
 				$add_on['target'] = '_self';
 				break;
 			case 'installed-not-activated':
 				$activation_url = $this->plugin_status_adapter->get_activate_plugin_url( $add_on['file_path'] );
-				$add_on['url'] = $this->remove_ampersand_from_url( $activation_url );
+				$add_on['url'] = html_entity_decode( $activation_url );
 				$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
 				$add_on['target'] = '_self';
 				break;
