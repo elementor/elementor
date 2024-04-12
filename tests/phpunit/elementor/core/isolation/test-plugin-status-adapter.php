@@ -9,6 +9,11 @@ class Test_Plugin_Status_Adapter extends PHPUnit_TestCase {
 
 	private $wordpress_adapter;
 
+	public function __construct( ?string $name = null, array $data = [], $dataName = '' ) {
+		parent::__construct( $name, $data, $dataName );
+		$this->wordpress_adapter = null;
+	}
+
 	public function test_is_plugin_installed() {
 		// Arrange
 		$adapter = new Plugin_Status_Adapter( $this->wordpress_adapter );
