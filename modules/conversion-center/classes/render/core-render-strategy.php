@@ -20,11 +20,11 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		//  Title
 		$title_output = '';
 		$title_props_tag = $settings['title_tag'] ?? 'h2';
-		$title_value = $settings['title'] ?? 'Kitchen Chronicles'; // TODO : remove when control exists
+		$title_value = $settings['title'] ?? '';
 
 		//  Description
 		$description_output = '';
-		$description_value = $settings['description'] ?? 'Join me on my journey to a healthier lifestyle'; // TODO : remove when control exists
+		$description_value = $settings['description'] ?? '';
 
 		// Icons
 		$icons_value = $settings['icons'] ?? [
@@ -106,11 +106,35 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		}
 		?>
 			<style>
+				.elementor-widget-link-in-bio {
+					--align-self: center;
+				}
+				.elementor-widget-link-in-bio .elementor-widget-container {
+					border: 1px solid blue;
+					margin-inline: auto;
+					max-width: 100%;
+					padding: 2em;
+					width: 100%;
+				}
 				.elementor-link-in-bio-content-container {
 					display: flex;
 					flex-direction: column;
 					gap: 1em;
+					margin-inline: auto;
 					text-align: center;
+				}
+				.elementor-link-in-bio-content-container * {
+					word-wrap: break-word;
+				}
+				.elementor-link-in-bio-identity img.elementor-link-in-bio-identity-image {
+					aspect-ratio: 1;
+					border: 1px solid blue;
+					border-radius: 50%;
+					display: block;
+					object-fit: cover;
+					margin-inline: auto;
+					max-width: 100%;
+					width: 150px;
 				}
 				.elementor-link-in-bio-icons {
 					display: flex;
@@ -150,6 +174,9 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 				}
 			</style>
 			<div class="elementor-link-in-bio-content-container">
+				<figure class="elementor-link-in-bio-identity">
+					<img class="elementor-link-in-bio-identity-image" src="https://doodleipsum.com/700/avatar?bg=6392D9" alt="" />
+				</figure>
 				<?php if ( $has_heading || $has_title || $has_description ) : ?>
 					<div class="elementor-link-in-bio-content">
 						<?php if ( $has_heading ) {

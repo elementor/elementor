@@ -55,6 +55,7 @@ class Link_In_Bio extends Widget_Base {
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			]
 		);
+
 		$this->add_control(
 			'heading',
 			[
@@ -64,6 +65,30 @@ class Link_In_Bio extends Widget_Base {
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Heading', 'elementor-oembed-widget' ),
+			]
+		);
+
+		$this->add_control(
+			'title',
+			[
+				'label'       => esc_html__( 'Title or Tagline', 'elementor-oembed-widget' ),
+				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'Title', 'elementor-oembed-widget' ),
+			]
+		);
+
+		$this->add_control(
+			'description',
+			[
+				'label'       => esc_html__( 'Description', 'elementor-oembed-widget' ),
+				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'Description', 'elementor-oembed-widget' ),
 			]
 		);
 
@@ -107,10 +132,9 @@ class Link_In_Bio extends Widget_Base {
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-					// '{{WRAPPER}} .your-class' => 'width: {{SIZE}}{{UNIT}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'width: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -121,17 +145,16 @@ class Link_In_Bio extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => 'circle',
 				'options' => [
-					'circle' => esc_html__( 'Circle', 'elementor' ),
-					'square'  => esc_html__( 'Square', 'elementor' ),
+					'50%' => esc_html__( 'Circle', 'elementor' ),
+					'0'  => esc_html__( 'Square', 'elementor' ),
 				],
 				// TODO: uncomment and adjust attributes if necessary when content controls are available
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'border-radius: {{VALUE}};',
+				],
 			]
 		);
 
@@ -175,10 +198,10 @@ class Link_In_Bio extends Widget_Base {
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+				'selectors' => [
+					'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'border-width: {{SIZE}}{{UNIT}};',
 				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				// ],
+				],
 			]
 		);
 
@@ -194,10 +217,10 @@ class Link_In_Bio extends Widget_Base {
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				// 'selectors' => [
+				'selectors' => [
 				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-color: {{VALUE}};',
-				// ],
+				// 	'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'border-color: {{VALUE}};',
+				],
 			]
 		);
 
@@ -333,8 +356,7 @@ class Link_In_Bio extends Widget_Base {
 			\Elementor\Group_Control_Typography::get_type(),
 			[
 				'name' => 'bio_heading_typography',
-				// TODO: add class selector when markup is done
-				// 'selector' => '{{WRAPPER}} .your-class',
+				'selector' => '{{WRAPPER}} .elementor-link-in-bio-heading',
 			]
 		);
 
@@ -362,8 +384,7 @@ class Link_In_Bio extends Widget_Base {
 			\Elementor\Group_Control_Typography::get_type(),
 			[
 				'name' => 'bio_title_typography',
-				// TODO: add class selector when markup is done
-				// 'selector' => '{{WRAPPER}} .your-class',
+				'selector' => '{{WRAPPER}} .elementor-link-in-bio-title',
 			]
 		);
 
@@ -391,8 +412,7 @@ class Link_In_Bio extends Widget_Base {
 			\Elementor\Group_Control_Typography::get_type(),
 			[
 				'name' => 'bio_description_typography',
-				// TODO: add class selector when markup is done
-				// 'selector' => '{{WRAPPER}} .your-class',
+				'selector' => '{{WRAPPER}} ..elementor-link-in-bio-description',
 			]
 		);
 
