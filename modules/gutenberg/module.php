@@ -126,8 +126,8 @@ class Module extends BaseModule {
 			</div>
 		</script>
 
-		<script id="elementor-gutenberg-button-edit" type="text/html">
-			<div id="elementor-edit-mode-gutenberg">
+		<script id="elementor-gutenberg-button-tmpl" type="text/html">
+			<div id="elementor-edit-button-gutenberg">
 				<button id="elementor-edit-mode-button" type="button" class="button button-primary button-large">
 					<span class="elementor-edit-mode-gutenberg">
 						<i class="eicon-elementor-square" aria-hidden="true"></i>
