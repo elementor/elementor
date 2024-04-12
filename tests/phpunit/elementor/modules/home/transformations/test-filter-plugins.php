@@ -79,11 +79,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 			'add_ons' => [
 				'repeater' => [
 					[
-<<<<<<< HEAD
-						'Name' => 'Something Else',
-						'Version' => '3.0.0',
-						'file_path' => 'some/thing.php',
-=======
 						'Name' => 'Elementor Pro',
 						'Version' => '3.0.0',
 						'file_path' => 'elementor-pro/elementor-pro.php',
@@ -99,7 +94,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 						'url' => 'some/thing.php?nonce=123',
 						'type' => 'wporg',
 						'target' => '_self'
->>>>>>> home/ED-14306-fix-the-link-to-the-image-optimizer-add-on-should-behave-as-its-equivalent-on-the-add-on-page
 					],
 					[
 						'Name' => 'Elementor AI',
