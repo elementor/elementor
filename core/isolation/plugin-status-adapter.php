@@ -1,22 +1,18 @@
 <?php
 namespace Elementor\Core\Isolation;
 
-class Elementor_Adapter implements Elementor_Adapter_Interface {
+class Plugin_Status_Adapter implements Plugin_Status_Adapter_Interface {
 
 	public Wordpress_Adapter $wordpress_adapter;
 
-	public function __construct() {
-		$this->wordpress_adapter = new Wordpress_Adapter();
+	public function __construct( $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
 	}
 
 	public function is_plugin_installed( $plugin_path ): bool {
 		$installed_plugins = $this->wordpress_adapter->get_plugins();
 
 		return isset( $installed_plugins[ $plugin_path ] );
-	}
-
-	public function is_plugin_activated( $plugin_path ): bool {
-		return $this->wordpress_adapter->is_plugin_active( $plugin_path );
 	}
 
 	public function get_install_plugin_url( $plugin_path ): string {

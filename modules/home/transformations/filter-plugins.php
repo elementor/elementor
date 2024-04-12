@@ -41,7 +41,7 @@ class Filter_Plugins extends Transformations_Abstract {
 	private function get_plugin_installation_status( $add_on ): string {
 		$plugin_path = $add_on['file_path'];
 
-		if ( ! $this->elementor_adapter->is_plugin_installed( $plugin_path ) ) {
+		if ( ! $this->plugin_status_adapter->is_plugin_installed( $plugin_path ) ) {
 
 			if ( 'wporg' === $add_on['type'] ) {
 				return 'not-installed-wporg';
@@ -50,7 +50,7 @@ class Filter_Plugins extends Transformations_Abstract {
 			return 'not-installed-not-wporg';
 		}
 
-		if ( $this->elementor_adapter->is_plugin_activated( $plugin_path ) ) {
+		if ( $this->wordpress_adapter->is_plugin_active( $plugin_path ) ) {
 			return 'activated';
 		}
 
@@ -68,12 +68,12 @@ class Filter_Plugins extends Transformations_Abstract {
 			case 'not-installed-not-wporg':
 				break;
 			case 'not-installed-wporg':
-				$installation_url = $this->elementor_adapter->get_install_plugin_url( $add_on['file_path'] );
+				$installation_url = $this->plugin_status_adapter->get_install_plugin_url( $add_on['file_path'] );
 				$add_on['url'] = $this->remove_ampersand_from_url( $installation_url );
 				$add_on['target'] = '_self';
 				break;
 			case 'installed-not-activated':
-				$activation_url = $this->elementor_adapter->get_activate_plugin_url( $add_on['file_path'] );
+				$activation_url = $this->plugin_status_adapter->get_activate_plugin_url( $add_on['file_path'] );
 				$add_on['url'] = $this->remove_ampersand_from_url( $activation_url );
 				$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
 				$add_on['target'] = '_self';

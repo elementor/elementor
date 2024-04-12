@@ -1,7 +1,8 @@
 <?php
 namespace Elementor\Modules\Apps;
 
-use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Plugin_Status_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,7 +12,9 @@ class Admin_Apps_Page {
 
 	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
 
-	private static ?Elementor_Adapter $elementor_adapter = null;
+	private static ?Wordpress_Adapter $wordpress_adapter = null;
+
+	private static ?Plugin_Status_Adapter $plugin_status_adapter = null;
 
 	public static function render() {
 		?>
@@ -43,8 +46,12 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		if ( ! self::$elementor_adapter ) {
-			self::$elementor_adapter = new Elementor_Adapter();
+		if ( ! self::$wordpress_adapter ) {
+			self::$wordpress_adapter = new Wordpress_Adapter();
+		}
+
+		if ( ! self::$plugin_status_adapter ) {
+			self::$plugin_status_adapter = new Plugin_Status_Adapter( self::$wordpress_adapter );
 		}
 
 		$apps = static::get_remote_apps();
@@ -95,14 +102,14 @@ class Admin_Apps_Page {
 	}
 
 	private static function filter_wporg_app( $app ) {
-		if ( self::$elementor_adapter->is_plugin_activated( $app['file_path'] ) ) {
+		if ( self::$wordpress_adapter->is_plugin_active( $app['file_path'] ) ) {
 			return null;
 		}
 
-		if ( self::$elementor_adapter->is_plugin_installed( $app['file_path'] ) ) {
+		if ( self::$plugin_status_adapter->is_plugin_installed( $app['file_path'] ) ) {
 			if ( current_user_can( 'activate_plugins' ) ) {
 				$app['action_label'] = 'Activate';
-				$app['action_url'] = self::$elementor_adapter->get_activate_plugin_url( $app['file_path'] );
+				$app['action_url'] = self::$plugin_status_adapter->get_activate_plugin_url( $app['file_path'] );
 			} else {
 				$app['action_label'] = 'Cannot Activate';
 				$app['action_url'] = '#';
@@ -110,7 +117,7 @@ class Admin_Apps_Page {
 		} else {
 			if ( current_user_can( 'install_plugins' ) ) {
 				$app['action_label'] = 'Install';
-				$app['action_url'] = self::$elementor_adapter->get_install_plugin_url( $app['file_path'] );
+				$app['action_url'] = self::$plugin_status_adapter->get_install_plugin_url( $app['file_path'] );
 			} else {
 				$app['action_label'] = 'Cannot Install';
 				$app['action_url'] = '#';
@@ -125,17 +132,17 @@ class Admin_Apps_Page {
 	}
 
 	private static function filter_ecom_app( $app ) {
-		if ( self::$elementor_adapter->is_plugin_activated( $app['file_path'] ) ) {
+		if ( self::$wordpress_adapter->is_plugin_active( $app['file_path'] ) ) {
 			return null;
 		}
 
-		if ( ! self::$elementor_adapter->is_plugin_installed( $app['file_path'] ) ) {
+		if ( ! self::$plugin_status_adapter->is_plugin_installed( $app['file_path'] ) ) {
 			return $app;
 		}
 
 		if ( current_user_can( 'activate_plugins' ) ) {
 			$app['action_label'] = 'Activate';
-			$app['action_url'] = self::$elementor_adapter->get_activate_plugin_url( $app['file_path'] );
+			$app['action_url'] = self::$plugin_status_adapter->get_activate_plugin_url( $app['file_path'] );
 		} else {
 			$app['action_label'] = 'Cannot Activate';
 			$app['action_url'] = '#';

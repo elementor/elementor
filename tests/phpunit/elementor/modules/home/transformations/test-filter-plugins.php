@@ -1,20 +1,20 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Plugin_Status_Adapter;
 use Elementor\Modules\Home\Transformations\Filter_Plugins;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Plugins extends PHPUnit_TestCase {
 
-	private $elementor_adapter;
+	private $plugin_status_adapter;
 
 	public function test_transform() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
 
 		$transformation = new Filter_Plugins( [
-			'elementor_adapter' => $this->elementor_adapter
+			'plugin_status_adapter' => $this->plugin_status_adapter
 		] );
 
 		// Act
@@ -104,32 +104,32 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$elementor_adapter_mock = $this->getMockBuilder( Elementor_Adapter::class )
+		$plugin_status_adapter_mock = $this->getMockBuilder( Plugin_Status_Adapter::class )
 			->setMethods( [ 'is_plugin_installed', 'is_plugin_activated', 'get_install_plugin_url', 'get_activate_plugin_url' ] )
 			->getMock();
 
-		$elementor_adapter_mock->method( 'is_plugin_installed' )->willReturnMap( [
+		$plugin_status_adapter_mock->method( 'is_plugin_installed' )->willReturnMap( [
 			[ 'elementor/elementor.php', true ],
 			[ 'elementor-pro/elementor-pro.php', true ],
 			[ 'some/thing.php', false ]
 		] );
 
-		$elementor_adapter_mock->method( 'is_plugin_activated' )->willReturnMap( [
+		$plugin_status_adapter_mock->method( 'is_plugin_activated' )->willReturnMap( [
 			[ 'elementor/elementor.php', true ],
 			[ 'elementor-pro/elementor-pro.php', false ]
 		] );
 
-		$elementor_adapter_mock->method( 'get_install_plugin_url' )->willReturnMap( [
+		$plugin_status_adapter_mock->method( 'get_install_plugin_url' )->willReturnMap( [
 			[ 'elementor/elementor.php', 'elementor/elementor.php?nonce=123' ],
 			[ 'elementor-pro/elementor-pro.php', 'elementor-pro/elementor-pro.php?nonce=123' ],
 			[ 'some/thing.php', 'some/thing.php?nonce=123' ]
 		] );
 
-		$elementor_adapter_mock->method( 'get_activate_plugin_url' )->willReturnMap( [
+		$plugin_status_adapter_mock->method( 'get_activate_plugin_url' )->willReturnMap( [
 			[ 'elementor/elementor.php', 'elementor/elementor.php?activate=true&nonce=123' ],
 			[ 'elementor-pro/elementor-pro.php', 'elementor-pro/elementor-pro.php?activate=true&nonce=123' ]
 		] );
 
-		$this->elementor_adapter = $elementor_adapter_mock;
+		$this->plugin_status_adapter = $plugin_status_adapter_mock;
 	}
 }
