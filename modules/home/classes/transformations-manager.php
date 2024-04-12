@@ -17,13 +17,8 @@ class Transformations_Manager {
 		'Filter_Plugins',
 		'Filter_Get_Started_By_License',
 		'Filter_Sidebar_Upgrade_By_License',
-<<<<<<< HEAD
-		'Create_Site_Settings_Url',
-		'Filter_Condition_Introduction_Meta',
-=======
 		'Filter_Condition_Introduction_Meta',
 		'Create_Site_Settings_Url',
->>>>>>> home/ED-14306-fix-the-link-to-the-image-optimizer-add-on-should-behave-as-its-equivalent-on-the-add-on-page
 	];
 
 	protected array $home_screen_data;
