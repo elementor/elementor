@@ -7,13 +7,22 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Plugins extends PHPUnit_TestCase {
 
+	private $wordpress_adapter;
+
 	private $plugin_status_adapter;
+
+	public function __construct( ?string $name = null, array $data = [], $dataName = '' ) {
+		parent::__construct( $name, $data, $dataName );
+		$this->wordpress_adapter = null;
+		$this->plugin_status_adapter = null;
+	}
 
 	public function test_transform() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
 
 		$transformation = new Filter_Plugins( [
+			'wordpress_adapter' => $this->wordpress_adapter,
 			'plugin_status_adapter' => $this->plugin_status_adapter
 		] );
 
@@ -104,7 +113,14 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->wordpress_adapter_mock();
+		$this->plugin_status_adapter_mock();
+	}
+
+	public function plugin_status_adapter_mock(): void {
+
 		$plugin_status_adapter_mock = $this->getMockBuilder( Plugin_Status_Adapter::class )
+			->disableOriginalConstructor()
 			->setMethods( [ 'is_plugin_installed', 'is_plugin_activated', 'get_install_plugin_url', 'get_activate_plugin_url' ] )
 			->getMock();
 
@@ -112,11 +128,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 			[ 'elementor/elementor.php', true ],
 			[ 'elementor-pro/elementor-pro.php', true ],
 			[ 'some/thing.php', false ]
-		] );
-
-		$plugin_status_adapter_mock->method( 'is_plugin_activated' )->willReturnMap( [
-			[ 'elementor/elementor.php', true ],
-			[ 'elementor-pro/elementor-pro.php', false ]
 		] );
 
 		$plugin_status_adapter_mock->method( 'get_install_plugin_url' )->willReturnMap( [
@@ -131,5 +142,21 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 		] );
 
 		$this->plugin_status_adapter = $plugin_status_adapter_mock;
+	}
+
+
+	public function wordpress_adapter_mock(): void {
+
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter::class )
+			->setMethods( [ 'is_plugin_active' ] )
+			->getMock();
+
+		$wordpress_adapter_mock->method( 'is_plugin_active' )->willReturnMap( [
+			[ 'elementor/elementor.php', true ],
+			[ 'elementor-pro/elementor-pro.php', false ],
+			[ 'some/thing.php', false ]
+		] );
+
+		$this->wordpress_adapter = $wordpress_adapter_mock;
 	}
 }
