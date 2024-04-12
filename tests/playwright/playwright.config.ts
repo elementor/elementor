@@ -23,6 +23,7 @@ function getGrepInvert() {
 			/@pluginTester2_sections/,
 			/@promotions/,
 			/@nested-atomic-repeaters/,
+			/@playing-cards/,
 		];
 	}
 	return [];

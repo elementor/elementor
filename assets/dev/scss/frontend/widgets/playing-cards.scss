@@ -1,0 +1,125 @@
+$playing-card-cover-bg-color: #e2e2e2;
+$transition-fast: 0.3s ease;
+$transition-normal: 0.6s;
+
+:root {
+	--e-card-bg-color: #fff;
+	--e-card-border-size: 1px;
+	--e-card-border-color: #000;
+	--e-card-border-radius: 4px;
+	--e-card-padding: 4px --e-card-suite-size: 20px;
+	--e-card-suite-size: 20px;
+	--e-card-suite-color: #000;
+	--e-card-number-color: #000;
+}
+
+.elementor-widget-playing-cards {
+	.e-playing-cards-container,
+	.e-playing-cards-container-clone {
+		margin-bottom: 20px;
+		height: 150px;
+		transition: opacity $transition-fast;
+	}
+
+	.e-playing-cards-container {
+		&-clone {
+			opacity: 0;
+		}
+	}
+
+	.e-playing-cards-container-clone {
+		&-show {
+			opacity: 1;
+		}
+	}
+
+	.e-flex {
+		display: flex;
+		gap: 10px;
+	}
+
+	.e-card-is-flipped {
+		transform: rotateY(180deg);
+	}
+
+	.e-playing-card {
+		transform-style: preserve-3d;
+		border-style: solid;
+		width: 100px;
+		height: 150px;
+		box-shadow: 5px 6px 10px $gray;
+		cursor: pointer;
+		perspective: 100px;
+		transition: transform $transition-normal;
+
+		border-width: var(--e-card-border-size);
+		border-color: var(--e-card-border-color);
+		border-radius: var(--e-card-border-radius);
+		background-color: var(--e-card-bg-color);
+		padding: var(--e-card-padding);
+
+		.e-card-suite {
+			color: var(--e-card-suite-color);
+			font-size: var(--e-card-suite-size);
+		}
+
+		.e-card-number {
+			color: var(--e-card-number-color);
+		}
+
+		.e-card-inner {
+			width: 100%;
+			height: 100%;
+			transform-style: preserve-3d;
+			position: relative;
+
+			&-front,
+			&-back {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				backface-visibility: hidden;
+			}
+
+			&-back {
+				justify-content: center;
+				align-items: center;
+				transform: rotateY(180deg);
+			}
+
+			&-front {
+				flex-direction: column;
+				justify-content: space-between;
+				transform: rotateY(0deg);
+
+				&-top-icon,
+				&-center-icon,
+				&-bottom-icon {
+					display: flex;
+				}
+
+				&-center-icon {
+					align-self: center;
+				}
+
+				&-bottom-icon {
+					align-self: flex-end;
+				}
+			}
+		}
+	}
+
+	.e-button {
+		&-container {
+			display: flex;
+			justify-content: center;
+			padding-bottom: 20px;
+		}
+
+		&.cards-shuffle,
+		&.cards-play-again {
+			display: none;
+		}
+	}
+}

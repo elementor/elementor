@@ -183,6 +183,16 @@ const EditorSelectors = {
 		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
 		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
 	},
+	playingCards: {
+		container: '.elementor-widget-playing-cards',
+		card: '.e-playing-card',
+		cardHeader: '.e-playing-card-header',
+		cardBody: '.e-playing-card-body',
+		repeaterAdd: '.elementor-repeater-add',
+		cardControl: '.playing-cards-controls',
+		cardPlay: '.cards-play',
+		cardShuffle: '.cards-shuffle',
+	},
 };
 
 export default EditorSelectors;

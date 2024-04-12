@@ -103,6 +103,7 @@ jobs:
           'pluginTester2_sections',
           'promotions',
           'nested-atomic-repeaters',
+          'playing-cards',
         ]
     steps:
       - name: Checkout source code

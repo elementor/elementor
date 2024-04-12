@@ -24,6 +24,7 @@ module.exports = function( $ ) {
 		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
+		'playing-cards.default': () => import( /* webpackChunkName: 'playing-cards' */ './handlers/playing-cards' ),
 	};
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {

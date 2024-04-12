@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
@@ -98,6 +97,7 @@ class Widgets_Manager {
 			'read-more',
 			'rating',
 			'share-buttons',
+			'playing-cards',
 		];
 
 		$this->_widget_types = [];
