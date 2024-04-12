@@ -7,6 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+const PLUGIN_IS_NOT_INSTALLED_FROM_WPORG = 'not-installed-wporg';
+
+const PLUGIN_IS_NOT_INSTALLED_NOT_FROM_WPORG = 'not-installed-not-wporg';
+
+const PLUGIN_IS_INSTALLED_NOT_ACTIVATED = 'installed-not-activated';
+
+const PLUGIN_IS_ACTIVATED = 'activated';
+
 class Filter_Plugins extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
@@ -40,35 +48,35 @@ class Filter_Plugins extends Transformations_Abstract {
 		if ( ! $this->plugin_status_adapter->is_plugin_installed( $plugin_path ) ) {
 
 			if ( 'wporg' === $add_on['type'] ) {
-				return 'not-installed-wporg';
+				return PLUGIN_IS_NOT_INSTALLED_FROM_WPORG;
 			}
 
-			return 'not-installed-not-wporg';
+			return PLUGIN_IS_NOT_INSTALLED_NOT_FROM_WPORG;
 		}
 
 		if ( $this->wordpress_adapter->is_plugin_active( $plugin_path ) ) {
-			return 'activated';
+			return PLUGIN_IS_ACTIVATED;
 		}
 
-		return 'installed-not-activated';
+		return PLUGIN_IS_INSTALLED_NOT_ACTIVATED;
 	}
 
 	private function handle_plugin_add_on( array $add_on, array &$transformed_add_ons ): void {
 		$installation_status = $this->get_plugin_installation_status( $add_on );
 
-		if ( 'activated' === $installation_status ) {
+		if ( PLUGIN_IS_ACTIVATED === $installation_status ) {
 			return;
 		}
 
 		switch ( $this->get_plugin_installation_status( $add_on ) ) {
-			case 'not-installed-not-wporg':
+			case PLUGIN_IS_NOT_INSTALLED_NOT_FROM_WPORG:
 				break;
-			case 'not-installed-wporg':
+			case PLUGIN_IS_NOT_INSTALLED_FROM_WPORG:
 				$installation_url = $this->plugin_status_adapter->get_install_plugin_url( $add_on['file_path'] );
 				$add_on['url'] = html_entity_decode( $installation_url );
 				$add_on['target'] = '_self';
 				break;
-			case 'installed-not-activated':
+			case PLUGIN_IS_INSTALLED_NOT_ACTIVATED:
 				$activation_url = $this->plugin_status_adapter->get_activate_plugin_url( $add_on['file_path'] );
 				$add_on['url'] = html_entity_decode( $activation_url );
 				$add_on['button_label'] = esc_html__( 'Activate', 'elementor' );
