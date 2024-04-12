@@ -34,7 +34,6 @@
 
 			if ( this.hasIframe() ) {
 				this.handleIframe();
-				return;
 			}
 
 			if ( ! $( '#elementor-editor' ).length ) {
@@ -89,7 +88,7 @@
 		buildPanelTopBar() {
 			var self = this;
 
-			if ( ! $( '#elementor-edit-mode-button' ).length ) {
+			if ( ! $( '#elementor-edit-mode-button' ).length && this.isElementorMode ) {
 				self.cache.$editorBtnTop = $( $( '#elementor-gutenberg-button-tmpl' ).html() );
 				self.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( self.cache.$editorBtnTop );
 
