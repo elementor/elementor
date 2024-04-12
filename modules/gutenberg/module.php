@@ -125,6 +125,17 @@ class Module extends BaseModule {
 				</div>
 			</div>
 		</script>
+
+		<script id="elementor-gutenberg-button-edit" type="text/html">
+			<div id="elementor-edit-mode-gutenberg">
+				<button id="elementor-edit-mode-button" type="button" class="button button-primary button-large">
+					<span class="elementor-edit-mode-gutenberg">
+						<i class="eicon-elementor-square" aria-hidden="true"></i>
+						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
+					</span>
+				</button>
+			</div>
+		</script>
 		<?php
 	}
 

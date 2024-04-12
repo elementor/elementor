@@ -33,7 +33,8 @@
 			}
 
 			if ( this.hasIframe() ) {
-				this.hideIframeContent();
+				this.handleIframe();
+				return;
 			}
 
 			if ( ! $( '#elementor-editor' ).length ) {
@@ -51,24 +52,14 @@
 				self.cache.$editorPanelButton.on( 'click', function( event ) {
 					event.preventDefault();
 
-					self.animateLoader();
-
-					// A new post is initialized as an 'auto-draft'.
-					// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
-					const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
-
-					if ( isNewPost ) {
-						var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
-						if ( ! documentTitle ) {
-							wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
-						}
-
-						wp.data.dispatch( 'core/editor' ).savePost();
-					}
-
-					self.redirectWhenSave();
+					self.handleEditButtonClick();
 				} );
 			}
+		},
+
+		handleIframe() {
+			this.hideIframeContent();
+			this.buildPanelTopBar();
 		},
 
 		// Sometimes Gutenberg uses iframe instead of div.
@@ -93,6 +84,44 @@
 			</style>`;
 
 			this.cache.$gutenberg.find( 'iframe[name="editor-canvas"]' ).contents().find( 'body' ).append( style );
+		},
+
+		buildPanelTopBar() {
+			var self = this;
+
+			if ( ! $( '#elementor-edit-mode-button' ).length ) {
+				self.cache.$editorBtnTop = $( $( '#elementor-gutenberg-button-edit' ).html() );
+				self.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( self.cache.$editorBtnTop );
+				
+				$( '#elementor-edit-mode-button' ).on( 'click', function( event ) {
+					event.preventDefault();
+
+					self.handleEditButtonClick( false );
+				} );
+			}
+		},
+
+		handleEditButtonClick( withAnimation = true ) {
+			var self = this;
+
+			if ( withAnimation ) {
+				self.animateLoader();
+			}
+
+			// A new post is initialized as an 'auto-draft'.
+			// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
+			const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
+
+			if ( isNewPost ) {
+				var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+				if ( ! documentTitle ) {
+					wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+				}
+
+				wp.data.dispatch( 'core/editor' ).savePost();
+			}
+
+			self.redirectWhenSave();
 		},
 
 		bindEvents() {
