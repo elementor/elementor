@@ -31,19 +31,6 @@ class Filter_Plugins extends Transformations_Abstract {
 		$transformed_add_ons = [];
 
 		foreach ( $add_ons as $add_on ) {
-<<<<<<< HEAD
-			$file_path = $add_on['file_path'] ?? '';
-			$is_installed_plugin = in_array( $file_path, $this->installed_plugins );
-
-			if ( $is_installed_plugin ) {
-				continue;
-			}
-
-			$transformed_add_ons[] = $add_on;
-		}
-
-		return $transformed_add_ons;
-=======
 
 			if ( $this->is_plugin( $add_on ) ) {
 				$this->handle_plugin_add_on( $add_on, $transformed_add_ons );
@@ -98,6 +85,5 @@ class Filter_Plugins extends Transformations_Abstract {
 		}
 
 		$transformed_add_ons[] = $add_on;
->>>>>>> home/ED-14306-fix-the-link-to-the-image-optimizer-add-on-should-behave-as-its-equivalent-on-the-add-on-page
 	}
 }
