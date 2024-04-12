@@ -29,7 +29,7 @@ class Filter_Plugins extends Transformations_Abstract {
 		foreach ( $add_ons as $add_on ) {
 
 			if ( $this->is_plugin( $add_on ) ) {
-				$transformed_add_ons = $this->handle_plugin_add_on( $add_on, $transformed_add_ons );
+				$this->handle_plugin_add_on( $add_on, $transformed_add_ons );
 			} else {
 				$transformed_add_ons[] = $add_on;
 			}
@@ -57,11 +57,11 @@ class Filter_Plugins extends Transformations_Abstract {
 		return 'installed-not-activated';
 	}
 
-	private function handle_plugin_add_on( $add_on, $transformed_add_ons ): array {
+	private function handle_plugin_add_on( array $add_on, array &$transformed_add_ons ): void {
 		$installation_status = $this->get_plugin_installation_status( $add_on );
 
 		if ( 'activated' === $installation_status ) {
-			return $transformed_add_ons;
+			return;
 		}
 
 		switch ( $this->get_plugin_installation_status( $add_on ) ) {
@@ -81,7 +81,5 @@ class Filter_Plugins extends Transformations_Abstract {
 		}
 
 		$transformed_add_ons[] = $add_on;
-
-		return $transformed_add_ons;
 	}
 }
