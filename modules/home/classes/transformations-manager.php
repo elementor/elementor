@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Home\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Plugin_Status_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -16,19 +17,27 @@ class Transformations_Manager {
 		'Filter_Plugins',
 		'Filter_Get_Started_By_License',
 		'Filter_Sidebar_Upgrade_By_License',
+<<<<<<< HEAD
 		'Create_Site_Settings_Url',
 		'Filter_Condition_Introduction_Meta',
+=======
+		'Filter_Condition_Introduction_Meta',
+		'Create_Site_Settings_Url',
+>>>>>>> home/ED-14306-fix-the-link-to-the-image-optimizer-add-on-should-behave-as-its-equivalent-on-the-add-on-page
 	];
 
 	protected array $home_screen_data;
 
 	protected Wordpress_Adapter $wordpress_adapter;
 
+	protected Plugin_Status_Adapter $plugin_status_adapter;
+
 	protected array $transformation_classes = [];
 
 	public function __construct( $home_screen_data ) {
 		$this->home_screen_data = $home_screen_data;
 		$this->wordpress_adapter = new Wordpress_Adapter();
+		$this->plugin_status_adapter = new Plugin_Status_Adapter( $this->wordpress_adapter );
 		$this->transformation_classes = $this->get_transformation_classes();
 	}
 
@@ -55,6 +64,7 @@ class Transformations_Manager {
 
 		$arguments = [
 			'wordpress_adapter' => $this->wordpress_adapter,
+			'plugin_status_adapter' => $this->plugin_status_adapter,
 		];
 
 		foreach ( $transformations as $transformation_id ) {
