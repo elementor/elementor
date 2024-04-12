@@ -12,7 +12,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	test( 'Enabling Styleguide Preview user preference enabled Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 		page.setDefaultTimeout( 20000 );
 
 		await page.evaluate( () => $e.run( 'document/elements/settings', {
@@ -87,7 +87,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		// Arrange.
 
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 		page.setDefaultTimeout( 20000 );
 
 		await page.evaluate( () => $e.run( 'document/elements/settings', {
@@ -479,7 +479,7 @@ async function isStyleguidePreviewUserPreferencesEnabled( page ) {
 
 async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const editor = await wpAdmin.openNewPage();
 	page.setDefaultTimeout( 10000 );
 
 	await page.evaluate( ( isOpen ) => $e.run( 'document/elements/settings', {

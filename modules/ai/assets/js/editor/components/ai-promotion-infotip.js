@@ -30,7 +30,7 @@ const StyledPopper = styled( Popper )( ( { theme } ) => ( {
 	},
 } ) );
 
-export default function AiPromotionInfotip( { anchor, content, focusOutListener } ) {
+export default function AiPromotionInfotip( { anchor, content, focusOutListener, placement, offset = { x: 0, y: 0 } } ) {
 	const positionRef = React.useRef( {
 		x: 0,
 		y: 0,
@@ -42,7 +42,7 @@ export default function AiPromotionInfotip( { anchor, content, focusOutListener 
 	const showTooltip = () => {
 		const { x, y, width, height } = anchor.getBoundingClientRect();
 
-		positionRef.current = { x, y, width, height };
+		positionRef.current = { x: x + offset.x, y: y + offset.y, width, height };
 
 		if ( null === popperRef.current ) {
 			return;
@@ -60,7 +60,7 @@ export default function AiPromotionInfotip( { anchor, content, focusOutListener 
 			arrow
 			open={ true }
 			title={ content }
-			placement="right"
+			placement={ placement || 'left' }
 			PopperComponent={ StyledPopper }
 			PopperProps={ {
 				onClick: () => focusOutListener.reset(),
@@ -86,4 +86,6 @@ AiPromotionInfotip.propTypes = {
 	anchor: PropTypes.element.isRequired,
 	content: PropTypes.object.isRequired,
 	focusOutListener: PropTypes.object.isRequired,
+	placement: PropTypes.string,
+	offset: PropTypes.object,
 };
