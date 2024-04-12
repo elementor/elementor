@@ -92,7 +92,7 @@
 			if ( ! $( '#elementor-edit-mode-button' ).length ) {
 				self.cache.$editorBtnTop = $( $( '#elementor-gutenberg-button-edit' ).html() );
 				self.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( self.cache.$editorBtnTop );
-				
+
 				$( '#elementor-edit-mode-button' ).on( 'click', function( event ) {
 					event.preventDefault();
 
