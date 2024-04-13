@@ -20,11 +20,11 @@
 	&-content-wrapper {
 		display: flex;
 		justify-content: center;
+		flex-direction: row;
 		gap: 5px;
 	}
 
 	&-icon {
-		order: 5;
 		svg {
 			width: 1em;
 			height: auto;
@@ -36,7 +36,6 @@
 	}
 
 	&-text {
-		order: 10;
 		display: inline-block;
 	}
 
@@ -67,16 +66,6 @@
 			font-size: 20px;
 			padding: 25px 50px;
 			border-radius: 6px;
-		}
-	}
-
-	.elementor-align-icon- {
-		&right {
-			order: getValueByDirection( 15, 5 );
-		}
-
-		&left {
-			order: getValueByDirection( 5, 15 );
 		}
 	}
 
