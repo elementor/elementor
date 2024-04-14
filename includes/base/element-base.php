@@ -430,6 +430,16 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$element_type = $this->get_type();
 
+		$should_render_dynamic = apply_filters( 'elementor/element/should_render_dynamic', false );
+		if ( ! $should_render_dynamic ) {
+			$raw_data = $this->get_raw_data();
+			if ( ! empty( $raw_data['settings']['__dynamic__'] ) ) {
+				echo '[elementor-element data="' . base64_encode( wp_json_encode( $raw_data ) ) . '"]';
+
+				return;
+			}
+		}
+
 		/**
 		 * Before frontend element render.
 		 *

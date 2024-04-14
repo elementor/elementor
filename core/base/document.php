@@ -1778,22 +1778,83 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		// Collect all data updaters that should be updated on runtime.
-		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
+		$main_id = $this->get_main_id();
 
-		if ( $runtime_elements_iteration_actions ) {
-			$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
-		}
+		do_action( 'qm/start', "e_element_cache_{$main_id}" );
 
-		foreach ( $elements_data as $element_data ) {
-			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+		$cached_data = get_transient( "e_element_cache_{$main_id}" );
 
-			if ( ! $element ) {
-				continue;
+		if ( false === $cached_data ) {
+			add_filter( 'elementor/element/should_render_dynamic', '__return_true' );
+
+			global $wp_scripts, $wp_styles;
+			$scripts_ignored = $wp_scripts->queue;
+			$styles_ignored = $wp_styles->queue;
+
+			ob_start();
+
+			// Collect all data updaters that should be updated on runtime.
+			$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
+
+			if ( $runtime_elements_iteration_actions ) {
+				$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
 			}
 
-			$element->print_element();
+			foreach ( $elements_data as $element_data ) {
+				$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+				if ( ! $element ) {
+					continue;
+				}
+
+				$element->print_element();
+			}
+
+			$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
+			$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
+
+			$cached_data = [
+				'content' => ob_get_clean(),
+				'scripts' => $scripts_to_queue,
+				'styles' => $styles_to_queue,
+			];
+
+			if ( $this->should_store_cache_elements() ) {
+				set_transient( "e_element_cache_{$main_id}", $cached_data, 30 * MINUTE_IN_SECONDS );
+			}
+
+			remove_filter( 'elementor/element/should_render_dynamic', '__return_true' );
+		} else {
+			if ( ! empty( $cached_data['scripts'] ) ) {
+				foreach ( $cached_data['scripts'] as $script_handle ) {
+					wp_enqueue_script( $script_handle );
+				}
+			}
+
+			if ( ! empty( $cached_data['styles'] ) ) {
+				foreach ( $cached_data['styles'] as $style_handle ) {
+					wp_enqueue_style( $style_handle );
+				}
+			}
 		}
+
+		echo do_shortcode( $cached_data['content'] );
+
+		do_action( 'qm/stop', "e_element_cache_{$main_id}" );
+	}
+
+	private function should_store_cache_elements() {
+		static $should_store_cache_elements = null;
+
+		if ( null === $should_store_cache_elements ) {
+			$should_store_cache_elements = (
+				! is_admin()
+				// && ! is_user_logged_in()
+				&& ! Plugin::$instance->preview->is_preview_mode()
+			);
+		}
+
+		return $should_store_cache_elements;
 	}
 
 	protected function register_document_controls() {
