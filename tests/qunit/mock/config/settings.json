@@ -71,7 +71,7 @@
 					"tablet": "Tablet",
 					"desktop": "Desktop"
 				},
-				"description": "Which device to display when clicking the Responsive Mode icon.",
+				"description": "Choose which device to display when clicking the Responsive Mode icon.",
 				"name": "default_device_view"
 			},
 			"edit_buttons": {

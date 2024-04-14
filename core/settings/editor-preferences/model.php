@@ -122,7 +122,7 @@ class Model extends BaseModel {
 					'tablet' => esc_html__( 'Tablet', 'elementor' ),
 					'desktop' => esc_html__( 'Desktop', 'elementor' ),
 				],
-				'description' => esc_html__( 'Which device to display when clicking the Responsive Mode icon.', 'elementor' ),
+				'description' => esc_html__( 'Choose which device to display when clicking the Responsive Mode icon.', 'elementor' ),
 			]
 		);
 
