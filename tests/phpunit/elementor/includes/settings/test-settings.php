@@ -48,8 +48,7 @@ class Test_Settings extends Elementor_Test_Base {
 		$elementor_menu = $submenu['elementor'];
 
 		$expected_items = [
-			'elementor' => 'Home',
-			'settings' => 'Settings',
+			'elementor' => 'Settings',
 			'elementor-role-manager' => 'Role Manager',
 			'elementor-element-manager' => 'Element Manager',
 			'elementor-tools' => 'Tools',
