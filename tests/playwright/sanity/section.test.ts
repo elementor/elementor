@@ -21,7 +21,7 @@ test.describe( 'Section tests', () => {
 	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			sectionId1 = await editor.addElement( { elType: 'section' }, 'document' ),
 			sectionId2 = await editor.addElement( { elType: 'section' }, 'document' ),
 			section1Column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId1 + ' .elementor-column' ),

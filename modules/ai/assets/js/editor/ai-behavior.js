@@ -2,6 +2,7 @@ import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
+import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -145,10 +146,7 @@ export default class AiBehavior extends Marionette.Behavior {
 			return;
 		}
 
-		const editorSessionValue = sessionStorage.getItem( 'ai_promotion_introduction_editor_session_key' );
-		if ( ! editorSessionValue || editorSessionValue !== EDITOR_SESSION_ID ) {
-			sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', EDITOR_SESSION_ID );
-		} else {
+		if ( ! shouldShowPromotionIntroduction() ) {
 			return;
 		}
 		setTimeout( () => {

@@ -8,7 +8,7 @@ const defaultBtnName = 'Click here';
 test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	// Act.
 	await editor.addWidget( 'button' );
@@ -22,7 +22,7 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 test( 'Button controls should return to default', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'button' );
 	await editor.activatePanelTab( 'style' );
