@@ -484,6 +484,18 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_onboarding',
+			'title' => esc_html__( 'Plugin Onboarding', 'elementor' ),
+			'description' => esc_html__( 'New plugin onboarding.', 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => false,
+			],
+		] );
 	}
 
 	/**

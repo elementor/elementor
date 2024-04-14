@@ -7,6 +7,7 @@ import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
 
 export default function Layout( props ) {
+	console.log( { props })
 	useEffect( () => {
 		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
@@ -24,7 +25,7 @@ export default function Layout( props ) {
 			nextStep: props.nextStep || '',
 			proNotice: null,
 		} );
-	}, [ props.pageId ] );
+	}, [ props.pageId, props.nextStep ] );
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],

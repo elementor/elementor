@@ -1,4 +1,4 @@
-import { useRef, useContext, useState } from 'react';
+import { useRef, useContext, useState, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
@@ -8,13 +8,23 @@ import PageContentLayout from '../components/layout/page-content-layout';
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
+		[ nextStep, setNextStep ] = useState( 'hello' ),
 		navigate = useNavigate(),
 		pageId = 'account',
-		nextStep = state.isHelloThemeActivated ? 'siteName' : 'hello',
+		// nextStep = !state.isHelloThemeActivated ? 'hello' : elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		actionButtonRef = useRef(),
 		alreadyHaveAccountLinkRef = useRef();
 
 	let skipButton;
+
+	useEffect( () => {
+		if ( state.isHelloThemeActivated ) {
+			console.log('exp ', elementorAppConfig.onboarding.experiment);
+			const newNextStep = getNextStep();
+			setNextStep( newNextStep );
+			updateState( { nextStep } );
+		}
+	}, [nextStep] );
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
@@ -84,6 +94,7 @@ export default function Account() {
 		};
 	}
 
+	elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName'
 	const connectSuccessCallback = ( data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
@@ -112,6 +123,8 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
+		// console.log('Success: ', nextStep, state.nextStep);
+		// debugger;
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -133,11 +146,14 @@ export default function Account() {
 			message: __( 'Oops, the connection failed. Try again.', 'elementor' ),
 		} );
 
+		console.log('failure: ', nextStep, state.nextStep);
+		debugger;
 		navigate( 'onboarding/' + nextStep );
 	};
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
+			{ console.log( { nextStep } ) }
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
 				title={ __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
