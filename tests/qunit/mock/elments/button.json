@@ -235,6 +235,14 @@
 				"selected_icon[value]!": ""
 			}
 		},
+		"view": {
+			"type": "hidden",
+			"tab": "content",
+			"section": "section_button",
+			"label": "View",
+			"default": "traditional",
+			"name": "view"
+		},
 		"button_css_id": {
 			"type": "text",
 			"tab": "content",
