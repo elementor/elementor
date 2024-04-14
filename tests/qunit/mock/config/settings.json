@@ -15,23 +15,23 @@
 				"type": "heading",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Editor",
+				"label": "Panel",
 				"name": "editor_heading"
 			},
 			"ui_theme": {
 				"type": "choose",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Editor Theme",
-				"description": "Set light or dark mode, or use Auto Detect to sync it with your operating system setting.",
+				"label": "Display mode",
+				"description": "Set light or dark mode, or auto-detect to sync with your operating system settings.",
 				"default": "auto",
 				"options": {
 					"light": {
-						"title": "Light",
+						"title": "Light mode",
 						"icon": "eicon-light-mode"
 					},
 					"dark": {
-						"title": "Dark",
+						"title": "Dark mode",
 						"icon": "eicon-dark-mode"
 					},
 					"auto": {
@@ -45,75 +45,25 @@
 				"type": "slider",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Panel Width (px)",
+				"label": "Width (px)",
 				"default": {
 					"size": "300"
 				},
 				"name": "panel_width"
 			},
-			"preview_heading": {
+			"canvas_heading": {
 				"type": "heading",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Preview",
+				"label": "Canvas",
 				"separator": "before",
-				"name": "preview_heading"
-			},
-			"edit_buttons": {
-				"type": "switcher",
-				"tab": "settings",
-				"section": "preferences",
-				"label": "Editing Handles",
-				"label_on": "Show",
-				"label_off": "Hide",
-				"description": "Show editing handles when hovering over the element edit button.",
-				"name": "edit_buttons",
-				"default": ""
-			},
-			"lightbox_in_editor": {
-				"type": "switcher",
-				"tab": "settings",
-				"section": "preferences",
-				"label": "Enable Lightbox In Editor",
-				"label_on": "On",
-				"label_off": "Off",
-				"description": "Open images in Lightbox when clicking images in the editor.",
-				"default": "yes",
-				"name": "lightbox_in_editor"
-			},
-			"enable_styleguide_preview": {
-				"type": "switcher",
-				"tab": "settings",
-				"section": "preferences",
-				"label": "Style Guide Preview",
-				"label_on": "On",
-				"label_off": "Off",
-				"description": "Switch between the content area and style guide to preview your changes to global colors and fonts.",
-				"default": "yes",
-				"name": "enable_styleguide_preview"
-			},
-			"responsive_heading": {
-				"type": "heading",
-				"tab": "settings",
-				"section": "preferences",
-				"label": "Responsive View",
-				"separator": "before",
-				"name": "responsive_heading"
-			},
-			"show_hidden_elements": {
-				"type": "switcher",
-				"tab": "settings",
-				"section": "preferences",
-				"label": "Hidden Elements",
-				"label_on": "Show",
-				"label_off": "Hide",
-				"name": "show_hidden_elements"
+				"name": "canvas_heading"
 			},
 			"default_device_view": {
 				"type": "select",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Default Device View",
+				"label": "Default device view",
 				"default": "default",
 				"options": {
 					"default": "Default",
@@ -121,7 +71,81 @@
 					"tablet": "Tablet",
 					"desktop": "Desktop"
 				},
+				"description": "Which device to display when clicking the Responsive Mode icon.",
 				"name": "default_device_view"
+			},
+			"edit_buttons": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Show quick edit options",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "Show additional actions while hovering over the handle of an element.",
+				"name": "edit_buttons",
+				"default": ""
+			},
+			"lightbox_in_editor": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Expand images in lightbox",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "This only applies while you’re working in the editor. The front end won’t be affected.",
+				"default": "yes",
+				"name": "lightbox_in_editor"
+			},
+			"show_hidden_elements": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Show hidden elements",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "This refers to elements you’ve hidden in the Responsive Visibility settings.",
+				"name": "show_hidden_elements"
+			},
+			"design_system_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Design System",
+				"separator": "before",
+				"name": "design_system_heading"
+			},
+			"enable_styleguide_preview": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Preview global settings",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "Temporarily overlay the canvas with the style guide to preview your changes to global colors and fonts.",
+				"default": "yes",
+				"name": "enable_styleguide_preview"
+			},
+			"navigation_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Navigation",
+				"separator": "before",
+				"name": "navigation_heading"
+			},
+			"exit_to": {
+				"type": "select",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Exit to",
+				"description": "Decide where you want to go when leaving the editor.",
+				"default": "this_post",
+				"options": {
+					"this_post": "This Post",
+					"all_posts": "All Posts",
+					"dashboard": "WP Dashboard"
+				},
+				"name": "exit_to"
 			}
 		},
 		"tabs": {
