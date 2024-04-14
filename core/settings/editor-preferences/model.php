@@ -53,7 +53,7 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-			'editor_panel_heading',
+			'editor_heading',
 			[
 				'label' => esc_html__( 'Panel', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
@@ -102,7 +102,7 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-			'canvas_heading',
+			'preview_heading',
 			[
 				'label' => esc_html__( 'Canvas', 'elementor' ),
 				'type' => Controls_Manager::HEADING,

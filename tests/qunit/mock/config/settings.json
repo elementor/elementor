@@ -51,13 +51,13 @@
 				},
 				"name": "panel_width"
 			},
-			"canvas_heading": {
+			"preview_heading": {
 				"type": "heading",
 				"tab": "settings",
 				"section": "preferences",
 				"label": "Canvas",
 				"separator": "before",
-				"name": "canvas_heading"
+				"name": "preview_heading"
 			},
 			"default_device_view": {
 				"type": "select",
