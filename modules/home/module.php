@@ -91,7 +91,7 @@ class Module extends BaseApp {
 			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
 			'description' => esc_html__( 'Default Elementor menu page.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
 	}
 
