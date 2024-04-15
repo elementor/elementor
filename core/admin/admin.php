@@ -845,10 +845,6 @@ class Admin extends App {
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			$this->register_menu();
-		}
-
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
@@ -944,10 +940,6 @@ class Admin extends App {
 					'messages' => $experiment_data['messages'] ?? [],
 				];
 			} )->all();
-	}
-
-	private function register_menu() {
-		$this->menus['main'] = new MainMenu();
 	}
 
 	private function maybe_enqueue_hints() {
