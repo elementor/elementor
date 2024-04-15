@@ -4,7 +4,7 @@ import ImageCarousel from '../../../../../../../pages/widgets/image-carousel';
 
 test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 	const imageCarousel = new ImageCarousel( page, testInfo );
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
