@@ -52,7 +52,7 @@
 		display: flex;
 		flex: 1 0 auto;
 
-		:where(:hover, :focus, :active) {
+		&:where(:hover, :focus, :active) {
 			color: inherit;
 		}
 
@@ -74,7 +74,7 @@
 		display: block;
 		padding: 1em;
 
-		:where(:hover, :focus, :active) {
+		&:where(:hover, :focus, :active) {
 			color: white;
 		}
 	}
