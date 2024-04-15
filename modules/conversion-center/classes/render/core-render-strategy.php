@@ -182,19 +182,16 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 						<?php if ( $has_heading ) {
 							$widget->add_render_attribute( 'heading', 'class', 'elementor-link-in-bio-heading' );
 							$heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>',  Utils::validate_html_tag( $heading_props_tag ), $widget->get_render_attribute_string( 'heading' ), $heading_value );
-							// echo ( $heading_output );
 							Utils::print_unescaped_internal_string( $heading_output );
 						}?>
 						<?php if ( $has_title ) {
 							$widget->add_render_attribute( 'title', 'class', 'elementor-link-in-bio-title' );
 							$title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>',  Utils::validate_html_tag( $title_props_tag ), $widget->get_render_attribute_string( 'title' ), $title_value );
-							// echo ( $title_output );
 							Utils::print_unescaped_internal_string( $title_output );
 						}?>
 						<?php if ( $has_description ) {
 							$widget->add_render_attribute( 'description', 'class', 'elementor-link-in-bio-description' );
 							$description_output = sprintf( '<p %1$s>%2$s</p>', $widget->get_render_attribute_string( 'description' ), $description_value );
-							// echo ( $description_output );
 							Utils::print_unescaped_internal_string( $description_output );
 						}?>
 					</div>
@@ -202,9 +199,14 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 				<?php if ( $has_icons ) : ?>
 					<div class="elementor-link-in-bio-icons">
 						<?php
-						foreach ( $icons_value as $key => $icon ) { ?>
+						foreach ( $icons_value as $key => $icon ) {
+							$widget->add_render_attribute( 'icon-link', [
+								'class' => 'elementor-link-in-bio-icon-link',
+								'href' => $icon['link'],
+							]);
+							?>
 							<div class="elementor-link-in-bio-icon">
-								<a class="elementor-link-in-bio-icon-link" href="<?php echo esc_attr( $icon['link'] ) ?>">
+								<a <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?>>
 									<?php Utils::print_unescaped_internal_string( $icon['svg'] ); ?>
 								</a>
 							</div>
@@ -214,10 +216,15 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 				<?php if ( $has_ctas ) : ?>
 					<div class="elementor-link-in-bio-ctas">
 						<?php
-						foreach ( $ctas_value as $key => $cta ) { ?>
-							<a class="elementor-link-in-bio-cta" href="<?php echo esc_attr( $cta['link'] ) ?>">
+						foreach ( $ctas_value as $key => $cta ) {
+							$widget->add_render_attribute( 'cta', [
+								'class' => 'elementor-link-in-bio-cta',
+								'href' => $cta['link'],
+							]);
+							?>
+							<a <?php echo $widget->get_render_attribute_string( 'cta' ); ?>>
 								<span class="elementor-link-in-bio-cta-text">
-									<?php Utils::print_unescaped_internal_string( $cta['text'] ); ?>
+									<?php echo $cta['text']; ?>
 								</span>
 							</a>
 						<?php } ?>
