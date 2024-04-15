@@ -11,10 +11,44 @@ export default function ChooseFeatures() {
 		{ ajaxState, setAjax } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
-		pageId = 'siteName',
-		nextStep = 'siteLogo',
+		pageId = 'chooseFeatures',
+		nextStep = 'goodToGo',
 		navigate = useNavigate(),
 		nameInputRef = useRef(),
+		options = [
+			{
+				plan: 'essential',
+				text: __( 'Templates & Theme Builder', 'elementor' ),
+			},
+			{
+				plan: 'advanced',
+				text: __( 'WooCommerce Builder', 'elementor' ),
+			},
+			{
+				plan: 'essential',
+				text: __( 'Lead Collection & Form Builder', 'elementor' ),
+			},
+			{
+				plan: 'essential',
+				text: __( 'Dynamic Content', 'elementor' ),
+			},
+			{
+				plan: 'advanced',
+				text: __( 'Popup Builder', 'elementor' ),
+			},
+			{
+				plan: 'advanced',
+				text: __( 'Custom Code & CSS', 'elementor' ),
+			},
+			{
+				plan: 'essential',
+				text: __( 'Motion Effects & Animations', 'elementor' ),
+			},
+			{
+				plan: 'advanced',
+				text: __( 'Notes & Collaboration', 'elementor' ),
+			},
+		],
 		actionButton = {
 			text: __( 'Next', 'elementor' ),
 			onClick: () => {
@@ -101,22 +135,42 @@ export default function ChooseFeatures() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Setup.svg' }
-				title={ __( 'Choose Features.', 'elementor' ) }
+				title={ __( 'Elevate your website with additional Pro features.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
 			>
 				<p>
-					{ __( 'This is what your site is called on the WP dashboard, and can be changed later from the general settings - it\'s not your website\'s URL.', 'elementor' ) }
+					{ __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ) }
 				</p>
-				<input
-					className="e-onboarding__text-input e-onboarding__site-name-input"
-					type="text"
-					placeholder="e.g. Eric's Space Shuttles"
-					defaultValue={ state.siteName || '' }
-					ref={ nameInputRef }
-					onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
-				/>
+
+				<div className="e-onboarding__choose-features-section">
+					{
+						options.map( ( option, index ) => {
+							return (
+								<div key={ option.plan + index } className="e-onboarding__choose-features-section__item">
+									<label
+										className="e-onboarding__choose-features-section__item__label"
+										htmlFor={ option.plan + index }
+									>
+										<input
+											className="e-onboarding__choose-features-section__item__checkbox"
+											type="checkbox"
+											placeholder="e.g. Eric's Space Shuttles"
+											defaultValue={ state.siteName || '' }
+											ref={ nameInputRef }
+											onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
+											id={ option.plan + index }
+										/>
+										{ option.text }
+
+									</label>
+								</div>
+							);
+						} )
+					}
+				</div >
+
 			</PageContentLayout>
 		</Layout>
 	);
