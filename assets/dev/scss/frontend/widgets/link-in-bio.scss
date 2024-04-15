@@ -1,0 +1,81 @@
+.elementor-widget-link-in-bio {
+	--align-self: center;
+
+	.elementor-widget-container {
+		border: 1px solid blue;
+		margin-inline: auto;
+		max-width: 100%;
+		padding: 2em;
+		width: 100%;
+	}
+}
+
+.e-link-in-bio {
+
+	&__content-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		margin-inline: auto;
+		text-align: center;
+
+		* {
+			word-wrap: break-word;
+		}
+	}
+
+	&__identity img.e-link-in-bio__identity-image {
+		aspect-ratio: 1;
+		border: 1px solid blue;
+		border-radius: 50%;
+		display: block;
+		object-fit: cover;
+		margin-inline: auto;
+		max-width: 100%;
+		width: 150px;
+	}
+
+	&__icons {
+		display: flex;
+		gap: 1em;
+		justify-content: center;
+	}
+
+	&__icon {
+		aspect-ratio: 1;
+		display: flex;
+		width: 2em;
+	}
+
+	&__icon-link {
+		color: inherit;
+		display: flex;
+		flex: 1 0 auto;
+
+		:where(:hover, :focus, :active) {
+			color: inherit;
+		}
+
+		svg {
+			aspect-ratio: 1;
+		}
+	}
+
+	&__ctas {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	&__cta {
+		border-radius: 1em;
+		background: blue;
+		color: white;
+		display: block;
+		padding: 1em;
+
+		:where(:hover, :focus, :active) {
+			color: white;
+		}
+	}
+}
