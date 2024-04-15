@@ -3,32 +3,25 @@
 namespace Elementor\Modules\ConversionCenter\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render_Strategy;
+use Elementor\Group_Control_Background;
+use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
-use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Group_Control_Background;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 /**
- * Elementor Nested Accordion widget.
+ * Elementor Link in Bio widget.
  *
- * Elementor widget that displays a collapsible display of content in an
- * accordion style.
+ * Elementor widget that displays an image, a bio, up to 4 CTA links and up to 5 icons.
  *
- * @since 3.15.0
+ * @since 3.23.0
  */
 class Link_In_Bio extends Widget_Base {
 
-	/**
-	 *
-	 *
-	 * @return string
-	 */
 	public function get_name(): string {
 		return 'link-in-bio';
 	}
@@ -58,90 +51,164 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 	protected function register_controls(): void {
+		$this->add_identity_section();
+
+		$this->end_controls_section();
+
+		$this->add_bio_section();
+
+		$this->end_controls_section();
+
+		$this->add_icons_controls();
+
+		$this->add_cta_controls();
+
+		$this->add_style_tab();
+
+		$this->add_advanced_tab();
+	}
+
+	protected function render(): void {
+		$render_strategy = new Core_Render();
+
+		$render_strategy->render( $this );
+	}
+
+	private function add_cta_controls(): void {
 		$this->start_controls_section(
-			'identity_section',
+			'cta_section',
 			[
-				'label' => esc_html__( 'Identity', 'elementor' ),
+				'label' => esc_html__( 'CTA Links', 'elementor' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
-			'identity_image_style',
+			'cta_section_alert',
 			[
-				'label'   => esc_html__( 'Image style', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::SELECT,
-				'default' => 'profile',
-				'options' => [
-					'profile' => esc_html__( 'Profile', 'elementor' ),
-					'cover'   => esc_html__( 'None', 'elementor' ),
-				],
+				'type'       => \Elementor\Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content'    => wp_kses_post(
+					__( 'Add up to <b>4</b> CTA links', 'elementor' )
+				),
 			]
 		);
 
 		$this->add_control(
-			'identity_image',
+			'cta_link',
 			[
-				'label'   => esc_html__( 'Choose Image', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::MEDIA,
-				'default' => [
-					'url' => \Elementor\Utils::get_placeholder_image_src(),
+				'type'          => \Elementor\Controls_Manager::REPEATER,
+				'fields'        => [
+					[
+						'name'        => 'cta_link_text',
+						'label'       => esc_html__( 'Text', 'elementor' ),
+						'type'        => \Elementor\Controls_Manager::TEXT,
+						'dynamic'     => [
+							'active' => true,
+						],
+						'label_block' => true,
+						'default'     => '',
+						'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
+					],
+					[
+						'name'    => 'cta_link_type',
+						'label'   => esc_html__( 'Platform', 'elementor' ),
+						'type'    => \Elementor\Controls_Manager::SELECT,
+						'groups'  => [
+
+							[
+								'label'   => '',
+								'options' => [
+									'Url'           => esc_html__( 'Url', 'elementor' ),
+									'File Download' => esc_html__( 'File Download', 'elementor' ),
+								],
+							],
+							[
+								'label'   => '   --',
+								'options' => [
+									'Email'     => esc_html__( 'Email', 'elementor' ),
+									'Telephone' => esc_html__( 'Telephone', 'elementor' ),
+									'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
+									'Waze'      => esc_html__( 'Waze', 'elementor' ),
+									'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
+								],
+							],
+						],
+						'default' => 'Url',
+					],
+					[
+						'name'        => 'cta_link_file',
+						'label'       => esc_html__( 'Choose File', 'elementor' ),
+						'type'        => \Elementor\Controls_Manager::MEDIA,
+						'label_block' => true,
+						'condition'   => [
+							'cta_link_type' => [
+								'File Download',
+							],
+						],
+					],
+					[
+						'name'         => 'cta_link_url',
+						'label'        => esc_html__( 'Link', 'elementor' ),
+						'type'         => \Elementor\Controls_Manager::URL,
+						'options'      => false,
+						'dynamic'      => [
+							'active' => true,
+						],
+						'autocomplete' => true,
+						'label_block'  => true,
+						'condition'    => [
+							'cta_link_type' => [
+								'Waze',
+								'Url',
+							],
+						],
+						'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
+					],
+					[
+						'name'        => 'cta_link_number',
+						'label'       => esc_html__( 'Number', 'elementor' ),
+						'type'        => \Elementor\Controls_Manager::TEXT,
+						'dynamic'     => [
+							'active' => true,
+						],
+						'label_block' => true,
+						'condition'   => [
+							'cta_link_type' => [
+								'Telephone',
+								'Telegram',
+								'WhatsApp',
+							],
+						],
+						'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+					],
+					[
+						'name'        => 'cta_link_mail',
+						'label'       => esc_html__( 'Mail', 'elementor' ),
+						'type'        => \Elementor\Controls_Manager::TEXT,
+						'dynamic'     => [
+							'active' => true,
+						],
+						'label_block' => true,
+						'condition'   => [
+							'cta_link_type' => [
+								'Email',
+							],
+						],
+						'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
+					],
 				],
+				'title_field'   => "{{{ cta_link_text }}}",
+				'prevent_empty' => true,
+				'button_text'   => esc_html__( 'Add CTA Link', 'elementor' ),
 			]
 		);
+
 
 		$this->end_controls_section();
+	}
 
-		$this->start_controls_section(
-			'bio_section',
-			[
-				'label' => esc_html__( 'Bio', 'elementor-list-widget' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
-			]
-		);
-
-		$this->add_control(
-			'bio_heading',
-			[
-				'label'       => esc_html__( 'Heading', 'elementor-oembed-widget' ),
-				'type'        => \Elementor\Controls_Manager::TEXTAREA,
-				'dynamic'     => [
-					'active' => true,
-				],
-				'placeholder' => esc_html__( 'Heading', 'elementor-oembed-widget' ),
-			]
-		);
-
-		$this->add_tag_control( 'bio_heading_tag' );
-
-		$this->add_control(
-			'bio_title',
-			[
-				'label'       => esc_html__( 'Title or Tagline', 'elementor-oembed-widget' ),
-				'type'        => \Elementor\Controls_Manager::TEXTAREA,
-				'dynamic'     => [
-					'active' => true,
-				],
-				'placeholder' => esc_html__( 'Title', 'elementor-oembed-widget' ),
-			]
-		);
-
-		$this->add_tag_control( 'bio_title_tag' );
-
-		$this->add_control(
-			'bio_description',
-			[
-				'label'       => esc_html__( 'Description', 'elementor-oembed-widget' ),
-				'type'        => \Elementor\Controls_Manager::TEXTAREA,
-				'dynamic'     => [
-					'active' => true,
-				],
-				'placeholder' => esc_html__( 'Description', 'elementor-oembed-widget' ),
-			]
-		);
-
-		$this->end_controls_section();
-
+	private function add_icons_controls(): void {
 		$this->start_controls_section(
 			'icons_section',
 			[
@@ -153,36 +220,37 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'custom_panel_alert',
 			[
-				'type' => \Elementor\Controls_Manager::ALERT,
+				'type'       => \Elementor\Controls_Manager::ALERT,
 				'alert_type' => 'info',
-				'heading' => esc_html__( 'Custom Alert', 'textdomain' ),
-				'content' => esc_html__( 'Lorem ipsum dolor sit amet consectetur adipisicing elit.', 'textdomain' ) . ' <a href="">' . esc_html__( 'Learn more', 'textdomain' ) . '</a>',
+				'content'    => wp_kses_post(
+					__( 'Add up to <b>5</b> icons', 'elementor' )
+				),
 			]
 		);
 
 		$this->add_control(
 			'icon',
 			[
-				'type'        => \Elementor\Controls_Manager::REPEATER,
-				'fields'      => [
+				'type'          => \Elementor\Controls_Manager::REPEATER,
+				'fields'        => [
 					[
 						'name'    => 'icon_platform',
 						'label'   => esc_html__( 'Platform', 'elementor' ),
 						'type'    => \Elementor\Controls_Manager::SELECT,
-						'groups' => [
+						'groups'  => [
 
 							[
-								'label' => '',
+								'label'   => '',
 								'options' => [
-									'Email'       => esc_html__( 'Email', 'elementor' ),
-									'Telephone'   => esc_html__( 'Telephone', 'elementor' ),
-									'Telegram'    => esc_html__( 'Telegram', 'elementor' ),
-									'Waze'        => esc_html__( 'Waze', 'elementor' ),
-									'WhatsApp'    => esc_html__( 'WhatsApp', 'elementor' ),
+									'Email'     => esc_html__( 'Email', 'elementor' ),
+									'Telephone' => esc_html__( 'Telephone', 'elementor' ),
+									'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
+									'Waze'      => esc_html__( 'Waze', 'elementor' ),
+									'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
 								],
 							],
 							[
-								'label' => '-',
+								'label'   => '   --',
 								'options' => [
 									'Facebook'    => esc_html__( 'Facebook', 'elementor' ),
 									'Instagram'   => esc_html__( 'Instagram', 'elementor' ),
@@ -194,7 +262,7 @@ class Link_In_Bio extends Widget_Base {
 								],
 							],
 							[
-								'label' => '-',
+								'label'   => '   --',
 								'options' => [
 									'Apple Music' => esc_html__( 'Apple Music', 'elementor' ),
 									'Behance'     => esc_html__( 'Behance', 'elementor' ),
@@ -209,7 +277,7 @@ class Link_In_Bio extends Widget_Base {
 					],
 					[
 						'name'        => 'icon_icon',
-						'label'       => esc_html__( 'Content', 'textdomain' ),
+						'label'       => esc_html__( 'Content', 'elementor' ),
 						'type'        => \Elementor\Controls_Manager::ICONS,
 						'default'     => [
 							'url' => \Elementor\Utils::get_placeholder_image_src(),
@@ -218,7 +286,7 @@ class Link_In_Bio extends Widget_Base {
 					],
 					[
 						'name'         => 'icon_url',
-						'label'        => esc_html__( 'Link', 'textdomain' ),
+						'label'        => esc_html__( 'Link', 'elementor' ),
 						'type'         => \Elementor\Controls_Manager::URL,
 						'options'      => false,
 						'dynamic'      => [
@@ -226,6 +294,7 @@ class Link_In_Bio extends Widget_Base {
 						],
 						'autocomplete' => true,
 						'label_block'  => true,
+						'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
 						'condition'    => [
 							'icon_platform' => [
 								'Vimeo',
@@ -244,60 +313,61 @@ class Link_In_Bio extends Widget_Base {
 								'Spotify',
 								'SoundCloud',
 								'Vimeo',
+								'Waze',
 							],
 						],
 					],
 					[
-						'name'         => 'icon_number',
-						'label'        => esc_html__( 'Number', 'textdomain' ),
-						'type'         => \Elementor\Controls_Manager::TEXT,
-						'dynamic'      => [
+						'name'        => 'icon_number',
+						'label'       => esc_html__( 'Number', 'elementor' ),
+						'type'        => \Elementor\Controls_Manager::TEXT,
+						'dynamic'     => [
 							'active' => true,
 						],
-						'label_block'  => true,
-						'condition'    => [
+						'label_block' => true,
+						'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+						'condition'   => [
 							'icon_platform' => [
 								'Telephone',
 								'Telegram',
-								'Waze',
 								'WhatsApp',
 							],
 						],
 					],
 					[
-						'name'         => 'icon_mail',
-						'label'        => esc_html__( 'Mail', 'textdomain' ),
-						'type'         => \Elementor\Controls_Manager::TEXT,
-						'dynamic'      => [
+						'name'        => 'icon_mail',
+						'label'       => esc_html__( 'Mail', 'elementor' ),
+						'type'        => \Elementor\Controls_Manager::TEXT,
+						'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
+						'dynamic'     => [
 							'active' => true,
 						],
-						'label_block'  => true,
-						'condition'    => [
+						'label_block' => true,
+						'condition'   => [
 							'icon_platform' => [
 								'Email',
 							],
 						],
 					],
 				],
-				'title_field' => '{{{ icon_platform }}}',
+				'title_field'   => "<i class='{{{ icon_icon.value }}}' ></i> {{{ icon_platform }}}",
 				'prevent_empty' => true,
+				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
 			]
 		);
 
-		$this->end_controls_section();
-		$this->add_style_tab();
 
-		$this->add_advanced_tab();
+		$this->end_controls_section();
 	}
 
-	private function add_advanced_tab() {
+	private function add_advanced_tab(): void {
 		\Elementor\Controls_Manager::add_tab(
 			'advanced-tab',
 			esc_html__( 'Advanced', 'elementor' )
 		);
 	}
 
-	private function add_style_tab() {
+	private function add_style_tab(): void {
 
 		$this->start_controls_section(
 			'identity_section_style',
@@ -332,7 +402,7 @@ class Link_In_Bio extends Widget_Base {
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} e-link-in-bio__identity-image' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -398,7 +468,7 @@ class Link_In_Bio extends Widget_Base {
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} e-link-in-bio__identity-image' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -554,7 +624,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_group_control(
 			\Elementor\Group_Control_Typography::get_type(),
 			[
-				'name' => 'bio_heading_typography',
+				'name'     => 'bio_heading_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
 			]
 		);
@@ -582,7 +652,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_group_control(
 			\Elementor\Group_Control_Typography::get_type(),
 			[
-				'name' => 'bio_title_typography',
+				'name'     => 'bio_title_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
 			]
 		);
@@ -610,7 +680,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_group_control(
 			\Elementor\Group_Control_Typography::get_type(),
 			[
-				'name' => 'bio_description_typography',
+				'name'     => 'bio_description_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
 			]
 		);
@@ -868,14 +938,6 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
-	}
-
-
-	protected function render() {
-		$render_strategy = new Core_Render_Strategy();
-
-		$render_strategy->render( $this );
 	}
 
 	private function add_tag_control( string $name ): void {
@@ -896,6 +958,90 @@ class Link_In_Bio extends Widget_Base {
 					'p'    => 'p',
 				],
 				'default' => 'h2',
+			]
+		);
+	}
+
+	private function add_bio_section(): void {
+		$this->start_controls_section(
+			'bio_section',
+			[
+				'label' => esc_html__( 'Bio', 'elementor-list-widget' ),
+				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		$this->add_control(
+			'bio_heading',
+			[
+				'label'       => esc_html__( 'Heading', 'elementor-oembed-widget' ),
+				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'Heading', 'elementor-oembed-widget' ),
+			]
+		);
+
+		$this->add_tag_control( 'bio_heading_tag' );
+
+		$this->add_control(
+			'bio_title',
+			[
+				'label'       => esc_html__( 'Title or Tagline', 'elementor-oembed-widget' ),
+				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'Title', 'elementor-oembed-widget' ),
+			]
+		);
+
+		$this->add_tag_control( 'bio_title_tag' );
+
+		$this->add_control(
+			'bio_description',
+			[
+				'label'       => esc_html__( 'Description', 'elementor-oembed-widget' ),
+				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'Description', 'elementor-oembed-widget' ),
+			]
+		);
+	}
+
+	private function add_identity_section(): void {
+		$this->start_controls_section(
+			'identity_section',
+			[
+				'label' => esc_html__( 'Identity', 'elementor' ),
+				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		$this->add_control(
+			'identity_image_style',
+			[
+				'label'   => esc_html__( 'Image style', 'elementor' ),
+				'type'    => \Elementor\Controls_Manager::SELECT,
+				'default' => 'profile',
+				'options' => [
+					'profile' => esc_html__( 'Profile', 'elementor' ),
+					'cover'   => esc_html__( 'None', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'identity_image',
+			[
+				'label'   => esc_html__( 'Choose Image', 'elementor' ),
+				'type'    => \Elementor\Controls_Manager::MEDIA,
+				'default' => [
+					'url' => \Elementor\Utils::get_placeholder_image_src(),
+				],
 			]
 		);
 	}
