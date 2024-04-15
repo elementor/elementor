@@ -104,7 +104,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 75% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You’ve used over 75% of credits for this AI feature.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -122,7 +122,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 80% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You’ve used over 80% of credits for this AI feature.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -140,7 +140,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 95% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You’ve used over 95% of credits for this AI feature.' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
