@@ -21,11 +21,12 @@ class Core_Render extends Render_Base {
 		 */
 
 		//  Identity Image
-		$identity_image = $settings['identity_image'] ?? [];
+		$identity_image_props_style = $settings['identity_image_style'] ?? 'profile';
+		$identity_image_value = $settings['identity_image'] ?? [];
 
 		//  Bio Heading
 		$bio_heading_output    = '';
-		$bio_heading_props_tag = $settings['bio_heading_tag'] ?? 'h1';
+		$bio_heading_props_tag = $settings['bio_heading_tag'] ?? 'h2';
 		$bio_heading_value     = $settings['bio_heading'] ?? '';
 
 		//  Bio Title
@@ -38,32 +39,7 @@ class Core_Render extends Render_Base {
 		$bio_description_value  = $settings['bio_description'] ?? '';
 
 		// Icons
-		$icons_value = $settings['icons'] ?? [
-			[
-				'email'  => 'test@test.com',
-				'link'   => '#',
-				'number' => '',
-				'svg'    => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-			[
-				'email'  => 'test@test.com',
-				'link'   => '#',
-				'number' => '',
-				'svg'    => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-			[
-				'email'  => 'test@test.com',
-				'link'   => '#',
-				'number' => '',
-				'svg'    => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-			[
-				'email'  => 'test@test.com',
-				'link'   => '#',
-				'number' => '',
-				'svg'    => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-		];// TODO : remove when control exists
+		$icons_value = $settings['icon'] ?? [];
 
 		// CTAs
 		$ctas_value = $settings['ctas'] ?? [
@@ -108,7 +84,7 @@ class Core_Render extends Render_Base {
 		$has_ctas           = ! empty( $ctas_value );
 		$has_description    = ! empty( $bio_description_value );
 		$has_heading        = ! empty( $bio_heading_value );
-		$has_identity_image = ! empty( $identity_image ) && ( ! empty( $identity_image['url'] || ! empty( $identity_image['id'] ) ) );
+		$has_identity_image = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ));
 		$has_icons          = ! empty( $icons_value );
 		$has_title          = ! empty( $bio_title_value );
 
@@ -118,18 +94,22 @@ class Core_Render extends Render_Base {
 		}
 		?>
 		<div class="e-link-in-bio__content-container">
-			<?php if ( $has_identity_image ) : ?>
-				<figure class="e-link-in-bio__identity">
-					<?php if ( ! empty( $identity_image['id'] ) ) {
-						echo wp_get_attachment_image( $identity_image['id'], 'thumbnail', false, [
+			<?php if ( $has_identity_image ) :
+				$widget->add_render_attribute( 'identity', [
+					'class' => ['e-link-in-bio__identity', "e-link-in-bio__identity--{$identity_image_props_style}"],
+				]);
+				?>
+				<figure <?php echo $widget->get_render_attribute_string( 'identity' ); ?>>
+					<?php if ( ! empty( $identity_image_value['id'] ) ) {
+						echo wp_get_attachment_image( $identity_image_value['id'], 'medium', false, [
 							'class' => 'e-link-in-bio__identity-image',
 						] );
 					} else {
 						$widget->add_render_attribute( 'identity_image', [
-							'alt'   => '',
+							'alt' => '',
 							'class' => 'e-link-in-bio__identity-image',
-							'src'   => esc_url( $identity_image['url'] ),
-						] );
+							'src' => esc_url( $identity_image_value['url'] ),
+						]);
 						?>
 						<img <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?> />
 					<?php }; ?>
@@ -154,18 +134,53 @@ class Core_Render extends Render_Base {
 					} ?>
 				</div>
 			<?php endif; ?>
-			<?php if ( $has_icons ) : ?>
-				<div class="e-link-in-bio__icons">
+				<?php if ( $has_icons ) : ?>
+					<div class="e-link-in-bio__icons">
 					<?php
 					foreach ( $icons_value as $key => $icon ) {
-						$widget->add_render_attribute( 'icon-link', [
+						// Bail if no icon
+						if ( empty( $icon['icon_icon'] ) ) {
+							break;
+						}
+
+						// Check for link format based on platform type
+						$formatted_link = $icon['icon_url']['url'] ?? '';
+
+						// Ensure we clear the default link value if the matching type value is empty
+						switch ($icon['icon_platform']) {
+							case 'Email':
+								$formatted_link = ! empty( $icon['icon_mail'] ) ? "mailto:{$icon['icon_mail']}" : '';
+								break;
+							case 'Telephone':
+								$formatted_link = ! empty( $icon['icon_number'] ) ? "tel:{$icon['icon_number']}" : '';
+								break;
+							case 'Telegram':
+								$formatted_link = ! empty( $icon['icon_number'] ) ? "https://telegram.me/{$icon['icon_number']}" : '';
+								break;
+							case 'Waze':
+								$formatted_link = ! empty( $icon['icon_number'] ) ? "https://www.waze.com/ul?ll={$icon['icon_number']}&navigate=yes" : '';
+								break;
+							case 'WhatsApp':
+								$formatted_link = ! empty( $icon['icon_number'] ) ? "https://wa.me/{$icon['icon_number']}" : '';
+								break;
+						}
+
+						// Bail if no link
+						if ( empty( $formatted_link ) ) {
+							break;
+						}
+
+						$widget->add_render_attribute( "icon-link-{$key}", [
+							'aria-label' => $icon['icon_platform'],
 							'class' => 'e-link-in-bio__icon-link',
-							'href'  => $icon['link'],
-						] );
+							'href' => esc_url( $formatted_link ),
+							'rel' => 'noopener noreferrer',
+							'target' => '_blank',
+						]);
 						?>
 						<div class="e-link-in-bio__icon">
-							<a <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?>>
-								<?php Utils::print_unescaped_internal_string( $icon['svg'] ); ?>
+							<a <?php echo $widget->get_render_attribute_string( "icon-link-{$key}" ); ?>>
+								<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 							</a>
 						</div>
 					<?php } ?>
@@ -181,9 +196,9 @@ class Core_Render extends Render_Base {
 						] );
 						?>
 						<a <?php echo $widget->get_render_attribute_string( 'cta' ); ?>>
-								<span class="e-link-in-bio__cta-text">
-									<?php echo $cta['text']; ?>
-								</span>
+							<span class="e-link-in-bio__cta-text">
+								<?php echo $cta['text']; ?>
+							</span>
 						</a>
 					<?php } ?>
 				</div>
