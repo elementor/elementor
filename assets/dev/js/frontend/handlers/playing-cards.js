@@ -9,6 +9,7 @@ export default class PlayingCards extends Base {
 
 	toggleCardFlip( card ) {
 		card.classList.toggle( 'e-card-is-flipped' );
+
 		this.cardsState.forEach( ( item ) => {
 			if ( item.card === card ) {
 				item.isFlipped = ! item.isFlipped;
@@ -16,13 +17,14 @@ export default class PlayingCards extends Base {
 		} );
 	}
 
-	onCardClick = ( e ) => {
+	onCardClick = ( event ) => {
 		if ( this.disableCards ) {
 			return;
 		}
 		this.disableCards = true;
 
-		const currentCardItem = this.cardsState.find( ( item ) => item.card === e.currentTarget );
+		const currentCardItem = this.cardsState.find( ( item ) => item.card === event.currentTarget );
+
 		if ( currentCardItem ) {
 			this.toggleCardFlip( currentCardItem.card );
 			this.handleCardComparison( currentCardItem );
@@ -52,6 +54,7 @@ export default class PlayingCards extends Base {
 		} else {
 			this.flipBackCards( this.activeCardItem, currentCardItem );
 		}
+
 		this.activeCardItem = null;
 	}
 
@@ -65,6 +68,7 @@ export default class PlayingCards extends Base {
 
 	flipCard( card ) {
 		card.classList.add( 'e-card-is-flipped' );
+
 		this.cardsState.forEach( ( item ) => {
 			if ( item.card === card ) {
 				item.isFlipped = true;

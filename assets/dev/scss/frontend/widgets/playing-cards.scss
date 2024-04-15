@@ -21,13 +21,9 @@ $transition-normal: 0.6s;
 		transition: opacity $transition-fast;
 	}
 
-	.e-playing-cards-container {
-		&-clone {
-			opacity: 0;
-		}
-	}
-
 	.e-playing-cards-container-clone {
+		opacity: 0;
+
 		&-show {
 			opacity: 1;
 		}

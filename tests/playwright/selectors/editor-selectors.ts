@@ -189,7 +189,7 @@ const EditorSelectors = {
 		cardHeader: '.e-playing-card-header',
 		cardBody: '.e-playing-card-body',
 		repeaterAdd: '.elementor-repeater-add',
-		cardControl: '.playing-cards-controls',
+		cardControl: '.e-playing-cards-controls',
 		cardPlay: '.cards-play',
 		cardShuffle: '.cards-shuffle',
 	},

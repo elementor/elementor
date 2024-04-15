@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Playing_Cards extends Widget_Base {
 
-
 	/**
 	 * Get widget name.
 	 *
@@ -41,7 +40,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	 *
 	 */
 	public function get_title(): string {
-		return esc_html__( 'Playing Cards', 'elementor' );
+		return __( 'Playing Cards', 'elementor' );
 	}
 
 	/**
@@ -144,7 +143,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$repeater->add_control(
 			'card_border_size',
 			[
-				'label' => esc_html__( 'Card Border Size', 'elementor' ),
+				'label' => __( 'Card Border Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -168,8 +167,8 @@ class Widget_Playing_Cards extends Widget_Base {
 					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => 'border-color: {{VALUE}};',
 				],
 				'options' => [
-					'default' => esc_html__( 'Default Color', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
+					'default' => __( 'Default Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			],
 		);
@@ -177,7 +176,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$repeater->add_control(
 			'card_border_radius',
 			[
-				'label' => esc_html__( 'Card Border Radius', 'elementor' ),
+				'label' => __( 'Card Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -201,8 +200,8 @@ class Widget_Playing_Cards extends Widget_Base {
 					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-number' => 'color: {{VALUE}};',
 				],
 				'options' => [
-					'default' => esc_html__( 'Default Color', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
+					'default' => __( 'Default Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -216,8 +215,8 @@ class Widget_Playing_Cards extends Widget_Base {
 					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => 'color: {{VALUE}};',
 				],
 				'options' => [
-					'default' => esc_html__( 'Default Color', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
+					'default' => __( 'Default Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -225,7 +224,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$repeater->add_responsive_control(
 			'card_size',
 			[
-				'label' => esc_html__( 'Card Suite Size', 'elementor' ),
+				'label' => __( 'Card Suite Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -243,7 +242,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$repeater->add_control(
 			'card_padding',
 			[
-				'label' => esc_html__( 'Card Padding', 'elementor' ),
+				'label' => __( 'Card Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -273,7 +272,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->start_controls_section(
 			'cards_global_style_section',
 			[
-				'label' => esc_html__( 'Card Color', 'elementor' ),
+				'label' => __( 'Card Color', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -284,7 +283,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Cards Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}  {{CURRENT_ITEM}}.e-playing-card' => '--e-card-bg-color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-bg-color: {{VALUE}};',
 				],
 				'default' => '#FFFFFF',
 			],
@@ -293,7 +292,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_control(
 			'card_border_size',
 			[
-				'label' => esc_html__( 'Cards Border Size', 'elementor' ),
+				'label' => __( 'Cards Border Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -317,8 +316,8 @@ class Widget_Playing_Cards extends Widget_Base {
 					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-color: {{VALUE}};',
 				],
 				'options' => [
-					'default' => esc_html__( 'Default Color', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
+					'default' => __( 'Default Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			],
 		);
@@ -326,7 +325,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_control(
 			'card_border_radius',
 			[
-				'label' => esc_html__( 'Cards Border Radius', 'elementor' ),
+				'label' => __( 'Cards Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -350,8 +349,8 @@ class Widget_Playing_Cards extends Widget_Base {
 					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-number' => '--e-card-number-color: {{VALUE}};',
 				],
 				'options' => [
-					'default' => esc_html__( 'Default Color', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
+					'default' => __( 'Default Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -365,8 +364,8 @@ class Widget_Playing_Cards extends Widget_Base {
 					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => '--e-card-suite-color: {{VALUE}};',
 				],
 				'options' => [
-					'default' => esc_html__( 'Default Color', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
+					'default' => __( 'Default Color', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -374,7 +373,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_responsive_control(
 			'card_size',
 			[
-				'label' => esc_html__( 'Cards Suite Size', 'elementor' ),
+				'label' => __( 'Cards Suite Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -392,7 +391,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_control(
 			'card_padding',
 			[
-				'label' => esc_html__( 'Cards Padding', 'elementor' ),
+				'label' => __( 'Cards Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
@@ -420,22 +419,26 @@ class Widget_Playing_Cards extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render(): void {
-		$settings = $this->get_settings_for_display();
+        $settings = $this->get_settings_for_display();
 
-		if ( empty( $settings['cards'] ) ) {
-			return;
-		}
+        if ( empty( $settings['cards'] ) ) {
+            return;
+        }
 
-		$this->render_card_controls();
+        $this->render_card_controls();
 
-		echo '<div class="e-playing-cards-container e-flex card-section">';
-		foreach ( $settings['cards'] as $index => $card ) {
-			$this->render_card( $index, $card );
-		}
-		echo '</div>';
+        ?>
+        <div class="e-playing-cards-container e-flex card-section">
+            <?php
+            foreach ( $settings['cards'] as $index => $card ) {
+                $this->render_card( $index, $card );
+            }
+            ?>
+        </div>
 
-		echo '<div class="e-playing-cards-container-clone e-flex card-section">';
-		echo '</div>';
+        <div class="e-playing-cards-container-clone e-flex card-section">
+        </div>
+        <?php
 	}
 
 	/**
@@ -446,7 +449,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	 */
 	protected function render_card_controls(): void {
 		?>
-		<div class="playing-cards-controls e-button-container mb-2">
+		<div class="e-playing-cards-controls e-button-container mb-2">
 			<button type="button" class="e-button cards-play">
 				<?php esc_html_e( 'Play', 'elementor' ); ?>
 			</button>

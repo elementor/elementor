@@ -14,7 +14,7 @@ test.describe( 'Playing Cards @playing-cards', () => {
 
 	test( 'Add widget', async () => {
 		const widget = await editor.getPreviewFrame().locator( EditorSelectors.playingCards.container );
-		await expect( widget ).toBeVisible( { timeout: 10000 } );
+		await expect( widget ).toBeVisible();
 	} );
 
 	test( 'Add a card', async ( { page } ) => {
