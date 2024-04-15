@@ -127,7 +127,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 						foreach ( $icons_value as $key => $icon ) {
 							// Bail if no icon
 							if ( empty( $icon['icon_icon'] ) ) {
-								return;
+								break;
 							}
 
 							// Check for link format based on platform type
@@ -154,13 +154,15 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 
 							// Bail if no link
 							if ( empty( $formatted_link ) ) {
-								return;
+								break;
 							}
 
 							$widget->add_render_attribute( "icon-link-{$key}", [
 								'aria-label' => $icon['icon_platform'],
 								'class' => 'e-link-in-bio__icon-link',
 								'href' => esc_url( $formatted_link ),
+								'rel' => 'noopener noreferrer',
+								'target' => '_blank',
 							]);
 							?>
 							<div class="e-link-in-bio__icon">
