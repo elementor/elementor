@@ -42,40 +42,7 @@ class Core_Render extends Render_Base {
 		$icons_value = $settings['icon'] ?? [];
 
 		// CTAs
-		$ctas_value = $settings['ctas'] ?? [
-			[
-				'email'     => '',
-				'file'      => '',
-				'link'      => '#',
-				'link_type' => 'url',
-				'number'    => '',
-				'text'      => 'Get Healthy',
-			],
-			[
-				'email'     => '',
-				'file'      => '',
-				'link'      => '#',
-				'link_type' => 'url',
-				'number'    => '',
-				'text'      => 'Top 10 Recipes',
-			],
-			[
-				'email'     => '',
-				'file'      => '',
-				'link'      => '#',
-				'link_type' => 'url',
-				'number'    => '',
-				'text'      => 'Meal Prep',
-			],
-			[
-				'email'     => '',
-				'file'      => '',
-				'link'      => '#',
-				'link_type' => 'url',
-				'number'    => '',
-				'text'      => 'Healthy Living Resources',
-			],
-		];// TODO : remove when control exists
+		$ctas_value = $settings['cta_link'] ?? [];
 
 		/**
 		 * Checks
@@ -143,7 +110,7 @@ class Core_Render extends Render_Base {
 							break;
 						}
 
-						// Check for link format based on platform type
+						// Check for link format based on type
 						$formatted_link = $icon['icon_url']['url'] ?? '';
 
 						// Ensure we clear the default link value if the matching type value is empty
@@ -190,14 +157,55 @@ class Core_Render extends Render_Base {
 				<div class="e-link-in-bio__ctas">
 					<?php
 					foreach ( $ctas_value as $key => $cta ) {
-						$widget->add_render_attribute( 'cta', [
+						// Bail if no text
+						if ( empty( $cta['cta_link_text'] ) ) {
+							break;
+						}
+
+						// Check for link format based on type
+						$formatted_link = $cta['cta_link_url']['url'] ?? '';
+
+						// Ensure we clear the default link value if the matching type value is empty
+						switch ($cta['cta_link_type']) {
+							case 'Email':
+								$formatted_link = ! empty( $cta['cta_link_mail'] ) ? "mailto:{$cta['cta_link_mail']}" : '';
+								break;
+							case 'Telephone':
+								$formatted_link = ! empty( $cta['cta_link_number'] ) ? "tel:{$cta['cta_link_number']}" : '';
+								break;
+							case 'Telegram':
+								$formatted_link = ! empty( $cta['cta_link_number'] ) ? "https://telegram.me/{$cta['cta_link_number']}" : '';
+								break;
+							case 'Waze':
+								$formatted_link = ! empty( $cta['cta_link_number'] ) ? "https://www.waze.com/ul?ll={$cta['cta_link_number']}&navigate=yes" : '';
+								break;
+							case 'WhatsApp':
+								$formatted_link = ! empty( $cta['cta_link_number'] ) ? "https://wa.me/{$cta['cta_link_number']}" : '';
+								break;
+							case 'File Download':
+								$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
+								break;
+						}
+
+						// Bail if no link
+						if ( empty( $formatted_link ) ) {
+							break;
+						}
+
+						$widget->add_render_attribute( "cta-{$key}", [
 							'class' => 'e-link-in-bio__cta',
-							'href'  => $cta['link'],
-						] );
+							'href' => esc_url( $formatted_link ),
+						]);
+
+						if ( 'File Download' === $cta['cta_link_type'] ) {
+							$widget->add_render_attribute( "cta-{$key}", [
+								'download' => 'download',
+							]);
+						}
 						?>
-						<a <?php echo $widget->get_render_attribute_string( 'cta' ); ?>>
+						<a <?php echo $widget->get_render_attribute_string( "cta-{$key}" ); ?>>
 							<span class="e-link-in-bio__cta-text">
-								<?php echo $cta['text']; ?>
+								<?php echo $cta['cta_link_text']; ?>
 							</span>
 						</a>
 					<?php } ?>

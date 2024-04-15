@@ -112,7 +112,7 @@ class Link_In_Bio extends Widget_Base {
 					],
 					[
 						'name'    => 'cta_link_type',
-						'label'   => esc_html__( 'Platform', 'elementor' ),
+						'label'   => esc_html__( 'Link Type', 'elementor' ),
 						'type'    => \Elementor\Controls_Manager::SELECT,
 						'groups'  => [
 
