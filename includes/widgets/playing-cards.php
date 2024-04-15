@@ -85,7 +85,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			'cards_section',
 			[
 				'label' => __( 'Cards', 'elementor' ),
-				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
