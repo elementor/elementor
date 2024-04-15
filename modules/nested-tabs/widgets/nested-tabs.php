@@ -202,7 +202,6 @@ class NestedTabs extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
-			'render_type' => 'template',
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_horizontal', [

@@ -12,11 +12,11 @@ const AiPromotionInfotipContent = ( props ) => {
 	return (
 		<Card sx={ { width: 300 } } elevation={ 0 }>
 			<CardHeader subheader="ELEMENTOR AI" />
-			<CardContent>
-				<Typography variant="subtitle2" color="text.secondary">
+			<CardContent sx={ { pt: 1 } }>
+				<Typography variant="subtitle2" color="text.secondary" sx={ { pb: 0.5 } }>
 					{ props.header }
 				</Typography>
-				<Typography color="text.secondary">
+				<Typography variant="body2" color="text.secondary">
 					{ props.contentText }
 				</Typography>
 			</CardContent>

@@ -72,6 +72,9 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editorPage.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
+			if ( 'astra-sites' === plugin ) {
+				await page.goto( '/wp-admin/index.php' );
+			}
 			await page.goto( '/law-firm-about/?elementor' );
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
@@ -141,6 +144,9 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await editorPage.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
+			if ( 'astra-sites' === plugin ) {
+				await page.goto( '/wp-admin/index.php' );
+			}
 			await page.goto( '/law-firm-about/?elementor' );
 			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();

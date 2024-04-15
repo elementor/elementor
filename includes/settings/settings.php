@@ -398,6 +398,23 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
 								],
 							],
+							'optimized_image_loading' => [
+								'label' => esc_html__( 'Optimized Image Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => sprintf(
+										/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
+										esc_html__( 'Applying %1$s on LCP image and %2$s on images below the fold to improve performance scores.', 'elementor' ),
+										'<code>fetchpriority="high"</code>',
+										'<code>loading="lazy"</code>'
+									),
+								],
+							],
 						],
 					],
 				],
