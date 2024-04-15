@@ -12,7 +12,7 @@ import {
 	userInformationConnectedNoGetStartedMock,
 } from './user-information.mock';
 
-const CREDITS_USAGE_MESSAGE = 'You\'ve used %s of credits for this AI feature.';
+const CREDITS_USAGE_MESSAGE = 'You’ve used %s of credits for this AI feature.';
 
 test.describe( 'AI @ai', () => {
 	test( 'User Information', async ( { page }, testInfo ) => {

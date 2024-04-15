@@ -5,7 +5,7 @@ const KEY_NO_SUBSCRIPTION = 'noSubscription';
 
 const getUsageTitle = ( percentage ) => {
 	// Translators: %s refers to the credits percentage usage
-	return sprintf( __( 'You\'ve used %s of credits for this AI feature.', 'elementor' ), percentage );
+	return sprintf( __( 'You’ve used %s of credits for this AI feature.', 'elementor' ), percentage );
 };
 
 const CREDITS_95_USAGE_TITLE = getUsageTitle( '95%' );
