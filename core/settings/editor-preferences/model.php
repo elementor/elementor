@@ -173,7 +173,7 @@ class Model extends BaseModel {
 		$this->add_control(
 			'enable_styleguide_preview',
 			[
-				'label' => esc_html__( 'Preview global settings', 'elementor' ),
+				'label' => esc_html__( 'Show global settings', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
 				'label_on' => esc_html__( 'Yes', 'elementor' ),

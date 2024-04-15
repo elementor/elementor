@@ -118,7 +118,7 @@
 				"type": "switcher",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Preview global settings",
+				"label": "Show global settings",
 				"label_on": "Yes",
 				"label_off": "No",
 				"description": "Temporarily overlay the canvas with the style guide to preview your changes to global colors and fonts.",

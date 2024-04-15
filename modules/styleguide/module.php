@@ -120,7 +120,7 @@ class Module extends Base_Module {
 		$element->add_control(
 			$control_name,
 			[
-				'label' => esc_html__( 'Preview global settings', 'elementor' ),
+				'label' => esc_html__( 'Show global settings', 'elementor' ),
 				'type' => Switcher::CONTROL_TYPE,
 				'description' => esc_html__( 'Temporarily overlay the canvas with the style guide to preview your changes to global colors and fonts.', 'elementor' ),
 				'separator' => 'after',
