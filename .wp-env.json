@@ -2,7 +2,7 @@
 	"core": null,
 	"phpVersion": "8.0",
 	"plugins": [
-		"./build"
+		"./"
 	],
 	"themes": [
 		"https://downloads.wordpress.org/theme/hello-elementor.zip"

@@ -3,28 +3,16 @@ import { Alert, AlertTitle, Button } from '@elementor/ui';
 const KEY_SUBSCRIPTION = 'subscription';
 const KEY_NO_SUBSCRIPTION = 'noSubscription';
 
-const getUsageTitle = ( percentage ) => {
-	// Translators: %s refers to the credits percentage usage
-	return sprintf( __( 'You\'ve used %s of credits for this AI feature.', 'elementor' ), percentage );
-};
-
-const CREDITS_95_USAGE_TITLE = getUsageTitle( '95%' );
-const CREDITS_80_USAGE_TITLE = getUsageTitle( '80%' );
-const CREDITS_75_USAGE_TITLE = getUsageTitle( '75%' );
-
-const DESCRIPTION_SUBSCRIPTION = __( 'Get maximum access.', 'elementor' );
-const DESCRIPTION_NO_SUBSCRIPTION = __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' );
-
 const alertConfigs = [
 	{
 		threshold: 95,
 		title: {
-			[ KEY_SUBSCRIPTION ]: CREDITS_95_USAGE_TITLE,
-			[ KEY_NO_SUBSCRIPTION ]: CREDITS_95_USAGE_TITLE,
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used 95% of credits for this AI feature.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used 95% of credits for this AI feature.', 'elementor' ),
 		},
 		description: {
-			[ KEY_SUBSCRIPTION ]: DESCRIPTION_SUBSCRIPTION,
-			[ KEY_NO_SUBSCRIPTION ]: DESCRIPTION_NO_SUBSCRIPTION,
+			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-95-limit-reach/',
@@ -35,12 +23,12 @@ const alertConfigs = [
 	{
 		threshold: 80,
 		title: {
-			[ KEY_SUBSCRIPTION ]: CREDITS_80_USAGE_TITLE,
-			[ KEY_NO_SUBSCRIPTION ]: CREDITS_80_USAGE_TITLE,
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used 80% of credits for this AI feature.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used 80% of credits for this AI feature.', 'elementor' ),
 		},
 		description: {
-			[ KEY_SUBSCRIPTION ]: DESCRIPTION_SUBSCRIPTION,
-			[ KEY_NO_SUBSCRIPTION ]: DESCRIPTION_NO_SUBSCRIPTION,
+			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
@@ -51,12 +39,12 @@ const alertConfigs = [
 	{
 		threshold: 75,
 		title: {
-			[ KEY_SUBSCRIPTION ]: CREDITS_75_USAGE_TITLE,
-			[ KEY_NO_SUBSCRIPTION ]: CREDITS_75_USAGE_TITLE,
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used 75% of credits for this AI feature.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used 75% of credits for this AI feature.', 'elementor' ),
 		},
 		description: {
-			[ KEY_SUBSCRIPTION ]: DESCRIPTION_SUBSCRIPTION,
-			[ KEY_NO_SUBSCRIPTION ]: DESCRIPTION_NO_SUBSCRIPTION,
+			[ KEY_SUBSCRIPTION ]: __( 'Get maximum access.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' ),
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
