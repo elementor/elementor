@@ -13,7 +13,8 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		 */
 
 		//  Identity Image
-		$identity_image = $settings['identity_image'] ?? [];
+		$identity_image_props_style = $settings['identity_image_style'] ?? 'profile';
+		$identity_image_value = $settings['identity_image'] ?? [];
 
 		//  Bio Heading
 		$bio_heading_output = '';
@@ -75,7 +76,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		$has_ctas = ! empty( $ctas_value );
 		$has_description = ! empty( $bio_description_value );
 		$has_heading = ! empty( $bio_heading_value );
-		$has_identity_image = ! empty( $identity_image ) && ( ! empty( $identity_image['url'] || ! empty( $identity_image['id'] ) ));
+		$has_identity_image = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ));
 		$has_icons = ! empty( $icons_value );
 		$has_title = ! empty( $bio_title_value );
 
@@ -85,17 +86,21 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		}
 		?>
 			<div class="e-link-in-bio__content-container">
-				<?php if ( $has_identity_image ) : ?>
-					<figure class="e-link-in-bio__identity">
-						<?php if ( ! empty( $identity_image['id'] ) ) {
-							echo wp_get_attachment_image( $identity_image['id'], 'thumbnail', false, [
+				<?php if ( $has_identity_image ) :
+					$widget->add_render_attribute( 'identity', [
+						'class' => ['e-link-in-bio__identity', "e-link-in-bio__identity--{$identity_image_props_style}"],
+					]);
+					?>
+					<figure <?php echo $widget->get_render_attribute_string( 'identity' ); ?>>
+						<?php if ( ! empty( $identity_image_value['id'] ) ) {
+							echo wp_get_attachment_image( $identity_image_value['id'], 'medium', false, [
 								'class' => 'e-link-in-bio__identity-image',
 							] );
 						} else {
 							$widget->add_render_attribute( 'identity_image', [
 								'alt' => '',
 								'class' => 'e-link-in-bio__identity-image',
-								'src' => esc_url( $identity_image['url'] ),
+								'src' => esc_url( $identity_image_value['url'] ),
 							]);
 							?>
 							<img <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?> />

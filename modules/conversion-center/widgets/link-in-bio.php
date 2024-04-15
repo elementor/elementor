@@ -360,8 +360,6 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 
-
-
 	private function add_style_tab(): void {
 
 		$this->start_controls_section(
@@ -375,9 +373,9 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'identity_image_size',
 			[
-				'label' => esc_html__( 'Image Size', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::SLIDER,
-				'default' => [
+				'label'          => esc_html__( 'Image Size', 'elementor' ),
+				'type'           => \Elementor\Controls_Manager::SLIDER,
+				'default'        => [
 					'size' => 30,
 					'unit' => '%',
 				],
@@ -387,8 +385,8 @@ class Link_In_Bio extends Widget_Base {
 				'mobile_default' => [
 					'unit' => '%',
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'range'      => [
+				'size_units'     => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range'          => [
 					'px' => [
 						'min'  => 0,
 						'max'  => 1000,
@@ -403,7 +401,7 @@ class Link_In_Bio extends Widget_Base {
 				// 'condition' => [
 				// 	'image_style' => 'profile',
 				// ],
-				'selectors'  => [
+				'selectors'      => [
 					'{{WRAPPER}} e-link-in-bio__identity-image' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -952,41 +950,41 @@ class Link_In_Bio extends Widget_Base {
 			'advanced_layout',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab' => 'advanced-tab-custom',
+				'tab'   => 'advanced-tab-custom',
 			]
 		);
 
 		$this->add_control(
 			'advanced_layout_full_width',
 			[
-				'label' => esc_html__( 'Full Width', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
+				'label'        => esc_html__( 'Full Width', 'elementor' ),
+				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default' => 'no',
+				'default'      => 'no',
 			]
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
 			'advanced_layout_layout_width',
 			[
-				'label' => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
-				'type' => \Elementor\Controls_Manager::SLIDER,
+				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
+				'type'       => \Elementor\Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range' => [
+				'range'      => [
 					'px' => [
-						'min' => 0,
-						'max' => 1440, // TODO: check range
+						'min'  => 0,
+						'max'  => 1440, // TODO: check range
 						'step' => 1,
 					],
 				],
-				'default' => [
+				'default'    => [
 					'size' => 360,
 					'unit' => 'px',
 				],
@@ -1001,17 +999,17 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'advanced_layout_content_width',
 			[
-				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
-				'type' => \Elementor\Controls_Manager::SLIDER,
+				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+				'type'       => \Elementor\Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range' => [
+				'range'      => [
 					'px' => [
-						'min' => 0,
-						'max' => 1440, // TODO: check range
+						'min'  => 0,
+						'max'  => 1440, // TODO: check range
 						'step' => 1,
 					],
 				],
-				'default' => [
+				'default'    => [
 					'size' => 280,
 					'unit' => 'px',
 				],
@@ -1026,35 +1024,35 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'advanced_layout_center_vertical',
 			[
-				'label' => esc_html__( 'Center Vertical', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
+				'label'        => esc_html__( 'Center Vertical', 'elementor' ),
+				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default' => 'yes',
+				'default'      => 'yes',
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
 			'advanced_layout_full_screen_height',
 			[
-				'label' => esc_html__( 'Full Screen Height', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
+				'label'        => esc_html__( 'Full Screen Height', 'elementor' ),
+				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default' => 'no',
+				'default'      => 'no',
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->end_controls_section();
@@ -1094,12 +1092,12 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'bio_heading',
 			[
-				'label'       => esc_html__( 'Heading', 'elementor-oembed-widget' ),
+				'label'       => esc_html__( 'Heading', 'elementor' ),
 				'type'        => \Elementor\Controls_Manager::TEXTAREA,
 				'dynamic'     => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'Heading', 'elementor-oembed-widget' ),
+				'placeholder' => esc_html__( 'Heading', 'elementor' ),
 			]
 		);
 
@@ -1108,12 +1106,12 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'bio_title',
 			[
-				'label'       => esc_html__( 'Title or Tagline', 'elementor-oembed-widget' ),
+				'label'       => esc_html__( 'Title or Tagline', 'elementor' ),
 				'type'        => \Elementor\Controls_Manager::TEXTAREA,
 				'dynamic'     => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'Title', 'elementor-oembed-widget' ),
+				'placeholder' => esc_html__( 'Title', 'elementor' ),
 			]
 		);
 
@@ -1122,12 +1120,12 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'bio_description',
 			[
-				'label'       => esc_html__( 'Description', 'elementor-oembed-widget' ),
+				'label'       => esc_html__( 'Description', 'elementor' ),
 				'type'        => \Elementor\Controls_Manager::TEXTAREA,
 				'dynamic'     => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'Description', 'elementor-oembed-widget' ),
+				'placeholder' => esc_html__( 'Description', 'elementor' ),
 			]
 		);
 	}
@@ -1149,7 +1147,7 @@ class Link_In_Bio extends Widget_Base {
 				'default' => 'profile',
 				'options' => [
 					'profile' => esc_html__( 'Profile', 'elementor' ),
-					'cover'   => esc_html__( 'None', 'elementor' ),
+					'cover'   => esc_html__( 'Cover', 'elementor' ),
 				],
 			]
 		);
