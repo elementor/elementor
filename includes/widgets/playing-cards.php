@@ -135,7 +135,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Card Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-bg-color: {{VALUE}};',
 				],
 			],
 		);
@@ -153,7 +153,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-size: {{SIZE}}{{UNIT}}',
 				],
 			],
 		);
@@ -164,7 +164,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Card Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-color: {{VALUE}};',
 				],
 				'options' => [
 					'default' => __( 'Default Color', 'elementor' ),
@@ -186,7 +186,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => 'border-radius: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-radius: {{SIZE}}{{UNIT}}',
 				],
 			],
 		);
@@ -197,7 +197,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Card Number Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-number' => 'color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-number' => '--e-card-number-color: {{VALUE}};',
 				],
 				'options' => [
 					'default' => __( 'Default Color', 'elementor' ),
@@ -212,7 +212,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Card Suite Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => 'color: {{VALUE}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => '--e-card-suite-color: {{VALUE}};',
 				],
 				'options' => [
 					'default' => __( 'Default Color', 'elementor' ),
@@ -234,7 +234,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => '--e-card-suite-size: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -252,7 +252,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => 'padding: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-padding: {{SIZE}}{{UNIT}}',
 				],
 			],
 		);
@@ -283,7 +283,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Cards Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-bg-color: {{VALUE}};',
+					'{{WRAPPER}} .e-playing-card' => '--e-card-bg-color: {{VALUE}};',
 				],
 				'default' => '#FFFFFF',
 			],
@@ -302,7 +302,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-playing-card' => '--e-card-border-size: {{SIZE}}{{UNIT}}',
 				],
 			],
 		);
@@ -313,7 +313,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Cards Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-color: {{VALUE}};',
+					'{{WRAPPER}} .e-playing-card' => '--e-card-border-color: {{VALUE}};',
 				],
 				'options' => [
 					'default' => __( 'Default Color', 'elementor' ),
@@ -335,7 +335,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-border-radius: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-playing-card' => '--e-card-border-radius: {{SIZE}}{{UNIT}}',
 				],
 			],
 		);
@@ -346,7 +346,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Cards Number Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-number' => '--e-card-number-color: {{VALUE}};',
+					'{{WRAPPER}} .e-card-number' => '--e-card-number-color: {{VALUE}};',
 				],
 				'options' => [
 					'default' => __( 'Default Color', 'elementor' ),
@@ -361,7 +361,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => __( 'Cards Suite Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => '--e-card-suite-color: {{VALUE}};',
+					'{{WRAPPER}} .e-card-suite' => '--e-card-suite-color: {{VALUE}};',
 				],
 				'options' => [
 					'default' => __( 'Default Color', 'elementor' ),
@@ -383,7 +383,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-card-suite' => '--e-card-suite-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-card-suite' => '--e-card-suite-size: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -401,7 +401,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.e-playing-card' => '--e-card-padding: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-playing-card' => '--e-card-padding: {{SIZE}}{{UNIT}}',
 				],
 			],
 		);
