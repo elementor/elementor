@@ -425,6 +425,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['attachment'] = [
 			'label' => esc_html_x( 'Attachment', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
+			'responsive' => true,
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
@@ -432,7 +433,7 @@ class Group_Control_Background extends Group_Control_Base {
 				'fixed' => esc_html_x( 'Fixed', 'Background Control', 'elementor' ),
 			],
 			'selectors' => [
-				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
+				'{{SELECTOR}}' => 'background-attachment: {{VALUE}};',
 			],
 			'condition' => [
 				'background' => [ 'classic' ],
@@ -443,7 +444,7 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['attachment_alert'] = [
 			'type' => Controls_Manager::RAW_HTML,
 			'content_classes' => 'elementor-control-field-description',
-			'raw' => esc_html__( 'Note: Attachment Fixed works only on desktop.', 'elementor' ),
+			'raw' => esc_html__( 'Note: Attachment Fixed may not works on some older mobile browsers.', 'elementor' ),
 			'condition' => [
 				'background' => [ 'classic' ],
 				'image[url]!' => '',
