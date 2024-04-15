@@ -232,6 +232,7 @@ class Link_In_Bio extends Widget_Base {
 			'icon',
 			[
 				'type'          => \Elementor\Controls_Manager::REPEATER,
+				'max_items'    => 5,
 				'fields'        => [
 					[
 						'name'    => 'icon_platform',
