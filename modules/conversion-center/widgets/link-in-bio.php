@@ -57,7 +57,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'identity-image',
+			'identity_image',
 			[
 				'label' => esc_html__( 'Choose Image', 'textdomain' ),
 				'type' => \Elementor\Controls_Manager::MEDIA,
@@ -78,7 +78,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'heading',
+			'bio_heading',
 			[
 				'label'       => esc_html__( 'Heading', 'elementor-oembed-widget' ),
 				'type'        => \Elementor\Controls_Manager::TEXTAREA,
@@ -90,7 +90,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'title',
+			'bio_title',
 			[
 				'label'       => esc_html__( 'Title or Tagline', 'elementor-oembed-widget' ),
 				'type'        => \Elementor\Controls_Manager::TEXTAREA,
@@ -102,7 +102,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'description',
+			'bio_description',
 			[
 				'label'       => esc_html__( 'Description', 'elementor-oembed-widget' ),
 				'type'        => \Elementor\Controls_Manager::TEXTAREA,
@@ -154,7 +154,7 @@ class Link_In_Bio extends Widget_Base {
 				// 	'image_style' => 'profile',
 				// ],
 				'selectors' => [
-					'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} elementor-link-in-bio-identity-image img' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -174,7 +174,7 @@ class Link_In_Bio extends Widget_Base {
 				// 	'image_style' => 'profile',
 				// ],
 				'selectors' => [
-					'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'border-radius: {{VALUE}};',
+					'{{WRAPPER}} elementor-link-in-bio-identity-image img' => 'border-radius: {{VALUE}};',
 				],
 			]
 		);
@@ -220,7 +220,7 @@ class Link_In_Bio extends Widget_Base {
 				// 	'image_style' => 'profile',
 				// ],
 				'selectors' => [
-					'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} elementor-link-in-bio-identity-image img' => 'border-width: {{SIZE}}{{UNIT}};',
 				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]

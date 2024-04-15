@@ -13,21 +13,21 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		 */
 
 		//  Identity Image
-		$identity_image = $settings['identity-image'] ?? [];
+		$identity_image = $settings['identity_image'] ?? [];
 
-		//  Heading
-		$heading_output = '';
-		$heading_props_tag = $settings['heading_tag'] ?? 'h1';
-		$heading_value = $settings['heading'] ?? '';
+		//  Bio Heading
+		$bio_heading_output = '';
+		$bio_heading_props_tag = $settings['bio_heading_tag'] ?? 'h1';
+		$bio_heading_value = $settings['bio_heading'] ?? '';
 
-		//  Title
-		$title_output = '';
-		$title_props_tag = $settings['title_tag'] ?? 'h2';
-		$title_value = $settings['title'] ?? '';
+		//  Bio Title
+		$bio_title_output = '';
+		$bio_title_props_tag = $settings['bio_title_tag'] ?? 'h2';
+		$bio_title_value = $settings['bio_title'] ?? '';
 
-		//  Description
-		$description_output = '';
-		$description_value = $settings['description'] ?? '';
+		//  Bio Description
+		$bio_description_output = '';
+		$bio_description_value = $settings['bio_description'] ?? '';
 
 		// Icons
 		$icons_value = $settings['icons'] ?? [
@@ -98,11 +98,11 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		 */
 
 		$has_ctas = ! empty( $ctas_value );
-		$has_description = ! empty( $description_value );
-		$has_heading = ! empty( $heading_value );
+		$has_description = ! empty( $bio_description_value );
+		$has_heading = ! empty( $bio_heading_value );
 		$has_identity_image = ! empty( $identity_image ) && ( ! empty( $identity_image['url'] || ! empty( $identity_image['id'] ) ));
 		$has_icons = ! empty( $icons_value );
-		$has_title = ! empty( $title_value );
+		$has_title = ! empty( $bio_title_value );
 
 		// Render conditions
 		if ( ! $has_heading ) {
@@ -184,7 +184,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 							<?php if ( ! empty( $identity_image['id'] ) ) {
 								echo wp_get_attachment_image( $identity_image['id'], 'thumbnail' );
 							} else {
-								$widget->add_render_attribute( 'identity-image', [
+								$widget->add_render_attribute( 'identity_image', [
 									'alt' => '',
 									'src' => esc_url( $identity_image['url'] ),
 								]);
@@ -198,18 +198,18 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 					<div class="elementor-link-in-bio-content">
 						<?php if ( $has_heading ) {
 							$widget->add_render_attribute( 'heading', 'class', 'elementor-link-in-bio-heading' );
-							$heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>',  Utils::validate_html_tag( $heading_props_tag ), $widget->get_render_attribute_string( 'heading' ), $heading_value );
-							Utils::print_unescaped_internal_string( $heading_output );
+							$bio_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>',  Utils::validate_html_tag( $bio_heading_props_tag ), $widget->get_render_attribute_string( 'heading' ), $bio_heading_value );
+							Utils::print_unescaped_internal_string( $bio_heading_output );
 						}?>
 						<?php if ( $has_title ) {
 							$widget->add_render_attribute( 'title', 'class', 'elementor-link-in-bio-title' );
-							$title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>',  Utils::validate_html_tag( $title_props_tag ), $widget->get_render_attribute_string( 'title' ), $title_value );
-							Utils::print_unescaped_internal_string( $title_output );
+							$bio_title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>',  Utils::validate_html_tag( $bio_title_props_tag ), $widget->get_render_attribute_string( 'title' ), $bio_title_value );
+							Utils::print_unescaped_internal_string( $bio_title_output );
 						}?>
 						<?php if ( $has_description ) {
 							$widget->add_render_attribute( 'description', 'class', 'elementor-link-in-bio-description' );
-							$description_output = sprintf( '<p %1$s>%2$s</p>', $widget->get_render_attribute_string( 'description' ), $description_value );
-							Utils::print_unescaped_internal_string( $description_output );
+							$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $widget->get_render_attribute_string( 'description' ), $bio_description_value );
+							Utils::print_unescaped_internal_string( $bio_description_output );
 						}?>
 					</div>
 				<?php endif; ?>
