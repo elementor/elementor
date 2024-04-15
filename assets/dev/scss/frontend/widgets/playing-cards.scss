@@ -2,18 +2,16 @@ $playing-card-cover-bg-color: #e2e2e2;
 $transition-fast: 0.3s ease;
 $transition-normal: 0.6s;
 
-:root {
+.elementor-widget-playing-cards {
 	--e-card-bg-color: #fff;
 	--e-card-border-size: 1px;
 	--e-card-border-color: #000;
 	--e-card-border-radius: 4px;
-	--e-card-padding: 4px --e-card-suite-size: 20px;
+	--e-card-padding: 4px;
 	--e-card-suite-size: 20px;
 	--e-card-suite-color: #000;
 	--e-card-number-color: #000;
-}
 
-.elementor-widget-playing-cards {
 	.e-playing-cards-container,
 	.e-playing-cards-container-clone {
 		margin-bottom: 20px;
@@ -107,6 +105,7 @@ $transition-normal: 0.6s;
 	}
 
 	.e-button {
+
 		&-container {
 			display: flex;
 			justify-content: center;
