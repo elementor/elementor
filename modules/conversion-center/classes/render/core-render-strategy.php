@@ -12,6 +12,9 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		 * Map args to internals
 		 */
 
+		//  Identity Image
+		$identity_image = $settings['identity-image'] ?? [];
+
 		//  Heading
 		$heading_output = '';
 		$heading_props_tag = $settings['heading_tag'] ?? 'h1';
@@ -97,6 +100,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		$has_ctas = ! empty( $ctas_value );
 		$has_description = ! empty( $description_value );
 		$has_heading = ! empty( $heading_value );
+		$has_identity_image = ! empty( $identity_image ) && ( ! empty( $identity_image['url'] || ! empty( $identity_image['id'] ) ));
 		$has_icons = ! empty( $icons_value );
 		$has_title = ! empty( $title_value );
 
@@ -126,7 +130,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 				.elementor-link-in-bio-content-container * {
 					word-wrap: break-word;
 				}
-				.elementor-link-in-bio-identity img.elementor-link-in-bio-identity-image {
+				.elementor-link-in-bio-identity .elementor-link-in-bio-identity-image img {
 					aspect-ratio: 1;
 					border: 1px solid blue;
 					border-radius: 50%;
@@ -174,9 +178,22 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 				}
 			</style>
 			<div class="elementor-link-in-bio-content-container">
-				<figure class="elementor-link-in-bio-identity">
-					<img class="elementor-link-in-bio-identity-image" src="https://doodleipsum.com/700/avatar?bg=6392D9" alt="" />
-				</figure>
+				<?php if ( $has_identity_image ) : ?>
+					<figure class="elementor-link-in-bio-identity">
+						<div class="elementor-link-in-bio-identity-image">
+							<?php if ( ! empty( $identity_image['id'] ) ) {
+								echo wp_get_attachment_image( $identity_image['id'], 'thumbnail' );
+							} else {
+								$widget->add_render_attribute( 'identity-image', [
+									'alt' => '',
+									'src' => esc_url( $identity_image['url'] ),
+								]);
+								?>
+								<img <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?> />
+							<?php }; ?>
+						</div>
+					</figure>
+				<?php endif; ?>
 				<?php if ( $has_heading || $has_title || $has_description ) : ?>
 					<div class="elementor-link-in-bio-content">
 						<?php if ( $has_heading ) {

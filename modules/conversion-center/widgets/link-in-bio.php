@@ -49,6 +49,27 @@ class Link_In_Bio extends Widget_Base {
 
 	protected function register_controls() {
 		$this->start_controls_section(
+			'identity_section',
+			[
+				'label' => esc_html__( 'Identity', 'elementor-list-widget' ),
+				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		$this->add_control(
+			'identity-image',
+			[
+				'label' => esc_html__( 'Choose Image', 'textdomain' ),
+				'type' => \Elementor\Controls_Manager::MEDIA,
+				'default' => [
+					'url' => \Elementor\Utils::get_placeholder_image_src(),
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'bio_section',
 			[
 				'label' => esc_html__( 'Bio', 'elementor-list-widget' ),
