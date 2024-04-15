@@ -149,7 +149,7 @@ export default class WpAdminPage extends BasePage {
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 */
 	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+		await this.page.goto( '/wp-admin/admin.php?page=settings#tab-experiments' );
 
 		const prefix = 'e-experiment';
 
@@ -232,7 +232,7 @@ export default class WpAdminPage extends BasePage {
 	 * Enable uploading SVG files
 	 */
 	async enableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
@@ -241,7 +241,7 @@ export default class WpAdminPage extends BasePage {
      *  Disable uploading SVG files
      */
 	async disableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
