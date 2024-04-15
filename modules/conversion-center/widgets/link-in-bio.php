@@ -47,6 +47,10 @@ class Link_In_Bio extends Widget_Base {
 		return Plugin::$instance->experiments->is_feature_active( ConversionCenterModule::EXPERIMENT_NAME );
 	}
 
+	public function get_stack( $with_common_controls = true ) {
+		return parent::get_stack( false );
+	}
+
 	protected function register_controls() {
 		$this->start_controls_section(
 			'bio_section',
@@ -70,6 +74,15 @@ class Link_In_Bio extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->add_style_tab();
+
+		$this->add_advanced_tab();
+	}
+
+	private function add_advanced_tab() {
+		\Elementor\Controls_Manager::add_tab(
+			'advanced-tab',
+			esc_html__( 'Advanced', 'elementor' )
+		);
 	}
 
 	private function add_style_tab() {
@@ -656,10 +669,10 @@ class Link_In_Bio extends Widget_Base {
 
 	}
 
-
+	
 	protected function render() {
 		$render_strategy = new Core_Render_Strategy();
-
+		
 		$render_strategy->render( $this );
 	}
 }
