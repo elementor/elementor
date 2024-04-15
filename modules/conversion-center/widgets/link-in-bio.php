@@ -120,15 +120,9 @@ class Link_In_Bio extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->add_style_tab();
-
+		
 		$this->add_advanced_tab();
-	}
 
-	private function add_advanced_tab() {
-		\Elementor\Controls_Manager::add_tab(
-			'advanced-tab',
-			esc_html__( 'Advanced', 'elementor' )
-		);
 	}
 
 	private function add_style_tab() {
@@ -146,21 +140,22 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image Size', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'default' => [
+					'size' => 30,
+					'unit' => '%',
+				],
+				'tablet_default' => [
+					'unit' => '%',
+				],
+				'mobile_default' => [
+					'unit' => '%',
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 1000,
-						'step' => 1,
-					],
 					'%' => [
-						'min' => 0,
+						'min' => 5,
 						'max' => 100,
 					],
-				],
-				'default' => [
-					'unit' => '%',
-					'size' => 50,
 				],
 				// TODO: uncomment and adjust attributes if necessary when content controls are available
 				// 'condition' => [
@@ -704,6 +699,124 @@ class Link_In_Bio extends Widget_Base {
 
 		$this->end_controls_section();
 
+	}
+
+	private function add_advanced_tab() {
+		\Elementor\Controls_Manager::add_tab(
+			'advanced-tab-custom',
+			esc_html__( 'Advanced', 'elementor' )
+		);
+
+		$this->start_controls_section(
+			'advanced_layout',
+			[
+				'label' => esc_html__( 'Layout', 'elementor' ),
+				'tab' => 'advanced-tab-custom',
+			]
+		);
+
+		$this->add_control(
+			'advanced_layout_full_width',
+			[
+				'label' => esc_html__( 'Full Width', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => 'no',
+			]
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
+		);
+
+		$this->add_control(
+			'advanced_layout_layout_width',
+			[
+				'label' => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
+				'type' => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1440, // TODO: check range
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'size' => 360,
+					'unit' => 'px',
+				],
+				// TODO: add class selector when markup is done
+				// 'selectors' => [
+				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+				// ],
+			]
+		);
+
+		$this->add_control(
+			'advanced_layout_content_width',
+			[
+				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+				'type' => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1440, // TODO: check range
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'size' => 280,
+					'unit' => 'px',
+				],
+				// TODO: add class selector when markup is done
+				// 'selectors' => [
+				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+				// ],
+			]
+		);
+
+		$this->add_control(
+			'advanced_layout_center_vertical',
+			[
+				'label' => esc_html__( 'Center Vertical', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+			],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
+		);
+
+		$this->add_control(
+			'advanced_layout_full_screen_height',
+			[
+				'label' => esc_html__( 'Full Screen Height', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => 'no',
+			],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
+		);
+
+		$this->end_controls_section();
 	}
 
 	
