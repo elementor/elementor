@@ -167,7 +167,7 @@ class Link_In_Bio extends Widget_Base {
 				// 	'image_style' => 'profile',
 				// ],
 				'selectors' => [
-					'{{WRAPPER}} elementor-link-in-bio-identity-image img' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} e-link-in-bio__identity-image' => 'width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -187,7 +187,7 @@ class Link_In_Bio extends Widget_Base {
 				// 	'image_style' => 'profile',
 				// ],
 				'selectors' => [
-					'{{WRAPPER}} elementor-link-in-bio-identity-image img' => 'border-radius: {{VALUE}};',
+					'{{WRAPPER}} e-link-in-bio__identity-image' => 'border-radius: {{VALUE}};',
 				],
 			]
 		);
@@ -233,8 +233,7 @@ class Link_In_Bio extends Widget_Base {
 				// 	'image_style' => 'profile',
 				// ],
 				'selectors' => [
-					'{{WRAPPER}} elementor-link-in-bio-identity-image img' => 'border-width: {{SIZE}}{{UNIT}};',
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} e-link-in-bio__identity-image' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -381,7 +380,7 @@ class Link_In_Bio extends Widget_Base {
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-link-in-bio-heading' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio__heading' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -390,7 +389,7 @@ class Link_In_Bio extends Widget_Base {
 			\Elementor\Group_Control_Typography::get_type(),
 			[
 				'name' => 'bio_heading_typography',
-				'selector' => '{{WRAPPER}} .elementor-link-in-bio-heading',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
 			]
 		);
 
@@ -409,7 +408,7 @@ class Link_In_Bio extends Widget_Base {
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-link-in-bio-title' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio__title' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -418,7 +417,7 @@ class Link_In_Bio extends Widget_Base {
 			\Elementor\Group_Control_Typography::get_type(),
 			[
 				'name' => 'bio_title_typography',
-				'selector' => '{{WRAPPER}} .elementor-link-in-bio-title',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
 			]
 		);
 
@@ -437,7 +436,7 @@ class Link_In_Bio extends Widget_Base {
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-link-in-bio-description' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio__description' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -446,7 +445,7 @@ class Link_In_Bio extends Widget_Base {
 			\Elementor\Group_Control_Typography::get_type(),
 			[
 				'name' => 'bio_description_typography',
-				'selector' => '{{WRAPPER}} ..elementor-link-in-bio-description',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
 			]
 		);
 
@@ -467,7 +466,7 @@ class Link_In_Bio extends Widget_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-link-in-bio-icon' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio__icon' => 'color: {{VALUE}}',
 				],
 			]
 		);
@@ -706,10 +705,10 @@ class Link_In_Bio extends Widget_Base {
 
 	}
 
-	
+
 	protected function render() {
 		$render_strategy = new Core_Render_Strategy();
-		
+
 		$render_strategy->render( $this );
 	}
 }
