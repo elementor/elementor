@@ -74,7 +74,7 @@ class Link_In_Bio extends Widget_Base {
 				'default' => 'profile',
 				'options' => [
 					'profile' => esc_html__( 'Profile', 'elementor' ),
-					'cover'   => esc_html__( 'None', 'elementor' ),
+					'cover'   => esc_html__( 'Cover', 'elementor' ),
 				],
 			]
 		);

@@ -1,11 +1,13 @@
 .elementor-widget-link-in-bio {
 	--align-self: center;
+	--e-link-in-bio-gutter: 2em;
 
 	.elementor-widget-container {
 		border: 1px solid blue;
 		margin-inline: auto;
 		max-width: 100%;
-		padding: 2em;
+		padding: var(--e-link-in-bio-gutter);
+		padding-block-start: 0;
 		width: 100%;
 	}
 }
@@ -24,15 +26,30 @@
 		}
 	}
 
-	&__identity img.e-link-in-bio__identity-image {
-		aspect-ratio: 1;
-		border: 1px solid blue;
-		border-radius: 50%;
-		display: block;
-		object-fit: cover;
-		margin-inline: auto;
-		max-width: 100%;
-		width: 150px;
+	&__identity--profile {
+		padding-block-start: var(--e-link-in-bio-gutter);
+
+		img.e-link-in-bio__identity-image {
+			aspect-ratio: 1;
+			border: 1px solid blue;
+			border-radius: 50%;
+			display: block;
+			object-fit: cover;
+			margin-inline: auto;
+			max-width: 100%;
+			width: 150px;
+		}
+	}
+
+	&__identity--cover {
+
+		img.e-link-in-bio__identity-image {
+			display: block;
+			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
+			max-width: unset;
+			object-fit: cover;
+			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
+		}
 	}
 
 	&__icons {
@@ -42,7 +59,6 @@
 	}
 
 	&__icon {
-		aspect-ratio: 1;
 		display: flex;
 		width: 2em;
 	}
@@ -54,10 +70,6 @@
 
 		&:where(:hover, :focus, :active) {
 			color: inherit;
-		}
-
-		svg {
-			aspect-ratio: 1;
 		}
 	}
 
