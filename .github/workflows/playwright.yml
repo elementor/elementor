@@ -129,6 +129,9 @@ jobs:
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
+      - name: Checkout source code
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        uses: actions/checkout@v4
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
         uses: ./.github/workflows/post-to-slack
