@@ -4,7 +4,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	const elementId = await editor.addElement( { widgetType: 'text-editor', elType: 'widget' } );
 

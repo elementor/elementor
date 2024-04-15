@@ -2,7 +2,6 @@
 namespace Elementor\Modules\ImageLoadingOptimization;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -35,6 +34,10 @@ class Module extends BaseModule {
 	 * Constructor.
 	 */
 	public function __construct() {
+		if ( ! static::is_optimized_image_loading_enabled() ) {
+			return;
+		}
+
 		parent::__construct();
 
 		// Stop wp core logic.
@@ -49,6 +52,18 @@ class Module extends BaseModule {
 
 		// Run optimization logic on content.
 		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_image' ] );
+	}
+
+	/**
+	 * Check whether the "Optimized Image Loading" settings is enabled.
+	 *
+	 * The 'optimized_image_loading' option can be enabled/disabled from the Elementor settings.
+	 *
+	 * @since 3.21.0
+	 * @access private
+	 */
+	private static function is_optimized_image_loading_enabled(): bool {
+		return '1' === get_option( 'elementor_optimized_image_loading', '1' );
 	}
 
 	/**

@@ -2,6 +2,8 @@ name: Playwright
 
 on:
   pull_request:
+  schedule:
+    - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
       inputs:
         reporter:
@@ -29,7 +31,6 @@ on:
             description: 'Cancel tests when one of them fails'
             default: false
 
-
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -38,45 +39,7 @@ concurrency:
 jobs:
   build-plugin:
     name: Build plugin
-    runs-on: ubuntu-latest
-    if: startsWith( github.repository, 'elementor/' )
-    outputs:
-      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Check if this is only a changelog PR
-        id: changelog_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          # PATTERNS are:
-          # Everything: **/*
-          # Everything in directories starting with a period: .*/**/*
-          # Not readme.txt: !readme.txt
-          # Not changelog.txt: !changelog.txt
-          PATTERNS: |
-            **/*
-            .*/**/*
-            !readme.txt
-            !changelog.txt
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - name: Install dependencies
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        run: npm ci
-      - name: Build
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        run: npx grunt build
-      - name: Save build to cache
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        uses: actions/cache/save@v4
-        with:
-          path: ./build/*
-          key: playwright-build-v4-${{ github.sha }}
-
+    uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
@@ -115,12 +78,11 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Restore build from cache
-        uses: actions/cache/restore@v4
-        id: restore-build
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          path: ./build/*
-          key: playwright-build-v4-${{ github.sha }}
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
       - name: Update wp-env.json file
         env:
           PHP_VERSION: '8.0'
@@ -129,7 +91,11 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          npm run test:setup:playwright
+      - name: Update wordpress to nightly build
+        if: ${{ github.event_name == 'schedule' }}
+        run: npx wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
+      - name: Setup test data
+        run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
           npx wp-env run cli wp core version
@@ -164,6 +130,28 @@ jobs:
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
+      - name: Checkout source code
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        uses: actions/checkout@v4
+      - name: Send slack message
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+          PAYLOAD: |
+            {
+              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
       - name: Check Playwright matrix status
         if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
         run: exit 1

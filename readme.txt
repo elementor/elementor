@@ -2,7 +2,7 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.0
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -249,6 +249,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.20.4 - 2024-04-10 =
+
+* Fix: Image prompt enhancement not functioning as expected in AI Images
 
 = 3.20.3 - 2024-03-26 =
 

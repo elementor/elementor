@@ -64,14 +64,23 @@ class Model extends BaseModel {
 			'ui_theme',
 			[
 				'label' => esc_html__( 'Editor Theme', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your operating system setting.', 'elementor' ),
-				'default' => 'auto',
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'auto' => esc_html__( 'Auto Detect', 'elementor' ),
-					'light' => esc_html__( 'Light', 'elementor' ),
-					'dark' => esc_html__( 'Dark', 'elementor' ),
+					'light' => [
+						'title' => esc_html__( 'Light', 'elementor' ),
+						'icon' => 'eicon-light-mode',
+					],
+					'dark' => [
+						'title' => esc_html__( 'Dark', 'elementor' ),
+						'icon' => 'eicon-dark-mode',
+					],
+					'auto' => [
+						'title' => esc_html__( 'Auto Detect', 'elementor' ),
+						'icon' => 'eicon-header',
+					],
 				],
+				'default' => 'auto',
+				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your operating system setting.', 'elementor' ),
 			]
 		);
 
