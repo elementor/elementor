@@ -22,7 +22,7 @@ class Core_Render extends Render_Base {
 
 		//  Identity Image
 		$identity_image_props_style = $settings['identity_image_style'] ?? 'profile';
-		$identity_image_value = $settings['identity_image'] ?? [];
+		$identity_image_value       = $settings['identity_image'] ?? [];
 
 		//  Bio Heading
 		$bio_heading_output    = '';
@@ -48,15 +48,15 @@ class Core_Render extends Render_Base {
 		 * Checks
 		 */
 
-		$has_ctas           = ! empty( $ctas_value );
-		$has_description    = ! empty( $bio_description_value );
-		$has_heading        = ! empty( $bio_heading_value );
-		$has_identity_image = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ));
-		$has_icons          = ! empty( $icons_value );
-		$has_title          = ! empty( $bio_title_value );
+		$has_bio_description = ! empty( $bio_description_value );
+		$has_bio_heading     = ! empty( $bio_heading_value );
+		$has_bio_title       = ! empty( $bio_title_value );
+		$has_ctas            = ! empty( $ctas_value );
+		$has_icons           = ! empty( $icons_value );
+		$has_identity_image  = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ));
 
 		// Render conditions
-		if ( ! $has_heading ) {
+		if ( ! $has_bio_heading ) {
 			return;
 		}
 		?>
@@ -73,28 +73,28 @@ class Core_Render extends Render_Base {
 						] );
 					} else {
 						$widget->add_render_attribute( 'identity_image', [
-							'alt' => '',
+							'alt'   => '',
 							'class' => 'e-link-in-bio__identity-image',
-							'src' => esc_url( $identity_image_value['url'] ),
+							'src'   => esc_url( $identity_image_value['url'] ),
 						]);
 						?>
 						<img <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?> />
 					<?php }; ?>
 				</figure>
 			<?php endif; ?>
-			<?php if ( $has_heading || $has_title || $has_description ) : ?>
+			<?php if ( $has_bio_heading || $has_bio_title || $has_bio_description ) : ?>
 				<div class="e-link-in-bio__content">
-					<?php if ( $has_heading ) {
+					<?php if ( $has_bio_heading ) {
 						$widget->add_render_attribute( 'heading', 'class', 'e-link-in-bio__heading' );
 						$bio_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_heading_props_tag ), $widget->get_render_attribute_string( 'heading' ), $bio_heading_value );
 						Utils::print_unescaped_internal_string( $bio_heading_output );
 					} ?>
-					<?php if ( $has_title ) {
+					<?php if ( $has_bio_title ) {
 						$widget->add_render_attribute( 'title', 'class', 'e-link-in-bio__title' );
 						$bio_title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_title_props_tag ), $widget->get_render_attribute_string( 'title' ), $bio_title_value );
 						Utils::print_unescaped_internal_string( $bio_title_output );
 					} ?>
-					<?php if ( $has_description ) {
+					<?php if ( $has_bio_description ) {
 						$widget->add_render_attribute( 'description', 'class', 'e-link-in-bio__description' );
 						$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $widget->get_render_attribute_string( 'description' ), $bio_description_value );
 						Utils::print_unescaped_internal_string( $bio_description_output );
@@ -139,10 +139,10 @@ class Core_Render extends Render_Base {
 
 						$widget->add_render_attribute( "icon-link-{$key}", [
 							'aria-label' => $icon['icon_platform'],
-							'class' => 'e-link-in-bio__icon-link',
-							'href' => esc_url( $formatted_link ),
-							'rel' => 'noopener noreferrer',
-							'target' => '_blank',
+							'class'      => 'e-link-in-bio__icon-link',
+							'href'       => esc_url( $formatted_link ),
+							'rel'        => 'noopener noreferrer',
+							'target'     => '_blank',
 						]);
 						?>
 						<div class="e-link-in-bio__icon">
@@ -194,7 +194,7 @@ class Core_Render extends Render_Base {
 
 						$widget->add_render_attribute( "cta-{$key}", [
 							'class' => 'e-link-in-bio__cta',
-							'href' => esc_url( $formatted_link ),
+							'href'  => esc_url( $formatted_link ),
 						]);
 
 						if ( 'File Download' === $cta['cta_link_type'] ) {
