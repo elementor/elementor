@@ -17,7 +17,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 
 		//  Bio Heading
 		$bio_heading_output = '';
-		$bio_heading_props_tag = $settings['bio_heading_tag'] ?? 'h1';
+		$bio_heading_props_tag = $settings['bio_heading_tag'] ?? 'h2';
 		$bio_heading_value = $settings['bio_heading'] ?? '';
 
 		//  Bio Title
@@ -30,32 +30,7 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 		$bio_description_value = $settings['bio_description'] ?? '';
 
 		// Icons
-		$icons_value = $settings['icons'] ?? [
-			[
-				'email' => 'test@test.com',
-				'link' => '#',
-				'number' => '',
-				'svg' => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-			[
-				'email' => 'test@test.com',
-				'link' => '#',
-				'number' => '',
-				'svg' => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-			[
-				'email' => 'test@test.com',
-				'link' => '#',
-				'number' => '',
-				'svg' => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-			[
-				'email' => 'test@test.com',
-				'link' => '#',
-				'number' => '',
-				'svg' => '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.6 8a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0Z" fill="currentColor"/></svg>',
-			],
-		];// TODO : remove when control exists
+		$icons_value = $settings['icon'] ?? [];
 
 		// CTAs
 		$ctas_value = $settings['ctas'] ?? [
@@ -150,14 +125,47 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 					<div class="e-link-in-bio__icons">
 						<?php
 						foreach ( $icons_value as $key => $icon ) {
-							$widget->add_render_attribute( 'icon-link', [
+							// Bail if no icon
+							if ( empty( $icon['icon_icon'] ) ) {
+								return;
+							}
+
+							// Check for link format based on platform type
+							$formatted_link = $icon['icon_url']['url'] ?? '';
+
+							// Ensure we clear the default link value if the matching type value is empty
+							switch ($icon['icon_platform']) {
+								case 'Email':
+									$formatted_link = ! empty( $icon['icon_mail'] ) ? "mailto:{$icon['icon_mail']}" : '';
+									break;
+								case 'Telephone':
+									$formatted_link = ! empty( $icon['icon_number'] ) ? "tel:{$icon['icon_number']}" : '';
+									break;
+								case 'Telegram':
+									$formatted_link = ! empty( $icon['icon_number'] ) ? "https://telegram.me/{$icon['icon_number']}" : '';
+									break;
+								case 'Waze':
+									$formatted_link = ! empty( $icon['icon_number'] ) ? "https://www.waze.com/ul?ll={$icon['icon_number']}&navigate=yes" : '';
+									break;
+								case 'WhatsApp':
+									$formatted_link = ! empty( $icon['icon_number'] ) ? "https://wa.me/{$icon['icon_number']}" : '';
+									break;
+							}
+
+							// Bail if no link
+							if ( empty( $formatted_link ) ) {
+								return;
+							}
+
+							$widget->add_render_attribute( "icon-link-{$key}", [
+								'aria-label' => $icon['icon_platform'],
 								'class' => 'e-link-in-bio__icon-link',
-								'href' => $icon['link'],
+								'href' => esc_url( $formatted_link ),
 							]);
 							?>
 							<div class="e-link-in-bio__icon">
-								<a <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?>>
-									<?php Utils::print_unescaped_internal_string( $icon['svg'] ); ?>
+								<a <?php echo $widget->get_render_attribute_string( "icon-link-{$key}" ); ?>>
+									<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 								</a>
 							</div>
 						<?php } ?>
@@ -167,12 +175,12 @@ class Core_Render_Strategy extends Base_Render_Strategy {
 					<div class="e-link-in-bio__ctas">
 						<?php
 						foreach ( $ctas_value as $key => $cta ) {
-							$widget->add_render_attribute( 'cta', [
+							$widget->add_render_attribute( "cta-{$key}", [
 								'class' => 'e-link-in-bio__cta',
 								'href' => $cta['link'],
 							]);
 							?>
-							<a <?php echo $widget->get_render_attribute_string( 'cta' ); ?>>
+							<a <?php echo $widget->get_render_attribute_string( "cta-{$key}" ); ?>>
 								<span class="e-link-in-bio__cta-text">
 									<?php echo $cta['text']; ?>
 								</span>
