@@ -947,7 +947,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->start_controls_section(
-			'advanced_layout',
+			'advanced_custom_layout',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab'   => 'advanced-tab-custom',
@@ -955,24 +955,23 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_full_width',
+			'advanced_custom_layout_full_width_custom_flag',
 			[
 				'label'        => esc_html__( 'Full Width', 'elementor' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default'      => 'no',
+				'default'      => '',
 			]
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
-			'advanced_layout_layout_width',
+			'advanced_custom_layout_width',
 			[
 				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
 				'type'       => \Elementor\Controls_Manager::SLIDER,
@@ -988,6 +987,9 @@ class Link_In_Bio extends Widget_Base {
 					'size' => 360,
 					'unit' => 'px',
 				],
+				'condition'  => [
+					'advanced_custom_layout_full_width_custom_flag' => '',
+				],
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
 				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -997,7 +999,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_content_width',
+			'advanced_custom_layout_content_width',
 			[
 				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
 				'type'       => \Elementor\Controls_Manager::SLIDER,
@@ -1022,7 +1024,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_center_vertical',
+			'advanced_custom_layout_center_vertical',
 			[
 				'label'        => esc_html__( 'Center Vertical', 'elementor' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
@@ -1030,6 +1032,9 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'yes',
+				'condition'  => [
+					'advanced_custom_layout_full_width_custom_flag' => '',
+				],
 			],
 		// TODO: add class selector when markup is done
 		// 'selectors' => [
@@ -1039,7 +1044,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_full_screen_height',
+			'advanced_custom_layout_full_screen_height',
 			[
 				'label'        => esc_html__( 'Full Screen Height', 'elementor' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
@@ -1047,12 +1052,45 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
+				'condition'  => [
+					'advanced_custom_layout_full_width_custom_flag' => 'yes',
+				],
 			],
 		// TODO: add class selector when markup is done
 		// 'selectors' => [
 		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
 		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
 		// ],
+		);
+
+		$this->add_control(
+			'advanced_custom_layout_full_screen_height_controls',
+			[
+				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::SELECT2,
+				'label_block' => true,
+				'multiple' => true,
+				'options' => [
+					'mobile'  => esc_html__( 'Mobile', 'elementor' ),
+					'tablet' => esc_html__( 'Tablet', 'elementor' ),
+					'desktop' => esc_html__( 'Desktop', 'elementor' ),
+					// TODO: allow choosing between 7 breakpoints if the breakpoints experiment is on
+				],
+				'default' => [ 'mobile', 'tablet', 'desktop' ],
+				'condition'  => [
+					'advanced_custom_layout_full_screen_height' => 'yes',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_custom_custom_controls',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'tab'   => 'advanced-tab-custom',
+			]
 		);
 
 		$this->end_controls_section();
