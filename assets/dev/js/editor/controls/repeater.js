@@ -99,20 +99,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	maybeHideAddMoreButton() {
+	maybeHideAddMoreButtonAndCopyButton() {
 		const maxItems = this.model.get( 'max_items' );
 		if ( ! maxItems || ! Number.isInteger( maxItems ) ) {
 			return;
 		}
-		console.log(this.ui.addMoreButton);
-		console.log(maxItems);
-		console.log(this.collection.length);
-		if ( maxItems <= this.collection.length ) {
-			console.log('hide');
-			this.ui.addMoreButton.addClass( 'elementor-hidden' );
-		} else {
-			this.ui.addMoreButton.removeClass( 'elementor-hidden' );
-		}
+
+		this.$el.toggleClass( 'elementor-repeater-has-maximum-rows', maxItems <= this.collection.length );
 	},
 
 	toggleMinRowsClass() {
@@ -160,7 +153,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 
 		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButton();
+		this.maybeHideAddMoreButtonAndCopyButton();
 	},
 
 	onSortStart( event, ui ) {
@@ -269,7 +262,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.editRow( newChild );
 
 		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButton();
+		this.maybeHideAddMoreButtonAndCopyButton();
 	},
 
 	onChildviewClickRemove( childView ) {
@@ -287,7 +280,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateChildIndexes();
 
 		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButton();
+		this.maybeHideAddMoreButtonAndCopyButton();
 	},
 
 	onChildviewClickDuplicate( childView ) {
@@ -298,7 +291,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		} );
 
 		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButton();
+		this.maybeHideAddMoreButtonAndCopyButton();
 	},
 
 	onChildviewClickEdit( childView ) {
