@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.23.0
  */
 class Link_In_Bio extends Widget_Base {
+	const TAB_ADVANCED = 'advanced-tab-custom';
 
 	public function get_name(): string {
 		return 'link-in-bio';
@@ -948,7 +949,7 @@ class Link_In_Bio extends Widget_Base {
 
 	private function add_advanced_tab() {
 		Controls_Manager::add_tab(
-			'advanced-tab-custom',
+			self::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
@@ -956,7 +957,7 @@ class Link_In_Bio extends Widget_Base {
 			'advanced_custom_layout',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab'   => 'advanced-tab-custom',
+				'tab'   => self::TAB_ADVANCED,
 			]
 		);
 
@@ -1095,7 +1096,7 @@ class Link_In_Bio extends Widget_Base {
 			'advanced_custom_custom_controls',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab'   => 'advanced-tab-custom',
+				'tab'   => self::TAB_ADVANCED,
 			]
 		);
 
@@ -1124,21 +1125,12 @@ class Link_In_Bio extends Widget_Base {
 				'style_transfer' => false,
 			]
 		);
-
-		$this->add_control(
-			'advanced_custom_custom_styles',
-			[
-				'label'       => esc_html__( 'Add your own custom CSS here', 'elementor' ),
-				'description' => esc_html__( 'Use custom CSS to style your content or add the
-				"selector" prefix to target specific elements.', 'elementor' ),
-				'type'        => \Elementor\Controls_Manager::CODE,
-				'language'    => 'css',
-				'rows'        => 20,
-			]
-		);
-
 		
 		$this->end_controls_section();
+
+		// TODO: fix these two controls going into the wrong tabs
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, $tab = self::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, $tab = self::TAB_ADVANCED );
 	}
 
 	private function add_tag_control( string $name ): void {
