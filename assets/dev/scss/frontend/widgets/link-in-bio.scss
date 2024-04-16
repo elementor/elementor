@@ -46,7 +46,7 @@
 		img.e-link-in-bio__identity-image {
 			display: block;
 			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
-			max-width: unset;
+			max-width: initial;
 			object-fit: cover;
 			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
 		}
