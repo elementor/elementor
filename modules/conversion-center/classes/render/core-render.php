@@ -108,7 +108,8 @@ class Core_Render extends Render_Base {
 				if ( empty( $icon['icon_icon'] ) ) {
 					break;
 				}
-				[ $formatted_link, $icon ] = $this->get_formatted_link_for_icon( $icon );
+
+				$formatted_link = $this->get_formatted_link_for_icon( $icon );
 
 				// Bail if no link
 				if ( empty( $formatted_link ) ) {
