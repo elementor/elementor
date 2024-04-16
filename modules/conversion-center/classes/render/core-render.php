@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
+use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
 /**
