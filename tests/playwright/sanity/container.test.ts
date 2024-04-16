@@ -962,6 +962,27 @@ test.describe( 'Container tests @container', () => {
 			container: 'inactive',
 		} );
 	} );
+
+	test.only( 'Test child containers "Full Width" default content width if parent container is boxed', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			pageView = page.locator( 'body' ),
+			parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Act.
+		const container1 = await editor.addElement( { elType: 'container' }, parentContainer );
+		const container2 = await editor.addElement( { elType: 'container' }, container1 );
+		const container3 = await editor.addElement( { elType: 'container' }, container2 );
+		const container4 = await editor.addElement( { elType: 'container' }, container3 );
+		await editor.addElement( { elType: 'container' }, container4 );
+
+		// Assert.
+		expect.soft( await pageView.screenshot( {
+			type: 'jpeg',
+			quality: 90,
+		} ) ).toMatchSnapshot( 'child-container-full-width.jpeg' );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin: WpAdminPage ) {

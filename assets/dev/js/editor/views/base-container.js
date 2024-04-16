@@ -74,6 +74,33 @@ module.exports = Marionette.CompositeView.extend( {
 			options.onBeforeAdd();
 		}
 
+		const parent = this;
+
+		if ( parent.getNestingLevel ) {
+			let ancestorContainer = parent;
+			const nestingLevel = parent.getNestingLevel();
+
+			if ( nestingLevel !== 0 ) {
+				let currentElement = parent._parent;
+
+				while ( currentElement._parent ) {
+
+					if ( currentElement.getNestingLevel() === 0 ) {
+						ancestorContainer = currentElement;
+						break;
+					}
+
+					currentElement = currentElement._parent;
+				}
+			}
+
+			const isBoxed = ancestorContainer.isBoxedWidth();
+
+			newItem.settings = {
+				content_width: isBoxed ? 'full' : 'boxed'
+			};
+		}
+
 		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
