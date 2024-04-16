@@ -19,16 +19,13 @@ Container.propTypes = {
 
 const ImagesDisplay = ( {
 	images,
-	aspectRatio,
+	aspectRatio = '1:1',
 	onUseImage,
 	onEditImage,
 	transparentContainer = false,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
-	if ( ! aspectRatio ) {
-		aspectRatio = '1:1';
-	}
 	const { width, height } = useImageSize( aspectRatio );
 
 	if ( zoomIndex > -1 ) {
