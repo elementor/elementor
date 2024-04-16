@@ -453,7 +453,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
-		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
+		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '10px' );
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
 			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
@@ -973,11 +973,13 @@ test.describe( 'Container tests @container', () => {
 		// Act.
 		const container1 = await editor.addElement( { elType: 'container' }, parentContainer );
 		const container2 = await editor.addElement( { elType: 'container' }, container1 );
-		const container3 = await editor.addElement( { elType: 'container' }, container2 );
-		const container4 = await editor.addElement( { elType: 'container' }, container3 );
-		await editor.addElement( { elType: 'container' }, container4 );
+		await editor.addElement( { elType: 'container' }, container2 );
 
 		// Assert.
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentContainer }` ) ).toHaveClass( /e-con-boxed/ );
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ container1 }` ) ).toHaveClass( /e-con-full/ );
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ container2 }` ) ).toHaveClass( /e-con-full/ );
+
 		expect.soft( await pageView.screenshot( {
 			type: 'jpeg',
 			quality: 90,
