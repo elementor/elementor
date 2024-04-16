@@ -1,18 +1,16 @@
 .elementor-widget-link-in-bio {
 	--align-self: center;
-	--e-link-in-bio-gutter: 2em;
 
-	.elementor-widget-container {
-		border: 1px solid blue;
-		margin-inline: auto;
-		max-width: 100%;
-		padding: var(--e-link-in-bio-gutter);
-		padding-block-start: 0;
-		width: 100%;
-	}
 }
 
 .e-link-in-bio {
+	--e-link-in-bio-gutter: 40px;
+
+	margin-inline: auto;
+	max-width: 100%;
+	outline: 1px solid blue;
+	padding: var(--e-link-in-bio-gutter);
+	width: 100%;
 
 	&__content-container {
 		display: flex;
@@ -26,28 +24,42 @@
 		}
 	}
 
-	&__identity--profile {
-		padding-block-start: var(--e-link-in-bio-gutter);
+	&__identity {
 
-		img.e-link-in-bio__identity-image {
-			aspect-ratio: 1;
-			border: 1px solid blue;
-			border-radius: 50%;
+		.e-link-in-bio__identity-image {
+			display: flex;
+		}
+
+		.e-link-in-bio__identity-image-el {
 			display: block;
+			flex: 1 1 100%;
 			object-fit: cover;
+		}
+
+		.e-link-in-bio__identity-image-profile {
+			aspect-ratio: 1;
+			border-color: blue;
+			border-radius: 50%;
+			border-style: none;
+			border-width: 1px;
+			overflow: hidden;
 			margin-inline: auto;
 			max-width: 100%;
-			width: 150px;
+			width: 115px;
+
+			.e-link-in-bio__identity-image-el {
+				aspect-ratio: inherit;
+			}
 		}
-	}
 
-	&__identity--cover {
-
-		img.e-link-in-bio__identity-image {
-			display: block;
+		.e-link-in-bio__identity-image-cover {
+			border-color: blue;
+			border-style: none;
+			border-bottom-width: 1px;
+			margin-block-start: calc(var(--e-link-in-bio-gutter) * -1);
 			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
+			max-height: 170px;
 			max-width: unset;
-			object-fit: cover;
 			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
 		}
 	}
@@ -74,20 +86,21 @@
 	}
 
 	&__ctas {
-		display: flex;
-		flex-direction: column;
-		gap: 1em;
+		display: grid;
+		grid-template-columns: 100%;
+		grid-template-rows: auto;
+		gap: 22px;
 	}
 
 	&__cta {
-		border-radius: 1em;
+		border-radius: 20px;
 		background: blue;
 		color: white;
 		display: block;
-		padding: 1em;
+		padding: 20px;
 
 		&:where(:hover, :focus, :active) {
-			color: white;
+			color: inherit;
 		}
 	}
 }
