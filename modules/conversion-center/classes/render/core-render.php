@@ -19,11 +19,11 @@ class Core_Render extends Render_Base {
 		<div class="e-link-in-bio">
 			<div class="e-link-in-bio__content">
 
-				<?php $this->add_identity_image( $widget ); ?>
+				<?php $this->render_identity_image( $widget ); ?>
 
-				<?php $this->add_bio( $widget ); ?>
+				<?php $this->render_bio( $widget ); ?>
 
-				<?php $this->add_icons( $widget ); ?>
+				<?php $this->render_icons( $widget ); ?>
 
 				<?php $this->render_ctas( $widget ); ?>
 
@@ -90,7 +90,7 @@ class Core_Render extends Render_Base {
 		<?php
 	}
 
-	private function add_icons( Link_In_Bio $widget ): void {
+	private function render_icons( Link_In_Bio $widget ): void {
 		$settings = $widget->get_settings_for_display();
 
 		$icons_props_size = $settings['icons_size'] ?? 'small';
@@ -138,7 +138,7 @@ class Core_Render extends Render_Base {
 		<?php
 	}
 
-	private function add_bio( Link_In_Bio $widget ): void {
+	private function render_bio( Link_In_Bio $widget ): void {
 		$settings = $widget->get_settings_for_display();
 
 		$bio_heading_props_tag = $settings['bio_heading_tag'] ?? 'h2';
@@ -176,7 +176,7 @@ class Core_Render extends Render_Base {
 		}
 	}
 
-	private function add_identity_image( Link_In_Bio $widget ): void {
+	private function render_identity_image( Link_In_Bio $widget ): void {
 		$settings                                = $widget->get_settings_for_display();
 		$identity_image_props_shape              = $settings['identity_image_shape'] ?? 'circle';
 		$identity_image_props_style              = $settings['identity_image_style'] ?? 'profile';
