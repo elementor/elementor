@@ -114,7 +114,7 @@ class Core_Render extends Render_Base {
 						$formatted_link = $icon['icon_url']['url'] ?? '';
 
 						// Ensure we clear the default link value if the matching type value is empty
-						switch ($icon['icon_platform']) {
+						switch ( $icon['icon_platform'] ) {
 							case 'Email':
 								$formatted_link = ! empty( $icon['icon_mail'] ) ? "mailto:{$icon['icon_mail']}" : '';
 								break;
@@ -166,7 +166,7 @@ class Core_Render extends Render_Base {
 						$formatted_link = $cta['cta_link_url']['url'] ?? '';
 
 						// Ensure we clear the default link value if the matching type value is empty
-						switch ($cta['cta_link_type']) {
+						switch ( $cta['cta_link_type'] ) {
 							case 'Email':
 								$formatted_link = ! empty( $cta['cta_link_mail'] ) ? "mailto:{$cta['cta_link_mail']}" : '';
 								break;
@@ -205,7 +205,7 @@ class Core_Render extends Render_Base {
 						?>
 						<a <?php echo $widget->get_render_attribute_string( "cta-{$key}" ); ?>>
 							<span class="e-link-in-bio__cta-text">
-								<?php echo $cta['cta_link_text']; ?>
+								<?php echo esc_html( $cta['cta_link_text'] ); ?>
 							</span>
 						</a>
 					<?php } ?>
