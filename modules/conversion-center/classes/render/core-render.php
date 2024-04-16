@@ -147,7 +147,7 @@ class Core_Render extends Render_Base {
 						?>
 						<div class="e-link-in-bio__icon">
 							<a <?php echo esc_attr( $widget->get_render_attribute_string( "icon-link-{$key}" ) ); ?>>
-								<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
+								<?php Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 							</a>
 						</div>
 					<?php } ?>
