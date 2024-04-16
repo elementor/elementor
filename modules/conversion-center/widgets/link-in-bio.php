@@ -748,6 +748,21 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'cta_links_background_color',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type'  => Controls_Manager::COLOR,
+				'condition'  => [
+					'cta_links_type' => 'button',
+				],
+				// TODO: add class selector when markup is done
+				// 'selectors' => [
+				// 	'{{WRAPPER}} .your-class' => 'color: {{VALUE}}',
+				// ],
+			]
+		);
+
 		$this->add_group_control(
 			\Elementor\Group_Control_Typography::get_type(),
 			[
@@ -766,6 +781,9 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
+				'condition'  => [
+					'cta_links_type' => 'button',
+				],
 			]
 			// TODO: add class selector when markup is done
 			// 'selectors' => [
@@ -789,7 +807,6 @@ class Link_In_Bio extends Widget_Base {
 				],
 				'condition'  => [
 					'cta_links_show_border' => 'yes',
-
 				],
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
@@ -826,6 +843,9 @@ class Link_In_Bio extends Widget_Base {
 					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
 				],
+				'condition'  => [
+					'cta_links_type' => 'button',
+				],
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
 				// 	'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
@@ -853,6 +873,9 @@ class Link_In_Bio extends Widget_Base {
 					'left'     => 0,
 					'unit'     => 'px',
 					'isLinked' => false,
+				],
+				'condition'  => [
+					'cta_links_type' => 'button',
 				],
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
@@ -962,7 +985,7 @@ class Link_In_Bio extends Widget_Base {
 				'range'      => [
 					'px' => [
 						'min'  => 0,
-						'max'  => 1440, // TODO: check range
+						'max'  => 500,
 						'step' => 1,
 					],
 				],
@@ -990,7 +1013,7 @@ class Link_In_Bio extends Widget_Base {
 				'range'      => [
 					'px' => [
 						'min'  => 0,
-						'max'  => 1440, // TODO: check range
+						'max'  => 400,
 						'step' => 1,
 					],
 				],
