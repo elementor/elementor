@@ -1783,9 +1783,10 @@ abstract class Document extends Controls_Stack {
 		do_action( 'qm/start', "e_element_cache_{$main_id}" );
 
 		$cached_data = get_transient( "e_element_cache_{$main_id}" );
+		//$cached_data = false;
 
 		if ( false === $cached_data ) {
-			add_filter( 'elementor/element/should_render_dynamic', '__return_true' );
+			add_filter( 'elementor/element/should_render_shortcode', '__return_true' );
 
 			global $wp_scripts, $wp_styles;
 			$scripts_ignored = $wp_scripts->queue;
@@ -1823,7 +1824,7 @@ abstract class Document extends Controls_Stack {
 				set_transient( "e_element_cache_{$main_id}", $cached_data, 30 * MINUTE_IN_SECONDS );
 			}
 
-			remove_filter( 'elementor/element/should_render_dynamic', '__return_true' );
+			remove_filter( 'elementor/element/should_render_shortcode', '__return_true' );
 		} else {
 			if ( ! empty( $cached_data['scripts'] ) ) {
 				foreach ( $cached_data['scripts'] as $script_handle ) {

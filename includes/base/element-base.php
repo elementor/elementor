@@ -285,6 +285,10 @@ abstract class Element_Base extends Controls_Stack {
 		return true;
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get child elements.
 	 *
@@ -430,14 +434,9 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$element_type = $this->get_type();
 
-		$should_render_dynamic = apply_filters( 'elementor/element/should_render_dynamic', false );
-		if ( $should_render_dynamic ) {
-			$raw_data = $this->get_raw_data();
-			if ( ! empty( $raw_data['settings']['__dynamic__'] ) ) {
-				echo '[elementor-element data="' . base64_encode( wp_json_encode( $raw_data ) ) . '"]';
-
-				return;
-			}
+		if ( $this->should_render_shortcode() ) {
+			echo '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			return;
 		}
 
 		/**
@@ -531,6 +530,26 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( 'elementor/frontend/after_render', $this );
+	}
+
+	protected function should_render_shortcode() {
+		$should_render_shortcode = apply_filters( 'elementor/element/should_render_shortcode', false );
+
+		if ( ! $should_render_shortcode ) {
+			return false;
+		}
+
+		if ( $this->is_dynamic_content() ) {
+			return true;
+		}
+
+		$raw_data = $this->get_raw_data();
+
+		if ( empty( $raw_data['settings']['__dynamic__'] ) && empty( $raw_data['settings']['e_display_conditions'] ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
