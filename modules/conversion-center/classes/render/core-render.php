@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
+use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
 /**
@@ -13,7 +14,7 @@ use Elementor\Utils;
  */
 class Core_Render extends Render_Base {
 
-	public function render( \Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio $widget ): void {
+	public function render( Link_In_Bio $widget ): void {
 		$settings = $widget->get_settings_for_display();
 
 		/**

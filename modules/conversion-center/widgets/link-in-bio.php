@@ -413,7 +413,7 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label'     => esc_html__( 'Image Shape', 'elementor' ),
 				'type'      => Controls_Manager::SELECT,
-				'default'   => 'circle',
+				'default'   => '50%',
 				'options'   => [
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
