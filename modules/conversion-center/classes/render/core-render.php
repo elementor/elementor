@@ -22,7 +22,7 @@ class Core_Render extends Render_Base {
 
 		//  Identity Image
 		$identity_image_props_style = $settings['identity_image_style'] ?? 'profile';
-		$identity_image_value       = $settings['identity_image'] ?? [];
+		$identity_image_value = $settings['identity_image'] ?? [];
 
 		//  Bio Heading
 		$bio_heading_output    = '';
