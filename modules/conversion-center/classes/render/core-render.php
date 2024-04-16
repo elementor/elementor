@@ -17,7 +17,7 @@ class Core_Render extends Render_Base {
 	public function render( Link_In_Bio $widget ): void {
 		?>
 		<div class="e-link-in-bio">
-			<div class="e-link-in-bio__content-container">
+			<div class="e-link-in-bio__content">
 
 				<?php $this->add_identity_image( $widget ); ?>
 
@@ -155,7 +155,7 @@ class Core_Render extends Render_Base {
 
 		if ( $has_bio_title || $has_bio_description || $has_bio_heading ) {
 			?>
-			<div class="e-link-in-bio__content">
+			<div class="e-link-in-bio__bio">
 				<?php if ( $has_bio_heading ) {
 					$widget->add_render_attribute( 'heading', 'class', 'e-link-in-bio__heading' );
 					$bio_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_heading_props_tag ), $widget->get_render_attribute_string( 'heading' ), $bio_heading_value );
