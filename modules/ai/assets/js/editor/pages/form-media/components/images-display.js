@@ -26,6 +26,9 @@ const ImagesDisplay = ( {
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
+	if ( ! aspectRatio ) {
+		aspectRatio = '1:1';
+	}
 	const { width, height } = useImageSize( aspectRatio );
 
 	if ( zoomIndex > -1 ) {
