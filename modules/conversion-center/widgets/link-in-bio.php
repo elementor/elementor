@@ -79,14 +79,14 @@ class Link_In_Bio extends Widget_Base {
 			'cta_section',
 			[
 				'label' => esc_html__( 'CTA Links', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
 			'cta_section_alert',
 			[
-				'type'       => \Elementor\Controls_Manager::ALERT,
+				'type'       => Controls_Manager::ALERT,
 				'alert_type' => 'info',
 				'content'    => wp_kses_post(
 					__( 'Add up to <b>4</b> CTA links', 'elementor' )
@@ -97,12 +97,12 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'cta_link',
 			[
-				'type'          => \Elementor\Controls_Manager::REPEATER,
+				'type'          => Controls_Manager::REPEATER,
 				'fields'        => [
 					[
 						'name'        => 'cta_link_text',
 						'label'       => esc_html__( 'Text', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::TEXT,
+						'type'        => Controls_Manager::TEXT,
 						'dynamic'     => [
 							'active' => true,
 						],
@@ -112,8 +112,8 @@ class Link_In_Bio extends Widget_Base {
 					],
 					[
 						'name'    => 'cta_link_type',
-						'label'   => esc_html__( 'Platform', 'elementor' ),
-						'type'    => \Elementor\Controls_Manager::SELECT,
+						'label'   => esc_html__( 'Link Type', 'elementor' ),
+						'type'    => Controls_Manager::SELECT,
 						'groups'  => [
 
 							[
@@ -139,7 +139,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'        => 'cta_link_file',
 						'label'       => esc_html__( 'Choose File', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::MEDIA,
+						'type'        => Controls_Manager::MEDIA,
 						'label_block' => true,
 						'condition'   => [
 							'cta_link_type' => [
@@ -150,7 +150,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'         => 'cta_link_url',
 						'label'        => esc_html__( 'Link', 'elementor' ),
-						'type'         => \Elementor\Controls_Manager::URL,
+						'type'         => Controls_Manager::URL,
 						'options'      => false,
 						'dynamic'      => [
 							'active' => true,
@@ -168,7 +168,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'        => 'cta_link_number',
 						'label'       => esc_html__( 'Number', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::TEXT,
+						'type'        => Controls_Manager::TEXT,
 						'dynamic'     => [
 							'active' => true,
 						],
@@ -185,7 +185,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'        => 'cta_link_mail',
 						'label'       => esc_html__( 'Mail', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::TEXT,
+						'type'        => Controls_Manager::TEXT,
 						'dynamic'     => [
 							'active' => true,
 						],
@@ -198,12 +198,11 @@ class Link_In_Bio extends Widget_Base {
 						'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 					],
 				],
-				'title_field'   => "{{{ cta_link_text }}}",
+				'title_field'   => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add CTA Link', 'elementor' ),
 			]
 		);
-
 
 		$this->end_controls_section();
 	}
@@ -213,14 +212,14 @@ class Link_In_Bio extends Widget_Base {
 			'icons_section',
 			[
 				'label' => esc_html__( 'Icons', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
 			'custom_panel_alert',
 			[
-				'type'       => \Elementor\Controls_Manager::ALERT,
+				'type'       => Controls_Manager::ALERT,
 				'alert_type' => 'info',
 				'content'    => wp_kses_post(
 					__( 'Add up to <b>5</b> icons', 'elementor' )
@@ -231,13 +230,13 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
-				'type'          => \Elementor\Controls_Manager::REPEATER,
 				'max_items'    => 5,
+				'type'          => Controls_Manager::REPEATER,
 				'fields'        => [
 					[
 						'name'    => 'icon_platform',
 						'label'   => esc_html__( 'Platform', 'elementor' ),
-						'type'    => \Elementor\Controls_Manager::SELECT,
+						'type'    => Controls_Manager::SELECT,
 						'groups'  => [
 
 							[
@@ -279,7 +278,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'        => 'icon_icon',
 						'label'       => esc_html__( 'Content', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::ICONS,
+						'type'        => Controls_Manager::ICONS,
 						'default'     => [
 							'url' => \Elementor\Utils::get_placeholder_image_src(),
 						],
@@ -288,7 +287,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'         => 'icon_url',
 						'label'        => esc_html__( 'Link', 'elementor' ),
-						'type'         => \Elementor\Controls_Manager::URL,
+						'type'         => Controls_Manager::URL,
 						'options'      => false,
 						'dynamic'      => [
 							'active' => true,
@@ -321,7 +320,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'        => 'icon_number',
 						'label'       => esc_html__( 'Number', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::TEXT,
+						'type'        => Controls_Manager::TEXT,
 						'dynamic'     => [
 							'active' => true,
 						],
@@ -338,7 +337,7 @@ class Link_In_Bio extends Widget_Base {
 					[
 						'name'        => 'icon_mail',
 						'label'       => esc_html__( 'Mail', 'elementor' ),
-						'type'        => \Elementor\Controls_Manager::TEXT,
+						'type'        => Controls_Manager::TEXT,
 						'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 						'dynamic'     => [
 							'active' => true,
@@ -367,7 +366,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_section_style',
 			[
 				'label' => esc_html__( 'Identity', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -375,7 +374,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_size',
 			[
 				'label'          => esc_html__( 'Image Size', 'elementor' ),
-				'type'           => \Elementor\Controls_Manager::SLIDER,
+				'type'           => Controls_Manager::SLIDER,
 				'default'        => [
 					'size' => 30,
 					'unit' => '%',
@@ -412,8 +411,8 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_shape',
 			[
 				'label'     => esc_html__( 'Image Shape', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::SELECT,
-				'default'   => 'circle',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '50%',
 				'options'   => [
 					'50%' => esc_html__( 'Circle', 'elementor' ),
 					'0'   => esc_html__( 'Square', 'elementor' ),
@@ -432,27 +431,27 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_show_border',
 			[
 				'label'        => esc_html__( 'Border', 'elementor' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
 			]
-		// TODO: uncomment and adjust attributes if necessary when content controls are available
-		// 'condition' => [
-		// 	'image_style' => 'profile',
-		// ],
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: uncomment and adjust attributes if necessary when content controls are available
+			// 'condition' => [
+			// 	'image_style' => 'profile',
+			// ],
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
 			'identity_image_border_width',
 			[
 				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
 					'px' => [
@@ -478,7 +477,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_border_color',
 			[
 				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'condition' => [
 					'identity_image_show_border' => 'yes',
 				],
@@ -497,7 +496,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_height',
 			[
 				'label'      => esc_html__( 'Image Height', 'elementor' ),
-				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range'      => [
 					'px' => [
@@ -529,28 +528,28 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_show_bottom_border',
 			[
 				'label'        => esc_html__( 'Bottom Border', 'elementor' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
 			]
-		// TODO: uncomment and adjust attributes if necessary when content controls are available
-		// 'condition' => [
-		// 	'image_style' => 'cover',
-		// ],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: uncomment and adjust attributes if necessary when content controls are available
+			// 'condition' => [
+			// 	'image_style' => 'cover',
+			// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
 			'identity_image_border_bottom_width',
 			[
 				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
 					'px' => [
@@ -577,7 +576,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_bottom_border_color',
 			[
 				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'condition' => [
 					// TODO: uncomment and adjust attributes if necessary when content controls are available
 					// 	'image_style' => 'cover',
@@ -597,7 +596,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_section_style',
 			[
 				'label' => esc_html__( 'Bio', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -605,7 +604,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_heading_heading',
 			[
 				'label'     => esc_html__( 'Heading', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::HEADING,
+				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -614,7 +613,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_heading_text_color',
 			[
 				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio__heading' => 'color: {{VALUE}}',
 				],
@@ -633,7 +632,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_title_heading',
 			[
 				'label'     => esc_html__( 'Title or Tagline', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::HEADING,
+				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -642,7 +641,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_title_text_color',
 			[
 				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio__title' => 'color: {{VALUE}}',
 				],
@@ -661,7 +660,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_description_heading',
 			[
 				'label'     => esc_html__( 'Description', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::HEADING,
+				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -670,7 +669,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_description_text_color',
 			[
 				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio__description' => 'color: {{VALUE}}',
 				],
@@ -687,12 +686,11 @@ class Link_In_Bio extends Widget_Base {
 
 		$this->end_controls_section();
 
-
 		$this->start_controls_section(
 			'icons_section_style',
 			[
 				'label' => esc_html__( 'Icons', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -700,7 +698,7 @@ class Link_In_Bio extends Widget_Base {
 			'icons_color',
 			[
 				'label'     => esc_html__( 'Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio__icon' => 'color: {{VALUE}}',
 				],
@@ -711,7 +709,7 @@ class Link_In_Bio extends Widget_Base {
 			'icons_size',
 			[
 				'label'   => esc_html__( 'Size', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::SELECT,
+				'type'    => Controls_Manager::SELECT,
 				'default' => 'small',
 				'options' => [
 					'small'  => esc_html__( 'Small', 'elementor' ),
@@ -731,7 +729,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_links_section_style',
 			[
 				'label' => esc_html__( 'CTA Links', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -739,7 +737,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_links_type',
 			[
 				'label'   => esc_html__( 'Type', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::SELECT,
+				'type'    => Controls_Manager::SELECT,
 				'default' => 'button',
 				'options' => [
 					'button' => esc_html__( 'Button', 'elementor' ),
@@ -756,7 +754,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_links_text_color',
 			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type'  => \Elementor\Controls_Manager::COLOR,
+				'type'  => Controls_Manager::COLOR,
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
 				// 	'{{WRAPPER}} .your-class' => 'color: {{VALUE}}',
@@ -777,24 +775,24 @@ class Link_In_Bio extends Widget_Base {
 			'cta_links_show_border',
 			[
 				'label'        => esc_html__( 'Border', 'elementor' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
 			]
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
 			'cta_links_border_width',
 			[
 				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
 					'px' => [
@@ -819,7 +817,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_links_border_color',
 			[
 				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::COLOR,
+				'type'      => Controls_Manager::COLOR,
 				'condition' => [
 					'cta_links_show_border' => 'yes',
 				],
@@ -831,12 +829,11 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'cta_links_corners',
 			[
 				'label'   => esc_html__( 'Corners', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::SELECT,
+				'type'    => Controls_Manager::SELECT,
 				'default' => 'round',
 				'options' => [
 					'round'   => esc_html__( 'Round', 'elementor' ),
@@ -853,7 +850,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'hr',
 			[
-				'type' => \Elementor\Controls_Manager::DIVIDER,
+				'type' => Controls_Manager::DIVIDER,
 			]
 		);
 
@@ -861,7 +858,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_links_padding',
 			[
 				'label'      => esc_html__( 'Padding', 'elementor' ),
-				'type'       => \Elementor\Controls_Manager::DIMENSIONS,
+				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default'    => [
 					'top'      => 2,
@@ -884,16 +881,15 @@ class Link_In_Bio extends Widget_Base {
 			'background_border_section_style',
 			[
 				'label' => esc_html__( 'Background and Border', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_STYLE,
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
-
 
 		$this->add_control(
 			'background_border_background',
 			[
 				'label'     => esc_html__( 'Background', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::HEADING,
+				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -917,7 +913,7 @@ class Link_In_Bio extends Widget_Base {
 			'background_border_background_overlay',
 			[
 				'label'     => esc_html__( 'Background Overlay', 'elementor' ),
-				'type'      => \Elementor\Controls_Manager::HEADING,
+				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -942,13 +938,13 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 	private function add_advanced_tab() {
-		\Elementor\Controls_Manager::add_tab(
+		Controls_Manager::add_tab(
 			'advanced-tab-custom',
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
 		$this->start_controls_section(
-			'advanced_layout',
+			'advanced_custom_layout',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab'   => 'advanced-tab-custom',
@@ -956,27 +952,26 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_full_width',
+			'advanced_custom_layout_full_width_custom_flag',
 			[
 				'label'        => esc_html__( 'Full Width', 'elementor' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default'      => 'no',
+				'default'      => '',
 			]
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
-			'advanced_layout_layout_width',
+			'advanced_custom_layout_width',
 			[
 				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
-				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
 					'px' => [
@@ -989,6 +984,9 @@ class Link_In_Bio extends Widget_Base {
 					'size' => 360,
 					'unit' => 'px',
 				],
+				'condition'  => [
+					'advanced_custom_layout_full_width_custom_flag' => '',
+				],
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
 				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -998,10 +996,10 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_content_width',
+			'advanced_custom_layout_content_width',
 			[
 				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
-				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
 					'px' => [
@@ -1023,37 +1021,73 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_center_vertical',
+			'advanced_custom_layout_center_vertical',
 			[
 				'label'        => esc_html__( 'Center Vertical', 'elementor' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'yes',
+				'condition'  => [
+					'advanced_custom_layout_full_width_custom_flag' => '',
+				],
 			],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
-			'advanced_layout_full_screen_height',
+			'advanced_custom_layout_full_screen_height',
 			[
 				'label'        => esc_html__( 'Full Screen Height', 'elementor' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
+				'condition'  => [
+					'advanced_custom_layout_full_width_custom_flag' => 'yes',
+				],
 			],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
+		);
+
+		$this->add_control(
+			'advanced_custom_layout_full_screen_height_controls',
+			[
+				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
+				'type' => Controls_Manager::SELECT2,
+				'label_block' => true,
+				'multiple' => true,
+				'options' => [
+					'mobile'  => esc_html__( 'Mobile', 'elementor' ),
+					'tablet' => esc_html__( 'Tablet', 'elementor' ),
+					'desktop' => esc_html__( 'Desktop', 'elementor' ),
+					// TODO: allow choosing between 7 breakpoints if the breakpoints experiment is on
+				],
+				'default' => [ 'mobile', 'tablet', 'desktop' ],
+				'condition'  => [
+					'advanced_custom_layout_full_screen_height' => 'yes',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_custom_custom_controls',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'tab'   => 'advanced-tab-custom',
+			]
 		);
 
 		$this->end_controls_section();
@@ -1085,8 +1119,8 @@ class Link_In_Bio extends Widget_Base {
 		$this->start_controls_section(
 			'bio_section',
 			[
-				'label' => esc_html__( 'Bio', 'elementor-list-widget' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'label' => esc_html__( 'Bio', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
@@ -1094,7 +1128,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_heading',
 			[
 				'label'       => esc_html__( 'Heading', 'elementor' ),
-				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'type'        => Controls_Manager::TEXTAREA,
 				'dynamic'     => [
 					'active' => true,
 				],
@@ -1108,7 +1142,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_title',
 			[
 				'label'       => esc_html__( 'Title or Tagline', 'elementor' ),
-				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'type'        => Controls_Manager::TEXTAREA,
 				'dynamic'     => [
 					'active' => true,
 				],
@@ -1122,7 +1156,7 @@ class Link_In_Bio extends Widget_Base {
 			'bio_description',
 			[
 				'label'       => esc_html__( 'Description', 'elementor' ),
-				'type'        => \Elementor\Controls_Manager::TEXTAREA,
+				'type'        => Controls_Manager::TEXTAREA,
 				'dynamic'     => [
 					'active' => true,
 				],
@@ -1136,7 +1170,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_section',
 			[
 				'label' => esc_html__( 'Identity', 'elementor' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
@@ -1144,7 +1178,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image_style',
 			[
 				'label'   => esc_html__( 'Image style', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::SELECT,
+				'type'    => Controls_Manager::SELECT,
 				'default' => 'profile',
 				'options' => [
 					'profile' => esc_html__( 'Profile', 'elementor' ),
@@ -1157,7 +1191,7 @@ class Link_In_Bio extends Widget_Base {
 			'identity_image',
 			[
 				'label'   => esc_html__( 'Choose Image', 'elementor' ),
-				'type'    => \Elementor\Controls_Manager::MEDIA,
+				'type'    => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => \Elementor\Utils::get_placeholder_image_src(),
 				],
