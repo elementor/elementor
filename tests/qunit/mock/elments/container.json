@@ -1560,7 +1560,7 @@
 				"fixed": "Fixed"
 			},
 			"selectors": {
-				"(desktop+){{WRAPPER}}": "background-attachment: {{VALUE}};"
+				"{{WRAPPER}}": "background-attachment: {{VALUE}};"
 			},
 			"condition": {
 				"background_background": [
@@ -1576,7 +1576,7 @@
 			"tab": "style",
 			"section": "section_style",
 			"content_classes": "elementor-control-field-description",
-			"raw": "Note: Attachment Fixed works only on desktop.",
+			"raw": "Note: Attachment Fixed may not works on some older mobile browsers.",
 			"separator": "none",
 			"condition": {
 				"background_background": [

@@ -6833,7 +6833,7 @@
 				"fixed": "Fixed"
 			},
 			"selectors": {
-				"(desktop+){{WRAPPER}} > .elementor-widget-container": "background-attachment: {{VALUE}};"
+				"{{WRAPPER}} > .elementor-widget-container": "background-attachment: {{VALUE}};"
 			},
 			"condition": {
 				"_background_background": [
@@ -6851,7 +6851,7 @@
 			"inner_tab": "_tab_background_normal",
 			"section": "_section_background",
 			"content_classes": "elementor-control-field-description",
-			"raw": "Note: Attachment Fixed works only on desktop.",
+			"raw": "Note: Attachment Fixed may not works on some older mobile browsers.",
 			"separator": "none",
 			"condition": {
 				"_background_background": [
@@ -8199,7 +8199,7 @@
 				"fixed": "Fixed"
 			},
 			"selectors": {
-				"(desktop+){{WRAPPER}}:hover .elementor-widget-container": "background-attachment: {{VALUE}};"
+				"{{WRAPPER}}:hover .elementor-widget-container": "background-attachment: {{VALUE}};"
 			},
 			"condition": {
 				"_background_hover_background": [
@@ -8217,7 +8217,7 @@
 			"inner_tab": "_tab_background_hover",
 			"section": "_section_background",
 			"content_classes": "elementor-control-field-description",
-			"raw": "Note: Attachment Fixed works only on desktop.",
+			"raw": "Note: Attachment Fixed may not works on some older mobile browsers.",
 			"separator": "none",
 			"condition": {
 				"_background_hover_background": [
