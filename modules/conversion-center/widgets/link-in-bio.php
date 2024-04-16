@@ -98,6 +98,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_link',
 			[
 				'type'          => Controls_Manager::REPEATER,
+				'max_items'     => 4,
 				'fields'        => [
 					[
 						'name'        => 'cta_link_text',
