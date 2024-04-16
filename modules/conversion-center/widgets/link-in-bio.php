@@ -884,7 +884,7 @@ class Link_In_Bio extends Widget_Base {
 				'name'           => 'background_border_background_group',
 				'types'          => [ 'classic', 'gradient' ],
 				'exclude'        => [ 'image' ],
-				// 'selector' => '{{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -908,7 +908,7 @@ class Link_In_Bio extends Widget_Base {
 				'name'           => 'background_border_background_overlay_group',
 				'types'          => [ 'classic', 'gradient' ],
 				'exclude'        => [ 'image' ],
-				// 'selector' => '{{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',

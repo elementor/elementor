@@ -28,6 +28,9 @@ class Core_Render extends Render_Base {
 				<?php $this->render_ctas( $widget ); ?>
 
 			</div>
+			<div class="e-link-in-bio__bg">
+				<div class="e-link-in-bio__bg-overlay"></div>
+			</div>
 		</div>
 		<?php
 	}

@@ -1,12 +1,7 @@
-.elementor-widget-link-in-bio {
-	--align-self: center;
-
-}
-
 .e-link-in-bio {
 	--e-link-in-bio-gutter: 40px;
-	--e-link-in-bio-container-max-width: 360px;
-	--e-link-in-bio-content-max-width: 100%;
+	--e-link-in-bio-container-width: 360px;
+	--e-link-in-bio-content-width: 360px;
 
 	--e-link-in-bio-identity-image-profile-border-color: transparent;
 	--e-link-in-bio-identity-image-profile-border-radius: 50%;
@@ -34,18 +29,30 @@
 	--e-link-in-bio-ctas-padding: 20px;
 	--e-link-in-bio-ctas-text-color: inherit;
 
+	align-items: center;
+	display: flex;
+	justify-content: center;
 	margin-inline: auto;
-	max-width: var(--e-link-in-bio-container-max-width);
-	padding: var(--e-link-in-bio-gutter);
-	width: 100%;
+	max-width: 100%;
+	position: relative;
+	width: var(--e-link-in-bio-container-width);
+
+	&__bg {
+		display: grid;
+		inset: 0;
+		position: absolute;
+		z-index: $ground-layer;
+	}
 
 	&__content {
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
-		margin-inline: auto;
-		max-width: var(--e-link-in-bio-content-max-width);
+		max-width: 100%;
+		padding: var(--e-link-in-bio-gutter);
 		text-align: center;
+		width: var(--e-link-in-bio-content-width);
+		z-index: $first-layer;
 
 		* {
 			word-wrap: break-word;
