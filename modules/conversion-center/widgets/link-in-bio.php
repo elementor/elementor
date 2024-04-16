@@ -4,10 +4,12 @@ namespace Elementor\Modules\ConversionCenter\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Typography;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\Repeater;
+use Elementor\Utils;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -86,116 +88,139 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'type'       => Controls_Manager::ALERT,
 				'alert_type' => 'info',
-				'content'    => wp_kses_post(
-					__( 'Add up to <b>4</b> CTA links', 'elementor' )
+				'content'    => sprintf(
+					__( 'Add up to <b>%d</b> CTA links', 'elementor' ),
+					4
 				),
 			]
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'cta_link_text',
+			[
+				'label'       => esc_html__( 'Text', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'default'     => '',
+				'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_type',
+			[
+				'name'    => 'cta_link_type',
+				'label'   => esc_html__( 'Link Type', 'elementor' ),
+				'type'    => Controls_Manager::SELECT,
+				'groups'  => [
+
+					[
+						'label'   => '',
+						'options' => [
+							'Url'           => esc_html__( 'Url', 'elementor' ),
+							'File Download' => esc_html__( 'File Download', 'elementor' ),
+						],
+					],
+					[
+						'label'   => '   --',
+						'options' => [
+							'Email'     => esc_html__( 'Email', 'elementor' ),
+							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
+							'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
+							'Waze'      => esc_html__( 'Waze', 'elementor' ),
+							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
+						],
+					],
+				],
+				'default' => 'Url',
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_file',
+			[
+				'label'       => esc_html__( 'Choose File', 'elementor' ),
+				'type'        => Controls_Manager::MEDIA,
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						'File Download',
+					],
+				],
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_url',
+			[
+				'label'        => esc_html__( 'Link', 'elementor' ),
+				'type'         => Controls_Manager::URL,
+				'options'      => false,
+				'dynamic'      => [
+					'active' => true,
+				],
+				'autocomplete' => true,
+				'label_block'  => true,
+				'condition'    => [
+					'cta_link_type' => [
+						'Waze',
+						'Url',
+					],
+				],
+				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_mail',
+			[
+				'name'        => 'cta_link_mail',
+				'label'       => esc_html__( 'Mail', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						'Email',
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_number',
+			[
+				'name'        => 'cta_link_number',
+				'label'       => esc_html__( 'Number', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						'Telephone',
+						'Telegram',
+						'WhatsApp',
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+			],
 		);
 
 		$this->add_control(
 			'cta_link',
 			[
 				'type'          => Controls_Manager::REPEATER,
-				'fields'        => [
-					[
-						'name'        => 'cta_link_text',
-						'label'       => esc_html__( 'Text', 'elementor' ),
-						'type'        => Controls_Manager::TEXT,
-						'dynamic'     => [
-							'active' => true,
-						],
-						'label_block' => true,
-						'default'     => '',
-						'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
-					],
-					[
-						'name'    => 'cta_link_type',
-						'label'   => esc_html__( 'Link Type', 'elementor' ),
-						'type'    => Controls_Manager::SELECT,
-						'groups'  => [
-
-							[
-								'label'   => '',
-								'options' => [
-									'Url'           => esc_html__( 'Url', 'elementor' ),
-									'File Download' => esc_html__( 'File Download', 'elementor' ),
-								],
-							],
-							[
-								'label'   => '   --',
-								'options' => [
-									'Email'     => esc_html__( 'Email', 'elementor' ),
-									'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-									'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
-									'Waze'      => esc_html__( 'Waze', 'elementor' ),
-									'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
-								],
-							],
-						],
-						'default' => 'Url',
-					],
-					[
-						'name'        => 'cta_link_file',
-						'label'       => esc_html__( 'Choose File', 'elementor' ),
-						'type'        => Controls_Manager::MEDIA,
-						'label_block' => true,
-						'condition'   => [
-							'cta_link_type' => [
-								'File Download',
-							],
-						],
-					],
-					[
-						'name'         => 'cta_link_url',
-						'label'        => esc_html__( 'Link', 'elementor' ),
-						'type'         => Controls_Manager::URL,
-						'options'      => false,
-						'dynamic'      => [
-							'active' => true,
-						],
-						'autocomplete' => true,
-						'label_block'  => true,
-						'condition'    => [
-							'cta_link_type' => [
-								'Waze',
-								'Url',
-							],
-						],
-						'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
-					],
-					[
-						'name'        => 'cta_link_number',
-						'label'       => esc_html__( 'Number', 'elementor' ),
-						'type'        => Controls_Manager::TEXT,
-						'dynamic'     => [
-							'active' => true,
-						],
-						'label_block' => true,
-						'condition'   => [
-							'cta_link_type' => [
-								'Telephone',
-								'Telegram',
-								'WhatsApp',
-							],
-						],
-						'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
-					],
-					[
-						'name'        => 'cta_link_mail',
-						'label'       => esc_html__( 'Mail', 'elementor' ),
-						'type'        => Controls_Manager::TEXT,
-						'dynamic'     => [
-							'active' => true,
-						],
-						'label_block' => true,
-						'condition'   => [
-							'cta_link_type' => [
-								'Email',
-							],
-						],
-						'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
-					],
-				],
+				'fields'        => $repeater->get_controls(),
 				'title_field'   => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add CTA Link', 'elementor' ),
@@ -219,134 +244,149 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'type'       => Controls_Manager::ALERT,
 				'alert_type' => 'info',
-				'content'    => wp_kses_post(
-					__( 'Add up to <b>5</b> icons', 'elementor' )
+				'content'    => sprintf(
+					__( 'Add up to <b>%d</b> icons', 'elementor' ),
+					5
 				),
 			]
 		);
+		$repeater = new Repeater();
 
+		$repeater->add_control(
+			'icon_platform',
+			[
+				'label'   => esc_html__( 'Platform', 'elementor' ),
+				'type'    => Controls_Manager::SELECT,
+				'groups'  => [
+
+					[
+						'label'   => '',
+						'options' => [
+							'Email'     => esc_html__( 'Email', 'elementor' ),
+							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
+							'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
+							'Waze'      => esc_html__( 'Waze', 'elementor' ),
+							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
+						],
+					],
+					[
+						'label'   => '   --',
+						'options' => [
+							'Facebook'    => esc_html__( 'Facebook', 'elementor' ),
+							'Instagram'   => esc_html__( 'Instagram', 'elementor' ),
+							'LinkedIn'    => esc_html__( 'LinkedIn', 'elementor' ),
+							'Pinterest'   => esc_html__( 'Pinterest', 'elementor' ),
+							'TikTok'      => esc_html__( 'TikTok', 'elementor' ),
+							'X (Twitter)' => esc_html__( 'X (Twitter)', 'elementor' ),
+							'YouTube'     => esc_html__( 'YouTube', 'elementor' ),
+						],
+					],
+					[
+						'label'   => '   --',
+						'options' => [
+							'Apple Music' => esc_html__( 'Apple Music', 'elementor' ),
+							'Behance'     => esc_html__( 'Behance', 'elementor' ),
+							'Dribble'     => esc_html__( 'Dribble', 'elementor' ),
+							'Spotify'     => esc_html__( 'Spotify', 'elementor' ),
+							'SoundCloud'  => esc_html__( 'SoundCloud', 'elementor' ),
+							'Vimeo'       => esc_html__( 'Vimeo', 'elementor' ),
+						],
+					],
+				],
+				'default' => 'Facebook',
+			],
+		);
+
+		$repeater->add_control(
+			'icon_icon',
+			[
+				'label'       => esc_html__( 'Content', 'elementor' ),
+				'type'        => Controls_Manager::ICONS,
+				'default'     => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
+				'label_block' => true,
+			],
+		);
+
+		$repeater->add_control(
+			'icon_url',
+			[
+				'label'        => esc_html__( 'Link', 'elementor' ),
+				'type'         => Controls_Manager::URL,
+				'options'      => false,
+				'dynamic'      => [
+					'active' => true,
+				],
+				'autocomplete' => true,
+				'label_block'  => true,
+				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
+				'condition'    => [
+					'icon_platform' => [
+						'Vimeo',
+						'Facebook',
+						'SoundCloud',
+						'Spotify',
+						'Instagram',
+						'LinkedIn',
+						'Pinterest',
+						'TikTok',
+						'X (Twitter)',
+						'YouTube',
+						'Apple Music',
+						'Behance',
+						'Dribble',
+						'Spotify',
+						'SoundCloud',
+						'Vimeo',
+						'Waze',
+					],
+				],
+			],
+		);
+
+		$repeater->add_control(
+			'icon_mail',
+			[
+				'label'       => esc_html__( 'Mail', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'icon_platform' => [
+						'Email',
+					],
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'icon_number',
+			[
+				'label'       => esc_html__( 'Number', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+				'condition'   => [
+					'icon_platform' => [
+						'Telephone',
+						'Telegram',
+						'WhatsApp',
+					],
+				],
+			],
+		);
 		$this->add_control(
 			'icon',
 			[
 				'type'          => Controls_Manager::REPEATER,
-				'fields'        => [
-					[
-						'name'    => 'icon_platform',
-						'label'   => esc_html__( 'Platform', 'elementor' ),
-						'type'    => Controls_Manager::SELECT,
-						'groups'  => [
-
-							[
-								'label'   => '',
-								'options' => [
-									'Email'     => esc_html__( 'Email', 'elementor' ),
-									'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-									'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
-									'Waze'      => esc_html__( 'Waze', 'elementor' ),
-									'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
-								],
-							],
-							[
-								'label'   => '   --',
-								'options' => [
-									'Facebook'    => esc_html__( 'Facebook', 'elementor' ),
-									'Instagram'   => esc_html__( 'Instagram', 'elementor' ),
-									'LinkedIn'    => esc_html__( 'LinkedIn', 'elementor' ),
-									'Pinterest'   => esc_html__( 'Pinterest', 'elementor' ),
-									'TikTok'      => esc_html__( 'TikTok', 'elementor' ),
-									'X (Twitter)' => esc_html__( 'X (Twitter)', 'elementor' ),
-									'YouTube'     => esc_html__( 'YouTube', 'elementor' ),
-								],
-							],
-							[
-								'label'   => '   --',
-								'options' => [
-									'Apple Music' => esc_html__( 'Apple Music', 'elementor' ),
-									'Behance'     => esc_html__( 'Behance', 'elementor' ),
-									'Dribble'     => esc_html__( 'Dribble', 'elementor' ),
-									'Spotify'     => esc_html__( 'Spotify', 'elementor' ),
-									'SoundCloud'  => esc_html__( 'SoundCloud', 'elementor' ),
-									'Vimeo'       => esc_html__( 'Vimeo', 'elementor' ),
-								],
-							],
-						],
-						'default' => 'Facebook',
-					],
-					[
-						'name'        => 'icon_icon',
-						'label'       => esc_html__( 'Content', 'elementor' ),
-						'type'        => Controls_Manager::ICONS,
-						'default'     => [
-							'url' => \Elementor\Utils::get_placeholder_image_src(),
-						],
-						'label_block' => true,
-					],
-					[
-						'name'         => 'icon_url',
-						'label'        => esc_html__( 'Link', 'elementor' ),
-						'type'         => Controls_Manager::URL,
-						'options'      => false,
-						'dynamic'      => [
-							'active' => true,
-						],
-						'autocomplete' => true,
-						'label_block'  => true,
-						'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
-						'condition'    => [
-							'icon_platform' => [
-								'Vimeo',
-								'Facebook',
-								'SoundCloud',
-								'Spotify',
-								'Instagram',
-								'LinkedIn',
-								'Pinterest',
-								'TikTok',
-								'X (Twitter)',
-								'YouTube',
-								'Apple Music',
-								'Behance',
-								'Dribble',
-								'Spotify',
-								'SoundCloud',
-								'Vimeo',
-								'Waze',
-							],
-						],
-					],
-					[
-						'name'        => 'icon_number',
-						'label'       => esc_html__( 'Number', 'elementor' ),
-						'type'        => Controls_Manager::TEXT,
-						'dynamic'     => [
-							'active' => true,
-						],
-						'label_block' => true,
-						'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
-						'condition'   => [
-							'icon_platform' => [
-								'Telephone',
-								'Telegram',
-								'WhatsApp',
-							],
-						],
-					],
-					[
-						'name'        => 'icon_mail',
-						'label'       => esc_html__( 'Mail', 'elementor' ),
-						'type'        => Controls_Manager::TEXT,
-						'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
-						'dynamic'     => [
-							'active' => true,
-						],
-						'label_block' => true,
-						'condition'   => [
-							'icon_platform' => [
-								'Email',
-							],
-						],
-					],
-				],
+				'fields'        => $repeater->get_controls(),
 				'title_field'   => "<i class='{{{ icon_icon.value }}}' ></i> {{{ icon_platform }}}",
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
@@ -396,7 +436,7 @@ class Link_In_Bio extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'condition' => [
+				'condition'      => [
 					'identity_image_style' => 'profile',
 				],
 				'selectors'      => [
@@ -430,7 +470,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
-				'condition' => [
+				'condition'    => [
 					'identity_image_style' => 'profile',
 				],
 			]
@@ -497,10 +537,10 @@ class Link_In_Bio extends Widget_Base {
 					'unit' => '%',
 					'size' => 50,
 				],
-				'condition' => [
+				'condition'  => [
 					'identity_image_style' => 'cover',
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-height: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -515,7 +555,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
-				'condition' => [
+				'condition'    => [
 					'identity_image_style' => 'cover',
 				],
 			]
@@ -539,7 +579,7 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_show_bottom_border' => 'yes',
 
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-bottom-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -591,7 +631,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			\Elementor\Group_Control_Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'bio_heading_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
@@ -619,7 +659,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			\Elementor\Group_Control_Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'bio_title_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
@@ -647,7 +687,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			\Elementor\Group_Control_Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'bio_description_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
@@ -715,8 +755,8 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'cta_links_text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type'  => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Text Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
 				],
@@ -726,9 +766,9 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'cta_links_background_color',
 			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type'  => Controls_Manager::COLOR,
-				'condition'  => [
+				'label'     => esc_html__( 'Background Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'condition' => [
 					'cta_links_type' => 'button',
 				],
 				'selectors' => [
@@ -738,9 +778,9 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_group_control(
-			\Elementor\Group_Control_Typography::get_type(),
+			Group_Control_Typography::get_type(),
 			[
-				'name' => 'cta_links_typography',
+				'name'     => 'cta_links_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__cta',
 			]
 		);
@@ -754,7 +794,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
-				'condition'  => [
+				'condition'    => [
 					'cta_links_type' => 'button',
 				],
 			]
@@ -776,7 +816,7 @@ class Link_In_Bio extends Widget_Base {
 				'condition'  => [
 					'cta_links_show_border' => 'yes',
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{VALUE}}',
 				],
 			]
@@ -799,15 +839,15 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'cta_links_corners',
 			[
-				'label'   => esc_html__( 'Corners', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'rounded',
-				'options' => [
+				'label'     => esc_html__( 'Corners', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'rounded',
+				'options'   => [
 					'round'   => esc_html__( 'Round', 'elementor' ),
 					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
 				],
-				'condition'  => [
+				'condition' => [
 					'cta_links_type' => 'button',
 				],
 			]
@@ -837,7 +877,7 @@ class Link_In_Bio extends Widget_Base {
 				'condition'  => [
 					'cta_links_type' => 'button',
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
 			]
@@ -922,17 +962,17 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'advanced_custom_layout_full_width_custom_flag',
 			[
-				'label'        => esc_html__( 'Full Width', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
-				'default'      => '',
+				'label'     => esc_html__( 'Full Width', 'elementor' ),
+				'type'      => Controls_Manager::SWITCHER,
+				'label_on'  => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'default'   => '',
 			]
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
@@ -997,15 +1037,15 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'yes',
-				'condition'  => [
+				'condition'    => [
 					'advanced_custom_layout_full_width_custom_flag' => '',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
@@ -1017,32 +1057,32 @@ class Link_In_Bio extends Widget_Base {
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default'      => 'no',
-				'condition'  => [
+				'condition'    => [
 					'advanced_custom_layout_full_width_custom_flag' => 'yes',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
 			'advanced_custom_layout_full_screen_height_controls',
 			[
-				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
-				'type' => Controls_Manager::SELECT2,
+				'label'       => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
+				'type'        => Controls_Manager::SELECT2,
 				'label_block' => true,
-				'multiple' => true,
-				'options' => [
+				'multiple'    => true,
+				'options'     => [
 					'mobile'  => esc_html__( 'Mobile', 'elementor' ),
-					'tablet' => esc_html__( 'Tablet', 'elementor' ),
+					'tablet'  => esc_html__( 'Tablet', 'elementor' ),
 					'desktop' => esc_html__( 'Desktop', 'elementor' ),
 					// TODO: allow choosing between 7 breakpoints if the breakpoints experiment is on
 				],
-				'default' => [ 'mobile', 'tablet', 'desktop' ],
-				'condition'  => [
+				'default'     => [ 'mobile', 'tablet', 'desktop' ],
+				'condition'   => [
 					'advanced_custom_layout_full_screen_height' => 'yes',
 				],
 			]
@@ -1061,10 +1101,10 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'advanced_custom_css_id',
 			[
-				'label' => esc_html__( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'dynamic' => [
+				'label'          => esc_html__( 'CSS ID', 'elementor' ),
+				'type'           => Controls_Manager::TEXT,
+				'default'        => '',
+				'dynamic'        => [
 					'active' => true,
 				],
 				'style_transfer' => false,
@@ -1074,10 +1114,10 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'advanced_custom_css_classes',
 			[
-				'label' => esc_html__( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'dynamic' => [
+				'label'          => esc_html__( 'CSS Classes', 'elementor' ),
+				'type'           => Controls_Manager::TEXT,
+				'default'        => '',
+				'dynamic'        => [
 					'active' => true,
 				],
 				'style_transfer' => false,
@@ -1193,7 +1233,7 @@ class Link_In_Bio extends Widget_Base {
 				'label'   => esc_html__( 'Choose Image', 'elementor' ),
 				'type'    => Controls_Manager::MEDIA,
 				'default' => [
-					'url' => \Elementor\Utils::get_placeholder_image_src(),
+					'url' => Utils::get_placeholder_image_src(),
 				],
 			]
 		);
