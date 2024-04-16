@@ -7,6 +7,7 @@ use Elementor\Group_Control_Background;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
+use Elementor\Repeater;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,11 +54,7 @@ class Link_In_Bio extends Widget_Base {
 	protected function register_controls(): void {
 		$this->add_identity_section();
 
-		$this->end_controls_section();
-
 		$this->add_bio_section();
-
-		$this->end_controls_section();
 
 		$this->add_icons_controls();
 
@@ -1162,6 +1159,8 @@ class Link_In_Bio extends Widget_Base {
 				'placeholder' => esc_html__( 'Description', 'elementor' ),
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	private function add_identity_section(): void {
@@ -1196,5 +1195,7 @@ class Link_In_Bio extends Widget_Base {
 				],
 			]
 		);
+
+		$this->end_controls_section();
 	}
 }
