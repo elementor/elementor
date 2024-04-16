@@ -1089,6 +1089,45 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'advanced_custom_css_id',
+			[
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'dynamic' => [
+					'active' => true,
+				],
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'advanced_custom_css_classes',
+			[
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'dynamic' => [
+					'active' => true,
+				],
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'advanced_custom_custom_styles',
+			[
+				'label'       => esc_html__( 'Add your own custom CSS here', 'elementor' ),
+				'description' => esc_html__( 'Use custom CSS to style your content or add the
+				"selector" prefix to target specific elements.', 'elementor' ),
+				'type'        => \Elementor\Controls_Manager::CODE,
+				'language'    => 'css',
+				'rows'        => 20,
+			]
+		);
+
+		
 		$this->end_controls_section();
 	}
 
