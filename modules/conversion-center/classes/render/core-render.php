@@ -80,7 +80,7 @@ class Core_Render extends Render_Base {
 					] );
 				}
 				?>
-				<a <?php echo $widget->get_render_attribute_string( "cta-{$key}" ); ?>>
+				<a <?php echo $widget->get_render_attribute_string( "cta-{$key}" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<span class="e-link-in-bio__cta-text">
 						<?php echo esc_html( $cta['cta_link_text'] ); ?>
 					</span>
@@ -128,8 +128,8 @@ class Core_Render extends Render_Base {
 					'target'     => '_blank',
 				] );
 				?>
-				<div <?php echo $widget->get_render_attribute_string( "icon-{$key}" ); ?>>
-					<a <?php echo $widget->get_render_attribute_string( "icon-link-{$key}" ); ?>>
+				<div <?php echo $widget->get_render_attribute_string( "icon-{$key}" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<a <?php echo $widget->get_render_attribute_string( "icon-link-{$key}" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 					</a>
 				</div>
@@ -205,7 +205,7 @@ class Core_Render extends Render_Base {
 		] );
 		?>
 		<div class="e-link-in-bio__identity">
-			<div <?php echo $widget->get_render_attribute_string( 'identity_image' ); ?>>
+			<div <?php echo $widget->get_render_attribute_string( 'identity_image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php if ( ! empty( $identity_image_value['id'] ) ) {
 					echo wp_get_attachment_image( $identity_image_value['id'], 'medium', false, [
 						'class' => 'e-link-in-bio__identity-image-el',
@@ -217,7 +217,7 @@ class Core_Render extends Render_Base {
 						'src'   => esc_url( $identity_image_value['url'] ),
 					] );
 					?>
-					<img <?php echo $widget->get_render_attribute_string( 'identity_image_src' ); ?> />
+					<img <?php echo $widget->get_render_attribute_string( 'identity_image_src' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 				<?php }; ?>
 			</div>
 		</div>
