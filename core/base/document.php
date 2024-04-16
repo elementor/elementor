@@ -43,6 +43,8 @@ abstract class Document extends Controls_Stack {
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
+	const CACHE_META_KEY = '_e_element_cache';
+
 	/**
 	 * Document publish status.
 	 */
@@ -850,6 +852,9 @@ abstract class Document extends Controls_Stack {
 
 		$post_css->delete();
 
+		// Remove Document Cache
+		$this->delete_cache();
+
 		/**
 		 * After document save.
 		 *
@@ -1440,7 +1445,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param string $value Meta data value.
+	 * @param mixed $value Meta data value.
 	 *
 	 * @return bool|int
 	 */
@@ -1782,8 +1787,7 @@ abstract class Document extends Controls_Stack {
 
 		do_action( 'qm/start', "e_element_cache_{$main_id}" );
 
-		$cached_data = get_transient( "e_element_cache_{$main_id}" );
-		//$cached_data = false;
+		$cached_data = $this->get_document_cache();
 
 		if ( false === $cached_data ) {
 			add_filter( 'elementor/element/should_render_shortcode', '__return_true' );
@@ -1821,7 +1825,7 @@ abstract class Document extends Controls_Stack {
 			];
 
 			if ( $this->should_store_cache_elements() ) {
-				set_transient( "e_element_cache_{$main_id}", $cached_data, 30 * MINUTE_IN_SECONDS );
+				$this->set_document_cache( $cached_data );
 			}
 
 			remove_filter( 'elementor/element/should_render_shortcode', '__return_true' );
@@ -1839,9 +1843,44 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		echo do_shortcode( $cached_data['content'] );
+		if ( ! empty( $cached_data['content'] ) ) {
+			echo $cached_data['content'];
+		}
 
 		do_action( 'qm/stop', "e_element_cache_{$main_id}" );
+	}
+
+	public function set_document_cache( $value ) {
+		$expiration = '+12 hours';
+
+		$data = [
+			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
+			'value' => $value,
+		];
+
+		$this->update_json_meta( static::CACHE_META_KEY, $data );
+	}
+
+	private function get_document_cache() {
+		$cache = $this->get_json_meta( static::CACHE_META_KEY );
+
+		if ( empty( $cache['timeout'] ) ) {
+			return false;
+		}
+
+		if ( current_time( 'timestamp' ) > $cache['timeout'] ) {
+			return false;
+		}
+
+		if ( ! is_array( $cache['value'] ) ) {
+			return false;
+		}
+
+		return $cache['value'];
+	}
+
+	protected function delete_cache() {
+		$this->delete_meta( static::CACHE_META_KEY );
 	}
 
 	private function should_store_cache_elements() {

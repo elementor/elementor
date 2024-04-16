@@ -88,10 +88,6 @@ class Widget_Icon extends Widget_Base {
 		return [ 'icon' ];
 	}
 
-	protected function is_dynamic_content(): bool {
-		return true;
-	}
-
 	/**
 	 * Register icon widget controls.
 	 *
@@ -428,8 +424,6 @@ class Widget_Icon extends Widget_Base {
 		if ( empty( $settings['selected_icon']['value'] ) ) {
 			return;
 		}
-
-		echo current_time( 'timestamp' );
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
