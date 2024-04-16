@@ -84,8 +84,7 @@ module.exports = Marionette.CompositeView.extend( {
 				let currentElement = parent._parent;
 
 				while ( currentElement._parent ) {
-
-					if ( currentElement.getNestingLevel() === 0 ) {
+					if ( 0 === currentElement.getNestingLevel() ) {
 						ancestorContainer = currentElement;
 						break;
 					}
@@ -97,7 +96,7 @@ module.exports = Marionette.CompositeView.extend( {
 			const isBoxed = ancestorContainer.isBoxedWidth();
 
 			newItem.settings = {
-				content_width: isBoxed ? 'full' : 'boxed'
+				content_width: isBoxed ? 'full' : 'boxed',
 			};
 		}
 
