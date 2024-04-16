@@ -42,10 +42,15 @@ class Core_Render extends Render_Base {
 		$bio_description_value  = $settings['bio_description'] ?? '';
 
 		// Icons
-		$icons_value = $settings['icon'] ?? [];
+		$icons_props_size = $settings['icons_size'] ?? 'small';
+		$icons_value      = $settings['icon'] ?? [];
 
 		// CTAs
-		$ctas_value = $settings['cta_link'] ?? [];
+
+		$ctas_props_corners     = $settings['cta_links_corners'] ?? 'rounded';
+		$ctas_props_show_border = $settings['cta_links_show_border'] ?? false;
+		$ctas_props_type        = $settings['cta_links_type'] ?? 'button';
+		$ctas_value             = $settings['cta_link'] ?? [];
 
 		/**
 		 * Checks
@@ -153,15 +158,19 @@ class Core_Render extends Render_Base {
 								break;
 							}
 
+							$widget->add_render_attribute( "icon-{$key}", [
+								'class' => "e-link-in-bio__icon has-size-{$icons_props_size}",
+							] );
+
 							$widget->add_render_attribute( "icon-link-{$key}", [
 								'aria-label' => $icon['icon_platform'],
-								'class'      => 'e-link-in-bio__icon-link',
+								'class'      => "e-link-in-bio__icon-link",
 								'href'       => esc_url( $formatted_link ),
 								'rel'        => 'noopener noreferrer',
 								'target'     => '_blank',
 							] );
 							?>
-							<div class="e-link-in-bio__icon">
+							<div <?php echo $widget->get_render_attribute_string( "icon-{$key}" ); ?>>
 								<a <?php echo $widget->get_render_attribute_string( "icon-link-{$key}" ); ?>>
 									<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 								</a>
@@ -208,8 +217,18 @@ class Core_Render extends Render_Base {
 								break;
 							}
 
+							$ctas_classnames = "e-link-in-bio__cta has-type-{$ctas_props_type}";
+
+							if ( $ctas_props_show_border ) {
+								$ctas_classnames .= " has-border";
+							}
+
+							if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
+								$ctas_classnames .= " has-corners-{$ctas_props_corners}";
+							}
+
 							$widget->add_render_attribute( "cta-{$key}", [
-								'class' => 'e-link-in-bio__cta',
+								'class' => $ctas_classnames,
 								'href'  => esc_url( $formatted_link ),
 							] );
 
