@@ -21,8 +21,11 @@ class Core_Render extends Render_Base {
 		 */
 
 		//  Identity Image
-		$identity_image_props_style = $settings['identity_image_style'] ?? 'profile';
-		$identity_image_value       = $settings['identity_image'] ?? [];
+		$identity_image_props_shape              = $settings['identity_image_shape'] ?? 'circle';
+		$identity_image_props_style              = $settings['identity_image_style'] ?? 'profile';
+		$identity_image_props_show_border        = $settings['identity_image_show_border'] ?? false;
+		$identity_image_props_show_bottom_border = $settings['identity_image_show_bottom_border'] ?? false;
+		$identity_image_value                    = $settings['identity_image'] ?? [];
 
 		//  Bio Heading
 		$bio_heading_output    = '';
@@ -63,8 +66,18 @@ class Core_Render extends Render_Base {
 		<div class="e-link-in-bio">
 			<div class="e-link-in-bio__content-container">
 				<?php if ( $has_identity_image ) :
+					$identity_image_classnames = "e-link-in-bio__identity-image e-link-in-bio__identity-image-{$identity_image_props_style}";
+					if ( $identity_image_props_show_border || $identity_image_props_show_bottom_border ) {
+						$identity_image_classnames .= " has-border";
+					}
+					if ( $identity_image_props_show_border || $identity_image_props_show_bottom_border ) {
+						$identity_image_classnames .= " has-border";
+					}
+					if ( ! empty( $identity_image_props_shape ) && 'profile' === $identity_image_props_style ) {
+						$identity_image_classnames .= " has-style-{$identity_image_props_shape}";
+					}
 					$widget->add_render_attribute( 'identity_image', [
-						'class' => "e-link-in-bio__identity-image e-link-in-bio__identity-image-{$identity_image_props_style}",
+						'class' => $identity_image_classnames,
 					] );
 					?>
 					<div class="e-link-in-bio__identity">

@@ -369,6 +369,8 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
+		// Profile image style controls
+
 		$this->add_control(
 			'identity_image_size',
 			[
@@ -400,7 +402,7 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_style' => 'profile',
 				],
 				'selectors'      => [
-					'{{WRAPPER}} .e-link-in-bio__identity-image-profile' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -410,16 +412,13 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'label'     => esc_html__( 'Image Shape', 'elementor' ),
 				'type'      => Controls_Manager::SELECT,
-				'default'   => '50%',
+				'default'   => 'circle',
 				'options'   => [
-					'50%' => esc_html__( 'Circle', 'elementor' ),
-					'0' => esc_html__( 'Square', 'elementor' ),
+					'circle' => esc_html__( 'Circle', 'elementor' ),
+					'square' => esc_html__( 'Square', 'elementor' ),
 				],
 				'condition' => [
 					'identity_image_style' => 'profile',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio__identity-image-profile' => 'border-radius: {{VALUE}};',
 				],
 			]
 		);
@@ -437,10 +436,6 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_style' => 'profile',
 				],
 			]
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
 		);
 
 		$this->add_control(
@@ -461,7 +456,7 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_show_border' => 'yes',
 				],
 				'selectors'  => [
-					'{{WRAPPER}} e-link-in-bio__identity-image' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -476,11 +471,12 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_show_border' => 'yes',
 				],
 				'selectors' => [
-					// 	'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
-					// 	'{{WRAPPER}} elementor-link-in-bio-identity-image' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
 				],
 			]
 		);
+
+		// Cover image style controls
 
 		$this->add_control(
 			'identity_image_height',
@@ -506,10 +502,9 @@ class Link_In_Bio extends Widget_Base {
 				'condition' => [
 					'identity_image_style' => 'cover',
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// '{{WRAPPER}} .your-class' => 'width: {{SIZE}}{{UNIT}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-height: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -526,11 +521,6 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_style' => 'cover',
 				],
 			]
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
 		);
 
 		$this->add_control(
@@ -551,11 +541,9 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_show_bottom_border' => 'yes',
 
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-bottom-width: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -568,11 +556,9 @@ class Link_In_Bio extends Widget_Base {
 					'identity_image_style'              => 'cover',
 					'identity_image_show_bottom_border' => 'yes',
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-color: {{VALUE}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-color: {{VALUE}};',
+				],
 			]
 		);
 
@@ -1137,7 +1123,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-		
+
 		$this->end_controls_section();
 	}
 
