@@ -963,7 +963,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 
-	test.only( 'Test child containers "Full Width" default content width if parent container is boxed', async ( { page }, testInfo ) => {
+	test( 'Test child containers "Full Width" default content width if parent container is boxed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
