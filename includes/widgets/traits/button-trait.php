@@ -133,21 +133,31 @@ trait Button_Trait {
 			]
 		);
 
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
 		$this->add_control(
 			'icon_align',
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'left',
+				'default' => is_rtl() ? 'row-reverse' : 'row',
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+					'row' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-{$start}",
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
+					'row-reverse' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-{$end}",
 					],
+				],
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'row-reverse' : 'row',
+					'right' => is_rtl() ? 'row' : 'row-reverse',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
 				],
 				'condition' => array_merge(
 					$args['section_condition'],
@@ -602,6 +612,7 @@ trait Button_Trait {
 			view.addRenderAttribute( 'button', 'class', 'elementor-button-content-wrapper' );
 		}
 
+		view.addRenderAttribute( 'icon', 'class', 'elementor-button-icon' );
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 		view.addInlineEditingAttributes( 'text', 'none' );
 		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
@@ -616,7 +627,7 @@ trait Button_Trait {
 				<# } #>
 
 					<# if ( settings.icon || settings.selected_icon ) { #>
-					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
+					<span {{{ view.getRenderAttributeString( 'icon' ) }}}>
 						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
 							{{{ iconHTML.value }}}
 						<# } else { #>
@@ -659,13 +670,6 @@ trait Button_Trait {
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
-		if ( ! $is_new && empty( $settings['icon_align'] ) ) {
-			// @todo: remove when deprecated
-			// added as bc in 2.6
-			//old default
-			$settings['icon_align'] = $instance->get_settings( 'icon_align' );
-		}
-
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 
 		if ( ! $optimized_markup ) {
@@ -673,11 +677,11 @@ trait Button_Trait {
 		}
 
 		$instance->add_render_attribute( [
-			'icon-align' => [
-				'class' => [
-					'elementor-button-icon',
-					'elementor-align-icon-' . $settings['icon_align'],
-				],
+			'content-wrapper' => [
+				'class' => 'elementor-button-content-wrapper',
+			],
+			'icon' => [
+				'class' => 'elementor-button-icon',
 			],
 			'text' => [
 				'class' => 'elementor-button-text',
@@ -692,7 +696,7 @@ trait Button_Trait {
 		<?php endif; ?>
 
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-			<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
+			<span <?php $instance->print_render_attribute_string( 'icon' ); ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>

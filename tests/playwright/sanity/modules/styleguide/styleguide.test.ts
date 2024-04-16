@@ -38,7 +38,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.click( '.elementor-control-title:has-text("Style Guide Preview")' ),
+			page.click( '.elementor-control-title:has-text("Show global settings")' ),
 			page.waitForTimeout( 3000 ),
 		] );
 
@@ -161,7 +161,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
+			page.locator( '.elementor-control-title:has-text("Show global settings")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
@@ -186,7 +186,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
+			page.locator( '.elementor-control-title:has-text("Show global settings")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
@@ -211,7 +211,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
+			page.locator( '.elementor-control-title:has-text("Show global settings")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
@@ -236,7 +236,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
+			page.locator( '.elementor-control-title:has-text("Show global settings")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
