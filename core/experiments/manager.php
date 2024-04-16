@@ -396,11 +396,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'admin_menu_rearrangement',
-			'mutable' => false,
-		] );
-
-		$this->add_feature( [
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
 			'description' => sprintf(
