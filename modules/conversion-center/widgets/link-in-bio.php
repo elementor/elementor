@@ -398,6 +398,11 @@ class Link_In_Bio extends Widget_Base {
 
 
 	private function add_style_tab(): void {
+		$border_width_range = [
+			'min'  => 0,
+			'max'  => 10,
+			'step' => 1,
+		];
 
 		$this->start_controls_section(
 			'identity_section_style',
@@ -418,24 +423,7 @@ class Link_In_Bio extends Widget_Base {
 					'size' => 30,
 					'unit' => '%',
 				],
-				'tablet_default' => [
-					'unit' => '%',
-				],
-				'mobile_default' => [
-					'unit' => '%',
-				],
 				'size_units'     => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'range'          => [
-					'px' => [
-						'min'  => 0,
-						'max'  => 1000,
-						'step' => 1,
-					],
-					'%'  => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
 				'condition'      => [
 					'identity_image_style' => 'profile',
 				],
@@ -469,7 +457,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => 'no',
+				'default'      => '',
 				'condition'    => [
 					'identity_image_style' => 'profile',
 				],
@@ -483,11 +471,7 @@ class Link_In_Bio extends Widget_Base {
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
-					'px' => [
-						'min'  => 0,
-						'max'  => 10,
-						'step' => 1,
-					],
+					'px' => $border_width_range,
 				],
 				'condition'  => [
 					'identity_image_style'       => 'profile',
@@ -554,7 +538,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => 'no',
+				'default'      => '',
 				'condition'    => [
 					'identity_image_style' => 'cover',
 				],
@@ -568,11 +552,7 @@ class Link_In_Bio extends Widget_Base {
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
-					'px' => [
-						'min'  => 0,
-						'max'  => 10,
-						'step' => 1,
-					],
+					'px' => $border_width_range,
 				],
 				'condition'  => [
 					'identity_image_style'              => 'cover',
@@ -793,7 +773,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => 'no',
+				'default'      => '',
 				'condition'    => [
 					'cta_links_type' => 'button',
 				],
@@ -807,11 +787,7 @@ class Link_In_Bio extends Widget_Base {
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range'      => [
-					'px' => [
-						'min'  => 0,
-						'max'  => 10,
-						'step' => 1,
-					],
+					'px' => $border_width_range,
 				],
 				'condition'  => [
 					'cta_links_show_border' => 'yes',
@@ -952,7 +928,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->start_controls_section(
-			'advanced_custom_layout',
+			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab'   => self::TAB_ADVANCED,
@@ -960,7 +936,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_custom_layout_full_width_custom_flag',
+			'advanced_layout_full_width_custom',
 			[
 				'label'     => esc_html__( 'Full Width', 'elementor' ),
 				'type'      => Controls_Manager::SWITCHER,
@@ -976,7 +952,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_custom_layout_width',
+			'advanced_layout_width',
 			[
 				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
 				'type'       => Controls_Manager::SLIDER,
@@ -993,7 +969,7 @@ class Link_In_Bio extends Widget_Base {
 					'unit' => 'px',
 				],
 				'condition'  => [
-					'advanced_custom_layout_full_width_custom_flag' => '',
+					'advanced_layout_full_width_custom' => '',
 				],
 				// TODO: add class selector when markup is done
 				// 'selectors' => [
@@ -1004,7 +980,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_custom_layout_content_width',
+			'advanced_layout_content_width',
 			[
 				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
 				'type'       => Controls_Manager::SLIDER,
@@ -1029,7 +1005,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_custom_layout_center_vertical',
+			'advanced_layout_center_vertical',
 			[
 				'label'        => esc_html__( 'Center Vertical', 'elementor' ),
 				'type'         => Controls_Manager::SWITCHER,
@@ -1038,7 +1014,7 @@ class Link_In_Bio extends Widget_Base {
 				'return_value' => 'yes',
 				'default'      => 'yes',
 				'condition'    => [
-					'advanced_custom_layout_full_width_custom_flag' => '',
+					'advanced_layout_full_width_custom' => '',
 				],
 			],
 			// TODO: add class selector when markup is done
@@ -1049,16 +1025,16 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_custom_layout_full_screen_height',
+			'advanced_layout_full_screen_height',
 			[
 				'label'        => esc_html__( 'Full Screen Height', 'elementor' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'elementor' ),
 				'label_off'    => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => 'no',
+				'default'      => '',
 				'condition'    => [
-					'advanced_custom_layout_full_width_custom_flag' => 'yes',
+					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
 			// TODO: add class selector when markup is done
@@ -1069,7 +1045,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_custom_layout_full_screen_height_controls',
+			'advanced_layout_full_screen_height_controls',
 			[
 				'label'       => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
 				'type'        => Controls_Manager::SELECT2,
@@ -1083,7 +1059,7 @@ class Link_In_Bio extends Widget_Base {
 				],
 				'default'     => [ 'mobile', 'tablet', 'desktop' ],
 				'condition'   => [
-					'advanced_custom_layout_full_screen_height' => 'yes',
+					'advanced_layout_full_screen_height' => 'yes',
 				],
 			]
 		);
@@ -1091,7 +1067,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'advanced_custom_custom_controls',
+			'advanced_custom_controls_sectionmax',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
 				'tab'   => self::TAB_ADVANCED,
@@ -1126,9 +1102,7 @@ class Link_In_Bio extends Widget_Base {
 
 		$this->end_controls_section();
 
-		// TODO: fix these two controls going into the wrong tabs
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this, $tab = self::TAB_ADVANCED );
-		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, $tab = self::TAB_ADVANCED );
 	}
 
 	private function add_tag_control( string $name ): void {
