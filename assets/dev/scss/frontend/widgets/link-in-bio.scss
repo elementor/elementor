@@ -164,7 +164,8 @@
 			border-width: var(--e-link-in-bio-ctas-border-width);
 			background-color: var(--e-link-in-bio-ctas-background-color);
 			color: var(--e-link-in-bio-ctas-text-color);
-			display: block;
+			display: flex;
+			justify-content: center;
 			padding: var(--e-link-in-bio-ctas-padding);
 
 
