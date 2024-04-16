@@ -39,7 +39,7 @@
 	padding: var(--e-link-in-bio-gutter);
 	width: 100%;
 
-	&__content-container {
+	&__content {
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
@@ -164,7 +164,8 @@
 			border-width: var(--e-link-in-bio-ctas-border-width);
 			background-color: var(--e-link-in-bio-ctas-background-color);
 			color: var(--e-link-in-bio-ctas-text-color);
-			display: block;
+			display: flex;
+			justify-content: center;
 			padding: var(--e-link-in-bio-ctas-padding);
 
 
