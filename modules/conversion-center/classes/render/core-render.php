@@ -53,7 +53,7 @@ class Core_Render extends Render_Base {
 		$has_bio_title       = ! empty( $bio_title_value );
 		$has_ctas            = ! empty( $ctas_value );
 		$has_icons           = ! empty( $icons_value );
-		$has_identity_image  = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ));
+		$has_identity_image  = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ) );
 
 		// Render conditions
 		if ( ! $has_bio_heading ) {
@@ -63,10 +63,10 @@ class Core_Render extends Render_Base {
 		<div class="e-link-in-bio__content-container">
 			<?php if ( $has_identity_image ) :
 				$widget->add_render_attribute( 'identity', [
-					'class' => ['e-link-in-bio__identity', "e-link-in-bio__identity--{$identity_image_props_style}"],
-				]);
+					'class' => [ 'e-link-in-bio__identity', "e-link-in-bio__identity--{$identity_image_props_style}" ],
+				] );
 				?>
-				<figure <?php echo $widget->get_render_attribute_string( 'identity' ); ?>>
+				<figure <?php echo esc_attr( $widget->get_render_attribute_string( 'identity' ) ); ?>>
 					<?php if ( ! empty( $identity_image_value['id'] ) ) {
 						echo wp_get_attachment_image( $identity_image_value['id'], 'medium', false, [
 							'class' => 'e-link-in-bio__identity-image',
@@ -76,9 +76,9 @@ class Core_Render extends Render_Base {
 							'alt'   => '',
 							'class' => 'e-link-in-bio__identity-image',
 							'src'   => esc_url( $identity_image_value['url'] ),
-						]);
+						] );
 						?>
-						<img <?php echo $widget->get_render_attribute_string( 'icon-link' ); ?> />
+						<img <?php echo esc_attr( $widget->get_render_attribute_string( 'icon-link' ) ); ?> />
 					<?php }; ?>
 				</figure>
 			<?php endif; ?>
@@ -101,8 +101,8 @@ class Core_Render extends Render_Base {
 					} ?>
 				</div>
 			<?php endif; ?>
-				<?php if ( $has_icons ) : ?>
-					<div class="e-link-in-bio__icons">
+			<?php if ( $has_icons ) : ?>
+				<div class="e-link-in-bio__icons">
 					<?php
 					foreach ( $icons_value as $key => $icon ) {
 						// Bail if no icon
@@ -143,10 +143,10 @@ class Core_Render extends Render_Base {
 							'href'       => esc_url( $formatted_link ),
 							'rel'        => 'noopener noreferrer',
 							'target'     => '_blank',
-						]);
+						] );
 						?>
 						<div class="e-link-in-bio__icon">
-							<a <?php echo $widget->get_render_attribute_string( "icon-link-{$key}" ); ?>>
+							<a <?php echo esc_attr( $widget->get_render_attribute_string( "icon-link-{$key}" ) ); ?>>
 								<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 							</a>
 						</div>
@@ -195,15 +195,15 @@ class Core_Render extends Render_Base {
 						$widget->add_render_attribute( "cta-{$key}", [
 							'class' => 'e-link-in-bio__cta',
 							'href'  => esc_url( $formatted_link ),
-						]);
+						] );
 
 						if ( 'File Download' === $cta['cta_link_type'] ) {
 							$widget->add_render_attribute( "cta-{$key}", [
 								'download' => 'download',
-							]);
+							] );
 						}
 						?>
-						<a <?php echo $widget->get_render_attribute_string( "cta-{$key}" ); ?>>
+						<a <?php echo esc_attr( $widget->get_render_attribute_string( "cta-{$key}" ) ); ?>>
 							<span class="e-link-in-bio__cta-text">
 								<?php echo esc_html( $cta['cta_link_text'] ); ?>
 							</span>
