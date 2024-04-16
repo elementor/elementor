@@ -28,6 +28,9 @@ class Core_Render extends Render_Base {
 				<?php $this->render_ctas( $widget ); ?>
 
 			</div>
+			<div class="e-link-in-bio__bg">
+				<div class="e-link-in-bio__bg-overlay"></div>
+			</div>
 		</div>
 		<?php
 	}
@@ -43,9 +46,13 @@ class Core_Render extends Render_Base {
 		if ( ! $has_ctas ) {
 			return;
 		}
+
+		$widget->add_render_attribute( "ctas", [
+			'class' => "e-link-in-bio__ctas has-type-{$ctas_props_type}",
+		] );
 		?>
 
-		<div class="e-link-in-bio__ctas">
+		<div <?php echo $widget->get_render_attribute_string( "ctas" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
 				// Bail if no text
@@ -59,13 +66,13 @@ class Core_Render extends Render_Base {
 					break;
 				}
 
-				$ctas_classnames = "e-link-in-bio__cta has-type-{$ctas_props_type}";
+				$ctas_classnames = "e-link-in-bio__cta is-type-{$ctas_props_type}";
 
-				if ( $ctas_props_show_border ) {
+				if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
 					$ctas_classnames .= ' has-border';
 				}
 
-				if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
+				if ( 'button' === $ctas_props_type ) {
 					$ctas_classnames .= " has-corners-{$ctas_props_corners}";
 				}
 

@@ -1,12 +1,7 @@
-.elementor-widget-link-in-bio {
-	--align-self: center;
-
-}
-
 .e-link-in-bio {
 	--e-link-in-bio-gutter: 40px;
-	--e-link-in-bio-container-max-width: 360px;
-	--e-link-in-bio-content-max-width: 100%;
+	--e-link-in-bio-container-width: 360px;
+	--e-link-in-bio-content-width: 360px;
 
 	--e-link-in-bio-identity-image-profile-border-color: transparent;
 	--e-link-in-bio-identity-image-profile-border-radius: 50%;
@@ -31,21 +26,34 @@
 	--e-link-in-bio-ctas-border-radius: 20px;
 	--e-link-in-bio-ctas-border-style: none;
 	--e-link-in-bio-ctas-border-width: 0;
-	--e-link-in-bio-ctas-padding: 20px;
+	--e-link-in-bio-ctas-gap: 22px;
+	--e-link-in-bio-ctas-padding: 17px 20px;
 	--e-link-in-bio-ctas-text-color: inherit;
 
+	align-items: center;
+	display: flex;
+	justify-content: center;
 	margin-inline: auto;
-	max-width: var(--e-link-in-bio-container-max-width);
-	padding: var(--e-link-in-bio-gutter);
-	width: 100%;
+	max-width: 100%;
+	position: relative;
+	width: var(--e-link-in-bio-container-width);
+
+	&__bg {
+		display: grid;
+		inset: 0;
+		position: absolute;
+		z-index: $ground-layer;
+	}
 
 	&__content {
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
-		margin-inline: auto;
-		max-width: var(--e-link-in-bio-content-max-width);
+		max-width: 100%;
+		padding: var(--e-link-in-bio-gutter);
 		text-align: center;
+		width: var(--e-link-in-bio-content-width);
+		z-index: $first-layer;
 
 		* {
 			word-wrap: break-word;
@@ -117,6 +125,7 @@
 
 	&__icons {
 		display: flex;
+		flex-flow: row wrap;
 		gap: 1em;
 		justify-content: center;
 	}
@@ -151,29 +160,53 @@
 		}
 	}
 
-	&__ctas {
+	// Specificity needed to overwrite core link styles
+	.e-link-in-bio__content .e-link-in-bio__ctas {
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: auto;
-		gap: 22px;
+		gap: var(--e-link-in-bio-ctas-gap);
+
+		&.has-type-link {
+			--e-link-in-bio-ctas-gap: 5px;
+		}
 
 		.e-link-in-bio__cta {
-			border-color: var(--e-link-in-bio-ctas-border-color);
-			border-radius: var(--e-link-in-bio-ctas-border-radius);
-			border-style: var(--e-link-in-bio-ctas-border-style);
-			border-width: var(--e-link-in-bio-ctas-border-width);
-			background-color: var(--e-link-in-bio-ctas-background-color);
 			color: var(--e-link-in-bio-ctas-text-color);
 			display: flex;
 			justify-content: center;
-			padding: var(--e-link-in-bio-ctas-padding);
-
 
 			&:hover,
 			&:focus,
 			&:active {
 				color: var(--e-link-in-bio-ctas-text-color);
 			}
+		}
+
+		.e-link-in-bio__cta.is-type-button {
+			border-radius: var(--e-link-in-bio-ctas-border-radius);
+			background-color: var(--e-link-in-bio-ctas-background-color);
+			padding: var(--e-link-in-bio-ctas-padding);
+
+			&.has-border {
+				--e-link-in-bio-ctas-border-style: solid;
+				border-color: var(--e-link-in-bio-ctas-border-color);
+				border-style: var(--e-link-in-bio-ctas-border-style);
+				border-width: var(--e-link-in-bio-ctas-border-width);
+			}
+
+			&.has-corners-round {
+				--e-link-in-bio-ctas-border-radius: 50px;
+			}
+
+			&.has-corners-sharp {
+				--e-link-in-bio-ctas-border-radius: 0;
+			}
+		}
+
+		.e-link-in-bio__cta.is-type-link {
+			margin-block: 17px;
+			text-decoration: underline;
 		}
 	}
 }

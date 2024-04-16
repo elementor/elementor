@@ -791,9 +791,10 @@ class Link_In_Bio extends Widget_Base {
 				],
 				'condition'  => [
 					'cta_links_show_border' => 'yes',
+					'cta_links_type'        => 'button',
 				],
 				'selectors'  => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -805,6 +806,7 @@ class Link_In_Bio extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'condition' => [
 					'cta_links_show_border' => 'yes',
+					'cta_links_type'        => 'button',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-color: {{VALUE}}',
@@ -884,7 +886,7 @@ class Link_In_Bio extends Widget_Base {
 				'name'           => 'background_border_background_group',
 				'types'          => [ 'classic', 'gradient' ],
 				'exclude'        => [ 'image' ],
-				// 'selector' => '{{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -908,7 +910,7 @@ class Link_In_Bio extends Widget_Base {
 				'name'           => 'background_border_background_overlay_group',
 				'types'          => [ 'classic', 'gradient' ],
 				'exclude'        => [ 'image' ],
-				// 'selector' => '{{WRAPPER}} .elementor-button',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
