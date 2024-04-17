@@ -183,16 +183,30 @@
 			}
 		},
 		"icon_align": {
-			"type": "select",
+			"type": "choose",
 			"tab": "content",
 			"section": "section_button",
 			"label": "Icon Position",
 			"default": "left",
 			"options": {
-				"left": "Before",
-				"right": "After"
+				"row": {
+					"title": "Start",
+					"icon": "eicon-h-align-left"
+				},
+				"row-reverse": {
+					"title": "End",
+					"icon": "eicon-h-align-center"
+				}
+			},
+			"selectors_dictionary": {
+				"left": "row",
+				"right": "row-reverse"
+			},
+			"selectors": {
+				"{{WRAPPER}} .elementor-button-content-wrapper": "flex-direction: {{VALUE}};"
 			},
 			"condition": {
+				"text!": "",
 				"selected_icon[value]!": ""
 			},
 			"name": "icon_align"
@@ -215,6 +229,10 @@
 				"unit": "px",
 				"size": "",
 				"sizes": []
+			},
+			"condition": {
+				"text!": "",
+				"selected_icon[value]!": ""
 			}
 		},
 		"view": {
