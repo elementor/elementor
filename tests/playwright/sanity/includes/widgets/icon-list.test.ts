@@ -5,7 +5,7 @@ test.describe( 'Icon List', () => {
 	test( 'Test vertical alignment of the icons', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		// Act.
 		await editor.addWidget( 'icon-list' );

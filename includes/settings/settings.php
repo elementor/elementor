@@ -433,10 +433,6 @@ class Settings extends Settings_Page {
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			return esc_html__( 'Settings', 'elementor' );
-		}
-
 		return esc_html__( 'Elementor', 'elementor' );
 	}
 
@@ -493,18 +489,16 @@ class Settings extends Settings_Page {
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->register_knowledge_base_menu( $admin_menu );
-			}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			$this->register_knowledge_base_menu( $admin_menu );
+		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
-			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 
-			add_filter( 'custom_menu_order', '__return_true' );
-			add_filter( 'menu_order', [ $this, 'menu_order' ] );
-		}
+		add_filter( 'custom_menu_order', '__return_true' );
+		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 

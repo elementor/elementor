@@ -21,6 +21,8 @@ const Addons = ( { ...props } ) => {
 			<List sx={ { display: 'grid', gridTemplateColumns: { md: `repeat(${ cardsPerRow }, 1fr)`, xs: 'repeat(1, 1fr)' }, gap: 2 } }>
 				{
 					addonsArray.map( ( item ) => {
+						const linkTarget = item.hasOwnProperty( 'target' ) ? item.target : '_blank';
+
 						return (
 							<Card key={ item.title } elevation={ 0 } sx={ { display: 'flex', border: 1, borderRadius: 1, borderColor: 'action.focus' } }>
 								<CardContent sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 3, p: 3 } }>
@@ -32,7 +34,7 @@ const Addons = ( { ...props } ) => {
 										</Box>
 									</Box>
 									<CardActions sx={ { p: 0 } }>
-										<Button variant="outlined" size="small" color="promotion" href={ item.url } target="_blank">{ item.button_label }</Button>
+										<Button variant="outlined" size="small" color="promotion" href={ item.url } target={ linkTarget }>{ item.button_label }</Button>
 									</CardActions>
 								</CardContent>
 							</Card>
