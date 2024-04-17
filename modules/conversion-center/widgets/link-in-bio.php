@@ -946,11 +946,6 @@ class Link_In_Bio extends Widget_Base {
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default'   => '',
 			]
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
 		);
 
 		$this->add_control(
@@ -973,11 +968,9 @@ class Link_In_Bio extends Widget_Base {
 				'condition'  => [
 					'advanced_layout_full_width_custom' => '',
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -998,11 +991,9 @@ class Link_In_Bio extends Widget_Base {
 					'size' => 280,
 					'unit' => 'px',
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -1019,11 +1010,6 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => '',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
 		);
 
 		$this->add_control(
@@ -1039,11 +1025,6 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
 		);
 
 		$this->add_control(
@@ -1061,6 +1042,7 @@ class Link_In_Bio extends Widget_Base {
 				],
 				'default'     => [ 'mobile', 'tablet', 'desktop' ],
 				'condition'   => [
+					'advanced_layout_full_width_custom'  => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
 				],
 			]

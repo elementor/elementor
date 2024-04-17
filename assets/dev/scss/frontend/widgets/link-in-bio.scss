@@ -1,42 +1,67 @@
 .e-link-in-bio {
-	--e-link-in-bio-gutter: 40px;
+	// Layout config
+	--e-link-in-bio-container-height: auto;
 	--e-link-in-bio-container-width: 360px;
-	--e-link-in-bio-content-width: 360px;
+	--e-link-in-bio-content-align-h: center;
+	--e-link-in-bio-content-align-v: flex-start;
+	--e-link-in-bio-content-width: 280px;
+	--e-link-in-bio-gutter: 40px;
 
+	// Identity config - Cover
+	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
+	--e-link-in-bio-identity-image-cover-border-color: transparent;
+	--e-link-in-bio-identity-image-cover-border-style: none;
+	--e-link-in-bio-identity-image-cover-height: 170px;
+
+	// Identity config - Profile
 	--e-link-in-bio-identity-image-profile-border-color: transparent;
 	--e-link-in-bio-identity-image-profile-border-radius: 50%;
 	--e-link-in-bio-identity-image-profile-border-style: none;
 	--e-link-in-bio-identity-image-profile-border-width: 0;
 	--e-link-in-bio-identity-image-profile-width: 115px;
 
-	--e-link-in-bio-identity-image-cover-border-color: transparent;
-	--e-link-in-bio-identity-image-cover-border-style: none;
-	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
-	--e-link-in-bio-identity-image-cover-height: 170px;
-
+	// Bio config
 	--e-link-in-bio-heading-color: inherit;
 	--e-link-in-bio-title-color: inherit;
 	--e-link-in-bio-description-color: inherit;
 
+	// Icons config
 	--e-link-in-bio-icon-color: inherit;
 	--e-link-in-bio-icon-size: 25px;
 
+	// CTAs config
 	--e-link-in-bio-ctas-background-color: blue;
 	--e-link-in-bio-ctas-border-color: transparent;
 	--e-link-in-bio-ctas-border-radius: 20px;
 	--e-link-in-bio-ctas-border-style: none;
-	--e-link-in-bio-ctas-border-width: 0;
+	--e-link-in-bio-ctas-border-width: 2px;
 	--e-link-in-bio-ctas-gap: 22px;
 	--e-link-in-bio-ctas-padding: 17px 20px;
 	--e-link-in-bio-ctas-text-color: inherit;
 
-	align-items: center;
+	align-items: var(--e-link-in-bio-content-align-h);
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	justify-content: var(--e-link-in-bio-content-align-v);
 	margin-inline: auto;
 	max-width: 100%;
+	min-height: var(--e-link-in-bio-container-height);
+	padding: var(--e-link-in-bio-gutter);
 	position: relative;
 	width: var(--e-link-in-bio-container-width);
+
+	&.is-center-vertical {
+		--e-link-in-bio-content-align-v: center;
+	}
+
+	&.is-full-height {
+		--e-link-in-bio-container-height: 100dvh;
+		--e-link-in-bio-content-align-v: center;
+	}
+
+	&.is-full-width {
+		--e-link-in-bio-container-width: 100%;
+	}
 
 	&__bg {
 		display: grid;
@@ -50,7 +75,6 @@
 		flex-direction: column;
 		gap: 1em;
 		max-width: 100%;
-		padding: var(--e-link-in-bio-gutter);
 		text-align: center;
 		width: var(--e-link-in-bio-content-width);
 		z-index: $first-layer;
