@@ -8,7 +8,6 @@ import PageContentLayout from '../components/layout/page-content-layout';
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
-		// [ nextStep, setNextStep ] = useState( 'hello' ),
 		nextStep = getNextStep(),
 		navigate = useNavigate(),
 		pageId = 'account',
