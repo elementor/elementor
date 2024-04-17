@@ -158,12 +158,13 @@ export default class AiBehavior extends Marionette.Behavior {
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 
+			const mainActionText = isPromotion ? 'Try it for free' : 'Try it now';
 			const { unmount } = ReactUtils.render( (
 				<AiPromotionInfotipWrapper
 					anchor={ $button[ 0 ] }
 					header={ promotionTexts.header }
 					contentText={ promotionTexts.contentText }
-					mainActionText={ __( isPromotion ? 'Try it for free' : 'Try it now', 'elementor' ) }
+					mainActionText={ __( mainActionText, 'elementor' ) }
 					controlType={ controlType }
 					unmountAction={ () => {
 						unmount();

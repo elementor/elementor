@@ -37,7 +37,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 			const isPromotion = ! window.ElementorAiConfig.is_get_started;
-
+			const mainActionText = isPromotion ? 'Try it for free' : 'Try it now';
 			const { unmount } = ReactUtils.render( (
 				<AiPromotionInfotipWrapper
 					test-id="ai-promotion-infotip-wrapper"
@@ -47,7 +47,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					} }
 					header={ __( 'Give your workflow a boost.', 'elementor' ) }
 					contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
-					mainActionText={ __( isPromotion ? 'Try it for free' : 'Try it now', 'elementor' ) }
+					mainActionText={ __( mainActionText, 'elementor' ) }
 					controlType={ 'container' }
 					unmountAction={ () => {
 						unmount();
