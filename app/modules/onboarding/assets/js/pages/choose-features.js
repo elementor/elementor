@@ -11,9 +11,9 @@ export default function ChooseFeatures() {
 		{ ajaxState, setAjax } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
-		[ featureWasSelected, setFeatureWasSelected ] = useState( true ),
-		selectedFeatures = [],
-		tierName = __( 'Essential', 'elementor' ),
+		[ featureWasSelected, setFeatureWasSelected ] = useState( false ),
+		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
+		[ tierName, setTierName ] = useState( 'Essential' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		navigate = useNavigate(),
@@ -98,7 +98,7 @@ export default function ChooseFeatures() {
 		};
 	}
 
-	if ( ! siteNameInputValue || 0 === selectedFeatures.length ) {
+	if ( ! featureWasSelected ) {
 		actionButton.className = 'e-onboarding__button--disabled';
 	}
 
@@ -134,9 +134,32 @@ export default function ChooseFeatures() {
 		}
 	}, [ ajaxState.status ] );
 
+
 	useEffect( () => {
+		if ( selectedFeatures[ 'advanced' ].length > 0 ) {
+			setTierName( 'Advanced' )
+		} else {
+			setTierName( 'Essential' )
+		}
+	}, [ selectedFeatures ] );
+
+	function assignTierName( checked, id, text ) {
+		const tier = id.split( '-' )[ 0 ];
+
+		if ( checked ) {
+			setSelectedFeatures( {
+				...selectedFeatures,
+				[ tier ]: [ ...selectedFeatures[ tier ], text ],
+			} );
+		} else {
+			setSelectedFeatures( {
+				...selectedFeatures,
+				[ tier ]: selectedFeatures[ tier ].filter( ( item ) => item !== text ),
+			} );
+		}
+
 		setFeatureWasSelected( true );
-	}, [ featureWasSelected ] );
+	}
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
@@ -154,7 +177,7 @@ export default function ChooseFeatures() {
 				<form className="e-onboarding__choose-features-section">
 					{
 						options.map( ( option, index ) => {
-							const itemId = option.plan + index;
+							const itemId = `${ option.plan }-${ index }`;
 
 							return (
 								<label
@@ -165,11 +188,9 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										placeholder="e.g. Eric's Space Shuttles"
-										defaultValue={ state.siteName || '' }
-										ref={ nameInputRef }
-										onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
+										onChange={ ( event ) => assignTierName( event.currentTarget.checked, event.target.value, option.text ) }
 										id={ itemId }
+										value={ itemId }
 									/>
 									{ option.text }
 								</label>
