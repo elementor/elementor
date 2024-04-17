@@ -11,6 +11,8 @@ export default function ChooseFeatures() {
 		{ ajaxState, setAjax } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
+		[ selectedFeatures, setSelectedFeatures ] = useState( [] ),
+		[ featureWasSelected, setFeatureWasSelected ] = useState( true ),
 		tierName = __( 'Essential', 'elementor' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
@@ -135,6 +137,7 @@ export default function ChooseFeatures() {
 	useEffect( () => {
 		setFeatureWasSelected( true );
 	}, [ featureWasSelected ] );
+
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
