@@ -78,7 +78,7 @@ export default class AiBehavior extends Marionette.Behavior {
 			case 'media':
 				return {
 					header: __( 'Unleash your creativity.', 'elementor' ),
-					contentText: __( 'With Elementor AI, you can generate any image you would like for your website.', 'elementor' ),
+					contentText: __( 'Now you can generate any image you’d like for your website.', 'elementor' ),
 				};
 			case 'media-edit':
 				return {
@@ -163,6 +163,7 @@ export default class AiBehavior extends Marionette.Behavior {
 					anchor={ $button[ 0 ] }
 					header={ promotionTexts.header }
 					contentText={ promotionTexts.contentText }
+					mainActionText={ __( isPromotion ? 'Try it for free' : 'Try it now', 'elementor' ) }
 					controlType={ controlType }
 					unmountAction={ () => {
 						unmount();
