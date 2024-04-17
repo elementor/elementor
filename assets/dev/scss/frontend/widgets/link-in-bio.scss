@@ -70,12 +70,42 @@
 		--e-link-in-bio-border-style: solid;
 	}
 
-	&.is-full-height {
-		--e-link-in-bio-container-height: 100vh;
-
-		@supports (height: 100dvh) {
-			--e-link-in-bio-container-height: 100dvh;
+	@mixin full-height($breakpoint) {
+		@media (max-width: $breakpoint) {
+			--e-link-in-bio-container-height: 100vh;
+			
+			@supports (height: 100dvh) {
+				--e-link-in-bio-container-height: 100dvh;
+			}
 		}
+	}
+
+	&.-is-full-height-mobile {
+		@include full-height($screen-mobile-max);
+	}
+
+	&.-is-full-height-mobile_extra {
+		@include full-height($screen-mobile-extra-max);
+	}
+
+	&.-is-full-height-tablet {
+		@include full-height($screen-tablet-max);
+	}
+
+	&.-is-full-height-tablet_extra {
+		@include full-height($screen-tablet-extra-max);
+	}
+
+	&.-is-full-height-laptop {
+		@include full-height($screen-laptop-max);
+	}
+
+	&.-is-full-height-desktop {
+		@include full-height($screen-desktop-max);
+	}
+
+	&.-is-full-height-widescreen {
+		@include full-height(99999px);
 	}
 
 	&.is-full-width {

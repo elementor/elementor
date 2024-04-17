@@ -830,7 +830,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'hr',
+			'cta_links_hr',
 			[
 				'type' => Controls_Manager::DIVIDER,
 			]
@@ -912,7 +912,7 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'hr',
+			'background_hr',
 			[
 				'type' => Controls_Manager::DIVIDER,
 			]
@@ -1054,6 +1054,15 @@ class Link_In_Bio extends Widget_Base {
 			],
 		);
 
+
+		// Getting active breakpoints and setting dynamic options
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
+            $available_devices[ $breakpoint_key ] = $breakpoint->get_label();
+            $default_devices[] = $breakpoint_key;
+        }
+
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
 			[
@@ -1061,13 +1070,8 @@ class Link_In_Bio extends Widget_Base {
 				'type'        => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'multiple'    => true,
-				'options'     => [
-					'mobile'  => esc_html__( 'Mobile', 'elementor' ),
-					'tablet'  => esc_html__( 'Tablet', 'elementor' ),
-					'desktop' => esc_html__( 'Desktop', 'elementor' ),
-					// TODO: allow choosing between 7 breakpoints if the breakpoints experiment is on
-				],
-				'default'     => [ 'mobile', 'tablet', 'desktop' ],
+				'options'     => $available_devices,
+				'default'     => $default_devices,
 				'condition'   => [
 					'advanced_layout_full_width_custom'  => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
