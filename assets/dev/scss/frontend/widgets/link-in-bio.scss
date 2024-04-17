@@ -34,20 +34,20 @@
 
 	// Icons config
 	--e-link-in-bio-icon-color: inherit;
-	--e-link-in-bio-icon-gap: 1em;
-	--e-link-in-bio-icon-size: 25px;
+	--e-link-in-bio-icon-gap: #{pxToRem(29px)};
+	--e-link-in-bio-icon-size: #{pxToRem(25px)};
 
 	// CTAs config
 	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-ctas-border-color: transparent;
-	--e-link-in-bio-ctas-border-radius: 20px;
+	--e-link-in-bio-ctas-border-radius: #{pxToRem(20px)};
 	--e-link-in-bio-ctas-border-style: none;
 	--e-link-in-bio-ctas-border-width: 2px;
-	--e-link-in-bio-ctas-gap: 22px;
-	--e-link-in-bio-ctas-padding-block-end: 17px;
-	--e-link-in-bio-ctas-padding-block-start: 17px;
-	--e-link-in-bio-ctas-padding-inline-end: 20px;
-	--e-link-in-bio-ctas-padding-inline-start: 20px;
+	--e-link-in-bio-ctas-gap: #{pxToRem(22px)};
+	--e-link-in-bio-ctas-padding-block-end: #{pxToRem(17px)};
+	--e-link-in-bio-ctas-padding-block-start: #{pxToRem(17px)};
+	--e-link-in-bio-ctas-padding-inline-end: #{pxToRem(20px)};
+	--e-link-in-bio-ctas-padding-inline-start: #{pxToRem(20px)};
 	--e-link-in-bio-ctas-text-color: #{$white};
 
 	align-items: var(--e-link-in-bio-content-align-h);
@@ -91,7 +91,6 @@
 		color: $link-in-bio-text-color-default;
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
 		max-width: 100%;
 		text-align: center;
 		width: var(--e-link-in-bio-content-width);
@@ -153,6 +152,14 @@
 		}
 	}
 
+	&__bio {
+		margin-block-start: pxToRem(14px);
+
+		> * {
+			margin-block: 0;
+		}
+	}
+
 	&__heading {
 		color: var(--e-link-in-bio-heading-color);
 	}
@@ -163,6 +170,8 @@
 
 	&__description {
 		color: var(--e-link-in-bio-description-color);
+		margin-block-start: pxToRem(20px);
+
 	}
 
 	&__icons {
@@ -170,6 +179,7 @@
 		flex-flow: row wrap;
 		gap: var(--e-link-in-bio-icon-gap);
 		justify-content: center;
+		margin-block-start: pxToRem(20px);
 	}
 
 	&__icon {
@@ -178,11 +188,11 @@
 		height: var(--e-link-in-bio-icon-size);
 
 		&.has-size-medium {
-			--e-link-in-bio-icon-size: 30px;
+			--e-link-in-bio-icon-size: #{pxToRem(30px)};
 		}
 
 		&.has-size-large {
-			--e-link-in-bio-icon-size: 35px;
+			--e-link-in-bio-icon-size: #{pxToRem(35px)};
 		}
 
 		.e-link-in-bio__icon-link {
@@ -207,9 +217,10 @@
 		grid-template-columns: 1fr;
 		grid-template-rows: auto;
 		gap: var(--e-link-in-bio-ctas-gap);
+		margin-block-start: pxToRem(31px);
 
 		&.has-type-link {
-			--e-link-in-bio-ctas-gap: 5px;
+			--e-link-in-bio-ctas-gap: #{pxToRem(5px)};
 		}
 
 		.e-link-in-bio__cta {
@@ -240,7 +251,7 @@
 			}
 
 			&.has-corners-round {
-				--e-link-in-bio-ctas-border-radius: 50px;
+				--e-link-in-bio-ctas-border-radius: #{pxToRem(50px)};
 			}
 
 			&.has-corners-sharp {
@@ -249,7 +260,7 @@
 		}
 
 		.e-link-in-bio__cta.is-type-link {
-			margin-block: 17px;
+			margin-block: pxToRem(17px);
 			text-decoration: underline;
 		}
 	}
