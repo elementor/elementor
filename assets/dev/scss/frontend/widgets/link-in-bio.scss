@@ -39,7 +39,10 @@
 	--e-link-in-bio-ctas-border-style: none;
 	--e-link-in-bio-ctas-border-width: 2px;
 	--e-link-in-bio-ctas-gap: 22px;
-	--e-link-in-bio-ctas-padding: 17px 20px;
+	--e-link-in-bio-ctas-padding-block-end: 17px;
+	--e-link-in-bio-ctas-padding-block-start: 17px;
+	--e-link-in-bio-ctas-padding-inline-end: 20px;
+	--e-link-in-bio-ctas-padding-inline-start: 20px;
 	--e-link-in-bio-ctas-text-color: inherit;
 
 	align-items: var(--e-link-in-bio-content-align-h);
@@ -193,8 +196,7 @@
 		}
 	}
 
-	// Specificity needed to overwrite core link styles
-	.e-link-in-bio__content .e-link-in-bio__ctas {
+	&__ctas {
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: auto;
@@ -219,7 +221,10 @@
 		.e-link-in-bio__cta.is-type-button {
 			border-radius: var(--e-link-in-bio-ctas-border-radius);
 			background-color: var(--e-link-in-bio-ctas-background-color);
-			padding: var(--e-link-in-bio-ctas-padding);
+			padding-block-end: var(--e-link-in-bio-ctas-padding-block-end);
+			padding-block-start: var(--e-link-in-bio-ctas-padding-block-start);
+			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
+			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
 
 			&.has-border {
 				--e-link-in-bio-ctas-border-style: solid;
@@ -239,6 +244,14 @@
 
 		.e-link-in-bio__cta.is-type-link {
 			margin-block: 17px;
+			text-decoration: underline;
+		}
+	}
+
+	// Specificity needed to overwrite core link styles
+	.e-link-in-bio__content .e-link-in-bio__ctas {
+
+		.e-link-in-bio__cta.is-type-link {
 			text-decoration: underline;
 		}
 	}
