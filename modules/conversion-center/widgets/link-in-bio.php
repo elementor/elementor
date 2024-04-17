@@ -417,7 +417,7 @@ class Link_In_Bio extends Widget_Base {
 
 		// Profile image style controls
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'identity_image_size',
 			[
 				'label'      => esc_html__( 'Image Size', 'elementor' ),
@@ -466,7 +466,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'identity_image_border_width',
 			[
 				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
@@ -502,7 +502,7 @@ class Link_In_Bio extends Widget_Base {
 
 		// Cover image style controls
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'identity_image_height',
 			[
 				'label'      => esc_html__( 'Image Height', 'elementor' ),
@@ -839,7 +839,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'cta_links_padding',
 			[
 				'label'      => esc_html__( 'Padding', 'elementor' ),
@@ -914,6 +914,24 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'background_overlay_opacity',
+			[
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio__bg-overlay' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'background_hr',
 			[
@@ -933,7 +951,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_border_width',
 			[
 				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
@@ -995,7 +1013,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'advanced_layout_width',
 			[
 				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
@@ -1020,7 +1038,7 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'advanced_layout_content_width',
 			[
 				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
