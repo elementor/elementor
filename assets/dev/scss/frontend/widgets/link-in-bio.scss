@@ -3,7 +3,7 @@
 	--e-link-in-bio-container-height: auto;
 	--e-link-in-bio-container-width: 360px;
 	--e-link-in-bio-content-align-h: center;
-	--e-link-in-bio-content-align-v: flex-start;
+	--e-link-in-bio-content-align-v: center;
 	--e-link-in-bio-content-width: 280px;
 	--e-link-in-bio-gutter: 40px;
 
@@ -50,13 +50,12 @@
 	position: relative;
 	width: var(--e-link-in-bio-container-width);
 
-	&.is-center-vertical {
-		--e-link-in-bio-content-align-v: center;
-	}
-
 	&.is-full-height {
-		--e-link-in-bio-container-height: 100dvh;
-		--e-link-in-bio-content-align-v: center;
+		--e-link-in-bio-container-height: 100vh;
+
+		@supports (height: 100dvh) {
+			--e-link-in-bio-container-height: 100dvh;
+		}
 	}
 
 	&.is-full-width {

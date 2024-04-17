@@ -1048,21 +1048,6 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$this->add_control(
-			'advanced_layout_center_vertical',
-			[
-				'label'        => esc_html__( 'Center Vertical', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default'      => 'yes',
-				'condition'    => [
-					'advanced_layout_full_width_custom' => '',
-				],
-			],
-		);
-
-		$this->add_control(
 			'advanced_layout_full_screen_height',
 			[
 				'label'        => esc_html__( 'Full Screen Height', 'elementor' ),

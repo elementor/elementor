@@ -16,15 +16,10 @@ class Core_Render extends Render_Base {
 
 	public function render( Link_In_Bio $widget ): void {
 		$settings = $widget->get_settings_for_display();
-		$layout_props_center_vertical = $settings['advanced_layout_center_vertical'] ?? 'yes';
 		$layout_props_full_height = $settings['advanced_layout_full_screen_height'] ?? '';
 		$layout_props_full_width = $settings['advanced_layout_full_width_custom'] ?? '';
 
 		$layout_classnames = 'e-link-in-bio';
-
-		if ( 'yes' === $layout_props_center_vertical ) {
-			$layout_classnames .= ' is-center-vertical';
-		}
 
 		if ( 'yes' === $layout_props_full_height ) {
 			$layout_classnames .= ' is-full-height';
