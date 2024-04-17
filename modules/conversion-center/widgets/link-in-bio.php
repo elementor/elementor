@@ -949,7 +949,7 @@ class Link_In_Bio extends Widget_Base {
 					'background_show_border' => 'yes',
 				],
 				'selectors'  => [
-					// '{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -963,7 +963,7 @@ class Link_In_Bio extends Widget_Base {
 					'background_show_border' => 'yes',
 				],
 				'selectors' => [
-					// '{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
 				],
 			]
 		);

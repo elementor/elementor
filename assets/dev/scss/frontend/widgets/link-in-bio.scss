@@ -1,5 +1,8 @@
 .e-link-in-bio {
 	// Layout config
+	--e-link-in-bio-border-color: transparent;
+	--e-link-in-bio-border-style: none;
+	--e-link-in-bio-border-width: 0;
 	--e-link-in-bio-container-height: auto;
 	--e-link-in-bio-container-width: 360px;
 	--e-link-in-bio-content-align-h: center;
@@ -40,6 +43,9 @@
 	--e-link-in-bio-ctas-text-color: inherit;
 
 	align-items: var(--e-link-in-bio-content-align-h);
+	border-color: var(--e-link-in-bio-border-color);
+	border-style: var(--e-link-in-bio-border-style);
+	border-width: var(--e-link-in-bio-border-width);
 	display: flex;
 	flex-direction: column;
 	justify-content: var(--e-link-in-bio-content-align-v);
@@ -49,6 +55,10 @@
 	padding: var(--e-link-in-bio-gutter);
 	position: relative;
 	width: var(--e-link-in-bio-container-width);
+
+	&.has-border {
+		--e-link-in-bio-border-style: solid;
+	}
 
 	&.is-full-height {
 		--e-link-in-bio-container-height: 100vh;

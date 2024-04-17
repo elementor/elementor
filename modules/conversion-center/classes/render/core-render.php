@@ -16,10 +16,15 @@ use Elementor\Utils;
 class Core_Render extends Render_Base {
 
 	public function render(): void {
-		$layout_props_full_height = $this->settings['advanced_layout_full_screen_height'] ?? '';
-		$layout_props_full_width  = $this->settings['advanced_layout_full_width_custom'] ?? '';
+		$layout_props_full_show_border  = $this->settings['background_show_border'] ?? '';
+		$layout_props_full_height       = $this->settings['advanced_layout_full_screen_height'] ?? '';
+		$layout_props_full_width        = $this->settings['advanced_layout_full_width_custom'] ?? '';
 
 		$layout_classnames = 'e-link-in-bio';
+
+		if ( 'yes' === $layout_props_full_show_border ) {
+			$layout_classnames .= ' has-border';
+		}
 
 		if ( 'yes' === $layout_props_full_height ) {
 			$layout_classnames .= ' is-full-height';
