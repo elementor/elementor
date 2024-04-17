@@ -37,27 +37,25 @@ export default class Module extends elementorModules.editor.utils.Module {
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 			const isPromotion = ! window.ElementorAiConfig.is_get_started;
-			const mainActionText = isPromotion ? 'Try it for free' : 'Try it now';
-			const { unmount } = ReactUtils.render( (
-				<AiPromotionInfotipWrapper
-					test-id="ai-promotion-infotip-wrapper"
-					anchor={ element }
-					clickAction={ () => {
-						window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
-					} }
-					header={ __( 'Give your workflow a boost.', 'elementor' ) }
-					contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
-					mainActionText={ __( mainActionText, 'elementor' ) }
-					controlType={ 'container' }
-					unmountAction={ () => {
-						unmount();
-					} }
-					colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
-					isRTL={ elementorCommon.config.isRTL }
-					placement={ 'bottom' }
-					offset={ { x: canvasOffsetX, y: canvasOffsetY } }
-				/>
-			), rootElement );
+			const mainActionText = isPromotion ? __( 'Try it for free', 'elementor' ) : __( 'Try it now', 'elementor' );
+			const { unmount } = ReactUtils.render( <AiPromotionInfotipWrapper
+				test-id="ai-promotion-infotip-wrapper"
+				anchor={ element }
+				clickAction={ () => {
+					window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
+				} }
+				header={ __( 'Give your workflow a boost.', 'elementor' ) }
+				contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
+				mainActionText={ mainActionText }
+				controlType={ 'container' }
+				unmountAction={ () => {
+					unmount();
+				} }
+				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+				isRTL={ elementorCommon.config.isRTL }
+				placement={ 'bottom' }
+				offset={ { x: canvasOffsetX, y: canvasOffsetY } }
+			/>, rootElement );
 		}, 1000 );
 	}
 
