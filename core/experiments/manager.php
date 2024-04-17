@@ -340,6 +340,8 @@ class Manager extends Base_Object {
 				esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
+			static::TYPE_HIDDEN => true,
+			'mutable' => false,
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
@@ -391,11 +393,6 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
-			'name' => 'admin_menu_rearrangement',
-			'mutable' => false,
 		] );
 
 		$this->add_feature( [
@@ -471,6 +468,15 @@ class Manager extends Base_Object {
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_INACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_markup',
+			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
 		] );
 	}

@@ -8,7 +8,7 @@ const defaultBtnName = 'Click here';
 test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	// Act.
 	await editor.addWidget( 'button' );
@@ -22,7 +22,7 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 test( 'Button controls should return to default', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'button' );
 	await editor.activatePanelTab( 'style' );
@@ -30,7 +30,7 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	const widget = editor.getPreviewFrame().locator( EditorSelectors.widget ),
-		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]',
+		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Position") label[data-tooltip="Center"]',
 		alignCenterClassRegex = /elementor-align-center/;
 
 	// Act

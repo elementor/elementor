@@ -90,26 +90,6 @@ class Test_Loader extends Elementor_Test_Base {
 		global $wp_styles;
 		global $wp_scripts;
 
-		// When "optimized assets loading" mode is inactive, all assets should be loaded by default.
-		$this->elementor()->experiments->set_feature_default_state( 'e_optimized_assets_loading', Experiments_Manager::STATE_INACTIVE );
-
-		$this->add_testing_assets( 'e-style-default-enqueue', 'e-script-default-enqueue' );
-
-		$assets_loader = $this->elementor()->assets_loader;
-
-		$assets_loader->enqueue_assets();
-
-		$this->assertContains( 'e-style-default-enqueue', $wp_styles->queue, 'e-style-default-enqueue was not properly enqueued.' );
-		$this->assertContains( 'e-script-default-enqueue', $wp_scripts->queue, 'e-script-default-enqueue was not properly enqueued.' );
-	}
-
-	public function test_enqueue_assets__optimized_mode_activated() {
-		global $wp_styles;
-		global $wp_scripts;
-
-		// When "optimized assets loading" mode is active, assets should be loaded only when enabled.
-		$this->elementor()->experiments->set_feature_default_state( 'e_optimized_assets_loading', Experiments_Manager::STATE_ACTIVE );
-
 		$this->add_testing_assets( 'e-style-dynamic-enqueue', 'e-script-dynamic-enqueue' );
 
 		$assets_loader = $this->elementor()->assets_loader;
