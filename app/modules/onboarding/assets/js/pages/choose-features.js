@@ -11,6 +11,10 @@ export default function ChooseFeatures() {
 		{ ajaxState, setAjax } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
+		[ selectedFeatures, setSelectedFeatures ] = useState( [] ),
+		[ featureWasSelected, setFeatureWasSelected ] = useState( false ),
+		[ planName, setPlanName ] = useState( 'Essential' ),
+		getPlanName = __( 'Essential', 'elementor' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		navigate = useNavigate(),
@@ -50,7 +54,7 @@ export default function ChooseFeatures() {
 			},
 		],
 		actionButton = {
-			text: __( 'Next', 'elementor' ),
+			text: __( 'Upgrade Now', 'elementor' ),
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
 					event: 'next',
@@ -95,8 +99,12 @@ export default function ChooseFeatures() {
 		};
 	}
 
-	if ( ! siteNameInputValue ) {
+	if ( ! siteNameInputValue || 0 === selectedFeatures.length ) {
 		actionButton.className = 'e-onboarding__button--disabled';
+	}
+
+	function srtPlanName () {
+
 	}
 
 	// Run the callback for the site name update AJAX request.
@@ -131,6 +139,9 @@ export default function ChooseFeatures() {
 		}
 	}, [ ajaxState.status ] );
 
+	useEffect( () => {
+		setFeatureWasSelected( true );
+	}, [ featureWasSelected ] );
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
@@ -148,28 +159,30 @@ export default function ChooseFeatures() {
 					{
 						options.map( ( option, index ) => {
 							return (
-								<div key={ option.plan + index } className="e-onboarding__choose-features-section__item">
-									<label
-										className="e-onboarding__choose-features-section__item__label"
-										htmlFor={ option.plan + index }
-									>
-										<input
-											className="e-onboarding__choose-features-section__item__checkbox"
-											type="checkbox"
-											placeholder="e.g. Eric's Space Shuttles"
-											defaultValue={ state.siteName || '' }
-											ref={ nameInputRef }
-											onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
-											id={ option.plan + index }
-										/>
-										{ option.text }
-
-									</label>
-								</div>
+								<label
+									key={ option.plan + index }
+									className="e-onboarding__choose-features-section__label"
+								>
+									<input
+										className="e-onboarding__choose-features-section__checkbox"
+										type="checkbox"
+										placeholder="e.g. Eric's Space Shuttles"
+										defaultValue={ state.siteName || '' }
+										ref={ nameInputRef }
+										onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
+										id={ option.plan + index }
+									/>
+									{ option.text }
+								</label>
 							);
 						} )
 					}
 				</div >
+				{ featureWasSelected &&
+					<p className="e-onboarding__choose-features-section__plan">
+						{ __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', planName ) }
+					</p>
+				}
 
 			</PageContentLayout>
 		</Layout>
