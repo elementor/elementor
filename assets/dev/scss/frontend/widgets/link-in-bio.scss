@@ -217,7 +217,7 @@
 
 	&__ctas {
 		display: grid;
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: auto;
 		gap: var(--e-link-in-bio-ctas-gap);
 		margin-block-start: pxToRem(31px);
