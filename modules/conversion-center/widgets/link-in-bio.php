@@ -446,7 +446,7 @@ class Link_In_Bio extends Widget_Base {
 
 	private function get_icon_title_field(): string {
 		$platform_icons_js = json_encode( self::$platform_icon_mapping );
-		return  <<<JS
+		return <<<JS
 <#
 elementor.helpers.enqueueIconFonts( 'fa-solid' );
 elementor.helpers.enqueueIconFonts( 'fa-brands' );
