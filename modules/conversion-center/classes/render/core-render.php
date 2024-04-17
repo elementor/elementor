@@ -129,7 +129,7 @@ class Core_Render extends Render_Base {
 				] );
 
 				$this->widget->add_render_attribute( 'icon-link-' . $key, [
-					'aria-label' => $icon['icon_platform'],
+					'aria-label' => esc_attr( $icon['icon_platform'] ),
 					'class'      => 'e-link-in-bio__icon-link',
 					'href'       => esc_url( $formatted_link ),
 					'rel'        => 'noopener noreferrer',
