@@ -1,4 +1,8 @@
 .e-link-in-bio {
+	$link-in-bio-cta-bg-color: #467FF7;
+	$link-in-bio-text-color-alt: #324a6d;
+	$link-in-bio-text-color-default: #1c2448;
+
 	// Layout config
 	--e-link-in-bio-border-color: transparent;
 	--e-link-in-bio-border-style: none;
@@ -8,7 +12,9 @@
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
 	--e-link-in-bio-content-width: 280px;
-	--e-link-in-bio-gutter: 40px;
+	--e-link-in-bio-gutter-block-end: 45px;
+	--e-link-in-bio-gutter-block-start: 38px;
+	--e-link-in-bio-gutter-inline: 40px;
 
 	// Identity config - Cover
 	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
@@ -26,21 +32,25 @@
 	// Bio config
 	--e-link-in-bio-heading-color: inherit;
 	--e-link-in-bio-title-color: inherit;
-	--e-link-in-bio-description-color: inherit;
+	--e-link-in-bio-description-color: #{$link-in-bio-text-color-alt};
 
 	// Icons config
 	--e-link-in-bio-icon-color: inherit;
-	--e-link-in-bio-icon-size: 25px;
+	--e-link-in-bio-icon-gap: #{pxToRem(20px)} #{pxToRem(29px)};
+	--e-link-in-bio-icon-size: #{pxToRem(25px)};
 
 	// CTAs config
-	--e-link-in-bio-ctas-background-color: blue;
+	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-ctas-border-color: transparent;
-	--e-link-in-bio-ctas-border-radius: 20px;
+	--e-link-in-bio-ctas-border-radius: #{pxToRem(20px)};
 	--e-link-in-bio-ctas-border-style: none;
 	--e-link-in-bio-ctas-border-width: 2px;
-	--e-link-in-bio-ctas-gap: 22px;
-	--e-link-in-bio-ctas-padding: 17px 20px;
-	--e-link-in-bio-ctas-text-color: inherit;
+	--e-link-in-bio-ctas-gap: #{pxToRem(22px)};
+	--e-link-in-bio-ctas-padding-block-end: #{pxToRem(17px)};
+	--e-link-in-bio-ctas-padding-block-start: #{pxToRem(17px)};
+	--e-link-in-bio-ctas-padding-inline-end: #{pxToRem(20px)};
+	--e-link-in-bio-ctas-padding-inline-start: #{pxToRem(20px)};
+	--e-link-in-bio-ctas-text-color: #{$white};
 
 	align-items: var(--e-link-in-bio-content-align-h);
 	border-color: var(--e-link-in-bio-border-color);
@@ -52,7 +62,7 @@
 	margin-inline: auto;
 	max-width: 100%;
 	min-height: var(--e-link-in-bio-container-height);
-	padding: var(--e-link-in-bio-gutter);
+	padding: var(--e-link-in-bio-gutter-block-start) var(--e-link-in-bio-gutter-inline) var(--e-link-in-bio-gutter-block-end);
 	position: relative;
 	width: var(--e-link-in-bio-container-width);
 
@@ -110,9 +120,9 @@
 	}
 
 	&__content {
+		color: $link-in-bio-text-color-default;
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
 		max-width: 100%;
 		text-align: center;
 		width: var(--e-link-in-bio-content-width);
@@ -124,6 +134,7 @@
 	}
 
 	&__identity {
+		margin-block-end: pxToRem(14px);
 
 		.e-link-in-bio__identity-image {
 			display: flex;
@@ -142,6 +153,7 @@
 			border-style: var(--e-link-in-bio-identity-image-profile-border-style);
 			border-width: var(--e-link-in-bio-identity-image-profile-border-width);
 			overflow: hidden;
+			margin-block-end: pxToRem(17px);
 			margin-inline: auto;
 			max-width: 100%;
 			width: var(--e-link-in-bio-identity-image-profile-width);
@@ -163,14 +175,21 @@
 			border-color: var(--e-link-in-bio-identity-image-cover-border-color);
 			border-style: var(--e-link-in-bio-identity-image-cover-border-style);
 			border-width: 0 0 var(--e-link-in-bio-identity-image-cover-border-bottom-width) 0;
-			margin-block-start: calc(var(--e-link-in-bio-gutter) * -1);
-			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
+			margin-block-start: calc(var(--e-link-in-bio-gutter-block-start) * -1);
+			margin-inline: calc(var(--e-link-in-bio-gutter-inline) * -1);
 			max-height: var(--e-link-in-bio-identity-image-cover-height);;
-			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
+			width: calc(100% + calc(var(--e-link-in-bio-gutter-inline) * 2));
 
 			&.has-border {
 				--e-link-in-bio-identity-image-cover-border-style: solid;
 			}
+		}
+	}
+
+	&__bio {
+
+		> * {
+			margin-block: 0;
 		}
 	}
 
@@ -184,13 +203,16 @@
 
 	&__description {
 		color: var(--e-link-in-bio-description-color);
+		margin-block-start: pxToRem(20px);
+
 	}
 
 	&__icons {
 		display: flex;
 		flex-flow: row wrap;
-		gap: 1em;
+		gap: var(--e-link-in-bio-icon-gap);
 		justify-content: center;
+		margin-block-start: pxToRem(20px);
 	}
 
 	&__icon {
@@ -199,11 +221,11 @@
 		height: var(--e-link-in-bio-icon-size);
 
 		&.has-size-medium {
-			--e-link-in-bio-icon-size: 30px;
+			--e-link-in-bio-icon-size: #{pxToRem(30px)};
 		}
 
 		&.has-size-large {
-			--e-link-in-bio-icon-size: 35px;
+			--e-link-in-bio-icon-size: #{pxToRem(35px)};
 		}
 
 		.e-link-in-bio__icon-link {
@@ -223,15 +245,15 @@
 		}
 	}
 
-	// Specificity needed to overwrite core link styles
-	.e-link-in-bio__content .e-link-in-bio__ctas {
+	&__ctas {
 		display: grid;
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: auto;
 		gap: var(--e-link-in-bio-ctas-gap);
+		margin-block-start: pxToRem(31px);
 
 		&.has-type-link {
-			--e-link-in-bio-ctas-gap: 5px;
+			--e-link-in-bio-ctas-gap: #{pxToRem(5px)};
 		}
 
 		.e-link-in-bio__cta {
@@ -249,7 +271,10 @@
 		.e-link-in-bio__cta.is-type-button {
 			border-radius: var(--e-link-in-bio-ctas-border-radius);
 			background-color: var(--e-link-in-bio-ctas-background-color);
-			padding: var(--e-link-in-bio-ctas-padding);
+			padding-block-end: var(--e-link-in-bio-ctas-padding-block-end);
+			padding-block-start: var(--e-link-in-bio-ctas-padding-block-start);
+			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
+			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
 
 			&.has-border {
 				--e-link-in-bio-ctas-border-style: solid;
@@ -259,7 +284,7 @@
 			}
 
 			&.has-corners-round {
-				--e-link-in-bio-ctas-border-radius: 50px;
+				--e-link-in-bio-ctas-border-radius: #{pxToRem(50px)};
 			}
 
 			&.has-corners-sharp {
@@ -268,7 +293,15 @@
 		}
 
 		.e-link-in-bio__cta.is-type-link {
-			margin-block: 17px;
+			margin-block: pxToRem(17px);
+			text-decoration: underline;
+		}
+	}
+
+	// Specificity needed to overwrite core link styles
+	.e-link-in-bio__content .e-link-in-bio__ctas {
+
+		.e-link-in-bio__cta.is-type-link {
 			text-decoration: underline;
 		}
 	}

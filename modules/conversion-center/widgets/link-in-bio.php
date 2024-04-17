@@ -420,8 +420,7 @@ class Link_In_Bio extends Widget_Base {
 				'label'      => esc_html__( 'Image Size', 'elementor' ),
 				'type'       => Controls_Manager::SLIDER,
 				'default'    => [
-					'size' => 30,
-					'unit' => '%',
+					'unit' => 'px',
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'condition'  => [
@@ -518,8 +517,7 @@ class Link_In_Bio extends Widget_Base {
 					],
 				],
 				'default'    => [
-					'unit' => '%',
-					'size' => 50,
+					'unit' => 'px',
 				],
 				'condition'  => [
 					'identity_image_style' => 'cover',
@@ -845,18 +843,14 @@ class Link_In_Bio extends Widget_Base {
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default'    => [
-					'top'      => 0,
-					'right'    => 0,
-					'bottom'   => 0,
-					'left'     => 0,
 					'unit'     => 'px',
 					'isLinked' => false,
 				],
 				'condition'  => [
 					'cta_links_type' => 'button',
 				],
-				'selectors'  => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1012,7 +1006,6 @@ class Link_In_Bio extends Widget_Base {
 					],
 				],
 				'default'    => [
-					'size' => 360,
 					'unit' => 'px',
 				],
 				'condition'  => [
@@ -1038,7 +1031,6 @@ class Link_In_Bio extends Widget_Base {
 					],
 				],
 				'default'    => [
-					'size' => 280,
 					'unit' => 'px',
 				],
 				'selectors' => [
