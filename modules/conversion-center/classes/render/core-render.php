@@ -20,25 +20,25 @@ class Core_Render extends Render_Base {
 		$layout_props_full_height = $settings['advanced_layout_full_screen_height'] ?? '';
 		$layout_props_full_width = $settings['advanced_layout_full_width_custom'] ?? '';
 
-		$layout_classnames = "e-link-in-bio";
+		$layout_classnames = 'e-link-in-bio';
 
 		if ( 'yes' === $layout_props_center_vertical ) {
-			$layout_classnames .= " is-center-vertical";
+			$layout_classnames .= ' is-center-vertical';
 		}
 
 		if ( 'yes' === $layout_props_full_height ) {
-			$layout_classnames .= " is-full-height";
+			$layout_classnames .= ' is-full-height';
 		}
 
 		if ( 'yes' === $layout_props_full_width ) {
 			$layout_classnames .= " is-full-width";
 		}
 
-		$widget->add_render_attribute( "layout", [
+		$widget->add_render_attribute( 'layout', [
 			'class' => $layout_classnames,
 		] );
 		?>
-		<div <?php echo $widget->get_render_attribute_string( "layout" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php echo $widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="e-link-in-bio__content">
 
 				<?php $this->render_identity_image( $widget ); ?>
@@ -69,12 +69,12 @@ class Core_Render extends Render_Base {
 			return;
 		}
 
-		$widget->add_render_attribute( "ctas", [
+		$widget->add_render_attribute( 'ctas', [
 			'class' => "e-link-in-bio__ctas has-type-{$ctas_props_type}",
 		] );
 		?>
 
-		<div <?php echo $widget->get_render_attribute_string( "ctas" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php echo $widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
 				// Bail if no text
