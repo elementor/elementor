@@ -69,9 +69,9 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 	protected function render(): void {
-		$render_strategy = new Core_Render();
+		$render_strategy = new Core_Render( $this );
 
-		$render_strategy->render( $this );
+		$render_strategy->render();
 	}
 
 	private function add_cta_controls(): void {
@@ -417,17 +417,17 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'identity_image_size',
 			[
-				'label'          => esc_html__( 'Image Size', 'elementor' ),
-				'type'           => Controls_Manager::SLIDER,
-				'default'        => [
+				'label'      => esc_html__( 'Image Size', 'elementor' ),
+				'type'       => Controls_Manager::SLIDER,
+				'default'    => [
 					'size' => 30,
 					'unit' => '%',
 				],
-				'size_units'     => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'condition'      => [
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'condition'  => [
 					'identity_image_style' => 'profile',
 				],
-				'selectors'      => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -885,7 +885,7 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'name'           => 'background_border_background_group',
 				'types'          => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
+				'selector'       => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -908,7 +908,7 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'name'           => 'background_border_background_overlay_group',
 				'types'          => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
+				'selector'       => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -1121,7 +1121,7 @@ class Link_In_Bio extends Widget_Base {
 
 		$this->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, $tab = self::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, self::TAB_ADVANCED );
 	}
 
 	private function add_tag_control( string $name ): void {
