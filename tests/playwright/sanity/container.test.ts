@@ -453,7 +453,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
-		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '10px' );
+		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column[data-nesting-level="1"]' ).last() ).toHaveCSS( 'padding', '0px' );
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
 			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
@@ -963,27 +963,44 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 
-	test( 'Test child containers "Full Width" default content width if parent container is boxed', async ( { page }, testInfo ) => {
+	test( 'Test child containers default content widths', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.openNewPage(),
-			pageView = page.locator( 'body' ),
-			parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
+			editor = await wpAdmin.openNewPage();
 
-		// Act.
-		const container1 = await editor.addElement( { elType: 'container' }, parentContainer );
-		const container2 = await editor.addElement( { elType: 'container' }, container1 );
-		await editor.addElement( { elType: 'container' }, container2 );
+		await test.step( '“Boxed” Parent container to default to "Full Width" content width on child container ', async () => {
+			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Assert.
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentContainer }` ) ).toHaveClass( /e-con-boxed/ );
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ container1 }` ) ).toHaveClass( /e-con-full/ );
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ container2 }` ) ).toHaveClass( /e-con-full/ );
+			// Act.
+			// Just in case it's not Boxed by default
+			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 
-		expect.soft( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'child-container-full-width.jpeg' );
+			const childContainer = await editor.addElement( { elType: 'container' }, parentContainer );
+			const nestedChildContainer1 = await editor.addElement( { elType: 'container' }, childContainer );
+			const nestedChildContainer2 = await editor.addElement( { elType: 'container' }, nestedChildContainer1 );
+
+			// Assert
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentContainer }` ) ).toHaveClass( /e-con-boxed/ );
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` ) ).toHaveClass( /e-con-full/ );
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer1 }` ) ).toHaveClass( /e-con-full/ );
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer2 }` ) ).toHaveClass( /e-con-full/ );
+		} );
+
+		await test.step( '“Full Width” Parent container to default to "Boxed" content width on child container', async () => {
+			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
+
+			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+
+			const childContainer = await editor.addElement( { elType: 'container' }, parentContainer );
+			const nestedChildContainer1 = await editor.addElement( { elType: 'container' }, childContainer );
+			const nestedChildContainer2 = await editor.addElement( { elType: 'container' }, nestedChildContainer1 );
+
+			// Assert
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentContainer }` ) ).toHaveClass( /e-con-full/ );
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` ) ).toHaveClass( /e-con-boxed/ );
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer1 }` ) ).toHaveClass( /e-con-full/ );
+			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer2 }` ) ).toHaveClass( /e-con-full/ );
+		} );
 	} );
 } );
 

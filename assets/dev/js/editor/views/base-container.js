@@ -74,31 +74,7 @@ module.exports = Marionette.CompositeView.extend( {
 			options.onBeforeAdd();
 		}
 
-		const parent = this;
-
-		if ( parent.getNestingLevel ) {
-			let ancestorContainer = parent;
-			const nestingLevel = parent.getNestingLevel();
-
-			if ( nestingLevel !== 0 ) {
-				let currentElement = parent._parent;
-
-				while ( currentElement._parent ) {
-					if ( 0 === currentElement.getNestingLevel() ) {
-						ancestorContainer = currentElement;
-						break;
-					}
-
-					currentElement = currentElement._parent;
-				}
-			}
-
-			const isBoxed = ancestorContainer.isBoxedWidth();
-
-			newItem.settings = {
-				content_width: isBoxed ? 'full' : 'boxed',
-			};
-		}
+		this.applyChildContentWidthSettings( newItem );
 
 		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
@@ -122,6 +98,24 @@ module.exports = Marionette.CompositeView.extend( {
 
 	createElementFromContainer( container, options = {} ) {
 		return this.createElementFromModel( container.model, options );
+	},
+
+	applyChildContentWidthSettings( newItem ) {
+		const parent = this;
+
+		if ( parent.getNestingLevel ) {
+			const nestingLevel = parent.getNestingLevel();
+
+			if ( parent.isBoxedWidth() ) {
+				newItem.settings.content_width = 'full';
+
+				return false;
+			}
+
+			if ( ! parent.isBoxedWidth() && nestingLevel !== 0 ) {
+				newItem.settings.content_width = 'full';
+			}
+		}
 	},
 
 	createElementFromModel( model, options = {} ) {
