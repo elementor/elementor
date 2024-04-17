@@ -885,7 +885,6 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'name'           => 'background_border_background_group',
 				'types'          => [ 'classic', 'gradient' ],
-				'exclude'        => [ 'image' ],
 				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => [
 					'background' => [
@@ -909,7 +908,6 @@ class Link_In_Bio extends Widget_Base {
 			[
 				'name'           => 'background_border_background_overlay_group',
 				'types'          => [ 'classic', 'gradient' ],
-				'exclude'        => [ 'image' ],
 				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => [
 					'background' => [
@@ -918,6 +916,58 @@ class Link_In_Bio extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'hr',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->add_control(
+			'background_show_border',
+			[
+				'label'        => esc_html__( 'Border', 'elementor' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default'      => '',
+			]
+		);
+
+		$this->add_control(
+			'background_border_width',
+			[
+				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => $border_width_range,
+				],
+				'condition'  => [
+					'background_show_border' => 'yes',
+				],
+				'selectors'  => [
+					// '{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_border_color',
+			[
+				'label'     => esc_html__( 'Border Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'condition' => [
+					'background_show_border' => 'yes',
+				],
+				'selectors' => [
+					// '{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
+				],
+			]
+		);
+
 
 		$this->end_controls_section();
 
