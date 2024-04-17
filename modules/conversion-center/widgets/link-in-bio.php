@@ -147,6 +147,7 @@ class Link_In_Bio extends Widget_Base {
 				'label'       => esc_html__( 'Choose File', 'elementor' ),
 				'type'        => Controls_Manager::MEDIA,
 				'label_block' => true,
+				'media_type'  => [ 'application/pdf' ],
 				'condition'   => [
 					'cta_link_type' => [
 						'File Download',
