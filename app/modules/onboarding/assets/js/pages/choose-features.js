@@ -11,8 +11,8 @@ export default function ChooseFeatures() {
 		{ ajaxState, setAjax } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
-		[ selectedFeatures, setSelectedFeatures ] = useState( [] ),
 		[ featureWasSelected, setFeatureWasSelected ] = useState( true ),
+		selectedFeatures = [],
 		tierName = __( 'Essential', 'elementor' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
@@ -154,10 +154,13 @@ export default function ChooseFeatures() {
 				<form className="e-onboarding__choose-features-section">
 					{
 						options.map( ( option, index ) => {
+							const itemId = option.plan + index;
+
 							return (
 								<label
-									key={ option.plan + index }
+									key={ itemId }
 									className="e-onboarding__choose-features-section__label"
+									htmlFor={ itemId }
 								>
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
@@ -166,7 +169,7 @@ export default function ChooseFeatures() {
 										defaultValue={ state.siteName || '' }
 										ref={ nameInputRef }
 										onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
-										id={ option.plan + index }
+										id={ itemId }
 									/>
 									{ option.text }
 								</label>
