@@ -12,6 +12,8 @@ import {
 	userInformationConnectedNoGetStartedMock,
 } from './user-information.mock';
 
+const CREDITS_USAGE_MESSAGE = 'You’ve used %s of credits for this AI feature.';
+
 test.describe( 'AI @ai', () => {
 	test( 'User Information', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -50,7 +52,8 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used 75% of credits for this AI feature.' ) ).toHaveCount( 1 );
+			const message = CREDITS_USAGE_MESSAGE.replace( '%s', '75%' );
+			await expect( page.getByText( message ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -68,7 +71,8 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used 80% of credits for this AI feature.' ) ).toHaveCount( 1 );
+			const message = CREDITS_USAGE_MESSAGE.replace( '%s', '80%' );
+			await expect( page.getByText( message ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -86,7 +90,8 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used 95% of credits for this AI feature.' ) ).toHaveCount( 1 );
+			const message = CREDITS_USAGE_MESSAGE.replace( '%s', '95%' );
+			await expect( page.getByText( message ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -104,7 +109,8 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 75% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			const message = CREDITS_USAGE_MESSAGE.replace( '%s', '75%' );
+			await expect( page.getByText( message ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -122,7 +128,8 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 80% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			const message = CREDITS_USAGE_MESSAGE.replace( '%s', '80%' );
+			await expect( page.getByText( message ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
@@ -140,7 +147,8 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You’ve used over 95% of your Elementor AI plan.' ) ).toHaveCount( 1 );
+			const message = CREDITS_USAGE_MESSAGE.replace( '%s', '95%' );
+			await expect( page.getByText( message ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
