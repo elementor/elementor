@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
+use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
@@ -430,12 +431,17 @@ class Link_In_Bio extends Widget_Base {
 		$platform_icons_js = json_encode( self::$platform_icon_mapping );
 
 		$this->add_control(
+			'hidden-icons',
+			[ 'type' => Controls_Manager::ICONS ]
+		);
+
+		$this->add_control(
 			'icon',
 			[
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => "
-<# const mapping = {$platform_icons_js}; console.log(mapping); #>
+<# const mapping = {$platform_icons_js}; #>
 <i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
 ",
 				'prevent_empty' => true,
