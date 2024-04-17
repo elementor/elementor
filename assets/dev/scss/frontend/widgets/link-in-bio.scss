@@ -73,7 +73,7 @@
 	@mixin full-height($breakpoint) {
 		@media (max-width: $breakpoint) {
 			--e-link-in-bio-container-height: 100vh;
-			
+
 			@supports (height: 100dvh) {
 				--e-link-in-bio-container-height: 100dvh;
 			}
@@ -205,7 +205,7 @@
 		color: var(--e-link-in-bio-title-color);
 		font-size: 20px;
 		font-weight: 500;
-		line-height: 20px;
+		line-height: 35px; // 20px in Figma is not accurate
 	}
 
 	&__description {
