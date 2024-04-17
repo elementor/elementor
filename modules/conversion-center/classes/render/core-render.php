@@ -47,12 +47,12 @@ class Core_Render extends Render_Base {
 			return;
 		}
 
-		$widget->add_render_attribute( "ctas", [
+		$widget->add_render_attribute( 'ctas', [
 			'class' => "e-link-in-bio__ctas has-type-{$ctas_props_type}",
 		] );
 		?>
 
-		<div <?php echo $widget->get_render_attribute_string( "ctas" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php echo $widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
 				// Bail if no text
