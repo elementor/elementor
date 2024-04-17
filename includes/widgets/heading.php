@@ -331,7 +331,7 @@ class Widget_Heading extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$title = $settings['title'];
+		$title = esc_attr( $settings['title'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_link_attributes( 'url', $settings['link'] );
@@ -356,7 +356,7 @@ class Widget_Heading extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		var title = settings.title;
+		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );
 
 		if ( '' !== settings.link.url ) {
 			title = '<a href="' + _.escape( settings.link.url ) + '">' + title + '</a>';
