@@ -7,7 +7,7 @@ test.describe( 'Favorite widgets', () => {
 	test( 'Add favorite', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		const favoriteToAdd = 'Button';
 

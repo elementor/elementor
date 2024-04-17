@@ -1,5 +1,34 @@
 == Changelog ==
 
+= 3.21.0 - 2024-04-15 =
+
+* New: Introducing Optimized Control Loading experiment - Improved TTFB by excluding UI controls from the frontend load, enhancing overall site speed
+* New: Meet Elementor Home - Jumpstart your web creation and expand your design toolkit
+* Tweak: Enhanced the mechanism of Lazy Load Background Images experiment for better performance
+* Tweak: Added additional styling options to Counter widget ([#9068](https://github.com/elementor/elementor/issues/9068))
+* Tweak: Add additional unit options to Width and Height in Shape Dividers
+* Tweak: Optimized Button widget to eliminate unnecessary markup when no text is present
+* Tweak: Optimized Icon widget to eliminate unnecessary markup when no icon is present
+* Tweak: Optimized Spacer widget to eliminate unnecessary markup when no space is defined or set to 0
+* Tweak: Optimized Progress Bar widget to eliminate unnecessary markup when both title and percentage are empty.
+* Tweak: Optimized Testimonial widget to eliminate unnecessary markup when content controls are left empty
+* Tweak: Optimized Shortcode widget to eliminate unnecessary markup when the shortcode field is left empty
+* Tweak: Optimized Menu Anchor widget to eliminate unnecessary markup when the anchor ID is left empty
+* Tweak: Optimized Text Editor widget to eliminate unnecessary markup when the editor content is empty
+* Tweak: Optimized Icon Box widget to eliminate unnecessary markup when there is no content
+* Tweak: Optimized Image Box widget to eliminate unnecessary markup when there is no content
+* Tweak: Optimized Alert widget to eliminate unnecessary markup when the content is empty
+* Tweak: Improved Asset Loading feature merged to version
+* Tweak: Activated Grid Container feature for existing sites
+* Tweak: Promoted Editor Top Bar to Beta status
+* Tweak: Activated Lazy Load Background Images by default to new sites and changed status to Beta
+* Tweak: Optimized Gutenberg Loading feature merged to version and moved to Settings
+* Tweak: Optimize Image Loading feature merged to version and moved to Settings
+* Fix: Edit with Elementor button is missing in various scenarios when using WordPress 6.5.2
+* Fix: RTL websites using a LTR UI are flipping between 'left' and 'right' inside the editor
+* Fix: Deprecated styling has been removed from the Editor's tabs
+* Fix: Replaced deprecated `elementor.$previewElementorEl` with `documents.getCurrent().$element` (props [@vHeemstra](https://github.com/vHeemstra))
+
 = 3.20.4 - 2024-04-10 =
 
 * Fix: Image prompt enhancement not functioning as expected in AI Images

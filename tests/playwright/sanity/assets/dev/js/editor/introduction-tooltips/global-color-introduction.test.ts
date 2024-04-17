@@ -5,7 +5,7 @@ test.describe( 'Global color introduction tests', () => {
 	test( 'Check if globals introduction tooltip is being triggered by clicking on the color picker', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await page.evaluate( () => {
 			elementor.config.user.introduction.globals_introduction = false;
@@ -27,7 +27,7 @@ test.describe( 'Global color introduction tests', () => {
 	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await page.evaluate( () => {
 			elementor.config.user.introduction.globals_introduction = true;
