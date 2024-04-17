@@ -5,7 +5,6 @@ namespace Elementor\Modules\ConversionCenter\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
