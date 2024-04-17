@@ -227,7 +227,7 @@ class Icons_Manager {
 		);
 	}
 
-	public static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
+	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		static $is_test_mode = null;
 		if ( null === $is_test_mode ) {
 			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;

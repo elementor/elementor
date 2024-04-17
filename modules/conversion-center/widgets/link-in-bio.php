@@ -49,7 +49,6 @@ class Link_In_Bio extends Widget_Base {
 
 	public static function get_mapping( string $platform ): string {
 		return self::$platform_icon_mapping[ $platform ];
-
 	}
 
 	public function get_name(): string {
