@@ -479,6 +479,15 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_element_cache',
+			'title' => esc_html__( 'Element Cache', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Enable Element Cache to improve the performance of your site by caching the rendered content of Elementor widgets.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**

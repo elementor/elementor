@@ -539,11 +539,15 @@ abstract class Element_Base extends Controls_Stack {
 			return false;
 		}
 
+		$raw_data = $this->get_raw_data();
+
+		if ( ! empty( $raw_data['settings']['_element_cache'] ) ) {
+			return 'yes' === $raw_data['settings']['_element_cache'];
+		}
+
 		if ( $this->is_dynamic_content() ) {
 			return true;
 		}
-
-		$raw_data = $this->get_raw_data();
 
 		if ( empty( $raw_data['settings']['__dynamic__'] ) && empty( $raw_data['settings']['e_display_conditions'] ) ) {
 			return false;

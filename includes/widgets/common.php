@@ -598,6 +598,22 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			$this->add_control(
+				'_element_cache',
+				[
+					'label' => esc_html__( 'Cache', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => '',
+					'options' => [
+						'' => esc_html__( 'Default', 'elementor' ),
+						'yes' => esc_html__( 'Dynamic', 'elementor' ),
+						'no' => esc_html__( 'Static', 'elementor' ),
+					],
+				],
+			);
+		}
+
 		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		$this->end_controls_section();

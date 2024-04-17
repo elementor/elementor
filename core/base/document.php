@@ -1787,6 +1787,14 @@ abstract class Document extends Controls_Stack {
 
 		do_action( 'qm/start', "e_element_cache_{$main_id}" );
 
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			$this->do_print_elements( $elements_data );
+
+			do_action( 'qm/stop', "e_element_cache_{$main_id}" );
+
+			return;
+		}
+
 		$cached_data = $this->get_document_cache();
 
 		if ( false === $cached_data ) {
@@ -1798,22 +1806,7 @@ abstract class Document extends Controls_Stack {
 
 			ob_start();
 
-			// Collect all data updaters that should be updated on runtime.
-			$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
-
-			if ( $runtime_elements_iteration_actions ) {
-				$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
-			}
-
-			foreach ( $elements_data as $element_data ) {
-				$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-				if ( ! $element ) {
-					continue;
-				}
-
-				$element->print_element();
-			}
+			$this->do_print_elements( $elements_data );
 
 			$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
 			$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
@@ -1848,6 +1841,25 @@ abstract class Document extends Controls_Stack {
 		}
 
 		do_action( 'qm/stop', "e_element_cache_{$main_id}" );
+	}
+
+	protected function do_print_elements( $elements_data ) {
+		// Collect all data updaters that should be updated on runtime.
+		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
+
+		if ( $runtime_elements_iteration_actions ) {
+			$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
+		}
+
+		foreach ( $elements_data as $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				continue;
+			}
+
+			$element->print_element();
+		}
 	}
 
 	public function set_document_cache( $value ) {
