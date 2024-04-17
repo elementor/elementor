@@ -1,4 +1,4 @@
-import { useRef, useContext, useState, useEffect } from 'react';
+import { useRef, useContext, useState } from 'react';
 import { useNavigate } from '@reach/router';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';

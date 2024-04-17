@@ -11,10 +11,7 @@ export default function ChooseFeatures() {
 		{ ajaxState, setAjax } = useAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
-		[ selectedFeatures, setSelectedFeatures ] = useState( [] ),
-		[ featureWasSelected, setFeatureWasSelected ] = useState( false ),
-		[ planName, setPlanName ] = useState( 'Essential' ),
-		getPlanName = __( 'Essential', 'elementor' ),
+		tierName = __( 'Essential', 'elementor' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		navigate = useNavigate(),
@@ -103,10 +100,6 @@ export default function ChooseFeatures() {
 		actionButton.className = 'e-onboarding__button--disabled';
 	}
 
-	function srtPlanName () {
-
-	}
-
 	// Run the callback for the site name update AJAX request.
 	useEffect( () => {
 		if ( 'initial' !== ajaxState.status ) {
@@ -155,7 +148,7 @@ export default function ChooseFeatures() {
 					{ __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ) }
 				</p>
 
-				<div className="e-onboarding__choose-features-section">
+				<form className="e-onboarding__choose-features-section">
 					{
 						options.map( ( option, index ) => {
 							return (
@@ -177,10 +170,13 @@ export default function ChooseFeatures() {
 							);
 						} )
 					}
-				</div >
+				</form >
 				{ featureWasSelected &&
 					<p className="e-onboarding__choose-features-section__plan">
-						{ __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', planName ) }
+						{
+							/* Translators: %s: Tier name. */
+							__( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', tierName )
+						}
 					</p>
 				}
 
