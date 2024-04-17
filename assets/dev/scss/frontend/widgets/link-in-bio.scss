@@ -1,4 +1,8 @@
 .e-link-in-bio {
+	$link-in-bio-cta-bg-color: #467FF7;
+	$link-in-bio-text-color-alt: #324a6d;
+	$link-in-bio-text-color-default: #1c2448;
+
 	// Layout config
 	--e-link-in-bio-border-color: transparent;
 	--e-link-in-bio-border-style: none;
@@ -26,14 +30,15 @@
 	// Bio config
 	--e-link-in-bio-heading-color: inherit;
 	--e-link-in-bio-title-color: inherit;
-	--e-link-in-bio-description-color: inherit;
+	--e-link-in-bio-description-color: #{$link-in-bio-text-color-alt};
 
 	// Icons config
 	--e-link-in-bio-icon-color: inherit;
+	--e-link-in-bio-icon-gap: 1em;
 	--e-link-in-bio-icon-size: 25px;
 
 	// CTAs config
-	--e-link-in-bio-ctas-background-color: blue;
+	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-ctas-border-color: transparent;
 	--e-link-in-bio-ctas-border-radius: 20px;
 	--e-link-in-bio-ctas-border-style: none;
@@ -43,7 +48,7 @@
 	--e-link-in-bio-ctas-padding-block-start: 17px;
 	--e-link-in-bio-ctas-padding-inline-end: 20px;
 	--e-link-in-bio-ctas-padding-inline-start: 20px;
-	--e-link-in-bio-ctas-text-color: inherit;
+	--e-link-in-bio-ctas-text-color: #{$white};
 
 	align-items: var(--e-link-in-bio-content-align-h);
 	border-color: var(--e-link-in-bio-border-color);
@@ -83,6 +88,7 @@
 	}
 
 	&__content {
+		color: $link-in-bio-text-color-default;
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
@@ -162,7 +168,7 @@
 	&__icons {
 		display: flex;
 		flex-flow: row wrap;
-		gap: 1em;
+		gap: var(--e-link-in-bio-icon-gap);
 		justify-content: center;
 	}
 
