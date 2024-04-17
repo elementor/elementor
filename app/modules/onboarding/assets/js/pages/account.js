@@ -113,8 +113,6 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
-		// Console.log('Success: ', nextStep, state.nextStep);
-		debugger;
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -143,7 +141,6 @@ export default function Account() {
 			message: __( 'Oops, the connection failed. Try again.', 'elementor' ),
 		} );
 
-		debugger;
 		navigate( 'onboarding/' + nextStep );
 	};
 

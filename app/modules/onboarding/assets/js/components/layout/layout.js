@@ -7,7 +7,6 @@ import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
 
 export default function Layout( props ) {
-	console.log( { props })
 	useEffect( () => {
 		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
