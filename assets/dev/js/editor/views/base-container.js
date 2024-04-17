@@ -110,9 +110,7 @@ module.exports = Marionette.CompositeView.extend( {
 				newItem.settings.content_width = 'full';
 
 				return false;
-			}
-
-			if ( ! parent.isBoxedWidth() && nestingLevel !== 0 ) {
+			} else if ( 0 !== nestingLevel ) {
 				newItem.settings.content_width = 'full';
 			}
 		}
