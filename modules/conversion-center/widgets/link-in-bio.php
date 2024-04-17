@@ -1101,22 +1101,26 @@ class Link_In_Bio extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'advanced_custom_controls_sectionmax',
+			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
 				'tab'   => self::TAB_ADVANCED,
 			]
 		);
-
+	
 		$this->add_control(
 			'advanced_custom_css_id',
 			[
-				'label'          => esc_html__( 'CSS ID', 'elementor' ),
-				'type'           => Controls_Manager::TEXT,
-				'default'        => '',
-				'dynamic'        => [
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
 					'active' => true,
 				],
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 			]
 		);
@@ -1124,13 +1128,16 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'advanced_custom_css_classes',
 			[
-				'label'          => esc_html__( 'CSS Classes', 'elementor' ),
-				'type'           => Controls_Manager::TEXT,
-				'default'        => '',
-				'dynamic'        => [
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
 					'active' => true,
 				],
-				'style_transfer' => false,
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
