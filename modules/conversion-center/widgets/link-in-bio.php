@@ -983,7 +983,6 @@ class Link_In_Bio extends Widget_Base {
 			]
 		);
 
-
 		$this->end_controls_section();
 
 	}

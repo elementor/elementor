@@ -32,10 +32,10 @@ class Core_Render extends Render_Base {
 		}
 
 		if ( 'yes' === $layout_props_full_width ) {
-			$layout_classnames .= " is-full-width";
+			$layout_classnames .= ' is-full-width';
 		}
 
-		if ( !empty( $layout_props_full_height_controls ) ) {
+		if ( ! empty( $layout_props_full_height_controls ) ) {
 			foreach ( $layout_props_full_height_controls as $breakpoint ) {
 				$layout_classnames .= ' is-full-height-' . $breakpoint;
 			}
