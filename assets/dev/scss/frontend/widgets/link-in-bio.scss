@@ -93,6 +93,7 @@
 		color: $link-in-bio-text-color-default;
 		display: flex;
 		flex-direction: column;
+		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
 		max-width: 100%;
 		text-align: center;
 		width: var(--e-link-in-bio-content-width);
@@ -165,16 +166,24 @@
 
 	&__heading {
 		color: var(--e-link-in-bio-heading-color);
+		font-size: 36px;
+		font-weight: 600;
+		line-height: 42px;
 	}
 
 	&__title {
 		color: var(--e-link-in-bio-title-color);
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 20px;
 	}
 
 	&__description {
 		color: var(--e-link-in-bio-description-color);
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 24px;
 		margin-block-start: pxToRem(20px);
-
 	}
 
 	&__icons {
@@ -223,12 +232,15 @@
 		margin-block-start: pxToRem(31px);
 
 		&.has-type-link {
-			--e-link-in-bio-ctas-gap: #{pxToRem(5px)};
+			--e-link-in-bio-ctas-gap: #{pxToRem(10px)};
 		}
 
 		.e-link-in-bio__cta {
 			color: var(--e-link-in-bio-ctas-text-color);
 			display: flex;
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 20px;
 			justify-content: center;
 
 			&:hover,
@@ -263,8 +275,10 @@
 		}
 
 		.e-link-in-bio__cta.is-type-link {
+			--e-link-in-bio-ctas-text-color: #{$link-in-bio-cta-bg-color};
+
+			font-weight: 700;
 			margin-block: pxToRem(17px);
-			text-decoration: underline;
 		}
 	}
 
