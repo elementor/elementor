@@ -12,7 +12,9 @@
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
 	--e-link-in-bio-content-width: 280px;
-	--e-link-in-bio-gutter: 40px;
+	--e-link-in-bio-gutter-block-end: 45px;
+	--e-link-in-bio-gutter-block-start: 38px;
+	--e-link-in-bio-gutter-inline: 40px;
 
 	// Identity config - Cover
 	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
@@ -60,7 +62,7 @@
 	margin-inline: auto;
 	max-width: 100%;
 	min-height: var(--e-link-in-bio-container-height);
-	padding: var(--e-link-in-bio-gutter);
+	padding: var(--e-link-in-bio-gutter-block-start) var(--e-link-in-bio-gutter-inline) var(--e-link-in-bio-gutter-block-end);
 	position: relative;
 	width: var(--e-link-in-bio-container-width);
 
@@ -102,6 +104,7 @@
 	}
 
 	&__identity {
+		margin-block-end: pxToRem(14px);
 
 		.e-link-in-bio__identity-image {
 			display: flex;
@@ -120,6 +123,7 @@
 			border-style: var(--e-link-in-bio-identity-image-profile-border-style);
 			border-width: var(--e-link-in-bio-identity-image-profile-border-width);
 			overflow: hidden;
+			margin-block-end: pxToRem(17px);
 			margin-inline: auto;
 			max-width: 100%;
 			width: var(--e-link-in-bio-identity-image-profile-width);
@@ -141,10 +145,10 @@
 			border-color: var(--e-link-in-bio-identity-image-cover-border-color);
 			border-style: var(--e-link-in-bio-identity-image-cover-border-style);
 			border-width: 0 0 var(--e-link-in-bio-identity-image-cover-border-bottom-width) 0;
-			margin-block-start: calc(var(--e-link-in-bio-gutter) * -1);
-			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
+			margin-block-start: calc(var(--e-link-in-bio-gutter-block-start) * -1);
+			margin-inline: calc(var(--e-link-in-bio-gutter-inline) * -1);
 			max-height: var(--e-link-in-bio-identity-image-cover-height);;
-			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
+			width: calc(100% + calc(var(--e-link-in-bio-gutter-inline) * 2));
 
 			&.has-border {
 				--e-link-in-bio-identity-image-cover-border-style: solid;
@@ -153,7 +157,6 @@
 	}
 
 	&__bio {
-		margin-block-start: pxToRem(14px);
 
 		> * {
 			margin-block: 0;
