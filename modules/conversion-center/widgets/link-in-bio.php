@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Link_In_Bio extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-custom';
 
-	static protected $platform_icon_mapping = [
+	protected static $platform_icon_mapping = [
 		'Facebook'    => 'fab fa-facebook',
 		'Instagram'   => 'fab fa-instagram',
 		'LinkedIn'    => 'fab fa-linkedin-in',
@@ -48,7 +48,7 @@ class Link_In_Bio extends Widget_Base {
 		'Email'       => 'fas fa-envelope',
 	];
 
-	static public function get_mapping( string $platform ): string {
+	public static function get_mapping( string $platform ): string {
 		return self::$platform_icon_mapping[ $platform ];
 
 	}
@@ -431,17 +431,15 @@ class Link_In_Bio extends Widget_Base {
 		$platform_icons_js = json_encode( self::$platform_icon_mapping );
 
 		$this->add_control(
-			'hidden-icons',
-			[ 'type' => Controls_Manager::ICONS ]
-		);
-
-		$this->add_control(
 			'icon',
 			[
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => "
-<# const mapping = {$platform_icons_js}; #>
+<#
+elementor.helpers.enqueueIconFonts( 'fa-solid' );
+elementor.helpers.enqueueIconFonts( 'fa-brands' );
+const mapping = {$platform_icons_js}; #>
 <i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
 ",
 				'prevent_empty' => true,
@@ -1002,11 +1000,11 @@ class Link_In_Bio extends Widget_Base {
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default'   => '',
 			]
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
@@ -1075,11 +1073,11 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => '',
 				],
 			],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
@@ -1095,11 +1093,11 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(

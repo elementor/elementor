@@ -134,10 +134,25 @@ class Core_Render extends Render_Base {
 					'rel'        => 'noopener noreferrer',
 					'target'     => '_blank',
 				] );
+
 				?>
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
+						<?php
+						$mapping = Link_In_Bio::get_mapping( $icon['icon_platform'] );
+						$icon_lib = explode( ' ', $mapping )[0];
+						$library = 'fa-solid';
+						if ( 'fab' === $icon_lib ) {
+							$library = 'fa-brands';
+						}
+						Icons_Manager::render_icon(
+							[
+								'library' => $library,
+								'value' => $mapping,
+							],
+							[ 'aria-hidden' => 'true' ]
+						);
+						?>
 					</a>
 				</div>
 			<?php } ?>
