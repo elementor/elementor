@@ -100,7 +100,6 @@ class Core_Render extends Render_Base {
 	}
 
 	private function render_icons(): void {
-
 		$icons_props_size = $this->settings['icons_size'] ?? 'small';
 		$icons_value      = $this->settings['icon'] ?? [];
 		$has_icons        = ! empty( $icons_value );
@@ -147,8 +146,6 @@ class Core_Render extends Render_Base {
 	}
 
 	private function render_bio(): void {
-		$this->settings = $this->widget->get_settings_for_display();
-
 		$bio_heading_props_tag = $this->settings['bio_heading_tag'] ?? 'h2';
 		$bio_heading_value     = $this->settings['bio_heading'] ?? '';
 
@@ -185,7 +182,6 @@ class Core_Render extends Render_Base {
 	}
 
 	private function render_identity_image(): void {
-		$this->settings                          = $this->widget->get_settings_for_display();
 		$identity_image_props_shape              = $this->settings['identity_image_shape'] ?? 'circle';
 		$identity_image_props_style              = $this->settings['identity_image_style'] ?? 'profile';
 		$identity_image_props_show_border        = $this->settings['identity_image_show_border'] ?? false;
