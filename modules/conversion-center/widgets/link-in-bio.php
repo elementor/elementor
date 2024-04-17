@@ -989,7 +989,7 @@ class Link_In_Bio extends Widget_Base {
 
 	private function add_advanced_tab() {
 		Controls_Manager::add_tab(
-			self::TAB_ADVANCED,
+			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
@@ -997,7 +997,7 @@ class Link_In_Bio extends Widget_Base {
 			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab'   => self::TAB_ADVANCED,
+				'tab'   => static::TAB_ADVANCED,
 			]
 		);
 
@@ -1104,10 +1104,10 @@ class Link_In_Bio extends Widget_Base {
 			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab'   => self::TAB_ADVANCED,
+				'tab'   => static::TAB_ADVANCED,
 			]
 		);
-	
+
 		$this->add_control(
 			'advanced_custom_css_id',
 			[
@@ -1143,7 +1143,9 @@ class Link_In_Bio extends Widget_Base {
 
 		$this->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, self::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
+
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
 	}
 
 	private function add_tag_control( string $name ): void {

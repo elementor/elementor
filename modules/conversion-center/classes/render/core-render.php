@@ -3,7 +3,6 @@
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
 use Elementor\Icons_Manager;
-use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
 /**
@@ -20,6 +19,7 @@ class Core_Render extends Render_Base {
 		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
 		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
 		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
+		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
 
 		$layout_classnames = 'e-link-in-bio';
 
@@ -41,8 +41,13 @@ class Core_Render extends Render_Base {
 			}
 		}
 
+		if ( $custom_classes ) {
+			$layout_classnames .= ' ' . $custom_classes;
+		}
+
 		$this->widget->add_render_attribute( 'layout', [
 			'class' => $layout_classnames,
+			'id'    => $this->settings['advanced_custom_css_id'],
 		] );
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>

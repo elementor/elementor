@@ -15,7 +15,7 @@ abstract class Render_Base {
 
 	protected Link_In_Bio $widget;
 
-	protected mixed $settings;
+	protected array $settings;
 
 	public function __construct( Link_In_Bio $widget ) {
 		$this->widget   = $widget;
