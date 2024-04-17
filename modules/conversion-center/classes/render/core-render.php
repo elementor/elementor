@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
+use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
@@ -49,7 +50,7 @@ class Core_Render extends Render_Base {
 		}
 
 		$this->widget->add_render_attribute( 'ctas', [
-			'class' => "e-link-in-bio__ctas has-type-{$ctas_props_type}",
+			'class' => 'e-link-in-bio__ctas has-type-' . $ctas_props_type,
 		] );
 		?>
 
@@ -67,28 +68,28 @@ class Core_Render extends Render_Base {
 					break;
 				}
 
-				$ctas_classnames = "e-link-in-bio__cta is-type-{$ctas_props_type}";
+				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
 				if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
 					$ctas_classnames .= ' has-border';
 				}
 
 				if ( 'button' === $ctas_props_type ) {
-					$ctas_classnames .= " has-corners-{$ctas_props_corners}";
+					$ctas_classnames .= ' has-corners-' . $ctas_props_corners;
 				}
 
-				$this->widget->add_render_attribute( "cta-{$key}", [
+				$this->widget->add_render_attribute( 'cta-' . $key, [
 					'class' => $ctas_classnames,
 					'href'  => esc_url( $formatted_link ),
 				] );
 
 				if ( 'File Download' === $cta['cta_link_type'] ) {
-					$this->widget->add_render_attribute( "cta-{$key}", [
+					$this->widget->add_render_attribute( 'cta-' . $key, [
 						'download' => 'download',
 					] );
 				}
 				?>
-				<a <?php echo $this->widget->get_render_attribute_string( "cta-{$key}" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<a <?php echo $this->widget->get_render_attribute_string( 'cta-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<span class="e-link-in-bio__cta-text">
 						<?php echo esc_html( $cta['cta_link_text'] ); ?>
 					</span>
@@ -123,11 +124,11 @@ class Core_Render extends Render_Base {
 					break;
 				}
 
-				$this->widget->add_render_attribute( "icon-{$key}", [
-					'class' => "e-link-in-bio__icon has-size-{$icons_props_size}",
+				$this->widget->add_render_attribute( 'icon-' . $key, [
+					'class' => 'e-link-in-bio__icon has-size-' . $icons_props_size,
 				] );
 
-				$this->widget->add_render_attribute( "icon-link-{$key}", [
+				$this->widget->add_render_attribute( 'icon-link-' . $key, [
 					'aria-label' => $icon['icon_platform'],
 					'class'      => 'e-link-in-bio__icon-link',
 					'href'       => esc_url( $formatted_link ),
@@ -135,9 +136,9 @@ class Core_Render extends Render_Base {
 					'target'     => '_blank',
 				] );
 				?>
-				<div <?php echo $this->widget->get_render_attribute_string( "icon-{$key}" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<a <?php echo $this->widget->get_render_attribute_string( "icon-link-{$key}" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php \Elementor\Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
+				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
 					</a>
 				</div>
 			<?php } ?>
@@ -197,7 +198,7 @@ class Core_Render extends Render_Base {
 			return;
 		}
 
-		$identity_image_classnames = "e-link-in-bio__identity-image e-link-in-bio__identity-image-{$identity_image_props_style}";
+		$identity_image_classnames = 'e-link-in-bio__identity-image e-link-in-bio__identity-image-' . $identity_image_props_style;
 		if ( $identity_image_props_show_border || $identity_image_props_show_bottom_border ) {
 			$identity_image_classnames .= ' has-border';
 		}
@@ -205,7 +206,7 @@ class Core_Render extends Render_Base {
 			$identity_image_classnames .= ' has-border';
 		}
 		if ( ! empty( $identity_image_props_shape ) && 'profile' === $identity_image_props_style ) {
-			$identity_image_classnames .= " has-style-{$identity_image_props_shape}";
+			$identity_image_classnames .= ' has-style-' . $identity_image_props_shape;
 		}
 		$this->widget->add_render_attribute( 'identity_image', [
 			'class' => $identity_image_classnames,
@@ -238,19 +239,19 @@ class Core_Render extends Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $cta['cta_link_type'] ) {
 			case 'Email':
-				$formatted_link = ! empty( $cta['cta_link_mail'] ) ? "mailto:{$cta['cta_link_mail']}" : '';
+				$formatted_link = ! empty( $cta['cta_link_mail'] ) ? 'mailto:' . $cta['cta_link_mail'] : '';
 				break;
 			case 'Telephone':
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? "tel:{$cta['cta_link_number']}" : '';
+				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
 				break;
 			case 'Telegram':
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? "https://telegram.me/{$cta['cta_link_number']}" : '';
+				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://telegram.me/' . $cta['cta_link_number'] : '';
 				break;
 			case 'Waze':
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? "https://www.waze.com/ul?ll={$cta['cta_link_number']}&navigate=yes" : '';
+				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://www.waze.com/ul?ll=' . $cta['cta_link_number'] . '&navigate=yes' : '';
 				break;
 			case 'WhatsApp':
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? "https://wa.me/{$cta['cta_link_number']}" : '';
+				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
 				break;
 			case 'File Download':
 				$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
@@ -269,19 +270,19 @@ class Core_Render extends Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $icon['icon_platform'] ) {
 			case 'Email':
-				$formatted_link = ! empty( $icon['icon_mail'] ) ? "mailto:{$icon['icon_mail']}" : '';
+				$formatted_link = ! empty( $icon['icon_mail'] ) ? 'mailto:' . $icon['icon_mail'] : '';
 				break;
 			case 'Telephone':
-				$formatted_link = ! empty( $icon['icon_number'] ) ? "tel:{$icon['icon_number']}" : '';
+				$formatted_link = ! empty( $icon['icon_number'] ) ? 'tel:' . $icon['icon_number'] : '';
 				break;
 			case 'Telegram':
-				$formatted_link = ! empty( $icon['icon_number'] ) ? "https://telegram.me/{$icon['icon_number']}" : '';
+				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://telegram.me/' . $icon['icon_number'] : '';
 				break;
 			case 'Waze':
-				$formatted_link = ! empty( $icon['icon_number'] ) ? "https://www.waze.com/ul?ll={$icon['icon_number']}&navigate=yes" : '';
+				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://www.waze.com/ul?ll=' . $icon['icon_number'] . '&navigate=yes' : '';
 				break;
 			case 'WhatsApp':
-				$formatted_link = ! empty( $icon['icon_number'] ) ? "https://wa.me/{$icon['icon_number']}" : '';
+				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://wa.me/' . $icon['icon_number'] : '';
 				break;
 		}
 

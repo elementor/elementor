@@ -1104,7 +1104,7 @@ class Link_In_Bio extends Widget_Base {
 
 		$this->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, $tab = self::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, self::TAB_ADVANCED );
 	}
 
 	private function add_tag_control( string $name ): void {
