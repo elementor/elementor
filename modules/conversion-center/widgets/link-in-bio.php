@@ -48,7 +48,10 @@ class Link_In_Bio extends Widget_Base {
 	];
 
 	public static function get_mapping( string $platform ): string {
-		return self::$platform_icon_mapping[ $platform ];
+		if ( isset( self::$platform_icon_mapping[ $platform ] ) ) {
+			return self::$platform_icon_mapping[ $platform ];
+		}
+		return '';
 	}
 
 	public function get_name(): string {
@@ -80,6 +83,7 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 	protected function register_controls(): void {
+
 		$this->add_identity_section();
 
 		$this->add_bio_section();
@@ -426,26 +430,29 @@ class Link_In_Bio extends Widget_Base {
 			],
 		);
 
-		$platform_icons_js = json_encode( self::$platform_icon_mapping );
-
 		$this->add_control(
 			'icon',
 			[
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
-				'title_field'   => "
-<#
-elementor.helpers.enqueueIconFonts( 'fa-solid' );
-elementor.helpers.enqueueIconFonts( 'fa-brands' );
-const mapping = {$platform_icons_js}; #>
-<i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
-",
+				'title_field'   => $this->get_icon_title_field(),
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
 			]
 		);
 
 		$this->end_controls_section();
+	}
+
+	private function get_icon_title_field(): string {
+		$platform_icons_js = json_encode( self::$platform_icon_mapping );
+		return  <<<JS
+<#
+elementor.helpers.enqueueIconFonts( 'fa-solid' );
+elementor.helpers.enqueueIconFonts( 'fa-brands' );
+const mapping = {$platform_icons_js}; #>
+<i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
+JS;
 	}
 
 
