@@ -16,9 +16,10 @@ use Elementor\Utils;
 class Core_Render extends Render_Base {
 
 	public function render(): void {
-		$layout_props_full_show_border  = $this->settings['background_show_border'] ?? '';
-		$layout_props_full_height       = $this->settings['advanced_layout_full_screen_height'] ?? '';
-		$layout_props_full_width        = $this->settings['advanced_layout_full_width_custom'] ?? '';
+		$layout_props_full_show_border     = $this->settings['background_show_border'] ?? '';
+		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
+		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
+		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
 
 		$layout_classnames = 'e-link-in-bio';
 
@@ -32,6 +33,12 @@ class Core_Render extends Render_Base {
 
 		if ( 'yes' === $layout_props_full_width ) {
 			$layout_classnames .= " is-full-width";
+		}
+
+		if ( !empty( $layout_props_full_height_controls ) ) {
+			foreach ( $layout_props_full_height_controls as $breakpoint ) {
+				$layout_classnames .= ' is-full-height-' . $breakpoint;
+			}
 		}
 
 		$this->widget->add_render_attribute( 'layout', [
