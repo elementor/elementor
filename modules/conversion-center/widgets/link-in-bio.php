@@ -220,6 +220,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_link',
 			[
 				'type'          => Controls_Manager::REPEATER,
+				'max_items'     => 4,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
@@ -385,6 +386,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
+				'max_items'    => 5,
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => "<i class='{{{ icon_icon.value }}}' ></i> {{{ icon_platform }}}",
@@ -1054,14 +1056,13 @@ class Link_In_Bio extends Widget_Base {
 			],
 		);
 
-
 		// Getting active breakpoints and setting dynamic options
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
-            $available_devices[ $breakpoint_key ] = $breakpoint->get_label();
-            $default_devices[] = $breakpoint_key;
-        }
+			$available_devices[ $breakpoint_key ] = $breakpoint->get_label();
+			$default_devices[] = $breakpoint_key;
+		}
 
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
