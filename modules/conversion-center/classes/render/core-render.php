@@ -48,12 +48,12 @@ class Core_Render extends Render_Base {
 			return;
 		}
 
-		$this->widget->add_render_attribute( "ctas", [
+		$this->widget->add_render_attribute( 'ctas', [
 			'class' => "e-link-in-bio__ctas has-type-{$ctas_props_type}",
 		] );
 		?>
 
-		<div <?php echo $this->widget->get_render_attribute_string( "ctas" ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php echo $this->widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
 				// Bail if no text
@@ -183,8 +183,7 @@ class Core_Render extends Render_Base {
 		}
 	}
 
-	private
-	function render_identity_image(): void {
+	private function render_identity_image(): void {
 		$this->settings                          = $this->widget->get_settings_for_display();
 		$identity_image_props_shape              = $this->settings['identity_image_shape'] ?? 'circle';
 		$identity_image_props_style              = $this->settings['identity_image_style'] ?? 'profile';

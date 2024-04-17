@@ -946,11 +946,11 @@ class Link_In_Bio extends Widget_Base {
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default'   => '',
 			]
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
@@ -1019,11 +1019,11 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => '',
 				],
 			],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
@@ -1039,11 +1039,11 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
-		// TODO: add class selector when markup is done
-		// 'selectors' => [
-		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-		// ],
+			// TODO: add class selector when markup is done
+			// 'selectors' => [
+			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+			// ],
 		);
 
 		$this->add_control(
