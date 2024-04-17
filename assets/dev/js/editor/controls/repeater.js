@@ -6,7 +6,6 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	ui: {
 		btnAddRow: '.elementor-repeater-add',
 		fieldContainer: '.elementor-repeater-fields-wrapper',
-		addMoreButton: '.elementor-button-wrapper',
 	},
 
 	events() {
@@ -99,7 +98,12 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	maybeHideAddMoreButtonAndCopyButton() {
+	toggleClasses() {
+		this.toggleMinRowsClass();
+		this.toggleMaxRowsClass();
+	},
+
+	toggleMaxRowsClass() {
 		const maxItems = this.model.get( 'max_items' );
 		if ( ! maxItems || ! Number.isInteger( maxItems ) ) {
 			return;
@@ -152,8 +156,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.ui.fieldContainer.sortable( this.getSortableParams() );
 		}
 
-		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButtonAndCopyButton();
+		this.toggleClasses();
 	},
 
 	onSortStart( event, ui ) {
@@ -261,8 +264,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.editRow( newChild );
 
-		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButtonAndCopyButton();
+		this.toggleClasses();
 	},
 
 	onChildviewClickRemove( childView ) {
@@ -279,8 +281,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 		this.updateChildIndexes();
 
-		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButtonAndCopyButton();
+		this.toggleClasses();
 	},
 
 	onChildviewClickDuplicate( childView ) {
@@ -290,8 +291,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			index: childView._index,
 		} );
 
-		this.toggleMinRowsClass();
-		this.maybeHideAddMoreButtonAndCopyButton();
+		this.toggleClasses();
 	},
 
 	onChildviewClickEdit( childView ) {
