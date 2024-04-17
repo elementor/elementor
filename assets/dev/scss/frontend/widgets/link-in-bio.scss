@@ -1,93 +1,212 @@
-.elementor-widget-link-in-bio {
-	--align-self: center;
-	--e-link-in-bio-gutter: 2em;
-
-	.elementor-widget-container {
-		border: 1px solid blue;
-		margin-inline: auto;
-		max-width: 100%;
-		padding: var(--e-link-in-bio-gutter);
-		padding-block-start: 0;
-		width: 100%;
-	}
-}
-
 .e-link-in-bio {
+	--e-link-in-bio-gutter: 40px;
+	--e-link-in-bio-container-width: 360px;
+	--e-link-in-bio-content-width: 360px;
 
-	&__content-container {
+	--e-link-in-bio-identity-image-profile-border-color: transparent;
+	--e-link-in-bio-identity-image-profile-border-radius: 50%;
+	--e-link-in-bio-identity-image-profile-border-style: none;
+	--e-link-in-bio-identity-image-profile-border-width: 0;
+	--e-link-in-bio-identity-image-profile-width: 115px;
+
+	--e-link-in-bio-identity-image-cover-border-color: transparent;
+	--e-link-in-bio-identity-image-cover-border-style: none;
+	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
+	--e-link-in-bio-identity-image-cover-height: 170px;
+
+	--e-link-in-bio-heading-color: inherit;
+	--e-link-in-bio-title-color: inherit;
+	--e-link-in-bio-description-color: inherit;
+
+	--e-link-in-bio-icon-color: inherit;
+	--e-link-in-bio-icon-size: 25px;
+
+	--e-link-in-bio-ctas-background-color: blue;
+	--e-link-in-bio-ctas-border-color: transparent;
+	--e-link-in-bio-ctas-border-radius: 20px;
+	--e-link-in-bio-ctas-border-style: none;
+	--e-link-in-bio-ctas-border-width: 0;
+	--e-link-in-bio-ctas-gap: 22px;
+	--e-link-in-bio-ctas-padding: 17px 20px;
+	--e-link-in-bio-ctas-text-color: inherit;
+
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	margin-inline: auto;
+	max-width: 100%;
+	position: relative;
+	width: var(--e-link-in-bio-container-width);
+
+	&__bg {
+		display: grid;
+		inset: 0;
+		position: absolute;
+		z-index: $ground-layer;
+	}
+
+	&__content {
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
-		margin-inline: auto;
+		max-width: 100%;
+		padding: var(--e-link-in-bio-gutter);
 		text-align: center;
+		width: var(--e-link-in-bio-content-width);
+		z-index: $first-layer;
 
 		* {
 			word-wrap: break-word;
 		}
 	}
 
-	&__identity--profile {
-		padding-block-start: var(--e-link-in-bio-gutter);
+	&__identity {
 
-		img.e-link-in-bio__identity-image {
-			aspect-ratio: 1;
-			border: 1px solid blue;
-			border-radius: 50%;
+		.e-link-in-bio__identity-image {
+			display: flex;
+		}
+
+		.e-link-in-bio__identity-image-el {
 			display: block;
+			flex: 1 1 100%;
 			object-fit: cover;
+		}
+
+		.e-link-in-bio__identity-image-profile {
+			aspect-ratio: 1;
+			border-color: var(--e-link-in-bio-identity-image-profile-border-color);
+			border-radius: var(--e-link-in-bio-identity-image-profile-border-radius);
+			border-style: var(--e-link-in-bio-identity-image-profile-border-style);
+			border-width: var(--e-link-in-bio-identity-image-profile-border-width);
+			overflow: hidden;
 			margin-inline: auto;
 			max-width: 100%;
-			width: 150px;
+			width: var(--e-link-in-bio-identity-image-profile-width);
+
+			&.has-border {
+				--e-link-in-bio-identity-image-profile-border-style: solid;
+			}
+
+			&.has-style-square {
+				--e-link-in-bio-identity-image-profile-border-radius: 0;
+			}
+
+			.e-link-in-bio__identity-image-el {
+				aspect-ratio: inherit;
+			}
+		}
+
+		.e-link-in-bio__identity-image-cover {
+			border-color: var(--e-link-in-bio-identity-image-cover-border-color);
+			border-style: var(--e-link-in-bio-identity-image-cover-border-style);
+			border-width: 0 0 var(--e-link-in-bio-identity-image-cover-border-bottom-width) 0;
+			margin-block-start: calc(var(--e-link-in-bio-gutter) * -1);
+			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
+			max-height: var(--e-link-in-bio-identity-image-cover-height);;
+			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
+
+			&.has-border {
+				--e-link-in-bio-identity-image-cover-border-style: solid;
+			}
 		}
 	}
 
-	&__identity--cover {
+	&__heading {
+		color: var(--e-link-in-bio-heading-color);
+	}
 
-		img.e-link-in-bio__identity-image {
-			display: block;
-			margin-inline: calc(var(--e-link-in-bio-gutter) * -1);
-			max-width: unset;
-			object-fit: cover;
-			width: calc(100% + calc(var(--e-link-in-bio-gutter) * 2));
-		}
+	&__title {
+		color: var(--e-link-in-bio-title-color);
+	}
+
+	&__description {
+		color: var(--e-link-in-bio-description-color);
 	}
 
 	&__icons {
 		display: flex;
+		flex-flow: row wrap;
 		gap: 1em;
 		justify-content: center;
 	}
 
 	&__icon {
+		color: var(--e-link-in-bio-icon-color);
 		display: flex;
-		width: 2em;
-	}
+		height: var(--e-link-in-bio-icon-size);
 
-	&__icon-link {
-		color: inherit;
-		display: flex;
-		flex: 1 0 auto;
+		&.has-size-medium {
+			--e-link-in-bio-icon-size: 30px;
+		}
 
-		&:where(:hover, :focus, :active) {
+		&.has-size-large {
+			--e-link-in-bio-icon-size: 35px;
+		}
+
+		.e-link-in-bio__icon-link {
 			color: inherit;
+			display: flex;
+			flex: 1 1 auto;
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: inherit;
+			}
+		}
+
+		svg {
+			fill: currentColor;
 		}
 	}
 
-	&__ctas {
-		display: flex;
-		flex-direction: column;
-		gap: 1em;
-	}
+	// Specificity needed to overwrite core link styles
+	.e-link-in-bio__content .e-link-in-bio__ctas {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+		gap: var(--e-link-in-bio-ctas-gap);
 
-	&__cta {
-		border-radius: 1em;
-		background: blue;
-		color: white;
-		display: block;
-		padding: 1em;
+		&.has-type-link {
+			--e-link-in-bio-ctas-gap: 5px;
+		}
 
-		&:where(:hover, :focus, :active) {
-			color: white;
+		.e-link-in-bio__cta {
+			color: var(--e-link-in-bio-ctas-text-color);
+			display: flex;
+			justify-content: center;
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var(--e-link-in-bio-ctas-text-color);
+			}
+		}
+
+		.e-link-in-bio__cta.is-type-button {
+			border-radius: var(--e-link-in-bio-ctas-border-radius);
+			background-color: var(--e-link-in-bio-ctas-background-color);
+			padding: var(--e-link-in-bio-ctas-padding);
+
+			&.has-border {
+				--e-link-in-bio-ctas-border-style: solid;
+				border-color: var(--e-link-in-bio-ctas-border-color);
+				border-style: var(--e-link-in-bio-ctas-border-style);
+				border-width: var(--e-link-in-bio-ctas-border-width);
+			}
+
+			&.has-corners-round {
+				--e-link-in-bio-ctas-border-radius: 50px;
+			}
+
+			&.has-corners-sharp {
+				--e-link-in-bio-ctas-border-radius: 0;
+			}
+		}
+
+		.e-link-in-bio__cta.is-type-link {
+			margin-block: 17px;
+			text-decoration: underline;
 		}
 	}
 }

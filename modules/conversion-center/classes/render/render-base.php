@@ -12,5 +12,15 @@ use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
  * @since 3.23.0
  */
 abstract class Render_Base {
-	abstract public function render( Link_In_Bio $widget ): void;
+
+	protected Link_In_Bio $widget;
+
+	protected mixed $settings;
+
+	public function __construct( Link_In_Bio $widget ) {
+		$this->widget   = $widget;
+		$this->settings = $widget->get_settings_for_display();
+	}
+
+	abstract public function render(): void;
 }
