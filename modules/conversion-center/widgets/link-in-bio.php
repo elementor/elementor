@@ -26,6 +26,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Link_In_Bio extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-custom';
 
+	static protected $platform_icon_mapping = [
+		'Facebook'    => 'fab fa-facebook',
+		'Instagram'   => 'fab fa-instagram',
+		'LinkedIn'    => 'fab fa-linkedin-in',
+		'Pinterest'   => 'fab fa-pinterest',
+		'TikTok'      => 'fab fa-tiktok',
+		'X (Twitter)' => 'fab fa-x-twitter',
+		'YouTube'     => 'fab fa-youtube',
+		'Apple Music' => 'fab fa-apple',
+		'Behance'     => 'fab fa-behance',
+		'Dribble'     => 'fab fa-dribbble',
+		'Spotify'     => 'fab fa-spotify',
+		'SoundCloud'  => 'fab fa-soundcloud',
+		'Vimeo'       => 'fab fa-vimeo-v',
+		'Waze'        => 'fab fa-waze',
+		'WhatsApp'    => 'fab fa-whatsapp',
+		'Messenger'   => 'fab fa-facebook-messenger',
+		'Telephone'   => 'fas fa-phone-alt',
+		'Email'       => 'fas fa-envelope',
+	];
+
+	static public function get_mapping( string $platform ): string {
+		return self::$platform_icon_mapping[ $platform ];
+
+	}
+
 	public function get_name(): string {
 		return 'link-in-bio';
 	}
@@ -131,7 +157,7 @@ class Link_In_Bio extends Widget_Base {
 						'options' => [
 							'Email'     => esc_html__( 'Email', 'elementor' ),
 							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-							'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
+							'Messenger' => esc_html__( 'Messenger', 'elementor' ),
 							'Waze'      => esc_html__( 'Waze', 'elementor' ),
 							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
 						],
@@ -208,7 +234,7 @@ class Link_In_Bio extends Widget_Base {
 				'condition'   => [
 					'cta_link_type' => [
 						'Telephone',
-						'Telegram',
+						'Messenger',
 						'WhatsApp',
 					],
 				],
@@ -264,7 +290,7 @@ class Link_In_Bio extends Widget_Base {
 						'options' => [
 							'Email'     => esc_html__( 'Email', 'elementor' ),
 							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-							'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
+							'Messenger' => esc_html__( 'Messenger', 'elementor' ),
 							'Waze'      => esc_html__( 'Waze', 'elementor' ),
 							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
 						],
@@ -294,18 +320,6 @@ class Link_In_Bio extends Widget_Base {
 					],
 				],
 				'default' => 'Facebook',
-			],
-		);
-
-		$repeater->add_control(
-			'icon_icon',
-			[
-				'label'       => esc_html__( 'Content', 'elementor' ),
-				'type'        => Controls_Manager::ICONS,
-				'default'     => [
-					'url' => Utils::get_placeholder_image_src(),
-				],
-				'label_block' => true,
 			],
 		);
 
@@ -364,6 +378,36 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$repeater->add_control(
+			'icon_mail_subject',
+			[
+				'label'       => esc_html__( 'Subject', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => esc_html__( 'Subject', 'elementor' ),
+				'label_block' => true,
+				'condition'   => [
+					'icon_platform' => [
+						'Email',
+					],
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'icon_mail_message',
+			[
+				'label'       => esc_html__( 'Message', 'elementor' ),
+				'type'        => Controls_Manager::TEXTAREA,
+				'placeholder' => esc_html__( 'Message', 'elementor' ),
+				'label_block' => true,
+				'condition'   => [
+					'icon_platform' => [
+						'Email',
+					],
+				],
+			]
+		);
+
+		$repeater->add_control(
 			'icon_number',
 			[
 				'label'       => esc_html__( 'Number', 'elementor' ),
@@ -376,18 +420,24 @@ class Link_In_Bio extends Widget_Base {
 				'condition'   => [
 					'icon_platform' => [
 						'Telephone',
-						'Telegram',
+						'Messenger',
 						'WhatsApp',
 					],
 				],
 			],
 		);
+
+		$platform_icons_js = json_encode( self::$platform_icon_mapping );
+
 		$this->add_control(
 			'icon',
 			[
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
-				'title_field'   => "<i class='{{{ icon_icon.value }}}' ></i> {{{ icon_platform }}}",
+				'title_field'   => "
+<# const mapping = {$platform_icons_js}; console.log(mapping); #>
+<i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
+",
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
 			]
@@ -946,11 +996,11 @@ class Link_In_Bio extends Widget_Base {
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default'   => '',
 			]
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
@@ -1019,11 +1069,11 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => '',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
@@ -1039,11 +1089,11 @@ class Link_In_Bio extends Widget_Base {
 					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+		// TODO: add class selector when markup is done
+		// 'selectors' => [
+		// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+		// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+		// ],
 		);
 
 		$this->add_control(
