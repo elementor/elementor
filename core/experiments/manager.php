@@ -426,14 +426,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_swiper_latest',
-			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
-			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-		] );
-
-		$this->add_feature( [
 			'name' => 'container_grid',
 			'title' => esc_html__( 'Grid Container', 'elementor' ),
 			'tag' => esc_html__( 'Feature', 'elementor' ),
@@ -442,11 +434,19 @@ class Manager extends Base_Object {
 				esc_html__( 'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' ),
 			),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'dependencies' => [
 				'container',
 			],
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_swiper_latest',
+			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
+			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'default' => self::STATE_ACTIVE,
 		] );
 
 		$this->add_feature( [
