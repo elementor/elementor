@@ -331,7 +331,7 @@ class Widget_Heading extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$title = esc_attr( $settings['title'] );
+		$title = $this->filter_data_attributes( $settings['title'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_link_attributes( 'url', $settings['link'] );
@@ -378,5 +378,25 @@ class Widget_Heading extends Widget_Base {
 		print( title_html );
 		#>
 		<?php
+	}
+
+	/**
+	 * Remove data attributes from the html.
+	 *
+	 * @param string $html
+	 * @return string
+	 */
+	private function filter_data_attributes( string $html ): string {
+		$allowed_tags = wp_kses_allowed_html( 'post' );
+
+		foreach ( $allowed_tags as $tag => $attributes ) {
+			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
+				return ! str_starts_with( $attribute, 'data-' );
+			}, ARRAY_FILTER_USE_KEY );
+
+			$allowed_tags[ $tag ] = $filtered_attributes;
+		}
+
+		return wp_kses( $html, $allowed_tags );
 	}
 }
