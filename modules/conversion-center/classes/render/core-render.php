@@ -260,6 +260,9 @@ class Core_Render extends Render_Base {
 			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
 				break;
+			case Social_Network_Provider::FILE_DOWNLOAD:
+				$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
+				break;
 			default:
 				break;
 		}
