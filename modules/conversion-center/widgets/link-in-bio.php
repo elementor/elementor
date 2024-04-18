@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.23.0
  */
 class Link_In_Bio extends Widget_Base {
-	const TAB_ADVANCED = 'advanced-tab-custom';
+	const TAB_ADVANCED = 'advanced-tab-links';
 
 	public function get_name(): string {
 		return 'link-in-bio';
@@ -152,6 +152,7 @@ class Link_In_Bio extends Widget_Base {
 				'label'       => esc_html__( 'Choose File', 'elementor' ),
 				'type'        => Controls_Manager::MEDIA,
 				'label_block' => true,
+				'media_type'  => [ 'application/pdf' ],
 				'condition'   => [
 					'cta_link_type' => [
 						Social_Network_Provider::FILE_DOWNLOAD,
@@ -526,14 +527,13 @@ JS;
 
 		// Profile image style controls
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'identity_image_size',
 			[
 				'label'      => esc_html__( 'Image Size', 'elementor' ),
 				'type'       => Controls_Manager::SLIDER,
 				'default'    => [
-					'size' => 30,
-					'unit' => '%',
+					'unit' => 'px',
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'condition'  => [
@@ -576,7 +576,7 @@ JS;
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'identity_image_border_width',
 			[
 				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
@@ -612,7 +612,7 @@ JS;
 
 		// Cover image style controls
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'identity_image_height',
 			[
 				'label'      => esc_html__( 'Image Height', 'elementor' ),
@@ -630,8 +630,7 @@ JS;
 					],
 				],
 				'default'    => [
-					'unit' => '%',
-					'size' => 50,
+					'unit' => 'px',
 				],
 				'condition'  => [
 					'identity_image_style' => 'cover',
@@ -944,31 +943,27 @@ JS;
 		);
 
 		$this->add_control(
-			'hr',
+			'cta_links_hr',
 			[
 				'type' => Controls_Manager::DIVIDER,
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'cta_links_padding',
 			[
 				'label'      => esc_html__( 'Padding', 'elementor' ),
 				'type'       => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem' ],
 				'default'    => [
-					'top'      => 0,
-					'right'    => 0,
-					'bottom'   => 0,
-					'left'     => 0,
 					'unit'     => 'px',
 					'isLinked' => false,
 				],
 				'condition'  => [
 					'cta_links_type' => 'button',
 				],
-				'selectors'  => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -997,7 +992,6 @@ JS;
 			[
 				'name'           => 'background_border_background_group',
 				'types'          => [ 'classic', 'gradient' ],
-				'exclude'        => [ 'image' ],
 				'selector'       => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => [
 					'background' => [
@@ -1021,12 +1015,80 @@ JS;
 			[
 				'name'           => 'background_border_background_overlay_group',
 				'types'          => [ 'classic', 'gradient' ],
-				'exclude'        => [ 'image' ],
 				'selector'       => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
 					],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'background_overlay_opacity',
+			[
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio__bg-overlay' => '--background-overlay-opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_hr',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->add_control(
+			'background_show_border',
+			[
+				'label'        => esc_html__( 'Border', 'elementor' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default'      => '',
+			]
+		);
+
+		$this->add_responsive_control(
+			'background_border_width',
+			[
+				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => $border_width_range,
+				],
+				'condition'  => [
+					'background_show_border' => 'yes',
+				],
+				'selectors'  => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_border_color',
+			[
+				'label'     => esc_html__( 'Border Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'condition' => [
+					'background_show_border' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -1037,7 +1099,7 @@ JS;
 
 	private function add_advanced_tab() {
 		Controls_Manager::add_tab(
-			self::TAB_ADVANCED,
+			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
@@ -1045,7 +1107,7 @@ JS;
 			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab'   => self::TAB_ADVANCED,
+				'tab'   => static::TAB_ADVANCED,
 			]
 		);
 
@@ -1058,14 +1120,9 @@ JS;
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default'   => '',
 			]
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'advanced_layout_width',
 			[
 				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
@@ -1079,21 +1136,18 @@ JS;
 					],
 				],
 				'default'    => [
-					'size' => 360,
 					'unit' => 'px',
 				],
 				'condition'  => [
 					'advanced_layout_full_width_custom' => '',
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'advanced_layout_content_width',
 			[
 				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
@@ -1107,35 +1161,12 @@ JS;
 					],
 				],
 				'default'    => [
-					'size' => 280,
 					'unit' => 'px',
 				],
-				// TODO: add class selector when markup is done
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-				// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				// ],
-			]
-		);
-
-		$this->add_control(
-			'advanced_layout_center_vertical',
-			[
-				'label'        => esc_html__( 'Center Vertical', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default'      => 'yes',
-				'condition'    => [
-					'advanced_layout_full_width_custom' => '',
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
 				],
-			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
+			]
 		);
 
 		$this->add_control(
@@ -1151,12 +1182,15 @@ JS;
 					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
-			// TODO: add class selector when markup is done
-			// 'selectors' => [
-			// 	'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-			// 	'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-			// ],
 		);
+
+		// Getting active breakpoints and setting dynamic options
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
+			$available_devices[ $breakpoint_key ] = $breakpoint->get_label();
+			$default_devices[] = $breakpoint_key;
+		}
 
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
@@ -1165,14 +1199,10 @@ JS;
 				'type'        => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'multiple'    => true,
-				'options'     => [
-					'mobile'  => esc_html__( 'Mobile', 'elementor' ),
-					'tablet'  => esc_html__( 'Tablet', 'elementor' ),
-					'desktop' => esc_html__( 'Desktop', 'elementor' ),
-					// TODO: allow choosing between 7 breakpoints if the breakpoints experiment is on
-				],
-				'default'     => [ 'mobile', 'tablet', 'desktop' ],
+				'options'     => $available_devices,
+				'default'     => $default_devices,
 				'condition'   => [
+					'advanced_layout_full_width_custom'  => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
 				],
 			]
@@ -1181,22 +1211,26 @@ JS;
 		$this->end_controls_section();
 
 		$this->start_controls_section(
-			'advanced_custom_controls_sectionmax',
+			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab'   => self::TAB_ADVANCED,
+				'tab'   => static::TAB_ADVANCED,
 			]
 		);
 
 		$this->add_control(
 			'advanced_custom_css_id',
 			[
-				'label'          => esc_html__( 'CSS ID', 'elementor' ),
-				'type'           => Controls_Manager::TEXT,
-				'default'        => '',
-				'dynamic'        => [
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
 					'active' => true,
 				],
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 			]
 		);
@@ -1204,19 +1238,24 @@ JS;
 		$this->add_control(
 			'advanced_custom_css_classes',
 			[
-				'label'          => esc_html__( 'CSS Classes', 'elementor' ),
-				'type'           => Controls_Manager::TEXT,
-				'default'        => '',
-				'dynamic'        => [
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
 					'active' => true,
 				],
-				'style_transfer' => false,
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
 		$this->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, self::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
+
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
 	}
 
 	private function add_tag_control( string $name ): void {
