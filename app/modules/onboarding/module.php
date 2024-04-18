@@ -113,6 +113,7 @@ class Module extends BaseModule {
 				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
+			'experiment' => Plugin::$instance->experiments->is_feature_active( 'e_onboarding' ),
 		] );
 	}
 
