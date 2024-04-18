@@ -33,12 +33,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
-		const parent = this;
+		if ( this.getNestingLevel ) {
+			const nestingLevel = this.getNestingLevel();
 
-		if ( parent.getNestingLevel ) {
-			const nestingLevel = parent.getNestingLevel();
-
-			if ( parent.isBoxedWidth() ) {
+			if ( this.isBoxedWidth() ) {
 				newItem.settings.content_width = 'full';
 
 				return false;
