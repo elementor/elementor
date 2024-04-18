@@ -1,13 +1,13 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { OnboardingContext } from '../context/context';
-import { useNavigate } from '@reach/router';
+import Message from '../components/Message';
 
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function ChooseFeatures() {
 	const { state } = useContext( OnboardingContext ),
-		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
+		tiers = { advanced: 'Advanced', essential: 'Essential' },
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
 		// [ message, setMessage ] = useState( '' ),
@@ -101,13 +101,13 @@ export default function ChooseFeatures() {
 		}
 	}
 
-	// function createMessage() {
-	// 	/* Translators: %s: Tier name. */
-	// 	const translatedMessage = __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ),
-	// 		splittedMessage = translatedMessage.split( '%s' );
-	//
-	// 	setMessage( `${ splittedMessage[ 0 ] } <b> ${ tierName } </b> ${ splittedMessage[ 1 ] }` );
-	// }
+	function createMessage() {
+		/* Translators: %s: Tier name. */
+		const translatedMessage = __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ),
+			splittedMessage = translatedMessage.split( '%s' );
+
+		setMessage( `${ splittedMessage[ 0 ] } <b> ${ tierName } </b> ${ splittedMessage[ 1 ] }` );
+	}
 
 	function isFeatureSelected( features ) {
 		return !! features.advanced.length || !! features.essential.length;
@@ -153,7 +153,8 @@ export default function ChooseFeatures() {
 					{ isFeatureSelected( selectedFeatures ) &&
 						// { message }
 						/* Translators: %s: Tier name. */
-						__( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', tierName )
+						// __( `Based on the features you chose, we recommend the %s plan, or higher`, 'elementor' ).replace( '%s', tierName )
+						<Message tier={tierName}/>
 					}
 				</p>
 
