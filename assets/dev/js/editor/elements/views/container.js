@@ -32,6 +32,22 @@ const ContainerView = BaseElementView.extend( {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
+	filterSettings( newItem ) {
+		const parent = this;
+
+		if ( parent.getNestingLevel ) {
+			const nestingLevel = parent.getNestingLevel();
+
+			if ( parent.isBoxedWidth() ) {
+				newItem.settings.content_width = 'full';
+
+				return false;
+			} else if ( 0 !== nestingLevel ) {
+				newItem.settings.content_width = 'full';
+			}
+		}
+	},
+
 	childViewOptions() {
 		return {
 			emptyViewOwner: this,

@@ -74,7 +74,9 @@ module.exports = Marionette.CompositeView.extend( {
 			options.onBeforeAdd();
 		}
 
-		this.applyChildContentWidthSettings( newItem );
+		if ( this.filterSettings ) {
+			this.filterSettings( newItem );
+		}
 
 		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
@@ -98,22 +100,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	createElementFromContainer( container, options = {} ) {
 		return this.createElementFromModel( container.model, options );
-	},
-
-	applyChildContentWidthSettings( newItem ) {
-		const parent = this;
-
-		if ( parent.getNestingLevel ) {
-			const nestingLevel = parent.getNestingLevel();
-
-			if ( parent.isBoxedWidth() ) {
-				newItem.settings.content_width = 'full';
-
-				return false;
-			} else if ( 0 !== nestingLevel ) {
-				newItem.settings.content_width = 'full';
-			}
-		}
 	},
 
 	createElementFromModel( model, options = {} ) {
