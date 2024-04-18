@@ -315,11 +315,9 @@ class Role_Manager extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->register_admin_menu( $admin_menu );
-			}, Settings::ADMIN_MENU_PRIORITY + 10 );
-		}
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			$this->register_admin_menu( $admin_menu );
+		}, Settings::ADMIN_MENU_PRIORITY + 10 );
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );
