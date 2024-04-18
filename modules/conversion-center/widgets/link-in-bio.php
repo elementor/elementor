@@ -276,6 +276,7 @@ class Link_In_Bio extends Widget_Base {
 			'cta_link',
 			[
 				'type'          => Controls_Manager::REPEATER,
+				'max_items'     => 4,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
@@ -482,6 +483,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
+				'max_items'    => 5,
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => $this->get_icon_title_field(),
