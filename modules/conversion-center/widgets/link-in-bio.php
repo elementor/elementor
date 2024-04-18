@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
+use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
@@ -55,6 +56,7 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 	protected function register_controls(): void {
+
 		$this->add_identity_section();
 
 		$this->add_bio_section();
@@ -114,27 +116,30 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_type',
 			[
-				'name'    => 'cta_link_type',
 				'label'   => esc_html__( 'Link Type', 'elementor' ),
 				'type'    => Controls_Manager::SELECT,
 				'groups'  => [
 
 					[
 						'label'   => '',
-						'options' => [
-							'Url'           => esc_html__( 'Url', 'elementor' ),
-							'File Download' => esc_html__( 'File Download', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::URL,
+								Social_Network_Provider::FILE_DOWNLOAD,
+							]
+						),
 					],
 					[
 						'label'   => '   --',
-						'options' => [
-							'Email'     => esc_html__( 'Email', 'elementor' ),
-							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-							'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
-							'Waze'      => esc_html__( 'Waze', 'elementor' ),
-							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::EMAIL,
+								Social_Network_Provider::TELEPHONE,
+								Social_Network_Provider::MESSENGER,
+								Social_Network_Provider::WAZE,
+								Social_Network_Provider::WHATSAPP,
+							]
+						),
 					],
 				],
 				'default' => 'Url',
@@ -149,7 +154,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'cta_link_type' => [
-						'File Download',
+						Social_Network_Provider::FILE_DOWNLOAD,
 					],
 				],
 			],
@@ -168,8 +173,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block'  => true,
 				'condition'    => [
 					'cta_link_type' => [
-						'Waze',
-						'Url',
+						Social_Network_Provider::URL,
 					],
 				],
 				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
@@ -179,7 +183,6 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_mail',
 			[
-				'name'        => 'cta_link_mail',
 				'label'       => esc_html__( 'Mail', 'elementor' ),
 				'type'        => Controls_Manager::TEXT,
 				'dynamic'     => [
@@ -188,7 +191,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'cta_link_type' => [
-						'Email',
+						Social_Network_Provider::EMAIL,
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
@@ -196,9 +199,44 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$repeater->add_control(
+			'cta_link_mail_subject',
+			[
+				'label'       => esc_html__( 'Subject', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::EMAIL,
+					],
+				],
+				'placeholder' => esc_html__( 'Subject', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_mail_body',
+			[
+				'label'       => esc_html__( 'Message', 'elementor' ),
+				'type'        => Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::EMAIL,
+					],
+				],
+				'placeholder' => esc_html__( 'Message', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
 			'cta_link_number',
 			[
-				'name'        => 'cta_link_number',
 				'label'       => esc_html__( 'Number', 'elementor' ),
 				'type'        => Controls_Manager::TEXT,
 				'dynamic'     => [
@@ -207,12 +245,30 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'cta_link_type' => [
-						'Telephone',
-						'Telegram',
-						'WhatsApp',
+						Social_Network_Provider::TELEPHONE,
+						Social_Network_Provider::WAZE,
+						Social_Network_Provider::WHATSAPP,
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_username',
+			[
+				'label'       => esc_html__( 'Username', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::MESSENGER,
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
 			],
 		);
 
@@ -262,51 +318,44 @@ class Link_In_Bio extends Widget_Base {
 
 					[
 						'label'   => '',
-						'options' => [
-							'Email'     => esc_html__( 'Email', 'elementor' ),
-							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-							'Telegram'  => esc_html__( 'Telegram', 'elementor' ),
-							'Waze'      => esc_html__( 'Waze', 'elementor' ),
-							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text( [
+							Social_Network_Provider::EMAIL,
+							Social_Network_Provider::TELEPHONE,
+							Social_Network_Provider::MESSENGER,
+							Social_Network_Provider::WAZE,
+							Social_Network_Provider::WHATSAPP,
+
+						] ),
 					],
 					[
 						'label'   => '   --',
-						'options' => [
-							'Facebook'    => esc_html__( 'Facebook', 'elementor' ),
-							'Instagram'   => esc_html__( 'Instagram', 'elementor' ),
-							'LinkedIn'    => esc_html__( 'LinkedIn', 'elementor' ),
-							'Pinterest'   => esc_html__( 'Pinterest', 'elementor' ),
-							'TikTok'      => esc_html__( 'TikTok', 'elementor' ),
-							'X (Twitter)' => esc_html__( 'X (Twitter)', 'elementor' ),
-							'YouTube'     => esc_html__( 'YouTube', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::FACEBOOK,
+								Social_Network_Provider::INSTAGRAM,
+								Social_Network_Provider::LINKEDIN,
+								Social_Network_Provider::PINTEREST,
+								Social_Network_Provider::TIKTOK,
+								Social_Network_Provider::TWITTER,
+								Social_Network_Provider::YOUTUBE,
+							]
+						),
 					],
 					[
 						'label'   => '   --',
-						'options' => [
-							'Apple Music' => esc_html__( 'Apple Music', 'elementor' ),
-							'Behance'     => esc_html__( 'Behance', 'elementor' ),
-							'Dribble'     => esc_html__( 'Dribble', 'elementor' ),
-							'Spotify'     => esc_html__( 'Spotify', 'elementor' ),
-							'SoundCloud'  => esc_html__( 'SoundCloud', 'elementor' ),
-							'Vimeo'       => esc_html__( 'Vimeo', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::APPLEMUSIC,
+								Social_Network_Provider::BEHANCE,
+								Social_Network_Provider::DRIBBBLE,
+								Social_Network_Provider::SPOTIFY,
+								Social_Network_Provider::SOUNDCLOUD,
+								Social_Network_Provider::VIMEO,
+							]
+						),
 					],
 				],
 				'default' => 'Facebook',
-			],
-		);
-
-		$repeater->add_control(
-			'icon_icon',
-			[
-				'label'       => esc_html__( 'Content', 'elementor' ),
-				'type'        => Controls_Manager::ICONS,
-				'default'     => [
-					'url' => Utils::get_placeholder_image_src(),
-				],
-				'label_block' => true,
 			],
 		);
 
@@ -324,23 +373,22 @@ class Link_In_Bio extends Widget_Base {
 				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
 				'condition'    => [
 					'icon_platform' => [
-						'Vimeo',
-						'Facebook',
-						'SoundCloud',
-						'Spotify',
-						'Instagram',
-						'LinkedIn',
-						'Pinterest',
-						'TikTok',
-						'X (Twitter)',
-						'YouTube',
-						'Apple Music',
-						'Behance',
-						'Dribble',
-						'Spotify',
-						'SoundCloud',
-						'Vimeo',
-						'Waze',
+						Social_Network_Provider::VIMEO,
+						Social_Network_Provider::FACEBOOK,
+						Social_Network_Provider::SOUNDCLOUD,
+						Social_Network_Provider::SPOTIFY,
+						Social_Network_Provider::INSTAGRAM,
+						Social_Network_Provider::LINKEDIN,
+						Social_Network_Provider::PINTEREST,
+						Social_Network_Provider::TIKTOK,
+						Social_Network_Provider::TWITTER,
+						Social_Network_Provider::YOUTUBE,
+						Social_Network_Provider::APPLEMUSIC,
+						Social_Network_Provider::BEHANCE,
+						Social_Network_Provider::DRIBBBLE,
+						Social_Network_Provider::SPOTIFY,
+						Social_Network_Provider::SOUNDCLOUD,
+						Social_Network_Provider::VIMEO,
 					],
 				],
 			],
@@ -358,7 +406,37 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'icon_platform' => [
-						'Email',
+						Social_Network_Provider::EMAIL,
+					],
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'icon_mail_subject',
+			[
+				'label'       => esc_html__( 'Subject', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => esc_html__( 'Subject', 'elementor' ),
+				'label_block' => true,
+				'condition'   => [
+					'icon_platform' => [
+						Social_Network_Provider::EMAIL,
+					],
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'icon_mail_body',
+			[
+				'label'       => esc_html__( 'Message', 'elementor' ),
+				'type'        => Controls_Manager::TEXTAREA,
+				'placeholder' => esc_html__( 'Message', 'elementor' ),
+				'label_block' => true,
+				'condition'   => [
+					'icon_platform' => [
+						Social_Network_Provider::EMAIL,
 					],
 				],
 			]
@@ -376,26 +454,58 @@ class Link_In_Bio extends Widget_Base {
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
 				'condition'   => [
 					'icon_platform' => [
-						'Telephone',
-						'Telegram',
-						'WhatsApp',
+						Social_Network_Provider::TELEPHONE,
+						Social_Network_Provider::WHATSAPP,
+						Social_Network_Provider::WAZE,
 					],
 				],
 			],
 		);
+
+		$repeater->add_control(
+			'icon_username',
+			[
+				'label'       => esc_html__( 'Username', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
+				'condition'   => [
+					'icon_platform' => [
+						Social_Network_Provider::MESSENGER,
+					],
+				],
+			],
+		);
+
 		$this->add_control(
 			'icon',
 			[
 				'max_items'    => 5,
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
-				'title_field'   => "<i class='{{{ icon_icon.value }}}' ></i> {{{ icon_platform }}}",
+				'title_field'   => $this->get_icon_title_field(),
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
 			]
 		);
 
 		$this->end_controls_section();
+	}
+
+	private function get_icon_title_field(): string {
+		$platform_icons_js = json_encode( Social_Network_Provider::get_social_networks_icons() );
+
+		return <<<JS
+	<#
+	elementor.helpers.enqueueIconFonts( 'fa-solid' );
+	elementor.helpers.enqueueIconFonts( 'fa-brands' );
+	const mapping = {$platform_icons_js};
+	#>
+	<i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
+JS;
 	}
 
 
