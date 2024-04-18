@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
+use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
@@ -25,34 +26,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Link_In_Bio extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-custom';
-
-	protected static $platform_icon_mapping = [
-		'Facebook'    => 'fab fa-facebook',
-		'Instagram'   => 'fab fa-instagram',
-		'LinkedIn'    => 'fab fa-linkedin-in',
-		'Pinterest'   => 'fab fa-pinterest',
-		'TikTok'      => 'fab fa-tiktok',
-		'X (Twitter)' => 'fab fa-x-twitter',
-		'YouTube'     => 'fab fa-youtube',
-		'Apple Music' => 'fab fa-apple',
-		'Behance'     => 'fab fa-behance',
-		'Dribble'     => 'fab fa-dribbble',
-		'Spotify'     => 'fab fa-spotify',
-		'SoundCloud'  => 'fab fa-soundcloud',
-		'Vimeo'       => 'fab fa-vimeo-v',
-		'Waze'        => 'fab fa-waze',
-		'WhatsApp'    => 'fab fa-whatsapp',
-		'Messenger'   => 'fab fa-facebook-messenger',
-		'Telephone'   => 'fas fa-phone-alt',
-		'Email'       => 'fas fa-envelope',
-	];
-
-	public static function get_mapping( string $platform ): string {
-		if ( isset( self::$platform_icon_mapping[ $platform ] ) ) {
-			return self::$platform_icon_mapping[ $platform ];
-		}
-		return '';
-	}
 
 	public function get_name(): string {
 		return 'link-in-bio';
@@ -290,36 +263,41 @@ class Link_In_Bio extends Widget_Base {
 
 					[
 						'label'   => '',
-						'options' => [
-							'Email'     => esc_html__( 'Email', 'elementor' ),
-							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-							'Messenger' => esc_html__( 'Messenger', 'elementor' ),
-							'Waze'      => esc_html__( 'Waze', 'elementor' ),
-							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text( [
+							Social_Network_Provider::EMAIL,
+							Social_Network_Provider::TELEPHONE,
+							Social_Network_Provider::MESSENGER,
+							Social_Network_Provider::WAZE,
+							Social_Network_Provider::WHATSAPP,
+
+						] ),
 					],
 					[
 						'label'   => '   --',
-						'options' => [
-							'Facebook'    => esc_html__( 'Facebook', 'elementor' ),
-							'Instagram'   => esc_html__( 'Instagram', 'elementor' ),
-							'LinkedIn'    => esc_html__( 'LinkedIn', 'elementor' ),
-							'Pinterest'   => esc_html__( 'Pinterest', 'elementor' ),
-							'TikTok'      => esc_html__( 'TikTok', 'elementor' ),
-							'X (Twitter)' => esc_html__( 'X (Twitter)', 'elementor' ),
-							'YouTube'     => esc_html__( 'YouTube', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::FACEBOOK,
+								Social_Network_Provider::INSTAGRAM,
+								Social_Network_Provider::LINKEDIN,
+								Social_Network_Provider::PINTEREST,
+								Social_Network_Provider::TIKTOK,
+								Social_Network_Provider::TWITTER,
+								Social_Network_Provider::YOUTUBE,
+							]
+						),
 					],
 					[
 						'label'   => '   --',
-						'options' => [
-							'Apple Music' => esc_html__( 'Apple Music', 'elementor' ),
-							'Behance'     => esc_html__( 'Behance', 'elementor' ),
-							'Dribble'     => esc_html__( 'Dribble', 'elementor' ),
-							'Spotify'     => esc_html__( 'Spotify', 'elementor' ),
-							'SoundCloud'  => esc_html__( 'SoundCloud', 'elementor' ),
-							'Vimeo'       => esc_html__( 'Vimeo', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::APPLEMUSIC,
+								Social_Network_Provider::BEHANCE,
+								Social_Network_Provider::DRIBBBLE,
+								Social_Network_Provider::SPOTIFY,
+								Social_Network_Provider::SOUNDCLOUD,
+								Social_Network_Provider::VIMEO,
+							]
+						),
 					],
 				],
 				'default' => 'Facebook',
@@ -340,23 +318,22 @@ class Link_In_Bio extends Widget_Base {
 				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
 				'condition'    => [
 					'icon_platform' => [
-						'Vimeo',
-						'Facebook',
-						'SoundCloud',
-						'Spotify',
-						'Instagram',
-						'LinkedIn',
-						'Pinterest',
-						'TikTok',
-						'X (Twitter)',
-						'YouTube',
-						'Apple Music',
-						'Behance',
-						'Dribble',
-						'Spotify',
-						'SoundCloud',
-						'Vimeo',
-						'Waze',
+						Social_Network_Provider::VIMEO,
+						Social_Network_Provider::FACEBOOK,
+						Social_Network_Provider::SOUNDCLOUD,
+						Social_Network_Provider::SPOTIFY,
+						Social_Network_Provider::INSTAGRAM,
+						Social_Network_Provider::LINKEDIN,
+						Social_Network_Provider::PINTEREST,
+						Social_Network_Provider::TIKTOK,
+						Social_Network_Provider::TWITTER,
+						Social_Network_Provider::YOUTUBE,
+						Social_Network_Provider::APPLEMUSIC,
+						Social_Network_Provider::BEHANCE,
+						Social_Network_Provider::DRIBBBLE,
+						Social_Network_Provider::SPOTIFY,
+						Social_Network_Provider::SOUNDCLOUD,
+						Social_Network_Provider::VIMEO,
 					],
 				],
 			],
@@ -374,7 +351,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'icon_platform' => [
-						'Email',
+						Social_Network_Provider::EMAIL,
 					],
 				],
 			]
@@ -389,14 +366,14 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'icon_platform' => [
-						'Email',
+						Social_Network_Provider::EMAIL,
 					],
 				],
 			]
 		);
 
 		$repeater->add_control(
-			'icon_mail_message',
+			'icon_mail_body',
 			[
 				'label'       => esc_html__( 'Message', 'elementor' ),
 				'type'        => Controls_Manager::TEXTAREA,
@@ -404,7 +381,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'icon_platform' => [
-						'Email',
+						Social_Network_Provider::EMAIL,
 					],
 				],
 			]
@@ -422,9 +399,27 @@ class Link_In_Bio extends Widget_Base {
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
 				'condition'   => [
 					'icon_platform' => [
-						'Telephone',
-						'Messenger',
-						'WhatsApp',
+						Social_Network_Provider::TELEPHONE,
+						Social_Network_Provider::WHATSAPP,
+						Social_Network_Provider::WAZE,
+					],
+				],
+			],
+		);
+
+		$repeater->add_control(
+			'icon_username',
+			[
+				'label'       => esc_html__( 'Username', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
+				'condition'   => [
+					'icon_platform' => [
+						Social_Network_Provider::MESSENGER,
 					],
 				],
 			],
@@ -445,13 +440,15 @@ class Link_In_Bio extends Widget_Base {
 	}
 
 	private function get_icon_title_field(): string {
-		$platform_icons_js = json_encode( self::$platform_icon_mapping );
+		$platform_icons_js = json_encode( Social_Network_Provider::get_social_networks_icons() );
+
 		return <<<JS
-<#
-elementor.helpers.enqueueIconFonts( 'fa-solid' );
-elementor.helpers.enqueueIconFonts( 'fa-brands' );
-const mapping = {$platform_icons_js}; #>
-<i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
+	<#
+	elementor.helpers.enqueueIconFonts( 'fa-solid' );
+	elementor.helpers.enqueueIconFonts( 'fa-brands' );
+	const mapping = {$platform_icons_js};
+	#>
+	<i class='{{{ mapping[icon_platform] }}}' ></i> {{{ icon_platform }}}
 JS;
 	}
 

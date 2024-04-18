@@ -3,6 +3,7 @@
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
@@ -102,7 +103,8 @@ class Core_Render extends Render_Base {
 	private function render_icons(): void {
 		$icons_props_size = $this->settings['icons_size'] ?? 'small';
 		$icons_value      = $this->settings['icon'] ?? [];
-		$has_icons        = ! empty( $icons_value );
+
+		$has_icons = ! empty( $icons_value );
 		if ( ! $has_icons ) {
 			return;
 		}
@@ -111,13 +113,9 @@ class Core_Render extends Render_Base {
 		<div class="e-link-in-bio__icons">
 			<?php
 			foreach ( $icons_value as $key => $icon ) {
-				// Bail if no icon
-				if ( empty( $icon['icon_icon'] ) ) {
-					break;
-				}
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
-
+				error_log( print_r( $formatted_link, true ) );
 				// Bail if no link
 				if ( empty( $formatted_link ) ) {
 					break;
@@ -139,16 +137,13 @@ class Core_Render extends Render_Base {
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php
-						$mapping = Link_In_Bio::get_mapping( $icon['icon_platform'] );
+						$mapping  = Social_Network_Provider::get_icon_mapping( $icon['icon_platform'] );
 						$icon_lib = explode( ' ', $mapping )[0];
-						$library = 'fa-solid';
-						if ( 'fab' === $icon_lib ) {
-							$library = 'fa-brands';
-						}
+						$library  = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
 						Icons_Manager::render_icon(
 							[
 								'library' => $library,
-								'value' => $mapping,
+								'value'   => $mapping,
 							],
 							[ 'aria-hidden' => 'true' ]
 						);
@@ -280,19 +275,27 @@ class Core_Render extends Render_Base {
 
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $icon['icon_platform'] ) {
-			case 'Email':
+			case Social_Network_Provider::EMAIL:
 				$formatted_link = ! empty( $icon['icon_mail'] ) ? 'mailto:' . $icon['icon_mail'] : '';
+				if ( $formatted_link && isset( $icon['icon_mail_subject'] ) ) {
+					$formatted_link .= '?subject=' . $icon['icon_mail_subject'];
+				}
+				if ( $formatted_link && isset( $icon['icon_mail_body'] ) ) {
+					$formatted_link .= '&body=' . $icon['icon_mail_body'];
+				}
 				break;
-			case 'Telephone':
+			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'tel:' . $icon['icon_number'] : '';
 				break;
-			case 'Telegram':
-				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://telegram.me/' . $icon['icon_number'] : '';
+			case Social_Network_Provider::MESSENGER:
+				$formatted_link = ! empty( $icon['icon_username'] ) ?
+					'https://www.facebook.com/messages/t/' . $icon['icon_username'] :
+					'';
 				break;
-			case 'Waze':
+			case Social_Network_Provider::WAZE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://www.waze.com/ul?ll=' . $icon['icon_number'] . '&navigate=yes' : '';
 				break;
-			case 'WhatsApp':
+			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://wa.me/' . $icon['icon_number'] : '';
 				break;
 		}
