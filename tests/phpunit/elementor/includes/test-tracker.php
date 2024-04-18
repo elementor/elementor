@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
@@ -11,13 +10,9 @@ use Elementor\Utils;
 
 class Test_Tracker extends Elementor_Test_Base {
 	public function test_get_settings_general_usage() {
-		// Arrange - Set page only.
+		// Arrange.
 		update_option( 'elementor_cpt_support', [ 'page' ] );
-
-		// Set true.
 		update_option( 'elementor_disable_color_schemes', true );
-
-		// Set false.
 		update_option( 'elementor_disable_typography_schemes', '' );
 
 		// Act.
@@ -36,26 +31,14 @@ class Test_Tracker extends Elementor_Test_Base {
 
 	public function test_get_settings_advanced_usage() {
 		// Arrange.
-
-		// Load font_awesome_support settings.
 		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
 
 		update_option( 'elementor_css_print_method', 'internal' );
-
 		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
-
 		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
-
 		update_option( 'elementor_google_font', '1' );
-
-		update_option( 'elementor_optimized_gutenberg_loading', '1' );
-
-		update_option( 'elementor_optimized_image_loading', '1' );
-
 		update_option( 'elementor_font_display', 'block' );
-
 		update_option( 'elementor_meta_generator_tag', '1' );
-
 		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
 
 		// Act.
@@ -67,11 +50,26 @@ class Test_Tracker extends Elementor_Test_Base {
 			'switch_editor_loader_method' => '',
 			'enable_unfiltered_file_uploads' => '1',
 			'google_font' => '1',
-			'optimized_gutenberg_loading' => '1',
-			'optimized_image_loading' => '1',
 			'font_display' => 'block',
 			'font_awesome_support' => 'yes',
 			'meta_generator_tag' => '1',
+		], $actual );
+	}
+
+	public function test_get_settings_performance_usage() {
+		// Arrange.
+		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
+
+		update_option( 'elementor_optimized_gutenberg_loading', '1' );
+		update_option( 'elementor_optimized_image_loading', '1' );
+
+		// Act.
+		$actual = Tracker::get_settings_performance_usage();
+
+		// Assert.
+		$this->assertEqualSets( [
+			'optimized_gutenberg_loading' => '1',
+			'optimized_image_loading' => '1',
 		], $actual );
 	}
 
