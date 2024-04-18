@@ -388,15 +388,21 @@ class Widget_Heading extends Widget_Base {
 	 */
 	private function filter_data_attributes( string $html ): string {
 		$allowed_tags = wp_kses_allowed_html( 'post' );
+		$allowed_tags_for_heading = [];
+		$non_allowed_tags = [ 'img' ];
 
 		foreach ( $allowed_tags as $tag => $attributes ) {
+			if ( in_array( $tag, $non_allowed_tags, true ) ) {
+				continue;
+			}
+
 			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
 				return ! str_starts_with( $attribute, 'data-' );
 			}, ARRAY_FILTER_USE_KEY );
 
-			$allowed_tags[ $tag ] = $filtered_attributes;
+			$allowed_tags_for_heading[ $tag ] = $filtered_attributes;
 		}
 
-		return wp_kses( $html, $allowed_tags );
+		return wp_kses( $html, $allowed_tags_for_heading );
 	}
 }
