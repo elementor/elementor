@@ -11,13 +11,13 @@ test.describe( 'Tabs widget tests', () => {
 			container: 'active',
 			'nested-elements': 'active',
 		} );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		// Act.
 		await editor.addWidget( 'tabs' );
 
 		// Assert.
-		await expect( editor.page.locator( '.elementor-control-raw-html.elementor-panel-alert.elementor-panel-alert-info' ) )
+		await expect( editor.page.locator( '.elementor-control-alert.elementor-panel-alert.elementor-panel-alert-info' ) )
 			.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
 
 		await wpAdmin.setExperiments( {

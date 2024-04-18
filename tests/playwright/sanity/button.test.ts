@@ -8,7 +8,7 @@ const defaultBtnName = 'Click here';
 test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	// Act.
 	await editor.addWidget( 'button' );
@@ -22,14 +22,15 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 test( 'Button controls should return to default', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'button' );
+	await editor.activatePanelTab( 'style' );
 
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	const widget = editor.getPreviewFrame().locator( EditorSelectors.widget ),
-		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]',
+		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Position") label[data-tooltip="Center"]',
 		alignCenterClassRegex = /elementor-align-center/;
 
 	// Act
@@ -54,4 +55,21 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	await buttonWidget.setButtonId( buttonId, defaultBtnName );
 	await editor.publishAndViewPage();
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
+} );
+
+test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
+	// Arrange.
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	await wpAdmin.openNewPage();
+	const buttonWidget = new ButtonWidget( page, testInfo );
+	await buttonWidget.addWidget( defaultBtnName );
+	const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+
+	// Act.
+	await promoArea.scrollIntoViewIfNeeded();
+
+	// Assert
+	expect.soft( await promoArea.screenshot( {
+		type: 'png',
+	} ) ).toMatchSnapshot( 'button-widget-sidebar-promotion.png' );
 } );

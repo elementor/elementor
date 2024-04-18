@@ -15,7 +15,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 	 */
 	private $expected_errors_found;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Should remove the default kit because it is actually a post and it affect

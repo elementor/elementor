@@ -64,13 +64,9 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = this.isOptimizedAssetsLoading() ? await LightboxManager.getLightbox() : elementorFrontend.utils.lightbox;
+		const lightbox = await LightboxManager.getLightbox();
 
 		lightbox.createLightbox( element );
-	}
-
-	isOptimizedAssetsLoading() {
-		return elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading;
 	}
 
 	bindEvents() {
@@ -84,7 +80,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( ! this.isOptimizedAssetsLoading() || elementorFrontend.isEditMode() ) {
+		if ( elementorFrontend.isEditMode() ) {
 			return;
 		}
 

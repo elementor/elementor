@@ -20,11 +20,11 @@
 	&-content-wrapper {
 		display: flex;
 		justify-content: center;
+		flex-direction: row;
+		gap: 5px;
 	}
 
 	&-icon {
-		flex-grow: 0;
-		order: 5;
 		svg {
 			width: 1em;
 			height: auto;
@@ -36,8 +36,6 @@
 	}
 
 	&-text {
-		flex-grow: 1;
-		order: 10;
 		display: inline-block;
 	}
 
@@ -71,14 +69,14 @@
 		}
 	}
 
+	// TODO: Delete in Elementor 3.24 when all buttons migrated from `order` to `flex-direction`.
+	// For now, it's here for BC, for sites that upgrade Elementor, but not Elementor Pro.
 	.elementor-align-icon- {
 		&right {
-			margin-left: 5px;
 			order: getValueByDirection( 15, 5 );
 		}
 
 		&left {
-			margin-right: 5px;
 			order: getValueByDirection( 5, 15 );
 		}
 	}

@@ -1,6 +1,7 @@
 import { useEffect, useState, useReducer } from 'react';
 import { LocationProvider } from './context/location-context';
 import { Divider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import PromptDialog from '../../components/prompt-dialog';
 import MediaOutlet from './media-outlet';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
@@ -43,6 +44,8 @@ const FormMedia = ( {
 	controlView,
 	additionalOptions,
 	maybeRenderUpgradeChip,
+	hasSubscription,
+	usagePercentage,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -65,6 +68,8 @@ const FormMedia = ( {
 
 	const globalSettings = {
 		initialImageType: additionalOptions?.defaultImageType || '',
+		hasSubscription,
+		usagePercentage,
 	};
 
 	const globalActions = {
@@ -125,6 +130,8 @@ FormMedia.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	maybeRenderUpgradeChip: PropTypes.func,
+	hasSubscription: PropTypes.bool,
+	usagePercentage: PropTypes.number,
 };
 
 export default FormMedia;

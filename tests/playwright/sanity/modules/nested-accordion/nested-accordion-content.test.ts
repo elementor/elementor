@@ -5,7 +5,7 @@ import { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, 
 test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = await new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
 			container: 'active',
@@ -211,17 +211,17 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 
 		await test.step( 'If Accordion is open fa-minus is displayed', async () => {
 			// Assert
-			await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
-			await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
-			await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
+			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
+			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
+			await expect.soft( nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
 		} );
 
 		await test.step( 'If Accordion is closed fa-plus is displayed & fa-minus icon is hidden', async () => {
 			await nestedAccordionTitle.click();
 			await editor.isUiStable( nestedAccordionTitle, 3, 1000 );
-			await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
-			await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
-			await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
+			await expect.soft( nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
+			await expect.soft( nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
+			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
 			await editor.isUiStable( nestedAccordionTitle, 3, 1500 );
 			await nestedAccordionTitle.click();
 		} );
@@ -289,17 +289,17 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 
 		await test.step( 'Mobile -Check that the title icon is displayed', async () => {
 			// Assert
-			await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
-			await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
-			await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
+			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
+			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
+			await expect.soft( nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Mobile - Check that icon changes when the mobile Accordion is opened', async () => {
 			await frame.waitForLoadState( 'load' );
 			await nestedAccordionTitle.click();
-			await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
-			await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
-			await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
+			await expect.soft( nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
+			await expect.soft( nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
+			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
 			await nestedAccordionTitle.click();
 		} );
 
@@ -398,7 +398,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test('Nested Accordion FAQ Schema', async ( {page}, testInfo ) => {
+	test( 'Nested Accordion FAQ Schema', async ( { page }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
@@ -410,26 +410,25 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await editor.selectElement( nestedAccordionID );
 
 		// Act
-		await editor.setSwitcherControlValue( 'faq_schema', true )
+		await editor.setSwitcherControlValue( 'faq_schema', true );
 		await editor.publishAndViewPage();
 
 		await page.waitForLoadState( 'load' );
 
 		// Assert
 		const faqSchema = await page.evaluate( async () => {
-			let jsonSchema = await document.querySelectorAll( 'script[type="application/ld+json"]' );
-			return await JSON.parse( jsonSchema[ 0 ][ 'text' ] );
+			const jsonSchema = document.querySelectorAll( 'script[type="application/ld+json"]' );
+			return await JSON.parse( jsonSchema[ 0 ].text );
 		} );
 
-		await expect.soft( faqSchema[ '@type' ], 'Expecting Structured data Schema to be of type FAQPage but found' ).toBe( 'FAQPage' );
+		expect.soft( faqSchema[ '@type' ], 'Expecting Structured data Schema to be of type FAQPage but found' ).toBe( 'FAQPage' );
 
 		let i = 1;
-		for ( const faq of faqSchema[ 'mainEntity' ] ) {
+		for ( const faq of faqSchema.mainEntity ) {
 			expect.soft( faq[ '@type' ], 'Expecting Title\'s schema to be Question but found' ).toBe( 'Question' );
-			expect.soft( faq[ 'name' ], 'Expecting NA Title\'s content to match FAQ schema but found' ).toBe( 'Item #' + i );
-			expect.soft( faq[ 'acceptedAnswer' ][ 'text' ], 'Expecting accordion content to match Answer but found' ).toBe( 'Add Your Heading Text Here ' + i );
+			expect.soft( faq.name, 'Expecting NA Title\'s content to match FAQ schema but found' ).toBe( 'Item #' + i );
+			expect.soft( faq.acceptedAnswer.text, 'Expecting accordion content to match Answer but found' ).toBe( 'Add Your Heading Text Here ' + i );
 			i++;
 		}
-
 	} );
 } );

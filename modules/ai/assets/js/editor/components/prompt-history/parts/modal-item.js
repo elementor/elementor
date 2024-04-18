@@ -7,6 +7,8 @@ import {
 	Stack,
 	styled,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import EditIcon from '../../../icons/edit-icon';
 import { TrashIcon } from '@elementor/icons';
 import RestoreIcon from '../../../icons/restore-icon';

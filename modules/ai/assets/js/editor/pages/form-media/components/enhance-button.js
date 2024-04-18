@@ -1,4 +1,6 @@
 import { CircularProgress, Tooltip, Box, IconButton, withDirection } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import WandIcon from '../../../icons/wand-icon';
 
 const StyledWandIcon = withDirection( WandIcon );
@@ -15,7 +17,7 @@ const EnhanceButton = ( { isLoading, ...props } ) => {
 					{
 						isLoading
 							? <CircularProgress color="secondary" size={ 20 } />
-							: <StyledWandIcon />
+							: <StyledWandIcon fontSize="small" />
 					}
 				</IconButton>
 			</Box>

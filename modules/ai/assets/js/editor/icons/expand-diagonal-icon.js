@@ -1,3 +1,4 @@
+import React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
 const ExpandDiagonalIcon = React.forwardRef( ( props, ref ) => {

@@ -16,6 +16,8 @@ export class RemoveActiveDocumentQueryParam extends $e.modules.hookUI.After {
 		if ( activeDocumentId === closedDocumentId ) {
 			removeQueryParam( 'active-document' );
 		}
+
+		args.previous_active_document_id = activeDocumentId;
 	}
 }
 

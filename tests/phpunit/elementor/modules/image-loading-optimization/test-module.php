@@ -44,7 +44,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		parent::tear_down_after_class();
 	}
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		set_current_screen( 'front' );
@@ -56,7 +56,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 	public function test_attachment_fixtures() {
 		$image = wp_get_attachment_image( self::$attachments[0], 'full' );
 
-		$this->assertRegExp( '/mock-image.png/', $image, 'Could not confirm attachments were created' );
+		$this->assertMatchesRegularExpression( '/mock-image.png/', $image, 'Could not confirm attachments were created' );
 	}
 
 	/**

@@ -1,0 +1,85 @@
+.elementor-control-notice {
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 16px;
+	border-radius: 3px;
+	border: 1px solid var(--notice-control-color, var(--e-a-color-txt));
+	color: var(--e-a-color-txt);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: start;
+	margin-block-start: 10px;
+
+	&-type {
+
+		&-info {
+			--notice-control-color: var(--e-a-color-info);
+		}
+
+		&-success {
+			--notice-control-color: var(--e-a-color-success);
+		}
+
+		&-warning {
+			--notice-control-color: var(--e-a-color-warning);
+		}
+
+		&-danger {
+			--notice-control-color: var(--e-a-color-danger);
+		}
+	}
+
+	&-icon {
+		flex-basis: 18px;
+		color: var(--notice-control-color);
+	}
+
+	&-main {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
+		gap: 6px;
+
+		flex: 1;
+
+		&-heading {
+			font-weight: 700;
+			font-style: italic;
+		}
+
+		&-content {
+			font-style: italic;
+			line-height: 1.5;
+		}
+
+		&-actions {
+			display: flex;
+			gap: 10px;
+			padding-block-start: 8px;
+		}
+
+		a {
+			color: inherit;
+			font-weight: 700;
+			cursor: pointer;
+
+			&:hover,
+			&:focus {
+				color: inherit;
+			}
+		}
+	}
+
+	&-dismiss {
+		appearance: none;
+		background-color: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+	}
+}

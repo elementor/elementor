@@ -1,4 +1,5 @@
 import { styled, Typography } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Tooltip from '../../tooltip';
 
 const StyledTitle = styled( Typography )`

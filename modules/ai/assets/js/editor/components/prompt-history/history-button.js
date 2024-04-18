@@ -1,8 +1,10 @@
 import { IconButton, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { HistoryIcon } from '@elementor/icons';
 
 const StyledHistoryButton = styled( IconButton )`
-  margin-right: ${ ( { theme } ) => theme.spacing( 3 ) };
+  margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
 
   ${ ( { isActive, theme } ) => isActive && `
     background-color: ${ theme.palette.action.hover };

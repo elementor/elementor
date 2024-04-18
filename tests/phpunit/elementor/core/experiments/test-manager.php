@@ -25,7 +25,7 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments_state = [];
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		add_action( 'elementor/experiments/feature-registered', [ $this, 'set_original_experiments_state' ], 1, 2 );

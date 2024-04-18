@@ -1,4 +1,5 @@
 import { IconButton } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Tooltip from '../../tooltip';
 
 const ActionButton = ( { tooltipTitle, ...props } ) => {

@@ -6,7 +6,7 @@ import EditorPage from '../pages/editor-page';
 test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const editor = await wpAdmin.openNewPage();
 
 	// Act.
 	const heading = await addWidgetByClick( editor, 'heading' );
@@ -18,13 +18,16 @@ test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 	await addWidgetByClick( editor, 'icon' );
 
 	// Assert.
-
+	type dataset = Element & {
+		dataset: {
+			widget_type: string
+		}
+	}
 	const orderedWidgets = await editor.getPreviewFrame().evaluate( () => {
 		// Build a string that represents the widgets order in the page, since
 		// evaluate() must return a primitive value.
-		// @ts-ignore
 		return [ ...document.querySelectorAll( '.elementor-widget' ) ]
-			.map( ( el ) => {
+			.map( ( el: dataset ) => {
 				return el.dataset.widget_type.replace( '.default', '' );
 			} )
 			.join( ',' );
@@ -36,7 +39,7 @@ test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 test( 'block adding from panel an inner section inside an inner section', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const editor = await wpAdmin.openNewPage();
 
 	// Act.
 	const firstInnerSection = await editor.addElement( { elType: 'inner-section' }, 'document' );

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 export const HISTORY_TYPES = Object.freeze( {
 	ALL: 'all',
 	TEXT: 'text',
@@ -13,3 +14,11 @@ export const TRANSLATED_HISTORY_TYPES = Object.freeze( {
 	[ HISTORY_TYPES.IMAGE ]: __( 'images', 'elementor' ),
 	[ HISTORY_TYPES.BLOCK ]: __( 'blocks', 'elementor' ),
 } );
+
+export const getTranslatedPromptHistoryType = ( historyType ) => {
+	if ( TRANSLATED_HISTORY_TYPES[ historyType ] ) {
+		return TRANSLATED_HISTORY_TYPES[ historyType ];
+	}
+
+	return TRANSLATED_HISTORY_TYPES_FALLBACK;
+};

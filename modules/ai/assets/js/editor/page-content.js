@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';
@@ -10,10 +11,10 @@ import UpgradeChip from './components/upgrade-chip';
 import FormMedia from './pages/form-media';
 import PromptHistory from './components/prompt-history';
 import { HISTORY_TYPES } from './components/prompt-history/history-types';
-import {
-	PromptHistoryActionProvider,
-} from './components/prompt-history/context/prompt-history-action-context';
+import { PromptHistoryActionProvider } from './components/prompt-history/context/prompt-history-action-context';
 import { PromptHistoryProvider } from './components/prompt-history/context/prompt-history-context';
+import useUpgradeMessage from './hooks/use-upgrade-message';
+import UsageMessages from './components/usage-messages';
 
 const PageContent = (
 	{
@@ -26,8 +27,17 @@ const PageContent = (
 		controlView,
 		additionalOptions,
 	} ) => {
-	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-
+	const {
+		isLoading,
+		isConnected,
+		isGetStarted,
+		connectUrl,
+		fetchData,
+		hasSubscription,
+		credits,
+		usagePercentage,
+	} = useUserInfo();
+	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
@@ -50,9 +60,7 @@ const PageContent = (
 	};
 
 	const maybeRenderUpgradeChip = () => {
-		const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
-
-		if ( ! needsUpgradeChip ) {
+		if ( ! showBadge ) {
 			return;
 		}
 
@@ -108,7 +116,7 @@ const PageContent = (
 
 	if ( 'media' === type ) {
 		return (
-			<PromptHistoryProvider promptType={ HISTORY_TYPES.IMAGE }>
+			<PromptHistoryProvider historyType={ HISTORY_TYPES.IMAGE }>
 				<PromptHistoryActionProvider>
 					<FormMedia
 						onClose={ onClose }
@@ -118,6 +126,8 @@ const PageContent = (
 						credits={ credits }
 						maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
 						DialogProps={ promptDialogStyleProps }
+						hasSubscription={ hasSubscription }
+						usagePercentage={ usagePercentage }
 					/>
 				</PromptHistoryActionProvider>
 			</PromptHistoryProvider>
@@ -127,7 +137,7 @@ const PageContent = (
 	if ( 'code' === type ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-				<PromptHistoryProvider promptType={ HISTORY_TYPES.CODE }>
+				<PromptHistoryProvider historyType={ HISTORY_TYPES.CODE }>
 					<PromptHistoryActionProvider>
 						<PromptDialog.Header onClose={ onClose }>
 							<PromptHistory />
@@ -143,7 +153,13 @@ const PageContent = (
 								additionalOptions={ additionalOptions }
 								credits={ credits }
 								usagePercentage={ usagePercentage }
-							/>
+							>
+								<UsageMessages
+									hasSubscription={ hasSubscription }
+									usagePercentage={ usagePercentage }
+									sx={ { mb: 2 } }
+								/>
+							</FormCode>
 						</PromptDialog.Content>
 					</PromptHistoryActionProvider>
 				</PromptHistoryProvider>
@@ -153,7 +169,7 @@ const PageContent = (
 
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-			<PromptHistoryProvider promptType={ HISTORY_TYPES.TEXT }>
+			<PromptHistoryProvider historyType={ HISTORY_TYPES.TEXT }>
 				<PromptHistoryActionProvider>
 					<PromptDialog.Header onClose={ onClose }>
 						<PromptHistory />
@@ -171,7 +187,13 @@ const PageContent = (
 							additionalOptions={ additionalOptions }
 							credits={ credits }
 							usagePercentage={ usagePercentage }
-						/>
+						>
+							<UsageMessages
+								hasSubscription={ hasSubscription }
+								usagePercentage={ usagePercentage }
+								sx={ { mb: 2 } }
+							/>
+						</FormText>
 					</PromptDialog.Content>
 				</PromptHistoryActionProvider>
 			</PromptHistoryProvider>

@@ -75,7 +75,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		"type" => "page",
 	];
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		// In case tests get interrupted and the tearDown method doesn't run, we reset the files.
 		self::$temp_directory = getcwd() . '/temp/';
 
@@ -90,7 +90,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		file_put_contents( self::$temp_directory . self::$template_json_file_name, $template_json );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		if ( is_dir( self::$temp_directory ) ) {
 			// Remove all temporary files in the temporary directory
 			array_map('unlink', glob(self::$temp_directory . '*.*' ) );
@@ -219,6 +219,8 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_are_unfiltered_uploads_enabled() {
+		$this->act_as_admin();
+
 		$current_option_state = get_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY );
 
 		// Test when option is true.
@@ -270,6 +272,41 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		// Delete temp file and directory.
 		unlink( $temp_file_path );
 		rmdir( $temp_dir );
+	}
+
+	/**
+	 * @dataProvider file_names_provider
+	 */
+	public function test_create_invalid_filename_temp_file( $file_name ) {
+		// Arrange.
+		$temp_dir = Plugin::$instance->uploads_manager->get_temp_dir();
+		$assert_path = '#' . preg_quote( $temp_dir, '#' ) . '[a-z0-9]+/testfile.php#';
+		$template = json_encode( self::$mock_template );
+
+		// Act.
+		$temp_file_path = Plugin::$instance->uploads_manager->create_temp_file( $template, $file_name );
+
+		// Assert.
+		$this->assertMatchesRegularExpression( $assert_path, $temp_file_path, "Failed for file name: { $file_name }" );
+
+		// Clean up.
+		$temp_dir = dirname( $temp_file_path );
+
+		unlink( $temp_file_path );
+		rmdir( $temp_dir );
+	}
+
+	public function file_names_provider() {
+		return [
+			[ '../../../test/file.php' ],
+			[ '..\..\..\test\file.php' ],
+			[ 'test<file.php' ],
+			[ 'test>file.php' ],
+			[ 'test;file.php' ],
+			[ 'test/file.php' ],
+			[ 'test\\file.php' ],
+			[ 'test%file.php' ],
+		];
 	}
 
 	public function test_get_temp_dir() {

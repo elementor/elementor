@@ -31,16 +31,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 1000,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
 				],
 			],
 			'default' => [
@@ -61,15 +52,15 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html__( 'Center', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
@@ -91,11 +82,11 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'start' => [
-					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-flex eicon-order-start',
 				],
 				'end' => [
-					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-flex eicon-order-end',
 				],
 				'custom' => [

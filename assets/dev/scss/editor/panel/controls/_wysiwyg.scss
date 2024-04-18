@@ -121,6 +121,9 @@
 			&:active,
 			&.mce-active {
 				color: var(--e-a-color-txt-active);
+				background: var(--e-a-bg-hover);
+				border-color: var(--e-a-border-color);
+				box-shadow: none;
 
 				i {
 					color: var(--e-a-color-txt-active);
@@ -147,5 +150,40 @@
 
 	.elementor-control-dynamic-switcher {
 		border: none;
+	}
+}
+
+// Compatibility WP link modal with dark mode
+@media screen and (prefers-color-scheme: dark) {
+
+	#wp-link-wrap {
+		color-scheme: light;
+		--e-a-color-txt: #{$e-gray-600};
+		--e-a-bg-default: #{$white};
+		--e-a-border-color-bold: #{$e-gray-100};
+		--e-a-color-primary-bold: #{$e-primary-bold};
+	}
+
+	#wp-link {
+		color: var(--e-a-color-txt);
+
+		input {
+			background-color: var(--e-a-bg-default);
+			border-color: var(--e-a-border-color-bold);
+
+			&[type="checkbox"] {
+				border-color: var(--e-a-border-color-bold);
+
+				&:checked {
+					background: var(--e-a-color-primary-bold);
+				}
+			}
+
+			&.button-primary {
+				background: #2271b1;
+				border-color: #2271b1;
+				color: #fff;
+			}
+		}
 	}
 }

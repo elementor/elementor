@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import PromptField from '../../components/prompt-field';
@@ -12,10 +13,11 @@ import usePromptSettings from '../../hooks/use-prompt-settings';
 import useInPainting from './hooks/use-in-painting';
 import { useEditImage } from '../../context/edit-image-context';
 import useImageActions from '../../hooks/use-image-actions';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const InPainting = () => {
 	const [ prompt, setPrompt ] = useState( '' );
-
+	const { setGenerate } = useRequestIds();
 	const [ mask, setMask ] = useState( '' );
 
 	const { settings, resetSettings } = usePromptSettings();
@@ -33,8 +35,8 @@ const InPainting = () => {
 
 		// The fallback instruction should be hidden for the user.
 		const finalPrompt = prompt || 'Remove object and fill based on the surroundings';
-
-		send( finalPrompt, settings, editImage, mask );
+		setGenerate();
+		send( { prompt: finalPrompt, settings, image: editImage, mask } );
 	};
 
 	return (

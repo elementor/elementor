@@ -1,0 +1,71 @@
+name: Upgrade Elementor test
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Elementor version from Wordpress svn'
+        required: false
+        default: ''
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build-plugin:
+    uses: ./.github/workflows/build.yml
+  run-upgrade-test:
+    name: Playwright plugin upgrade test
+    runs-on: ubuntu-latest
+    needs: [build-plugin]
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+      - name: Install dependencies
+        run: |
+            npm ci
+            cd ./tests/playwright/upgrade-test && npm ci
+      - name: Run upgrade test
+        run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
+        env:
+          ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
+      - name: Setup playwright tests
+        run: cd ./tests/playwright/upgrade-test && npm run test:setup
+      - name: Install chromium
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        run: npm run test:playwright:elements-regression -- --grep="Test heading template"
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-test-results-elements-regression
+          path: test-results/
+          retention-days: 3
+
+  test-result:
+    needs: run-upgrade-test
+    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+    runs-on: ubuntu-22.04
+    name: Playwright - Test Results
+    steps:
+      - name: Test status
+        run: echo "Test status is - ${{ needs.run-upgrade-test.result }}"
+      - name: Check Playwright matrix status
+        if: ${{ needs.run-upgrade-test.result != 'success' && needs.run-upgrade-test.result != 'skipped' }}
+        run: exit 1
+
+

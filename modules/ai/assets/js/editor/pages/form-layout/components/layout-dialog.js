@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { AppBar, Toolbar, Typography, Stack, IconButton, Chip, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import PromptDialog from '../../../components/prompt-dialog';
 import { AIIcon, XIcon } from '@elementor/icons';
 

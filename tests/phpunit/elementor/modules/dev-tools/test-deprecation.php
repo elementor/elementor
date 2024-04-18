@@ -10,7 +10,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 	 */
 	private $deprecation;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->deprecation = Module::instance()->deprecation;

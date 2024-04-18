@@ -6,6 +6,7 @@ use Elementor\Plugin;
 use Elementor\Data\V2\Base\Controller as Base_Controller;
 use Elementor\Modules\SiteNavigation\Data\Endpoints\Add_New_Post;
 use Elementor\Modules\SiteNavigation\Data\Endpoints\Duplicate_Post;
+use Elementor\Modules\SiteNavigation\Data\Endpoints\Homepage;
 use Elementor\Modules\SiteNavigation\Data\Endpoints\Recent_Posts;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -41,6 +42,7 @@ class Controller extends Base_Controller {
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'pages_panel' ) ) {
 			$this->register_endpoint( new Duplicate_Post( $this ) );
+			$this->register_endpoint( new Homepage( $this ) );
 		}
 	}
 

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, Paper } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Draggable from 'react-draggable';
 import DialogHeader from './dialog-header';
 
@@ -76,7 +77,7 @@ const PromptDialog = ( props ) => {
 
 PromptDialog.propTypes = {
 	onClose: PropTypes.func.isRequired,
-	children: PropTypes.node.isRequired,
+	children: PropTypes.node,
 	maxWidth: PropTypes.oneOf( [ 'xs', 'sm', 'md', 'lg', 'xl', false ] ),
 };
 

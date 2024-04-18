@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
@@ -41,6 +42,15 @@ class Module extends BaseApp {
 
 		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar', null, 'default', true ), [], ELEMENTOR_VERSION );
 
+		/**
+		 * Before admin top bar enqueue scripts.
+		 *
+		 * Fires before Elementor admin top bar scripts are enqueued.
+		 *
+		 * @since 3.19.0
+		 */
+		do_action( 'elementor/admin_top_bar/before_enqueue_scripts', $this );
+
 		wp_enqueue_script( 'elementor-admin-top-bar', $this->get_js_assets_url( 'admin-top-bar' ), [
 			'elementor-common',
 			'react',
@@ -65,6 +75,16 @@ class Module extends BaseApp {
 
 		// TODO: Find a better way to add apps page url to the admin top bar.
 		$settings['apps_url'] = admin_url( 'admin.php?page=elementor-apps' );
+		$settings['promotion'] = [
+			'text' => __( 'Upgrade Now', 'elementor' ),
+			'url' => 'https://go.elementor.com/wp-dash-admin-top-bar-upgrade/',
+		];
+
+		$settings['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+			$settings['promotion'],
+			'elementor/admin_top_bar/go_pro_promotion',
+			'url'
+		);
 
 		$current_screen = get_current_screen();
 

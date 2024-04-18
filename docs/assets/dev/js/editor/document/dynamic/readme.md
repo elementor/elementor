@@ -63,7 +63,7 @@
     ```javascript
     // Get heading container.
     const eWidget = elementor.getContainer( '0b9da89' ),
-      postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( {} ));
+      postDateTag = elementor.dynamicTags.tagDataToTagText( elementorCommon.helpers.getUniqueId(), 'post-date', new Backbone.Model( {} ));
   
     // Enable dynamic tag `post-date` for title.
     $e.run( 'document/dynamic/enable', {
@@ -101,7 +101,7 @@
     ```javascript
     // Get heading container.
     const eWidget = elementor.getContainer( '0b9da89' ),
-      postDateTag = elementor.dynamicTags.tagDataToTagText( elementor.helpers.getUniqueID(), 'post-date', new Backbone.Model( { format: 'human'} ));
+      postDateTag = elementor.dynamicTags.tagDataToTagText( elementorCommon.helpers.getUniqueId(), 'post-date', new Backbone.Model( { format: 'human'} ));
     
     // Change dynamic settings.
     $e.run( 'document/dynamic/settings', {

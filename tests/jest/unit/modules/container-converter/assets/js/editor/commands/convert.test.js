@@ -4,8 +4,10 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 	beforeAll( async () => {
 		global.$e = {
 			modules: {
-				document: {
-					CommandHistory: class {},
+				editor: {
+					document: {
+						CommandHistoryBase: class {},
+					},
 				},
 			},
 		};

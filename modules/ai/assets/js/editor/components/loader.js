@@ -1,4 +1,5 @@
 import { Box, LinearProgress } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const Loader = ( { sx = {}, BoxProps = {}, ...props } ) => (
 	<Box

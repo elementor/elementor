@@ -29,14 +29,14 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.config.legacyMode = {
 			/**
-			 * @deprecated since 3.1.0, use `elementorFrontend.config.experimentalFeatures.e_dom_optimization` instead.
+			 * @deprecated since 3.1.0
 			 */
 			get elementWrappers() {
 				if ( elementorFrontend.isEditMode() ) {
-					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0' );
 				}
 
-				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
+				return false;
 			},
 		};
 

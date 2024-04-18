@@ -1,4 +1,5 @@
 import View from '../../components/view';
+import { __ } from '@wordpress/i18n';
 import ImageToolsPanel from './image-tools-panel';
 import ImageToolsContent from './image-tools-content';
 import { useLocation } from '../../context/location-context';

@@ -9,7 +9,7 @@ class Elementor_Test_Section extends Elementor_Test_Base {
 	/** @var Section */
 	private static $section;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		self::$section = new Section();
 
 		parent::setUpBeforeClass();

@@ -8,6 +8,10 @@ export class Json extends FileReaderBase {
 		return 'json';
 	}
 
+	static isActive() {
+		return elementor.config.user.is_administrator || ( elementor.config.user.restrictions?.includes( 'json-upload' ) ?? false );
+	}
+
 	/**
 	 * @inheritDoc
 	 */

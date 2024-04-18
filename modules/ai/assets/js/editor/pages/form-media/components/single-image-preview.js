@@ -1,4 +1,5 @@
 import { Stack, Box } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const SingleImagePreview = ( { children, ...props } ) => (
 	<Box display="flex" { ...props }>

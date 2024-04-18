@@ -94,15 +94,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Start', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-start-h',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'Center', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-center-h',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'End', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-end-h',
 				],
 				'space-between' => [
@@ -130,15 +130,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'flex-start' => [
-					'title' => esc_html_x( 'Start', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
-					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'Center', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'flex-end' => [
-					'title' => esc_html_x( 'End', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
@@ -180,15 +180,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		];
 
 		$fields['wrap'] = [
-			'label' => esc_html_x( 'Wrap', 'Flex Container Control', 'elementor' ),
+			'label' => esc_html__( 'Wrap', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'nowrap' => [
-					'title' => esc_html_x( 'No Wrap', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'No Wrap', 'elementor' ),
 					'icon' => 'eicon-flex eicon-nowrap',
 				],
 				'wrap' => [
-					'title' => esc_html_x( 'Wrap', 'Flex Container Control', 'elementor' ),
+					'title' => esc_html__( 'Wrap', 'elementor' ),
 					'icon' => 'eicon-flex eicon-wrap',
 				],
 			],

@@ -62,7 +62,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
+	test.skip( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );

@@ -189,15 +189,9 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
-				$this->register_admin_menu( $menu );
-			} );
-		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
-			}, Settings::ADMIN_MENU_PRIORITY + 20 );
-		}
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
@@ -322,15 +316,17 @@ class Tools extends Settings_Page {
 				'sections' => [
 					'replace_url' => [
 						'callback' => function() {
-							$intro_text = sprintf(
-								/* translators: %s: WordPress backups documentation. */
-								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
-								'https://go.elementor.com/wordpress-backups/'
-							);
-							$intro_text = '<div>' . $intro_text . '</div>';
-
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							Utils::print_unescaped_internal_string( $intro_text );
+							echo sprintf(
+								'<p><strong>%1$s</strong> %2$s</p>',
+								esc_html__( 'Important:', 'elementor' ),
+								sprintf(
+									/* translators: 1: Link open tag, 2: Link close tag. */
+									esc_html__( 'It is strongly recommended to %1$sbackup the database%2$s before using replacing URLs.', 'elementor' ),
+									'<a href="https://go.elementor.com/wordpress-backups/" target="_blank">',
+									'</a>'
+								)
+							);
 						},
 						'fields' => [
 							'replace_url' => [
@@ -367,9 +363,9 @@ class Tools extends Settings_Page {
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf(
-										$rollback_html . '<a data-placeholder-text="' . esc_html__( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
-										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
-										esc_html__( 'Reinstall', 'elementor' )
+										$rollback_html . '<a data-placeholder-text="%1$s v{VERSION}" href="#" data-placeholder-url="%2$s" class="button elementor-button-spinner elementor-rollback-button">%1$s</a>',
+										esc_html__( 'Reinstall', 'elementor' ),
+										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' )
 									),
 									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
@@ -377,17 +373,20 @@ class Tools extends Settings_Page {
 						],
 					],
 					'beta' => [
+						'show_if' => $this->display_beta_tester(),
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
 							echo '<p>' .
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';
-							echo sprintf(
+							echo '<p>' . sprintf(
 								/* translators: 1: Link open tag, 2: Link close tag. */
-								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
-								'<a id="beta-tester-first-to-know" href="#">',
-								'</a>'
-							);
+								esc_html__( '%1$sClick here%2$s %3$sto join our first-to-know email updates.%4$s', 'elementor' ),
+								'<a id="beta-tester-first-to-know" class="elementor-become-a-beta-tester" href="#">',
+								'</a>',
+								'<span class="elementor-become-a-beta-tester">',
+								'</span>',
+							) . '</p>';
 						},
 						'fields' => [
 							'beta' => [
@@ -442,5 +441,26 @@ class Tools extends Settings_Page {
 	 */
 	public static function can_user_rollback_versions() {
 		return current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
+	}
+
+	/**
+	 * Check if the beta tester should be displayed.
+	 *
+	 * @since 3.19.0
+	 *
+	 * @return bool
+	 */
+	public function display_beta_tester(): bool {
+		$display_beta_tester = true;
+		/**
+		 * Filter to allow override the display of the beta tester.
+		 *
+		 * @param bool $display_beta_tester Whether to display the beta tester.
+		 *
+		 * @since 3.19.0
+		 *
+		 * return bool
+		 */
+		return apply_filters( 'elementor/admin/show_beta_tester', $display_beta_tester );
 	}
 }

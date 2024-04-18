@@ -1,4 +1,6 @@
 import { Backdrop, Box, Modal, Slide, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { usePromptHistoryContext } from '../context/prompt-history-context';
 
 const StyledContent = styled( Box )`

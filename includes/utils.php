@@ -724,7 +724,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+		return $tag && in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
 
 	/**
@@ -822,12 +822,24 @@ class Utils {
 		}
 
 		if ( $_FILES === $super_global ) {
-			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
-
-			return $super_global[ $key ];
+			return isset( $super_global[ $key ]['name'] ) ?
+				self::sanitize_file_name( $super_global[ $key ] ) :
+				self::sanitize_multi_upload( $super_global[ $key ] );
 		}
 
 		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
+	private static function sanitize_multi_upload( $fields ) {
+		return array_map( function( $field ) {
+			return array_map( 'self::sanitize_file_name', $field );
+		}, $fields );
+	}
+
+	private static function sanitize_file_name( $file ) {
+		$file['name'] = sanitize_file_name( $file['name'] );
+
+		return $file;
 	}
 
 	/**
@@ -846,5 +858,19 @@ class Utils {
 			$array = $array[ $key ];
 		}
 		return $array;
+	}
+
+	public static function get_cached_callback( $callback, $cache_key, $cache_time = 24 * HOUR_IN_SECONDS ) {
+		$cache = get_site_transient( $cache_key );
+
+		if ( ! $cache ) {
+			$cache = call_user_func( $callback );
+
+			if ( ! is_wp_error( $cache ) ) {
+				set_site_transient( $cache_key, $cache, $cache_time );
+			}
+		}
+
+		return $cache;
 	}
 }

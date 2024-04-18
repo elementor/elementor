@@ -32,7 +32,7 @@ const normalizeItems = ( response ) => {
 	} );
 };
 
-const usePromptHistory = ( promptType ) => {
+const usePromptHistory = ( historyType ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ data, setData ] = useState( {} );
 	const [ error, setError ] = useState( '' );
@@ -40,7 +40,7 @@ const usePromptHistory = ( promptType ) => {
 	const fetchData = async ( { page, limit } ) => new Promise( ( resolve, reject ) => {
 		setIsLoading( true );
 
-		getHistory( promptType, page, limit )
+		getHistory( historyType, page, limit )
 			.then( ( response ) => {
 				const clone = JSON.parse( JSON.stringify( data ) );
 

@@ -1,4 +1,8 @@
 import { resolve } from 'path';
+import { defineConfig } from '@playwright/test';
+import { config as _config } from 'dotenv';
+
+process.env.DEBUG_PORT = '9222';
 
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
@@ -13,10 +17,20 @@ function getGrepInvert() {
 			/@onBoarding/,
 			/@video/,
 			/@rating/,
+			/@pluginTester1_containers/,
+			/@pluginTester2_containers/,
+			/@pluginTester1_sections/,
+			/@pluginTester2_sections/,
+			/@promotions/,
+			/@nested-atomic-repeaters/,
 		];
 	}
 	return [];
 }
+
+_config( {
+	path: resolve( __dirname, './.env' ),
+} );
 
 function getGrep() {
 	if ( undefined === process.env.TEST_SUITE || '@default' === process.env.TEST_SUITE ) {
@@ -27,8 +41,7 @@ function getGrep() {
 	return [ /.*/ ];
 }
 
-/** @type {import('@playwright/test').PlaywrightTestConfig} */
-export default {
+export default defineConfig( {
 	testDir: './sanity',
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
@@ -38,6 +51,7 @@ export default {
 	expect: {
 		timeout: 5_000,
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
+		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
@@ -45,6 +59,9 @@ export default {
 	fullyParallel: false,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
+		launchOptions: {
+			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+		},
 		headless: process.env.CI ? true : false,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
@@ -54,10 +71,5 @@ export default {
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
 		storageState: './storageState.json',
-		user: {
-			username: process.env.USERNAME || 'admin',
-			password: process.env.PASSWORD || 'password',
-		},
-		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
-};
+} );

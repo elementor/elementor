@@ -62,12 +62,15 @@ class Feedback extends Module {
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
 			[
 				'elementor-common',
+				'wp-i18n',
 			],
 			ELEMENTOR_VERSION,
 			true
 		);
 
 		wp_enqueue_script( 'elementor-admin-feedback' );
+
+		wp_set_script_translations( 'elementor-admin-feedback', 'elementor' );
 	}
 
 	/**

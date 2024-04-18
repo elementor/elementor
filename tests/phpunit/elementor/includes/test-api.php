@@ -8,7 +8,7 @@ use ElementorEditorTesting\Traits\Auth_Helpers;
 class Test_Api extends Elementor_Test_AJAX {
 	use Auth_Helpers;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// TODO: HACK - Avoid register reports to make sure the 'tests/phpunit/elementor/schemas/test-usage.php' not fail.

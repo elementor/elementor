@@ -1,6 +1,6 @@
 import { toCanvas } from 'html-to-image';
 import { toggleHistory } from './history';
-import { generateIds } from './genereate-ids';
+import { generateIds } from '../context/requests-ids';
 
 export const takeScreenshot = async ( template ) => {
 	if ( ! template ) {
@@ -19,6 +19,10 @@ export const takeScreenshot = async ( template ) => {
 
 	// Wait for the container to render.
 	await waitForContainer( container.id );
+
+	if ( template.elements.length ) {
+		await Promise.all( template.elements.map( ( child ) => waitForContainer( child.id ) ) );
+	}
 
 	let screenshot;
 

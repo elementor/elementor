@@ -49,21 +49,4 @@ class Control_Tab extends Base_UI_Control {
 			</div>
 		<?php
 	}
-
-	/**
-	 * Get tab control default settings.
-	 *
-	 * Retrieve the default settings of the tab control. Used to return the
-	 * default settings while initializing the tab control.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @return array Control default settings.
-	 */
-	protected function get_default_settings() {
-		return [
-			'separator' => 'none',
-		];
-	}
 }

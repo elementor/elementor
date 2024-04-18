@@ -1,11 +1,10 @@
+import { type APIRequestContext, expect } from '@playwright/test';
 import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-
-/**
- * This post is used for any tests that need a post, with empty elements.
- */
-const CLEAN_POST_ID: number = 1;
+import { create } from '../assets/api-requests';
+import { ElementorType, WindowType } from '../types/types';
+let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
 	async gotoDashboard() {
@@ -22,24 +21,64 @@ export default class WpAdminPage extends BasePage {
 		}
 
 		await this.page.waitForSelector( 'text=Log In' );
-		await this.page.fill( 'input[name="log"]', this.config.user.username );
-		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
+		await this.page.fill( 'input[name="log"]', process.env.USERNAME );
+		await this.page.fill( 'input[name="pwd"]', process.env.PASSWORD );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage() {
+	async openNewPage( setWithApi: boolean = true, setPageName: boolean = true ) {
+		if ( setWithApi ) {
+			await this.createNewPostWithAPI();
+		} else {
+			await this.createNewPostFromDashboard( setPageName );
+		}
+
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( this.page, this.testInfo );
+	}
+
+	async createNewPostWithAPI() {
+		const request: APIRequestContext = this.page.context().request,
+			postDataInitial = {
+				title: 'Playwright Test Page - Uninitialized',
+				content: '',
+			},
+			postId = await create( request, 'pages', postDataInitial ),
+			postDataUpdated = {
+				title: `Playwright Test Page #${ postId }`,
+			};
+
+		await create( request, `pages/${ postId }`, postDataUpdated );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+	}
+
+	async createNewPostFromDashboard( setPageName: boolean ) {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
-		await this.waitForPanel();
 
-		await this.closeAnnouncementsIfVisible();
+		if ( ! setPageName ) {
+			return;
+		}
 
-		return new EditorPage( this.page, this.testInfo );
+		await this.setPageName();
+	}
+
+	async setPageName() {
+		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+
+		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
+		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
+
+		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
+		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
 	async convertFromGutenberg() {
@@ -61,25 +100,6 @@ export default class WpAdminPage extends BasePage {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
 		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
 		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
-	}
-
-	/**
-	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
-	 *
-	 * @return {Promise<EditorPage>}
-	 */
-	async useElementorCleanPost() {
-		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
-
-		await this.waitForPanel();
-
-		await this.closeAnnouncementsIfVisible();
-
-		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
-
-		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-
-		return editor;
 	}
 
 	async skipTutorial() {
@@ -104,7 +124,7 @@ export default class WpAdminPage extends BasePage {
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 */
 	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
 
 		const prefix = 'e-experiment';
 
@@ -130,9 +150,31 @@ export default class WpAdminPage extends BasePage {
 		await this.page.click( '#submit' );
 	}
 
-	async setLanguage( language: string ) {
+	async setLanguage( language: string, userLanguage = null ) {
+		let languageCheck = language;
+
+		if ( 'he_IL' === language ) {
+			languageCheck = 'he-IL';
+		} else if ( '' === language ) {
+			languageCheck = 'en_US';
+		}
+
 		await this.page.goto( '/wp-admin/options-general.php' );
-		await this.page.selectOption( '#WPLANG', language );
+
+		const isLanguageActive = await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible();
+
+		if ( ! isLanguageActive ) {
+			await this.page.selectOption( '#WPLANG', language );
+			await this.page.locator( '#submit' ).click();
+		}
+
+		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
+		await this.setUserLanguage( userProfileLanguage );
+	}
+
+	async setUserLanguage( language: string ) {
+		await this.page.goto( 'wp-admin/profile.php' );
+		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
 	}
 
@@ -165,7 +207,7 @@ export default class WpAdminPage extends BasePage {
 	 * Enable uploading SVG files
 	 */
 	async enableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
@@ -174,7 +216,7 @@ export default class WpAdminPage extends BasePage {
      *  Disable uploading SVG files
      */
 	async disableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
@@ -183,6 +225,13 @@ export default class WpAdminPage extends BasePage {
 		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
+		let window: WindowType;
+		await this.page.evaluate( () => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore editor session is on the window object
+			const editorSessionId = window.EDITOR_SESSION_ID;
+			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
+		} );
 	}
 
 	async editWithElementor() {
@@ -200,4 +249,24 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
 	}
+
+	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
+		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
+		const promoContainer = this.page.locator( promotionContainer );
+		await promoContainer.waitFor();
+		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
+	}
+
+	async hideAdminBar() {
+		await this.page.goto( '/wp-admin/profile.php' );
+		await this.page.locator( '#admin_bar_front' ).uncheck();
+		await this.page.locator( '#submit' ).click();
+	}
+
+	async showAdminBar() {
+		await this.page.goto( '/wp-admin/profile.php' );
+		await this.page.locator( '#admin_bar_front' ).check();
+		await this.page.locator( '#submit' ).click();
+	}
 }
+

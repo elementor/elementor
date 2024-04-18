@@ -44,29 +44,12 @@ class Control_Section extends Base_UI_Control {
 	 */
 	public function content_template() {
 		?>
-		<div class="elementor-panel-heading">
+		<button class="elementor-panel-heading">
 			<div class="elementor-panel-heading-toggle elementor-section-toggle" data-collapse_id="{{ data.name }}">
 				<i class="eicon" aria-hidden="true"></i>
 			</div>
 			<div class="elementor-panel-heading-title elementor-section-title">{{{ data.label }}}</div>
-		</div>
+		</button>
 		<?php
-	}
-
-	/**
-	 * Get repeater control default settings.
-	 *
-	 * Retrieve the default settings of the repeater control. Used to return the
-	 * default settings while initializing the repeater control.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @return array Control default settings.
-	 */
-	protected function get_default_settings() {
-		return [
-			'separator' => 'none',
-		];
 	}
 }

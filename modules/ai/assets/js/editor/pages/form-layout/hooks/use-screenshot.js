@@ -9,20 +9,22 @@ const useScreenshot = ( type, onData ) => {
 
 	const layoutData = useLayoutPrompt( type, null );
 
-	const generate = ( prompt, signal ) => {
+	const generate = ( requestBody, signal ) => {
 		setIsLoading( true );
 		setError( ERROR_INITIAL_VALUE );
 
-		return layoutData.send( prompt, signal )
+		return layoutData.send( requestBody, signal )
 			.then( async ( data ) => {
 				const createdScreenshot = await onData( data.result );
 
 				createdScreenshot.sendUsageData = () => layoutData.sendUsageData( data );
+				createdScreenshot.baseTemplateId = data.baseTemplateId;
+				createdScreenshot.type = data.type;
 
 				return createdScreenshot;
 			} )
 			.catch( ( err ) => {
-				setError( err.message || err );
+				setError( err.extra_data ? err : err.message || err );
 
 				throw err;
 			} )
