@@ -59,6 +59,11 @@ class Settings extends Settings_Page {
 	 */
 	const TAB_ADVANCED = 'advanced';
 
+	/**
+	 * Settings page performance tab slug.
+	 */
+	const TAB_PERFORMANCE = 'performance';
+
 	const ADMIN_MENU_PRIORITY = 10;
 
 	public Home_Module $home_module;
@@ -386,6 +391,15 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . esc_html__( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
+						],
+					],
+				],
+			],
+			self::TAB_PERFORMANCE => [
+				'label' => esc_html__( 'Performance', 'elementor' ),
+				'sections' => [
+					'performance' => [
+						'fields' => [
 							'optimized_gutenberg_loading' => [
 								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
 								'field_args' => [

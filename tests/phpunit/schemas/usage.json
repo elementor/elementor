@@ -952,24 +952,6 @@
 										"optional"
 									]
 								},
-								"optimized_gutenberg_loading": {
-									"$id": "#/usages/settings/advanced/optimized_gutenberg_loading",
-									"title": "Optimized Gutenberg Loading",
-									"default": "1",
-									"enum": [
-										"1",
-										"0"
-									]
-								},
-								"optimized_image_loading": {
-									"$id": "#/usages/settings/advanced/optimized_image_loading",
-									"title": "Optimized Image Loading",
-									"default": "1",
-									"enum": [
-										"1",
-										"0"
-									]
-								},
 								"load_fa4_shim": {
 									"$id": "#/usages/settings/advanced/load_fa4_shim",
 									"enum": [
@@ -987,6 +969,31 @@
 									],
 									"title": "Generator Tag",
 									"default": ""
+								}
+							},
+							"additionalProperties": false
+						},
+						"performance": {
+							"$id": "#/usages/settings/performance",
+							"title": "The performance settings schema",
+							"properties": {
+								"optimized_gutenberg_loading": {
+									"$id": "#/usages/settings/performance/optimized_gutenberg_loading",
+									"title": "Optimized Gutenberg Loading",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
+								},
+								"optimized_image_loading": {
+									"$id": "#/usages/settings/performance/optimized_image_loading",
+									"title": "Optimized Image Loading",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
 								}
 							},
 							"additionalProperties": false
