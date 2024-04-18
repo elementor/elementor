@@ -9,11 +9,11 @@ import PageContentLayout from '../components/layout/page-content-layout';
 export default function ChooseFeatures() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		{ ajaxState, setAjax } = useAjax(),
+		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
 		[ noticeState, setNoticeState ] = useState( null ),
-		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
 		[ featureWasSelected, setFeatureWasSelected ] = useState( false ),
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
-		[ tierName, setTierName ] = useState( 'Essential' ),
+		[ tierName, setTierName ] = useState( tiers.essential ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		navigate = useNavigate(),
@@ -98,48 +98,15 @@ export default function ChooseFeatures() {
 		};
 	}
 
-	if ( ! featureWasSelected ) {
+	if ( ! selectedFeatures.advanced ) {
 		actionButton.className = 'e-onboarding__button--disabled';
 	}
 
-	// Run the callback for the site name update AJAX request.
 	useEffect( () => {
-		if ( 'initial' !== ajaxState.status ) {
-			if ( 'success' === ajaxState.status && ajaxState.response?.siteNameUpdated ) {
-				const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
-
-				stateToUpdate.siteName = nameInputRef.current.value;
-
-				updateState( stateToUpdate );
-
-				navigate( 'onboarding/' + nextStep );
-			} else if ( 'error' === ajaxState.status ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						action_state: 'failure',
-						action: 'site name update',
-					},
-				} );
-
-				setNoticeState( {
-					type: 'error',
-					icon: 'eicon-warning',
-					message: __( 'Sorry, the name wasn\'t saved. Try again, or skip for now.', 'elementor' ),
-				} );
-			}
-		}
-	}, [ ajaxState.status ] );
-
-
-	useEffect( () => {
-		if ( selectedFeatures[ 'advanced' ].length > 0 ) {
-			setTierName( 'Advanced' )
+		if ( selectedFeatures.advanced.length > 0 ) {
+			setTierName( tiers.advanced );
 		} else {
-			setTierName( 'Essential' )
+			setTierName( tiers.essential );
 		}
 	}, [ selectedFeatures ] );
 
@@ -198,7 +165,7 @@ export default function ChooseFeatures() {
 						} )
 					}
 				</form >
-				{ featureWasSelected &&
+				{ selectedFeatures &&
 					<p className="e-onboarding__choose-features-section__plan">
 						{
 							/* Translators: %s: Tier name. */
