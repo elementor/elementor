@@ -15,7 +15,7 @@ use Elementor\Utils;
 class Core_Render extends Render_Base {
 
 	public function render(): void {
-		$this->get_layout_classnames();
+		$this->build_layout_render_attribute();
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="e-link-in-bio__content">
@@ -285,7 +285,7 @@ class Core_Render extends Render_Base {
 		return $formatted_link;
 	}
 
-	private function get_layout_classnames(): void {
+	private function build_layout_render_attribute(): void {
 		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
 		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
 		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
