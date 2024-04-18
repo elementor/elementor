@@ -59,8 +59,8 @@ class Test_Tracker extends Elementor_Test_Base {
 		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
 
 		update_option( 'elementor_css_print_method', 'internal' );
-		update_option( 'elementor_optimized_gutenberg_loading', '1' );
 		update_option( 'elementor_optimized_image_loading', '1' );
+		update_option( 'elementor_optimized_gutenberg_loading', '1' );
 
 		// Act.
 		$actual = Tracker::get_settings_performance_usage();
@@ -68,8 +68,8 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEqualSets( [
 			'css_print_method' => 'internal',
-			'optimized_gutenberg_loading' => '1',
 			'optimized_image_loading' => '1',
+			'optimized_gutenberg_loading' => '1',
 		], $actual );
 	}
 

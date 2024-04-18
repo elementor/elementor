@@ -400,18 +400,6 @@ class Settings extends Settings_Page {
 									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
 								],
 							],
-							'optimized_gutenberg_loading' => [
-								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => '1',
-									'options' => [
-										'1' => esc_html__( 'Enable', 'elementor' ),
-										'0' => esc_html__( 'Disable', 'elementor' ),
-									],
-									'desc' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
-								],
-							],
 							'optimized_image_loading' => [
 								'label' => esc_html__( 'Optimized Image Loading', 'elementor' ),
 								'field_args' => [
@@ -427,6 +415,18 @@ class Settings extends Settings_Page {
 										'<code>fetchpriority="high"</code>',
 										'<code>loading="lazy"</code>'
 									),
+								],
+							],
+							'optimized_gutenberg_loading' => [
+								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
 								],
 							],
 						],
