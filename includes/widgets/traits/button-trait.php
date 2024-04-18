@@ -472,7 +472,7 @@ trait Button_Trait {
 					],
 					'column-reverse' => [
 						'title' => esc_html__( 'Below', 'elementor' ),
-						'icon' => "eicon-v-align-top",
+						'icon' => "eicon-v-align-bottom",
 					],
 				],
 				'selectors_dictionary' => [
