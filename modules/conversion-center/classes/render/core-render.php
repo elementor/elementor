@@ -15,40 +15,7 @@ use Elementor\Utils;
 class Core_Render extends Render_Base {
 
 	public function render(): void {
-		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
-		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
-		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
-		$layout_props_show_border          = $this->settings['background_show_border'] ?? '';
-		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
-
-		$layout_classnames = 'e-link-in-bio';
-
-		if ( 'yes' === $layout_props_show_border ) {
-			$layout_classnames .= ' has-border';
-		}
-
-		if ( 'yes' === $layout_props_full_height ) {
-			$layout_classnames .= ' is-full-height';
-		}
-
-		if ( 'yes' === $layout_props_full_width ) {
-			$layout_classnames .= ' is-full-width';
-		}
-
-		if ( ! empty( $layout_props_full_height_controls ) ) {
-			foreach ( $layout_props_full_height_controls as $breakpoint ) {
-				$layout_classnames .= ' is-full-height-' . $breakpoint;
-			}
-		}
-
-		if ( $custom_classes ) {
-			$layout_classnames .= ' ' . $custom_classes;
-		}
-
-		$this->widget->add_render_attribute( 'layout', [
-			'class' => $layout_classnames,
-			'id'    => $this->settings['advanced_custom_css_id'],
-		] );
+		$this->get_layout_classnames();
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="e-link-in-bio__content">
@@ -316,5 +283,42 @@ class Core_Render extends Render_Base {
 		}
 
 		return $formatted_link;
+	}
+
+	private function get_layout_classnames(): void {
+		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
+		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
+		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
+		$layout_props_show_border          = $this->settings['background_show_border'] ?? '';
+		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
+
+		$layout_classnames = 'e-link-in-bio';
+
+		if ( 'yes' === $layout_props_show_border ) {
+			$layout_classnames .= ' has-border';
+		}
+
+		if ( 'yes' === $layout_props_full_height ) {
+			$layout_classnames .= ' is-full-height';
+		}
+
+		if ( 'yes' === $layout_props_full_width ) {
+			$layout_classnames .= ' is-full-width';
+		}
+
+		if ( ! empty( $layout_props_full_height_controls ) ) {
+			foreach ( $layout_props_full_height_controls as $breakpoint ) {
+				$layout_classnames .= ' is-full-height-' . $breakpoint;
+			}
+		}
+
+		if ( $custom_classes ) {
+			$layout_classnames .= ' ' . $custom_classes;
+		}
+
+		$this->widget->add_render_attribute( 'layout', [
+			'class' => $layout_classnames,
+			'id'    => $this->settings['advanced_custom_css_id'],
+		] );
 	}
 }
