@@ -122,6 +122,18 @@ class Widget_Button extends Widget_Base {
 		$this->register_button_style_controls();
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->register_icon_style_controls();
+
+		$this->end_controls_section();
 	}
 
 	/**

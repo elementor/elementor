@@ -1,0 +1,37 @@
+.elementor-widget-button {
+
+    .elementor-button{
+
+        &-content-wrapper {
+
+        }
+
+        &-icon {
+            
+            i {
+                color: var(--button-icon-color, inherit);
+            }
+
+            svg {
+                fill: var(--button-icon-color, inherit);
+            }
+            svg:hover {
+                fill: var(--button-icon-color, inherit);
+            }
+        }
+
+        &-icon:hover {
+
+            i {
+                color: var(--button-icon-color-hover) !important;
+            }
+        
+            svg {
+                fill: var(--button-icon-color-hover) !important;
+            }
+        }
+       
+    }
+    
+
+}

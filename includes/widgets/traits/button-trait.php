@@ -503,6 +503,63 @@ trait Button_Trait {
 		);
 	}
 
+	protected function register_icon_style_controls( $args = [] ) {
+		$default_args = [
+				'section_condition' => [],
+				'alignment_default' => '',
+				'alignment_control_prefix_class' => 'elementor%s-align-',
+				'content_alignment_default' => '',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
+		//start the color tabs
+		$this->start_controls_tabs( 'icons_button_style', [
+			'condition' => $args['section_condition'],
+		] );
+				//when the icon is on normal
+				$this->start_controls_tab(
+					'icon_button_normal',
+					[
+						'label' => esc_html__( 'Normal', 'elementor' ),
+						'condition' => $args['section_condition'],
+						]
+					);
+					
+				$this->add_control( 'icon_color', [
+						'label' => esc_html__( 'Color', 'elementor' ),
+						'type' => Controls_Manager::COLOR,
+						'selectors' => [
+							'{{WRAPPER}}' => '--button-icon-color: {{VALUE}};',
+						],
+					] );
+						
+				$this->end_controls_tab();
+						
+				//when the icon is on hover
+				$this->start_controls_tab(
+						'icon_button_hover',
+						[
+							'label' => esc_html__( 'Hover', 'elementor' ),
+							'condition' => $args['section_condition'],
+							]
+						);
+
+				$this->add_control( 'icon_color_hover', [
+					'label' => esc_html__( 'Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}}' => '--button-icon-color-hover: {{VALUE}};',
+					],
+					] );
+					
+				$this->end_controls_tab();
+					
+
+		$this->end_controls_tabs();
+
+	}
+
 	/**
 	 * Render button widget output on the frontend.
 	 *
