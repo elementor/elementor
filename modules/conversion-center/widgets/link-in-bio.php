@@ -116,27 +116,30 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_type',
 			[
-				'name'    => 'cta_link_type',
 				'label'   => esc_html__( 'Link Type', 'elementor' ),
 				'type'    => Controls_Manager::SELECT,
 				'groups'  => [
 
 					[
 						'label'   => '',
-						'options' => [
-							'Url'           => esc_html__( 'Url', 'elementor' ),
-							'File Download' => esc_html__( 'File Download', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::URL,
+								Social_Network_Provider::FILE_DOWNLOAD,
+							]
+						),
 					],
 					[
 						'label'   => '   --',
-						'options' => [
-							'Email'     => esc_html__( 'Email', 'elementor' ),
-							'Telephone' => esc_html__( 'Telephone', 'elementor' ),
-							'Messenger' => esc_html__( 'Messenger', 'elementor' ),
-							'Waze'      => esc_html__( 'Waze', 'elementor' ),
-							'WhatsApp'  => esc_html__( 'WhatsApp', 'elementor' ),
-						],
+						'options' => Social_Network_Provider::get_social_networks_text(
+							[
+								Social_Network_Provider::EMAIL,
+								Social_Network_Provider::TELEPHONE,
+								Social_Network_Provider::MESSENGER,
+								Social_Network_Provider::WAZE,
+								Social_Network_Provider::WHATSAPP,
+							]
+						),
 					],
 				],
 				'default' => 'Url',
@@ -151,7 +154,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'cta_link_type' => [
-						'File Download',
+						Social_Network_Provider::FILE_DOWNLOAD,
 					],
 				],
 			],
@@ -170,8 +173,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block'  => true,
 				'condition'    => [
 					'cta_link_type' => [
-						'Waze',
-						'Url',
+						Social_Network_Provider::URL,
 					],
 				],
 				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
@@ -181,7 +183,6 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_mail',
 			[
-				'name'        => 'cta_link_mail',
 				'label'       => esc_html__( 'Mail', 'elementor' ),
 				'type'        => Controls_Manager::TEXT,
 				'dynamic'     => [
@@ -190,7 +191,7 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'cta_link_type' => [
-						'Email',
+						Social_Network_Provider::EMAIL,
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
@@ -200,7 +201,6 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_number',
 			[
-				'name'        => 'cta_link_number',
 				'label'       => esc_html__( 'Number', 'elementor' ),
 				'type'        => Controls_Manager::TEXT,
 				'dynamic'     => [
@@ -209,12 +209,30 @@ class Link_In_Bio extends Widget_Base {
 				'label_block' => true,
 				'condition'   => [
 					'cta_link_type' => [
-						'Telephone',
-						'Messenger',
-						'WhatsApp',
+						Social_Network_Provider::TELEPHONE,
+						Social_Network_Provider::WAZE,
+						Social_Network_Provider::WHATSAPP,
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_username',
+			[
+				'label'       => esc_html__( 'Username', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::MESSENGER,
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
 			],
 		);
 

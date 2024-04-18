@@ -243,23 +243,22 @@ class Core_Render extends Render_Base {
 
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $cta['cta_link_type'] ) {
-			case 'Email':
+			case Social_Network_Provider::EMAIL:
 				$formatted_link = ! empty( $cta['cta_link_mail'] ) ? 'mailto:' . $cta['cta_link_mail'] : '';
 				break;
-			case 'Telephone':
+			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
 				break;
-			case 'Telegram':
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://telegram.me/' . $cta['cta_link_number'] : '';
+			case Social_Network_Provider::MESSENGER:
+				$formatted_link = ! empty( $icon['cta_link_username'] ) ?
+					'https://www.facebook.com/messages/t/' . $icon['icon_username'] :
+					'';
 				break;
-			case 'Waze':
+			case Social_Network_Provider::WAZE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://www.waze.com/ul?ll=' . $cta['cta_link_number'] . '&navigate=yes' : '';
 				break;
-			case 'WhatsApp':
+			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
-				break;
-			case 'File Download':
-				$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
 				break;
 			default:
 				break;
@@ -296,6 +295,8 @@ class Core_Render extends Render_Base {
 				break;
 			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://wa.me/' . $icon['icon_number'] : '';
+				break;
+			default:
 				break;
 		}
 

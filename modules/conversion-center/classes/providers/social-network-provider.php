@@ -24,6 +24,8 @@ class Social_Network_Provider {
 	public const MESSENGER = 'Messenger';
 	public const TELEPHONE = 'Telephone';
 	public const EMAIL = 'Email';
+	public const URL = 'Url';
+	public const FILE_DOWNLOAD = 'File Download';
 
 	public static function get_social_networks_icons(): array {
 		static::init_social_networks_array_if_empty();
@@ -160,6 +162,16 @@ class Social_Network_Provider {
 		static::$social_networks[ static::EMAIL ] = [
 			'text' => esc_html__( 'Email', 'elementor' ),
 			'icon' => 'fas fa-envelope',
+		];
+
+		static::$social_networks[ static::URL ] = [
+			'text' => esc_html__( 'URL', 'elementor' ),
+			'icon' => 'fas fa-link',
+		];
+
+		static::$social_networks[ static::FILE_DOWNLOAD ] = [
+			'text' => esc_html__( 'File Download', 'elementor' ),
+			'icon' => 'fas fa-download',
 		];
 	}
 }
