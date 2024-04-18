@@ -1,23 +1,18 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
-import useAjax from 'elementor-app/hooks/use-ajax';
 
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function ChooseFeatures() {
-	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
-		{ ajaxState, setAjax } = useAjax(),
+	const { state } = useContext( OnboardingContext ),
 		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
-		[ noticeState, setNoticeState ] = useState( null ),
-		[ featureWasSelected, setFeatureWasSelected ] = useState( false ),
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
+		// [ message, setMessage ] = useState( '' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
-		navigate = useNavigate(),
-		nameInputRef = useRef(),
 		options = [
 			{
 				plan: 'essential',
@@ -54,6 +49,8 @@ export default function ChooseFeatures() {
 		],
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
+			href: elementorAppConfig.onboarding.urls.upgradeCTA,
+			target: '_blank',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
 					event: 'next',
@@ -63,30 +60,6 @@ export default function ChooseFeatures() {
 						step: state.currentStep,
 					},
 				} );
-
-				// Only run the site name update AJAX if the new name is different than the existing one and it isn't empty.
-				if ( nameInputRef.current.value !== state.siteName && '' !== nameInputRef.current.value ) {
-					setAjax( {
-						data: {
-							action: 'elementor_update_site_name',
-							data: JSON.stringify( {
-								siteName: nameInputRef.current.value,
-							} ),
-						},
-					} );
-				} else if ( nameInputRef.current.value === state.siteName ) {
-					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
-
-					updateState( stateToUpdate );
-
-					navigate( 'onboarding/' + nextStep );
-				} else {
-					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'skipped' );
-
-					updateState( stateToUpdate );
-
-					navigate( 'onboarding/' + nextStep );
-				}
 			},
 		};
 
@@ -98,7 +71,7 @@ export default function ChooseFeatures() {
 		};
 	}
 
-	if ( ! selectedFeatures.advanced ) {
+	if ( ! isFeatureSelected( selectedFeatures ) ) {
 		actionButton.className = 'e-onboarding__button--disabled';
 	}
 
@@ -108,6 +81,8 @@ export default function ChooseFeatures() {
 		} else {
 			setTierName( tiers.essential );
 		}
+
+		// createMessage();
 	}, [ selectedFeatures ] );
 
 	function assignTierName( checked, id, text ) {
@@ -124,8 +99,18 @@ export default function ChooseFeatures() {
 				[ tier ]: selectedFeatures[ tier ].filter( ( item ) => item !== text ),
 			} );
 		}
+	}
 
-		setFeatureWasSelected( true );
+	// function createMessage() {
+	// 	/* Translators: %s: Tier name. */
+	// 	const translatedMessage = __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ),
+	// 		splittedMessage = translatedMessage.split( '%s' );
+	//
+	// 	setMessage( `${ splittedMessage[ 0 ] } <b> ${ tierName } </b> ${ splittedMessage[ 1 ] }` );
+	// }
+
+	function isFeatureSelected( features ) {
+		return !! features.advanced.length || !! features.essential.length;
 	}
 
 	return (
@@ -135,7 +120,6 @@ export default function ChooseFeatures() {
 				title={ __( 'Elevate your website with additional Pro features.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
-				noticeState={ noticeState }
 			>
 				<p>
 					{ __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ) }
@@ -165,14 +149,13 @@ export default function ChooseFeatures() {
 						} )
 					}
 				</form >
-				{ selectedFeatures &&
-					<p className="e-onboarding__choose-features-section__plan">
-						{
-							/* Translators: %s: Tier name. */
-							__( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', tierName )
-						}
-					</p>
-				}
+				<p className="e-onboarding__choose-features-section__plan">
+					{ isFeatureSelected( selectedFeatures ) &&
+						// { message }
+						/* Translators: %s: Tier name. */
+						__( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', tierName )
+					}
+				</p>
 
 			</PageContentLayout>
 		</Layout>
