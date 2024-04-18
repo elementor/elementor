@@ -928,7 +928,7 @@
 										"",
 										"1"
 									],
-									"title": "Is enable unfilterd file uploads?",
+									"title": "Is enable unfiltered file uploads?",
 									"default": ""
 								},
 								"google_font": {
@@ -1071,7 +1071,7 @@
 								"css_print_method": "internal",
 								"editor_break_lines": "1",
 								"unfiltered_files_upload": "",
-								"font_display": "auto"
+								"font_display": "swap"
 							},
 							"experiments": {
 								"e_optimized_css_loading": {
