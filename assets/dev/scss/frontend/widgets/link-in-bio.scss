@@ -52,6 +52,9 @@
 	--e-link-in-bio-ctas-padding-inline-start: #{pxToRem(20px)};
 	--e-link-in-bio-ctas-text-color: #{$white};
 
+	// Background config
+	--background-overlay-opacity: 1;
+
 	align-items: var(--e-link-in-bio-content-align-h);
 	border-color: var(--e-link-in-bio-border-color);
 	border-style: var(--e-link-in-bio-border-style);
@@ -117,6 +120,10 @@
 		inset: 0;
 		position: absolute;
 		z-index: $ground-layer;
+	}
+
+	&__bg-overlay {
+		opacity: --background-overlay-opacity;
 	}
 
 	&__content {
@@ -205,7 +212,7 @@
 		color: var(--e-link-in-bio-title-color);
 		font-size: 20px;
 		font-weight: 500;
-		line-height: 35px; // 20px in Figma is not accurate
+		line-height: 35px;
 	}
 
 	&__description {

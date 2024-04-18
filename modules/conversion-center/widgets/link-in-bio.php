@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.23.0
  */
 class Link_In_Bio extends Widget_Base {
-	const TAB_ADVANCED = 'advanced-tab-link-in-bio';
+	const TAB_ADVANCED = 'advanced-tab-links';
 
 	public function get_name(): string {
 		return 'link-in-bio';
@@ -927,7 +927,7 @@ class Link_In_Bio extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio__bg-overlay' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}} .e-link-in-bio__bg-overlay' => '--background-overlay-opacity: {{SIZE}};',
 				],
 			]
 		);
