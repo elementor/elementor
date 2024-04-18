@@ -124,7 +124,7 @@ export default class WpAdminPage extends BasePage {
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 */
 	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=settings#tab-experiments' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
 
 		const prefix = 'e-experiment';
 
