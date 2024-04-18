@@ -199,6 +199,42 @@ class Link_In_Bio extends Widget_Base {
 		);
 
 		$repeater->add_control(
+			'cta_link_mail_subject',
+			[
+				'label'       => esc_html__( 'Subject', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::EMAIL,
+					],
+				],
+				'placeholder' => esc_html__( 'Subject', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_mail_body',
+			[
+				'label'       => esc_html__( 'Message', 'elementor' ),
+				'type'        => Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::EMAIL,
+					],
+				],
+				'placeholder' => esc_html__( 'Message', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
 			'cta_link_number',
 			[
 				'label'       => esc_html__( 'Number', 'elementor' ),

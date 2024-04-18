@@ -244,7 +244,7 @@ class Core_Render extends Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $cta['cta_link_type'] ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = ! empty( $cta['cta_link_mail'] ) ? 'mailto:' . $cta['cta_link_mail'] : '';
+				$formatted_link = $this->build_email_link( $cta, 'cta_link' );
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
@@ -267,6 +267,26 @@ class Core_Render extends Render_Base {
 		return $formatted_link;
 	}
 
+	private function build_email_link( array $data, string $prefix ) {
+		$email   = $data[ $prefix . '_mail' ] ?? '';
+		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
+		$body    = $data[ $prefix . '_mail_body' ] ?? '';
+		if ( ! $email ) {
+			return '';
+		}
+		$link = 'mailto:' . $email;
+		if ( $subject ) {
+			$link .= '?subject=' . $subject;
+		}
+		if ( $body ) {
+			$link .= $subject ? '&' : '?';
+			$link .= 'body=' . $body;
+		}
+
+		return $link;
+
+	}
+
 	private function get_formatted_link_for_icon( array $icon ): string {
 
 		$formatted_link = $icon['icon_url']['url'] ?? '';
@@ -274,13 +294,7 @@ class Core_Render extends Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $icon['icon_platform'] ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = ! empty( $icon['icon_mail'] ) ? 'mailto:' . $icon['icon_mail'] : '';
-				if ( $formatted_link && isset( $icon['icon_mail_subject'] ) ) {
-					$formatted_link .= '?subject=' . $icon['icon_mail_subject'];
-				}
-				if ( $formatted_link && isset( $icon['icon_mail_body'] ) ) {
-					$formatted_link .= '&body=' . $icon['icon_mail_body'];
-				}
+				$formatted_link = $this->build_email_link( $icon, 'icon' );
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'tel:' . $icon['icon_number'] : '';
