@@ -132,72 +132,7 @@ trait Button_Trait {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = is_rtl() ? 'left' : 'right';
-
-		$this->add_control(
-			'icon_align',
-			[
-				'label' => esc_html__( 'Icon Position', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'default' => is_rtl() ? 'row-reverse' : 'row',
-				'options' => [
-					'row' => [
-						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-h-align-{$start}",
-					],
-					'row-reverse' => [
-						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-h-align-{$end}",
-					],
-				],
-				'selectors_dictionary' => [
-					'left' => is_rtl() ? 'row-reverse' : 'row',
-					'right' => is_rtl() ? 'row' : 'row-reverse',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
-				],
-				'condition' => array_merge(
-					$args['section_condition'],
-					[
-						'text!' => '',
-						'selected_icon[value]!' => '',
-					]
-				),
-			]
-		);
-
-		$this->add_control(
-			'icon_indent',
-			[
-				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'max' => 50,
-					],
-					'em' => [
-						'max' => 5,
-					],
-					'rem' => [
-						'max' => 5,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => array_merge(
-					$args['section_condition'],
-					[
-						'text!' => '',
-						'selected_icon[value]!' => '',
-					]
-				),
-			]
-		);
-
+		
 		$this->add_control(
 			'button_css_id',
 			[
@@ -512,6 +447,72 @@ trait Button_Trait {
 		];
 
 		$args = wp_parse_args( $args, $default_args );
+
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
+		$this->add_control(
+			'icon_align',
+			[
+				'label' => esc_html__( 'Icon Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'default' => is_rtl() ? 'row-reverse' : 'row',
+				'options' => [
+					'row' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-{$start}",
+					],
+					'row-reverse' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-{$end}",
+					],
+				],
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'row-reverse' : 'row',
+					'right' => is_rtl() ? 'row' : 'row-reverse',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
+				],
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
+			]
+		);
+
+		$this->add_control(
+			'icon_indent',
+			[
+				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
+			]
+		);
 
 		//start the color tabs
 		$this->start_controls_tabs( 'icons_button_style', [
