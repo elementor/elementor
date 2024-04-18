@@ -36,20 +36,20 @@
 
 	// Icons config
 	--e-link-in-bio-icon-color: inherit;
-	--e-link-in-bio-icon-gap: #{pxToRem(20px)} #{pxToRem(29px)};
-	--e-link-in-bio-icon-size: #{pxToRem(25px)};
+	--e-link-in-bio-icon-gap: 20px 29px;
+	--e-link-in-bio-icon-size: 25px;
 
 	// CTAs config
 	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-ctas-border-color: transparent;
-	--e-link-in-bio-ctas-border-radius: #{pxToRem(20px)};
+	--e-link-in-bio-ctas-border-radius: 20px;
 	--e-link-in-bio-ctas-border-style: none;
 	--e-link-in-bio-ctas-border-width: 2px;
-	--e-link-in-bio-ctas-gap: #{pxToRem(22px)};
-	--e-link-in-bio-ctas-padding-block-end: #{pxToRem(17px)};
-	--e-link-in-bio-ctas-padding-block-start: #{pxToRem(17px)};
-	--e-link-in-bio-ctas-padding-inline-end: #{pxToRem(20px)};
-	--e-link-in-bio-ctas-padding-inline-start: #{pxToRem(20px)};
+	--e-link-in-bio-ctas-gap: 22px;
+	--e-link-in-bio-ctas-padding-block-end: 17px;
+	--e-link-in-bio-ctas-padding-block-start: 17px;
+	--e-link-in-bio-ctas-padding-inline-end: 20px;
+	--e-link-in-bio-ctas-padding-inline-start: 20px;
 	--e-link-in-bio-ctas-text-color: #{$white};
 
 	// Background config
@@ -142,7 +142,7 @@
 	}
 
 	&__identity {
-		margin-block-end: pxToRem(14px);
+		margin-block-end: 14px;
 
 		.e-link-in-bio__identity-image {
 			display: flex;
@@ -161,7 +161,7 @@
 			border-style: var(--e-link-in-bio-identity-image-profile-border-style);
 			border-width: var(--e-link-in-bio-identity-image-profile-border-width);
 			overflow: hidden;
-			margin-block-end: pxToRem(17px);
+			margin-block-end: 17px;
 			margin-inline: auto;
 			max-width: 100%;
 			width: var(--e-link-in-bio-identity-image-profile-width);
@@ -220,7 +220,7 @@
 		font-size: 16px;
 		font-weight: 300;
 		line-height: 24px;
-		margin-block-start: pxToRem(20px);
+		margin-block-start: 20px;
 	}
 
 	&__icons {
@@ -228,7 +228,7 @@
 		flex-flow: row wrap;
 		gap: var(--e-link-in-bio-icon-gap);
 		justify-content: center;
-		margin-block-start: pxToRem(20px);
+		margin-block-start: 20px;
 	}
 
 	&__icon {
@@ -237,11 +237,11 @@
 		height: var(--e-link-in-bio-icon-size);
 
 		&.has-size-medium {
-			--e-link-in-bio-icon-size: #{pxToRem(30px)};
+			--e-link-in-bio-icon-size: 30px;
 		}
 
 		&.has-size-large {
-			--e-link-in-bio-icon-size: #{pxToRem(35px)};
+			--e-link-in-bio-icon-size: 35px;
 		}
 
 		.e-link-in-bio__icon-link {
@@ -266,10 +266,10 @@
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: auto;
 		gap: var(--e-link-in-bio-ctas-gap);
-		margin-block-start: pxToRem(31px);
+		margin-block-start: 31px;
 
 		&.has-type-link {
-			--e-link-in-bio-ctas-gap: #{pxToRem(10px)};
+			--e-link-in-bio-ctas-gap: 10px;
 		}
 
 		.e-link-in-bio__cta {
@@ -303,7 +303,7 @@
 			}
 
 			&.has-corners-round {
-				--e-link-in-bio-ctas-border-radius: #{pxToRem(50px)};
+				--e-link-in-bio-ctas-border-radius: 50px;
 			}
 
 			&.has-corners-sharp {
@@ -315,7 +315,7 @@
 			--e-link-in-bio-ctas-text-color: #{$link-in-bio-cta-bg-color};
 
 			font-weight: 700;
-			margin-block: pxToRem(17px);
+			margin-block: 17px;
 		}
 	}
 
