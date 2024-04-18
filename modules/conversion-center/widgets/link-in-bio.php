@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.23.0
  */
 class Link_In_Bio extends Widget_Base {
-	const TAB_ADVANCED = 'advanced-tab-links';
+	const TAB_ADVANCED = 'advanced-tab-links-in-bio';
 
 	public function get_name(): string {
 		return 'link-in-bio';
