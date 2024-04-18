@@ -456,7 +456,7 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				// 'default' => is_rtl() ? 'row-reverse' : 'row',
+				
 				'options' => [
 					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),

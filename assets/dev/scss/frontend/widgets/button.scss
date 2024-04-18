@@ -39,6 +39,20 @@
         }
        
     }
+
+    .elementor-button:hover{
+
+        &-icon {
+
+            i {
+                color: var(--button-icon-color-hover);
+            }
+        
+            svg {
+                fill: var(--button-icon-color-hover);
+            }
+        }
+    }
     
 
 }
