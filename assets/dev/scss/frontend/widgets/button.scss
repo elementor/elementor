@@ -2,8 +2,8 @@
 
     .elementor-button{
 
-        &-content-wrapper {
-
+        span {
+            align-self: center;
         }
 
         &-icon {
@@ -33,7 +33,8 @@
                 fill: var(--button-icon-color-hover);
             }
         }
-        .e-font-icon-svg{
+
+        .e-font-icon-svg {
             font-size: var(--n-button-icon-size);
         }
        

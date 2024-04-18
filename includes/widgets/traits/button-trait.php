@@ -456,7 +456,7 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => is_rtl() ? 'row-reverse' : 'row',
+				// 'default' => is_rtl() ? 'row-reverse' : 'row',
 				'options' => [
 					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
@@ -466,10 +466,20 @@ trait Button_Trait {
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-h-align-{$end}",
 					],
+					'column' => [
+						'title' => esc_html__( 'Above', 'elementor' ),
+						'icon' => "eicon-v-align-top",
+					],
+					'column-reverse' => [
+						'title' => esc_html__( 'Below', 'elementor' ),
+						'icon' => "eicon-v-align-top",
+					],
 				],
 				'selectors_dictionary' => [
 					'left' => is_rtl() ? 'row-reverse' : 'row',
 					'right' => is_rtl() ? 'row' : 'row-reverse',
+					'above' => is_rtl() ? 'column-reverse' : 'column',
+					'below' => is_rtl() ? 'column' : 'column-reverse',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
