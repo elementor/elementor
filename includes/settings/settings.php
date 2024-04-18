@@ -97,7 +97,7 @@ class Settings extends Settings_Page {
 
 		if ( $this->home_module->is_experiment_active() ) {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$admin_menu->register( 'settings', new Admin_Menu_Item( $this ) );
+				$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
 			}, 0 );
 		}
 	}
