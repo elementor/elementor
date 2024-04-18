@@ -397,7 +397,11 @@ class Settings extends Settings_Page {
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">'
+										. esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' )
+										. '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">'
+										. esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' )
+										. '</div>',
 								],
 							],
 							'optimized_image_loading' => [
@@ -411,7 +415,7 @@ class Settings extends Settings_Page {
 									],
 									'desc' => sprintf(
 										/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
-										esc_html__( 'Applying %1$s on LCP image and %2$s on images below the fold to improve performance scores.', 'elementor' ),
+										esc_html__( 'Improve performance by applying %1$s on LCP image and %2$s on images below the fold.', 'elementor' ),
 										'<code>fetchpriority="high"</code>',
 										'<code>loading="lazy"</code>'
 									),
@@ -426,7 +430,7 @@ class Settings extends Settings_Page {
 										'1' => esc_html__( 'Enable', 'elementor' ),
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
-									'desc' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
+									'desc' => esc_html__( 'Reduce unnecessary render-blocking loads by dequeuing unused Gutenberg block editor scripts and styles.', 'elementor' ),
 								],
 							],
 						],
