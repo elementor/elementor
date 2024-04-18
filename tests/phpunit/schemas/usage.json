@@ -904,15 +904,6 @@
 							"$id": "#/usages/settings/advanced",
 							"title": "The advanced settings schema",
 							"properties": {
-								"css_print_method": {
-									"$id": "#/usages/settings/advanced/css_print_method",
-									"title": "CSS print method.",
-									"default": "internal",
-									"enum": [
-										"internal",
-										"external"
-									]
-								},
 								"editor_break_lines": {
 									"$id": "#/usages/settings/advanced/editor_break_lines",
 									"title": "Editor loader editor method switch",
@@ -977,6 +968,15 @@
 							"$id": "#/usages/settings/performance",
 							"title": "The performance settings schema",
 							"properties": {
+								"css_print_method": {
+									"$id": "#/usages/settings/performance/css_print_method",
+									"title": "CSS print method.",
+									"default": "internal",
+									"enum": [
+										"internal",
+										"external"
+									]
+								},
 								"optimized_gutenberg_loading": {
 									"$id": "#/usages/settings/performance/optimized_gutenberg_loading",
 									"title": "Optimized Gutenberg Loading",
@@ -1068,10 +1068,12 @@
 								"allow_tracking": "yes"
 							},
 							"advanced": {
-								"css_print_method": "internal",
 								"editor_break_lines": "1",
 								"unfiltered_files_upload": "",
 								"font_display": "swap"
+							},
+							"performance": {
+								"css_print_method": "internal"
 							},
 							"experiments": {
 								"e_optimized_css_loading": {

@@ -323,19 +323,6 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'advanced' => [
 						'fields' => [
-							'css_print_method' => [
-								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
-								'field_args' => [
-									'class' => 'elementor_css_print_method',
-									'type' => 'select',
-									'std' => 'external',
-									'options' => [
-										'external' => esc_html__( 'External File', 'elementor' ),
-										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
-									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
-								],
-							],
 							'editor_break_lines' => [
 								'label' => esc_html__( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
@@ -400,6 +387,19 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'performance' => [
 						'fields' => [
+							'css_print_method' => [
+								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_css_print_method',
+									'type' => 'select',
+									'std' => 'external',
+									'options' => [
+										'external' => esc_html__( 'External File', 'elementor' ),
+										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
+									],
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
+								],
+							],
 							'optimized_gutenberg_loading' => [
 								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
 								'field_args' => [
