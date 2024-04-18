@@ -484,6 +484,28 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_responsive_control( 
+			'icon_size', 
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
+				],
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-button-icon-size: {{SIZE}}{{UNIT}}',
+				],
+		] );
+
 		$this->add_control(
 			'icon_indent',
 			[
