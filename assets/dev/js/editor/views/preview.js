@@ -3,12 +3,12 @@ import AddSectionView from './add-section/independent';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
-	config: {
-		allowEdit: true,
-	},
-
 	initialize() {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
+
+		this.config = {
+			allowEdit: true,
+		};
 
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
 	},

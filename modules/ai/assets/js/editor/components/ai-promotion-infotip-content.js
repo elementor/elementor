@@ -12,18 +12,18 @@ const AiPromotionInfotipContent = ( props ) => {
 	return (
 		<Card sx={ { width: 300 } } elevation={ 0 }>
 			<CardHeader subheader="ELEMENTOR AI" />
-			<CardContent>
-				<Typography variant="subtitle2" color="text.secondary">
+			<CardContent sx={ { pt: 1 } }>
+				<Typography variant="subtitle2" color="text.secondary" sx={ { pb: 0.5 } }>
 					{ props.header }
 				</Typography>
-				<Typography color="text.secondary">
+				<Typography variant="body2" color="text.secondary">
 					{ props.contentText }
 				</Typography>
 			</CardContent>
 			<CardActions disableSpacing sx={ { justifyContent: 'flex-end', gap: 1 } } >
 				<Button
 					onClick={ () => props.onClose() } color="secondary">{ __( 'Not Now', 'elementor' ) }</Button>
-				<Button onClick={ () => props.onClick() } variant="contained">{ __( 'Try it now', 'elementor' ) }</Button>
+				<Button onClick={ () => props.onClick() } variant="contained">{ props.mainActionText }</Button>
 			</CardActions>
 		</Card> );
 };
@@ -32,6 +32,7 @@ AiPromotionInfotipContent.propTypes = {
 	contentText: PropTypes.string,
 	onClick: PropTypes.func,
 	onClose: PropTypes.func,
+	mainActionText: PropTypes.string,
 };
 
 export default AiPromotionInfotipContent;
