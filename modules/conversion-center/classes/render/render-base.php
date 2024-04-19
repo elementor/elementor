@@ -313,7 +313,7 @@ abstract class Render_Base {
 		$layout_props_show_border          = $this->settings['background_show_border'] ?? '';
 		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
 
-		$layout_classnames = 'e-link-in-bio';
+		$layout_classnames = 'e-link-in-bio ' . $this->widget->get_name();
 
 		if ( 'yes' === $layout_props_show_border ) {
 			$layout_classnames .= ' has-border';
