@@ -23,16 +23,16 @@
             }
         }
 
-        &-icon:hover {
+        // &-icon:hover {
 
-            i {
-                color: var(--button-icon-color-hover);
-            }
+        //     i {
+        //         color: var(--button-icon-color-hover);
+        //     }
         
-            svg {
-                fill: var(--button-icon-color-hover);
-            }
-        }
+        //     svg {
+        //         fill: var(--button-icon-color-hover);
+        //     }
+        // }
 
         .e-font-icon-svg {
             font-size: var(--n-button-icon-size);
@@ -46,10 +46,12 @@
 
             i {
                 color: var(--button-icon-color-hover);
+                transition: all 0.3s;
             }
         
             svg {
                 fill: var(--button-icon-color-hover);
+                transition: all 0.3s;
             }
         }
     }
