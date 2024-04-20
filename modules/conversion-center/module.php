@@ -25,6 +25,7 @@ class Module extends BaseModule {
 	public function get_widgets(): array {
 		return [
 			'Link_In_Bio',
+			'Link_In_Bio_Var_1'
 		];
 	}
 

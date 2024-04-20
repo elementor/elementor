@@ -20,6 +20,8 @@ abstract class Render_Base {
 
 	protected array $settings;
 
+	abstract public function render(): void;
+
 	public function __construct( Link_In_Bio $widget ) {
 		$this->widget   = $widget;
 		$this->settings = $widget->get_settings_for_display();
@@ -313,7 +315,7 @@ abstract class Render_Base {
 		$layout_props_show_border          = $this->settings['background_show_border'] ?? '';
 		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
 
-		$layout_classnames = 'e-link-in-bio ' . $this->widget->get_name();
+		$layout_classnames = 'e-link-in-bio e-var-' . $this->widget->get_name();
 
 		if ( 'yes' === $layout_props_show_border ) {
 			$layout_classnames .= ' has-border';
@@ -342,7 +344,4 @@ abstract class Render_Base {
 			'id'    => $this->settings['advanced_custom_css_id'],
 		] );
 	}
-
-
-	abstract public function render(): void;
 }
