@@ -4,6 +4,7 @@ namespace Elementor\Modules\Ai\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Modules\Ai\Module;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -275,8 +276,8 @@ class Ai extends Library {
 			'image/text-to-image',
 			[
 				self::PROMPT => $data['payload']['prompt'],
-				self::IMAGE_TYPE => $data['payload']['promptSettings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['promptSettings'][ self::STYLE_PRESET ],
-				self::ASPECT_RATIO => $data['payload']['promptSettings'][ self::ASPECT_RATIO ],
+				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
+				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
@@ -558,11 +559,20 @@ class Ai extends Library {
 		}
 
 		$context['currentContext'] = $data['currentContext'];
+		$context['features'] = [
+			'supportedFeatures' => [],
+		];
 
 		if ( ElementorUtils::has_pro() ) {
-			$context['features'] = [
-				'subscriptions' => [ 'Pro' ],
-			];
+			$context['features']['subscriptions'] = [ 'Pro' ];
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
+			$context['features']['supportedFeatures'][] = 'Grid';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
+			$context['features']['supportedFeatures'][] = 'NestedElements';
 		}
 
 		$metadata = [

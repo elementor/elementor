@@ -6,17 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Transformations_Abstract {
-	/**
-	 * @var array
-	 */
-	protected $home_screen_data;
 
 	protected $wordpress_adapter;
+	protected $plugin_status_adapter;
 
-	public function __construct( $home_screen_data, $wordpress_adapter ) {
-		$this->home_screen_data = $home_screen_data;
-		$this->wordpress_adapter = $wordpress_adapter;
+	public function __construct( $args ) {
+		$this->wordpress_adapter = $args['wordpress_adapter'] ?? null;
+		$this->plugin_status_adapter = $args['plugin_status_adapter'] ?? null;
 	}
 
-	abstract public function transform(): array;
+	abstract public function transform( array $home_screen_data ): array;
 }

@@ -53,24 +53,41 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'editor_heading',
+			[
+				'label' => esc_html__( 'Panel', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_control(
 			'ui_theme',
 			[
-				'label' => esc_html__( 'UI Theme', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'description' => esc_html__( 'Set light or dark mode, or use Auto Detect to sync it with your OS setting.', 'elementor' ),
-				'default' => 'auto',
+				'label' => esc_html__( 'Display mode', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'auto' => esc_html__( 'Auto Detect', 'elementor' ),
-					'light' => esc_html__( 'Light', 'elementor' ),
-					'dark' => esc_html__( 'Dark', 'elementor' ),
+					'light' => [
+						'title' => esc_html__( 'Light mode', 'elementor' ),
+						'icon' => 'eicon-light-mode',
+					],
+					'dark' => [
+						'title' => esc_html__( 'Dark mode', 'elementor' ),
+						'icon' => 'eicon-dark-mode',
+					],
+					'auto' => [
+						'title' => esc_html__( 'Auto detect', 'elementor' ),
+						'icon' => 'eicon-header',
+					],
 				],
+				'default' => 'auto',
+				'description' => esc_html__( 'Set light or dark mode, or auto-detect to sync with your operating system settings.', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'panel_width',
 			[
-				'label' => esc_html__( 'Panel Width', 'elementor' ) . ' (px)',
+				'label' => esc_html__( 'Width', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -85,47 +102,18 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-			'edit_buttons',
+			'preview_heading',
 			[
-				'label' => esc_html__( 'Editing Handles', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'Show editing handles when hovering over the element edit button.', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'lightbox_in_editor',
-			[
-				'label' => esc_html__( 'Enable Lightbox In Editor', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => 'yes',
-			]
-		);
-
-		$this->add_control(
-			'responsive_heading',
-			[
-				'label' => esc_html__( 'Responsive Preview', 'elementor' ),
+				'label' => esc_html__( 'Canvas', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
-			'show_hidden_elements',
-			[
-				'label' => esc_html__( 'Hidden Elements', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Show', 'elementor' ),
-				'label_off' => esc_html__( 'Hide', 'elementor' ),
-				'default' => 'yes',
-			]
-		);
-
-		$this->add_control(
 			'default_device_view',
 			[
-				'label' => esc_html__( 'Default Device View ', 'elementor' ),
+				'label' => esc_html__( 'Default device view', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
@@ -134,6 +122,72 @@ class Model extends BaseModel {
 					'tablet' => esc_html__( 'Tablet', 'elementor' ),
 					'desktop' => esc_html__( 'Desktop', 'elementor' ),
 				],
+				'description' => esc_html__( 'Choose which device to display when clicking the Responsive Mode icon.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'edit_buttons',
+			[
+				'label' => esc_html__( 'Show quick edit options', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'description' => esc_html__( 'Show additional actions while hovering over the handle of an element.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'lightbox_in_editor',
+			[
+				'label' => esc_html__( 'Expand images in lightbox', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => 'yes',
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'description' => esc_html__( 'This only applies while you’re working in the editor. The front end won’t be affected.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'show_hidden_elements',
+			[
+				'label' => esc_html__( 'Show hidden elements', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'default' => 'yes',
+				'description' => esc_html__( 'This refers to elements you’ve hidden in the Responsive Visibility settings.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'design_system_heading',
+			[
+				'label' => esc_html__( 'Design System', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'enable_styleguide_preview',
+			[
+				'label' => esc_html__( 'Show global settings', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => 'yes',
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'description' => esc_html__( 'Temporarily overlay the canvas with the style guide to preview your changes to global colors and fonts.', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'navigation_heading',
+			[
+				'label' => esc_html__( 'Navigation', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
 			]
 		);
 
@@ -142,27 +196,13 @@ class Model extends BaseModel {
 			[
 				'label' => esc_html__( 'Exit to', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'separator' => 'before',
-				'description' => esc_html__( 'Decide where you want to go when you click the "Exit" button.', 'elementor' ),
 				'default' => 'this_post',
 				'options' => [
 					'this_post' => esc_html__( 'This Post', 'elementor' ),
 					'all_posts' => esc_html__( 'All Posts', 'elementor' ),
 					'dashboard' => esc_html__( 'WP Dashboard', 'elementor' ),
 				],
-			]
-		);
-
-		$this->add_control(
-			'enable_styleguide_preview',
-			[
-				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors and fonts.', 'elementor' ),
-				'separator' => 'before',
-				'label_off' => esc_html__( 'Off', 'elementor' ),
-				'label_on' => esc_html__( 'On', 'elementor' ),
-				'default' => 'yes',
+				'description' => esc_html__( 'Decide where you want to go when leaving the editor.', 'elementor' ),
 			]
 		);
 

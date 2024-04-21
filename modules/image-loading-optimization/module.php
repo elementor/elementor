@@ -2,18 +2,12 @@
 namespace Elementor\Modules\ImageLoadingOptimization;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends BaseModule {
-	/**
-	 * @var string The experiment name.
-	 */
-	const EXPERIMENT_NAME = 'e_image_loading_optimization';
-
 	/**
 	 * @var int Minimum square-pixels threshold.
 	 */
@@ -37,31 +31,13 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Get experimental data.
-	 *
-	 * @return array Experimental settings.
-	 */
-	public static function get_experimental_data() {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Optimize Image Loading', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => sprintf(
-				/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
-				esc_html__( 'Applying %1$s on LCP image and %2$s on images below the fold to improve performance scores.', 'elementor' ),
-				'<code>fetchpriority="high"</code>',
-				'<code>loading="lazy"</code>'
-			),
-			'generator_tag' => true,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-		];
-	}
-
-	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+		if ( ! static::is_optimized_image_loading_enabled() ) {
+			return;
+		}
+
 		parent::__construct();
 
 		// Stop wp core logic.
@@ -76,6 +52,18 @@ class Module extends BaseModule {
 
 		// Run optimization logic on content.
 		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_image' ] );
+	}
+
+	/**
+	 * Check whether the "Optimized Image Loading" settings is enabled.
+	 *
+	 * The 'optimized_image_loading' option can be enabled/disabled from the Elementor settings.
+	 *
+	 * @since 3.21.0
+	 * @access private
+	 */
+	private static function is_optimized_image_loading_enabled(): bool {
+		return '1' === get_option( 'elementor_optimized_image_loading', '1' );
 	}
 
 	/**

@@ -482,9 +482,14 @@ export default class EditorPage extends BasePage {
 	}
 
 	async changeUiTheme( uiMode: string ) {
+		const uiThemeOptions = {
+			light: '.eicon-light-mode',
+			dark: '.eicon-dark-mode',
+			auto: '.eicon-header',
+		};
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
-		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+		await this.page.locator( `.elementor-control-ui_theme ${ uiThemeOptions[ uiMode ] }` ).click();
 	}
 
 	/**
@@ -514,7 +519,7 @@ export default class EditorPage extends BasePage {
 
 	async publishAndViewPage() {
 		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
 		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
 		await this.page.waitForLoadState();
 	}
@@ -915,5 +920,9 @@ export default class EditorPage extends BasePage {
 			const admin = document.getElementById( selector );
 			admin.remove();
 		}, adminBar );
+	}
+
+	async isolatedIdNumber( idPrefix: string, itemID: string ) {
+		return Number( itemID.replace( idPrefix, '' ) );
 	}
 }

@@ -1,22 +1,33 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Plugin_Status_Adapter;
 use Elementor\Modules\Home\Transformations\Filter_Plugins;
-use ElementorEditorTesting\Elementor_Test_Base;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Filter_Plugins extends Elementor_Test_Base {
+class Test_Filter_Plugins extends PHPUnit_TestCase {
 
 	private $wordpress_adapter;
 
-	public function test_filter_plugins() {
+	private $plugin_status_adapter;
+
+	public function __construct( ?string $name = null, array $data = [], $dataName = '' ) {
+		parent::__construct( $name, $data, $dataName );
+		$this->wordpress_adapter = null;
+		$this->plugin_status_adapter = null;
+	}
+
+	public function test_transform() {
 		// Arrange
 		$data = $this->mock_home_screen_data();
-		$transformation = new Filter_Plugins( $data, $this->wordpress_adapter );
+
+		$transformation = new Filter_Plugins( [
+			'wordpress_adapter' => $this->wordpress_adapter,
+			'plugin_status_adapter' => $this->plugin_status_adapter
+		] );
 
 		// Act
-		$transformed_data = $transformation->transform();
+		$transformed_data = $transformation->transform( $data );
 		$expected_data = $this->mock_home_screen_data_transformed();
 
 		// Assert
@@ -31,16 +42,28 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 						'Name' => 'Elementor',
 						'Version' => '3.0.0',
 						'file_path' => 'elementor/elementor.php',
+						'url' => 'https://elementor.com',
+						'type' => 'wporg',
+					],
+					[
+						'Name' => 'Elementor Pro',
+						'Version' => '3.0.0',
+						'file_path' => 'elementor-pro/elementor-pro.php',
+						'url' => 'https://elementor.com',
+						'type' => 'ecom',
 					],
 					[
 						'Name' => 'Something Else',
 						'Version' => '3.0.0',
 						'file_path' => 'some/thing.php',
+						'url' => 'https://something.else',
+						'type' => 'wporg',
 					],
 					[
 						'Name' => 'Elementor AI',
 						'Version' => '3.0.0',
-						'url' => 'elementor/elementor.php',
+						'url' => 'elementor-ai/elementor-ai.php',
+						'type' => 'link',
 					],
 				],
 			],
@@ -56,21 +79,27 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 			'add_ons' => [
 				'repeater' => [
 					[
-						'Name' => 'Elementor',
+						'Name' => 'Elementor Pro',
 						'Version' => '3.0.0',
-						'file_path' => 'elementor/elementor.php',
-						'is_installed' => true,
+						'file_path' => 'elementor-pro/elementor-pro.php',
+						'url' => 'elementor-pro/elementor-pro.php?activate=true&nonce=123',
+						'type' => 'ecom',
+						'button_label' => 'Activate',
+						'target' => '_self'
 					],
 					[
 						'Name' => 'Something Else',
 						'Version' => '3.0.0',
 						'file_path' => 'some/thing.php',
-						'is_installed' => false,
+						'url' => 'some/thing.php?nonce=123',
+						'type' => 'wporg',
+						'target' => '_self'
 					],
 					[
 						'Name' => 'Elementor AI',
 						'Version' => '3.0.0',
-						'url' => 'elementor/elementor.php',
+						'url' => 'elementor-ai/elementor-ai.php',
+						'type' => 'link'
 					],
 				],
 			],
@@ -81,24 +110,52 @@ class Test_Filter_Plugins extends Elementor_Test_Base {
 		];
 	}
 
-	private function installed_plugins() {
-		return [
-			'elementor/elementor.php' => [
-				'Name' => 'Elementor',
-				'Version' => '3.0.0'
-			],
-			'elementor-pro/elementor-pro.php' => [
-				'Name' => 'Elementor Pro',
-				'Version' => '3.0.0'
-			],
-		];
-	}
-
 	public function setUp(): void {
 		parent::setUp();
-		$plugin_array = $this->installed_plugins();
-		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
-		$wordpress_adapter_mock->method( 'get_plugins' )->willReturn( $plugin_array );
+
+		$this->wordpress_adapter_mock();
+		$this->plugin_status_adapter_mock();
+	}
+
+	public function plugin_status_adapter_mock(): void {
+
+		$plugin_status_adapter_mock = $this->getMockBuilder( Plugin_Status_Adapter::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_plugin_installed', 'is_plugin_activated', 'get_install_plugin_url', 'get_activate_plugin_url' ] )
+			->getMock();
+
+		$plugin_status_adapter_mock->method( 'is_plugin_installed' )->willReturnMap( [
+			[ 'elementor/elementor.php', true ],
+			[ 'elementor-pro/elementor-pro.php', true ],
+			[ 'some/thing.php', false ]
+		] );
+
+		$plugin_status_adapter_mock->method( 'get_install_plugin_url' )->willReturnMap( [
+			[ 'elementor/elementor.php', 'elementor/elementor.php?nonce=123' ],
+			[ 'elementor-pro/elementor-pro.php', 'elementor-pro/elementor-pro.php?nonce=123' ],
+			[ 'some/thing.php', 'some/thing.php?nonce=123' ]
+		] );
+
+		$plugin_status_adapter_mock->method( 'get_activate_plugin_url' )->willReturnMap( [
+			[ 'elementor/elementor.php', 'elementor/elementor.php?activate=true&nonce=123' ],
+			[ 'elementor-pro/elementor-pro.php', 'elementor-pro/elementor-pro.php?activate=true&nonce=123' ]
+		] );
+
+		$this->plugin_status_adapter = $plugin_status_adapter_mock;
+	}
+
+
+	public function wordpress_adapter_mock(): void {
+
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter::class )
+			->setMethods( [ 'is_plugin_active' ] )
+			->getMock();
+
+		$wordpress_adapter_mock->method( 'is_plugin_active' )->willReturnMap( [
+			[ 'elementor/elementor.php', true ],
+			[ 'elementor-pro/elementor-pro.php', false ],
+			[ 'some/thing.php', false ]
+		] );
 
 		$this->wordpress_adapter = $wordpress_adapter_mock;
 	}
