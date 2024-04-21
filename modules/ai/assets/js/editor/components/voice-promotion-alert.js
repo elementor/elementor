@@ -12,7 +12,7 @@ export const VoicePromotionAlert = ( props ) => {
 	return (
 		<Box sx={ { mt: 2, ...props.sx } } alignItems="top">
 			<Alert severity="info" variant="standard" icon={ <BulbIcon sx={ { alignSelf: 'flex-start' } } /> } onClose={ markAsViewed }>
-				{ __( 'Get improved results from AI by adding personal context.' ) }
+				{ __( 'Get improved results from AI by adding personal context.', 'elementor' ) }
 				<Link onClick={ () => $e.route( 'panel/global/menu' ) } className="elementor-clickable" style={ { textDecoration: 'none' } } color="info.main" href="#">
 					{ __( 'Let’s do it', 'elementor' ) }
 				</Link>
