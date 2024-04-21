@@ -286,7 +286,7 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	protected function is_dynamic_content(): bool {
-		return false;
+		return true;
 	}
 
 	/**
