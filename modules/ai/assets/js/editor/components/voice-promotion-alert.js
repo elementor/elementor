@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { Box, Alert } from '@elementor/ui';
 import BulbIcon from '../icons/bulb-icon';
@@ -14,11 +15,7 @@ export const VoicePromotionAlert = ( props ) => {
 			<Alert severity="info" variant="standard" icon={ <BulbIcon sx={ { alignSelf: 'flex-start' } } /> } onClose={ markAsViewed }>
 				{ __( 'Get improved results from AI by adding personal context.' ) }
 				<Box sx={ { ml: 0.25 } }>
-					<a href="#" onClick={ ( e) => {
-						e.preventDefault();
-						$e.route( 'panel/global/menu' ); } }>
-						{ __( 'Let’s do it') }
-					</a>
+					<a href="javascript: $e.route( 'panel/global/menu' ) ">{__(' Let’s do it', 'elementor')}</a>
 				</Box>
 			</Alert>
 		</Box>
