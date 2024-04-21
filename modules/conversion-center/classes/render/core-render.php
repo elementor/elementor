@@ -3,7 +3,7 @@
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
 use Elementor\Icons_Manager;
-use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
+use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Utils;
 
 /**
@@ -16,8 +16,9 @@ use Elementor\Utils;
 class Core_Render extends Render_Base {
 
 	public function render(): void {
+		$this->build_layout_render_attribute();
 		?>
-		<div class="e-link-in-bio">
+		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="e-link-in-bio__content">
 
 				<?php
@@ -102,7 +103,8 @@ class Core_Render extends Render_Base {
 	private function render_icons(): void {
 		$icons_props_size = $this->settings['icons_size'] ?? 'small';
 		$icons_value      = $this->settings['icon'] ?? [];
-		$has_icons        = ! empty( $icons_value );
+
+		$has_icons = ! empty( $icons_value );
 		if ( ! $has_icons ) {
 			return;
 		}
@@ -111,13 +113,8 @@ class Core_Render extends Render_Base {
 		<div class="e-link-in-bio__icons">
 			<?php
 			foreach ( $icons_value as $key => $icon ) {
-				// Bail if no icon
-				if ( empty( $icon['icon_icon'] ) ) {
-					break;
-				}
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
-
 				// Bail if no link
 				if ( empty( $formatted_link ) ) {
 					break;
@@ -134,10 +131,22 @@ class Core_Render extends Render_Base {
 					'rel'        => 'noopener noreferrer',
 					'target'     => '_blank',
 				] );
+
 				?>
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php Icons_Manager::render_icon( $icon['icon_icon'], [ 'aria-hidden' => 'true' ] ); ?>
+						<?php
+						$mapping  = Social_Network_Provider::get_icon_mapping( $icon['icon_platform'] );
+						$icon_lib = explode( ' ', $mapping )[0];
+						$library  = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
+						Icons_Manager::render_icon(
+							[
+								'library' => $library,
+								'value'   => $mapping,
+							],
+							[ 'aria-hidden' => 'true' ]
+						);
+						?>
 					</a>
 				</div>
 			<?php } ?>
@@ -234,22 +243,24 @@ class Core_Render extends Render_Base {
 
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $cta['cta_link_type'] ) {
-			case 'Email':
-				$formatted_link = ! empty( $cta['cta_link_mail'] ) ? 'mailto:' . $cta['cta_link_mail'] : '';
+			case Social_Network_Provider::EMAIL:
+				$formatted_link = $this->build_email_link( $cta, 'cta_link' );
 				break;
-			case 'Telephone':
+			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
 				break;
-			case 'Telegram':
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://telegram.me/' . $cta['cta_link_number'] : '';
+			case Social_Network_Provider::MESSENGER:
+				$formatted_link = ! empty( $icon['cta_link_username'] ) ?
+					'https://www.facebook.com/messages/t/' . $icon['icon_username'] :
+					'';
 				break;
-			case 'Waze':
+			case Social_Network_Provider::WAZE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://www.waze.com/ul?ll=' . $cta['cta_link_number'] . '&navigate=yes' : '';
 				break;
-			case 'WhatsApp':
+			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
 				break;
-			case 'File Download':
+			case Social_Network_Provider::FILE_DOWNLOAD:
 				$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
 				break;
 			default:
@@ -259,29 +270,90 @@ class Core_Render extends Render_Base {
 		return $formatted_link;
 	}
 
+	private function build_email_link( array $data, string $prefix ) {
+		$email   = $data[ $prefix . '_mail' ] ?? '';
+		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
+		$body    = $data[ $prefix . '_mail_body' ] ?? '';
+		if ( ! $email ) {
+			return '';
+		}
+		$link = 'mailto:' . $email;
+		if ( $subject ) {
+			$link .= '?subject=' . $subject;
+		}
+		if ( $body ) {
+			$link .= $subject ? '&' : '?';
+			$link .= 'body=' . $body;
+		}
+
+		return $link;
+
+	}
+
 	private function get_formatted_link_for_icon( array $icon ): string {
 
 		$formatted_link = $icon['icon_url']['url'] ?? '';
 
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $icon['icon_platform'] ) {
-			case 'Email':
-				$formatted_link = ! empty( $icon['icon_mail'] ) ? 'mailto:' . $icon['icon_mail'] : '';
+			case Social_Network_Provider::EMAIL:
+				$formatted_link = $this->build_email_link( $icon, 'icon' );
 				break;
-			case 'Telephone':
+			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'tel:' . $icon['icon_number'] : '';
 				break;
-			case 'Telegram':
-				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://telegram.me/' . $icon['icon_number'] : '';
+			case Social_Network_Provider::MESSENGER:
+				$formatted_link = ! empty( $icon['icon_username'] ) ?
+					'https://www.facebook.com/messages/t/' . $icon['icon_username'] :
+					'';
 				break;
-			case 'Waze':
+			case Social_Network_Provider::WAZE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://www.waze.com/ul?ll=' . $icon['icon_number'] . '&navigate=yes' : '';
 				break;
-			case 'WhatsApp':
+			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://wa.me/' . $icon['icon_number'] : '';
+				break;
+			default:
 				break;
 		}
 
 		return $formatted_link;
+	}
+
+	private function build_layout_render_attribute(): void {
+		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
+		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
+		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
+		$layout_props_show_border          = $this->settings['background_show_border'] ?? '';
+		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
+
+		$layout_classnames = 'e-link-in-bio';
+
+		if ( 'yes' === $layout_props_show_border ) {
+			$layout_classnames .= ' has-border';
+		}
+
+		if ( 'yes' === $layout_props_full_height ) {
+			$layout_classnames .= ' is-full-height';
+		}
+
+		if ( 'yes' === $layout_props_full_width ) {
+			$layout_classnames .= ' is-full-width';
+		}
+
+		if ( ! empty( $layout_props_full_height_controls ) ) {
+			foreach ( $layout_props_full_height_controls as $breakpoint ) {
+				$layout_classnames .= ' is-full-height-' . $breakpoint;
+			}
+		}
+
+		if ( $custom_classes ) {
+			$layout_classnames .= ' ' . $custom_classes;
+		}
+
+		$this->widget->add_render_attribute( 'layout', [
+			'class' => $layout_classnames,
+			'id'    => $this->settings['advanced_custom_css_id'],
+		] );
 	}
 }

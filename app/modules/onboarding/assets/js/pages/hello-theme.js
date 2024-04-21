@@ -23,7 +23,7 @@ export default function HelloTheme() {
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText ),
 		navigate = useNavigate(),
 		pageId = 'hello',
-		nextStep = 'siteName',
+		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		goToNextScreen = () => navigate( 'onboarding/' + nextStep );
 
 	/**
