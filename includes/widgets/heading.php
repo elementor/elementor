@@ -89,6 +89,10 @@ class Widget_Heading extends Widget_Base {
 		return [ 'heading', 'title', 'text' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *

@@ -77,6 +77,10 @@ class Widget_Button extends Widget_Base {
 		return [ 'basic' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *

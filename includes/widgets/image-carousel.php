@@ -73,6 +73,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *
