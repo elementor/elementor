@@ -8,9 +8,9 @@ import PageContentLayout from '../components/layout/page-content-layout';
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
+		nextStep = getNextStep(),
 		navigate = useNavigate(),
 		pageId = 'account',
-		nextStep = state.isHelloThemeActivated ? 'siteName' : 'hello',
 		actionButtonRef = useRef(),
 		alreadyHaveAccountLinkRef = useRef();
 
@@ -115,6 +115,13 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
+	function getNextStep() {
+		if ( ! state.isHelloThemeActivated ) {
+			return 'hello';
+		}
+
+		return elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName';
+	}
 	const connectFailureCallback = () => {
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
