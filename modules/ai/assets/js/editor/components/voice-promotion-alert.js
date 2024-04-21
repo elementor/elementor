@@ -11,9 +11,11 @@ export const VoicePromotionAlert = ( props ) => {
 
 	return (
 		<Box sx={ { mt: 2, ...props.sx } } alignItems="top">
-			<Alert severity="info" variant="standard" icon={ <BulbIcon sx={ { alignSelf: 'flex-start' } } /> } onClose={ markAsViewed }
-			>
-				{ __( 'Get improved results from AI by adding some personal context. Go to Site Settings > AI Context to get started.' ) }
+			<Alert severity="info" variant="standard" icon={ <BulbIcon sx={ { alignSelf: 'flex-start' } } /> } onClose={ markAsViewed }>
+				{ __( 'Get improved results from AI by adding personal context.' ) }
+				<Box sx={ { ml: 0.25 } }>
+					<a href="javascript: $e.route( 'panel/global/menu' ) ">{ __( ' Let’s do it' ) }</a>
+				</Box>
 			</Alert>
 		</Box>
 	);
