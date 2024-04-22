@@ -117,6 +117,7 @@ class Modules_Manager {
 			'editor-events',
 			'home',
 			'conversion-center',
+			'content-sanitizer',
 		];
 	}
 
