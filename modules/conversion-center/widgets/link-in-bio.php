@@ -1040,7 +1040,7 @@ JS;
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio__bg-overlay' => '--background-overlay-opacity: {{SIZE}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
 				],
 			]
 		);
