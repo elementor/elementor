@@ -80,7 +80,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->start_controls_section(
 			'cta_section',
 			[
-				'label' => esc_html__( 'CTA Links', 'elementor' ),
+				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
