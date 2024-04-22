@@ -22,7 +22,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	protected function get_promotion_title():string {
 		return sprintf(
 			/* translators: %s: br  */
-			esc_html( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
+			esc_html__( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
 			'<br />'
 		);
 	}
