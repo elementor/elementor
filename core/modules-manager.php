@@ -116,6 +116,7 @@ class Modules_Manager {
 			'apps',
 			'editor-events',
 			'home',
+			'content-sanitizer',
 		];
 	}
 
