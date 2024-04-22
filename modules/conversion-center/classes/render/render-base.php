@@ -52,11 +52,6 @@ abstract class Render_Base {
 				}
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
 
-				// Bail if no link
-				if ( empty( $formatted_link ) ) {
-					break;
-				}
-
 				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
 				if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
@@ -239,7 +234,7 @@ abstract class Render_Base {
 					'';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://www.waze.com/ul?ll=' . $cta['cta_link_number'] . '&navigate=yes' : '';
+				$formatted_link = ! empty( $cta['cta_link_location'] ) ? 'https://www.waze.com/ul?ll=' . $cta['cta_link_location'] . '&navigate=yes' : '';
 				break;
 			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
@@ -292,7 +287,7 @@ abstract class Render_Base {
 					'';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://www.waze.com/ul?ll=' . $icon['icon_number'] . '&navigate=yes' : '';
+				$formatted_link = ! empty( $icon['icon_location'] ) ? 'https://www.waze.com/ul?ll=' . $icon['icon_location'] . '&navigate=yes' : '';
 				break;
 			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://wa.me/' . $icon['icon_number'] : '';

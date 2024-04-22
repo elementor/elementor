@@ -247,11 +247,28 @@ class Link_In_Bio extends Widget_Base {
 				'condition'   => [
 					'cta_link_type' => [
 						Social_Network_Provider::TELEPHONE,
-						Social_Network_Provider::WAZE,
 						Social_Network_Provider::WHATSAPP,
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_location',
+			[
+				'label'       => esc_html__( 'Location', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::WAZE,
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
 			],
 		);
 
@@ -282,6 +299,20 @@ class Link_In_Bio extends Widget_Base {
 				'title_field'   => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add CTA Link', 'elementor' ),
+				'default' => [
+					[
+						'cta_link_text' => esc_html__( 'Get Healthy', 'elementor' ),
+					],
+					[
+						'cta_link_text' => esc_html__( 'Top 10 Recipes', 'elementor' ),
+					],
+					[
+						'cta_link_text' => esc_html__( 'Meal Prep', 'elementor' ),
+					],
+					[
+						'cta_link_text' => esc_html__( 'Healthy Living Resources', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -356,7 +387,7 @@ class Link_In_Bio extends Widget_Base {
 						),
 					],
 				],
-				'default' => 'Facebook',
+				'default' => Social_Network_Provider::FACEBOOK,
 			],
 		);
 
@@ -455,11 +486,31 @@ class Link_In_Bio extends Widget_Base {
 					'active' => true,
 				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition'   => [
 					'icon_platform' => [
 						Social_Network_Provider::TELEPHONE,
 						Social_Network_Provider::WHATSAPP,
+					],
+				],
+				'ai'          => [
+					'active' => false,
+				],
+			],
+		);
+
+		$repeater->add_control(
+			'icon_location',
+			[
+				'label'       => esc_html__( 'Location', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
+				'condition'   => [
+					'icon_platform' => [
 						Social_Network_Provider::WAZE,
 					],
 				],
@@ -496,6 +547,17 @@ class Link_In_Bio extends Widget_Base {
 				'title_field'   => $this->get_icon_title_field(),
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
+				'default' => [
+					[
+						'icon_platform' => Social_Network_Provider::FACEBOOK,
+					],
+					[
+						'icon_platform' => Social_Network_Provider::INSTAGRAM,
+					],
+					[
+						'icon_platform' => Social_Network_Provider::TIKTOK,
+					],
+				],
 			]
 		);
 
@@ -1305,6 +1367,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Heading', 'elementor' ),
+				'default' => esc_html__( 'Sara Parker', 'elementor' ),
 			]
 		);
 
@@ -1319,6 +1382,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Title', 'elementor' ),
+				'default' => esc_html__( 'Kitchen Cronicles', 'elementor' ),
 			]
 		);
 
@@ -1333,6 +1397,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Description', 'elementor' ),
+				'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
 			]
 		);
 
