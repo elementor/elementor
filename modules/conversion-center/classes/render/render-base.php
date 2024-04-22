@@ -103,10 +103,6 @@ abstract class Render_Base {
 			foreach ( $icons_value as $key => $icon ) {
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
-				// Bail if no link
-				if ( empty( $formatted_link ) ) {
-					break;
-				}
 
 				$this->widget->add_render_attribute( 'icon-' . $key, [
 					'class' => 'e-link-in-bio__icon has-size-' . $icons_props_size,
