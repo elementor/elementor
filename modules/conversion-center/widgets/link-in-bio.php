@@ -460,6 +460,9 @@ class Link_In_Bio extends Widget_Base {
 						Social_Network_Provider::WAZE,
 					],
 				],
+				'ai'          => [
+					'active' => false,
+				],
 			],
 		);
 
