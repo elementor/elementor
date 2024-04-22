@@ -4,7 +4,7 @@ import WpAdminPage from '../../../../../../../pages/wp-admin-page';
 test( 'A page can be saved successfully after copy-paste style', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const editor = await wpAdmin.openNewPage();
 
 	// Close Navigator
 	await editor.closeNavigatorIfOpen();

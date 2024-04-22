@@ -39,10 +39,13 @@ function echo_select_your_structure_title() {
 			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_attr( $button_title ); ?>">
 				<i class="eicon-plus"></i>
 			</div>
-			<# if ( 'loop-item' !== elementor.documents.getCurrent()?.config?.type || elementorCommon.config.experimentalFeatures[ 'container' ] ) { #>
-			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
-				<i class="eicon-folder"></i>
-			</div>
+			<# if ( 'loop-item' !== elementor.documents.getCurrent()?.config?.type || elementorCommon.config.experimentalFeatures[ 'container' ] ) {
+				const additionalClass = 'loop-item' === elementor.documents.getCurrent()?.config?.type && elementor.documents.getCurrent()?.config?.settings?.settings?.source?.includes( 'taxonomy' )
+					? 'elementor-edit-hidden'
+					: ''; #>
+					<div class="{{ additionalClass }} elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
+					<i class="eicon-folder"></i>
+				</div>
 			<# } #>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>

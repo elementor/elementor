@@ -32,6 +32,16 @@ const ContainerView = BaseElementView.extend( {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
+	filterSettings( newItem ) {
+		const parentContainer = this;
+
+		if ( parentContainer.isBoxedWidth() ) {
+			newItem.settings.content_width = 'full';
+		} else if ( 0 !== parentContainer.getNestingLevel() ) {
+			newItem.settings.content_width = 'full';
+		}
+	},
+
 	childViewOptions() {
 		return {
 			emptyViewOwner: this,
@@ -420,12 +430,6 @@ const ContainerView = BaseElementView.extend( {
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
-			}
-
-			// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-			if ( ! this.model.get( 'isInner' ) ) {
-				this.$el[ 0 ].dataset.coreV316Plus = 'true';
 			}
 
 			this.droppableInitialize( this.container.settings );

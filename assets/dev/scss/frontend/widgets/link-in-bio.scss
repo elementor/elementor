@@ -1,0 +1,329 @@
+.e-link-in-bio {
+	$link-in-bio-cta-bg-color: #467FF7;
+	$link-in-bio-text-color-alt: #324a6d;
+	$link-in-bio-text-color-default: #1c2448;
+
+	// Layout config
+	--e-link-in-bio-border-color: transparent;
+	--e-link-in-bio-border-style: none;
+	--e-link-in-bio-border-width: 0;
+	--e-link-in-bio-container-height: auto;
+	--e-link-in-bio-container-width: 360px;
+	--e-link-in-bio-content-align-h: center;
+	--e-link-in-bio-content-align-v: center;
+	--e-link-in-bio-content-width: 280px;
+	--e-link-in-bio-gutter-block-end: 45px;
+	--e-link-in-bio-gutter-block-start: 38px;
+	--e-link-in-bio-gutter-inline: 40px;
+
+	// Identity config - Cover
+	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
+	--e-link-in-bio-identity-image-cover-border-color: transparent;
+	--e-link-in-bio-identity-image-cover-border-style: none;
+	--e-link-in-bio-identity-image-cover-height: 170px;
+
+	// Identity config - Profile
+	--e-link-in-bio-identity-image-profile-border-color: transparent;
+	--e-link-in-bio-identity-image-profile-border-radius: 50%;
+	--e-link-in-bio-identity-image-profile-border-style: none;
+	--e-link-in-bio-identity-image-profile-border-width: 0;
+	--e-link-in-bio-identity-image-profile-width: 115px;
+
+	// Bio config
+	--e-link-in-bio-heading-color: inherit;
+	--e-link-in-bio-title-color: inherit;
+	--e-link-in-bio-description-color: #{$link-in-bio-text-color-alt};
+
+	// Icons config
+	--e-link-in-bio-icon-color: inherit;
+	--e-link-in-bio-icon-gap: 20px 29px;
+	--e-link-in-bio-icon-size: 25px;
+
+	// CTAs config
+	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
+	--e-link-in-bio-ctas-border-color: transparent;
+	--e-link-in-bio-ctas-border-radius: 20px;
+	--e-link-in-bio-ctas-border-style: none;
+	--e-link-in-bio-ctas-border-width: 2px;
+	--e-link-in-bio-ctas-gap: 22px;
+	--e-link-in-bio-ctas-padding-block-end: 17px;
+	--e-link-in-bio-ctas-padding-block-start: 17px;
+	--e-link-in-bio-ctas-padding-inline-end: 20px;
+	--e-link-in-bio-ctas-padding-inline-start: 20px;
+	--e-link-in-bio-ctas-text-color: #{$white};
+
+	// Background config
+	--background-overlay-opacity: 1;
+
+	align-items: var(--e-link-in-bio-content-align-h);
+	border-color: var(--e-link-in-bio-border-color);
+	border-style: var(--e-link-in-bio-border-style);
+	border-width: var(--e-link-in-bio-border-width);
+	display: flex;
+	flex-direction: column;
+	justify-content: var(--e-link-in-bio-content-align-v);
+	margin-inline: auto;
+	max-width: 100%;
+	min-height: var(--e-link-in-bio-container-height);
+	padding: var(--e-link-in-bio-gutter-block-start) var(--e-link-in-bio-gutter-inline) var(--e-link-in-bio-gutter-block-end);
+	position: relative;
+	width: var(--e-link-in-bio-container-width);
+
+	&.has-border {
+		--e-link-in-bio-border-style: solid;
+	}
+
+	@mixin full-height($breakpoint) {
+		@media (max-width: $breakpoint) {
+			--e-link-in-bio-container-height: 100vh;
+
+			@supports (height: 100dvh) {
+				--e-link-in-bio-container-height: 100dvh;
+			}
+		}
+	}
+
+	&.-is-full-height-mobile {
+		@include full-height($screen-mobile-max);
+	}
+
+	&.-is-full-height-mobile_extra {
+		@include full-height($screen-mobile-extra-max);
+	}
+
+	&.-is-full-height-tablet {
+		@include full-height($screen-tablet-max);
+	}
+
+	&.-is-full-height-tablet_extra {
+		@include full-height($screen-tablet-extra-max);
+	}
+
+	&.-is-full-height-laptop {
+		@include full-height($screen-laptop-max);
+	}
+
+	&.-is-full-height-desktop {
+		@include full-height($screen-desktop-max);
+	}
+
+	&.-is-full-height-widescreen {
+		@include full-height(99999px);
+	}
+
+	&.is-full-width {
+		--e-link-in-bio-container-width: 100%;
+	}
+
+	&__bg {
+		display: grid;
+		inset: 0;
+		position: absolute;
+		z-index: $ground-layer;
+	}
+
+	&__bg-overlay {
+		opacity: --background-overlay-opacity;
+	}
+
+	&__content {
+		color: $link-in-bio-text-color-default;
+		display: flex;
+		flex-direction: column;
+		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
+		max-width: 100%;
+		text-align: center;
+		width: var(--e-link-in-bio-content-width);
+		z-index: $first-layer;
+
+		* {
+			word-wrap: break-word;
+		}
+	}
+
+	&__identity {
+		margin-block-end: 14px;
+
+		.e-link-in-bio__identity-image {
+			display: flex;
+		}
+
+		.e-link-in-bio__identity-image-el {
+			display: block;
+			flex: 1 1 100%;
+			object-fit: cover;
+		}
+
+		.e-link-in-bio__identity-image-profile {
+			aspect-ratio: 1;
+			border-color: var(--e-link-in-bio-identity-image-profile-border-color);
+			border-radius: var(--e-link-in-bio-identity-image-profile-border-radius);
+			border-style: var(--e-link-in-bio-identity-image-profile-border-style);
+			border-width: var(--e-link-in-bio-identity-image-profile-border-width);
+			overflow: hidden;
+			margin-block-end: 17px;
+			margin-inline: auto;
+			max-width: 100%;
+			width: var(--e-link-in-bio-identity-image-profile-width);
+
+			&.has-border {
+				--e-link-in-bio-identity-image-profile-border-style: solid;
+			}
+
+			&.has-style-square {
+				--e-link-in-bio-identity-image-profile-border-radius: 0;
+			}
+
+			.e-link-in-bio__identity-image-el {
+				aspect-ratio: inherit;
+			}
+		}
+
+		.e-link-in-bio__identity-image-cover {
+			border-color: var(--e-link-in-bio-identity-image-cover-border-color);
+			border-style: var(--e-link-in-bio-identity-image-cover-border-style);
+			border-width: 0 0 var(--e-link-in-bio-identity-image-cover-border-bottom-width) 0;
+			margin-block-start: calc(var(--e-link-in-bio-gutter-block-start) * -1);
+			margin-inline: calc(var(--e-link-in-bio-gutter-inline) * -1);
+			max-height: var(--e-link-in-bio-identity-image-cover-height);;
+			width: calc(100% + calc(var(--e-link-in-bio-gutter-inline) * 2));
+
+			&.has-border {
+				--e-link-in-bio-identity-image-cover-border-style: solid;
+			}
+		}
+	}
+
+	&__bio {
+
+		> * {
+			margin-block: 0;
+		}
+	}
+
+	&__heading {
+		color: var(--e-link-in-bio-heading-color);
+		font-size: 36px;
+		font-weight: 600;
+		line-height: 42px;
+	}
+
+	&__title {
+		color: var(--e-link-in-bio-title-color);
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 35px;
+	}
+
+	&__description {
+		color: var(--e-link-in-bio-description-color);
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 24px;
+		margin-block-start: 20px;
+	}
+
+	&__icons {
+		display: flex;
+		flex-flow: row wrap;
+		gap: var(--e-link-in-bio-icon-gap);
+		justify-content: center;
+		margin-block-start: 20px;
+	}
+
+	&__icon {
+		color: var(--e-link-in-bio-icon-color);
+		display: flex;
+		height: var(--e-link-in-bio-icon-size);
+
+		&.has-size-medium {
+			--e-link-in-bio-icon-size: 30px;
+		}
+
+		&.has-size-large {
+			--e-link-in-bio-icon-size: 35px;
+		}
+
+		.e-link-in-bio__icon-link {
+			color: inherit;
+			display: flex;
+			flex: 1 1 auto;
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: inherit;
+			}
+		}
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	&__ctas {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto;
+		gap: var(--e-link-in-bio-ctas-gap);
+		margin-block-start: 31px;
+
+		&.has-type-link {
+			--e-link-in-bio-ctas-gap: 10px;
+		}
+
+		.e-link-in-bio__cta {
+			color: var(--e-link-in-bio-ctas-text-color);
+			display: flex;
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 20px;
+			justify-content: center;
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var(--e-link-in-bio-ctas-text-color);
+			}
+		}
+
+		.e-link-in-bio__cta.is-type-button {
+			border-radius: var(--e-link-in-bio-ctas-border-radius);
+			background-color: var(--e-link-in-bio-ctas-background-color);
+			padding-block-end: var(--e-link-in-bio-ctas-padding-block-end);
+			padding-block-start: var(--e-link-in-bio-ctas-padding-block-start);
+			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
+			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
+
+			&.has-border {
+				--e-link-in-bio-ctas-border-style: solid;
+				border-color: var(--e-link-in-bio-ctas-border-color);
+				border-style: var(--e-link-in-bio-ctas-border-style);
+				border-width: var(--e-link-in-bio-ctas-border-width);
+			}
+
+			&.has-corners-round {
+				--e-link-in-bio-ctas-border-radius: 50px;
+			}
+
+			&.has-corners-sharp {
+				--e-link-in-bio-ctas-border-radius: 0;
+			}
+		}
+
+		.e-link-in-bio__cta.is-type-link {
+			--e-link-in-bio-ctas-text-color: #{$link-in-bio-cta-bg-color};
+
+			font-weight: 700;
+			margin-block: 17px;
+		}
+	}
+
+	// Specificity needed to overwrite core link styles
+	.e-link-in-bio__content .e-link-in-bio__ctas {
+
+		.e-link-in-bio__cta.is-type-link {
+			text-decoration: underline;
+		}
+	}
+}

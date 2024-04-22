@@ -1447,8 +1447,11 @@ class Element_Section extends Element_Base {
 				endif;
 			endif;
 
-			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+			$overlay_background = $settings['background_overlay_background'] ?? '';
+			$overlay_hover_background = $settings['background_overlay_hover_background'] ?? '';
+
+			$has_background_overlay = in_array( $overlay_background, [ 'classic', 'gradient' ], true ) ||
+									in_array( $overlay_hover_background, [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 				?>
