@@ -22,7 +22,7 @@ class Form_Submissions_Promotion_Item extends Base_Promotion_Template {
 	public function get_promotion_title():string {
 		return sprintf(
 			/* translators: %s: br  */
-			esc_html( 'Create Forms and Collect Leads %s with Elementor Pro', 'elementor' ),
+			esc_html__( 'Create Forms and Collect Leads %s with Elementor Pro', 'elementor' ),
 			'<br />'
 		);
 	}
