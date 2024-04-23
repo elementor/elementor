@@ -5,6 +5,7 @@
     --e-contact-buttons-button-bg: #24d066;
     --e-contact-buttons-button-bg-hover: #178541;
     --e-contact-buttons-button-text: #ffffff;
+    --e-contact-buttons-button-text-hover: #ffffff;
     --e-contact-buttons-dot: #FF0000;
     --e-contact-buttons-dot-size: 20px;
 
@@ -28,6 +29,7 @@
         &:hover,
         &:focus {
             background-color: var(--e-contact-buttons-button-bg-hover);
+            color: var(--e-contact-buttons-button-text-hover);
         }
 
         &.has-dot::after {
