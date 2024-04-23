@@ -80,7 +80,7 @@ class Link_In_Bio extends Widget_Base {
 		$this->start_controls_section(
 			'cta_section',
 			[
-				'label' => esc_html__( 'CTA Links', 'elementor' ),
+				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -247,11 +247,28 @@ class Link_In_Bio extends Widget_Base {
 				'condition'   => [
 					'cta_link_type' => [
 						Social_Network_Provider::TELEPHONE,
-						Social_Network_Provider::WAZE,
 						Social_Network_Provider::WHATSAPP,
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+			],
+		);
+
+		$repeater->add_control(
+			'cta_link_location',
+			[
+				'label'       => esc_html__( 'Location', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'cta_link_type' => [
+						Social_Network_Provider::WAZE,
+					],
+				],
+				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
 			],
 		);
 
@@ -282,6 +299,20 @@ class Link_In_Bio extends Widget_Base {
 				'title_field'   => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add CTA Link', 'elementor' ),
+				'default'       => [
+					[
+						'cta_link_text' => esc_html__( 'Get Healthy', 'elementor' ),
+					],
+					[
+						'cta_link_text' => esc_html__( 'Top 10 Recipes', 'elementor' ),
+					],
+					[
+						'cta_link_text' => esc_html__( 'Meal Prep', 'elementor' ),
+					],
+					[
+						'cta_link_text' => esc_html__( 'Healthy Living Resources', 'elementor' ),
+					],
+				],
 			]
 		);
 
@@ -356,7 +387,7 @@ class Link_In_Bio extends Widget_Base {
 						),
 					],
 				],
-				'default' => 'Facebook',
+				'default' => Social_Network_Provider::FACEBOOK,
 			],
 		);
 
@@ -410,6 +441,9 @@ class Link_In_Bio extends Widget_Base {
 						Social_Network_Provider::EMAIL,
 					],
 				],
+				'ai'          => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -452,13 +486,36 @@ class Link_In_Bio extends Widget_Base {
 					'active' => true,
 				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
+				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition'   => [
 					'icon_platform' => [
 						Social_Network_Provider::TELEPHONE,
 						Social_Network_Provider::WHATSAPP,
+					],
+				],
+				'ai'          => [
+					'active' => false,
+				],
+			],
+		);
+
+		$repeater->add_control(
+			'icon_location',
+			[
+				'label'       => esc_html__( 'Location', 'elementor' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
+				'condition'   => [
+					'icon_platform' => [
 						Social_Network_Provider::WAZE,
 					],
+				],
+				'ai'          => [
+					'active' => false,
 				],
 			],
 		);
@@ -484,12 +541,23 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
-				'max_items'    => 5,
+				'max_items'     => 5,
 				'type'          => Controls_Manager::REPEATER,
 				'fields'        => $repeater->get_controls(),
 				'title_field'   => $this->get_icon_title_field(),
 				'prevent_empty' => true,
 				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
+				'default'       => [
+					[
+						'icon_platform' => Social_Network_Provider::FACEBOOK,
+					],
+					[
+						'icon_platform' => Social_Network_Provider::INSTAGRAM,
+					],
+					[
+						'icon_platform' => Social_Network_Provider::TIKTOK,
+					],
+				],
 			]
 		);
 
@@ -849,7 +917,8 @@ JS;
 				'label'     => esc_html__( 'Text Color', 'elementor' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio'                   => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio__cta.is-type-link' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
 				],
 			]
 		);
@@ -962,7 +1031,7 @@ JS;
 				'condition'  => [
 					'cta_links_type' => 'button',
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
@@ -1027,17 +1096,17 @@ JS;
 		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
-				'label' => esc_html__( 'Opacity', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
+				'label'     => esc_html__( 'Opacity', 'elementor' ),
+				'type'      => Controls_Manager::SLIDER,
+				'range'     => [
 					'px' => [
-						'max' => 1,
-						'min' => 0.10,
+						'max'  => 1,
+						'min'  => 0.10,
 						'step' => 0.01,
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio__bg-overlay' => '--background-overlay-opacity: {{SIZE}};',
+					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
 				],
 			]
 		);
@@ -1141,7 +1210,7 @@ JS;
 				'condition'  => [
 					'advanced_layout_full_width_custom' => '',
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -1163,7 +1232,7 @@ JS;
 				'default'    => [
 					'unit' => 'px',
 				],
-				'selectors' => [
+				'selectors'  => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -1189,7 +1258,7 @@ JS;
 
 		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
 			$available_devices[ $breakpoint_key ] = $breakpoint->get_label();
-			$default_devices[] = $breakpoint_key;
+			$default_devices[]                    = $breakpoint_key;
 		}
 
 		$this->add_control(
@@ -1221,16 +1290,16 @@ JS;
 		$this->add_control(
 			'advanced_custom_css_id',
 			[
-				'label' => esc_html__( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'ai' => [
+				'label'          => esc_html__( 'CSS ID', 'elementor' ),
+				'type'           => Controls_Manager::TEXT,
+				'default'        => '',
+				'ai'             => [
 					'active' => false,
 				],
-				'dynamic' => [
+				'dynamic'        => [
 					'active' => true,
 				],
-				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'title'          => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 			]
 		);
@@ -1238,16 +1307,16 @@ JS;
 		$this->add_control(
 			'advanced_custom_css_classes',
 			[
-				'label' => esc_html__( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'label'   => esc_html__( 'CSS Classes', 'elementor' ),
+				'type'    => Controls_Manager::TEXT,
 				'default' => '',
-				'ai' => [
+				'ai'      => [
 					'active' => false,
 				],
 				'dynamic' => [
 					'active' => true,
 				],
-				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'title'   => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -1298,6 +1367,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Heading', 'elementor' ),
+				'default'     => esc_html__( 'Sara Parker', 'elementor' ),
 			]
 		);
 
@@ -1312,6 +1382,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Title', 'elementor' ),
+				'default'     => esc_html__( 'Kitchen Cronicles', 'elementor' ),
 			]
 		);
 
@@ -1326,6 +1397,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Description', 'elementor' ),
+				'default'     => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
 			]
 		);
 
