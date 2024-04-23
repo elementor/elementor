@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
+use Elementor\Modules\ConversionCenter\Base\Conversion_Center_Controls_Trait;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
@@ -25,23 +26,44 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.23.0
  */
 class Link_In_Bio extends Widget_Base {
+
+	use Conversion_Center_Controls_Trait;
+
 	const TAB_ADVANCED = 'advanced-tab-links-in-bio';
 
 	public static function get_configuration() {
 		return [
-			[
-				'content' => [
-					'cta_section' => [
-						'cta_has_image' => false
-					]
+			'content' => [
+				'cta_section' => [
+					'cta_has_image' => false,
 				],
-				'style' => [
-					'cta_section' => [
-						'has_image_border' => false,
-						'has_'
-					]
-				]
-			]
+			],
+			'style' => [
+				'cta_section' => [
+					'has_image_border' => false,
+					'has_link_type' => true,
+					'has_corners' => true,
+					'has_padding' => true,
+					'has_border_control' => [
+						'prefix' => 'cta_links',
+						'show_border_args' => [
+							'condition' => [
+								'cta_links_type' => 'button',
+							],
+						],
+						'border_width_args' => [
+							'condition' => [
+								'cta_links_type' => 'button',
+							],
+						],
+						'border_color_args' => [
+							'condition' => [
+								'cta_links_type' => 'button',
+							],
+						],
+					],
+				],
+			],
 
 		];
 	}
@@ -95,7 +117,7 @@ class Link_In_Bio extends Widget_Base {
 		$render_strategy->render();
 	}
 
-	private function add_cta_controls( ): void {
+	private function add_cta_controls(): void {
 		$this->start_controls_section(
 			'cta_section',
 			[
@@ -132,7 +154,7 @@ class Link_In_Bio extends Widget_Base {
 			],
 		);
 
-		if ( static::get_configuration()['cta_section']['cta_has_image'] ) {
+		if ( static::get_configuration()['content']['cta_section']['cta_has_image'] ) {
 			$repeater->add_control(
 				'cta_link_image',
 				[
@@ -923,154 +945,7 @@ JS;
 
 		$this->end_controls_section();
 
-		$this->start_controls_section(
-			'cta_links_section_style',
-			[
-				'label' => esc_html__( 'CTA Links', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'cta_links_type',
-			[
-				'label' => esc_html__( 'Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'button',
-				'options' => [
-					'button' => esc_html__( 'Button', 'elementor' ),
-					'link' => esc_html__( 'Link', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'cta_links_text_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
-					'{{WRAPPER}} .e-link-in-bio__cta.is-type-link' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'cta_links_background_color',
-			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'cta_links_type' => 'button',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'cta_links_typography',
-				'selector' => '{{WRAPPER}} .e-link-in-bio__cta',
-			]
-		);
-
-		$this->add_control(
-			'cta_links_show_border',
-			[
-				'label' => esc_html__( 'Border', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => '',
-				'condition' => [
-					'cta_links_type' => 'button',
-				],
-			]
-		);
-
-		$this->add_control(
-			'cta_links_border_width',
-			[
-				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => $border_width_range,
-				],
-				'condition' => [
-					'cta_links_show_border' => 'yes',
-					'cta_links_type' => 'button',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'cta_links_border_color',
-			[
-				'label' => esc_html__( 'Border Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'cta_links_show_border' => 'yes',
-					'cta_links_type' => 'button',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'cta_links_corners',
-			[
-				'label' => esc_html__( 'Corners', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'rounded',
-				'options' => [
-					'round' => esc_html__( 'Round', 'elementor' ),
-					'rounded' => esc_html__( 'Rounded', 'elementor' ),
-					'sharp' => esc_html__( 'Sharp', 'elementor' ),
-				],
-				'condition' => [
-					'cta_links_type' => 'button',
-				],
-			]
-		);
-
-		$this->add_control(
-			'cta_links_hr',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_responsive_control(
-			'cta_links_padding',
-			[
-				'label' => esc_html__( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem' ],
-				'default' => [
-					'unit' => 'px',
-					'isLinked' => false,
-				],
-				'condition' => [
-					'cta_links_type' => 'button',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
+		$this->add_style_cta_section( $border_width_range );
 
 		$this->start_controls_section(
 			'background_border_section_style',
@@ -1360,28 +1235,6 @@ JS;
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
 	}
 
-	private function add_tag_control( string $name ): void {
-		$this->add_control(
-			$name,
-			[
-				'label' => esc_html__( 'HTML Tag', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'h1' => 'H1',
-					'h2' => 'H2',
-					'h3' => 'H3',
-					'h4' => 'H4',
-					'h5' => 'H5',
-					'h6' => 'H6',
-					'div' => 'div',
-					'span' => 'span',
-					'p' => 'p',
-				],
-				'default' => 'h2',
-			]
-		);
-	}
-
 	private function add_bio_section(): void {
 		$this->start_controls_section(
 			'bio_section',
@@ -1404,7 +1257,7 @@ JS;
 			]
 		);
 
-		$this->add_tag_control( 'bio_heading_tag' );
+		$this->add_html_tag_control( 'bio_heading_tag' );
 
 		$this->add_control(
 			'bio_title',
@@ -1419,7 +1272,7 @@ JS;
 			]
 		);
 
-		$this->add_tag_control( 'bio_title_tag' );
+		$this->add_html_tag_control( 'bio_title_tag' );
 
 		$this->add_control(
 			'bio_description',
@@ -1469,6 +1322,125 @@ JS;
 				],
 			]
 		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_style_cta_section(): void {
+		$config = static::get_configuration();
+		$this->start_controls_section(
+			'cta_links_section_style',
+			[
+				'label' => esc_html__( 'CTA Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		if ( $config['style']['cta_section']['has_link_type'] ) {
+			$this->add_control(
+				'cta_links_type',
+				[
+					'label' => esc_html__( 'Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'button',
+					'options' => [
+						'button' => esc_html__( 'Button', 'elementor' ),
+						'link' => esc_html__( 'Link', 'elementor' ),
+					],
+				]
+			);
+		}
+
+		$this->add_control(
+			'cta_links_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio__cta.is-type-link' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'cta_links_background_color',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => [
+					'cta_links_type' => 'button',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'cta_links_typography',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__cta',
+			]
+		);
+
+		if ( $config['style']['cta_section']['has_border_control'] ) {
+			$this->add_borders_control(
+				$config['style']['cta_section']['has_border_control']['prefix'],
+				$config['style']['cta_section']['has_border_control']['show_border_args'],
+				$config['style']['cta_section']['has_border_control']['border_width_args'],
+				$config['style']['cta_section']['has_border_control']['border_color_args'],
+			);
+		}
+
+		if ( $config['style']['cta_section']['has_corners'] ) {
+			$this->add_control(
+				'cta_links_corners',
+				[
+					'label' => esc_html__( 'Corners', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'rounded',
+					'options' => [
+						'round' => esc_html__( 'Round', 'elementor' ),
+						'rounded' => esc_html__( 'Rounded', 'elementor' ),
+						'sharp' => esc_html__( 'Sharp', 'elementor' ),
+					],
+					'condition' => [
+						'cta_links_type' => 'button',
+					],
+				]
+			);
+		}
+
+		if ( $config['style']['cta_section']['has_padding'] ) {
+
+			$this->add_control(
+				'cta_links_hr',
+				[
+					'type' => Controls_Manager::DIVIDER,
+				]
+			);
+
+			$this->add_responsive_control(
+				'cta_links_padding',
+				[
+					'label' => esc_html__( 'Padding', 'elementor' ),
+					'type' => Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px', '%', 'em', 'rem' ],
+					'default' => [
+						'unit' => 'px',
+						'isLinked' => false,
+					],
+					'condition' => [
+						'cta_links_type' => 'button',
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
+					],
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
