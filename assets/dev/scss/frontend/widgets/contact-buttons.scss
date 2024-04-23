@@ -1,0 +1,59 @@
+.e-contact-buttons {
+    --e-contact-buttons-button-size-small: 65px;
+    --e-contact-buttons-button-size-medium: 75px;
+    --e-contact-buttons-button-size-large: 85px;
+    --e-contact-buttons-button-bg: #24d066;
+    --e-contact-buttons-button-bg-hover: #178541;
+    --e-contact-buttons-button-text: #ffffff;
+    --e-contact-buttons-dot: #FF0000;
+    --e-contact-buttons-dot-size: 20px;
+
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+
+    &__content {
+        display: none;
+    }
+    
+    &__chat-button {
+        align-items: center;
+        background-color: var(--e-contact-buttons-button-bg);
+        border-radius: 50%;
+        border: 0;
+        color: var(--e-contact-buttons-button-text);
+        display: flex;
+        justify-content: center;
+        
+        &:hover,
+        &:focus {
+            background-color: var(--e-contact-buttons-button-bg-hover);
+        }
+
+        &.has-dot::after {
+            background-color: var(--e-contact-buttons-dot);
+            border-radius: 50%;
+            content: "";
+            height: var(--e-contact-buttons-dot-size);
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: var(--e-contact-buttons-dot-size);
+        }
+
+        &.has-size-small {
+            height: var(--e-contact-buttons-button-size-small);
+            width: var(--e-contact-buttons-button-size-small);
+        }
+
+        &.has-size-medium {
+            height: var(--e-contact-buttons-button-size-medium);
+            width: var(--e-contact-buttons-button-size-medium);
+        }
+
+        &.has-size-large {
+            height: var(--e-contact-buttons-button-size-large);
+            width: var(--e-contact-buttons-button-size-large);
+        }
+	}
+}

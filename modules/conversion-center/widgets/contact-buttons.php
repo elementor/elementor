@@ -7,6 +7,7 @@ use Elementor\Modules\ConversionCenter\Classes\Render\Contact_Buttons_Core_Rende
 use Elementor\Group_Control_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -20,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.23.0
  */
 class Contact_Buttons extends Widget_Base {
+	const TAB_ADVANCED = 'advanced-tab-contact-buttons';
+
     public function get_name(): string {
 		return 'contact-buttons';
 	}
@@ -63,7 +66,7 @@ class Contact_Buttons extends Widget_Base {
 
 		$this->add_style_chat_box_section();
 
-		// Advanced tab
+		$this->add_advanced_tab();
 	}
 
 	private function add_chat_button_section(): void {
@@ -279,7 +282,7 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'send_button_url',
 			[
-				'label' => esc_html__( 'Link', 'textdomain' ),
+				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'options' => [ 'url', 'is_external' ],
 				'default' => [
@@ -326,7 +329,7 @@ class Contact_Buttons extends Widget_Base {
 		$this->start_controls_tab(
 			'style_button_color_tabs_normal',
 			[
-				'label' => esc_html__( 'Normal', 'textdomain' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -378,7 +381,7 @@ class Contact_Buttons extends Widget_Base {
 		$this->start_controls_tab(
 			'style_button_color_tabs_hover',
 			[
-				'label' => esc_html__( 'Hover', 'textdomain' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -794,7 +797,7 @@ class Contact_Buttons extends Widget_Base {
 		$this->start_controls_tab(
 			'style_send_tabs_normal',
 			[
-				'label' => esc_html__( 'Normal', 'textdomain' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -866,7 +869,7 @@ class Contact_Buttons extends Widget_Base {
 		$this->start_controls_tab(
 			'style_send_tabs_hover',
 			[
-				'label' => esc_html__( 'Hover', 'textdomain' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -1073,6 +1076,152 @@ class Contact_Buttons extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
+
+	private function add_advanced_tab(): void {
+		Controls_Manager::add_tab(
+			static::TAB_ADVANCED,
+			esc_html__( 'Advanced', 'elementor' )
+		);
+
+		$this->start_controls_section(
+			'advanced_layout_section',
+			[
+				'label' => esc_html__( 'Layout', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_responsive_control(
+			'advanced_horizontal_position',
+			[
+				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right
+						',
+					],
+				],
+				'default' => 'right',
+				'toggle' => true,
+				// TODO: add correct selectors
+				// 'selectors' => [
+				// 	'{{WRAPPER}} .your-class' => 'text-align: {{VALUE}};',
+				// ],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_responsive_section',
+			[
+				'label' => esc_html__( 'Responsive', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'advanced_responsive_alert',
+			[
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => esc_html__( 'Responsive visibility will take effect only on preview mode or live page, and not while editing in Elementor.', 'elementor' ),
+			]
+		);
+
+		// TODO: refactor this to allow experimental breakpoints
+		$this->add_control(
+			'advanced_responsive_hide_desktop',
+			[
+				'label'        => esc_html__( 'Hide on Desktop', 'elementor' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default'      => '',
+			]
+		);
+
+		$this->add_control(
+			'advanced_responsive_hide_tablet_portrait',
+			[
+				'label'        => esc_html__( 'Hide on Tablet Portrait', 'elementor' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default'      => '',
+			]
+		);
+
+		$this->add_control(
+			'advanced_responsive_hide_mobile_portrait',
+			[
+				'label'        => esc_html__( 'Hide on Mobile Portrait', 'elementor' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default'      => '',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_custom_controls_section',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'advanced_custom_css_id',
+			[
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
+					'active' => true,
+				],
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'advanced_custom_css_classes',
+			[
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
+					'active' => true,
+				],
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
+
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
+
 	}
 
 	protected function render(): void {
