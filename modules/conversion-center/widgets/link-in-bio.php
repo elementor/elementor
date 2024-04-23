@@ -29,9 +29,20 @@ class Link_In_Bio extends Widget_Base {
 
 	public static function get_configuration() {
 		return [
-			'cta_section' => [
-				'cta_has_image' => false
+			[
+				'content' => [
+					'cta_section' => [
+						'cta_has_image' => false
+					]
+				],
+				'style' => [
+					'cta_section' => [
+						'has_image_border' => false,
+						'has_'
+					]
+				]
 			]
+
 		];
 	}
 
