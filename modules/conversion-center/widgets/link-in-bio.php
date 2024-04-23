@@ -81,16 +81,16 @@ class Link_In_Bio extends Widget_Base {
 			'cta_section',
 			[
 				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
 			'cta_section_alert',
 			[
-				'type'       => Controls_Manager::ALERT,
+				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'info',
-				'content'    => sprintf(
+				'content' => sprintf(
 					__( 'Add up to <b>%d</b> CTA links', 'elementor' ),
 					4
 				),
@@ -102,13 +102,13 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_text',
 			[
-				'label'       => esc_html__( 'Text', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Text', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'default'     => '',
+				'default' => '',
 				'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
 			],
 		);
@@ -116,12 +116,12 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_type',
 			[
-				'label'   => esc_html__( 'Link Type', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
-				'groups'  => [
+				'label' => esc_html__( 'Link Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'groups' => [
 
 					[
-						'label'   => '',
+						'label' => '',
 						'options' => Social_Network_Provider::get_social_networks_text(
 							[
 								Social_Network_Provider::URL,
@@ -130,7 +130,7 @@ class Link_In_Bio extends Widget_Base {
 						),
 					],
 					[
-						'label'   => '   --',
+						'label' => '   --',
 						'options' => Social_Network_Provider::get_social_networks_text(
 							[
 								Social_Network_Provider::EMAIL,
@@ -149,11 +149,11 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_file',
 			[
-				'label'       => esc_html__( 'Choose File', 'elementor' ),
-				'type'        => Controls_Manager::MEDIA,
+				'label' => esc_html__( 'Choose File', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
 				'label_block' => true,
-				'media_type'  => [ 'application/pdf' ],
-				'condition'   => [
+				'media_type' => [ 'application/pdf' ],
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::FILE_DOWNLOAD,
 					],
@@ -164,33 +164,33 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_url',
 			[
-				'label'        => esc_html__( 'Link', 'elementor' ),
-				'type'         => Controls_Manager::URL,
-				'options'      => false,
-				'dynamic'      => [
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'options' => false,
+				'dynamic' => [
 					'active' => true,
 				],
 				'autocomplete' => true,
-				'label_block'  => true,
-				'condition'    => [
+				'label_block' => true,
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::URL,
 					],
 				],
-				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
+				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
 			],
 		);
 
 		$repeater->add_control(
 			'cta_link_mail',
 			[
-				'label'       => esc_html__( 'Mail', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Mail', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::EMAIL,
 					],
@@ -202,13 +202,13 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_mail_subject',
 			[
-				'label'       => esc_html__( 'Subject', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Subject', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::EMAIL,
 					],
@@ -220,13 +220,13 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_mail_body',
 			[
-				'label'       => esc_html__( 'Message', 'elementor' ),
-				'type'        => Controls_Manager::TEXTAREA,
-				'dynamic'     => [
+				'label' => esc_html__( 'Message', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::EMAIL,
 					],
@@ -238,13 +238,13 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_number',
 			[
-				'label'       => esc_html__( 'Number', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Number', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::TELEPHONE,
 						Social_Network_Provider::WHATSAPP,
@@ -257,13 +257,13 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_location',
 			[
-				'label'       => esc_html__( 'Location', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Location', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::WAZE,
 					],
@@ -275,13 +275,13 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'cta_link_username',
 			[
-				'label'       => esc_html__( 'Username', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Username', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'cta_link_type' => [
 						Social_Network_Provider::MESSENGER,
 					],
@@ -293,13 +293,13 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'cta_link',
 			[
-				'type'          => Controls_Manager::REPEATER,
-				'max_items'     => 4,
-				'fields'        => $repeater->get_controls(),
-				'title_field'   => '{{{ cta_link_text }}}',
+				'type' => Controls_Manager::REPEATER,
+				'max_items' => 4,
+				'fields' => $repeater->get_controls(),
+				'title_field' => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
-				'button_text'   => esc_html__( 'Add CTA Link', 'elementor' ),
-				'default'       => [
+				'button_text' => esc_html__( 'Add CTA Link', 'elementor' ),
+				'default' => [
 					[
 						'cta_link_text' => esc_html__( 'Get Healthy', 'elementor' ),
 					],
@@ -324,16 +324,16 @@ class Link_In_Bio extends Widget_Base {
 			'icons_section',
 			[
 				'label' => esc_html__( 'Icons', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
 			'custom_panel_alert',
 			[
-				'type'       => Controls_Manager::ALERT,
+				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'info',
-				'content'    => sprintf(
+				'content' => sprintf(
 					__( 'Add up to <b>%d</b> icons', 'elementor' ),
 					5
 				),
@@ -344,12 +344,12 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_platform',
 			[
-				'label'   => esc_html__( 'Platform', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
-				'groups'  => [
+				'label' => esc_html__( 'Platform', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'groups' => [
 
 					[
-						'label'   => '',
+						'label' => '',
 						'options' => Social_Network_Provider::get_social_networks_text( [
 							Social_Network_Provider::EMAIL,
 							Social_Network_Provider::TELEPHONE,
@@ -360,7 +360,7 @@ class Link_In_Bio extends Widget_Base {
 						] ),
 					],
 					[
-						'label'   => '   --',
+						'label' => '   --',
 						'options' => Social_Network_Provider::get_social_networks_text(
 							[
 								Social_Network_Provider::FACEBOOK,
@@ -374,7 +374,7 @@ class Link_In_Bio extends Widget_Base {
 						),
 					],
 					[
-						'label'   => '   --',
+						'label' => '   --',
 						'options' => Social_Network_Provider::get_social_networks_text(
 							[
 								Social_Network_Provider::APPLEMUSIC,
@@ -394,16 +394,16 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_url',
 			[
-				'label'        => esc_html__( 'Link', 'elementor' ),
-				'type'         => Controls_Manager::URL,
-				'options'      => false,
-				'dynamic'      => [
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'options' => false,
+				'dynamic' => [
 					'active' => true,
 				],
 				'autocomplete' => true,
-				'label_block'  => true,
-				'placeholder'  => esc_html__( 'Enter your link', 'elementor' ),
-				'condition'    => [
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::VIMEO,
 						Social_Network_Provider::FACEBOOK,
@@ -429,19 +429,19 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_mail',
 			[
-				'label'       => esc_html__( 'Mail', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
+				'label' => esc_html__( 'Mail', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
-				'dynamic'     => [
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::EMAIL,
 					],
 				],
-				'ai'          => [
+				'ai' => [
 					'active' => false,
 				],
 			]
@@ -450,11 +450,11 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_mail_subject',
 			[
-				'label'       => esc_html__( 'Subject', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
+				'label' => esc_html__( 'Subject', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Subject', 'elementor' ),
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::EMAIL,
 					],
@@ -465,11 +465,11 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_mail_body',
 			[
-				'label'       => esc_html__( 'Message', 'elementor' ),
-				'type'        => Controls_Manager::TEXTAREA,
+				'label' => esc_html__( 'Message', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => esc_html__( 'Message', 'elementor' ),
 				'label_block' => true,
-				'condition'   => [
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::EMAIL,
 					],
@@ -480,20 +480,20 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_number',
 			[
-				'label'       => esc_html__( 'Number', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Number', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
-				'condition'   => [
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::TELEPHONE,
 						Social_Network_Provider::WHATSAPP,
 					],
 				],
-				'ai'          => [
+				'ai' => [
 					'active' => false,
 				],
 			],
@@ -502,19 +502,19 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_location',
 			[
-				'label'       => esc_html__( 'Location', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Location', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
-				'condition'   => [
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::WAZE,
 					],
 				],
-				'ai'          => [
+				'ai' => [
 					'active' => false,
 				],
 			],
@@ -523,14 +523,14 @@ class Link_In_Bio extends Widget_Base {
 		$repeater->add_control(
 			'icon_username',
 			[
-				'label'       => esc_html__( 'Username', 'elementor' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => [
+				'label' => esc_html__( 'Username', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
-				'condition'   => [
+				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::MESSENGER,
 					],
@@ -541,13 +541,13 @@ class Link_In_Bio extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
-				'max_items'     => 5,
-				'type'          => Controls_Manager::REPEATER,
-				'fields'        => $repeater->get_controls(),
-				'title_field'   => $this->get_icon_title_field(),
+				'max_items' => 5,
+				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
+				'title_field' => $this->get_icon_title_field(),
 				'prevent_empty' => true,
-				'button_text'   => esc_html__( 'Add Icon', 'elementor' ),
-				'default'       => [
+				'button_text' => esc_html__( 'Add Icon', 'elementor' ),
+				'default' => [
 					[
 						'icon_platform' => Social_Network_Provider::FACEBOOK,
 					],
@@ -580,8 +580,8 @@ JS;
 
 	private function add_style_tab(): void {
 		$border_width_range = [
-			'min'  => 0,
-			'max'  => 10,
+			'min' => 0,
+			'max' => 10,
 			'step' => 1,
 		];
 
@@ -589,7 +589,7 @@ JS;
 			'identity_section_style',
 			[
 				'label' => esc_html__( 'Identity', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -598,16 +598,16 @@ JS;
 		$this->add_responsive_control(
 			'identity_image_size',
 			[
-				'label'      => esc_html__( 'Image Size', 'elementor' ),
-				'type'       => Controls_Manager::SLIDER,
-				'default'    => [
+				'label' => esc_html__( 'Image Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
 					'unit' => 'px',
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'condition'  => [
+				'condition' => [
 					'identity_image_style' => 'profile',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -616,10 +616,10 @@ JS;
 		$this->add_control(
 			'identity_image_shape',
 			[
-				'label'     => esc_html__( 'Image Shape', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => 'circle',
-				'options'   => [
+				'label' => esc_html__( 'Image Shape', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'circle',
+				'options' => [
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
 				],
@@ -632,13 +632,13 @@ JS;
 		$this->add_control(
 			'identity_image_show_border',
 			[
-				'label'        => esc_html__( 'Border', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => '',
-				'condition'    => [
+				'default' => '',
+				'condition' => [
 					'identity_image_style' => 'profile',
 				],
 			]
@@ -647,17 +647,17 @@ JS;
 		$this->add_responsive_control(
 			'identity_image_border_width',
 			[
-				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range'      => [
+				'range' => [
 					'px' => $border_width_range,
 				],
-				'condition'  => [
-					'identity_image_style'       => 'profile',
+				'condition' => [
+					'identity_image_style' => 'profile',
 					'identity_image_show_border' => 'yes',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -666,10 +666,10 @@ JS;
 		$this->add_control(
 			'identity_image_border_color',
 			[
-				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'condition' => [
-					'identity_image_style'       => 'profile',
+					'identity_image_style' => 'profile',
 					'identity_image_show_border' => 'yes',
 				],
 				'selectors' => [
@@ -683,27 +683,27 @@ JS;
 		$this->add_responsive_control(
 			'identity_image_height',
 			[
-				'label'      => esc_html__( 'Image Height', 'elementor' ),
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Image Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-				'range'      => [
+				'range' => [
 					'px' => [
-						'min'  => 0,
-						'max'  => 1000,
+						'min' => 0,
+						'max' => 1000,
 						'step' => 1,
 					],
-					'%'  => [
+					'%' => [
 						'min' => 0,
 						'max' => 100,
 					],
 				],
-				'default'    => [
+				'default' => [
 					'unit' => 'px',
 				],
-				'condition'  => [
+				'condition' => [
 					'identity_image_style' => 'cover',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-height: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -712,13 +712,13 @@ JS;
 		$this->add_control(
 			'identity_image_show_bottom_border',
 			[
-				'label'        => esc_html__( 'Bottom Border', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'label' => esc_html__( 'Bottom Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => '',
-				'condition'    => [
+				'default' => '',
+				'condition' => [
 					'identity_image_style' => 'cover',
 				],
 			]
@@ -727,18 +727,18 @@ JS;
 		$this->add_control(
 			'identity_image_border_bottom_width',
 			[
-				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range'      => [
+				'range' => [
 					'px' => $border_width_range,
 				],
-				'condition'  => [
-					'identity_image_style'              => 'cover',
+				'condition' => [
+					'identity_image_style' => 'cover',
 					'identity_image_show_bottom_border' => 'yes',
 
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-bottom-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -747,10 +747,10 @@ JS;
 		$this->add_control(
 			'identity_image_bottom_border_color',
 			[
-				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'condition' => [
-					'identity_image_style'              => 'cover',
+					'identity_image_style' => 'cover',
 					'identity_image_show_bottom_border' => 'yes',
 				],
 				'selectors' => [
@@ -765,15 +765,15 @@ JS;
 			'bio_section_style',
 			[
 				'label' => esc_html__( 'Bio', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
 			'bio_heading_heading',
 			[
-				'label'     => esc_html__( 'Heading', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Heading', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -781,8 +781,8 @@ JS;
 		$this->add_control(
 			'bio_heading_text_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
 				],
@@ -792,7 +792,7 @@ JS;
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'bio_heading_typography',
+				'name' => 'bio_heading_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
 			]
 		);
@@ -800,8 +800,8 @@ JS;
 		$this->add_control(
 			'bio_title_heading',
 			[
-				'label'     => esc_html__( 'Title or Tagline', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Title or Tagline', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -809,8 +809,8 @@ JS;
 		$this->add_control(
 			'bio_title_text_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-title-color: {{VALUE}}',
 				],
@@ -820,7 +820,7 @@ JS;
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'bio_title_typography',
+				'name' => 'bio_title_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
 			]
 		);
@@ -828,8 +828,8 @@ JS;
 		$this->add_control(
 			'bio_description_heading',
 			[
-				'label'     => esc_html__( 'Description', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Description', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -837,8 +837,8 @@ JS;
 		$this->add_control(
 			'bio_description_text_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-description-color: {{VALUE}}',
 				],
@@ -848,7 +848,7 @@ JS;
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'bio_description_typography',
+				'name' => 'bio_description_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
 			]
 		);
@@ -859,15 +859,15 @@ JS;
 			'icons_section_style',
 			[
 				'label' => esc_html__( 'Icons', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
 			'icons_color',
 			[
-				'label'     => esc_html__( 'Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-color: {{VALUE}}',
 				],
@@ -877,13 +877,13 @@ JS;
 		$this->add_control(
 			'icons_size',
 			[
-				'label'   => esc_html__( 'Size', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'default' => 'small',
 				'options' => [
-					'small'  => esc_html__( 'Small', 'elementor' ),
+					'small' => esc_html__( 'Small', 'elementor' ),
 					'medium' => esc_html__( 'Medium', 'elementor' ),
-					'large'  => esc_html__( 'Large', 'elementor' ),
+					'large' => esc_html__( 'Large', 'elementor' ),
 				],
 			]
 		);
@@ -894,19 +894,19 @@ JS;
 			'cta_links_section_style',
 			[
 				'label' => esc_html__( 'CTA Links', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
 			'cta_links_type',
 			[
-				'label'   => esc_html__( 'Type', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
+				'label' => esc_html__( 'Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'default' => 'button',
 				'options' => [
 					'button' => esc_html__( 'Button', 'elementor' ),
-					'link'   => esc_html__( 'Link', 'elementor' ),
+					'link' => esc_html__( 'Link', 'elementor' ),
 				],
 			]
 		);
@@ -914,10 +914,10 @@ JS;
 		$this->add_control(
 			'cta_links_text_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio'                   => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
 					'{{WRAPPER}} .e-link-in-bio__cta.is-type-link' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
 				],
 			]
@@ -926,8 +926,8 @@ JS;
 		$this->add_control(
 			'cta_links_background_color',
 			[
-				'label'     => esc_html__( 'Background Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'condition' => [
 					'cta_links_type' => 'button',
 				],
@@ -940,7 +940,7 @@ JS;
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'cta_links_typography',
+				'name' => 'cta_links_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__cta',
 			]
 		);
@@ -948,13 +948,13 @@ JS;
 		$this->add_control(
 			'cta_links_show_border',
 			[
-				'label'        => esc_html__( 'Border', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => '',
-				'condition'    => [
+				'default' => '',
+				'condition' => [
 					'cta_links_type' => 'button',
 				],
 			]
@@ -963,17 +963,17 @@ JS;
 		$this->add_control(
 			'cta_links_border_width',
 			[
-				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range'      => [
+				'range' => [
 					'px' => $border_width_range,
 				],
-				'condition'  => [
+				'condition' => [
 					'cta_links_show_border' => 'yes',
-					'cta_links_type'        => 'button',
+					'cta_links_type' => 'button',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{SIZE}}{{UNIT}}',
 				],
 			]
@@ -982,11 +982,11 @@ JS;
 		$this->add_control(
 			'cta_links_border_color',
 			[
-				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'condition' => [
 					'cta_links_show_border' => 'yes',
-					'cta_links_type'        => 'button',
+					'cta_links_type' => 'button',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-color: {{VALUE}}',
@@ -997,13 +997,13 @@ JS;
 		$this->add_control(
 			'cta_links_corners',
 			[
-				'label'     => esc_html__( 'Corners', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => 'rounded',
-				'options'   => [
-					'round'   => esc_html__( 'Round', 'elementor' ),
+				'label' => esc_html__( 'Corners', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'rounded',
+				'options' => [
+					'round' => esc_html__( 'Round', 'elementor' ),
 					'rounded' => esc_html__( 'Rounded', 'elementor' ),
-					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
+					'sharp' => esc_html__( 'Sharp', 'elementor' ),
 				],
 				'condition' => [
 					'cta_links_type' => 'button',
@@ -1021,17 +1021,17 @@ JS;
 		$this->add_responsive_control(
 			'cta_links_padding',
 			[
-				'label'      => esc_html__( 'Padding', 'elementor' ),
-				'type'       => Controls_Manager::DIMENSIONS,
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem' ],
-				'default'    => [
-					'unit'     => 'px',
+				'default' => [
+					'unit' => 'px',
 					'isLinked' => false,
 				],
-				'condition'  => [
+				'condition' => [
 					'cta_links_type' => 'button',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
@@ -1043,15 +1043,15 @@ JS;
 			'background_border_section_style',
 			[
 				'label' => esc_html__( 'Background and Border', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
 			'background_border_background',
 			[
-				'label'     => esc_html__( 'Background', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -1059,9 +1059,9 @@ JS;
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
-				'name'           => 'background_border_background_group',
-				'types'          => [ 'classic', 'gradient' ],
-				'selector'       => '{{WRAPPER}} .e-link-in-bio__bg',
+				'name' => 'background_border_background_group',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -1073,8 +1073,8 @@ JS;
 		$this->add_control(
 			'background_border_background_overlay',
 			[
-				'label'     => esc_html__( 'Background Overlay', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
 		);
@@ -1082,9 +1082,9 @@ JS;
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
-				'name'           => 'background_border_background_overlay_group',
-				'types'          => [ 'classic', 'gradient' ],
-				'selector'       => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
+				'name' => 'background_border_background_overlay_group',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -1096,12 +1096,12 @@ JS;
 		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
-				'label'     => esc_html__( 'Opacity', 'elementor' ),
-				'type'      => Controls_Manager::SLIDER,
-				'range'     => [
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
 					'px' => [
-						'max'  => 1,
-						'min'  => 0.10,
+						'max' => 1,
+						'min' => 0.10,
 						'step' => 0.01,
 					],
 				],
@@ -1121,28 +1121,28 @@ JS;
 		$this->add_control(
 			'background_show_border',
 			[
-				'label'        => esc_html__( 'Border', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => '',
+				'default' => '',
 			]
 		);
 
 		$this->add_responsive_control(
 			'background_border_width',
 			[
-				'label'      => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range'      => [
+				'range' => [
 					'px' => $border_width_range,
 				],
-				'condition'  => [
+				'condition' => [
 					'background_show_border' => 'yes',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -1151,8 +1151,8 @@ JS;
 		$this->add_control(
 			'background_border_color',
 			[
-				'label'     => esc_html__( 'Border Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'condition' => [
 					'background_show_border' => 'yes',
 				],
@@ -1176,41 +1176,41 @@ JS;
 			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab'   => static::TAB_ADVANCED,
+				'tab' => static::TAB_ADVANCED,
 			]
 		);
 
 		$this->add_control(
 			'advanced_layout_full_width_custom',
 			[
-				'label'     => esc_html__( 'Full Width', 'elementor' ),
-				'type'      => Controls_Manager::SWITCHER,
-				'label_on'  => esc_html__( 'Yes', 'elementor' ),
+				'label' => esc_html__( 'Full Width', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
 				'label_off' => esc_html__( 'No', 'elementor' ),
-				'default'   => '',
+				'default' => '',
 			]
 		);
 
 		$this->add_responsive_control(
 			'advanced_layout_width',
 			[
-				'label'      => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range'      => [
+				'range' => [
 					'px' => [
-						'min'  => 0,
-						'max'  => 500,
+						'min' => 0,
+						'max' => 500,
 						'step' => 1,
 					],
 				],
-				'default'    => [
+				'default' => [
 					'unit' => 'px',
 				],
-				'condition'  => [
+				'condition' => [
 					'advanced_layout_full_width_custom' => '',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -1219,20 +1219,20 @@ JS;
 		$this->add_responsive_control(
 			'advanced_layout_content_width',
 			[
-				'label'      => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
-				'range'      => [
+				'range' => [
 					'px' => [
-						'min'  => 0,
-						'max'  => 400,
+						'min' => 0,
+						'max' => 400,
 						'step' => 1,
 					],
 				],
-				'default'    => [
+				'default' => [
 					'unit' => 'px',
 				],
-				'selectors'  => [
+				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -1241,13 +1241,13 @@ JS;
 		$this->add_control(
 			'advanced_layout_full_screen_height',
 			[
-				'label'        => esc_html__( 'Full Screen Height', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'label' => esc_html__( 'Full Screen Height', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => '',
-				'condition'    => [
+				'default' => '',
+				'condition' => [
 					'advanced_layout_full_width_custom' => 'yes',
 				],
 			],
@@ -1258,20 +1258,20 @@ JS;
 
 		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
 			$available_devices[ $breakpoint_key ] = $breakpoint->get_label();
-			$default_devices[]                    = $breakpoint_key;
+			$default_devices[] = $breakpoint_key;
 		}
 
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
 			[
-				'label'       => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
-				'type'        => Controls_Manager::SELECT2,
+				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
+				'type' => Controls_Manager::SELECT2,
 				'label_block' => true,
-				'multiple'    => true,
-				'options'     => $available_devices,
-				'default'     => $default_devices,
-				'condition'   => [
-					'advanced_layout_full_width_custom'  => 'yes',
+				'multiple' => true,
+				'options' => $available_devices,
+				'default' => $default_devices,
+				'condition' => [
+					'advanced_layout_full_width_custom' => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
 				],
 			]
@@ -1283,23 +1283,23 @@ JS;
 			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab'   => static::TAB_ADVANCED,
+				'tab' => static::TAB_ADVANCED,
 			]
 		);
 
 		$this->add_control(
 			'advanced_custom_css_id',
 			[
-				'label'          => esc_html__( 'CSS ID', 'elementor' ),
-				'type'           => Controls_Manager::TEXT,
-				'default'        => '',
-				'ai'             => [
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
 					'active' => false,
 				],
-				'dynamic'        => [
+				'dynamic' => [
 					'active' => true,
 				],
-				'title'          => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 			]
 		);
@@ -1307,16 +1307,16 @@ JS;
 		$this->add_control(
 			'advanced_custom_css_classes',
 			[
-				'label'   => esc_html__( 'CSS Classes', 'elementor' ),
-				'type'    => Controls_Manager::TEXT,
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'ai'      => [
+				'ai' => [
 					'active' => false,
 				],
 				'dynamic' => [
 					'active' => true,
 				],
-				'title'   => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 			]
 		);
 
@@ -1331,18 +1331,18 @@ JS;
 		$this->add_control(
 			$name,
 			[
-				'label'   => esc_html__( 'HTML Tag', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
+				'label' => esc_html__( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'h1'   => 'H1',
-					'h2'   => 'H2',
-					'h3'   => 'H3',
-					'h4'   => 'H4',
-					'h5'   => 'H5',
-					'h6'   => 'H6',
-					'div'  => 'div',
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
 					'span' => 'span',
-					'p'    => 'p',
+					'p' => 'p',
 				],
 				'default' => 'h2',
 			]
@@ -1354,20 +1354,20 @@ JS;
 			'bio_section',
 			[
 				'label' => esc_html__( 'Bio', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
 			'bio_heading',
 			[
-				'label'       => esc_html__( 'Heading', 'elementor' ),
-				'type'        => Controls_Manager::TEXTAREA,
-				'dynamic'     => [
+				'label' => esc_html__( 'Heading', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Heading', 'elementor' ),
-				'default'     => esc_html__( 'Sara Parker', 'elementor' ),
+				'default' => esc_html__( 'Sara Parker', 'elementor' ),
 			]
 		);
 
@@ -1376,13 +1376,13 @@ JS;
 		$this->add_control(
 			'bio_title',
 			[
-				'label'       => esc_html__( 'Title or Tagline', 'elementor' ),
-				'type'        => Controls_Manager::TEXTAREA,
-				'dynamic'     => [
+				'label' => esc_html__( 'Title or Tagline', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Title', 'elementor' ),
-				'default'     => esc_html__( 'Kitchen Cronicles', 'elementor' ),
+				'default' => esc_html__( 'Kitchen Cronicles', 'elementor' ),
 			]
 		);
 
@@ -1391,13 +1391,13 @@ JS;
 		$this->add_control(
 			'bio_description',
 			[
-				'label'       => esc_html__( 'Description', 'elementor' ),
-				'type'        => Controls_Manager::TEXTAREA,
-				'dynamic'     => [
+				'label' => esc_html__( 'Description', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Description', 'elementor' ),
-				'default'     => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
+				'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
 			]
 		);
 
@@ -1409,19 +1409,19 @@ JS;
 			'identity_section',
 			[
 				'label' => esc_html__( 'Identity', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
 		$this->add_control(
 			'identity_image_style',
 			[
-				'label'   => esc_html__( 'Image style', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
+				'label' => esc_html__( 'Image style', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'default' => 'profile',
 				'options' => [
 					'profile' => esc_html__( 'Profile', 'elementor' ),
-					'cover'   => esc_html__( 'Cover', 'elementor' ),
+					'cover' => esc_html__( 'Cover', 'elementor' ),
 				],
 			]
 		);
@@ -1429,8 +1429,8 @@ JS;
 		$this->add_control(
 			'identity_image',
 			[
-				'label'   => esc_html__( 'Choose Image', 'elementor' ),
-				'type'    => Controls_Manager::MEDIA,
+				'label' => esc_html__( 'Choose Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
