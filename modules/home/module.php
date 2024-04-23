@@ -101,7 +101,7 @@ class Module extends BaseApp {
 
 	public static function get_elementor_settings_page_id(): string {
 		return Plugin::$instance->experiments->is_feature_active( self::PAGE_ID )
-			? 'settings'
+			? 'elementor-settings'
 			: Settings::PAGE_ID;
 	}
 }
