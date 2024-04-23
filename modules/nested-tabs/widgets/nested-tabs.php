@@ -1149,12 +1149,8 @@ class NestedTabs extends Widget_Nested_Base {
 	
 	    add_filter('elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3);
 	    
-	    // Check if the child at the specified index exists before trying to print it
-	    if (isset($children[$index])) {
-	        $children[$index]->print_element();
-	    } else {
-	        // Handle the case where the index does not exist, possibly log this issue or handle it accordingly
-	        error_log('Attempted to print a non-existent child in nested-tabs.php on index ' . $index);
+	    if ( isset( $children[ $index ] ) ) {
+	        $children[ $index ]->print_element();
 	    }
 	
 	    remove_filter('elementor/frontend/container/should_render', $add_attribute_to_container);
