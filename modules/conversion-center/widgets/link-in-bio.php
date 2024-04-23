@@ -27,6 +27,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Link_In_Bio extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-links-in-bio';
 
+	public static function get_configuration() {
+		return [
+			'cta_section' => [
+				'cta_has_image' => false
+			]
+		];
+	}
+
 	public function get_name(): string {
 		return 'link-in-bio';
 	}
@@ -76,7 +84,7 @@ class Link_In_Bio extends Widget_Base {
 		$render_strategy->render();
 	}
 
-	private function add_cta_controls(): void {
+	private function add_cta_controls( ): void {
 		$this->start_controls_section(
 			'cta_section',
 			[
@@ -112,6 +120,20 @@ class Link_In_Bio extends Widget_Base {
 				'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
 			],
 		);
+
+		if ( static::get_configuration()['cta_section']['cta_has_image'] ) {
+			$repeater->add_control(
+				'cta_link_image',
+				[
+					'label' => esc_html__( 'Choose Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'label_block' => true,
+					'default' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				]
+			);
+		}
 
 		$repeater->add_control(
 			'cta_link_type',
@@ -1166,7 +1188,7 @@ JS;
 
 	}
 
-	private function add_advanced_tab() {
+	private function add_advanced_tab(): void {
 		Controls_Manager::add_tab(
 			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )

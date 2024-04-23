@@ -133,6 +133,10 @@ abstract class Render_Base {
 		<?php
 	}
 
+	protected function render_ctas_with_images() {
+		// implement here rendering CTA with images
+	}
+
 	protected function render_bio(): void {
 		$bio_heading_props_tag = $this->settings['bio_heading_tag'] ?? 'h2';
 		$bio_heading_value = $this->settings['bio_heading'] ?? '';
