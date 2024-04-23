@@ -23,15 +23,15 @@ abstract class Render_Base {
 	abstract public function render(): void;
 
 	public function __construct( Link_In_Bio $widget ) {
-		$this->widget   = $widget;
+		$this->widget = $widget;
 		$this->settings = $widget->get_settings_for_display();
 	}
 
 	protected function render_ctas(): void {
-		$ctas_props_corners     = $this->settings['cta_links_corners'] ?? 'rounded';
+		$ctas_props_corners = $this->settings['cta_links_corners'] ?? 'rounded';
 		$ctas_props_show_border = $this->settings['cta_links_show_border'] ?? false;
-		$ctas_props_type        = $this->settings['cta_links_type'] ?? 'button';
-		$ctas_value             = $this->settings['cta_link'] ?? [];
+		$ctas_props_type = $this->settings['cta_links_type'] ?? 'button';
+		$ctas_value = $this->settings['cta_link'] ?? [];
 
 		$has_ctas = ! empty( $ctas_value );
 		if ( ! $has_ctas ) {
@@ -64,7 +64,7 @@ abstract class Render_Base {
 
 				$this->widget->add_render_attribute( 'cta-' . $key, [
 					'class' => $ctas_classnames,
-					'href'  => esc_url( $formatted_link ),
+					'href' => esc_url( $formatted_link ),
 				] );
 
 				if ( 'File Download' === $cta['cta_link_type'] ) {
@@ -85,7 +85,7 @@ abstract class Render_Base {
 
 	protected function render_icons(): void {
 		$icons_props_size = $this->settings['icons_size'] ?? 'small';
-		$icons_value      = $this->settings['icon'] ?? [];
+		$icons_value = $this->settings['icon'] ?? [];
 
 		$has_icons = ! empty( $icons_value );
 		if ( ! $has_icons ) {
@@ -105,23 +105,23 @@ abstract class Render_Base {
 
 				$this->widget->add_render_attribute( 'icon-link-' . $key, [
 					'aria-label' => esc_attr( $icon['icon_platform'] ),
-					'class'      => 'e-link-in-bio__icon-link',
-					'href'       => esc_url( $formatted_link ),
-					'rel'        => 'noopener noreferrer',
-					'target'     => '_blank',
+					'class' => 'e-link-in-bio__icon-link',
+					'href' => esc_url( $formatted_link ),
+					'rel' => 'noopener noreferrer',
+					'target' => '_blank',
 				] );
 
 				?>
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php
-						$mapping  = Social_Network_Provider::get_icon_mapping( $icon['icon_platform'] );
+						$mapping = Social_Network_Provider::get_icon_mapping( $icon['icon_platform'] );
 						$icon_lib = explode( ' ', $mapping )[0];
-						$library  = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
+						$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
 						Icons_Manager::render_icon(
 							[
 								'library' => $library,
-								'value'   => $mapping,
+								'value' => $mapping,
 							],
 							[ 'aria-hidden' => 'true' ]
 						);
@@ -135,16 +135,16 @@ abstract class Render_Base {
 
 	protected function render_bio(): void {
 		$bio_heading_props_tag = $this->settings['bio_heading_tag'] ?? 'h2';
-		$bio_heading_value     = $this->settings['bio_heading'] ?? '';
+		$bio_heading_value = $this->settings['bio_heading'] ?? '';
 
 		$bio_title_props_tag = $this->settings['bio_title_tag'] ?? 'h2';
-		$bio_title_value     = $this->settings['bio_title'] ?? '';
+		$bio_title_value = $this->settings['bio_title'] ?? '';
 
 		$bio_description_value = $this->settings['bio_description'] ?? '';
 
 		$has_bio_description = ! empty( $bio_description_value );
-		$has_bio_heading     = ! empty( $bio_heading_value );
-		$has_bio_title       = ! empty( $bio_title_value );
+		$has_bio_heading = ! empty( $bio_heading_value );
+		$has_bio_title = ! empty( $bio_title_value );
 
 		if ( $has_bio_title || $has_bio_description || $has_bio_heading ) {
 			?>
@@ -170,11 +170,11 @@ abstract class Render_Base {
 	}
 
 	protected function render_identity_image(): void {
-		$identity_image_props_shape              = $this->settings['identity_image_shape'] ?? 'circle';
-		$identity_image_props_style              = $this->settings['identity_image_style'] ?? 'profile';
-		$identity_image_props_show_border        = $this->settings['identity_image_show_border'] ?? false;
+		$identity_image_props_shape = $this->settings['identity_image_shape'] ?? 'circle';
+		$identity_image_props_style = $this->settings['identity_image_style'] ?? 'profile';
+		$identity_image_props_show_border = $this->settings['identity_image_show_border'] ?? false;
 		$identity_image_props_show_bottom_border = $this->settings['identity_image_show_bottom_border'] ?? false;
-		$identity_image_value                    = $this->settings['identity_image'] ?? [];
+		$identity_image_value = $this->settings['identity_image'] ?? [];
 
 		$has_identity_image = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ) );
 
@@ -204,9 +204,9 @@ abstract class Render_Base {
 					] );
 				} else {
 					$this->widget->add_render_attribute( 'identity_image_src', [
-						'alt'   => '',
+						'alt' => '',
 						'class' => 'e-link-in-bio__identity-image-el',
-						'src'   => esc_url( $identity_image_value['url'] ),
+						'src' => esc_url( $identity_image_value['url'] ),
 					] );
 					?>
 					<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
@@ -250,9 +250,9 @@ abstract class Render_Base {
 	}
 
 	protected function build_email_link( array $data, string $prefix ) {
-		$email   = $data[ $prefix . '_mail' ] ?? '';
+		$email = $data[ $prefix . '_mail' ] ?? '';
 		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
-		$body    = $data[ $prefix . '_mail_body' ] ?? '';
+		$body = $data[ $prefix . '_mail_body' ] ?? '';
 		if ( ! $email ) {
 			return '';
 		}
@@ -300,11 +300,11 @@ abstract class Render_Base {
 	}
 
 	protected function build_layout_render_attribute(): void {
-		$layout_props_full_height          = $this->settings['advanced_layout_full_screen_height'] ?? '';
+		$layout_props_full_height = $this->settings['advanced_layout_full_screen_height'] ?? '';
 		$layout_props_full_height_controls = $this->settings['advanced_layout_full_screen_height_controls'] ?? '';
-		$layout_props_full_width           = $this->settings['advanced_layout_full_width_custom'] ?? '';
-		$layout_props_show_border          = $this->settings['background_show_border'] ?? '';
-		$custom_classes                    = $this->settings['advanced_custom_css_classes'] ?? '';
+		$layout_props_full_width = $this->settings['advanced_layout_full_width_custom'] ?? '';
+		$layout_props_show_border = $this->settings['background_show_border'] ?? '';
+		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
 
 		$layout_classnames = 'e-link-in-bio e-var-' . $this->widget->get_name();
 
@@ -332,7 +332,7 @@ abstract class Render_Base {
 
 		$this->widget->add_render_attribute( 'layout', [
 			'class' => $layout_classnames,
-			'id'    => $this->settings['advanced_custom_css_id'],
+			'id' => $this->settings['advanced_custom_css_id'],
 		] );
 	}
 }
