@@ -1,20 +1,93 @@
 .e-contact-buttons {
-    --e-contact-buttons-button-size-small: 65px;
-    --e-contact-buttons-button-size-medium: 75px;
-    --e-contact-buttons-button-size-large: 85px;
+    --e-contact-buttons-chat-box-width: 360px;
+    --e-contact-buttons-size-small: 65px;
+    --e-contact-buttons-size-medium: 75px;
+    --e-contact-buttons-size-large: 85px;
     --e-contact-buttons-button-bg: #24d066;
     --e-contact-buttons-button-bg-hover: #178541;
     --e-contact-buttons-button-text: #ffffff;
     --e-contact-buttons-button-text-hover: #ffffff;
     --e-contact-buttons-dot: #FF0000;
     --e-contact-buttons-dot-size: 20px;
+    --e-contact-buttons-top-bar-bg: #075e54;
+    --e-contact-buttons-top-bar-name: #ffffff;
+    --e-contact-buttons-top-bar-title: #ffffff;
+    --e-contact-buttons-profile-dot-bg: #39AA59;
 
     position: fixed;
     bottom: 20px;
+    min-width: var(--e-contact-buttons-chat-box-width);
     right: 20px;
 
     &__content {
-        display: none;
+        font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
+    }
+
+    &__top-bar {
+        align-items: center;
+        background-color: var(--e-contact-buttons-top-bar-bg);
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    &__top-bar-name {
+        color: var(--e-contact-buttons-top-bar-name);
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+
+    &__top-bar-title {
+        color: var(--e-contact-buttons-top-bar-title);
+        font-size: 20px;
+        margin-bottom: 0;
+    }
+
+    &__profile-image {
+        align-items: center;
+        display: flex;
+        position: relative;
+
+        img {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        &.has-size-small img {
+            height: var(--e-contact-buttons-size-small);
+            width: var(--e-contact-buttons-size-small);
+        }
+
+        &.has-size-medium img {
+            height: var(--e-contact-buttons-size-medium);
+            width: var(--e-contact-buttons-size-medium);
+        }
+
+        &.has-size-large img {
+            height: var(--e-contact-buttons-size-large);
+            width: var(--e-contact-buttons-size-large);
+        }
+
+        &.has-dot::after {
+            background-color: var(--e-contact-buttons-profile-dot-bg);
+            border: 3px solid var(--e-contact-buttons-top-bar-bg);
+            border-radius: 50%;
+            bottom: 5px;
+            content: "";
+            height: 20px;
+            position: absolute;
+            right: 0;
+            width: 20px;
+        }
+    }
+
+    &__chat-button-container {
+        display: flex;
+        justify-content: flex-end;
     }
     
     &__chat-button {
@@ -25,6 +98,7 @@
         color: var(--e-contact-buttons-button-text);
         display: flex;
         justify-content: center;
+        position: relative;
         
         &:hover,
         &:focus {
@@ -44,18 +118,18 @@
         }
 
         &.has-size-small {
-            height: var(--e-contact-buttons-button-size-small);
-            width: var(--e-contact-buttons-button-size-small);
+            height: var(--e-contact-buttons-size-small);
+            width: var(--e-contact-buttons-size-small);
         }
 
         &.has-size-medium {
-            height: var(--e-contact-buttons-button-size-medium);
-            width: var(--e-contact-buttons-button-size-medium);
+            height: var(--e-contact-buttons-size-medium);
+            width: var(--e-contact-buttons-size-medium);
         }
 
         &.has-size-large {
-            height: var(--e-contact-buttons-button-size-large);
-            width: var(--e-contact-buttons-button-size-large);
+            height: var(--e-contact-buttons-size-large);
+            width: var(--e-contact-buttons-size-large);
         }
 	}
 }
