@@ -424,10 +424,9 @@ class Contact_Buttons extends Widget_Base {
 			[
 				'label' => esc_html__( 'Close Button Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				// TODO: add correct selectors
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-color: {{VALUE}}',
+				],
 				'condition' => [
 					'style_top_bar_colors' => 'custom',
 				],

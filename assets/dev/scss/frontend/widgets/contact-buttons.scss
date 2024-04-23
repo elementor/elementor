@@ -13,11 +13,13 @@
     --e-contact-buttons-top-bar-name: #ffffff;
     --e-contact-buttons-top-bar-title: #ffffff;
     --e-contact-buttons-profile-dot-bg: #39AA59;
+    --e-contact-buttons-close-button-color: #ffffff;
 
     position: fixed;
     bottom: 20px;
     min-width: var(--e-contact-buttons-chat-box-width);
     right: 20px;
+    z-index: 99;
 
     &__content {
         font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
@@ -82,6 +84,28 @@
             position: absolute;
             right: 0;
             width: 20px;
+        }
+    }
+
+    &__close-button {
+        background: none;
+        border: 0;
+        color: var(--e-contact-buttons-close-button-color);
+        padding: 0;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+
+        &:hover,
+        &:focus {
+            background: none;
+            border: 0;
+            color: var(--e-contact-buttons-close-button-color);
         }
     }
 
