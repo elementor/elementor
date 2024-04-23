@@ -1156,7 +1156,6 @@ class NestedTabs extends Widget_Nested_Base {
 	    remove_filter('elementor/frontend/container/should_render', $add_attribute_to_container);
 	}
 
-
 	protected function add_attributes_to_container( $container, $item_settings ) {
 		$container->add_render_attribute( '_wrapper', [
 			'id' => $item_settings['container_id'],
