@@ -47,6 +47,7 @@ class Social_Network_Provider {
 		if ( isset( self::$social_networks[ $platform ]['icon'] ) ) {
 			return self::$social_networks[ $platform ]['icon'];
 		}
+
 		return '';
 
 	}
