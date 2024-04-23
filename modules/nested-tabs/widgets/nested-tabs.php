@@ -1131,31 +1131,32 @@ class NestedTabs extends Widget_Nested_Base {
 	 * @param int $index
 	 * @param array $item_settings
 	 */
-	public function print_child($index, $item_settings = []) {
+	public function print_child( $index, $item_settings = [] ) {
 	    $children = $this->get_children();
 	    $child_ids = [];
 	
-	    foreach ($children as $child) {
+	    foreach ( $children as $child ) {
 	        $child_ids[] = $child->get_id();
 	    }
 	
-	    $add_attribute_to_container = function ($should_render, $container) use ($item_settings, $child_ids) {
-	        if (in_array($container->get_id(), $child_ids)) {
-	            $this->add_attributes_to_container($container, $item_settings);
+	    $add_attribute_to_container = function ( $should_render, $container ) use ( $item_settings, $child_ids ) {
+	        if ( in_array( $container->get_id(), $child_ids ) ) {
+	            $this->add_attributes_to_container( $container, $item_settings );
 	        }
 	
 	        return $should_render;
 	    };
 	
-	    add_filter('elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3);
+	    add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
 	    
 	    if ( isset( $children[ $index ] ) ) {
 	        $children[ $index ]->print_element();
 	    }
-	
-	    remove_filter('elementor/frontend/container/should_render', $add_attribute_to_container);
+	    remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 
+<<<<<<< HEAD
+=======
 	protected function add_attributes_to_container( $container, $item_settings ) {
 		$container->add_render_attribute( '_wrapper', [
 			'id' => $item_settings['container_id'],
@@ -1212,6 +1213,7 @@ class NestedTabs extends Widget_Nested_Base {
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+>>>>>>> 1136e5807613d5f9403f773b098da6c19062c626
 			</div>
 			<div class="e-n-tabs-content">
 				<?php echo $tab_containers_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
