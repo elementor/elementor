@@ -1136,22 +1136,22 @@ class NestedTabs extends Widget_Nested_Base {
 		$child_ids = [];
 
 		foreach ( $children as $child ) {
-				$child_ids[] = $child->get_id();
+			$child_ids[] = $child->get_id();
 		}
 
 		// Add data-tab-index attribute to the content area.
 		$add_attribute_to_container = function ( $should_render, $container ) use ( $item_settings, $child_ids ) {
-				if ( in_array( $container->get_id(), $child_ids ) ) {
-						$this->add_attributes_to_container( $container, $item_settings );
-				}
+			if ( in_array( $container->get_id(), $child_ids ) ) {
+				$this->add_attributes_to_container( $container, $item_settings );
+			}
 
-				return $should_render;
+			return $should_render;
 		};
 	
 		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
 		
 		if ( isset( $children[ $index ] ) ) {
-				$children[ $index ]->print_element();
+			$children[ $index ]->print_element();
 		}
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
