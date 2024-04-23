@@ -1131,27 +1131,35 @@ class NestedTabs extends Widget_Nested_Base {
 	 * @param int $index
 	 * @param array $item_settings
 	 */
-	public function print_child( $index, $item_settings = [] ) {
-		$children = $this->get_children();
-		$child_ids = [];
-
-		foreach ( $children as $child ) {
-			$child_ids[] = $child->get_id();
-		}
-
-		// Add data-tab-index attribute to the content area.
-		$add_attribute_to_container = function ( $should_render, $container ) use ( $item_settings, $child_ids ) {
-			if ( in_array( $container->get_id(), $child_ids ) ) {
-				$this->add_attributes_to_container( $container, $item_settings );
-			}
-
-			return $should_render;
-		};
-
-		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
-		$children[ $index ]->print_element();
-		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
+	public function print_child($index, $item_settings = []) {
+	    $children = $this->get_children();
+	    $child_ids = [];
+	
+	    foreach ($children as $child) {
+	        $child_ids[] = $child->get_id();
+	    }
+	
+	    $add_attribute_to_container = function ($should_render, $container) use ($item_settings, $child_ids) {
+	        if (in_array($container->get_id(), $child_ids)) {
+	            $this->add_attributes_to_container($container, $item_settings);
+	        }
+	
+	        return $should_render;
+	    };
+	
+	    add_filter('elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3);
+	    
+	    // Check if the child at the specified index exists before trying to print it
+	    if (isset($children[$index])) {
+	        $children[$index]->print_element();
+	    } else {
+	        // Handle the case where the index does not exist, possibly log this issue or handle it accordingly
+	        error_log('Attempted to print a non-existent child in nested-tabs.php on index ' . $index);
+	    }
+	
+	    remove_filter('elementor/frontend/container/should_render', $add_attribute_to_container);
 	}
+
 
 	protected function add_attributes_to_container( $container, $item_settings ) {
 		$container->add_render_attribute( '_wrapper', [
