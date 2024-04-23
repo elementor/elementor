@@ -22,7 +22,12 @@
     z-index: 99;
 
     &__content {
+        display: none;
         font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
+
+        &.is-visible {
+            display: block; // will be replaced with animation
+        }
     }
 
     &__top-bar {
