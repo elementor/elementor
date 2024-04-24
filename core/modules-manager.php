@@ -114,7 +114,6 @@ class Modules_Manager {
 			'site-navigation',
 			'styleguide',
 			'apps',
-			'editor-events',
 			'home',
 			'conversion-center',
 			'content-sanitizer',
