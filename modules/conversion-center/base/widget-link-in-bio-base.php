@@ -1337,6 +1337,7 @@ JS;
 	 * @return void
 	 */
 	private function add_style_identity_controls( array $border_width_range ): void {
+		$config = static::get_configuration();
 		$this->start_controls_section(
 			'identity_section_style',
 			[
@@ -1344,6 +1345,13 @@ JS;
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		$condition = [];
+		if ( $config['content']['identity_section']['identity_image_style'] ) {
+			$condition = [
+				'identity_image_style' => 'profile',
+			];
+		}
 
 		// Profile image style controls
 
@@ -1356,9 +1364,7 @@ JS;
 					'unit' => 'px',
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'condition' => [
-					'identity_image_style' => 'profile',
-				],
+				'condition' => $condition,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
 				],
@@ -1375,9 +1381,7 @@ JS;
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
 				],
-				'condition' => [
-					'identity_image_style' => 'profile',
-				],
+				'condition' => $condition,
 			]
 		);
 
@@ -1390,9 +1394,7 @@ JS;
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default' => '',
-				'condition' => [
-					'identity_image_style' => 'profile',
-				],
+				'condition' => $condition,
 			]
 		);
 
@@ -1405,10 +1407,12 @@ JS;
 				'range' => [
 					'px' => $border_width_range,
 				],
-				'condition' => [
-					'identity_image_style' => 'profile',
-					'identity_image_show_border' => 'yes',
-				],
+				'condition' => array_merge(
+					$condition,
+					[
+						'identity_image_show_border' => 'yes',
+					]
+				),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
 				],
@@ -1420,10 +1424,12 @@ JS;
 			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'identity_image_style' => 'profile',
-					'identity_image_show_border' => 'yes',
-				],
+				'condition' => array_merge(
+					$condition,
+					[
+						'identity_image_show_border' => 'yes',
+					]
+				),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
 				],
