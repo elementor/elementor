@@ -79,7 +79,7 @@ class Contact_Buttons extends Widget_Base {
 			[
 				'label' => esc_html__( 'Platform', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'whatsapp',
+				'default' => Social_Network_Provider::WHATSAPP,
 				'options' => Social_Network_Provider::get_social_networks_text(
 					[
 						Social_Network_Provider::EMAIL,
