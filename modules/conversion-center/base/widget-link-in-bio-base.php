@@ -6,6 +6,8 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
+use Elementor\Modules\ConversionCenter\Classes\Render\Core_Render;
+use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Modules\ConversionCenter\Traits\Conversion_Center_Controls_Trait;
 use Elementor\Plugin;
 use Elementor\Repeater;
@@ -53,6 +55,48 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			],
 
 		];
+	}
+
+
+	public function get_icon(): string {
+		return 'eicon-bullet-list';
+	}
+
+	public function get_categories(): array {
+		return [ 'general' ];
+	}
+
+	public function get_keywords(): array {
+		return [ 'buttons', 'bio', 'widget' ];
+	}
+
+	public function show_in_panel(): bool {
+		return Plugin::$instance->experiments->is_feature_active( ConversionCenterModule::EXPERIMENT_NAME );
+	}
+
+	public function get_stack( $with_common_controls = true ): array {
+		return parent::get_stack( false );
+	}
+
+	protected function register_controls(): void {
+
+		$this->add_identity_section();
+
+		$this->add_bio_section();
+
+		$this->add_icons_controls();
+
+		$this->add_cta_controls();
+
+		$this->add_style_tab();
+
+		$this->add_advanced_tab();
+	}
+
+	protected function render(): void {
+		$render_strategy = new Core_Render( $this );
+
+		$render_strategy->render();
 	}
 
 	protected function add_cta_controls(): void {
