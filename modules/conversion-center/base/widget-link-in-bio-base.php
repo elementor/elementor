@@ -79,6 +79,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						],
 					],
 				],
+				'border_section' => [
+					'field_options' => false,
+				]
 			],
 
 		];
@@ -961,17 +964,22 @@ JS;
 			]
 		);
 
+		$bg_image_field_options = [
+			'background' => [
+				'default' => 'classic',
+			],
+		];
+		$config = static::get_configuration();
+		if ( $config['style']['border_section']['field_options'] ) {
+			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
+		}
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_border_background_group',
 				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
-				'fields_options' => [
-					'background' => [
-						'default' => 'classic',
-					],
-				],
+				'fields_options' => $bg_image_field_options,
 			]
 		);
 
@@ -1449,6 +1457,7 @@ JS;
 				[
 					'type' => Controls_Manager::HEADING,
 					'label' => esc_html__( 'Dividers', 'elementor' ),
+					'separator' => 'before',
 				]
 			);
 
@@ -1463,10 +1472,10 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'cta_links_divider_width',
 				[
-					'label' => esc_html__( 'Width', 'elementor' ),
+					'label' => esc_html__( 'Width', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'px' ],
 					'range' => [
