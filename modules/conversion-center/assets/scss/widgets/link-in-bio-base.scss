@@ -1,18 +1,5 @@
 .e-link-in-bio {
 
-	// Constants
-	$link-in-bio-cta-bg-color: #467FF7;
-	$link-in-bio-text-color-alt: #324a6d;
-	$link-in-bio-text-color-default: #1c2448;
-
-	$link-in-bio-border-radius-rounded: 20px;
-	$link-in-bio-border-radius-round: 50px;
-	$link-in-bio-border-radius-sharp: 0;
-
-	$link-in-bio-icon-size-small: 25px;
-	$link-in-bio-icon-size-medium: 30px;
-	$link-in-bio-icon-size-large: 35px;
-
 	// Layout config
 	--e-link-in-bio-border-color: transparent;
 	--e-link-in-bio-border-style: none;
@@ -52,7 +39,7 @@
 	// CTAs config
 	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-ctas-border-color: transparent;
-	--e-link-in-bio-ctas-border-radius: 20px;
+	--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-rounded};
 	--e-link-in-bio-ctas-border-style: none;
 	--e-link-in-bio-ctas-border-width: 2px;
 	--e-link-in-bio-ctas-gap: 22px;
@@ -298,10 +285,13 @@
 			}
 		}
 
+		.e-link-in-bio__cta-image {
+			flex: 0 0 min(50%, 140px);
+		}
+
 		.e-link-in-bio__cta-image-el {
 			aspect-ratio: 140 / 100;
 			height: 100%;
-			max-width: 140px;
 			object-fit: cover;
 			width: 100%;
 		}

@@ -1,5 +1,14 @@
 .e-link-in-bio-var-3 {
 	--e-link-in-bio-gutter-block-end: 20px;
-	--e-link-in-bio-ctas-border-radius: 0;
+	--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-sharp};
 	--e-link-in-bio-ctas-gap: 8px;
+
+	.e-link-in-bio__ctas {
+		.e-link-in-bio__cta {
+			&.has-corners-rounded,
+			&.has-corners-round {
+				--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-sharp};
+			}
+		}
+	}
 }
