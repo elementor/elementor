@@ -25,7 +25,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'content' => [
 				'identity_section' => [
 					'identity_image_style' => [
-						'default' => 'profile'
+						'default' => 'profile',
 					],
 				],
 				'bio_section' => [
