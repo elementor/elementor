@@ -28,7 +28,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				],
 				'bio_section' => [
 					'title' => [
-						'default' => esc_html__( 'Sara Parker', 'elementor' ),
+						'default' => esc_html__( 'Kitchen Chronicles', 'elementor' ),
 					],
 					'description' => [
 						'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
