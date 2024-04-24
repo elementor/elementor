@@ -24,7 +24,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		return [
 			'content' => [
 				'identity_section' => [
-					'identity_image_style' => true,
+					'identity_image_style' => [
+						'default' => 'profile'
+					],
 				],
 				'bio_section' => [
 					'title' => [
@@ -1139,7 +1141,7 @@ JS;
 				[
 					'label' => esc_html__( 'Image style', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => 'profile',
+					'default' => $config['content']['identity_section']['identity_image_style']['default'],
 					'options' => [
 						'profile' => esc_html__( 'Profile', 'elementor' ),
 						'cover' => esc_html__( 'Cover', 'elementor' ),
@@ -1199,14 +1201,19 @@ JS;
 			]
 		);
 
+		$bga_color_condition = [];
+		if ( $config['style']['cta_section']['has_link_type'] ) {
+			$bga_color_condition = [
+				'cta_links_type' => 'button',
+			];
+		}
+
 		$this->add_control(
 			'cta_links_background_color',
 			[
 				'label' => esc_html__( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'cta_links_type' => 'button',
-				],
+				'condition' => $bga_color_condition,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
 				],
