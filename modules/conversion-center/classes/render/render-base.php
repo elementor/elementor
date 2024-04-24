@@ -3,8 +3,8 @@
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\ConversionCenter\Base\Widget_Link_In_Bio_Base;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
-use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
 /**
@@ -16,13 +16,13 @@ use Elementor\Utils;
  */
 abstract class Render_Base {
 
-	protected Link_In_Bio $widget;
+	protected Widget_Link_In_Bio_Base $widget;
 
 	protected array $settings;
 
 	abstract public function render(): void;
 
-	public function __construct( Link_In_Bio $widget ) {
+	public function __construct( Widget_Link_In_Bio_Base $widget ) {
 		$this->widget = $widget;
 		$this->settings = $widget->get_settings_for_display();
 	}
@@ -50,12 +50,21 @@ abstract class Render_Base {
 				if ( empty( $cta['cta_link_text'] ) ) {
 					break;
 				}
+
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
+				$cta_image = $cta['cta_link_image'] ?? [];
+				$cta_has_image = ! empty( $cta_image ) &&
+					( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) ) &&
+					'button' === $ctas_props_type;
 
 				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
 				if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
 					$ctas_classnames .= ' has-border';
+				}
+
+				if ( $cta_has_image ) {
+					$ctas_classnames .= ' has-image';
 				}
 
 				if ( 'button' === $ctas_props_type ) {
@@ -74,6 +83,23 @@ abstract class Render_Base {
 				}
 				?>
 				<a <?php echo $this->widget->get_render_attribute_string( 'cta-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<?php if ( $cta_has_image ) : ?>
+						<span class="e-link-in-bio__cta-image">
+							<?php if ( ! empty( $cta_image['id'] ) ) {
+								echo wp_get_attachment_image( $cta_image['id'], 'thumbnail', false, [
+									'class' => 'e-link-in-bio__cta-image-el',
+								] );
+							} else {
+								$this->widget->add_render_attribute( 'cta-link-image' . $key, [
+									'alt' => '',
+									'class' => 'e-link-in-bio__cta-image-el',
+									'src' => esc_url( $cta_image['url'] ),
+								] );
+								?>
+								<img <?php echo $this->widget->get_render_attribute_string( 'cta-link-image' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+							<?php }; ?>
+						</span>
+					<?php endif; ?>
 					<span class="e-link-in-bio__cta-text">
 						<?php echo esc_html( $cta['cta_link_text'] ); ?>
 					</span>
@@ -306,7 +332,7 @@ abstract class Render_Base {
 		$layout_props_show_border = $this->settings['background_show_border'] ?? '';
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
 
-		$layout_classnames = 'e-link-in-bio e-var-' . $this->widget->get_name();
+		$layout_classnames = 'e-link-in-bio e-' . $this->widget->get_name();
 
 		if ( 'yes' === $layout_props_show_border ) {
 			$layout_classnames .= ' has-border';
