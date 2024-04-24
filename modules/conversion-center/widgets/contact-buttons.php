@@ -48,16 +48,21 @@ class Contact_Buttons extends Widget_Base {
 	}
 
 	protected function register_controls(): void {
+
+		// Controls
 		$this->add_chat_button_section();
 
 		$this->add_top_bar_section();
 
+		// Styles
 		$this->add_style_chat_button_section();
 
 		$this->add_style_top_bar_section();
 
 		$this->add_advanced_tab();
 	}
+
+	// Controls
 
 	private function add_chat_button_section(): void {
 		$this->start_controls_section(
@@ -82,6 +87,175 @@ class Contact_Buttons extends Widget_Base {
 					'messenger' => esc_html__( 'Messenger', 'elementor' ),
 					'viber' => esc_html__( 'Viber', 'elementor' ),
 					'url' => esc_html__( 'Url', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'chat_button_email_address',
+			[
+				'label' => esc_html__( 'Email', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( '@', 'elementor' ),
+				'condition' => [
+					'chat_button_platform' => 'email'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_email_subject',
+			[
+				'label' => esc_html__( 'Subject', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition' => [
+					'chat_button_platform' => 'email'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_email_message',
+			[
+				'label' => esc_html__( 'Message', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'condition' => [
+					'chat_button_platform' => 'email'
+				],
+			]
+		);
+
+		$this->add_control(
+			'chat_button_sms_number',
+			[
+				'label' => esc_html__( 'Number', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( '+', 'elementor' ),
+				'condition' => [
+					'chat_button_platform' => 'sms'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_whatsapp_number',
+			[
+				'label' => esc_html__( 'Number', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( '+', 'elementor' ),
+				'condition' => [
+					'chat_button_platform' => 'whatsapp'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_skype_username',
+			[
+				'label' => esc_html__( 'Username', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition' => [
+					'chat_button_platform' => 'skype'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_skype_action',
+			[
+				'label' => esc_html__( 'Action', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'chat',
+				'options' => [
+					'chat' => 'Chat',
+					'phone' => 'Phone',
+				],
+				'condition' => [
+					'chat_button_platform' => 'skype'
+				],
+			]
+		);
+
+		$this->add_control(
+			'chat_button_messenger_number',
+			[
+				'label' => esc_html__( 'Username', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'condition' => [
+					'chat_button_platform' => 'messenger'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_viber_number',
+			[
+				'label' => esc_html__( 'Number', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( '+', 'elementor' ),
+				'condition' => [
+					'chat_button_platform' => 'viber'
+				],
+			],
+		);
+
+		$this->add_control(
+			'chat_button_viber_action',
+			[
+				'label' => esc_html__( 'Action', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'chat',
+				'options' => [
+					'chat' => 'Chat',
+					'contact' => 'Contact',
+				],
+				'condition' => [
+					'chat_button_platform' => 'viber'
+				],
+			]
+		);
+	
+		$this->add_control(
+			'chat_button_url',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'options' => [ 'url', 'is_external' ],
+				'default' => [
+					'url' => '',
+					'is_external' => true,
+				],
+				'label_block' => true,
+				'condition'   => [
+					'chat_button_platform' => 'url'
 				],
 			]
 		);
@@ -156,6 +330,8 @@ class Contact_Buttons extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	// Styles
+
 	private function add_style_chat_button_section(): void {
 		$this->start_controls_section(
 			'style_chat_button',
@@ -209,7 +385,7 @@ class Contact_Buttons extends Widget_Base {
 				'label'     => esc_html__( 'Icon Color', 'elementor' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-text: {{VALUE}}',
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
 				],
 				'condition' => [
 					'style_button_color_select' => 'custom',
@@ -259,7 +435,7 @@ class Contact_Buttons extends Widget_Base {
 				'label'     => esc_html__( 'Icon Color', 'elementor' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-text-hover: {{VALUE}}',
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon-hover: {{VALUE}}',
 				],
 				'condition' => [
 					'style_button_color_select_hover' => 'custom',

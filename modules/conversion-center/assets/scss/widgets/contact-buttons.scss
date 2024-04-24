@@ -3,23 +3,125 @@
     --e-contact-buttons-size-small: 65px;
     --e-contact-buttons-size-medium: 75px;
     --e-contact-buttons-size-large: 85px;
-    --e-contact-buttons-button-bg: #24d066;
-    --e-contact-buttons-button-bg-hover: #178541;
-    --e-contact-buttons-button-text: #ffffff;
-    --e-contact-buttons-button-text-hover: #ffffff;
     --e-contact-buttons-dot: #FF0000;
     --e-contact-buttons-dot-size: 20px;
-    --e-contact-buttons-top-bar-bg: #075e54;
+    --e-contact-buttons-profile-dot-bg: #39AA59;
+
+    // Platform specific colors
+    // Default used for email, sms, url
+    --e-contact-buttons-button-bg: #467FF7;
+    --e-contact-buttons-button-bg-hover: #1C2448;
+    --e-contact-buttons-button-icon: #ffffff;
+    --e-contact-buttons-button-icon-hover: #ffffff;
+    --e-contact-buttons-top-bar-bg: #1C2448;
     --e-contact-buttons-top-bar-name: #ffffff;
     --e-contact-buttons-top-bar-title: #ffffff;
-    --e-contact-buttons-profile-dot-bg: #39AA59;
     --e-contact-buttons-close-button-color: #ffffff;
+    --e-contact-buttons-message-bubble-name: #ffffff;
+    --e-contact-buttons-message-bubble-message: #000000;
+    --e-contact-buttons-message-bubble-time: #000000;
+    --e-contact-buttons-message-bubble-name: #ffffff;
+    --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+    --e-contact-buttons-message-bubble-chat-bg: #C8D5DC;
+    --e-contact-buttons-send-button-icon: #ffffff;
+    --e-contact-buttons-send-button-bg: #467FF7;
+    --e-contact-buttons-send-button-icon-hover: #ffffff;
+    --e-contact-buttons-send-button-bg-hover: #1C2448;
+    --e-contact-buttons-chat-box-bg: #FFFFFF;
 
     position: fixed;
     bottom: 20px;
     min-width: var(--e-contact-buttons-chat-box-width);
     right: 20px;
     z-index: 99;
+
+    &.has-platform-whatsapp {
+        --e-contact-buttons-button-bg: #25D366;
+        --e-contact-buttons-button-bg-hover: #075E54;
+        --e-contact-buttons-button-icon: #ffffff;
+        --e-contact-buttons-button-icon-hover: #ffffff;
+        --e-contact-buttons-top-bar-bg: #075E54;
+        --e-contact-buttons-top-bar-name: #ffffff;
+        --e-contact-buttons-top-bar-title: #ffffff;
+        --e-contact-buttons-close-button-color: #ffffff;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-message: #000000;
+        --e-contact-buttons-message-bubble-time: #000000;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+        --e-contact-buttons-message-bubble-chat-bg: #ECE5DD;
+        --e-contact-buttons-send-button-icon: #ffffff;
+        --e-contact-buttons-send-button-bg: #25D366;
+        --e-contact-buttons-send-button-icon-hover: #ffffff;
+        --e-contact-buttons-send-button-bg-hover: #075E54;
+        --e-contact-buttons-chat-box-bg: #FFFFFF;
+    }
+
+    &.has-platform-skype {
+        --e-contact-buttons-button-bg: #00AFF0;
+        --e-contact-buttons-button-bg-hover: #0D72CF;
+        --e-contact-buttons-button-icon: #ffffff;
+        --e-contact-buttons-button-icon-hover: #ffffff;
+        --e-contact-buttons-top-bar-bg: #0D72CF;
+        --e-contact-buttons-top-bar-name: #ffffff;
+        --e-contact-buttons-top-bar-title: #ffffff;
+        --e-contact-buttons-close-button-color: #ffffff;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-message: #000000;
+        --e-contact-buttons-message-bubble-time: #000000;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+        --e-contact-buttons-message-bubble-chat-bg: #CDF7FF;
+        --e-contact-buttons-send-button-icon: #ffffff;
+        --e-contact-buttons-send-button-bg: #00AFF0;
+        --e-contact-buttons-send-button-icon-hover: #ffffff;
+        --e-contact-buttons-send-button-bg-hover: #0D72CF;
+        --e-contact-buttons-chat-box-bg: #FFFFFF;
+    }
+
+    &.has-platform-messenger {
+        --e-contact-buttons-button-bg: #168AFF;
+        --e-contact-buttons-button-bg-hover: #168AFF;
+        --e-contact-buttons-button-icon: #ffffff;
+        --e-contact-buttons-button-icon-hover: #ffffff;
+        --e-contact-buttons-top-bar-bg: #168AFF;
+        --e-contact-buttons-top-bar-name: #ffffff;
+        --e-contact-buttons-top-bar-title: #ffffff;
+        --e-contact-buttons-close-button-color: #ffffff;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-message: #000000;
+        --e-contact-buttons-message-bubble-time: #000000;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+        --e-contact-buttons-message-bubble-chat-bg: #F0F0F0;
+        --e-contact-buttons-send-button-icon: #ffffff;
+        --e-contact-buttons-send-button-bg: #168AFF;
+        --e-contact-buttons-send-button-icon-hover: #ffffff;
+        --e-contact-buttons-send-button-bg-hover: #168AFF;
+        --e-contact-buttons-chat-box-bg: #FFFFFF;
+    }
+
+    &.has-platform-viber {
+        --e-contact-buttons-button-bg: #7360F2;
+        --e-contact-buttons-button-bg-hover: #4E4879;
+        --e-contact-buttons-button-icon: #ffffff;
+        --e-contact-buttons-button-icon-hover: #ffffff;
+        --e-contact-buttons-top-bar-bg: #4E4879;
+        --e-contact-buttons-top-bar-name: #ffffff;
+        --e-contact-buttons-top-bar-title: #ffffff;
+        --e-contact-buttons-close-button-color: #ffffff;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-message: #000000;
+        --e-contact-buttons-message-bubble-time: #000000;
+        --e-contact-buttons-message-bubble-name: #ffffff;
+        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+        --e-contact-buttons-message-bubble-chat-bg: #E5E1FF;
+        --e-contact-buttons-send-button-icon: #ffffff;
+        --e-contact-buttons-send-button-bg: #7360F2;
+        --e-contact-buttons-send-button-icon-hover: #ffffff;
+        --e-contact-buttons-send-button-bg-hover: #4E4879;
+        --e-contact-buttons-chat-box-bg: #FFFFFF;
+    }
 
     &__content {
         display: none;
@@ -124,7 +226,7 @@
         background-color: var(--e-contact-buttons-button-bg);
         border-radius: 50%;
         border: 0;
-        color: var(--e-contact-buttons-button-text);
+        color: var(--e-contact-buttons-button-icon);
         display: flex;
         justify-content: center;
         position: relative;
@@ -132,7 +234,7 @@
         &:hover,
         &:focus {
             background-color: var(--e-contact-buttons-button-bg-hover);
-            color: var(--e-contact-buttons-button-text-hover);
+            color: var(--e-contact-buttons-button-icon-hover);
         }
 
         &.has-dot::after {

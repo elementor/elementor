@@ -131,7 +131,12 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 
 	private function build_layout_render_attribute(): void {
 		$layout_classnames = 'e-contact-buttons';
+		$platform = $this->settings['chat_button_platform'] ?? '';
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
+
+		if (! empty($platform)) {
+			$layout_classnames .= ' has-platform-' . $platform;
+		}
 
 		if ( $custom_classes ) {
 			$layout_classnames .= ' ' . $custom_classes;
