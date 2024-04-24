@@ -197,13 +197,13 @@
     &__close-button {
         background: none;
         border: 0;
-        color: var(--e-contact-buttons-close-button-color);
         padding: 0;
         position: absolute;
         right: 20px;
         top: 20px;
 
         svg {
+            fill: var(--e-contact-buttons-close-button-color);
             height: 20px;
             width: 20px;
         }
@@ -212,7 +212,10 @@
         &:focus {
             background: none;
             border: 0;
-            color: var(--e-contact-buttons-close-button-color);
+
+            svg {
+                fill: var(--e-contact-buttons-close-button-color);
+            }
         }
     }
 
@@ -226,15 +229,21 @@
         background-color: var(--e-contact-buttons-button-bg);
         border-radius: 50%;
         border: 0;
-        color: var(--e-contact-buttons-button-icon);
         display: flex;
         justify-content: center;
         position: relative;
+
+        svg {
+            fill: var(--e-contact-buttons-button-icon);
+        }
         
         &:hover,
         &:focus {
             background-color: var(--e-contact-buttons-button-bg-hover);
-            color: var(--e-contact-buttons-button-icon-hover);
+            
+            svg {
+                fill: var(--e-contact-buttons-button-icon-hover);
+            }
         }
 
         &.has-dot::after {
