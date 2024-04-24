@@ -1149,7 +1149,7 @@ JS;
 				]
 			);
 		}
-		
+
 		if ( $config['content']['identity_section']['identity_image_style'] ) {
 			$this->add_control(
 				'identity_image_style',
