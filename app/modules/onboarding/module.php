@@ -92,7 +92,7 @@ class Module extends BaseModule {
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
 				] ),
-				'upgradeCTA' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
+				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
 				'signUp' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',

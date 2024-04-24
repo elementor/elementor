@@ -14,7 +14,7 @@ export default function ChooseFeatures() {
 		nextStep = 'goodToGo',
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
-			href: elementorAppConfig.onboarding.urls.upgradeCTA,
+			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
