@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\ConversionCenter\Base;
+namespace Elementor\Modules\ConversionCenter\Traits;
 
 use Elementor\Controls_Manager;
 
@@ -38,7 +38,7 @@ trait Conversion_Center_Controls_Trait {
 		string $prefix,
 		array $show_border_args = [],
 		array $border_width_args = [],
-		array $border_color_args = [],
+		array $border_color_args = []
 	): void {
 		$show_border = [
 			'label' => esc_html__( 'Border', 'elementor' ),
