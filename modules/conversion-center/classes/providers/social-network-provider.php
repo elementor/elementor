@@ -27,7 +27,7 @@ class Social_Network_Provider {
 	public const URL = 'Url';
 	public const FILE_DOWNLOAD = 'File Download';
 	public const SMS = 'SMS';
-	public CONST VIBER = 'VIBER';
+	public const VIBER = 'VIBER';
 	public const SKYPE = 'Skype';
 
 	public static function get_social_networks_icons(): array {
@@ -104,13 +104,13 @@ class Social_Network_Provider {
 		static::$social_networks[ static::INSTAGRAM ] = [
 			'text' => esc_html__( 'Instagram', 'elementor' ),
 			'icon' => 'fab fa-instagram',
-			'name' => 'instagram'
+			'name' => 'instagram',
 		];
 
 		static::$social_networks[ static::LINKEDIN ] = [
 			'text' => esc_html__( 'LinkedIn', 'elementor' ),
 			'icon' => 'fab fa-linkedin-in',
-			'name' => 'linkedin'
+			'name' => 'linkedin',
 		];
 
 		static::$social_networks[ static::PINTEREST ] = [
