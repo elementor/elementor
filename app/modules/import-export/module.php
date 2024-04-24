@@ -340,6 +340,7 @@ class Module extends BaseModule {
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
+		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
