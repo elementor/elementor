@@ -280,6 +280,8 @@
 
 		&.has-type-link {
 			--e-link-in-bio-ctas-gap: 10px;
+
+			justify-items: center;
 		}
 
 		.e-link-in-bio__cta {
@@ -309,10 +311,6 @@
 			display: flex;
 			flex: 1 1 auto;
 			justify-content: center;
-			padding-block-end: var(--e-link-in-bio-ctas-padding-block-end);
-			padding-block-start: var(--e-link-in-bio-ctas-padding-block-start);
-			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
-			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
 		}
 
 		.e-link-in-bio__cta.is-type-button {
@@ -340,6 +338,10 @@
 
 			.e-link-in-bio__cta-text {
 				background-color: var(--e-link-in-bio-ctas-background-color);
+				padding-block-end: var(--e-link-in-bio-ctas-padding-block-end);
+				padding-block-start: var(--e-link-in-bio-ctas-padding-block-start);
+				padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
+				padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
 			}
 		}
 
@@ -348,6 +350,7 @@
 
 			font-weight: 700;
 			margin-block: 17px;
+			justify-content: center;
 		}
 	}
 
