@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
-import { $eType, ElementorType } from '../types/types';
+import { $eType, ElementorType, WindowType } from '../types/types';
 let elementor: ElementorType;
 let $e: $eType;
 
@@ -149,7 +149,7 @@ export default class WpAdminPage extends BasePage {
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 */
 	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
 
 		const prefix = 'e-experiment';
 
@@ -232,7 +232,7 @@ export default class WpAdminPage extends BasePage {
 	 * Enable uploading SVG files
 	 */
 	async enableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
@@ -241,7 +241,7 @@ export default class WpAdminPage extends BasePage {
      *  Disable uploading SVG files
      */
 	async disableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
@@ -250,6 +250,13 @@ export default class WpAdminPage extends BasePage {
 		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
+		let window: WindowType;
+		await this.page.evaluate( () => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore editor session is on the window object
+			const editorSessionId = window.EDITOR_SESSION_ID;
+			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
+		} );
 	}
 
 	async editWithElementor() {
