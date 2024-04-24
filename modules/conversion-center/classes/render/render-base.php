@@ -53,7 +53,9 @@ abstract class Render_Base {
 
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
 				$cta_image = $cta['cta_link_image'] ?? [];
-				$cta_has_image = ! empty( $cta_image ) && ( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) );
+				$cta_has_image = ! empty( $cta_image ) &&
+					( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) ) &&
+					'button' === $ctas_props_type;
 
 				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
