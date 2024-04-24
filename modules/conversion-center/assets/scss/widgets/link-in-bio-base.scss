@@ -1,7 +1,17 @@
 .e-link-in-bio {
+
+	// Constants
 	$link-in-bio-cta-bg-color: #467FF7;
 	$link-in-bio-text-color-alt: #324a6d;
 	$link-in-bio-text-color-default: #1c2448;
+
+	$link-in-bio-border-radius-rounded: 20px;
+	$link-in-bio-border-radius-round: 50px;
+	$link-in-bio-border-radius-sharp: 0;
+
+	$link-in-bio-icon-size-small: 25px;
+	$link-in-bio-icon-size-medium: 30px;
+	$link-in-bio-icon-size-large: 35px;
 
 	// Layout config
 	--e-link-in-bio-border-color: transparent;
@@ -37,7 +47,7 @@
 	// Icons config
 	--e-link-in-bio-icon-color: inherit;
 	--e-link-in-bio-icon-gap: 20px 29px;
-	--e-link-in-bio-icon-size: 25px;
+	--e-link-in-bio-icon-size: #{$link-in-bio-icon-size-small};
 
 	// CTAs config
 	--e-link-in-bio-ctas-background-color: #{$link-in-bio-cta-bg-color};
@@ -237,11 +247,11 @@
 		height: var(--e-link-in-bio-icon-size);
 
 		&.has-size-medium {
-			--e-link-in-bio-icon-size: 30px;
+			--e-link-in-bio-icon-size: #{$link-in-bio-icon-size-medium};
 		}
 
 		&.has-size-large {
-			--e-link-in-bio-icon-size: 35px;
+			--e-link-in-bio-icon-size: #{$link-in-bio-icon-size-large};
 		}
 
 		.e-link-in-bio__icon-link {
@@ -278,7 +288,6 @@
 			font-size: 16px;
 			font-weight: 500;
 			line-height: 20px;
-			justify-content: center;
 
 			&:hover,
 			&:focus,
@@ -287,13 +296,28 @@
 			}
 		}
 
-		.e-link-in-bio__cta.is-type-button {
-			border-radius: var(--e-link-in-bio-ctas-border-radius);
-			background-color: var(--e-link-in-bio-ctas-background-color);
+		.e-link-in-bio__cta-image-el {
+			aspect-ratio: 140 / 100;
+			height: 100%;
+			max-width: 140px;
+			object-fit: cover;
+			width: 100%;
+		}
+
+		.e-link-in-bio__cta-text {
+			align-items: center;
+			display: flex;
+			flex: 1 1 auto;
+			justify-content: center;
 			padding-block-end: var(--e-link-in-bio-ctas-padding-block-end);
 			padding-block-start: var(--e-link-in-bio-ctas-padding-block-start);
 			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
 			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
+		}
+
+		.e-link-in-bio__cta.is-type-button {
+			border-radius: var(--e-link-in-bio-ctas-border-radius);
+			overflow: hidden;
 
 			&.has-border {
 				--e-link-in-bio-ctas-border-style: solid;
@@ -302,12 +326,20 @@
 				border-width: var(--e-link-in-bio-ctas-border-width);
 			}
 
+			&.has-corners-rounded {
+				--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-rounded};
+			}
+
 			&.has-corners-round {
-				--e-link-in-bio-ctas-border-radius: 50px;
+				--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-round};
 			}
 
 			&.has-corners-sharp {
-				--e-link-in-bio-ctas-border-radius: 0;
+				--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-sharp};
+			}
+
+			.e-link-in-bio__cta-text {
+				background-color: var(--e-link-in-bio-ctas-background-color);
 			}
 		}
 
