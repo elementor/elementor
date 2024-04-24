@@ -57,8 +57,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
-			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="Toggle Contact Buttons">
-
+			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="Open">
 				<?php
 				$mapping = Social_Network_Provider::get_icon_mapping( $platform );
 				$icon_lib = explode( ' ', $mapping )[0];
@@ -104,15 +103,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 		?>
 		<div class="e-contact-buttons__top-bar">
 			<button type="button" class="e-contact-buttons__close-button" aria-label="Close Contact Buttons">
-				<?php
-					Icons_Manager::render_icon(
-						[
-						'library' => 'fa-regular',
-						'value' => 'fa-close',
-						],
-						[ 'aria-hidden' => 'true' ]
-					);
-				?>
+				<i class="eicon-close"></i>
 			</button>
 			<div <?php echo $this->widget->get_render_attribute_string( 'profile-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php if ( ! empty( $profile_image_value['id'] ) ) {

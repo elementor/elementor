@@ -197,25 +197,17 @@
     &__close-button {
         background: none;
         border: 0;
+        color: var(--e-contact-buttons-close-button-color);
         padding: 0;
         position: absolute;
         right: 20px;
         top: 20px;
 
-        svg {
-            fill: var(--e-contact-buttons-close-button-color);
-            height: 20px;
-            width: 20px;
-        }
-
         &:hover,
         &:focus {
             background: none;
             border: 0;
-
-            svg {
-                fill: var(--e-contact-buttons-close-button-color);
-            }
+            color: var(--e-contact-buttons-close-button-color);
         }
     }
 

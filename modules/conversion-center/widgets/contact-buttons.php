@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor Contact Buttons widget.
  *
- * TODO: add description
+ * Elementor widget that displays contact buttons and a chat-like prompt message.
  *
  * @since 3.23.0
  */
@@ -445,16 +445,9 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_hover_animation',
 			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'grow',
-				'options' => [
-					'none' => esc_html__( 'None', 'elementor' ),
-					'grow' => esc_html__( 'Grow', 'elementor' ),
-					'pulse' => esc_html__( 'Pulse', 'elementor' ),
-					'push' => esc_html__( 'Push', 'elementor' ),
-					'float' => esc_html__( 'Float', 'elementor' ),
-				],
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
 			]
 		);
 

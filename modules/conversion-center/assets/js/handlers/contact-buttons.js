@@ -24,7 +24,7 @@ export default class ContactButtonsHandler extends elementorModules.frontend.han
 	}
 
 	onChatButtonClick() {
-		this.elements.$content.addClass( 'is-visible' );
+		this.elements.$content.toggleClass( 'is-visible' );
 	}
 
 	onCloseButtonClick() {
