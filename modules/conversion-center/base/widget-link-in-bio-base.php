@@ -59,7 +59,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'cta_section' => [
 					'has_dividers' => false,
 					'has_image_border' => false,
-					'has_link_type' => true,
+					'has_link_type' => [
+						'default' => 'button',
+					],
 					'has_corners' => true,
 					'has_padding' => true,
 					'has_border_control' => [
@@ -1180,7 +1182,7 @@ JS;
 				[
 					'label' => esc_html__( 'Type', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => 'button',
+					'default' => $config['style']['cta_section']['has_link_type']['default'],
 					'options' => [
 						'button' => esc_html__( 'Button', 'elementor' ),
 						'link' => esc_html__( 'Link', 'elementor' ),
