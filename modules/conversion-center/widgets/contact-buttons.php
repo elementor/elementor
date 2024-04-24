@@ -80,13 +80,12 @@ class Contact_Buttons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'whatsapp',
 				'options' => [
-					'email' => esc_html__( 'Email', 'elementor' ),
-					'sms' => esc_html__( 'SMS', 'elementor' ),
-					'whatsapp' => esc_html__( 'Whatsapp', 'elementor' ),
-					'skype' => esc_html__( 'Skype', 'elementor' ),
-					'messenger' => esc_html__( 'Messenger', 'elementor' ),
-					'viber' => esc_html__( 'Viber', 'elementor' ),
-					'url' => esc_html__( 'Url', 'elementor' ),
+					'email' => esc_html__( 'Email', 'elementor' ), // fas fa-envelope
+					'sms' => esc_html__( 'SMS', 'elementor' ), // fas fa-sms
+					'whatsapp' => esc_html__( 'Whatsapp', 'elementor' ), // fab fa-whatsapp
+					'skype' => esc_html__( 'Skype', 'elementor' ), // fab fa-skype
+					'messenger' => esc_html__( 'Messenger', 'elementor' ), // fab fa-facebook-messenger
+					'viber' => esc_html__ ( 'Viber', 'elementor' ), // fab fa-viber
 				],
 			]
 		);
@@ -239,23 +238,6 @@ class Contact_Buttons extends Widget_Base {
 				],
 				'condition' => [
 					'chat_button_platform' => 'viber'
-				],
-			]
-		);
-	
-		$this->add_control(
-			'chat_button_url',
-			[
-				'label' => esc_html__( 'Link', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'options' => [ 'url', 'is_external' ],
-				'default' => [
-					'url' => '',
-					'is_external' => true,
-				],
-				'label_block' => true,
-				'condition'   => [
-					'chat_button_platform' => 'url'
 				],
 			]
 		);
