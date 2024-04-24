@@ -5,10 +5,10 @@
 	--e-link-in-bio-border-style: none;
 	--e-link-in-bio-border-width: 0;
 	--e-link-in-bio-container-height: auto;
-	--e-link-in-bio-container-width: 360px;
+	--e-link-in-bio-container-width: #{$link-in-bio-default-container-width};
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
-	--e-link-in-bio-content-width: 280px;
+	--e-link-in-bio-content-width: #{$link-in-bio-default-content-width};
 	--e-link-in-bio-gutter-block-end: 45px;
 	--e-link-in-bio-gutter-block-start: 38px;
 	--e-link-in-bio-gutter-inline: 40px;
