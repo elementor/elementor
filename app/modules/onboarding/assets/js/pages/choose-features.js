@@ -1,52 +1,17 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { OnboardingContext } from '../context/context';
-import Message from '../components/Message';
-
+import Message from '../components/message';
+import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function ChooseFeatures() {
 	const { state } = useContext( OnboardingContext ),
-		tiers = { advanced: 'Advanced', essential: 'Essential' },
+		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
-		// [ message, setMessage ] = useState( '' ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
-		options = [
-			{
-				plan: 'essential',
-				text: __( 'Templates & Theme Builder', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'WooCommerce Builder', 'elementor' ),
-			},
-			{
-				plan: 'essential',
-				text: __( 'Lead Collection & Form Builder', 'elementor' ),
-			},
-			{
-				plan: 'essential',
-				text: __( 'Dynamic Content', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'Popup Builder', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'Custom Code & CSS', 'elementor' ),
-			},
-			{
-				plan: 'essential',
-				text: __( 'Motion Effects & Animations', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'Notes & Collaboration', 'elementor' ),
-			},
-		],
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
 			href: elementorAppConfig.onboarding.urls.upgradeCTA,
@@ -81,33 +46,7 @@ export default function ChooseFeatures() {
 		} else {
 			setTierName( tiers.essential );
 		}
-
-		// createMessage();
 	}, [ selectedFeatures ] );
-
-	function assignTierName( checked, id, text ) {
-		const tier = id.split( '-' )[ 0 ];
-
-		if ( checked ) {
-			setSelectedFeatures( {
-				...selectedFeatures,
-				[ tier ]: [ ...selectedFeatures[ tier ], text ],
-			} );
-		} else {
-			setSelectedFeatures( {
-				...selectedFeatures,
-				[ tier ]: selectedFeatures[ tier ].filter( ( item ) => item !== text ),
-			} );
-		}
-	}
-
-	function createMessage() {
-		/* Translators: %s: Tier name. */
-		const translatedMessage = __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ),
-			splittedMessage = translatedMessage.split( '%s' );
-
-		setMessage( `${ splittedMessage[ 0 ] } <b> ${ tierName } </b> ${ splittedMessage[ 1 ] }` );
-	}
 
 	function isFeatureSelected( features ) {
 		return !! features.advanced.length || !! features.essential.length;
@@ -139,7 +78,7 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										onChange={ ( event ) => assignTierName( event.currentTarget.checked, event.target.value, option.text ) }
+										onChange={ ( event ) => setSelectedFeatureList( event.currentTarget.checked, event.target.value, option.text, selectedFeatures, setSelectedFeatures ) }
 										id={ itemId }
 										value={ itemId }
 									/>
@@ -149,12 +88,9 @@ export default function ChooseFeatures() {
 						} )
 					}
 				</form >
-				<p className="e-onboarding__choose-features-section__plan">
+				<p className="e-onboarding__choose-features-section__message" data-testid="choose-features-message">
 					{ isFeatureSelected( selectedFeatures ) &&
-						// { message }
-						/* Translators: %s: Tier name. */
-						// __( `Based on the features you chose, we recommend the %s plan, or higher`, 'elementor' ).replace( '%s', tierName )
-						<Message tier={tierName}/>
+						<Message tier={ tierName } />
 					}
 				</p>
 
