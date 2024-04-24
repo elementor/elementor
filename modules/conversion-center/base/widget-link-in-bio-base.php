@@ -27,6 +27,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'identity_image_style' => [
 						'default' => 'profile',
 					],
+					'has_heading_text' => false,
 				],
 				'bio_section' => [
 					'title' => [
@@ -64,6 +65,8 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 					'has_corners' => true,
 					'has_padding' => true,
+					'has_background_control' => true,
+					'has_cta_control_text' => false,
 					'has_border_control' => [
 						'prefix' => 'cta_links',
 						'show_border_args' => [
@@ -1137,6 +1140,16 @@ JS;
 			]
 		);
 
+		if ( $config['content']['identity_section']['has_heading_text'] ) {
+			$this->add_control(
+				'identity_heading',
+				[
+					'label' => $config['content']['identity_section']['has_heading_text'],
+					'type' => Controls_Manager::HEADING,
+				]
+			);
+		}
+		
 		if ( $config['content']['identity_section']['identity_image_style'] ) {
 			$this->add_control(
 				'identity_image_style',
@@ -1176,6 +1189,16 @@ JS;
 			]
 		);
 
+		if ( $config['style']['cta_section']['has_cta_control_text'] ) {
+			$this->add_control(
+				'cta_links_heading',
+				[
+					'label' => $config['style']['cta_section']['has_cta_control_text'],
+					'type' => Controls_Manager::HEADING,
+				]
+			);
+		}
+
 		if ( $config['style']['cta_section']['has_link_type'] ) {
 			$this->add_control(
 				'cta_links_type',
@@ -1210,17 +1233,19 @@ JS;
 			];
 		}
 
-		$this->add_control(
-			'cta_links_background_color',
-			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'condition' => $bga_color_condition,
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
-				],
-			]
-		);
+		if ( $config['style']['cta_section']['has_background_control'] ) {
+			$this->add_control(
+				'cta_links_background_color',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'condition' => $bga_color_condition,
+					'selectors' => [
+						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
+					],
+				]
+			);
+		}
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
@@ -1333,11 +1358,6 @@ JS;
 		$this->end_controls_section();
 	}
 
-	/**
-	 * @param array $border_width_range
-	 *
-	 * @return void
-	 */
 	private function add_style_identity_controls( array $border_width_range ): void {
 		$config = static::get_configuration();
 		$this->start_controls_section(
