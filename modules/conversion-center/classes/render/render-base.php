@@ -3,8 +3,8 @@
 namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\ConversionCenter\Base\Widget_Link_In_Bio_Base;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
-use Elementor\Modules\ConversionCenter\Widgets\Link_In_Bio;
 use Elementor\Utils;
 
 /**
@@ -16,13 +16,13 @@ use Elementor\Utils;
  */
 abstract class Render_Base {
 
-	protected Link_In_Bio $widget;
+	protected Widget_Link_In_Bio_Base $widget;
 
 	protected array $settings;
 
 	abstract public function render(): void;
 
-	public function __construct( Link_In_Bio $widget ) {
+	public function __construct( Widget_Link_In_Bio_Base $widget ) {
 		$this->widget = $widget;
 		$this->settings = $widget->get_settings_for_display();
 	}
