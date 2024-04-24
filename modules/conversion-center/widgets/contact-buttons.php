@@ -3,6 +3,7 @@
 namespace Elementor\Modules\ConversionCenter\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\ConversionCenter\Classes\Render\Contact_Buttons_Core_Render;
 use Elementor\Group_Control_Typography;
 use Elementor\Plugin;
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Contact_Buttons extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-contact-buttons';
 
-    public function get_name(): string {
+	public function get_name(): string {
 		return 'contact-buttons';
 	}
 
@@ -79,14 +80,16 @@ class Contact_Buttons extends Widget_Base {
 				'label' => esc_html__( 'Platform', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'whatsapp',
-				'options' => [
-					'email' => esc_html__( 'Email', 'elementor' ), // fas fa-envelope
-					'sms' => esc_html__( 'SMS', 'elementor' ), // fas fa-sms
-					'whatsapp' => esc_html__( 'Whatsapp', 'elementor' ), // fab fa-whatsapp
-					'skype' => esc_html__( 'Skype', 'elementor' ), // fab fa-skype
-					'messenger' => esc_html__( 'Messenger', 'elementor' ), // fab fa-facebook-messenger
-					'viber' => esc_html__ ( 'Viber', 'elementor' ), // fab fa-viber
-				],
+				'options' => Social_Network_Provider::get_social_networks_text(
+					[
+						Social_Network_Provider::EMAIL,
+						Social_Network_Provider::SMS,
+						Social_Network_Provider::WHATSAPP,
+						Social_Network_Provider::SKYPE,
+						Social_Network_Provider::MESSENGER,
+						Social_Network_Provider::VIBER,
+					]
+				)
 			]
 		);
 
@@ -101,7 +104,7 @@ class Contact_Buttons extends Widget_Base {
 				'label_block' => true,
 				'placeholder' => esc_html__( '@', 'elementor' ),
 				'condition' => [
-					'chat_button_platform' => 'email'
+					'chat_button_platform' => Social_Network_Provider::EMAIL,
 				],
 			],
 		);
@@ -116,7 +119,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 				'label_block' => true,
 				'condition' => [
-					'chat_button_platform' => 'email'
+					'chat_button_platform' => Social_Network_Provider::EMAIL,
 				],
 			],
 		);
@@ -127,7 +130,7 @@ class Contact_Buttons extends Widget_Base {
 				'label' => esc_html__( 'Message', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'condition' => [
-					'chat_button_platform' => 'email'
+					'chat_button_platform' => Social_Network_Provider::EMAIL,
 				],
 			]
 		);
@@ -143,7 +146,7 @@ class Contact_Buttons extends Widget_Base {
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition' => [
-					'chat_button_platform' => 'sms'
+					'chat_button_platform' => Social_Network_Provider::SMS,
 				],
 			],
 		);
@@ -159,7 +162,7 @@ class Contact_Buttons extends Widget_Base {
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition' => [
-					'chat_button_platform' => 'whatsapp'
+					'chat_button_platform' => Social_Network_Provider::WHATSAPP
 				],
 			],
 		);
@@ -174,7 +177,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 				'label_block' => true,
 				'condition' => [
-					'chat_button_platform' => 'skype'
+					'chat_button_platform' => Social_Network_Provider::SKYPE
 				],
 			],
 		);
@@ -190,7 +193,7 @@ class Contact_Buttons extends Widget_Base {
 					'phone' => 'Phone',
 				],
 				'condition' => [
-					'chat_button_platform' => 'skype'
+					'chat_button_platform' => Social_Network_Provider::SKYPE
 				],
 			]
 		);
@@ -205,7 +208,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 				'label_block' => true,
 				'condition' => [
-					'chat_button_platform' => 'messenger'
+					'chat_button_platform' => Social_Network_Provider::MESSENGER
 				],
 			],
 		);
@@ -221,7 +224,7 @@ class Contact_Buttons extends Widget_Base {
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition' => [
-					'chat_button_platform' => 'viber'
+					'chat_button_platform' => Social_Network_Provider::VIBER
 				],
 			],
 		);
@@ -237,7 +240,7 @@ class Contact_Buttons extends Widget_Base {
 					'contact' => 'Contact',
 				],
 				'condition' => [
-					'chat_button_platform' => 'viber'
+					'chat_button_platform' => Social_Network_Provider::VIBER
 				],
 			]
 		);
@@ -265,7 +268,7 @@ class Contact_Buttons extends Widget_Base {
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
-	
+
 		$this->add_control(
 			'top_bar_name',
 			[
@@ -275,7 +278,7 @@ class Contact_Buttons extends Widget_Base {
 				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
 			]
 		);
-	
+
 		$this->add_control(
 			'top_bar_title',
 			[
@@ -285,7 +288,7 @@ class Contact_Buttons extends Widget_Base {
 				'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
 			]
 		);
-	
+
 		$this->add_control(
 			'top_bar_image',
 			[
@@ -296,7 +299,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'top_bar_show_dot',
 			[
@@ -308,7 +311,7 @@ class Contact_Buttons extends Widget_Base {
 				'default' => 'yes',
 			]
 		);
-	
+
 		$this->end_controls_section();
 	}
 
@@ -319,20 +322,20 @@ class Contact_Buttons extends Widget_Base {
 			'style_chat_button',
 			[
 				'label' => esc_html__( 'Chat Button', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
 		$this->add_control(
 			'style_chat_button_size',
 			[
-				'label'      => esc_html__( 'Size', 'elementor' ),
-				'type'       => Controls_Manager::SELECT,
-				'default'    => 'medium',
-				'options'    => [
-					'small'  => esc_html__( 'Small', 'elementor' ),
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'medium',
+				'options' => [
+					'small' => esc_html__( 'Small', 'elementor' ),
 					'medium' => esc_html__( 'Medium', 'elementor' ),
-					'large'  => esc_html__( 'Large', 'elementor' ),
+					'large' => esc_html__( 'Large', 'elementor' ),
 				],
 			]
 		);
@@ -351,12 +354,12 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_select',
 			[
-				'label'        => esc_html__( 'Colors', 'elementor' ),
-				'type'         => Controls_Manager::SELECT,
-				'default'      => 'default',
-				'options'      => [
-					'default'  => esc_html__( 'Default', 'elementor' ),
-					'custom'   => esc_html__( 'Custom', 'elementor' ),
+				'label' => esc_html__( 'Colors', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -364,8 +367,8 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_icon',
 			[
-				'label'     => esc_html__( 'Icon Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
 				],
@@ -378,8 +381,8 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_background',
 			[
-				'label'     => esc_html__( 'Background Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg: {{VALUE}}',
 				],
@@ -388,7 +391,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-		
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -401,12 +404,12 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_select_hover',
 			[
-				'label'        => esc_html__( 'Colors', 'elementor' ),
-				'type'         => Controls_Manager::SELECT,
-				'default'      => 'default',
-				'options'      => [
-					'default'  => esc_html__( 'Default', 'elementor' ),
-					'custom'   => esc_html__( 'Custom', 'elementor' ),
+				'label' => esc_html__( 'Colors', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -414,8 +417,8 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_icon_hover',
 			[
-				'label'     => esc_html__( 'Icon Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon-hover: {{VALUE}}',
 				],
@@ -428,8 +431,8 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_background_hover',
 			[
-				'label'     => esc_html__( 'Background Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg-hover: {{VALUE}}',
 				],
@@ -442,19 +445,19 @@ class Contact_Buttons extends Widget_Base {
 		$this->add_control(
 			'style_button_color_hover_animation',
 			[
-				'label'        => esc_html__( 'Hover Animation', 'elementor' ),
-				'type'         => Controls_Manager::SELECT,
-				'default'      => 'grow',
-				'options'      => [
-					'none'  => esc_html__( 'None', 'elementor' ),
-					'grow'  => esc_html__( 'Grow', 'elementor' ),
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'grow',
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'grow' => esc_html__( 'Grow', 'elementor' ),
 					'pulse' => esc_html__( 'Pulse', 'elementor' ),
-					'push'  => esc_html__( 'Push', 'elementor' ),
+					'push' => esc_html__( 'Push', 'elementor' ),
 					'float' => esc_html__( 'Float', 'elementor' ),
 				],
 			]
 		);
-		
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
@@ -471,7 +474,7 @@ class Contact_Buttons extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_profile_heading',
 			[
@@ -480,7 +483,7 @@ class Contact_Buttons extends Widget_Base {
 				'separator' => 'before',
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_image_size',
 			[
@@ -488,20 +491,20 @@ class Contact_Buttons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'medium',
 				'options' => [
-					'small'  => esc_html__( 'Small', 'elementor' ),
+					'small' => esc_html__( 'Small', 'elementor' ),
 					'medium' => esc_html__( 'Medium', 'elementor' ),
 					'large' => esc_html__( 'Large', 'elementor' ),
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_divider',
 			[
 				'type' => Controls_Manager::DIVIDER,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_colors',
 			[
@@ -514,7 +517,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_name_heading',
 			[
@@ -523,7 +526,7 @@ class Contact_Buttons extends Widget_Base {
 				'separator' => false,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_name_color',
 			[
@@ -537,7 +540,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -545,7 +548,7 @@ class Contact_Buttons extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-contact-buttons__top-bar-name',
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_title_heading',
 			[
@@ -554,7 +557,7 @@ class Contact_Buttons extends Widget_Base {
 				'separator' => false,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_title_color',
 			[
@@ -568,7 +571,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -576,7 +579,7 @@ class Contact_Buttons extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-contact-buttons__top-bar-title',
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_close_button_color',
 			[
@@ -590,7 +593,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_top_bar_background_color',
 			[
@@ -604,7 +607,7 @@ class Contact_Buttons extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->end_controls_section();
 	}
 
@@ -620,7 +623,7 @@ class Contact_Buttons extends Widget_Base {
 			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab'   => static::TAB_ADVANCED,
+				'tab' => static::TAB_ADVANCED,
 			]
 		);
 

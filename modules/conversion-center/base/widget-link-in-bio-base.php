@@ -179,7 +179,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						),
 					],
 				],
-				'default' => 'Url',
+				'default' => Social_Network_Provider::URL,
 			],
 		);
 

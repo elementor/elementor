@@ -26,6 +26,9 @@ class Social_Network_Provider {
 	public const EMAIL = 'Email';
 	public const URL = 'Url';
 	public const FILE_DOWNLOAD = 'File Download';
+	public const SMS = 'SMS';
+	public CONST VIBER = 'VIBER';
+	public const SKYPE = 'Skype';
 
 	public static function get_social_networks_icons(): array {
 		static::init_social_networks_array_if_empty();
@@ -173,6 +176,21 @@ class Social_Network_Provider {
 		static::$social_networks[ static::FILE_DOWNLOAD ] = [
 			'text' => esc_html__( 'File Download', 'elementor' ),
 			'icon' => 'fas fa-download',
+		];
+
+		static::$social_networks[ static::SMS ] = [
+			'text' => esc_html__( 'SMS', 'elementor' ),
+			'icon' => 'fas fa-sms',
+		];
+
+		static::$social_networks[ static::VIBER ] = [
+			'text' => esc_html__( 'Viber', 'elementor' ),
+			'icon' => 'fab fa-viber',
+		];
+
+		static::$social_networks[ static::SKYPE ] = [
+			'text' => esc_html__( 'Skype', 'elementor' ),
+			'icon' => 'fab fa-skype',
 		];
 	}
 }
