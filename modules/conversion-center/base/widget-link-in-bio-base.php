@@ -23,12 +23,39 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	public static function get_configuration() {
 		return [
 			'content' => [
+				'identity_section' => [
+					'identity_image_style' => true,
+				],
+				'bio_section' => [
+					'title' => [
+						'default' => esc_html__( 'Sara Parker', 'elementor' ),
+					],
+					'description' => [
+						'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
+					],
+				],
 				'cta_section' => [
 					'cta_has_image' => false,
+					'cta_repeater_defaults' => [
+						[
+							'cta_link_text' => esc_html__( 'Get Healthy', 'elementor' ),
+						],
+						[
+							'cta_link_text' => esc_html__( 'Top 10 Recipes', 'elementor' ),
+						],
+						[
+							'cta_link_text' => esc_html__( 'Meal Prep', 'elementor' ),
+						],
+						[
+							'cta_link_text' => esc_html__( 'Healthy Living Resources', 'elementor' ),
+						],
+					],
 				],
+
 			],
 			'style' => [
 				'cta_section' => [
+					'has_dividers' => false,
 					'has_image_border' => false,
 					'has_link_type' => true,
 					'has_corners' => true,
@@ -100,6 +127,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	protected function add_cta_controls(): void {
+		$config = static::get_configuration();
 		$this->start_controls_section(
 			'cta_section',
 			[
@@ -136,7 +164,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			],
 		);
 
-		if ( static::get_configuration()['content']['cta_section']['cta_has_image'] ) {
+		if ( $config['content']['cta_section']['cta_has_image'] ) {
 			$repeater->add_control(
 				'cta_link_image',
 				[
@@ -336,20 +364,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'title_field' => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add CTA Link', 'elementor' ),
-				'default' => [
-					[
-						'cta_link_text' => esc_html__( 'Get Healthy', 'elementor' ),
-					],
-					[
-						'cta_link_text' => esc_html__( 'Top 10 Recipes', 'elementor' ),
-					],
-					[
-						'cta_link_text' => esc_html__( 'Meal Prep', 'elementor' ),
-					],
-					[
-						'cta_link_text' => esc_html__( 'Healthy Living Resources', 'elementor' ),
-					],
-				],
+				'default' => $config['content']['cta_section']['cta_repeater_defaults'],
 			]
 		);
 
@@ -927,7 +942,7 @@ JS;
 
 		$this->end_controls_section();
 
-		$this->add_style_cta_section( $border_width_range );
+		$this->add_style_cta_section();
 
 		$this->start_controls_section(
 			'background_border_section_style',
@@ -1218,6 +1233,7 @@ JS;
 	}
 
 	protected function add_bio_section(): void {
+		$config = static::get_configuration();
 		$this->start_controls_section(
 			'bio_section',
 			[
@@ -1250,7 +1266,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Title', 'elementor' ),
-				'default' => esc_html__( 'Kitchen Cronicles', 'elementor' ),
+				'default' => $config['content']['bio_section']['title']['default'],
 			]
 		);
 
@@ -1265,7 +1281,7 @@ JS;
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Description', 'elementor' ),
-				'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
+				'default' => $config['content']['bio_section']['description']['default'],
 			]
 		);
 
@@ -1273,6 +1289,7 @@ JS;
 	}
 
 	protected function add_identity_section(): void {
+		$config = static::get_configuration();
 		$this->start_controls_section(
 			'identity_section',
 			[
@@ -1281,18 +1298,21 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'identity_image_style',
-			[
-				'label' => esc_html__( 'Image style', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'profile',
-				'options' => [
-					'profile' => esc_html__( 'Profile', 'elementor' ),
-					'cover' => esc_html__( 'Cover', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['content']['identity_section']['identity_image_style'] ) {
+			$this->add_control(
+				'identity_image_style',
+				[
+					'label' => esc_html__( 'Image style', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'profile',
+					'options' => [
+						'profile' => esc_html__( 'Profile', 'elementor' ),
+						'cover' => esc_html__( 'Cover', 'elementor' ),
+					],
+				]
+			);
+		}
+
 
 		$this->add_control(
 			'identity_image',
@@ -1418,6 +1438,49 @@ JS;
 					],
 					'selectors' => [
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
+					],
+				]
+			);
+		}
+
+		if ( $config['style']['cta_section']['has_dividers'] ) {
+			$this->add_control(
+				'cta_links_hr',
+				[
+					'type' => Controls_Manager::HEADING,
+					'label' => esc_html__( 'Dividers', 'elementor' ),
+				]
+			);
+
+			$this->add_responsive_control(
+				'cta_links_divider_color',
+				[
+					'label' => esc_html__( 'Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-link-in-bio__cta:not(:last-child)' => 'border-bottom-color: {{VALUE}}',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				'cta_links_divider_width',
+				[
+					'label' => esc_html__( 'Width', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'px' ],
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 10,
+							'step' => 1,
+						],
+					],
+					'default' => [
+						'unit' => 'px',
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-link-in-bio__cta:not(:last-child)' => 'border-bottom-width: {{SIZE}}{{UNIT}}',
 					],
 				]
 			);
