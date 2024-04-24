@@ -81,7 +81,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				],
 				'border_section' => [
 					'field_options' => false,
-				]
+				],
 			],
 
 		];
@@ -1147,7 +1147,6 @@ JS;
 				]
 			);
 		}
-
 
 		$this->add_control(
 			'identity_image',
