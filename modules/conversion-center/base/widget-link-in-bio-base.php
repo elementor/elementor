@@ -1300,7 +1300,7 @@ JS;
 					'label' => esc_html__( 'Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
-						'{{WRAPPER}} .e-link-in-bio__cta:not(:last-child)' => 'border-bottom-color: {{VALUE}}',
+						'{{WRAPPER}} .e-link-in-bio__cta' => 'border-bottom-color: {{VALUE}}',
 					],
 				]
 			);
@@ -1322,7 +1322,7 @@ JS;
 						'unit' => 'px',
 					],
 					'selectors' => [
-						'{{WRAPPER}} .e-link-in-bio__cta:not(:last-child)' => 'border-bottom-width: {{SIZE}}{{UNIT}}',
+						'{{WRAPPER}} .e-link-in-bio__cta' => 'border-bottom-width: {{SIZE}}{{UNIT}}',
 					],
 				]
 			);
