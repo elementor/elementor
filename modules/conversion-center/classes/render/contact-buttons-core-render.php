@@ -142,8 +142,10 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 		$platform = $this->settings['chat_button_platform'] ?? '';
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
 
+		$icon_name_mapping = Social_Network_Provider::get_name_mapping( $platform );
+
 		if (! empty($platform)) {
-			$layout_classnames .= ' has-platform-' . $platform;
+			$layout_classnames .= ' has-platform-' . $icon_name_mapping;
 		}
 
 		if ( $custom_classes ) {
