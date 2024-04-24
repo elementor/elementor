@@ -692,7 +692,7 @@ class Widget_Icon_Box extends Widget_Base {
 			$settings['icon'] = 'fa fa-star';
 		}
 
-		$has_icon = ! empty( $settings['icon'] || ! empty( $settings['selected_icon']['value'] ) );
+		$has_icon = ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] );
 		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
 
 		if ( ! $has_icon && ! $has_content ) {
