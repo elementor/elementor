@@ -201,6 +201,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onAddChild() {
 		this.updateChildIndexes();
 		this.updateActiveRow();
+		this.toggleClasses();
 	},
 
 	/**
