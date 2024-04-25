@@ -35,13 +35,8 @@ export default function Account() {
 		};
 	} else {
 		pageTexts = {
-			firstLine: __( 'To get the most out of Elementor, we’ll connect your account.', 'elementor' ) +
-			' ' + __( 'Then you can:', 'elementor' ),
-			listItems: [
-				__( 'Choose from countless professional templates', 'elementor' ),
-				__( 'Manage your site with our handy dashboard', 'elementor' ),
-				__( 'Take part in the community forum, share & grow together', 'elementor' ),
-			],
+			firstLine: __( 'Once you connect your Elementor account, you can choose from dozens of professional templates and manage your site with the My Elementor dashboard.', 'elementor' ),
+			listItems: [],
 		};
 	}
 
