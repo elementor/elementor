@@ -22,6 +22,7 @@ export default function PageContentLayout( props ) {
 				<div className="e-onboarding__page-content-start">
 					<h1 className="e-onboarding__page-content-section-title">
 						{ props.title }
+						{ props.secondLineTitle && <><br />{ props.secondLineTitle }</> }
 					</h1>
 					<div className="e-onboarding__page-content-section-text">
 						{ props.children }
@@ -43,6 +44,7 @@ export default function PageContentLayout( props ) {
 
 PageContentLayout.propTypes = {
 	title: PropTypes.string,
+	secondLineTitle: PropTypes.string,
 	children: PropTypes.any,
 	image: PropTypes.string,
 	actionButton: PropTypes.object,

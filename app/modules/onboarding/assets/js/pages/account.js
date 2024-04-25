@@ -147,7 +147,8 @@ export default function Account() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
-				title={ __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
+				title={ __( 'You\'re here!', 'elementor' ) }
+				secondLineTitle={ __( ' Let\'s get connected.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
