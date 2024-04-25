@@ -38,11 +38,12 @@ export const options = [
 
 /**
  * Set the selected feature list.
- * @param {boolean}       checked             - Whether the feature is checked or not.
- * @param {string}        id                  - The ID of the feature.
- * @param {string}        text                - The text associated with the feature.
- * @param {Array<string>} selectedFeatures    - Array of selected features.
- * @param {Function}      setSelectedFeatures - Function to set selected features.
+ * @param {Object}   param0
+ * @param {boolean}  param0.checked
+ * @param {string}   param0.id
+ * @param {string}   param0.text
+ * @param {Object}   param0.selectedFeatures
+ * @param {Function} param0.setSelectedFeatures
  */
 export const setSelectedFeatureList = ( { checked, id, text, selectedFeatures, setSelectedFeatures } ) => {
 	const tier = id.split( '-' )[ 0 ];
