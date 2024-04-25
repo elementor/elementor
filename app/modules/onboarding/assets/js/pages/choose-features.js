@@ -1,59 +1,21 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { OnboardingContext } from '../context/context';
-import { useNavigate } from '@reach/router';
-import useAjax from 'elementor-app/hooks/use-ajax';
-
+import Message from '../components/message';
+import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function ChooseFeatures() {
-	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
-		{ ajaxState, setAjax } = useAjax(),
-		[ noticeState, setNoticeState ] = useState( null ),
-		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
-		[ featureWasSelected, setFeatureWasSelected ] = useState( true ),
-		selectedFeatures = [],
-		tierName = __( 'Essential', 'elementor' ),
+	const { state } = useContext( OnboardingContext ),
+		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
+		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
+		[ tierName, setTierName ] = useState( tiers.essential ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
-		navigate = useNavigate(),
-		nameInputRef = useRef(),
-		options = [
-			{
-				plan: 'essential',
-				text: __( 'Templates & Theme Builder', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'WooCommerce Builder', 'elementor' ),
-			},
-			{
-				plan: 'essential',
-				text: __( 'Lead Collection & Form Builder', 'elementor' ),
-			},
-			{
-				plan: 'essential',
-				text: __( 'Dynamic Content', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'Popup Builder', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'Custom Code & CSS', 'elementor' ),
-			},
-			{
-				plan: 'essential',
-				text: __( 'Motion Effects & Animations', 'elementor' ),
-			},
-			{
-				plan: 'advanced',
-				text: __( 'Notes & Collaboration', 'elementor' ),
-			},
-		],
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
+			href: elementorAppConfig.onboarding.urls.upgrade,
+			target: '_blank',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
 					event: 'next',
@@ -63,30 +25,6 @@ export default function ChooseFeatures() {
 						step: state.currentStep,
 					},
 				} );
-
-				// Only run the site name update AJAX if the new name is different than the existing one and it isn't empty.
-				if ( nameInputRef.current.value !== state.siteName && '' !== nameInputRef.current.value ) {
-					setAjax( {
-						data: {
-							action: 'elementor_update_site_name',
-							data: JSON.stringify( {
-								siteName: nameInputRef.current.value,
-							} ),
-						},
-					} );
-				} else if ( nameInputRef.current.value === state.siteName ) {
-					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
-
-					updateState( stateToUpdate );
-
-					navigate( 'onboarding/' + nextStep );
-				} else {
-					const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'skipped' );
-
-					updateState( stateToUpdate );
-
-					navigate( 'onboarding/' + nextStep );
-				}
 			},
 		};
 
@@ -98,45 +36,21 @@ export default function ChooseFeatures() {
 		};
 	}
 
-	if ( ! siteNameInputValue || 0 === selectedFeatures.length ) {
+	if ( ! isFeatureSelected( selectedFeatures ) ) {
 		actionButton.className = 'e-onboarding__button--disabled';
 	}
 
-	// Run the callback for the site name update AJAX request.
 	useEffect( () => {
-		if ( 'initial' !== ajaxState.status ) {
-			if ( 'success' === ajaxState.status && ajaxState.response?.siteNameUpdated ) {
-				const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
-
-				stateToUpdate.siteName = nameInputRef.current.value;
-
-				updateState( stateToUpdate );
-
-				navigate( 'onboarding/' + nextStep );
-			} else if ( 'error' === ajaxState.status ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						action_state: 'failure',
-						action: 'site name update',
-					},
-				} );
-
-				setNoticeState( {
-					type: 'error',
-					icon: 'eicon-warning',
-					message: __( 'Sorry, the name wasn\'t saved. Try again, or skip for now.', 'elementor' ),
-				} );
-			}
+		if ( selectedFeatures.advanced.length > 0 ) {
+			setTierName( tiers.advanced );
+		} else {
+			setTierName( tiers.essential );
 		}
-	}, [ ajaxState.status ] );
+	}, [ selectedFeatures ] );
 
-	useEffect( () => {
-		setFeatureWasSelected( true );
-	}, [ featureWasSelected ] );
+	function isFeatureSelected( features ) {
+		return !! features.advanced.length || !! features.essential.length;
+	}
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
@@ -145,7 +59,6 @@ export default function ChooseFeatures() {
 				title={ __( 'Elevate your website with additional Pro features.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
-				noticeState={ noticeState }
 			>
 				<p>
 					{ __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ) }
@@ -154,7 +67,7 @@ export default function ChooseFeatures() {
 				<form className="e-onboarding__choose-features-section">
 					{
 						options.map( ( option, index ) => {
-							const itemId = option.plan + index;
+							const itemId = `${ option.plan }-${ index }`;
 
 							return (
 								<label
@@ -165,11 +78,9 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										placeholder="e.g. Eric's Space Shuttles"
-										defaultValue={ state.siteName || '' }
-										ref={ nameInputRef }
-										onChange={ ( event ) => setSiteNameInputValue( event.target.value ) }
+										onChange={ ( event ) => setSelectedFeatureList( { checked: event.currentTarget.checked, id: event.target.value, text: option.text, selectedFeatures, setSelectedFeatures } ) }
 										id={ itemId }
+										value={ itemId }
 									/>
 									{ option.text }
 								</label>
@@ -177,14 +88,11 @@ export default function ChooseFeatures() {
 						} )
 					}
 				</form >
-				{ featureWasSelected &&
-					<p className="e-onboarding__choose-features-section__plan">
-						{
-							/* Translators: %s: Tier name. */
-							__( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' ).replace( '%s', tierName )
-						}
-					</p>
-				}
+				<p className="e-onboarding__choose-features-section__message">
+					{ isFeatureSelected( selectedFeatures ) &&
+						<Message tier={ tierName } />
+					}
+				</p>
 
 			</PageContentLayout>
 		</Layout>
