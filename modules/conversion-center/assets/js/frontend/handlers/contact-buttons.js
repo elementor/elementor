@@ -1,4 +1,6 @@
-export default class ContactButtonsHandler extends elementorModules.frontend.handlers.Base {
+import Base from 'elementor-frontend/handlers/base';
+
+export default class ContactButtonsHandler extends Base {
 	getDefaultSettings() {
 		return {
 			selectors: {

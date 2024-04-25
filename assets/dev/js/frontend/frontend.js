@@ -14,7 +14,6 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
-import ConversionCenter from 'elementor/modules/conversion-center/assets/js/frontend';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
@@ -334,7 +333,6 @@ export default class Frontend extends elementorModules.ViewModule {
 	initModules() {
 		const handlers = {
 			shapes: Shapes,
-			conversionCenter: ConversionCenter,
 		};
 
 		// TODO: BC - Deprecated since 3.5.0
