@@ -116,6 +116,7 @@ class Modules_Manager {
 			'apps',
 			'home',
 			'conversion-center',
+			'content-sanitizer',
 		];
 	}
 
