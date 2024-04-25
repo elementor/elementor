@@ -38,11 +38,11 @@ export const options = [
 
 /**
  * Set the selected feature list.
- * @param {Object} param0
- * @param {boolean} param0.checked
- * @param {string} param0.id
- * @param {string} param0.text
- * @param {Object} param0.selectedFeatures
+ * @param {Object}   param0
+ * @param {boolean}  param0.checked
+ * @param {string}   param0.id
+ * @param {string}   param0.text
+ * @param {Object}   param0.selectedFeatures
  * @param {Function} param0.setSelectedFeatures
  */
 export const setSelectedFeatureList = ( { checked, id, text, selectedFeatures, setSelectedFeatures } ) => {
