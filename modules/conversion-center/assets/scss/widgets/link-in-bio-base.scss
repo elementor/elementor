@@ -347,37 +347,6 @@
 			margin-block: 17px;
 			justify-content: center;
 		}
-
-		.e-link-in-bio__cta.is-type-divider {
-			--e-link-in-bio-ctas-text-color: #{$link-in-bio-text-color-default};
-			--e-link-in-bio-ctas-padding-block-end: 16px;
-			--e-link-in-bio-ctas-padding-block-start: 16px;
-			--e-link-in-bio-ctas-padding-inline-end: 16px;
-			--e-link-in-bio-ctas-padding-inline-start: 16px;
-
-			font-size: 24px;
-			font-weight: 600;
-			line-height: 42px;
-			margin-block-end: calc(var(--e-link-in-bio-ctas-padding-block-end) + var(--e-link-in-bio-ctas-border-width));
-			margin-block-start: var(--e-link-in-bio-ctas-padding-block-start);
-			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
-			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
-			position: relative;
-
-			&:after {
-				--e-link-in-bio-ctas-border-style: solid;
-
-				border-bottom-color: var(--e-link-in-bio-ctas-border-color);
-				border-bottom-style: var(--e-link-in-bio-ctas-border-style);
-				border-bottom-width: var(--e-link-in-bio-ctas-border-width);
-				content: "";
-				display: block;
-				height: 0;
-				inset: auto 0 calc(var(--e-link-in-bio-ctas-padding-block-end) + var(--e-link-in-bio-ctas-border-width) * -1) 0;
-				position: absolute;
-			}
-
-		}
 	}
 
 	// Specificity needed to overwrite core link styles
