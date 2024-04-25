@@ -4,11 +4,6 @@
 	--e-link-in-bio-ctas-divider-color: $link-in-bio-text-color-default;
 	--e-link-in-bio-ctas-divider-width: 1px;
 
-	.e-link-in-bio__bio {
-		align-self: center;
-		max-width: $link-in-bio-default-content-width;
-	}
-
 	.e-link-in-bio__ctas {
 		.e-link-in-bio__cta {
 			border-bottom: var(--e-link-in-bio-ctas-divider-width) solid var(--e-link-in-bio-ctas-divider-color);
