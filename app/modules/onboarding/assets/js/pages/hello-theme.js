@@ -269,6 +269,9 @@ export default function HelloTheme() {
 				<p>
 					{ __( 'Hello is Elementor\'s official blank canvas theme optimized to build your website exactly the way you want.', 'elementor' ) }
 				</p>
+				{ ! elementorAppConfig.onboarding.experiment && <p>
+					{ __( 'Here\'s why:', 'elementor' ) }
+				</p> }
 				<ul className="e-onboarding__feature-list">
 					<li>{ __( 'Light-weight and fast loading', 'elementor' ) }</li>
 					<li>{ __( 'Great for SEO', 'elementor' ) }</li>

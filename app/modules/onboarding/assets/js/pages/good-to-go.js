@@ -14,7 +14,9 @@ export default function GoodToGo() {
 	return (
 		<Layout pageId={ pageId }>
 			<h1 className="e-onboarding__page-content-section-title">
-				{ __( 'Welcome aboard! What\'s next?', 'elementor' ) }
+				{ elementorAppConfig.onboarding.experiment
+					? __( 'Welcome aboard! What\'s next?', 'elementor' )
+					: __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
 			</h1>
 			<div className="e-onboarding__page-content-section-text">
 				{ __( 'There are two ways to get started with Elementor:', 'elementor' ) }

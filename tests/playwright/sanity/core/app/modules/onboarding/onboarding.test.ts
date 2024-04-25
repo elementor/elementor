@@ -146,7 +146,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 			pageTitleText = await pageTitle.innerText();
 
 		// Test that the "Skip" button leads the user to the "Good to Go" screen.
-		expect( pageTitleText ).toBe( 'Welcome aboard! What\'s next?' );
+		expect( pageTitleText ).toContain( 'What\'s next?' );
 	} );
 
 	/**
