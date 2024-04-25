@@ -1,12 +1,13 @@
 export default function Message( { tier } ) {
+	/* Translators: %s: Plan name */
 	const translatedString = __( 'Based on the features you chose, we recommend the %s plan, or higher', 'elementor' );
-	const [ firstPart, secondPart ] = translatedString.split( '%s' );
+	const [ messageFirstPart, messageSecondPart ] = translatedString.split( '%s' );
 
 	return (
 		<>
-			{ firstPart }
+			{ messageFirstPart }
 			<strong>{ tier }</strong>
-			{ secondPart }
+			{ messageSecondPart }
 		</>
 	);
 }

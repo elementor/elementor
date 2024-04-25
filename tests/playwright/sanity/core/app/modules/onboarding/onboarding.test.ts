@@ -1,4 +1,4 @@
-import {test, expect, Page} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
 test.describe( 'On boarding @onBoarding', async () => {
