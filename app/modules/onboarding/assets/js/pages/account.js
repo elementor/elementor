@@ -34,7 +34,10 @@ export default function Account() {
 			],
 		};
 	} else {
-		pageTexts = {
+		pageTexts = elementorAppConfig.onboarding.experiment ? {
+			firstLine: __( 'Once you connect your Elementor account, you can choose from dozens of professional templates and manage your site with the My Elementor dashboard.', 'elementor' ),
+			listItems: [],
+		} : {
 			firstLine: __( 'To get the most out of Elementor, we’ll connect your account.', 'elementor' ) +
 			' ' + __( 'Then you can:', 'elementor' ),
 			listItems: [
@@ -147,7 +150,8 @@ export default function Account() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
-				title={ __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
+				title={ elementorAppConfig.onboarding.experiment ? __( 'You\'re here!', 'elementor' ) : __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
+				secondLineTitle={ elementorAppConfig.onboarding.experiment ? __( ' Let\'s get connected.', 'elementor' ) : '' }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
