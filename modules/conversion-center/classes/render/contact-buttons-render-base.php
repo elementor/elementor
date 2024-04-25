@@ -134,6 +134,55 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
+	protected function render_message_bubble(): void {
+		$message_bubble_name = $this->settings['message_bubble_name'] ?? '';
+		$message_bubble_body = $this->settings['message_bubble_body'] ?? '';
+		$has_message_bubble_name = ! empty( $message_bubble_name );
+		$has_message_bubble_body = ! empty( $message_bubble_body );
+		$has_typing_animation = $this->settings['chat_button_show_animation'];
+		$time_format = $this->settings['chat_button_time_format'];
+
+		$message_bubble_classnames = 'e-contact-buttons__message-bubble';
+
+		if ( $has_typing_animation ) {
+			$message_bubble_classnames .= ' has-typing-animation';
+		}
+
+		$this->widget->add_render_attribute( 'message-bubble', [
+			'class' => $message_bubble_classnames,
+		] );
+		?>
+		<div <?php echo $this->widget->get_render_attribute_string( 'message-bubble' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php if ($has_typing_animation) { ?>
+				<div class="e-contact-buttons__dots-container">
+					<span class="e-contact-buttons__dot e-contact-buttons__dot-1"></span>
+					<span class="e-contact-buttons__dot e-contact-buttons__dot-2"></span>
+					<span class="e-contact-buttons__dot e-contact-buttons__dot-3"></span>
+				</div>
+			<?php } ?>
+			<div class="e-contact-buttons__bubble-container">
+				<div class="e-contact-buttons__bubble">
+					<?php if ( $has_message_bubble_name ) {
+						$this->widget->add_render_attribute( 'message-bubble-name', 'class', 'e-contact-buttons__message-bubble-name' );
+						$message_bubble_name_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-name' ), $message_bubble_name );
+						Utils::print_unescaped_internal_string( $message_bubble_name_output );
+					} ?>
+					<?php if ( $has_message_bubble_body ) {
+						$this->widget->add_render_attribute( 'message-bubble-body', 'class', 'e-contact-buttons__message-bubble-body' );
+						$message_bubble_body_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-body' ), $message_bubble_body );
+						Utils::print_unescaped_internal_string( $message_bubble_body_output );
+					} ?>
+					<?php
+						$this->widget->add_render_attribute( 'message-bubble-time', [ 'class' => 'e-contact-buttons__message-bubble-time', 'data-time-format' => $time_format ] );
+						$message_bubble_time_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-time' ), '' );
+						Utils::print_unescaped_internal_string( $message_bubble_time_output );
+					?>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
 	protected function build_layout_render_attribute(): void {
 		$layout_classnames = 'e-contact-buttons';
 		$platform = $this->settings['chat_button_platform'] ?? '';

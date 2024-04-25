@@ -37,11 +37,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->add_top_bar_section();
 
+		$this->add_message_bubble_section();
+
 		// Styles
 		$this->add_style_chat_button_section();
 
 		$this->add_style_top_bar_section();
 
+		$this->add_style_message_bubble_section();
+
+		// Advanced
 		$this->add_advanced_tab();
 	}
 
@@ -292,6 +297,67 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+	}
+
+	private function add_message_bubble_section(): void {
+		$this->start_controls_section(
+			'message_bubble_section',
+			[
+				'label' => esc_html__( 'Message Bubble', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_CONTENT,
+			]
+		);
+	
+		$this->add_control(
+			'message_bubble_name',
+			[
+				'label' => esc_html__( 'Name', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'default' => esc_html__( 'Rob', 'elementor' ),
+				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
+			]
+		);
+	
+		$this->add_control(
+			'message_bubble_body',
+			[
+				'label'       => esc_html__( 'Message', 'elementor' ),
+				'type'        => Controls_Manager::TEXTAREA,
+				'dynamic'     => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'default' => esc_html__( 'Hey, how can I help you today?', 'elementor' ),
+				'placeholder' => esc_html__( 'Message', 'elementor' ),
+			],
+		);
+	
+		$this->add_control(
+			'chat_button_time_format',
+			[
+				'label'     => esc_html__( 'Time format', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '12h',
+				'options'   => [
+					'12h' => esc_html__( '2:20 PM', 'elementor' ),
+					'24h' => esc_html__( '14:20', 'elementor' ),
+				],
+			]
+		);
+	
+		$this->add_control(
+			'chat_button_show_animation',
+			[
+				'label'        => esc_html__( 'Display Typing Animation', 'elementor' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'elementor' ),
+				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			]
+		);
+	
 		$this->end_controls_section();
 	}
 
@@ -579,6 +645,176 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+	}
+
+	private function add_style_message_bubble_section(): void {
+		$this->start_controls_section(
+			'style_bubble_section',
+			[
+				'label' => esc_html__( 'Message Bubble', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_colors',
+			[
+				'label'   => esc_html__( 'Colors', 'elementor' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom'  => esc_html__( 'Custom', 'elementor' ),
+				],
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_name_heading',
+			[
+				'label'     => esc_html__( 'Name', 'elementor' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_name_color',
+			[
+				'label'     => esc_html__( 'Text Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-name: {{VALUE}}',
+				],
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name'     => 'style_bubble_name_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-name',
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_message_heading',
+			[
+				'label'     => esc_html__( 'Message', 'elementor' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_message_color',
+			[
+				'label'     => esc_html__( 'Text Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-body: {{VALUE}}',
+				],
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name'     => 'style_bubble_message_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-body',
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_time_heading',
+			[
+				'label'     => esc_html__( 'Time', 'elementor' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_time_color',
+			[
+				'label'     => esc_html__( 'Text Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-time: {{VALUE}}',
+				],
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name'     => 'style_bubble_time_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-time',
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_background_heading',
+			[
+				'label'     => esc_html__( 'Bubble Background', 'elementor' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => false,
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_background_color',
+			[
+				'label'     => esc_html__( 'Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-bubble-bg: {{VALUE}}',
+				],
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_chat_heading',
+			[
+				'label'     => esc_html__( 'Chat Background', 'elementor' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => false,
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
+		$this->add_control(
+			'style_bubble_chat_color',
+			[
+				'label'     => esc_html__( 'Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-chat-bg: {{VALUE}}',
+				],
+				'condition' => [
+					'style_bubble_colors' => 'custom',
+				],
+			]
+		);
+	
 		$this->end_controls_section();
 	}
 
