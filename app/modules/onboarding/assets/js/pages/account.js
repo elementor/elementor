@@ -27,11 +27,16 @@ export default function Account() {
 	if ( state.isLibraryConnected ) {
 		pageTexts = {
 			firstLine: <>{ __( 'To get the most out of Elementor, we\'ll help you take your', 'elementor' ) } <br /> { __( 'first steps:', 'elementor' ) }</>,
-			listItems: [
-				__( 'Set your site\'s theme', 'elementor' ),
-				__( 'Chose additional features', 'elementor' ),
-				__( 'Choose how to start creating', 'elementor' ),
-			],
+			listItems: elementorAppConfig.onboarding.experiment
+				? [
+					__( 'Set your site\'s theme', 'elementor' ),
+					__( 'Chose additional features', 'elementor' ),
+					__( 'Choose how to start creating', 'elementor' ),
+				] : [
+					__( 'Set your site\'s theme', 'elementor' ),
+					__( 'Give your site a name & logo', 'elementor' ),
+					__( 'Choose how to start creating', 'elementor' ),
+				],
 		};
 	} else {
 		pageTexts = elementorAppConfig.onboarding.experiment ? {
