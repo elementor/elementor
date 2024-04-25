@@ -30,7 +30,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return parent::get_stack( false );
 	}
 
-
 	protected function register_controls(): void {
 
 		// Controls
@@ -45,8 +44,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->add_advanced_tab();
 	}
-
-	// Controls
 
 	private function add_chat_button_section(): void {
 		$this->start_controls_section(
@@ -297,8 +294,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->end_controls_section();
 	}
-
-	// Styles
 
 	private function add_style_chat_button_section(): void {
 		$this->start_controls_section(

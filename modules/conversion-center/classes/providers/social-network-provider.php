@@ -63,7 +63,6 @@ class Social_Network_Provider {
 		}
 
 		return '';
-
 	}
 
 	public static function get_social_networks_text( $providers = [] ): array {
