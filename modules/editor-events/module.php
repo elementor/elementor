@@ -20,7 +20,7 @@ class Module extends BaseModule {
 	}
 
 	public static function get_editor_events_config() {
-		$can_send_events = Tracker::is_allow_track();
+		$can_send_events = false;
 
 		$settings = [
 			'can_send_events' => $can_send_events,

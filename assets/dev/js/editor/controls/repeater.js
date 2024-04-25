@@ -98,6 +98,20 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
+	toggleClasses() {
+		this.toggleMinRowsClass();
+		this.toggleMaxRowsClass();
+	},
+
+	toggleMaxRowsClass() {
+		const maxItems = this.model.get( 'max_items' );
+		if ( ! maxItems || ! Number.isInteger( maxItems ) ) {
+			return;
+		}
+
+		this.$el.toggleClass( 'elementor-repeater-has-maximum-rows', maxItems <= this.collection.length );
+	},
+
 	toggleMinRowsClass() {
 		if ( ! this.model.get( 'prevent_empty' ) ) {
 			return;
@@ -142,7 +156,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.ui.fieldContainer.sortable( this.getSortableParams() );
 		}
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onSortStart( event, ui ) {
@@ -187,6 +201,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onAddChild() {
 		this.updateChildIndexes();
 		this.updateActiveRow();
+		this.toggleClasses();
 	},
 
 	/**
@@ -250,7 +265,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.editRow( newChild );
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickRemove( childView ) {
@@ -267,7 +282,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 		this.updateChildIndexes();
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickDuplicate( childView ) {
@@ -277,7 +292,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			index: childView._index,
 		} );
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickEdit( childView ) {

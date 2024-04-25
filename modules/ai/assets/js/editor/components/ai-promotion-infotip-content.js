@@ -23,7 +23,7 @@ const AiPromotionInfotipContent = ( props ) => {
 			<CardActions disableSpacing sx={ { justifyContent: 'flex-end', gap: 1 } } >
 				<Button
 					onClick={ () => props.onClose() } color="secondary">{ __( 'Not Now', 'elementor' ) }</Button>
-				<Button onClick={ () => props.onClick() } variant="contained">{ __( 'Try it now', 'elementor' ) }</Button>
+				<Button onClick={ () => props.onClick() } variant="contained">{ props.mainActionText }</Button>
 			</CardActions>
 		</Card> );
 };
@@ -32,6 +32,7 @@ AiPromotionInfotipContent.propTypes = {
 	contentText: PropTypes.string,
 	onClick: PropTypes.func,
 	onClose: PropTypes.func,
+	mainActionText: PropTypes.string,
 };
 
 export default AiPromotionInfotipContent;
