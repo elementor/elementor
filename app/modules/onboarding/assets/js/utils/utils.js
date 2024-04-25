@@ -44,7 +44,7 @@ export const options = [
  * @param {Array<string>} selectedFeatures    - Array of selected features.
  * @param {Function}      setSelectedFeatures - Function to set selected features.
  */
-export const setSelectedFeatureList = ( checked, id, text, selectedFeatures, setSelectedFeatures ) => {
+export const setSelectedFeatureList = ( { checked, id, text, selectedFeatures, setSelectedFeatures } ) => {
 	const tier = id.split( '-' )[ 0 ];
 
 	if ( checked ) {

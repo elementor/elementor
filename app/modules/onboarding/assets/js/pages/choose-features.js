@@ -78,7 +78,7 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										onChange={ ( event ) => setSelectedFeatureList( event.currentTarget.checked, event.target.value, option.text, selectedFeatures, setSelectedFeatures ) }
+										onChange={ ( event ) => setSelectedFeatureList( { checked: event.currentTarget.checked, value: event.target.value, text: option.text, selectedFeatures, setSelectedFeatures} ) }
 										id={ itemId }
 										value={ itemId }
 									/>
@@ -88,7 +88,7 @@ export default function ChooseFeatures() {
 						} )
 					}
 				</form >
-				<p className="e-onboarding__choose-features-section__message" data-testid="choose-features-message">
+				<p className="e-onboarding__choose-features-section__message">
 					{ isFeatureSelected( selectedFeatures ) &&
 						<Message tier={ tierName } />
 					}

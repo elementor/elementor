@@ -200,36 +200,36 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
 
 		await test.step( 'Check that Upgrade Now button is disabled', async () => {
-			await expect.soft( upgradeNowBtn ).toHaveClass( /e-onboarding__button--disabled/ );
+			await expect( upgradeNowBtn ).toHaveClass( /e-onboarding__button--disabled/ );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
 			await page.locator( '#essential-2' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.essential );
+			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
 		await test.step( 'Check that Upgrade Now button is not disabled', async () => {
-			await expect.soft( upgradeNowBtn ).not.toHaveClass( /e-onboarding__button--disabled/ );
+			await expect( upgradeNowBtn ).not.toHaveClass( /e-onboarding__button--disabled/ );
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
 			await page.locator( '#advanced-1' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.advanced );
+			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
 			await page.locator( '#advanced-1' ).uncheck();
-			await expect.soft( tierLocator ).toHaveText( tiers.essential );
+			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
 		await test.step( 'Check that is not visible when unchecking all items', async () => {
 			await page.locator( '#essential-2' ).uncheck();
-			await expect.soft( tierLocator ).not.toBeVisible();
+			await expect( tierLocator ).not.toBeVisible();
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
 			await page.locator( '#advanced-1' ).check();
-			await expect.soft( tierLocator ).toHaveText( tiers.advanced );
+			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 	} );
 } );
