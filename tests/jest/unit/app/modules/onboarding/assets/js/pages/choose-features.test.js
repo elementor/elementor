@@ -21,7 +21,7 @@ describe( 'setSelectedFeatureList function', () => {
 		[ false, 'essential-1', 'Feature 1', { essential: [ 'Feature 1' ], advanced: [] }, emptySelectedFeatures ],
 		[ false, 'advanced-1', 'Feature 1', { essential: [], advanced: [ 'Feature 1' ] }, emptySelectedFeatures ],
 	] )( 'should add a feature to selectedFeatures when checked is %s', ( checked, id, text, initialSelectedFeatures, finalSelectedFeatures ) => {
-		setSelectedFeatureList( { checked, id, text, initialSelectedFeatures, setSelectedFeaturesMock } );
+		setSelectedFeatureList( { checked, id, text, selectedFeatures: initialSelectedFeatures, setSelectedFeatures: setSelectedFeaturesMock } );
 
 		expect( setSelectedFeaturesMock ).toHaveBeenCalledWith( finalSelectedFeatures );
 	} );
