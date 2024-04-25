@@ -5,10 +5,10 @@
 	--e-link-in-bio-border-style: none;
 	--e-link-in-bio-border-width: 0;
 	--e-link-in-bio-container-height: auto;
-	--e-link-in-bio-container-width: 360px;
+	--e-link-in-bio-container-width: #{$link-in-bio-default-container-width};
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
-	--e-link-in-bio-content-width: 280px;
+	--e-link-in-bio-content-width: #{$link-in-bio-default-content-width};
 	--e-link-in-bio-gutter-block-end: 45px;
 	--e-link-in-bio-gutter-block-start: 38px;
 	--e-link-in-bio-gutter-inline: 40px;
@@ -271,6 +271,10 @@
 			justify-items: center;
 		}
 
+		&.has-type-divider {
+			--e-link-in-bio-ctas-gap: 0;
+		}
+
 		.e-link-in-bio__cta {
 			color: var(--e-link-in-bio-ctas-text-color);
 			display: flex;
@@ -291,6 +295,7 @@
 
 		.e-link-in-bio__cta-image-el {
 			aspect-ratio: 140 / 100;
+			display: block;
 			height: 100%;
 			object-fit: cover;
 			width: 100%;
@@ -341,6 +346,37 @@
 			font-weight: 700;
 			margin-block: 17px;
 			justify-content: center;
+		}
+
+		.e-link-in-bio__cta.is-type-divider {
+			--e-link-in-bio-ctas-text-color: #{$link-in-bio-text-color-default};
+			--e-link-in-bio-ctas-padding-block-end: 16px;
+			--e-link-in-bio-ctas-padding-block-start: 16px;
+			--e-link-in-bio-ctas-padding-inline-end: 16px;
+			--e-link-in-bio-ctas-padding-inline-start: 16px;
+
+			font-size: 24px;
+			font-weight: 600;
+			line-height: 42px;
+			margin-block-end: calc(var(--e-link-in-bio-ctas-padding-block-end) + var(--e-link-in-bio-ctas-border-width));
+			margin-block-start: var(--e-link-in-bio-ctas-padding-block-start);
+			padding-inline-end: var(--e-link-in-bio-ctas-padding-inline-end);
+			padding-inline-start: var(--e-link-in-bio-ctas-padding-inline-start);
+			position: relative;
+
+			&:after {
+				--e-link-in-bio-ctas-border-style: solid;
+
+				border-bottom-color: var(--e-link-in-bio-ctas-border-color);
+				border-bottom-style: var(--e-link-in-bio-ctas-border-style);
+				border-bottom-width: var(--e-link-in-bio-ctas-border-width);
+				content: "";
+				display: block;
+				height: 0;
+				inset: auto 0 calc(var(--e-link-in-bio-ctas-padding-block-end) + var(--e-link-in-bio-ctas-border-width) * -1) 0;
+				position: absolute;
+			}
+
 		}
 	}
 
