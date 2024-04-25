@@ -23,7 +23,6 @@ describe( 'setSelectedFeatureList function', () => {
 	] )( 'should add a feature to selectedFeatures when checked is %s', ( checked, id, text, initialSelectedFeatures, finalSelectedFeatures ) => {
 		setSelectedFeatureList( checked, id, text, initialSelectedFeatures, setSelectedFeaturesMock );
 
-		// Check if setSelectedFeaturesMock was called with the expected value
 		expect( setSelectedFeaturesMock ).toHaveBeenCalledWith( finalSelectedFeatures );
 	} );
 } );
