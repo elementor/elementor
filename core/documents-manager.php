@@ -275,8 +275,8 @@ class Documents_Manager {
 	 * @return false|Document The document if it exist, False otherwise.
 	 */
 	public function get_doc_for_frontend( $post_id ) {
-		$is_preview = is_preview() && isset( $_GET['preview_id'] ) && $post_id === (int) $_GET['preview_id'];
-		$is_nonce_verify = isset( $_GET['preview_id'] ) && wp_verify_nonce( $_GET['preview_nonce'], 'post_preview_' . (int) $_GET['preview_id'] );
+		$is_preview = is_preview() && isset( $_GET['preview_id'] ) && $post_id === (int) Utils::get_super_global_value( $_GET, 'preview_id' );
+		$is_nonce_verify = isset( $_GET['preview_id'] ) && wp_verify_nonce( Utils::get_super_global_value( $_GET, 'preview_nonce' ), 'post_preview_' . (int) Utils::get_super_global_value( $_GET, 'preview_id' ) );
 
 		if ( ( $is_preview && $is_nonce_verify ) || Plugin::$instance->preview->is_preview_mode() ) {
 			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
