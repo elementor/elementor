@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../../../../pages/wp-admin-page';
 
-test.describe.only( 'ProgressBar test: @progress', () => {
+test.describe( 'ProgressBar test', () => {
 	test( 'Testing intersection observer in progress bar', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
