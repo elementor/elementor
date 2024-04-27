@@ -108,18 +108,32 @@ class Admin_Apps_Page {
 
 		if ( self::$plugin_status_adapter->is_plugin_installed( $app['file_path'] ) ) {
 			if ( current_user_can( 'activate_plugins' ) ) {
+<<<<<<< HEAD
 				$app['action_label'] = esc_html__('Activate','elementor');
 				$app['action_url'] = self::$plugin_status_adapter->get_activate_plugin_url( $app['file_path'] );
 			} else {
 				$app['action_label'] = esc_html__('Cannot Activate','elementor');
+=======
+				$app['action_label'] = esc_html__( 'Activate', 'elementor' );
+				$app['action_url'] = self::$plugin_status_adapter->get_activate_plugin_url( $app['file_path'] );
+			} else {
+				$app['action_label'] = esc_html__( 'Cannot Activate', 'elementor' );
+>>>>>>> b002282f477df63e290d8f0002f2f3a493389a15
 				$app['action_url'] = '#';
 			}
 		} else {
 			if ( current_user_can( 'install_plugins' ) ) {
+<<<<<<< HEAD
 				$app['action_label'] = esc_html__('Install','elementor');
 				$app['action_url'] = self::$plugin_status_adapter->get_install_plugin_url( $app['file_path'] );
 			} else {
 				$app['action_label'] = esc_html__('Cannot Install','elementor');
+=======
+				$app['action_label'] = esc_html__( 'Install', 'elementor' );
+				$app['action_url'] = self::$plugin_status_adapter->get_install_plugin_url( $app['file_path'] );
+			} else {
+				$app['action_label'] = esc_html__( 'Cannot Install', 'elementor' );
+>>>>>>> b002282f477df63e290d8f0002f2f3a493389a15
 				$app['action_url'] = '#';
 			}
 		}
@@ -141,10 +155,17 @@ class Admin_Apps_Page {
 		}
 
 		if ( current_user_can( 'activate_plugins' ) ) {
+<<<<<<< HEAD
 			$app['action_label'] = esc_html__('Activate','elementor');
 			$app['action_url'] = self::$plugin_status_adapter->get_activate_plugin_url( $app['file_path'] );
 		} else {
 			$app['action_label'] = esc_html__('Cannot Activate','elementor');
+=======
+			$app['action_label'] = esc_html__( 'Activate', 'elementor' );
+			$app['action_url'] = self::$plugin_status_adapter->get_activate_plugin_url( $app['file_path'] );
+		} else {
+			$app['action_label'] = esc_html__( 'Cannot Activate', 'elementor' );
+>>>>>>> b002282f477df63e290d8f0002f2f3a493389a15
 			$app['action_url'] = '#';
 		}
 

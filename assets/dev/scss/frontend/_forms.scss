@@ -311,13 +311,15 @@
 .elementor-form {
 
 	.elementor-button {
-		padding-top: 0;
-		padding-bottom: 0;
+		padding-block-start: 0;
+		padding-block-end: 0;
 		border: none;
 
-		& > span {
+		& > span, // BC for older versions, before 3.22, should be deleted in 3.25.
+		&-content-wrapper {
 			display: flex;
 			justify-content: center;
+			flex-direction: row;
 			gap: 5px;
 		}
 

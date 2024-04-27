@@ -49,7 +49,7 @@ class Test_Settings extends Elementor_Test_Base {
 
 		$expected_items = [
 			'elementor' => 'Home',
-			'settings' => 'Settings',
+			'elementor-settings' => 'Settings',
 			'elementor-role-manager' => 'Role Manager',
 			'elementor-element-manager' => 'Element Manager',
 			'elementor-tools' => 'Tools',
