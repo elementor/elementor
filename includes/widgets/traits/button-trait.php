@@ -454,7 +454,7 @@ trait Button_Trait {
 		$this->add_control(
 			'icon_align',
 			[
-				'label' => esc_html__( 'Icon Position', 'elementor' ),
+				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				
 				'options' => [
@@ -512,14 +512,14 @@ trait Button_Trait {
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-button-icon-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--button-icon-size: {{SIZE}}{{UNIT}}',
 				],
 		] );
 
 		$this->add_control(
 			'icon_indent',
 			[
-				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
@@ -546,17 +546,17 @@ trait Button_Trait {
 			]
 		);
 
-		//start the color tabs
+		
 		$this->start_controls_tabs( 'icons_button_style', [
 			'condition' => $args['section_condition'],
 		] );
-				//when the icon is on normal
-				$this->start_controls_tab(
-					'icon_button_normal',
-					[
-						'label' => esc_html__( 'Normal', 'elementor' ),
-						'condition' => $args['section_condition'],
-						]
+				
+		$this->start_controls_tab(
+			'icon_button_normal',
+				[
+					'label' => esc_html__( 'Normal', 'elementor' ),
+					'condition' => $args['section_condition'],
+				]
 					);
 					
 				$this->add_control( 'icon_color', [
@@ -569,7 +569,7 @@ trait Button_Trait {
 						
 				$this->end_controls_tab();
 						
-				//when the icon is on hover
+				
 				$this->start_controls_tab(
 						'icon_button_hover',
 						[

@@ -10,12 +10,10 @@
             
             i {
                 color: var(--button-icon-color, inherit);
-                
             }
             
             svg {
-                fill: var(--button-icon-color, inherit);
-                
+                fill: var(--button-icon-color, inherit);               
             }
 
             svg:hover {
@@ -24,7 +22,7 @@
         }
 
         .e-font-icon-svg {
-            font-size: var(--n-button-icon-size);
+            font-size: var(--button-icon-size);
         }
        
     }
@@ -44,5 +42,4 @@
             }
         }
     }
-    
 }

@@ -25,14 +25,28 @@
 	}
 
 	&-icon {
+
+		i {
+			color: var(--button-icon-color, inherit);
+		}
+
 		svg {
 			width: 1em;
 			height: auto;
+			fill: var(--button-icon-color, inherit);
+		}
+
+		svg:hover {
+			fill: var(--button-icon-color, inherit);
 		}
 
 		.e-font-icon-svg {
 			height: 1em;
 		}
+	}
+
+	.e-font-icon-svg {
+		font-size: var(--button-icon-size);
 	}
 
 
@@ -84,6 +98,23 @@
 
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
+		align-self: center;
+	}
+}
+
+.elementor-button:hover{
+
+	.elementor-button-icon {
+
+		i {
+			color: var(--button-icon-color-hover);
+			transition: all 0.3s;
+		}
+	
+		svg {
+			fill: var(--button-icon-color-hover);
+			transition: all 0.3s;
+		}
 	}
 }
 
