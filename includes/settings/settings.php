@@ -59,6 +59,11 @@ class Settings extends Settings_Page {
 	 */
 	const TAB_ADVANCED = 'advanced';
 
+	/**
+	 * Settings page performance tab slug.
+	 */
+	const TAB_PERFORMANCE = 'performance';
+
 	const ADMIN_MENU_PRIORITY = 10;
 
 	public Home_Module $home_module;
@@ -318,19 +323,6 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'advanced' => [
 						'fields' => [
-							'css_print_method' => [
-								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
-								'field_args' => [
-									'class' => 'elementor_css_print_method',
-									'type' => 'select',
-									'std' => 'external',
-									'options' => [
-										'external' => esc_html__( 'External File', 'elementor' ),
-										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
-									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
-								],
-							],
 							'editor_break_lines' => [
 								'label' => esc_html__( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
@@ -386,16 +378,30 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . esc_html__( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
-							'optimized_gutenberg_loading' => [
-								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
+						],
+					],
+				],
+			],
+			self::TAB_PERFORMANCE => [
+				'label' => esc_html__( 'Performance', 'elementor' ),
+				'sections' => [
+					'performance' => [
+						'fields' => [
+							'css_print_method' => [
+								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
 								'field_args' => [
+									'class' => 'elementor_css_print_method',
 									'type' => 'select',
-									'std' => '1',
+									'std' => 'external',
 									'options' => [
-										'1' => esc_html__( 'Enable', 'elementor' ),
-										'0' => esc_html__( 'Disable', 'elementor' ),
+										'external' => esc_html__( 'External File', 'elementor' ),
+										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
+									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">'
+										. esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' )
+										. '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">'
+										. esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' )
+										. '</div>',
 								],
 							],
 							'optimized_image_loading' => [
@@ -409,10 +415,22 @@ class Settings extends Settings_Page {
 									],
 									'desc' => sprintf(
 										/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
-										esc_html__( 'Applying %1$s on LCP image and %2$s on images below the fold to improve performance scores.', 'elementor' ),
+										esc_html__( 'Improve performance by applying %1$s on LCP image and %2$s on images below the fold.', 'elementor' ),
 										'<code>fetchpriority="high"</code>',
 										'<code>loading="lazy"</code>'
 									),
+								],
+							],
+							'optimized_gutenberg_loading' => [
+								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Reduce unnecessary render-blocking loads by dequeuing unused Gutenberg block editor scripts and styles.', 'elementor' ),
 								],
 							],
 						],
