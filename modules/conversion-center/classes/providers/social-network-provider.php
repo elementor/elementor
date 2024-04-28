@@ -94,6 +94,7 @@ class Social_Network_Provider {
 			'icon' => 'fab fa-outlook',
 			'name' => 'vcf',
 		];
+
 		static::$social_networks[ static::FACEBOOK ] = [
 			'text' => esc_html__( 'Facebook', 'elementor' ),
 			'icon' => 'fab fa-facebook',

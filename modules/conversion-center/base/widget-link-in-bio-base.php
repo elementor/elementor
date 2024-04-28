@@ -650,10 +650,11 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 JS;
 	}
 
-
 	protected function add_style_tab(): void {
 
 		$this->add_style_identity_controls();
+
+		$this->add_style_bio_controls();
 
 		$this->add_icons_identity_controls();
 
@@ -1146,7 +1147,7 @@ JS;
 		$this->end_controls_section();
 	}
 
-	private function add_style_identity_controls(): void {
+	protected function add_style_identity_controls(): void {
 		$config = static::get_configuration();
 		$this->start_controls_section(
 			'identity_section_style',
@@ -1330,10 +1331,8 @@ JS;
 		$this->end_controls_section();
 	}
 
-	/**
-	 * @return void
-	 */
-	private function add_content_tab(): void {
+	protected function add_content_tab(): void {
+
 		$this->add_identity_section();
 
 		$this->add_bio_section();
@@ -1343,10 +1342,7 @@ JS;
 		$this->add_cta_controls();
 	}
 
-	/**
-	 * @return void
-	 */
-	private function add_style_bio_controls(): void {
+	protected function add_style_bio_controls(): void {
 		$this->start_controls_section(
 			'bio_section_style',
 			[
@@ -1442,11 +1438,7 @@ JS;
 		$this->end_controls_section();
 	}
 
-	/**
-	 * @return void
-	 */
-	private function add_icons_identity_controls(): void {
-		$this->add_style_bio_controls();
+	protected function add_icons_identity_controls(): void {
 
 		$this->start_controls_section(
 			'icons_section_style',
@@ -1484,12 +1476,7 @@ JS;
 		$this->end_controls_section();
 	}
 
-	/**
-	 * @param array $border_width_range
-	 *
-	 * @return void
-	 */
-	private function add_style_background_controls(): void {
+	protected function add_style_background_controls(): void {
 		$this->start_controls_section(
 			'background_border_section_style',
 			[
@@ -1622,9 +1609,6 @@ JS;
 		$this->end_controls_section();
 	}
 
-	/**
-	 * @return int[]
-	 */
 	private function get_border_width_range(): array {
 		return [
 			'min' => 0,
