@@ -3,6 +3,8 @@
 namespace Elementor\Modules\ConversionCenter\Traits;
 
 use Elementor\Controls_Manager;
+use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
+use Elementor\Utils;
 
 trait Conversion_Center_Controls_Trait {
 
@@ -12,7 +14,7 @@ trait Conversion_Center_Controls_Trait {
 		'step' => 1,
 	];
 
-	protected function add_html_tag_control( string $name ): void {
+	protected function add_html_tag_control( string $name, string $default = 'h2' ): void {
 		$this->add_control(
 			$name,
 			[
@@ -29,7 +31,30 @@ trait Conversion_Center_Controls_Trait {
 					'span' => 'span',
 					'p' => 'p',
 				],
-				'default' => 'h2',
+				'default' => $default,
+			]
+		);
+	}
+
+	protected function add_images_per_row_control(
+		string $name = 'icons_per_row',
+		$options = [
+			'2' => '2',
+			'3' => '3',
+		],
+		string $default = '3',
+		$label = ''
+	): void {
+		if ( ! $label ) {
+			$label = esc_html__( 'Icons Per Row', 'elementor' );
+		}
+		$this->add_control(
+			$name,
+			[
+				'label' => $label,
+				'type' => Controls_Manager::SELECT,
+				'options' => $options,
+				'default' => $default,
 			]
 		);
 	}

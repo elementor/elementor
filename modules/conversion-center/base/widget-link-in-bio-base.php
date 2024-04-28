@@ -28,6 +28,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						'default' => 'profile',
 					],
 					'has_heading_text' => false,
+					'has_profile_image_controls' => false,
 				],
 				'bio_section' => [
 					'title' => [
@@ -35,6 +36,21 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 					'description' => [
 						'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
+						'position' => 'top',
+					],
+					'has_about_field' => false,
+				],
+				'icon_section' => [
+					'platform' => [
+						'group-1' => [
+							Social_Network_Provider::EMAIL,
+							Social_Network_Provider::TELEPHONE,
+							Social_Network_Provider::MESSENGER,
+							Social_Network_Provider::WAZE,
+							Social_Network_Provider::WHATSAPP,
+
+						],
+						'limit' => 5,
 					],
 				],
 				'cta_section' => [
@@ -94,7 +110,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		];
 	}
 
-
 	public function get_icon(): string {
 		return 'eicon-bullet-list';
 	}
@@ -117,13 +132,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	protected function register_controls(): void {
 
-		$this->add_identity_section();
-
-		$this->add_bio_section();
-
-		$this->add_icons_controls();
-
-		$this->add_cta_controls();
+		$this->add_content_tab();
 
 		$this->add_style_tab();
 
@@ -136,7 +145,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$render_strategy->render();
 	}
 
-	protected function add_cta_controls(): void {
+	protected function add_cta_controls() {
 		$config = static::get_configuration();
 		$this->start_controls_section(
 			'cta_section',
@@ -382,6 +391,8 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	protected function add_icons_controls(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'icons_section',
 			[
@@ -390,17 +401,22 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'custom_panel_alert',
-			[
-				'type' => Controls_Manager::ALERT,
-				'alert_type' => 'info',
-				'content' => sprintf(
-					__( 'Add up to <b>%d</b> icons', 'elementor' ),
-					5
-				),
-			]
-		);
+		do_action( 'elementor/conversion-center/content/controls/icons/before', $this );
+
+		if ( $config['content']['icon_section']['platform']['limit'] ) {
+			$this->add_control(
+				'custom_panel_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => sprintf(
+						__( 'Add up to <b>%d</b> icons', 'elementor' ),
+						$config['content']['icon_section']['platform']['limit']
+					),
+				]
+			);
+		}
+
 		$repeater = new Repeater();
 
 		$repeater->add_control(
@@ -412,14 +428,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 					[
 						'label' => '',
-						'options' => Social_Network_Provider::get_social_networks_text( [
-							Social_Network_Provider::EMAIL,
-							Social_Network_Provider::TELEPHONE,
-							Social_Network_Provider::MESSENGER,
-							Social_Network_Provider::WAZE,
-							Social_Network_Provider::WHATSAPP,
-
-						] ),
+						'options' => Social_Network_Provider::get_social_networks_text(
+							$config['content']['icon_section']['platform']['group-1']
+						),
 					],
 					[
 						'label' => '   --',
@@ -482,7 +493,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						Social_Network_Provider::DRIBBBLE,
 						Social_Network_Provider::SPOTIFY,
 						Social_Network_Provider::SOUNDCLOUD,
-						Social_Network_Provider::VIMEO,
+						Social_Network_Provider::URL,
 					],
 				],
 			],
@@ -603,7 +614,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$this->add_control(
 			'icon',
 			[
-				'max_items' => 5,
+				'max_items' => $config['content']['icon_section']['platform']['limit'],
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
 				'title_field' => $this->get_icon_title_field(),
@@ -641,275 +652,14 @@ JS;
 
 
 	protected function add_style_tab(): void {
-		$border_width_range = [
-			'min' => 0,
-			'max' => 10,
-			'step' => 1,
-		];
 
-		$this->add_style_identity_controls( $border_width_range );
+		$this->add_style_identity_controls();
 
-		$this->start_controls_section(
-			'bio_section_style',
-			[
-				'label' => esc_html__( 'Bio', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'bio_heading_heading',
-			[
-				'label' => esc_html__( 'Heading', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'bio_heading_text_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'bio_heading_typography',
-				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
-			]
-		);
-
-		$this->add_control(
-			'bio_title_heading',
-			[
-				'label' => esc_html__( 'Title or Tagline', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'bio_title_text_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-title-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'bio_title_typography',
-				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
-			]
-		);
-
-		$this->add_control(
-			'bio_description_heading',
-			[
-				'label' => esc_html__( 'Description', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'bio_description_text_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-description-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'bio_description_typography',
-				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'icons_section_style',
-			[
-				'label' => esc_html__( 'Icons', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'icons_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'icons_size',
-			[
-				'label' => esc_html__( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'small',
-				'options' => [
-					'small' => esc_html__( 'Small', 'elementor' ),
-					'medium' => esc_html__( 'Medium', 'elementor' ),
-					'large' => esc_html__( 'Large', 'elementor' ),
-				],
-			]
-		);
-
-		$this->end_controls_section();
+		$this->add_icons_identity_controls();
 
 		$this->add_style_cta_section();
 
-		$this->start_controls_section(
-			'background_border_section_style',
-			[
-				'label' => esc_html__( 'Background and Border', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'background_border_background',
-			[
-				'label' => esc_html__( 'Background', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$bg_image_field_options = [
-			'background' => [
-				'default' => 'classic',
-			],
-		];
-
-		$config = static::get_configuration();
-		if ( $config['style']['border_section']['field_options'] ) {
-			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
-		}
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background_border_background_group',
-				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
-				'fields_options' => $bg_image_field_options,
-			]
-		);
-
-		$this->add_control(
-			'background_border_background_overlay',
-			[
-				'label' => esc_html__( 'Background Overlay', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background_border_background_overlay_group',
-				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
-				'fields_options' => [
-					'background' => [
-						'default' => 'classic',
-					],
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'background_overlay_opacity',
-			[
-				'label' => esc_html__( 'Opacity', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 1,
-						'min' => 0.10,
-						'step' => 0.01,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'background_hr',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_control(
-			'background_show_border',
-			[
-				'label' => esc_html__( 'Border', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => '',
-			]
-		);
-
-		$this->add_responsive_control(
-			'background_border_width',
-			[
-				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => $border_width_range,
-				],
-				'condition' => [
-					'background_show_border' => 'yes',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'background_border_color',
-			[
-				'label' => esc_html__( 'Border Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'background_show_border' => 'yes',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
+		$this->add_style_background_controls();
 
 	}
 
@@ -1114,6 +864,22 @@ JS;
 
 		$this->add_html_tag_control( 'bio_title_tag' );
 
+		if ( $config['content']['bio_section']['has_about_field'] ) {
+			$this->add_control(
+				'bio_about',
+				[
+					'label' => esc_html__( 'About Heading', 'elementor' ),
+					'type' => Controls_Manager::TEXTAREA,
+					'dynamic' => [
+						'active' => true,
+					],
+					'placeholder' => esc_html__( 'About', 'elementor' ),
+					'default' => esc_html__( 'About Me', 'elementor' ),
+				]
+			);
+			$this->add_html_tag_control( 'bio_about_tag', 'h3' );
+		}
+
 		$this->add_control(
 			'bio_description',
 			[
@@ -1175,6 +941,28 @@ JS;
 				],
 			]
 		);
+
+		if ( $config['content']['identity_section']['has_profile_image_controls'] ) {
+			$this->add_control(
+				'identity_heading_cove',
+				[
+					'label' => esc_html__( 'Profile', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
+				]
+			);
+
+			$this->add_control(
+				'identity_image_cover',
+				[
+					'label' => esc_html__( 'Choose Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'default' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -1358,7 +1146,7 @@ JS;
 		$this->end_controls_section();
 	}
 
-	private function add_style_identity_controls( array $border_width_range ): void {
+	private function add_style_identity_controls(): void {
 		$config = static::get_configuration();
 		$this->start_controls_section(
 			'identity_section_style',
@@ -1427,7 +1215,7 @@ JS;
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range' => [
-					'px' => $border_width_range,
+					'px' => $this->get_border_width_range(),
 				],
 				'condition' => array_merge(
 					$condition,
@@ -1511,7 +1299,7 @@ JS;
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
 				'range' => [
-					'px' => $border_width_range,
+					'px' => $this->get_border_width_range(),
 				],
 				'condition' => [
 					'identity_image_style' => 'cover',
@@ -1540,5 +1328,308 @@ JS;
 		);
 
 		$this->end_controls_section();
+	}
+
+	/**
+	 * @return void
+	 */
+	private function add_content_tab(): void {
+		$this->add_identity_section();
+
+		$this->add_bio_section();
+
+		$this->add_icons_controls();
+
+		$this->add_cta_controls();
+	}
+
+	/**
+	 * @return void
+	 */
+	private function add_style_bio_controls(): void {
+		$this->start_controls_section(
+			'bio_section_style',
+			[
+				'label' => esc_html__( 'Bio', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'bio_heading_heading',
+			[
+				'label' => esc_html__( 'Heading', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'bio_heading_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'bio_heading_typography',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
+			]
+		);
+
+		$this->add_control(
+			'bio_title_heading',
+			[
+				'label' => esc_html__( 'Title or Tagline', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'bio_title_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-title-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'bio_title_typography',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
+			]
+		);
+
+		$this->add_control(
+			'bio_description_heading',
+			[
+				'label' => esc_html__( 'Description', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'bio_description_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-description-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'bio_description_typography',
+				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	/**
+	 * @return void
+	 */
+	private function add_icons_identity_controls(): void {
+		$this->add_style_bio_controls();
+
+		$this->start_controls_section(
+			'icons_section_style',
+			[
+				'label' => esc_html__( 'Icons', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'icons_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icons_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'small',
+				'options' => [
+					'small' => esc_html__( 'Small', 'elementor' ),
+					'medium' => esc_html__( 'Medium', 'elementor' ),
+					'large' => esc_html__( 'Large', 'elementor' ),
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	/**
+	 * @param array $border_width_range
+	 *
+	 * @return void
+	 */
+	private function add_style_background_controls(): void {
+		$this->start_controls_section(
+			'background_border_section_style',
+			[
+				'label' => esc_html__( 'Background and Border', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'background_border_background',
+			[
+				'label' => esc_html__( 'Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$bg_image_field_options = [
+			'background' => [
+				'default' => 'classic',
+			],
+		];
+
+		$config = static::get_configuration();
+		if ( $config['style']['border_section']['field_options'] ) {
+			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
+		}
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_border_background_group',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
+				'fields_options' => $bg_image_field_options,
+			]
+		);
+
+		$this->add_control(
+			'background_border_background_overlay',
+			[
+				'label' => esc_html__( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_border_background_overlay_group',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'background_overlay_opacity',
+			[
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_hr',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->add_control(
+			'background_show_border',
+			[
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => '',
+			]
+		);
+
+		$this->add_responsive_control(
+			'background_border_width',
+			[
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => $this->get_border_width_range(),
+				],
+				'condition' => [
+					'background_show_border' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_border_color',
+			[
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => [
+					'background_show_border' => 'yes',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	/**
+	 * @return int[]
+	 */
+	private function get_border_width_range(): array {
+		return [
+			'min' => 0,
+			'max' => 10,
+			'step' => 1,
+		];
 	}
 }

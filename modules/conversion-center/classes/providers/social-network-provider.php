@@ -29,6 +29,7 @@ class Social_Network_Provider {
 	public const SMS = 'SMS';
 	public const VIBER = 'VIBER';
 	public const SKYPE = 'Skype';
+	public const VCF = 'Save contact (vCard)';
 
 	public static function get_social_networks_icons(): array {
 		static::init_social_networks_array_if_empty();
@@ -88,6 +89,11 @@ class Social_Network_Provider {
 			return;
 		}
 
+		static::$social_networks[ static::VCF ] = [
+			'text' => esc_html__( 'Save contact (vCard)', 'elementor' ),
+			'icon' => 'fab fa-outlook',
+			'name' => 'vcf',
+		];
 		static::$social_networks[ static::FACEBOOK ] = [
 			'text' => esc_html__( 'Facebook', 'elementor' ),
 			'icon' => 'fab fa-facebook',
