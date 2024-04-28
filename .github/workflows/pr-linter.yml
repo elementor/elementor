@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   pr_name_lint:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - uses: actions/checkout@v4
