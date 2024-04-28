@@ -24,4 +24,10 @@ jobs:
         run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
-        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
+        # passing github.event.pull_request.title as an argument
+        # to prevent a shell injection attack. Further reading:
+        # https://securitylab.github.com/research/github-actions-untrusted-input/#exploitability-and-impact
+        # https://securitylab.github.com/research/github-actions-untrusted-input/#remediation
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$TITLE" | npx commitlint
