@@ -6,6 +6,8 @@
     --e-contact-buttons-dot: #FF0000;
     --e-contact-buttons-dot-size: 20px;
     --e-contact-buttons-profile-dot-bg: #39AA59;
+    --e-contact-buttons-box-shadow: 0 3px 3px 0 rgba(0,0,0,0.25);
+    --e-contact-buttons-border-radius: 7px;
 
     // Platform specific colors
     // Default used for email, sms
@@ -119,6 +121,8 @@
     }
 
     &__content {
+        border-radius: var(--e-contact-buttons-border-radius);
+        box-shadow: var(--e-contact-buttons-box-shadow);
         display: none;
         font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
         margin-block-end: 20px;
@@ -131,8 +135,8 @@
     &__top-bar {
         align-items: center;
         background-color: var(--e-contact-buttons-top-bar-bg);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        border-top-left-radius: var(--e-contact-buttons-border-radius);
+        border-top-right-radius: var(--e-contact-buttons-border-radius);
         display: flex;
         gap: 20px;
         padding: 20px;
@@ -352,6 +356,43 @@
     
     &__dot-3 {
         animation-delay: 600ms;
+    }
+
+    &__send-button {
+        padding: 20px;
+    }
+
+    &__send-cta {
+        align-items: center;
+        background-color: var(--e-contact-buttons-send-button-bg);
+        border-radius: 30px;
+        color: var(--e-contact-buttons-send-button-icon);
+        display: flex;
+        font-size: 18px;
+        font-weight: 500;
+        justify-content: center;
+        padding: 10px;
+        text-align: center;
+        transition: $transition-hover;
+        width: 100%;
+
+        svg {
+            fill: var(--e-contact-buttons-send-button-icon);
+            height: 28px;
+            margin-inline-end: 8px;
+            width: 28px;
+        }
+
+        &:hover,
+        &:focus {
+            background-color: var(--e-contact-buttons-send-button-bg-hover);
+            color: var(--e-contact-buttons-send-button-icon-hover);
+            transition: $transition-hover;
+
+            svg {
+                fill: var(--e-contact-buttons-send-button-icon-hover);
+            }
+        }
     }
 
     &__content.is-visible {

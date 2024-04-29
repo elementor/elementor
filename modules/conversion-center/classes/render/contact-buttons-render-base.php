@@ -183,6 +183,116 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
+	protected function render_send_button(): void {
+		$platform = $this->settings['chat_button_platform'] ?? '';
+		$send_button_text = $this->settings['send_button_text'];
+		$hover_animation = $this->settings['style_send_hover_animation'];
+		$cta_classnames = 'e-contact-buttons__send-cta';
+		$formatted_link = $this->get_formatted_link_based_on_platform( $platform );
+
+		if ( ! empty( $hover_animation ) ) {
+			$cta_classnames .= ' elementor-animation-' . $hover_animation;
+		}
+
+		$this->widget->add_render_attribute( 'formatted-cta', [
+			'class' => $cta_classnames,
+			'href' => $formatted_link,
+		] );
+
+		?>
+		<div class="e-contact-buttons__send-button">
+			<div class="e-contact-buttons__send-button-container">
+				<?php if ($send_button_text && $formatted_link !== '') { ?>
+					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php
+							$mapping = Social_Network_Provider::get_icon_mapping( $platform );
+							$icon_lib = explode( ' ', $mapping )[0];
+							$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
+							Icons_Manager::render_icon(
+								[
+									'library' => $library,
+									'value' => $mapping,
+								],
+								[ 'aria-hidden' => 'true' ]
+							);
+						?>
+						<?php echo( $send_button_text ); ?>
+					</a>
+				<?php } ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	protected function build_email_link() {
+		$email = $this->settings['chat_button_mail'] ?? '';
+		$subject = $this->settings['chat_button_mail_subject'] ?? '';
+		$body = $this->settings['chat_button_mail_body'] ?? '';
+		if ( ! $email ) {
+			return '';
+		}
+		$link = 'mailto:' . $email;
+		if ( $subject ) {
+			$link .= '?subject=' . $subject;
+		}
+		if ( $body ) {
+			$link .= $subject ? '&' : '?';
+			$link .= 'body=' . $body;
+		}
+
+		return $link;
+	}
+
+	public function build_viber_link() {
+		$chat_button_number = $this->settings['chat_button_number'];
+		$viber_action = $this->settings['chat_button_viber_action'];
+
+		if ( empty( $chat_button_number ) ) {
+			return '';
+		}
+		$action = 'contact';
+		if ( ! empty( $viber_action ) ) {
+			$action = $viber_action;
+		}
+		return add_query_arg( [
+			'number' => urlencode( $chat_button_number ),
+		], 'viber://' . $action );
+	}
+
+	protected function get_formatted_link_based_on_platform( string $platform ): string {
+		$chat_button_number = $this->settings['chat_button_number'];
+		$chat_button_username = $this->settings['chat_button_username'];
+		$platform_skype_username = $this->settings['chat_button_skype_username'];
+
+		// Ensure we clear the default link value if the matching type value is empty
+		switch ( $platform ) {
+			case Social_Network_Provider::EMAIL:
+				$formatted_link = $this->build_email_link();
+				break;
+			case Social_Network_Provider::SMS:
+				$formatted_link = ! empty( $chat_button_number ) ? 'sms:' . $chat_button_number : '';
+				break;
+			case Social_Network_Provider::MESSENGER:
+				$formatted_link = ! empty( $chat_button_username ) ?
+					'https://www.facebook.com/messages/t/' . $chat_button_username :
+					'';
+				break;
+			case Social_Network_Provider::WHATSAPP:
+				$formatted_link = ! empty( $chat_button_number ) ? 'https://wa.me/' . $chat_button_number : '';
+				break;
+			case Social_Network_Provider::VIBER:
+				$formatted_link = $this->build_viber_link();
+				break;
+			case Social_Network_Provider::SKYPE:
+				$formatted_link = ! empty( $chat_button_username ) ? 'skype:' . $chat_button_username . '?chat' : '';
+				break;
+			default:
+				break;
+		}
+
+		return $formatted_link;
+	}
+
 	protected function build_layout_render_attribute(): void {
 		$layout_classnames = 'e-contact-buttons';
 		$platform = $this->settings['chat_button_platform'] ?? '';
