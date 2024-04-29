@@ -139,7 +139,7 @@ abstract class Contact_Buttons_Render_Base {
 		$message_bubble_body = $this->settings['message_bubble_body'] ?? '';
 		$has_message_bubble_name = ! empty( $message_bubble_name );
 		$has_message_bubble_body = ! empty( $message_bubble_body );
-		$has_typing_animation = $this->settings['chat_button_show_animation'];
+		$has_typing_animation = 'yes' === $this->settings['chat_button_show_animation'];
 		$time_format = $this->settings['chat_button_time_format'];
 
 		$message_bubble_classnames = 'e-contact-buttons__message-bubble';
@@ -173,7 +173,10 @@ abstract class Contact_Buttons_Render_Base {
 						Utils::print_unescaped_internal_string( $message_bubble_body_output );
 					} ?>
 					<?php
-						$this->widget->add_render_attribute( 'message-bubble-time', [ 'class' => 'e-contact-buttons__message-bubble-time', 'data-time-format' => $time_format ] );
+						$this->widget->add_render_attribute( 'message-bubble-time', [
+							'class' => 'e-contact-buttons__message-bubble-time',
+							'data-time-format' => $time_format,
+						] );
 						$message_bubble_time_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-time' ), '' );
 						Utils::print_unescaped_internal_string( $message_bubble_time_output );
 					?>
