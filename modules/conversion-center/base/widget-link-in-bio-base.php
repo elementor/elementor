@@ -971,6 +971,7 @@ JS;
 
 	protected function add_style_cta_section(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'cta_links_section_style',
 			[
