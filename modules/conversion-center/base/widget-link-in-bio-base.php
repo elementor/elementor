@@ -906,28 +906,6 @@ JS;
 			]
 		);
 
-		if ( $config['content']['identity_section']['has_profile_image_controls'] ) {
-			$this->add_control(
-				'identity_heading_cover',
-				[
-					'label' => esc_html__( 'Cover', 'elementor' ),
-					'type' => Controls_Manager::HEADING,
-					'separator' => 'before',
-				]
-			);
-
-			$this->add_control(
-				'identity_image_cover',
-				[
-					'label' => esc_html__( 'Choose Image', 'elementor' ),
-					'type' => Controls_Manager::MEDIA,
-					'default' => [
-						'url' => Utils::get_placeholder_image_src(),
-					],
-				]
-			);
-		}
-
 		if ( $config['content']['identity_section']['has_heading_text'] ) {
 			$this->add_control(
 				'identity_heading',
@@ -963,6 +941,28 @@ JS;
 				],
 			]
 		);
+
+		if ( $config['content']['identity_section']['has_profile_image_controls'] ) {
+			$this->add_control(
+				'identity_heading_cove',
+				[
+					'label' => esc_html__( 'Profile', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
+				]
+			);
+
+			$this->add_control(
+				'identity_image_cover',
+				[
+					'label' => esc_html__( 'Choose Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'default' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}

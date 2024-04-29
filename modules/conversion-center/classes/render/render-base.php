@@ -196,82 +196,48 @@ abstract class Render_Base {
 	}
 
 	protected function render_identity_image(): void {
-		/**
-		 * Get base data for potential images
-		 * Note order is important - secondary must render before primary
-		*/
-		$output_images = [
-			'secondary_image' => [
-				'props' => [],
-				'should_render' => false,
-				'value' => $this->settings['identity_image_cover'] ?? [],
-			],
-			'primary_image' => [
-				'props' => [],
-				'should_render' => false,
-				'value' => $this->settings['identity_image'] ?? [],
-			],
-		];
+		$identity_image_props_shape = $this->settings['identity_image_shape'] ?? 'circle';
+		$identity_image_props_style = $this->settings['identity_image_style'] ?? 'profile';
+		$identity_image_props_show_border = $this->settings['identity_image_show_border'] ?? false;
+		$identity_image_props_show_bottom_border = $this->settings['identity_image_show_bottom_border'] ?? false;
+		$identity_image_value = $this->settings['identity_image'] ?? [];
 
-		// Bail early if there are no images to render
-		$output_images['primary_image']['should_render'] = ! empty( $output_images['primary_image']['value'] ) && ( ! empty( $output_images['primary_image']['value']['url'] || ! empty( $output_images['primary_image']['value']['id'] ) ) );
-		$output_images['secondary_image']['should_render'] = ! empty( $output_images['secondary_image']['value'] ) && ( ! empty( $output_images['secondary_image']['value']['url'] || ! empty( $output_images['secondary_image']['value']['id'] ) ) );
+		$has_identity_image = ! empty( $identity_image_value ) && ( ! empty( $identity_image_value['url'] || ! empty( $identity_image_value['id'] ) ) );
 
-		if ( ! $output_images['primary_image']['should_render'] && ! $output_images['secondary_image']['should_render'] ) {
+		if ( ! $has_identity_image ) {
 			return;
 		}
 
-		// Set props for primary image
-		if ( $output_images['primary_image']['should_render'] ) {
-			$output_images['primary_image']['props']['shape'] = $this->settings['identity_image_shape'] ?? 'circle';
-			$output_images['primary_image']['props']['style'] = $this->settings['identity_image_style'] ?? 'profile';
-			$output_images['primary_image']['props']['show_border'] = $this->settings['identity_image_show_border'] ?? false;
-			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+		$identity_image_classnames = 'e-link-in-bio__identity-image e-link-in-bio__identity-image-' . $identity_image_props_style;
+		if ( $identity_image_props_show_border || $identity_image_props_show_bottom_border ) {
+			$identity_image_classnames .= ' has-border';
 		}
-
-		// Set props for secondary image
-		if ( $output_images['secondary_image']['should_render'] ) {
-			$output_images['secondary_image']['props']['style'] = 'cover';
-			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_cover_show_bottom_border'] ?? false;
-
-			// Force primary to be profile since this is cover
-			$output_images['primary_image']['props']['style'] = 'profile';
+		if ( $identity_image_props_show_border || $identity_image_props_show_bottom_border ) {
+			$identity_image_classnames .= ' has-border';
 		}
+		if ( ! empty( $identity_image_props_shape ) && 'profile' === $identity_image_props_style ) {
+			$identity_image_classnames .= ' has-style-' . $identity_image_props_shape;
+		}
+		$this->widget->add_render_attribute( 'identity_image', [
+			'class' => $identity_image_classnames,
+		] );
 		?>
 		<div class="e-link-in-bio__identity">
-			<?php
-			foreach ( $output_images as $image_key => $image ) :
-				if ( $image['should_render'] ) :
-					$image_classnames = 'e-link-in-bio__identity-image e-link-in-bio__identity-image-' . $image['props']['style'];
-					if ( ! empty( $image['props']['show_border'] ) || ! empty( $image['props']['show_bottom_border'] ) ) {
-						$image_classnames .= ' has-border';
-					}
-					if ( ! empty( $image['props']['shape'] ) && 'profile' === $image['props']['style'] ) {
-						$image_classnames .= ' has-style-' . $image['props']['shape'];
-					}
-					$this->widget->add_render_attribute( 'identity_image_' . $image_key, [
-						'class' => $image_classnames,
+			<div <?php echo $this->widget->get_render_attribute_string( 'identity_image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<?php if ( ! empty( $identity_image_value['id'] ) ) {
+					echo wp_get_attachment_image( $identity_image_value['id'], 'medium', false, [
+						'class' => 'e-link-in-bio__identity-image-el',
+					] );
+				} else {
+					$this->widget->add_render_attribute( 'identity_image_src', [
+						'alt' => '',
+						'class' => 'e-link-in-bio__identity-image-el',
+						'src' => esc_url( $identity_image_value['url'] ),
 					] );
 					?>
-						<div <?php echo $this->widget->get_render_attribute_string( 'identity_image_' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-							<?php if ( ! empty( $image['value']['id'] ) ) {
-								echo wp_get_attachment_image( $image['value']['id'], 'medium', false, [
-									'class' => 'e-link-in-bio__identity-image-el',
-								] );
-							} else {
-								$this->widget->add_render_attribute( 'identity_image_src' . $image_key, [
-									'alt' => '',
-									'class' => 'e-link-in-bio__identity-image-el',
-									'src' => esc_url( $image['value']['url'] ),
-								] );
-								?>
-								<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
-							<?php }; ?>
-						</div>
-					<?php
-				endif;
-			endforeach;
-			?>
+					<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+				<?php }; ?>
+			</div>
 		</div>
 		<?php
 	}

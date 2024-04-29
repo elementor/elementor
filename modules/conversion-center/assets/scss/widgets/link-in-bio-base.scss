@@ -139,11 +139,7 @@
 	}
 
 	&__identity {
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-template-rows: auto;
 		margin-block-end: 14px;
-		margin-block-start: calc(var(--e-link-in-bio-gutter-block-start) * -1);
 
 		.e-link-in-bio__identity-image {
 			display: flex;
@@ -155,33 +151,13 @@
 			object-fit: cover;
 		}
 
-		.e-link-in-bio__identity-image-cover {
-			align-self: start;
-			border-color: var(--e-link-in-bio-identity-image-cover-border-color);
-			border-style: var(--e-link-in-bio-identity-image-cover-border-style);
-			border-width: 0 0 var(--e-link-in-bio-identity-image-cover-border-bottom-width) 0;
-			grid-column: 1;
-			grid-row: 1;
-			margin-inline: calc(var(--e-link-in-bio-gutter-inline) * -1);
-			max-height: var(--e-link-in-bio-identity-image-cover-height);;
-			width: calc(100% + calc(var(--e-link-in-bio-gutter-inline) * 2));
-
-			&.has-border {
-				--e-link-in-bio-identity-image-cover-border-style: solid;
-			}
-		}
-
 		.e-link-in-bio__identity-image-profile {
-			align-self: center;
 			aspect-ratio: 1;
 			border-color: var(--e-link-in-bio-identity-image-profile-border-color);
 			border-radius: var(--e-link-in-bio-identity-image-profile-border-radius);
 			border-style: var(--e-link-in-bio-identity-image-profile-border-style);
 			border-width: var(--e-link-in-bio-identity-image-profile-border-width);
-			grid-column: 1;
-			grid-row: 1;
 			overflow: hidden;
-			margin-block-start: var(--e-link-in-bio-gutter-block-start);
 			margin-block-end: 17px;
 			margin-inline: auto;
 			max-width: 100%;
@@ -200,8 +176,18 @@
 			}
 		}
 
-		.e-link-in-bio__identity-image-cover + .e-link-in-bio__identity-image-profile {
-			margin-block-start: 17px;
+		.e-link-in-bio__identity-image-cover {
+			border-color: var(--e-link-in-bio-identity-image-cover-border-color);
+			border-style: var(--e-link-in-bio-identity-image-cover-border-style);
+			border-width: 0 0 var(--e-link-in-bio-identity-image-cover-border-bottom-width) 0;
+			margin-block-start: calc(var(--e-link-in-bio-gutter-block-start) * -1);
+			margin-inline: calc(var(--e-link-in-bio-gutter-inline) * -1);
+			max-height: var(--e-link-in-bio-identity-image-cover-height);;
+			width: calc(100% + calc(var(--e-link-in-bio-gutter-inline) * 2));
+
+			&.has-border {
+				--e-link-in-bio-identity-image-cover-border-style: solid;
+			}
 		}
 	}
 
