@@ -138,7 +138,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'chat_button_platform' => [
 						Social_Network_Provider::SMS,
 						Social_Network_Provider::WHATSAPP,
-						Social_Network_Provider::VIBER
+						Social_Network_Provider::VIBER,
 					],
 				],
 			],

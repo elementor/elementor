@@ -205,7 +205,7 @@ abstract class Contact_Buttons_Render_Base {
 		?>
 		<div class="e-contact-buttons__send-button">
 			<div class="e-contact-buttons__send-button-container">
-				<?php if ($send_button_text && $formatted_link !== '') { ?>
+				<?php if ( $send_button_text && $formatted_link !== '' ) { ?>
 					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php
 							$mapping = Social_Network_Provider::get_icon_mapping( $platform );
