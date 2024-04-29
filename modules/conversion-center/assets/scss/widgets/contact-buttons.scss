@@ -31,7 +31,7 @@
     position: fixed;
     bottom: 20px;
     min-width: var(--e-contact-buttons-chat-box-width);
-    right: 20px;
+    #{$end}: 20px;
     z-index: 99;
 
     &.has-platform-whatsapp {
@@ -195,7 +195,7 @@
         color: var(--e-contact-buttons-close-button-color);
         padding: 0;
         position: absolute;
-        right: 20px;
+        #{$end}: 20px;
         top: 20px;
 
         &:hover,
@@ -262,11 +262,8 @@
 
     &__message-bubble {
         background-color: var(--e-contact-buttons-message-bubble-chat-bg);
-        padding: 20px 20px 20px 40px;
-
-        @if $direction == rtl {
-            padding: 20px 40px 20px 20px;
-        }
+        padding: 20px;
+        padding-inline-start: 40px;
     }
 
     &__bubble {
@@ -282,15 +279,12 @@
             content: "";
             height: 0;
             position: absolute;
-            left: -20px;
+            #{$start}: -20px;
             top: 0;
             transform: rotate(0);
             width: 0;
             
             @if $direction == rtl {
-                border-width: 0 40px 40px 0;
-                left: unset;
-                right: -20px;
                 transform: rotate(-90deg);
             }
         }
@@ -313,14 +307,11 @@
 
     &__message-bubble-time {
         color: var(--e-contact-buttons-message-bubble-time);
+        display: flex;
         font-size: 20px;
+        justify-content: flex-end;
         line-height: 25px;
         font-weight: 600;
-        text-align: right;
-
-        @if $direction == rtl {
-            text-align: left;
-        }
     }
 
     &__dots-container {

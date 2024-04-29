@@ -308,7 +308,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
-	
+
 		$this->add_control(
 			'message_bubble_name',
 			[
@@ -318,7 +318,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
 			]
 		);
-	
+
 		$this->add_control(
 			'message_bubble_body',
 			[
@@ -332,7 +332,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'placeholder' => esc_html__( 'Message', 'elementor' ),
 			],
 		);
-	
+
 		$this->add_control(
 			'chat_button_time_format',
 			[
@@ -345,7 +345,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'chat_button_show_animation',
 			[
@@ -357,7 +357,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'default' => 'yes',
 			]
 		);
-	
+
 		$this->end_controls_section();
 	}
 
@@ -656,7 +656,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_colors',
 			[
@@ -669,7 +669,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_name_heading',
 			[
@@ -678,7 +678,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'separator' => false,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_name_color',
 			[
@@ -692,7 +692,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -700,7 +700,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-name',
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_message_heading',
 			[
@@ -709,7 +709,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'separator' => false,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_message_color',
 			[
@@ -723,7 +723,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -731,7 +731,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-body',
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_time_heading',
 			[
@@ -740,7 +740,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'separator' => false,
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_time_color',
 			[
@@ -754,7 +754,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -762,7 +762,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-time',
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_background_heading',
 			[
@@ -774,7 +774,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_background_color',
 			[
@@ -788,7 +788,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_chat_heading',
 			[
@@ -800,7 +800,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->add_control(
 			'style_bubble_chat_color',
 			[
@@ -814,10 +814,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
-	
+
 		$this->end_controls_section();
 	}
-
 
 	private function add_advanced_tab(): void {
 		Controls_Manager::add_tab(
