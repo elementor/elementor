@@ -28,28 +28,26 @@
 
 		i {
 			color: var(--button-icon-color, inherit);
+		    font-size: var(--button-icon-size);
 		}
 
 		svg {
 			width: 1em;
 			height: auto;
 			fill: var(--button-icon-color, inherit);
+			
 		}
-
+		
 		svg:hover {
 			fill: var(--button-icon-color, inherit);
 		}
-
+		
 		.e-font-icon-svg {
 			height: 1em;
 		}
 	}
-
-	.e-font-icon-svg {
-		font-size: var(--button-icon-size);
-	}
-
-
+	
+	
 	&-text {
 		display: inline-block;
 	}
