@@ -897,6 +897,7 @@ JS;
 
 	protected function add_identity_section(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'identity_section',
 			[
@@ -968,6 +969,7 @@ JS;
 
 	protected function add_style_cta_section(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'cta_links_section_style',
 			[
@@ -1147,6 +1149,7 @@ JS;
 
 	protected function add_style_identity_controls(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'identity_section_style',
 			[
@@ -1499,9 +1502,11 @@ JS;
 		];
 
 		$config = static::get_configuration();
+
 		if ( $config['style']['border_section']['field_options'] ) {
 			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
 		}
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
