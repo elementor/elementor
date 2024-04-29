@@ -50,6 +50,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->add_style_send_button_section();
 
+		$this->add_style_chat_box_section();
+
 		// Advanced
 		$this->add_advanced_tab();
 	}
@@ -911,6 +913,157 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->end_controls_tab();
+
+		$this->end_controls_section();
+	}
+
+	private function add_style_chat_box_section(): void {
+		$this->start_controls_section(
+			'style_chat_box_section',
+			[
+				'label' => esc_html__( 'Chat Box', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_bg_select',
+			[
+				'label'   => esc_html__( 'Background Color', 'elementor' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom'  => esc_html__( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_bg_color',
+			[
+				'label'     => esc_html__( 'Background Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				// TODO: add correct selectors
+				// 'selectors' => [
+				// 	'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
+				// ],
+				'condition' => [
+					'style_chat_box_bg_select' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_chat_box_width',
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 0,
+						'max' => 400,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+					'size' => 360,
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_corners',
+			[
+				'label'     => esc_html__( 'Corners', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'rounded',
+				'options'   => [
+					'round'   => esc_html__( 'Round', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_shadow_heading',
+			[
+				'label' => esc_html__( 'Box Shadow', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_box_shadow',
+			[
+				'label' => esc_html__( 'Box Shadow', 'textdomain' ),
+				'type' => \Elementor\Controls_Manager::BOX_SHADOW,
+				'selectors' => [
+					'{{SELECTOR}} .e-contact-buttons' => '--e-contact-buttons-box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_shadow_divider',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_entrance_animation',
+			[
+				'label'     => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'slide-in-up',
+				'options'   => [
+					'none'          => esc_html__( 'None', 'elementor' ),
+					'fade-in-up'    => esc_html__( 'Fade In Up', 'elementor' ),
+					'zoom-in-up'    => esc_html__( 'Zoom In Up', 'elementor' ),
+					'slide-in-up'   => esc_html__( 'Slide In Up', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_exit_animation',
+			[
+				'label'     => esc_html__( 'Exit Animation', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'slide-out-down',
+				'options'   => [
+					'none'             => esc_html__( 'None', 'elementor' ),
+					'fade-out-down'    => esc_html__( 'Fade Out Down', 'elementor' ),
+					'zoom-out-down'    => esc_html__( 'Zoom Out Down', 'elementor' ),
+					'slide-out-down'   => esc_html__( 'Slide Out Down', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_animation_duration',
+			[
+				'label'     => esc_html__( 'Animation Duration', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'normal',
+				'options'   => [
+					'slow'    => esc_html__( 'Slow', 'elementor' ),
+					'normal'  => esc_html__( 'Normal', 'elementor' ),
+					'fast'    => esc_html__( 'Fast', 'elementor' ),
+				],
+			]
+		);
 
 		$this->end_controls_section();
 	}

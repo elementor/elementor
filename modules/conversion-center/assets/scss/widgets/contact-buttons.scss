@@ -1,13 +1,13 @@
 .e-contact-buttons {
-    --e-contact-buttons-chat-box-width: 360px;
-    --e-contact-buttons-size-small: 65px;
+    --e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
+    --e-contact-buttons-size: 65px;
     --e-contact-buttons-size-medium: 75px;
     --e-contact-buttons-size-large: 85px;
-    --e-contact-buttons-dot: #FF0000;
-    --e-contact-buttons-dot-size: 20px;
-    --e-contact-buttons-profile-dot-bg: #39AA59;
-    --e-contact-buttons-box-shadow: 0 3px 3px 0 rgba(0,0,0,0.25);
-    --e-contact-buttons-border-radius: 7px;
+    --e-contact-buttons-dot: #{$contact-buttons-dots-color};
+    --e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
+    --e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
+    --e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
+    --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
 
     // Platform specific colors
     // Default used for email, sms
@@ -32,8 +32,8 @@
 
     position: fixed;
     bottom: 20px;
-    min-width: var(--e-contact-buttons-chat-box-width);
     #{$end}: 20px;
+    width: var(--e-contact-buttons-chat-box-width);
     z-index: 99;
 
     &.has-platform-whatsapp {
@@ -119,6 +119,19 @@
         --e-contact-buttons-send-button-bg-hover: #4E4879;
         --e-contact-buttons-chat-box-bg: #FFFFFF;
     }
+
+    &.has-corners-rounded {
+        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
+    }
+
+    &.has-corners-round {
+        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-round};
+    }
+
+    &.has-corners-sharp {
+        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
+    }
+
 
     &__content {
         border-radius: var(--e-contact-buttons-border-radius);
