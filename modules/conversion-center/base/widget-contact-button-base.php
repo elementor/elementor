@@ -910,7 +910,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->end_controls_tab();
 
-		$this->end_controls_tab();
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
