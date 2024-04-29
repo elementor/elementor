@@ -57,6 +57,31 @@ trait Conversion_Center_Controls_Trait {
 		);
 	}
 
+	protected function add_slider_control(
+		string $name,
+		array $args = []
+	): void {
+		$default_args = [
+			'type' => Controls_Manager::SLIDER,
+			'default' => [
+				'unit' => 'px',
+			],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 100,
+					'step' => 1,
+				],
+			],
+		];
+
+		$this->add_control(
+			$name,
+			array_merge_recursive( $default_args, $args )
+		);
+	}
+
 	protected function add_borders_control(
 		string $prefix,
 		array $show_border_args = [],
@@ -74,8 +99,17 @@ trait Conversion_Center_Controls_Trait {
 
 		$this->add_control(
 			$prefix . '_show_border',
-			array_merge_recursive( $show_border, $show_border_args )
+			array_merge( $show_border, $show_border_args )
 		);
+
+		$condition = [
+			$prefix . '_show_border' => 'yes',
+		];
+
+		if ( isset( $border_width_args['condition'] ) ) {
+			$condition = array_merge( $condition, $border_width_args['condition'] );
+			unset( $border_width_args['condition'] );
+		}
 
 		$border_width = [
 			'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
@@ -84,33 +118,32 @@ trait Conversion_Center_Controls_Trait {
 			'range' => [
 				'px' => $this->border_width_range,
 			],
-			'condition' => [
-				$prefix . '_show_border' => 'yes',
-			],
-			'selectors' => [
-				'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{SIZE}}{{UNIT}}',
-			],
+			'condition' => $condition,
 		];
 
 		$this->add_control(
 			$prefix . '_border_width',
-			array_merge_recursive( $border_width, $border_width_args ),
+			array_merge( $border_width, $border_width_args ),
 		);
+
+		$condition = [
+			$prefix . '_show_border' => 'yes',
+		];
+
+		if ( isset( $border_color_args['condition'] ) ) {
+			$condition = array_merge( $condition, $border_color_args['condition'] );
+			unset( $border_color_args['condition'] );
+		}
 
 		$border_color = [
 			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
-			'condition' => [
-				$prefix . '_show_border' => 'yes',
-			],
-			'selectors' => [
-				'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-color: {{VALUE}}',
-			],
+			'condition' => $condition,
 		];
 
 		$this->add_control(
 			$prefix . '_border_color',
-			array_merge_recursive( $border_color, $border_color_args )
+			array_merge( $border_color, $border_color_args )
 		);
 	}
 }
