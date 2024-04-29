@@ -205,7 +205,7 @@ abstract class Contact_Buttons_Render_Base {
 		?>
 		<div class="e-contact-buttons__send-button">
 			<div class="e-contact-buttons__send-button-container">
-				<?php if ( $send_button_text && $formatted_link !== '' ) { ?>
+				<?php if ( $send_button_text ) { ?>
 					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php
 							$mapping = Social_Network_Provider::get_icon_mapping( $platform );
@@ -219,7 +219,7 @@ abstract class Contact_Buttons_Render_Base {
 								[ 'aria-hidden' => 'true' ]
 							);
 						?>
-						<?php echo( $send_button_text ); ?>
+						<?php Utils::print_unescaped_internal_string( $send_button_text ); ?>
 					</a>
 				<?php } ?>
 			</div>
@@ -263,9 +263,9 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function get_formatted_link_based_on_platform( string $platform ): string {
-		$chat_button_number = $this->settings['chat_button_number'];
-		$chat_button_username = $this->settings['chat_button_username'];
-		$platform_skype_username = $this->settings['chat_button_skype_username'];
+		$chat_button_number = $this->settings['chat_button_number'] ?? '';
+		$chat_button_username = $this->settings['chat_button_username'] ?? '';
+		$platform_skype_username = $this->settings['chat_button_skype_username'] ?? '';
 
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $platform ) {
