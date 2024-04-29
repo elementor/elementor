@@ -687,12 +687,7 @@ class Widget_Icon_Box extends Widget_Base {
 
 		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
 
-		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
-			// add old default
-			$settings['icon'] = 'fa fa-star';
-		}
-
-		$has_icon = ! empty( $settings['icon'] || ! empty( $settings['selected_icon']['value'] ) );
+		$has_icon = ! empty( $settings['selected_icon']['value'] );
 		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
 
 		if ( ! $has_icon && ! $has_content ) {
@@ -704,7 +699,12 @@ class Widget_Icon_Box extends Widget_Base {
 			$this->add_render_attribute( 'icon', 'tabindex', '-1' );
 		}
 
-		if ( $has_icon ) {
+		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
+			// add old default
+			$settings['icon'] = 'fa fa-star';
+		}
+
+		if ( ! empty( $settings['icon'] ) ) {
 			$this->add_render_attribute( 'i', 'class', $settings['icon'] );
 			$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
 		}
