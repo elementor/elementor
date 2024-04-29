@@ -401,8 +401,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			]
 		);
 
-		do_action( 'elementor/conversion-center/content/controls/icons/before', $this );
-
 		if ( $config['content']['icon_section']['platform']['limit'] ) {
 			$this->add_control(
 				'custom_panel_alert',
