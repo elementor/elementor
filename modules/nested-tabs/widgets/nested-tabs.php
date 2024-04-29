@@ -1152,6 +1152,10 @@ class NestedTabs extends Widget_Nested_Base {
 		if ( isset( $children[ $index ] ) ) {
 			$children[ $index ]->print_element();
 		}
+		else {
+		    // Handle the error appropriately
+		    error_log("Child with index {$index} does not exist.");
+		}
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 
