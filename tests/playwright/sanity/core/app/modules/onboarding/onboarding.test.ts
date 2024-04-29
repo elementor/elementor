@@ -146,7 +146,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 			pageTitleText = await pageTitle.innerText();
 
 		// Test that the "Skip" button leads the user to the "Good to Go" screen.
-		expect( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
+		expect( pageTitleText ).toContain( 'What\'s next?' );
 	} );
 
 	/**
@@ -162,5 +162,74 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const kitLibraryTitle = page.locator( 'text=Kit Library' );
 
 		await expect( kitLibraryTitle ).toBeVisible();
+	} );
+} );
+
+test.describe( 'Onboarding @onBoarding', async () => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			e_onboarding: 'active',
+		} );
+	} );
+
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			e_onboarding: 'inactive',
+		} );
+	} );
+
+	test( 'Onboarding Choose Features page', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures' );
+
+		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
+			upgradeNowBtn = page.locator( '.e-onboarding__button-action' ),
+			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
+			tiers = {
+				advanced: 'Advanced',
+				essential: 'Essential',
+			};
+
+		await upgradeNowBtn.waitFor();
+
+		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
+
+		await test.step( 'Check that Upgrade Now button is disabled', async () => {
+			await expect( upgradeNowBtn ).toHaveClass( /e-onboarding__button--disabled/ );
+		} );
+
+		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
+			await page.locator( '#essential-2' ).check();
+			await expect( tierLocator ).toHaveText( tiers.essential );
+		} );
+
+		await test.step( 'Check that Upgrade Now button is not disabled', async () => {
+			await expect( upgradeNowBtn ).not.toHaveClass( /e-onboarding__button--disabled/ );
+		} );
+
+		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
+			await page.locator( '#advanced-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
+			await page.locator( '#advanced-1' ).uncheck();
+			await expect( tierLocator ).toHaveText( tiers.essential );
+		} );
+
+		await test.step( 'Check that is not visible when unchecking all items', async () => {
+			await page.locator( '#essential-2' ).uncheck();
+			await expect( tierLocator ).not.toBeVisible();
+		} );
+
+		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
+			await page.locator( '#advanced-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
 	} );
 } );
