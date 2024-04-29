@@ -1151,6 +1151,7 @@ JS;
 
 	protected function add_style_identity_controls(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'identity_section_style',
 			[
