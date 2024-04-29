@@ -175,7 +175,7 @@ abstract class Contact_Buttons_Render_Base {
 					<?php
 						$this->widget->add_render_attribute( 'message-bubble-time', [
 							'class' => 'e-contact-buttons__message-bubble-time',
-							'data-time-format' => $time_format
+							'data-time-format' => $time_format,
 						] );
 						$message_bubble_time_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-time' ), '' );
 						Utils::print_unescaped_internal_string( $message_bubble_time_output );
