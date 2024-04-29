@@ -309,7 +309,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-
 	private function add_send_button_section(): void {
 		$this->start_controls_section(
 			'send_button_section',
