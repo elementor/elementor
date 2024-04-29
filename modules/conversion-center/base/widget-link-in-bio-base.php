@@ -1165,8 +1165,6 @@ JS;
 			];
 		}
 
-		// Profile image style controls
-
 		$this->add_responsive_control(
 			'identity_image_size',
 			[
