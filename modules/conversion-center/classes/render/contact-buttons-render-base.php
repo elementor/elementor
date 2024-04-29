@@ -153,7 +153,7 @@ abstract class Contact_Buttons_Render_Base {
 		] );
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'message-bubble' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<?php if ($has_typing_animation) { ?>
+			<?php if ( $has_typing_animation ) { ?>
 				<div class="e-contact-buttons__dots-container">
 					<span class="e-contact-buttons__dot e-contact-buttons__dot-1"></span>
 					<span class="e-contact-buttons__dot e-contact-buttons__dot-2"></span>

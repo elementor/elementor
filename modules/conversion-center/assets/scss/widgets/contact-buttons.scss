@@ -263,6 +263,10 @@
     &__message-bubble {
         background-color: var(--e-contact-buttons-message-bubble-chat-bg);
         padding: 20px 20px 20px 40px;
+
+        @if $direction == rtl {
+            padding: 20px 40px 20px 20px;
+        }
     }
 
     &__bubble {
@@ -280,8 +284,15 @@
             position: absolute;
             left: -20px;
             top: 0;
-            transform: rotate(0deg);
+            transform: rotate(0);
             width: 0;
+            
+            @if $direction == rtl {
+                border-width: 0 40px 40px 0;
+                left: unset;
+                right: -20px;
+                transform: rotate(-90deg);
+            }
         }
     }
 
@@ -297,7 +308,7 @@
         color: var(--e-contact-buttons-message-bubble-body);
         font-size: 20px;
         line-height: 25px;
-        margin-bottom: 8px;
+        margin-block-end: 8px;
     }
 
     &__message-bubble-time {
@@ -306,12 +317,16 @@
         line-height: 25px;
         font-weight: 600;
         text-align: right;
+
+        @if $direction == rtl {
+            text-align: left;
+        }
     }
 
     &__dots-container {
         background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
         border-radius: 15px;
-        display: inline;
+        display: inline-flex;
         padding: 10px 12px;
     }
 

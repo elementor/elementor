@@ -258,7 +258,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'top_bar_name',
 			[
 				'label' => esc_html__( 'Name', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::TEXT,
+				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Rob Jones', 'elementor' ),
 				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
 			]
@@ -268,7 +268,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'top_bar_title',
 			[
 				'label' => esc_html__( 'Title', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::TEXT,
+				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Store Manager', 'elementor' ),
 				'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
 			]
@@ -313,7 +313,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'message_bubble_name',
 			[
 				'label' => esc_html__( 'Name', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::TEXT,
+				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Rob', 'elementor' ),
 				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
 			]
@@ -322,9 +322,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'message_bubble_body',
 			[
-				'label'       => esc_html__( 'Message', 'elementor' ),
-				'type'        => Controls_Manager::TEXTAREA,
-				'dynamic'     => [
+				'label' => esc_html__( 'Message', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
@@ -336,10 +336,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'chat_button_time_format',
 			[
-				'label'     => esc_html__( 'Time format', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => '12h',
-				'options'   => [
+				'label' => esc_html__( 'Time format', 'elementor' ),
+				'type'  => Controls_Manager::SELECT,
+				'default' => '12h',
+				'options' => [
 					'12h' => esc_html__( '2:20 PM', 'elementor' ),
 					'24h' => esc_html__( '14:20', 'elementor' ),
 				],
@@ -349,12 +349,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'chat_button_show_animation',
 			[
-				'label'        => esc_html__( 'Display Typing Animation', 'elementor' ),
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Yes', 'elementor' ),
-				'label_off'    => esc_html__( 'No', 'elementor' ),
+				'label' => esc_html__( 'Display Typing Animation', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
-				'default'      => 'yes',
+				'default' => 'yes',
 			]
 		);
 	
@@ -653,19 +653,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'style_bubble_section',
 			[
 				'label' => esc_html__( 'Message Bubble', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 	
 		$this->add_control(
 			'style_bubble_colors',
 			[
-				'label'   => esc_html__( 'Colors', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
+				'label' => esc_html__( 'Colors', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
 					'default' => esc_html__( 'Default', 'elementor' ),
-					'custom'  => esc_html__( 'Custom', 'elementor' ),
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 			]
 		);
@@ -673,8 +673,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_name_heading',
 			[
-				'label'     => esc_html__( 'Name', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Name', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 			]
 		);
@@ -682,8 +682,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_name_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-name: {{VALUE}}',
 				],
@@ -696,7 +696,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'style_bubble_name_typography',
+				'name' => 'style_bubble_name_typography',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-name',
 			]
 		);
@@ -704,8 +704,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_message_heading',
 			[
-				'label'     => esc_html__( 'Message', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Message', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 			]
 		);
@@ -713,8 +713,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_message_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-body: {{VALUE}}',
 				],
@@ -727,7 +727,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'style_bubble_message_typography',
+				'name' => 'style_bubble_message_typography',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-body',
 			]
 		);
@@ -735,8 +735,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_time_heading',
 			[
-				'label'     => esc_html__( 'Time', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Time', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 			]
 		);
@@ -744,8 +744,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_time_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-time: {{VALUE}}',
 				],
@@ -758,7 +758,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'name'     => 'style_bubble_time_typography',
+				'name' => 'style_bubble_time_typography',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-time',
 			]
 		);
@@ -766,8 +766,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_background_heading',
 			[
-				'label'     => esc_html__( 'Bubble Background', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Bubble Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 				'condition' => [
 					'style_bubble_colors' => 'custom',
@@ -778,8 +778,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_background_color',
 			[
-				'label'     => esc_html__( 'Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-bubble-bg: {{VALUE}}',
 				],
@@ -792,8 +792,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_chat_heading',
 			[
-				'label'     => esc_html__( 'Chat Background', 'elementor' ),
-				'type'      => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Chat Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 				'condition' => [
 					'style_bubble_colors' => 'custom',
@@ -804,8 +804,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_bubble_chat_color',
 			[
-				'label'     => esc_html__( 'Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-chat-bg: {{VALUE}}',
 				],
