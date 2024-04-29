@@ -47,6 +47,7 @@ const WidgetView = BaseWidget.extend( {
 					name: 'save',
 					title: __( 'Save as a global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
+					promotionURL: 'https://go.elementor.com/go-pro-global-widget-context-menu/',
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
 						! elementor.selection.isMultiple(),
 				},

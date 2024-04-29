@@ -158,15 +158,6 @@ class Widget_Accordion extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->add_control(
 			'selected_icon',
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
@@ -449,10 +440,16 @@ class Widget_Accordion extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 1,
+					],
+					'rem' => [
+						'max' => 1,
 					],
 				],
 				'selectors' => [

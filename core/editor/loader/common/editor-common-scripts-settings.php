@@ -5,12 +5,16 @@ use Elementor\Api;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
+use Elementor\Modules\Apps\Module as AppsModule;
+use Elementor\Modules\EditorEvents\Module as EditorEventsModule;
+use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Shapes;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -33,8 +37,9 @@ class Editor_Common_Scripts_Settings {
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
-			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
+			'admin_settings_url' => admin_url( 'admin.php?page=' . Home_Module::get_elementor_settings_page_id() ),
 			'admin_tools_url' => admin_url( 'admin.php?page=' . Tools::PAGE_ID ),
+			'admin_apps_url' => admin_url( 'admin.php?page=' . AppsModule::PAGE_ID ),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'tabs' => Plugin::$instance->controls_manager->get_tabs(),
 			'controls' => Plugin::$instance->controls_manager->get_controls_data(),
@@ -66,6 +71,7 @@ class Editor_Common_Scripts_Settings {
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
+				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
 			],
 			'preview' => [
@@ -93,10 +99,22 @@ class Editor_Common_Scripts_Settings {
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
 			],
+			'editor_events' => EditorEventsModule::get_editor_events_config(),
+			'promotions' => [
+				'notes' => Filtered_Promotions_Manager::get_filtered_promotion_data(
+					[ 'upgrade_url' => 'https://go.elementor.com/go-pro-notes/' ],
+					'elementor/panel/notes/custom_promotion',
+					'upgrade_url'
+				),
+			],
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
 			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
+			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
 
 		static::bc_move_document_filters();

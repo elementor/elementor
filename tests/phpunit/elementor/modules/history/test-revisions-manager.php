@@ -173,32 +173,23 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 			'the filter "wp_save_post_revision_check_for_changes" should return false' );
 	}
 
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage You must set the revision ID.
-	 */
 	public function test_should_not_get_revision_data_on_request_because_of_unset_revision_ID() {
+		$this->expectExceptionMessage( 'You must set the revision ID.' );
 		Revisions_Manager::ajax_get_revision_data( [] );
 	}
 
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage Not found.
-	 */
 	public function test_should_not_get_revision_data_on_request_because_of_invalid_revision() {
 		$args['id'] = $this->fake_post_id;
+		$this->expectExceptionMessage( 'Not found.' );
 
 		Revisions_Manager::ajax_get_revision_data( $args );
 	}
 
-	/**
-	 * @expectedException \Exception
-	 * @expectedExceptionMessage Access denied.
-	 */
 	public function test_should_not_get_revision_data_on_request_because_of_access_denied() {
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
 		$args['id'] = $this->factory()->create_and_get_default_post()->ID;
 
+		$this->expectExceptionMessage('Access denied.');
 		Revisions_Manager::ajax_get_revision_data( $args );
 	}
 

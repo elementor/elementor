@@ -12,9 +12,6 @@ $active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 $active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), array_flip( $active_devices ) );
-
-/* translators: %1$s: Device Name */
-$breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device will apply to %2$spx screens and down', 'elementor' );
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-responsive-bar">
@@ -24,11 +21,17 @@ $breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device wi
 				if ( 'desktop' === $device_key ) {
 					$tooltip_label = esc_html__( 'Desktop <br> Settings added for the base device will apply to all breakpoints unless edited', 'elementor' );
 				} elseif ( 'widescreen' === $device_key ) {
-					$tooltip_label = esc_html__( 'Widescreen <br> Settings added for the Widescreen device will apply to screen sizes %dpx and up', 'elementor' );
-
-					$tooltip_label = sprintf( $tooltip_label, $active_breakpoints[ $device_key ]->get_value() );
+					$tooltip_label = sprintf(
+						/* translators: %d: Breakpoint screen size. */
+						esc_html__( 'Widescreen <br> Settings added for the Widescreen device will apply to screen sizes %dpx and up', 'elementor' ),
+						$active_breakpoints[ $device_key ]->get_value()
+					);
 				} else {
-					$tooltip_label = sprintf( $breakpoint_label, $active_breakpoints[ $device_key ]->get_label(), $active_breakpoints[ $device_key ]->get_value() );
+					$tooltip_label = sprintf(
+						/* translators: %1$s: Device name, %2$s: Breakpoint screen size. */
+						esc_html__( '%1$s <br> Settings added for the %1$s device will apply to %2$spx screens and down', 'elementor' ),
+						$active_breakpoints[ $device_key ]->get_label(), $active_breakpoints[ $device_key ]->get_value()
+					);
 				}
 				printf( '<label
 					id="e-responsive-bar-switcher__option-%1$s"

@@ -1,4 +1,5 @@
 import { Box, Typography, Slider, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import GenerateSubmit from '../../components/generate-submit';
 import ImageForm from '../../components/image-form';
@@ -8,10 +9,11 @@ import { useEditImage } from '../../context/edit-image-context';
 import useResize from './hooks/use-resize';
 import useImageActions from '../../hooks/use-image-actions';
 import usePromptSettings, { IMAGE_UPSCALE } from '../../hooks/use-prompt-settings';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const Resize = () => {
 	const { editImage, width: initialEditImageWidth } = useEditImage();
-
+	const { setGenerate } = useRequestIds();
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const { settings, updateSettings } = usePromptSettings();
@@ -22,8 +24,8 @@ const Resize = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
-		send( null, settings, editImage );
+		setGenerate();
+		send( { promptSettings: settings, image: editImage } );
 	};
 
 	return (
@@ -39,7 +41,7 @@ const Resize = () => {
 				{ error && <View.ErrorMessage error={ error } onRetry={ handleSubmit } /> }
 
 				<ImageForm onSubmit={ handleSubmit }>
-					<Stack spacing={ 2 }>
+					<Stack spacing={ 0.2 }>
 						<Box display="flex" justifyContent="space-between" alignItems="center">
 							<Typography variant="caption">512px</Typography>
 

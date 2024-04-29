@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { FormControl, Slider, Typography, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import ImageRatioSelect from '../../components/image-ratio-select';
@@ -13,10 +14,11 @@ import { useEditImage } from '../../context/edit-image-context';
 import useImageActions from '../../hooks/use-image-actions';
 import usePromptSettings, { IMAGE_RATIO, IMAGE_ZOOM } from '../../hooks/use-prompt-settings';
 import useOutPainting from './hooks/use-out-painting';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const OutPainting = () => {
 	const [ prompt, setPrompt ] = useState( '' );
-
+	const { setGenerate } = useRequestIds();
 	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
 
 	const [ mask, setMask ] = useState( '' );
@@ -38,8 +40,8 @@ const OutPainting = () => {
 
 		// The fallback instruction should be hidden for the user.
 		const finalPrompt = prompt || 'Fill based on the surroundings';
-
-		send( finalPrompt, settings, editImage, mask );
+		setGenerate();
+		send( { prompt: finalPrompt, settings, image: editImage, mask } );
 	};
 
 	return (
@@ -61,7 +63,7 @@ const OutPainting = () => {
 						onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
 					/>
 
-					<FormControl sx={ { width: '100%', mb: 6 } }>
+					<FormControl sx={ { width: '100%', mb: 2.5 } }>
 						<Slider
 							marks
 							id="zoom"
@@ -92,7 +94,7 @@ const OutPainting = () => {
 
 					{
 						data?.result ? (
-							<Stack gap={ 5 } sx={ { my: 6 } }>
+							<Stack gap={ 2 } sx={ { my: 2.5 } }>
 								<GenerateAgainSubmit disabled={ isLoading } />
 
 								<NewPromptButton disabled={ isLoading } onClick={ () => {

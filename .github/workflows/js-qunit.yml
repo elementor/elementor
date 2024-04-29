@@ -18,7 +18,7 @@ jobs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -31,17 +31,17 @@ jobs:
   q-unit:
     runs-on: ubuntu-20.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
+    if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     name: Qunit - Test
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: cache-node-modules
         with:

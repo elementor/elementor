@@ -4,7 +4,7 @@
  * Description: The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 3.15.0
+ * Version: 3.22.0
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.16.0' );
+define( 'ELEMENTOR_VERSION', '3.22.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -45,9 +45,9 @@ define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
 add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
 
-if ( ! version_compare( PHP_VERSION, '7.0', '>=' ) ) {
+if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ! version_compare( get_bloginfo( 'version' ), '5.9', '>=' ) ) {
+} elseif ( ! version_compare( get_bloginfo( 'version' ), '6.0', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
@@ -76,16 +76,17 @@ function elementor_load_plugin_textdomain() {
  * @return void
  */
 function elementor_fail_php_version() {
-	$message = sprintf(
-		/* translators: 1: `<h3>` opening tag, 2: `</h3>` closing tag, 3: PHP version. 4: Link opening tag, 5: Link closing tag. */
-		esc_html__( '%1$sElementor isn’t running because PHP is outdated.%2$s Update to PHP version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
-		'<h3>',
-		'</h3>',
-		'7.0',
-		'<a href="https://go.elementor.com/wp-dash-update-php/" target="_blank">',
-		'</a>'
+	$html_message = sprintf(
+		'<div class="error"><h3>%1$s</h3><p>%2$s <a href="https://go.elementor.com/wp-dash-update-php/" target="_blank">%3$s</a></p></div>',
+		esc_html__( 'Elementor isn’t running because PHP is outdated.', 'elementor' ),
+		sprintf(
+			/* translators: %s: PHP version. */
+			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
+			'7.4',
+		),
+		esc_html__( 'Show me how', 'elementor' )
 	);
-	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
+
 	echo wp_kses_post( $html_message );
 }
 
@@ -99,15 +100,16 @@ function elementor_fail_php_version() {
  * @return void
  */
 function elementor_fail_wp_version() {
-	$message = sprintf(
-		/* translators: 1: `<h3>` opening tag, 2: `</h3>` closing tag, 3: WP version. 4: Link opening tag, 5: Link closing tag. */
-		esc_html__( '%1$sElementor isn’t running because WordPress is outdated.%2$s Update to version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
-		'<h3>',
-		'</h3>',
-		'5.9',
-		'<a href="https://go.elementor.com/wp-dash-update-wordpress/" target="_blank">',
-		'</a>'
+	$html_message = sprintf(
+		'<div class="error"><h3>%1$s</h3><p>%2$s <a href="https://go.elementor.com/wp-dash-update-wordpress/" target="_blank">%3$s</a></p></div>',
+		esc_html__( 'Elementor isn’t running because WordPress is outdated.', 'elementor' ),
+		sprintf(
+			/* translators: %s: WordPress version. */
+			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
+			'6.0',
+		),
+		esc_html__( 'Show me how', 'elementor' )
 	);
-	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
+
 	echo wp_kses_post( $html_message );
 }

@@ -35,11 +35,11 @@
 		&.eicon-menu-bar {
 			font-size: 18px;
 		}
+	}
 
-		&:hover,
-		&:focus {
-			color: var(--e-a-dark-color-txt-hover);
-		}
+	&:hover,
+	&:focus {
+		color: var(--e-a-dark-color-txt-hover);
 	}
 }
 

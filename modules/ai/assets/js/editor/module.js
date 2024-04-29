@@ -1,10 +1,62 @@
 import AiBehavior from './ai-behavior';
-import AiPromotionBehavior from './ai-promotion-behavior';
+import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
+import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
+import ReactUtils from 'elementor-utils/react';
+import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
+		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
+		window.$e.commands.on( 'run:after', ( component, command, args ) => {
+			if ( 'document/elements/create' === command ) {
+				this.onCreateContainer( args );
+			}
+		} );
+	}
+
+	onCreateContainer( args ) {
+		if ( args.container.id !== 'document' || args.model.elType !== 'container' ) {
+			return;
+		}
+
+		if ( ! shouldShowPromotionIntroduction() ) {
+			return;
+		}
+
+		const element = args.container.view.$el[ 0 ];
+		const rootBox = element.getBoundingClientRect();
+
+		if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
+			return;
+		}
+
+		const { x: canvasOffsetX, y: canvasOffsetY } = document.querySelector( '#elementor-preview-iframe' ).getBoundingClientRect();
+
+		setTimeout( () => {
+			const rootElement = document.createElement( 'div' );
+			document.body.append( rootElement );
+			const isPromotion = ! window.ElementorAiConfig.is_get_started;
+			const mainActionText = isPromotion ? __( 'Try it for free', 'elementor' ) : __( 'Try it now', 'elementor' );
+			const { unmount } = ReactUtils.render( <AiPromotionInfotipWrapper
+				test-id="ai-promotion-infotip-wrapper"
+				anchor={ element }
+				clickAction={ () => {
+					window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
+				} }
+				header={ __( 'Give your workflow a boost.', 'elementor' ) }
+				contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
+				mainActionText={ mainActionText }
+				controlType={ 'container' }
+				unmountAction={ () => {
+					unmount();
+				} }
+				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+				isRTL={ elementorCommon.config.isRTL }
+				placement={ 'bottom' }
+				offset={ { x: canvasOffsetX, y: canvasOffsetY } }
+			/>, rootElement );
+		}, 1000 );
 	}
 
 	registerControlBehavior( behaviors, view ) {
@@ -35,14 +87,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				additionalOptions: {
 					defaultValue: view.options.model.get( 'default' ),
 				},
-				context: {
-					documentType: view.options.container.document.config.type,
-					elementType: view.options.container.args.model.get( 'elType' ),
-					elementId: view.options.container.id,
-					widgetType: view.options.container.args.model.get( 'widgetType' ),
-					controlName: view.options.model.get( 'name' ),
-					controlType,
-				},
+				context: this.getContextData( view, controlType ),
 			};
 		}
 
@@ -62,14 +107,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				isLabelBlock: view.options.model.get( 'label_block' ),
 				getControlValue: view.getControlValue.bind( view ),
 				setControlValue: ( value ) => view.editor.setValue( value, -1 ),
-				context: {
-					documentType: view.options.container.document.config.type,
-					elementType: view.options.container.args.model.get( 'elType' ),
-					elementId: view.options.container.id,
-					widgetType: view.options.container.args.model.get( 'widgetType' ),
-					controlName: view.options.model.get( 'name' ),
-					controlType,
-				},
+				context: this.getContextData( view, controlType ),
 			};
 		}
 
@@ -83,24 +121,38 @@ export default class Module extends elementorModules.editor.utils.Module {
 					type: aiOptions.type,
 					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: ( value ) => {},
+					setControlValue: () => {},
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
 						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
 					},
-					context: {
-						documentType: view.options.container.document.config.type,
-						elementType: view.options.container.args.model.get( 'elType' ),
-						elementId: view.options.container.id,
-						widgetType: view.options.container.args.model.get( 'widgetType' ),
-						controlName: view.options.model.get( 'name' ),
-						controlType,
-					},
+					context: this.getContextData( view, controlType ),
 				};
 			}
 		}
 
 		return behaviors;
+	}
+
+	getContextData( view, controlType ) {
+		const controlName = view.options.model.get( 'name' );
+
+		if ( ! view.options.container ) {
+			return {
+				controlName,
+				controlType,
+			};
+		}
+
+		return {
+			documentType: view.options.container.document.config.type,
+			elementType: view.options.container.args.model.get( 'elType' ),
+			elementId: view.options.container.id,
+			widgetType: view.options.container.args.model.get( 'widgetType' ),
+			controlName,
+			controlType,
+			controlValue: view.options.container.settings.get( controlName ),
+		};
 	}
 }

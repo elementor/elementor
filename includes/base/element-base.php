@@ -321,6 +321,21 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Get panel presets.
+	 *
+	 * Used for displaying the widget in the panel multiple times, but with different defaults values,
+	 * icon, title etc.
+	 *
+	 * @since 3.16.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_panel_presets() {
+		return [];
+	}
+
+	/**
 	 * Add new child element.
 	 *
 	 * Register new child element to allow hierarchy.
@@ -807,7 +822,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateZ_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate', 'elementor' ),
+					'label' => esc_html__( 'Rotate', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -845,7 +860,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateX_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate X', 'elementor' ),
+					'label' => esc_html__( 'Rotate X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -868,7 +883,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateY_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate Y', 'elementor' ),
+					'label' => esc_html__( 'Rotate Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -891,11 +906,10 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_perspective_effect{$tab}",
 				[
-					'label' => esc_html__( 'Perspective', 'elementor' ),
+					'label' => esc_html__( 'Perspective', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 1000,
 						],
 					],
@@ -1008,7 +1022,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1031,7 +1044,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1054,7 +1066,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1087,7 +1098,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_skewX_effect{$tab}",
 				[
-					'label' => esc_html__( 'Skew X', 'elementor' ),
+					'label' => esc_html__( 'Skew X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -1109,7 +1120,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_skewY_effect{$tab}",
 				[
-					'label' => esc_html__( 'Skew Y', 'elementor' ),
+					'label' => esc_html__( 'Skew Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -1177,8 +1188,9 @@ abstract class Element_Base extends Controls_Stack {
 						'device_args' => $default_unit_values_ms,
 						'range' => [
 							'px' => [
-								'min' => 100,
+								'min' => 0,
 								'max' => 10000,
+								'step' => 100,
 							],
 						],
 						'selectors' => [
@@ -1298,8 +1310,11 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_control(
 				'hide_' . $breakpoint_key,
 				[
-					/* translators: %s: Device name. */
-					'label' => sprintf( __( 'Hide On %s', 'elementor' ), $label ),
+					'label' => sprintf(
+						/* translators: %s: Device name. */
+						esc_html__( 'Hide On %s', 'elementor' ),
+						$label
+					),
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',
 					'prefix_class' => 'elementor-',

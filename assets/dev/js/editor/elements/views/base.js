@@ -212,8 +212,8 @@ BaseElementView = BaseContainer.extend( {
 		 *
 		 * This filter allows adding new context menu groups to elements.
 		 *
-		 * @param  array  customGroups - An array of group objects.
-		 * @param  string elementType - The current element type.
+		 * @param array  customGroups - An array of group objects.
+		 * @param string elementType - The current element type.
 		 */
 		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
 
@@ -268,6 +268,14 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+
+		if ( ! this.onDynamicServerRequestEnd ) {
+			this.onDynamicServerRequestEnd = _.debounce( () => {
+				this.render();
+
+				this.$el.removeClass( 'elementor-loading' );
+			}, 100 );
+		}
 	},
 
 	getHandlesOverlay() {
@@ -288,7 +296,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param  array editButtons An array of buttons.
+			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
 
@@ -301,7 +309,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param  array editButtons An array of buttons.
+			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons/${ elementType }`, editButtons );
 		}
@@ -788,11 +796,7 @@ BaseElementView = BaseContainer.extend( {
 			onServerRequestStart() {
 				self.$el.addClass( 'elementor-loading' );
 			},
-			onServerRequestEnd() {
-				self.render();
-
-				self.$el.removeClass( 'elementor-loading' );
-			},
+			onServerRequestEnd: self.onDynamicServerRequestEnd,
 		};
 	},
 
@@ -844,6 +848,7 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
+			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
 	},
 
@@ -991,6 +996,10 @@ BaseElementView = BaseContainer.extend( {
 	 * Initialize the Droppable instance.
 	 */
 	initDraggable() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		// Init the draggable only for Containers and their children.
 		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
 			return;

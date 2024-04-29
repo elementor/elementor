@@ -176,9 +176,9 @@ class Revisions_Manager {
 				'timestamp' => strtotime( $revision->post_modified ),
 				'date' => sprintf(
 					/* translators: 1: Human readable time difference, 2: Date. */
-					__( '%1$s ago (%2$s)', 'elementor' ),
-					$human_time,
-					$date
+					esc_html__( '%1$s ago (%2$s)', 'elementor' ),
+					'<time>' . $human_time . '</time>',
+					'<time>' . $date . '</time>'
 				),
 				'type' => $type,
 				'typeLabel' => $type_label,

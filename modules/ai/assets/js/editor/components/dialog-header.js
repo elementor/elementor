@@ -1,6 +1,7 @@
-import { DialogTitle, Stack, SvgIcon, IconButton, styled } from '@elementor/ui';
+import { AppBar, Toolbar, Stack, SvgIcon, IconButton, Chip, Typography, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { XIcon } from '@elementor/icons';
-import StyledChip from './ui/styled-chip';
 
 const ElementorLogo = ( props ) => {
 	return (
@@ -11,8 +12,8 @@ const ElementorLogo = ( props ) => {
 };
 
 const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
-	width: theme.sizing[ '400' ],
-	height: theme.sizing[ '400' ],
+	width: theme.spacing( 3 ),
+	height: theme.spacing( 3 ),
 	'& path': {
 		fill: theme.palette.text.primary,
 	},
@@ -20,26 +21,30 @@ const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
 
 const DialogHeader = ( props ) => {
 	return (
-		<DialogTitle sx={ { fontWeight: 'normal' } }>
-			<StyledElementorLogo sx={ { mr: 3 } } />
+		<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
+			<Toolbar variant="dense">
+				<StyledElementorLogo sx={ { mr: 1 } } />
 
-			{ __( 'AI', 'elementor' ) }
+				<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+					{ __( 'AI', 'elementor' ) }
+				</Typography>
 
-			<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 3 } } />
+				<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
 
-			<Stack direction="row" spacing={ 3 } alignItems="center" sx={ { ml: 'auto' } }>
-				{ props.children }
+				<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: 'auto' } }>
+					{ props.children }
 
-				<IconButton
-					size="small"
-					aria-label="close"
-					onClick={ props.onClose }
-					sx={ { '&.MuiButtonBase-root': { mr: -4 } } }
-				>
-					<XIcon />
-				</IconButton>
-			</Stack>
-		</DialogTitle>
+					<IconButton
+						size="small"
+						aria-label="close"
+						onClick={ props.onClose }
+						sx={ { '&.MuiButtonBase-root': { mr: -1 } } }
+					>
+						<XIcon />
+					</IconButton>
+				</Stack>
+			</Toolbar>
+		</AppBar>
 	);
 };
 

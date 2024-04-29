@@ -133,6 +133,11 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
 			},
+			init: () => {
+				this.a11ySetWidgetAriaDetails();
+				this.a11ySetPaginationTabindex();
+				this.a11ySetSlideAriaHidden( 'initialisation' );
+			},
 		};
 
 		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
@@ -140,28 +145,30 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		return swiperOptions;
 	}
 
+	getOffsetWidth() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'offset_width', 'size', currentDevice ) || 0;
+	}
+
 	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
-		const offsetSide = elementSettings.offset_sides;
-		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
+		const offsetSide = elementSettings.offset_sides,
+			isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
 
 		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
 			return;
 		}
 
-		const offset = elementSettings.offset_width.size;
-
 		switch ( offsetSide ) {
 			case 'right':
 				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
-				this.addRightPaddingToShowNextSlide( offset );
+				this.addClassToSwiperContainer( 'offset-right' );
 				break;
 			case 'left':
-				this.addLeftPaddingToShowPreviousSlide( offset );
+				this.addClassToSwiperContainer( 'offset-left' );
 				break;
 			case 'both':
 				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
-				this.addLeftPaddingToShowPreviousSlide( offset );
-				this.addRightPaddingToShowNextSlide( offset );
+				this.addClassToSwiperContainer( 'offset-both' );
 				break;
 		}
 	}
@@ -170,12 +177,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		swiperOptions.slidesPerView = slidesToShow + 0.001;
 	}
 
-	addLeftPaddingToShowPreviousSlide( offset ) {
-		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
-	}
-
-	addRightPaddingToShowNextSlide( offset ) {
-		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
+	addClassToSwiperContainer( className ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].classList.add( className );
 	}
 
 	async onInit( ...args ) {
@@ -196,10 +199,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
-
-		this.a11ySetWidgetAriaDetails();
-		this.a11ySetPaginationTabindex();
-		this.a11ySetSlideAriaHidden( 'initialisation' );
 	}
 
 	bindEvents() {
@@ -207,6 +206,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
 		this.$element.find( ':focusable' ).on( 'focus', this.onFocusDisableAutoplay.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.getSwiperSettings.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -214,10 +214,11 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.off();
 		this.elements.$swiperContainer.off();
 		this.$element.find( ':focusable' ).off();
+		elementorFrontend.elements.$window.off( 'resize' );
 	}
 
 	onDirectionArrowKeydown( event ) {
-		const isRTL = elementorFrontend.config.isRTL,
+		const isRTL = elementorFrontend.config.is_rtl,
 			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
 			currentKeydown = event.originalEvent.code,
 			isDirectionInlineKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
@@ -328,14 +329,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			activeBulletClass = this.swiper?.params.pagination.bulletActiveClass;
 
 		this.getPaginationBullets().forEach( ( bullet ) => {
-			if ( ! bullet.classList.contains( activeBulletClass ) ) {
+			if ( ! bullet.classList?.contains( activeBulletClass ) ) {
 				bullet.removeAttribute( 'tabindex' );
 			}
 		} );
 
 		const isDirectionInlineArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
 
-		if ( event?.target?.classList.contains( bulletClass ) && isDirectionInlineArrowKey ) {
+		if ( event?.target?.classList?.contains( bulletClass ) && isDirectionInlineArrowKey ) {
 			this.$element.find( `.${ activeBulletClass }` ).trigger( 'focus' );
 		}
 	}

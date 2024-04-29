@@ -28,14 +28,14 @@
 		overflow: hidden;
 
 		&:nth-child(2) {
-			@include _dimension_side_property(border-top, start, radius, var(--e-a-border-radius));
-			@include _dimension_side_property(border-bottom, start, radius, var(--e-a-border-radius));
+			border-start-start-radius: var(--e-a-border-radius);
+			border-end-start-radius: var(--e-a-border-radius);
 		}
 
 		&:last-child {
 			border-inline-end: var(--e-a-border-bold);
-			@include _dimension_side_property(border-top, end, radius, var(--e-a-border-radius));
-			@include _dimension_side_property(border-bottom, end, radius, var(--e-a-border-radius));
+			border-start-end-radius: var(--e-a-border-radius);
+			border-end-end-radius: var(--e-a-border-radius);
 		}
 	}
 

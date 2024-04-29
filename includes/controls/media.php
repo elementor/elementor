@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -247,6 +248,37 @@ class Control_Media extends Control_Base_Multiple {
 							#>
 						</div>
 					</div>
+
+					<?php /* ?>
+					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
+						<?php
+						Hints::get_notice_template( [
+							'type' => 'warning',
+							'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+							'icon' => true,
+						] );
+						?>
+					</div>
+					<?php */ ?>
+
+					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
+					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
+						<?php
+						Hints::get_notice_template( [
+							'display' => ! Hints::is_dismissed( 'image-optimization' ),
+							'type' => 'info',
+							'content' => __( 'Don’t let unoptimized images be the downfall of your site’s performance. Use Image Optimizer!', 'elementor' ),
+							'icon' => true,
+							'dismissible' => 'image_optimizer_hint',
+							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
+							'button_event' => 'image_optimizer_hint',
+							'button_data' => [
+								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+							],
+						] ); ?>
+					</div>
+					<?php endif; ?>
+
 				</div>
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">
@@ -278,7 +310,7 @@ class Control_Media extends Control_Base_Multiple {
 			<# if ( data.has_sizes ) { #>
 			<div class="elementor-control-type-select e-control-image-size">
 				<div class="elementor-control-field">
-					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
+					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Resolution', 'elementor' ); ?></label>
 					<div class="elementor-control-input-wrapper elementor-control-unit-5">
 						<select class="e-image-size-select" id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
 							<?php foreach ( $this->get_image_sizes() as $size_key => $size_title ) : ?>
@@ -381,7 +413,7 @@ class Control_Media extends Control_Base_Multiple {
 	public static function get_image_alt( $instance ) {
 		if ( empty( $instance['id'] ) ) {
 			// For `Insert From URL` images.
-			return isset( $instance['alt'] ) ? trim( strip_tags( $instance['alt'] ) ) : '';
+			return isset( $instance['alt'] ) ? trim( self::sanitise_text( $instance['alt'] ) ) : '';
 		}
 
 		$attachment_id = $instance['id'];
@@ -401,7 +433,7 @@ class Control_Media extends Control_Base_Multiple {
 				$alt = $attachment->post_title;
 			}
 		}
-		return trim( strip_tags( $alt ) );
+		return trim( self::sanitise_text( $alt ) );
 	}
 
 	public function get_style_value( $css_property, $control_value, array $control_data ) {
@@ -414,5 +446,9 @@ class Control_Media extends Control_Base_Multiple {
 		}
 
 		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
+	}
+
+	public static function sanitise_text( $string ) {
+		return esc_attr( strip_tags( $string ) );
 	}
 }

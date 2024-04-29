@@ -74,6 +74,10 @@ module.exports = Marionette.CompositeView.extend( {
 			options.onBeforeAdd();
 		}
 
+		if ( this.filterSettings ) {
+			this.filterSettings( newItem );
+		}
+
 		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
@@ -112,6 +116,10 @@ module.exports = Marionette.CompositeView.extend( {
 		// Check whether the container cannot contain a section, in which case we should use an inner-section.
 		if ( 'section' === model.elType ) {
 			model.isInner = true;
+		}
+
+		if ( model?.isPreset ?? false ) {
+			model.settings = model.preset_settings;
 		}
 
 		const historyId = $e.internal( 'document/history/start-log', {

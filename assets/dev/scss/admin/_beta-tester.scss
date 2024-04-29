@@ -56,7 +56,10 @@
 		margin-block-start: 30px;
 
 		.elementor-button {
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			border-start-start-radius: 0;
+			border-start-end-radius: 3px;
+			border-end-start-radius: 0;
+			border-end-end-radius: 3px;
 		}
 	}
 
@@ -64,7 +67,10 @@
 		flex-grow: 1;
 		border: var(--e-a-border);
 		border-inline-end: 0;
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		border-start-start-radius: 3px;
+		border-start-end-radius: 0;
+		border-end-start-radius: 3px;
+		border-end-end-radius: 0;
 		margin: 0;
 		padding: 10px;
 		height: 50px;

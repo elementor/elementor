@@ -11,7 +11,10 @@
 		&-toggle {
 			border: var(--e-a-border-bold);
 			border-inline-end: 0;
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			border-start-start-radius: 3px;
+			border-start-end-radius: 0;
+			border-end-start-radius: 3px;
+			border-end-end-radius: 0;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -32,7 +35,6 @@
 			box-shadow: var(--e-a-popover-shadow);
 			border-radius: var(--e-a-border-radius);
 			background-color: var(--e-a-bg-default);
-			padding-block-end: 5px;
 		}
 
 		&-title {
@@ -51,7 +53,7 @@
 		}
 
 		&-info {
-			margin-inline-end: 5px;
+			margin-inline-end: 10px;
 			display: inline-block;
 
 			&-tooltip {
@@ -81,7 +83,7 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
-		margin-block-start: 5px;
+		padding: 5px 0;
 
 		@include webkit-scrollbar(7px, $editor-lighter, 10px)
 	}
@@ -93,7 +95,8 @@
 
 	// Typography Globals
 	&__typography {
-		padding: getValueByDirection(5px 10px 5px 35px, 5px 35px 5px 10px);
+		padding-block: 10px;
+		padding-inline: 35px 20px;
 		@include ellipsis;
 
 		&.e-global__preview-item--selected {
@@ -105,25 +108,16 @@
 				position: absolute;
 				transform: translateY(-50%);
 				top: 50%;
-				left: 12px;
+				inset-inline-start: 13px;
 			}
 		}
 	}
 
 	// Color Globals
 	&__color {
-		margin: 5px auto;
-		padding: 5px 20px;
+		padding: 10px 20px;
 		display: flex;
 		align-items: center;
-
-		&:first-child {
-			margin-block-start: 5px;
-		}
-
-		&:last-child {
-			margin-block-end: 10px;
-		}
 
 		&-preview {
 

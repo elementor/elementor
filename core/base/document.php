@@ -18,6 +18,7 @@ use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -67,7 +68,9 @@ abstract class Document extends Controls_Stack {
 	 */
 	const STATUS_PENDING = 'pending';
 
-
+	/**
+	 * @var int
+	 */
 	private $main_id;
 
 	/**
@@ -93,6 +96,42 @@ abstract class Document extends Controls_Stack {
 	 * @var \WP_Post WordPress post data.
 	 */
 	protected $post;
+
+	/**
+	 * @param array $internal_elements
+	 *
+	 * @return array[]
+	 */
+	private function get_container_elements_data( array $internal_elements ): array {
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'container',
+				'elements' => $internal_elements,
+			],
+		];
+	}
+
+	/**
+	 * @param array $internal_elements
+	 *
+	 * @return array[]
+	 */
+	private function get_sections_elements_data( array $internal_elements ): array {
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'section',
+				'elements' => [
+					[
+						'id' => Utils::generate_random_string(),
+						'elType' => 'column',
+						'elements' => $internal_elements,
+					],
+				],
+			],
+		];
+	}
 
 	/**
 	 * @since 2.1.0
@@ -140,15 +179,52 @@ abstract class Document extends Controls_Stack {
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
-			'elements_categories' => static::get_editor_panel_categories(),
+			'elements_categories' => self::get_filtered_editor_panel_categories(),
 			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
-				/* translators: %s: Document title. */
-				'publish_notification' => sprintf( esc_html__( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
+				'publish_notification' => sprintf(
+					/* translators: %s: Document title. */
+					esc_html__( 'Hurray! Your %s is live.', 'elementor' ),
+					static::get_title()
+				),
 			],
 		];
+	}
+
+	public static function get_filtered_editor_panel_categories(): array {
+		$categories = static::get_editor_panel_categories();
+		$has_pro = Utils::has_pro();
+
+		foreach ( $categories as $index => $category ) {
+			if ( isset( $category['promotion'] ) ) {
+				$categories = self::get_panel_category_item( $category['promotion'], $index, $categories, $has_pro );
+			}
+		}
+
+		return $categories;
+	}
+
+	/**
+	 * @param $promotion
+	 * @param $index
+	 * @param array $categories
+	 *
+	 * @return array
+	 */
+	private static function get_panel_category_item( $promotion, $index, array $categories, bool $has_pro ): array {
+		if ( ! $has_pro ) {
+			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+				$promotion,
+				'elementor/panel/' . $index . '/custom_promotion',
+				'url'
+			);
+		} else {
+			unset( $categories[ $index ]['promotion'] );
+		}
+
+		return $categories;
 	}
 
 	/**
@@ -171,7 +247,11 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_add_new_title() {
-		return sprintf( esc_html__( 'Add New %s', 'elementor' ), static::get_title() );
+		return sprintf(
+			/* translators: %s: Document title. */
+			esc_html__( 'Add New %s', 'elementor' ),
+			static::get_title()
+		);
 	}
 
 	/**
@@ -698,6 +778,14 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function save( $data ) {
 		/**
+		 * Set locale to "C" to avoid issues with comma as decimal separator.
+		 *
+		 * @see https://github.com/elementor/elementor/issues/10992
+		 */
+		$original_lc = setlocale( LC_NUMERIC, 0 );
+		setlocale( LC_NUMERIC, 'C' );
+
+		/**
 		 * Document save data.
 		 *
 		 * Filter the document data before saving process starts.
@@ -777,6 +865,8 @@ abstract class Document extends Controls_Stack {
 		$this->set_is_saving( false );
 
 		$this->remove_handle_revisions_changed_filter();
+
+		setlocale( LC_NUMERIC, $original_lc );
 
 		return true;
 	}
@@ -1065,26 +1155,18 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// TODO: Better coding to start template for editor
-		return [
+		$converted_blocks = [
 			[
 				'id' => Utils::generate_random_string(),
-				'elType' => 'section',
-				'elements' => [
-					[
-						'id' => Utils::generate_random_string(),
-						'elType' => 'column',
-						'elements' => [
-							[
-								'id' => Utils::generate_random_string(),
-								'elType' => $widget_type::get_type(),
-								'widgetType' => $widget_type->get_name(),
-								'settings' => $settings,
-							],
-						],
-					],
-				],
+				'elType' => $widget_type::get_type(),
+				'widgetType' => $widget_type->get_name(),
+				'settings' => $settings,
 			],
 		];
+
+		return Plugin::$instance->experiments->is_feature_active( 'container' )
+			? $this->get_container_elements_data( $converted_blocks )
+			: $this->get_sections_elements_data( $converted_blocks );
 	}
 
 	/**
@@ -1096,18 +1178,9 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-			<?php endif; ?>
 				<?php $this->print_elements( $elements_data ); ?>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-				</div>
-			</div>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -1126,8 +1199,11 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_panel_page_settings() {
 		return [
-			/* translators: %s: Document title. */
-			'title' => sprintf( esc_html__( '%s Settings', 'elementor' ), static::get_title() ),
+			'title' => sprintf(
+				/* translators: %s: Document title. */
+				esc_html__( '%s Settings', 'elementor' ),
+				static::get_title()
+			),
 		];
 	}
 
@@ -1441,11 +1517,19 @@ abstract class Document extends Controls_Stack {
 		$display_name = get_the_author_meta( 'display_name', $post->post_author );
 
 		if ( $autosave_post || 'revision' === $post->post_type ) {
-			/* translators: 1: Saving date, 2: Author display name. */
-			$last_edited = sprintf( esc_html__( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			$last_edited = sprintf(
+				/* translators: 1: Saving date, 2: Author display name. */
+				esc_html__( 'Draft saved on %1$s by %2$s', 'elementor' ),
+				'<time>' . $date . '</time>',
+				$display_name
+			);
 		} else {
-			/* translators: 1: Editing date, 2: Author display name. */
-			$last_edited = sprintf( esc_html__( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			$last_edited = sprintf(
+				/* translators: 1: Editing date, 2: Author display name. */
+				esc_html__( 'Last edited on %1$s by %2$s', 'elementor' ),
+				'<time>' . $date . '</time>',
+				$display_name
+			);
 		}
 
 		return $last_edited;

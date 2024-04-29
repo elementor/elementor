@@ -9,6 +9,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Frontend\Performance;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
@@ -212,6 +213,15 @@ abstract class Base extends Base_File {
 			return;
 		}
 
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires before enqueuing a CSS file.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( 'elementor/css-file/before_enqueue', $this );
+
 		// First time after clear cache and etc.
 		if ( '' === $meta['status'] || $this->is_update_required() ) {
 			$this->update();
@@ -262,6 +272,15 @@ abstract class Base extends Base_File {
 		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
+
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires after enqueuing a CSS file.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( 'elementor/css-file/after_enqueue', $this );
 	}
 
 	/**
@@ -652,6 +671,8 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		Performance::set_use_style_controls( true );
+
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
@@ -674,6 +695,8 @@ abstract class Base extends Base_File {
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
+
+		Performance::set_use_style_controls( false );
 
 		return $this->get_stylesheet()->__toString();
 	}
@@ -903,7 +926,7 @@ abstract class Base extends Base_File {
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
-				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+				if ( $controls_stack->is_control_visible( $control, $settings, $controls ) ) {
 					$active_controls[ $control_key ] = $control;
 				}
 

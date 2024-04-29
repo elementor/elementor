@@ -3,6 +3,7 @@ namespace Elementor\Core\Editor\Loader\V2;
 
 use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
+use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,8 +35,10 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	const LIBS = [
 		self::ENV_PACKAGE,
+		'editor-app-bar-ui',
 		'icons',
 		'locations',
+		'query',
 		'store',
 		'ui',
 	];
@@ -44,7 +47,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * @return void
 	 */
 	public function init() {
-		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::LIBS );
+		$packages = array_merge( $this->get_packages_to_enqueue(), self::LIBS );
 
 		foreach ( $packages as $package ) {
 			$this->assets_config_provider->load( $package );
@@ -90,9 +93,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				ELEMENTOR_VERSION,
 				true
 			);
-
-			wp_set_script_translations( $config['handle'], 'elementor' );
 		}
+
+		$packages_handles = $this->assets_config_provider->pluck( 'handle' )->all();
+
+		Assets_Translation_Loader::for_handles( $packages_handles, 'elementor' );
 
 		do_action( 'elementor/editor/v2/scripts/register' );
 	}
@@ -105,17 +110,19 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		wp_enqueue_script( 'elementor-editor-environment-v2' );
 
-		foreach ( $this->assets_config_provider->only( self::PACKAGES_TO_ENQUEUE ) as $config ) {
-			if ( self::ENV_PACKAGE === $config['handle'] ) {
-				$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
 
-				Utils::print_js_config(
-					$config['handle'],
-					'elementorEditorV2Env',
-					$client_env
-				);
-			}
+		if ( $env_config ) {
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 
+			Utils::print_js_config(
+				$env_config['handle'],
+				'elementorEditorV2Env',
+				$client_env
+			);
+		}
+
+		foreach ( $this->assets_config_provider->only( $this->get_packages_to_enqueue() ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
 		}
 
@@ -171,5 +178,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$body_file_path = __DIR__ . '/templates/editor-body-v2.view.php';
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	private function get_packages_to_enqueue() : array {
+		return apply_filters( 'elementor/editor/v2/packages', self::PACKAGES_TO_ENQUEUE );
 	}
 }

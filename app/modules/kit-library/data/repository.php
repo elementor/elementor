@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Data;
 
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Utils\Collection;
 use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
@@ -240,7 +241,16 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
-		$subscription_plan_tag = $this->subscription_plans->get( $kit->access_level );
+		// BC: Support legacy APIs that don't have access tiers.
+		if ( isset( $kit->access_tier ) ) {
+			$access_tier = $kit->access_tier;
+		} else {
+			$access_tier = 0 === $kit->access_level
+				? ConnectModule::ACCESS_TIER_FREE
+				: ConnectModule::ACCESS_TIER_ESSENTIAL;
+		}
+
+		$subscription_plan_tag = $this->subscription_plans->get( $access_tier );
 
 		$taxonomies = ( new Collection( ( (array) $kit )['taxonomies'] ) )
 			->filter( function ( $taxonomy ) {
@@ -256,6 +266,7 @@ class Repository {
 				'title' => $kit->title,
 				'thumbnail_url' => $kit->thumbnail,
 				'access_level' => $kit->access_level,
+				'access_tier' => $access_tier,
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies->values(),
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),

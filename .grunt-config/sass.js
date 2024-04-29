@@ -16,7 +16,7 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'core/editor/assets/scss',
+				cwd: 'core/editor/loader/v2/scss',
 				src: '*.scss',
 				dest: 'assets/css',
 				ext: '.css'
@@ -33,13 +33,6 @@ const sass = {
 				cwd: 'modules/notes/assets/scss',
 				src: 'editor.scss',
 				dest: 'assets/css/modules/notes',
-				ext: '.css',
-			},
-			{
-				expand: true,
-				cwd: 'modules/lazyload/assets/scss',
-				src: 'frontend.scss',
-				dest: 'assets/css/modules/lazyload',
 				ext: '.css',
 			},
 			{
@@ -66,8 +59,15 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'modules/ai/assets/scss',
-				src: 'editor.scss',
+				src: '*.scss',
 				dest: 'assets/css/modules/ai',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/apps/assets/scss',
+				src: 'admin.scss',
+				dest: 'assets/css/modules/apps',
 				ext: '.css',
 			},
 		]

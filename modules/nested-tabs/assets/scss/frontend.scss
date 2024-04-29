@@ -1,6 +1,48 @@
+@import "../../../../assets/dev/scss/helpers/mixins";
+
 //
 // Nested Tabs
 //
+
+@mixin active-tab-title() {
+
+	&,
+	& a {
+		color: var(--n-tabs-title-color-active);
+	}
+
+	.e-n-tab-icon {
+
+		i {
+			color: var(--n-tabs-icon-color-active);
+		}
+
+		svg {
+			fill: var(--n-tabs-icon-color-active);
+		}
+
+		i,
+		svg {
+
+			&:first-child {
+				transform: translate(0, -100vh);
+				height: 0;
+				opacity: 0;
+			}
+		}
+	}
+
+	// Remove the hover animation from the active tabs.
+	&[class*="elementor-animation-"] {
+		&:focus,
+		&:active,
+		&:hover {
+			transform: initial;
+			animation: initial;
+		}
+	}
+}
+
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
 	--n-tabs-color-secondary-fallback: #54595F;
@@ -19,56 +61,71 @@
 	--n-tabs-heading-wrap: nowrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
-	--n-tabs-content-padding: initial;
-	--n-tabs-content-border-radius: initial;
-	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-content-display: flex;
+	--n-tabs-title-color: var(--e-global-color-secondary, var(--n-tabs-color-secondary-fallback));
 	--n-tabs-title-color-hover: #{$white};
 	--n-tabs-title-color-active: #{$white};
 	--n-tabs-title-background-color: #{$editor-background-light};
-	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
-	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-background-color-hover: var(--e-global-color-accent, var(--n-tabs-color-accent-fallback));
+	--n-tabs-title-background-color-active: var(--e-global-color-accent, var(--n-tabs-color-accent-fallback));
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
 	--n-tabs-title-font-size: 1rem;
+	--n-tabs-title-white-space: initial;
 	--n-tabs-title-justify-content-toggle: initial;
 	--n-tabs-title-align-items-toggle: center;
 	--n-tabs-title-justify-content: center;
 	--n-tabs-title-align-items: center;
+	--n-tabs-title-text-align: center;
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
 	--n-tabs-title-flex-grow: 0;
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
-	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
-	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
-	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
-	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-order: initial;
+	--n-tabs-title-padding-top: var(--n-tabs-default-padding-block);
+	--n-tabs-title-padding-bottom: var(--n-tabs-default-padding-block);
+	--n-tabs-title-padding-left: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-right: var(--n-tabs-default-padding-inline);
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
-	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
-	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
+	--n-tabs-icon-color: var(--e-global-color-secondary, var(--n-tabs-color-secondary-fallback));
+	--n-tabs-icon-color-hover: var(--n-tabs-title-color-hover);
 	--n-tabs-icon-color-active: #{$white};
 	--n-tabs-icon-gap: 5px;
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 
+	& {
+		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-left);
+		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-right);
+		--n-tabs-title-padding-block-start: var(--n-tabs-title-padding-top);
+		--n-tabs-title-padding-block-end: var(--n-tabs-title-padding-bottom);
+	}
+
+	body.rtl & {
+		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-right);
+		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-left);
+	}
+
 	.e-n-tabs {
-		display: var( --n-tabs-display );
-		flex-direction: var( --n-tabs-direction );
-		gap: var( --n-tabs-gap );
-		text-align: $start;
+		display: var(--n-tabs-display);
+		flex-direction: var(--n-tabs-direction);
+		gap: var(--n-tabs-gap);
+		text-align: start;
+		min-width: 0;
 
 		&-heading {
-			display: var( --n-tabs-heading-display );
-			flex-basis: var( --n-tabs-heading-width );
-			flex-direction: var( --n-tabs-heading-direction );
+			display: var(--n-tabs-heading-display);
+			flex-basis: var(--n-tabs-heading-width);
+			flex-direction: var(--n-tabs-heading-direction);
 			flex-shrink: 0;
-			justify-content: var( --n-tabs-heading-justify-content );
-			gap: var( --n-tabs-title-gap );
+			justify-content: var(--n-tabs-heading-justify-content);
+			gap: var(--n-tabs-title-gap);
 			overflow-x: var(--n-tabs-heading-overflow-x);
 			flex-wrap: var(--n-tabs-heading-wrap);
-			-ms-overflow-style: none;  /* IE and Edge */
-			scrollbar-width: none;  /* Firefox */
+			-ms-overflow-style: none; /* IE and Edge */
+			scrollbar-width: none; /* Firefox */
 
 			&::-webkit-scrollbar {
 				display: none; /* Hide scrollbar for Chrome, Safari and Opera */
@@ -93,72 +150,89 @@
 		}
 
 		&-content {
+			display: var(--n-tabs-content-display);
 			flex-grow: 1;
-			padding: var( --n-tabs-content-padding );
-			border-radius: var( --n-tabs-content-border-radius );
 			min-width: 0;
+
+			> .e-con {
+
+				&:not( .e-active ) {
+					display: none;
+				}
+			}
+		}
+
+		&:not( .e-activated ) > .e-n-tabs-content > .e-con:nth-child( 1 ) {
+			display: flex;
 		}
 	}
 
 	.e-n-tab {
 
 		&-title {
+			all: unset;
+			user-select: none;
 			display: flex;
-			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
-			flex-direction: var( --n-tabs-title-direction );
-			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
-			gap: var( --n-tabs-icon-gap );
-			border-width: var( --n-tabs-border-width );
+			align-items: var(--n-tabs-title-align-items-toggle, var(--n-tabs-title-align-items));
+			flex-direction: var(--n-tabs-title-direction);
+			justify-content: var(--n-tabs-title-justify-content-toggle, var(--n-tabs-title-justify-content));
+			gap: var(--n-tabs-icon-gap);
+			border-width: var(--n-tabs-border-width);
 			position: relative;
 			cursor: pointer;
 			outline: none;
-			flex-grow: var( --n-tabs-title-flex-grow );
-			flex-basis: var( --n-tabs-title-flex-basis );
-			flex-shrink: var( --n-tabs-title-flex-shrink );
-			padding-top: var( --n-tabs-title-padding-top );
-			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom );
-			padding-left: var( --n-tabs-title-padding-left );
-			border-radius: var( --n-tabs-title-border-radius );
-			height: var( --n-tabs-title-height );
-			width: var( --n-tabs-title-width );
-			transition: background var( --n-tabs-title-transition ),
-					color var( --n-tabs-title-transition ),
-					border var( --n-tabs-title-transition ),
-					box-shadow var( --n-tabs-title-transition ),
-					text-shadow var( --n-tabs-title-transition ),
-					stroke var( --n-tabs-title-transition ),
-					stroke-width var( --n-tabs-title-transition ),
-					-webkit-text-stroke-width var( --n-tabs-title-transition ),
-					-webkit-text-stroke-color var( --n-tabs-title-transition ),
-					transform var( --n-tabs-title-transition );
+			flex-grow: var(--n-tabs-title-flex-grow);
+			flex-basis: var(--n-tabs-title-flex-basis);
+			flex-shrink: var(--n-tabs-title-flex-shrink);
+			padding-block-start: var(--n-tabs-title-padding-block-start);
+			padding-inline-end: var(--n-tabs-title-padding-inline-end);
+			padding-block-end: var(--n-tabs-title-padding-block-end);
+			padding-inline-start: var(--n-tabs-title-padding-inline-start);
+			border-radius: var(--n-tabs-title-border-radius);
+			height: var(--n-tabs-title-height);
+			width: var(--n-tabs-title-width);
+			white-space: var(--n-tabs-title-white-space);
+			transition: background var(--n-tabs-title-transition ),
+				color var(--n-tabs-title-transition ),
+				border var(--n-tabs-title-transition ),
+				box-shadow var(--n-tabs-title-transition ),
+				text-shadow var(--n-tabs-title-transition ),
+				stroke var(--n-tabs-title-transition ),
+				stroke-width var(--n-tabs-title-transition ),
+				-webkit-text-stroke-width var(--n-tabs-title-transition ),
+				-webkit-text-stroke-color var(--n-tabs-title-transition ),
+				transform var(--n-tabs-title-transition);
+
+			@include button-focus-outline;
 
 			& span svg,
 			& span i {
-				transition: color var( --n-tabs-title-transition ),
-					fill var( --n-tabs-title-transition );
+				transition: color var(--n-tabs-title-transition ),
+					fill var(--n-tabs-title-transition);
 			}
 
 			&-text {
 				display: flex;
-			  	align-items: center;
-			  	font-size: var( --n-tabs-title-font-size );
+				align-items: center;
+				font-size: var(--n-tabs-title-font-size);
+				text-align: var(--n-tabs-title-text-align);
 			}
 
 			.e-n-tab-icon {
 				display: flex;
 				align-items: center;
 				flex-direction: column;
-				order: var( --n-tabs-icon-order );
+				flex-shrink: 0;
+				order: var(--n-tabs-icon-order);
 				overflow: hidden;
 
 				i {
-					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					font-size: var(--n-tabs-icon-size, var(--n-tabs-title-font-size));
 				}
 
 				svg {
-					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
-					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					width: var(--n-tabs-icon-size, var(--n-tabs-title-font-size));
+					height: var(--n-tabs-icon-size, var(--n-tabs-title-font-size));
 				}
 
 				&:empty {
@@ -166,22 +240,22 @@
 				}
 			}
 
-			&:not( .e-active ) {
-				background-color: var( --n-tabs-title-background-color );
+			&[aria-selected="false"] {
+				background-color: var(--n-tabs-title-background-color);
 
 				&,
 				& a {
-					color: var( --n-tabs-title-color );
+					color: var(--n-tabs-title-color);
 				}
 
 				.e-n-tab-icon {
 
 					i {
-						color: var( --n-tabs-icon-color );
+						color: var(--n-tabs-icon-color);
 					}
 
 					svg {
-						fill: var( --n-tabs-icon-color );
+						fill: var(--n-tabs-icon-color);
 					}
 
 					i,
@@ -196,177 +270,119 @@
 				}
 			}
 
-			&:not( .e-active ).e-normal:hover {
+			&[aria-selected="true"] {
+				@include active-tab-title;
+			}
+		}
+	}
 
-				&,
-				& a {
-					color: var( --n-tabs-title-color-hover );
-				}
+	[data-touch-mode="false"] {
 
-				.e-n-tab-icon {
+		.e-n-tab-title[aria-selected="false"]:hover {
 
-					i {
-						color: var( --n-tabs-icon-color-hover );
-					}
-
-					svg {
-						fill: var( --n-tabs-icon-color-hover );
-					}
-				}
+			&,
+			& a {
+				color: var(--n-tabs-title-color-hover);
 			}
 
-			&.e-active {
+			.e-n-tab-icon {
 
-				&,
-				& a {
-					color: var( --n-tabs-title-color-active );
+				i {
+					color: var(--n-tabs-icon-color-hover);
 				}
 
-				.e-n-tab-icon {
-
-					i {
-						color: var( --n-tabs-icon-color-active );
-					}
-
-					svg {
-						fill: var( --n-tabs-icon-color-active );
-					}
-
-					i,
-					svg {
-
-						&:first-child {
-							transform: translate(0, -100vh);
-							height: 0;
-							opacity: 0;
-						}
-					}
-				}
-
-			  	// Remove the hover animation from the active tabs.
-			  	&[class*="elementor-animation-"] {
-					&:focus,
-					&:active,
-					&:hover {
-						transform: initial;
-						animation: initial;
-					}
+				svg {
+					fill: var(--n-tabs-icon-color-hover);
 				}
 			}
 		}
 	}
 
-	.e-n-tabs-content {
+	[data-touch-mode="true"] {
 
-		.e-collapse {
-			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
-			-webkit-tap-highlight-color: transparent;
-			-webkit-touch-callout: none;
-			-webkit-user-select: none;
-			-khtml-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
-			width: 100%;
+		.e-n-tab-title[aria-selected="false"]:hover {
 
-			&:not(:first-child) {
-				margin-top: var( --n-tabs-title-gap );
+			@include active-tab-title;
+
+			.e-n-tab-icon {
+
+				i,
+				svg {
+
+					&:last-child {
+						transform: initial;
+						height: initial;
+						opacity: initial;
+					}
+				}
 			}
-
-			&.e-active {
-				margin-bottom: var( --n-tabs-gap );
-			}
-		}
-
-		> .e-con:not(.e-active) {
-			display: none;
 		}
 	}
 }
 
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-normal:hover {
-	background-color: var( --n-tabs-title-background-color-hover );
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+	background-color: var(--n-tabs-title-background-color-hover);
 	background-image: initial;
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
-	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
-
-	&.e-active {
-		background-color: var( --n-tabs-title-background-color-active );
-		background-image: initial;
-	}
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"],
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+	background-color: var(--n-tabs-title-background-color-active);
+	background-image: initial;
 }
 
 // Responsive mode
-@mixin hide-normal-tabs-($device) {
-	.e-n-tabs-#{$device} {
+@mixin accordion-layout-($device) {
+	.elementor.elementor .elementor-widget-n-tabs.e-n-tabs-#{$device} {
+		--n-tabs-direction: column;
+		--n-tabs-heading-display: contents;
+		--n-tabs-content-display: contents;
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
-			display: none;
+		.e-n-tabs {
+			gap: 0;
+
+			&-content > .e-con {
+				order: var(--n-tabs-title-order);
+			}
 		}
-	}
-}
 
-@mixin hide-collapse-tabs-($device) {
-	.e-n-tabs-#{$device} {
+		.e-n-tab-title {
+			order: var(--n-tabs-title-order);
+			width: initial;
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
-			display: none;
+			&:not( :first-child ) {
+				margin-block-start: var(--n-tabs-title-gap);
+			}
+
+			&[aria-selected="true"] {
+				margin-block-end: var(--n-tabs-gap);
+			}
 		}
 	}
 }
 
 // Mobile.
-@media (min-width: $screen-mobile-next) {
-	@include hide-collapse-tabs-(mobile);
-}
-
 @media (max-width: $screen-mobile-max) {
-	@include hide-normal-tabs-(mobile);
+	@include accordion-layout-(mobile);
 }
 
 // Mobile Extra.
-@media (min-width: $screen-mobile-extra-next) {
-	@include hide-collapse-tabs-(mobile_extra);
-}
-
 @media (max-width: $screen-mobile-extra-max) {
-	@include hide-normal-tabs-(mobile_extra);
+	@include accordion-layout-(mobile_extra);
 }
 
 // Tablet.
-@media (min-width: $screen-tablet-next) {
-	@include hide-collapse-tabs-(tablet);
-}
-
 @media (max-width: $screen-tablet-max) {
-	@include hide-normal-tabs-(tablet);
+	@include accordion-layout-(tablet);
 }
 
 // Tablet Extra.
-@media (min-width: $screen-tablet-extra-next) {
-	@include hide-collapse-tabs-(tablet_extra);
-}
-
 @media (max-width: $screen-tablet-extra-max) {
-	@include hide-normal-tabs-(tablet_extra);
+	@include accordion-layout-(tablet_extra);
 }
 
 // Laptop.
-@media (min-width: $screen-desktop-min) {
-	@include hide-collapse-tabs-(laptop);
-}
-
 @media (max-width: $screen-laptop-max) {
-	@include hide-normal-tabs-(laptop);
-}
-
-
-// Breakpoint - none.
-.e-n-tabs-none {
-	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
-		display: none;
-	}
+	@include accordion-layout-(laptop);
 }

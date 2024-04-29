@@ -163,20 +163,6 @@ $title-size: 12px;
 			&:hover {
 				color: var(--e-a-color-primary-bold);
 			}
-
-			&:not([data-choose="custom"]) {
-
-				i {
-					display: none;
-				}
-			}
-
-			&[data-choose="custom"] {
-
-				span {
-					display: none;
-				}
-			}
 		}
 	}
 
@@ -247,7 +233,10 @@ $font-family-monospace: monospace;
 				background-color: var(--e-a-bg-default);
 				padding: 0;
 				outline: none;
-				border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+				border-start-start-radius: 0;
+				border-start-end-radius: var(--e-a-border-radius);
+				border-end-start-radius: 0;
+				border-end-end-radius: var(--e-a-border-radius);
 				cursor: pointer;
 			}
 
@@ -255,7 +244,10 @@ $font-family-monospace: monospace;
 
 				input {
 					border-inline-start: 1px solid var(--e-a-border-color-bold);
-					border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
+					border-start-start-radius: var(--e-a-border-radius);
+					border-start-end-radius: 0;
+					border-end-start-radius: var(--e-a-border-radius);
+					border-end-end-radius: 0;
 
 					&:focus {
 						border-color: var(--e-a-border-color-focus);

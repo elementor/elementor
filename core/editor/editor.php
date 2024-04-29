@@ -609,14 +609,60 @@ class Editor {
 			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
 			'description' => sprintf(
-				esc_html__(
-					'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way. %s',
-					'elementor'
-				),
-				'<a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">' . esc_html__( 'Learn more', 'elementor' ) . '</a>'
+				'%1$s <a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">%2$s</a>',
+				esc_html__( 'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
 			),
 			'default' => Experiments_Manager::STATE_INACTIVE,
-			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 		] );
+	}
+
+	/**
+	 * Get elements presets.
+	 *
+	 * @return array
+	 */
+	public function get_elements_presets() {
+		$element_types = Plugin::$instance->elements_manager->get_element_types();
+		$presets = [];
+
+		foreach ( $element_types as $el_type => $element ) {
+			$this->check_element_for_presets( $element, $el_type, $presets );
+		}
+
+		return $presets;
+	}
+
+	/**
+	 * @return void
+	 */
+	private function check_element_for_presets( $element, $el_type, &$presets ) {
+		$element_presets = $element->get_panel_presets();
+
+		if ( empty( $element_presets ) ) {
+			return;
+		}
+
+		foreach ( $element_presets as $key => $preset ) {
+			$this->maybe_add_preset( $el_type, $preset, $key, $presets );
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	private function maybe_add_preset( $el_type, $preset, $key, &$presets ) {
+		if ( $this->is_valid_preset( $el_type, $preset ) ) {
+			$presets[ $key ] = $preset;
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	private function is_valid_preset( $el_type, $preset ) {
+		return isset( $preset['replacements']['custom']['originalWidget'] )
+			&& $el_type === $preset['replacements']['custom']['originalWidget'];
 	}
 }

@@ -1,10 +1,13 @@
 import Panel from '../../../components/ui/panel';
 import { Box, Stack, Typography } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Loader from '../../../components/loader';
 import GenerateLoader from './generate-loader';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import BackButton from './back-button';
 import { useLocation } from '../context/location-context';
+import { useGlobalSettings } from '../context/global-settings-context';
+import UsageMessages from '../../../components/usage-messages';
 
 const ViewBackButton = ( { sx = {}, ...props } ) => {
 	const { back } = useLocation();
@@ -16,7 +19,7 @@ const ViewBackButton = ( { sx = {}, ...props } ) => {
 				back();
 			} }
 			{ ...props }
-			sx={ { mb: 3, alignSelf: 'flex-start', ...sx } }
+			sx={ { mb: 1, alignSelf: 'flex-start', ...sx } }
 		/>
 	);
 };
@@ -26,8 +29,8 @@ ViewBackButton.propTypes = {
 };
 
 const PanelHeading = ( { primary, secondary, ...props } ) => (
-	<Stack spacing={ 3 } sx={ { mb: 7 } } { ...props }>
-		<Typography variant="h3">{ primary }</Typography>
+	<Stack spacing={ 1 } sx={ { mb: 3 } } { ...props }>
+		<Typography variant="h4">{ primary }</Typography>
 		{ secondary && <Typography variant="body1" color="secondary">{ secondary }</Typography> }
 	</Stack>
 );
@@ -38,7 +41,7 @@ PanelHeading.propTypes = {
 };
 
 const ContentHeading = ( { primary, secondary, ...props } ) => (
-	<Stack gap={ 4 } sx={ { mb: 7 } } { ...props }>
+	<Stack gap={ 1.5 } sx={ { mb: 3 } } { ...props }>
 		<Typography variant="h6">{ primary }</Typography>
 		{ secondary && <Typography variant="subtitle1" color="secondary">{ secondary }</Typography> }
 	</Stack>
@@ -51,7 +54,7 @@ ContentHeading.propTypes = {
 
 const View = ( { children, ...props } ) => {
 	return (
-		<Box display="flex" sx={ { overflowY: 'auto' } } height="100%" { ...props }>
+		<Box className="e-ai-dialog-content" display="flex" sx={ { overflowY: 'auto', position: 'relative' } } height="100%" { ...props }>
 			{ children }
 		</Box>
 	);
@@ -71,7 +74,7 @@ const Content = ( { isLoading = false, isGenerating = false, children, ...props 
 	}
 
 	return (
-		<Box sx={ { overflowY: 'scroll', p: 8 } } flexGrow={ 1 } { ...props }>
+		<Box sx={ { overflowY: 'scroll', p: 4 } } flexGrow={ 1 } { ...props }>
 			{ children }
 		</Box>
 	);
@@ -84,14 +87,34 @@ Content.propTypes = {
 };
 
 const ErrorMessage = ( { sx = {}, ...props } ) => (
-	<PromptErrorMessage actionPosition="bottom" { ...props } sx={ { mb: 6, ...sx } } />
+	<PromptErrorMessage actionPosition="bottom" { ...props } sx={ { mb: 2.5, ...sx } } />
 );
 
 ErrorMessage.propTypes = {
 	sx: PropTypes.object,
 };
 
-View.Panel = Panel;
+const ViewPanel = ( props ) => {
+	const { hasSubscription, usagePercentage } = useGlobalSettings();
+
+	return (
+		<Panel>
+			<UsageMessages
+				hasSubscription={ hasSubscription }
+				usagePercentage={ usagePercentage }
+				sx={ { mb: 4 } }
+			/>
+
+			{ props.children }
+		</Panel>
+	);
+};
+
+ViewPanel.propTypes = {
+	children: PropTypes.node,
+};
+
+View.Panel = ViewPanel;
 View.Content = Content;
 View.BackButton = ViewBackButton;
 View.ErrorMessage = ErrorMessage;

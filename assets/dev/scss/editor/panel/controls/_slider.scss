@@ -3,7 +3,10 @@
 	&.elementor-control-dynamic {
 
 		input {
-			border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius) 0);
+			border-start-start-radius: var(--e-a-border-radius);
+			border-start-end-radius: 0;
+			border-end-start-radius: var(--e-a-border-radius);
+			border-end-end-radius: 0;
 		}
 	}
 
@@ -72,7 +75,10 @@
 
 	.elementor-control-dynamic-switcher {
 		border-inline-start-width: 0;
-		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+		border-start-start-radius: 0;
+		border-start-end-radius: var(--e-a-border-radius);
+		border-end-start-radius: 0;
+		border-end-end-radius: var(--e-a-border-radius);
 	}
 
 	.elementor-control-input-wrapper {

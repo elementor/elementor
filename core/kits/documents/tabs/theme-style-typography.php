@@ -80,16 +80,11 @@ class Theme_Style_Typography extends Tab_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 					'em' => [
 						'min' => 0.1,
 						'max' => 20,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],

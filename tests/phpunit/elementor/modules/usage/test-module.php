@@ -47,6 +47,208 @@ class Test_Module extends Elementor_Test_Base {
 		],
 	];
 
+	public static $document_mock_default_with_container = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => 'd50d8c5',
+				'elType' => 'container',
+				'isInner' => false,
+				'settings' => [
+					'container_type' => 'grid',
+					'presetTitle' => 'Container',
+					'presetIcon' => 'eicon-container',
+				],
+				'elements' => [
+					[
+						'id' => 'a2e9b68',
+						'elType' => 'container',
+						'isInner' => false,
+						'settings' => [
+							'presetTitle' => 'Container',
+							'presetIcon' => 'eicon-container',
+						],
+						'elements' => [
+							[
+								'id' => '5a1e8e5',
+								'elType' => 'container',
+								'settings' => [
+									'presetTitle' => 'Container',
+									'presetIcon' => 'eicon-container',
+								],
+								'isInner' => false,
+								'elements' => [],
+							],
+							[
+								'id' => 'b0bf8fd',
+								'elType' => 'container',
+								'settings' => [
+									'presetTitle' => 'Container',
+									'presetIcon' => 'eicon-container',
+								],
+								'isInner' => false,
+								'elements' => [
+									[
+										'id' => '5a1e8e5',
+										'elType' => 'widget',
+										'isInner' => false,
+										'settings' => [ 'text' => 'I\'m not a default', ],
+										'elements' => [],
+										'widgetType' => 'button',
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		],
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $document_mock_nested_tabs = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => '96a5894',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'fecdc45',
+						'elType' => 'widget',
+						'widgetType' => 'nested-tabs',
+						'settings' => [
+							'tabs' => [
+								[
+									'tab_title' => 'Tab #1',
+									'_id' => '477a473',
+									'tab_icon' => '',
+								],
+								[
+									'tab_title' => 'Tab #2',
+									'_id' => '4fb407a',
+									'tab_icon' => '',
+								],
+								[
+									'tab_title' => 'Tab #3',
+									'_id' => '59f7a8a',
+									'tab_icon' => '',
+								],
+							],
+						],
+						'elements' => [
+							[
+								'id' => 'cfe8a34',
+								'elType' => 'container',
+								'settings' => [
+									'_title' => 'Tab #1',
+									'content_width' => 'full',
+								],
+								'elements' => [
+									[
+										'id' => '43454c4',
+										'elType' => 'container',
+										'settings' => [],
+										'elements' => [],
+										'isInner' => false,
+									],
+								],
+								'isInner' => false,
+								'isLocked' => true,
+							],
+							[
+								'id' => '06b8b26',
+								'elType' => 'container',
+								'settings' => [
+									'_title' => 'Tab #2',
+									'content_width' => 'full',
+								],
+								'elements' => [],
+								'isInner' => false,
+								'isLocked' => true,
+							],
+							[
+								'id' => 'de89d62',
+								'elType' => 'container',
+								'settings' => [
+									'_title' => 'Tab #3',
+									'content_width' => 'full',
+								],
+								'elements' => [],
+								'isInner' => false,
+								'isLocked' => true,
+							],
+						],
+					],
+				],
+				'isInner' => false,
+			],
+		],
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $document_mock_flex_gap = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => '145b8fc',
+				'elType' => 'container',
+				'settings' => [
+					'flex_gap' => [
+						'unit' => 'px',
+						'size' => 99,
+						'sizes' => [],
+					],
+					'flex_gap_tablet' => [
+						'unit' => 'px',
+						'size' => 88,
+						'sizes' => [],
+					],
+					'flex_gap_mobile' => [
+						'unit' => 'px',
+						'size' => 77,
+						'sizes' => [],
+					],
+				],
+				'elements' => [
+					[
+						'id' => 'e1f0015',
+						'elType' => 'container',
+						'settings' => [
+							'flex_gap' => [
+								'unit' => 'px',
+								'size' => 66,
+								'sizes' => [],
+							],
+							'flex_gap_tablet' => [
+								'unit' => 'px',
+								'size' => 55,
+								'sizes' => [],
+							],
+							'flex_gap_mobile' => [
+								'unit' => 'px',
+								'size' => 44,
+								'sizes' => [],
+							],
+						],
+					],
+				],
+				'isInner' => false,
+			],
+		],
+	];
+
 	/**
 	 * @var Module
 	 */
@@ -57,7 +259,7 @@ class Test_Module extends Elementor_Test_Base {
 	 */
 	private $isDynamicTags = false;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
@@ -366,10 +568,10 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange.
 		update_option( 'elementor_disable_color_schemes', 'no' );
 		update_option( 'elementor_editor_break_lines', '1' );
-		
+
 		// Default value should not exist in the result
-		update_option( 'elementor_css_print_method', 'external' ); 
-		
+		update_option( 'elementor_css_print_method', 'external' );
+
 		// Not an Elementor option should not exist in the result
 		update_option( Settings::UPDATE_TIME_FIELD, time() );
 

@@ -108,6 +108,9 @@ class Widget_Shortcode extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
 			]
@@ -126,6 +129,10 @@ class Widget_Shortcode extends Widget_Base {
 	 */
 	protected function render() {
 		$shortcode = $this->get_settings_for_display( 'shortcode' );
+
+		if ( empty( $shortcode ) ) {
+			return;
+		}
 
 		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>
