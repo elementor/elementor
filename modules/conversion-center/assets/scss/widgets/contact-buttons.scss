@@ -121,7 +121,7 @@
     &__content {
         display: none;
         font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
-        margin-bottom: 20px;
+        margin-block-end: 20px;
 
         &.is-visible {
             display: block; // will be replaced with animation
@@ -142,13 +142,13 @@
         color: var(--e-contact-buttons-top-bar-name);
         font-size: 24px;
         font-weight: bold;
-        margin-bottom: 0;
+        margin-block-end: 0;
     }
 
     &__top-bar-title {
         color: var(--e-contact-buttons-top-bar-title);
         font-size: 20px;
-        margin-bottom: 0;
+        margin-block-end: 0;
     }
 
     &__profile-image {
@@ -301,7 +301,7 @@
         font-size: 20px;
         line-height: 25px;
         font-weight: 600;
-        margin-bottom: 8px;
+        margin-block-end: 8px;
     }
 
     &__message-bubble-body {
