@@ -899,6 +899,7 @@ JS;
 
 	protected function add_identity_section(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'identity_section',
 			[
