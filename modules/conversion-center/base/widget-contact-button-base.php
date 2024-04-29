@@ -305,7 +305,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'message_bubble_section',
 			[
 				'label' => esc_html__( 'Message Bubble', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_CONTENT,
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 

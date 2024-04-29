@@ -307,11 +307,10 @@
 
     &__message-bubble-time {
         color: var(--e-contact-buttons-message-bubble-time);
-        display: flex;
         font-size: 20px;
-        justify-content: flex-end;
         line-height: 25px;
         font-weight: 600;
+        text-align: end;
     }
 
     &__dots-container {
@@ -399,11 +398,9 @@
 
 @keyframes contactButtonsDisappear {
     from {
-        display: inline;
-        visibility: visible;
+        display: inline-flex;
     }
     to {
         display: none;
-        visibility: hidden;
     }
 }
