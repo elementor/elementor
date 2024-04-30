@@ -32,8 +32,8 @@
 		}
 		
 		svg {
-			width: var(--button-icon-size, 1em);
 			height: auto;
+			width: var(--button-icon-size, 1em);
 			fill: var(--button-icon-color, inherit);
 		}
 		
