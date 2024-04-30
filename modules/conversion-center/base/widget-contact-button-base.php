@@ -9,6 +9,7 @@ use Elementor\Modules\ConversionCenter\Classes\Render\Contact_Buttons_Core_Rende
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Widget_Base;
+use Elementor\Group_Control_Box_Shadow;
 
 abstract class Widget_Contact_Button_Base extends Widget_Base {
 
@@ -470,6 +471,64 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
+
+		$this->add_control(
+			'style_chat_button_box_divider',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'style_chat_button_box_shadow',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button',
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_chat_button_animation',
+			[
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'style_chat_button_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'condition' => [
+					'style_chat_button_animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_button_animation_delay',
+			[
+				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => '',
+				'min' => 0,
+				'step' => 100,
+				'condition' => [
+					'style_chat_button_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+			]
+		);
 
 		$this->end_controls_section();
 	}
@@ -994,30 +1053,11 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'style_chat_box_shadow_heading',
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
 			[
-				'label' => esc_html__( 'Box Shadow', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'style_chat_box_box_shadow',
-			[
-				'label' => esc_html__( 'Box Shadow', 'textdomain' ),
-				'type' => \Elementor\Controls_Manager::BOX_SHADOW,
-				'selectors' => [
-					'{{SELECTOR}} .e-contact-buttons' => '--e-contact-buttons-box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'style_chat_box_shadow_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
+				'name' => 'style_chat_box_box_shadow',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__content',
 			]
 		);
 
