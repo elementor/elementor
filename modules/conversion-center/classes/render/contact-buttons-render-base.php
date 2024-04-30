@@ -5,7 +5,6 @@ namespace Elementor\Modules\ConversionCenter\Classes\Render;
 use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\ConversionCenter\Widgets\Contact_Buttons;
-use Elementor\Utils;
 
 /**
  * Class Contact_Buttons_Render_Base.
@@ -54,7 +53,7 @@ abstract class Contact_Buttons_Render_Base {
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
-			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="Open">
+			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_html__( 'Open Contact Buttons', 'elementor' ); ?>">
 				<?php
 				$mapping = Social_Network_Provider::get_icon_mapping( $platform );
 				$icon_lib = explode( ' ', $mapping )[0];
@@ -99,7 +98,7 @@ abstract class Contact_Buttons_Render_Base {
 		] );
 		?>
 		<div class="e-contact-buttons__top-bar">
-			<button type="button" class="e-contact-buttons__close-button" aria-label="Close Contact Buttons">
+			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_html__( 'Close Contact Buttons', 'elementor' ); ?>>
 				<i class="eicon-close"></i>
 			</button>
 			<div <?php echo $this->widget->get_render_attribute_string( 'profile-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -119,16 +118,12 @@ abstract class Contact_Buttons_Render_Base {
 			</div>
 
 			<div class="e-contact-buttons__top-bar-details">
-				<?php if ( $has_top_bar_name ) {
-					$this->widget->add_render_attribute( 'top-bar-name', 'class', 'e-contact-buttons__top-bar-name' );
-					$top_bar_name_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'top-bar-name' ), $top_bar_name );
-					Utils::print_unescaped_internal_string( $top_bar_name_output );
-				} ?>
-				<?php if ( $has_top_bar_title ) {
-					$this->widget->add_render_attribute( 'top-bar-title', 'class', 'e-contact-buttons__top-bar-title' );
-					$top_bar_title_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'top-bar-title' ), $top_bar_title );
-					Utils::print_unescaped_internal_string( $top_bar_title_output );
-				} ?>
+				<?php if ( $has_top_bar_name ) { ?>
+					<p class="e-contact-buttons__top-bar-name"><?php echo esc_html( $top_bar_name ); ?></p>
+				<?php } ?>
+				<?php if ( $has_top_bar_title ) { ?>
+					<p class="e-contact-buttons__top-bar-title"><?php echo esc_html( $top_bar_title ); ?></p>
+				<?php } ?>
 			</div>
 		</div>
 		<?php
@@ -162,24 +157,13 @@ abstract class Contact_Buttons_Render_Base {
 			<?php } ?>
 			<div class="e-contact-buttons__bubble-container">
 				<div class="e-contact-buttons__bubble">
-					<?php if ( $has_message_bubble_name ) {
-						$this->widget->add_render_attribute( 'message-bubble-name', 'class', 'e-contact-buttons__message-bubble-name' );
-						$message_bubble_name_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-name' ), $message_bubble_name );
-						Utils::print_unescaped_internal_string( $message_bubble_name_output );
-					} ?>
-					<?php if ( $has_message_bubble_body ) {
-						$this->widget->add_render_attribute( 'message-bubble-body', 'class', 'e-contact-buttons__message-bubble-body' );
-						$message_bubble_body_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-body' ), $message_bubble_body );
-						Utils::print_unescaped_internal_string( $message_bubble_body_output );
-					} ?>
-					<?php
-						$this->widget->add_render_attribute( 'message-bubble-time', [
-							'class' => 'e-contact-buttons__message-bubble-time',
-							'data-time-format' => $time_format,
-						] );
-						$message_bubble_time_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'message-bubble-time' ), '' );
-						Utils::print_unescaped_internal_string( $message_bubble_time_output );
-					?>
+					<?php if ( $has_message_bubble_name ) { ?>
+						<p class="e-contact-buttons__message-bubble-name"><?php echo esc_html( $message_bubble_name ); ?></p>
+					<?php } ?>
+					<?php if ( $has_message_bubble_body ) { ?>
+						<p class="e-contact-buttons__message-bubble-body"><?php echo esc_html( $message_bubble_body ); ?></p>
+					<?php } ?>
+					<p class="e-contact-buttons__message-bubble-time" data-time-format="<?php echo esc_html( $time_format ); ?>"></p>
 				</div>
 			</div>
 		</div>
@@ -219,7 +203,7 @@ abstract class Contact_Buttons_Render_Base {
 								[ 'aria-hidden' => 'true' ]
 							);
 						?>
-						<?php Utils::print_unescaped_internal_string( $send_button_text ); ?>
+						<?php echo esc_html( $send_button_text ); ?>
 					</a>
 				<?php } ?>
 			</div>
