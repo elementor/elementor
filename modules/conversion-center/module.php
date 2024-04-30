@@ -7,11 +7,10 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
+use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Documents\Link_In_Bio;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Empty_View_Menu_Item;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Menu_Item;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -23,7 +22,7 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'conversion-center';
 
-	const DOCUMENT_TYPE = 'conversion-center-doc';
+	const DOCUMENT_TYPE = 'conversion-center';
 	/**
 	 * LIB stands for Link in bio.
 	 */
@@ -67,9 +66,9 @@ class Module extends BaseModule {
 		$function = $menu_args['function'];
 
 		if ( is_callable( $function ) ) {
-			$admin_menu->register( $slug, new Landing_Pages_Empty_View_Menu_Item( $function ) );
+			$admin_menu->register( $slug, new Links_Empty_View_Menu_Item( $function ) );
 		} else {
-			$admin_menu->register( $slug, new Landing_Pages_Menu_Item() );
+			$admin_menu->register( $slug, new Links_Menu_Item() );
 		}
 	}
 
@@ -149,7 +148,10 @@ class Module extends BaseModule {
 
 	private function get_add_new_lib_url() {
 		if ( ! $this->new_lib_url ) {
-			$this->new_lib_url = Plugin::$instance->documents->get_create_new_post_url( self::CPT_LIB, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lib_url = Plugin::$instance->documents->get_create_new_post_url(
+				self::CPT_LIB,
+				self::DOCUMENT_TYPE
+				) . '#library';
 		}
 		return $this->new_lib_url;
 	}
@@ -231,6 +233,7 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'capability_type' => 'page',
+			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'supports' => [ 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ],
 		];
 
