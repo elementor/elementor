@@ -436,6 +436,16 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		$attachments = new \WP_Query( [
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+			'fields' => 'ids',
+		] );
+
+		if ( 1 > $attachments->found_posts ) {
+			return false;
+		}
+
 		$plugin_file_path = 'image-optimization/image-optimization.php';
 		$plugin_slug = 'image-optimization';
 
