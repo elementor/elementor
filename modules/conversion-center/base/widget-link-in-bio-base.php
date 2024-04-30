@@ -36,7 +36,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 					'description' => [
 						'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
-						'position' => 'top',
 					],
 					'has_about_field' => false,
 				],
@@ -129,6 +128,10 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			],
 
 		];
+	}
+
+	public function get_description_position() {
+		return 'top';
 	}
 
 	public function get_icon(): string {
