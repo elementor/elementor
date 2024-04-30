@@ -32,14 +32,14 @@
 		}
 		
 		svg {
-			width: 1em;
+			width: var(--button-icon-size, 1em);
 			height: auto;
 			fill: var(--button-icon-color, inherit);
-			font-size: var(--button-icon-size);
 		}
-			
+		
 		.e-font-icon-svg {
 			height: 1em;
+			font-size: var(--button-icon-size);
 		}
 	}
 	
@@ -94,23 +94,24 @@
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 		align-self: center;
 	}
-}
 
-.elementor-button:hover{
+	&:hover {
 
-	.elementor-button-icon {
+		.elementor-button-icon {
 
-		i {
-			color: var(--button-icon-color-hover);
-			transition: all 0.3s;
-		}
-	
-		svg {
-			fill: var(--button-icon-color-hover);
-			transition: all 0.3s;
+			i {
+				color: var(--button-icon-color-hover);
+				transition: all 0.3s;
+			}
+		
+			svg {
+				fill: var(--button-icon-color-hover);
+				transition: all 0.3s;
+			}
 		}
 	}
 }
+
 
 .elementor-element.elementor-button- {
 	@include button-types( '.elementor-button' );
