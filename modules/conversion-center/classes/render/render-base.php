@@ -232,7 +232,7 @@ abstract class Render_Base {
 		// Set props for secondary image
 		if ( $output_images['secondary_image']['should_render'] ) {
 			$output_images['secondary_image']['props']['style'] = 'cover';
-			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_cover_show_bottom_border'] ?? false;
+			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
 
 			// Force primary to be profile since this is cover
 			$output_images['primary_image']['props']['style'] = 'profile';
