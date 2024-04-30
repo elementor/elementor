@@ -1094,7 +1094,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_responsive_control(
 			'style_chat_box_entrance_animation',
 			[
-				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'label' => esc_html__( 'Open Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
 			]
@@ -1103,7 +1103,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_responsive_control(
 			'style_chat_box_exit_animation',
 			[
-				'label' => esc_html__( 'Exit Animation', 'elementor' ),
+				'label' => esc_html__( 'Close Animation', 'elementor' ),
 				'type' => Controls_Manager::EXIT_ANIMATION,
 				'frontend_available' => true,
 			]
@@ -1166,6 +1166,32 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'toggle' => true,
 			]
 		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_responsive_section',
+			[
+				'label' => esc_html__( 'Responsive', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-descriptor',
+			]
+		);
+
+		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
 
