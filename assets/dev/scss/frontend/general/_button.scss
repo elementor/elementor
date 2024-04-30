@@ -30,12 +30,12 @@
 			color: var(--button-icon-color, inherit);
 		    font-size: var(--button-icon-size);
 		}
-
+		
 		svg {
 			width: 1em;
 			height: auto;
 			fill: var(--button-icon-color, inherit);
-			
+			font-size: var(--button-icon-size);
 		}
 			
 		.e-font-icon-svg {
