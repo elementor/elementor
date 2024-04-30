@@ -274,6 +274,8 @@ abstract class Contact_Buttons_Render_Base {
 		$layout_classnames = 'e-contact-buttons';
 		$platform = $this->settings['chat_button_platform'];
 		$border_radius = $this->settings['style_chat_box_corners'];
+		$alignment_position = $this->settings['advanced_horizontal_position'];
+		$has_animations = ! empty( $this->settings['style_chat_box_exit_animation'] ) || ! empty( $this->settings['style_chat_box_entrance_animation'] );
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
 
 		$icon_name_mapping = Social_Network_Provider::get_name_mapping( $platform );
@@ -282,8 +284,16 @@ abstract class Contact_Buttons_Render_Base {
 			$layout_classnames .= ' has-platform-' . $icon_name_mapping;
 		}
 
-		if ( ! empty( $border_radius )) {
+		if ( ! empty( $border_radius ) ) {
 			$layout_classnames .= ' has-corners-' . $border_radius;
+		}
+
+		if ( ! empty( $alignment_position ) ) {
+			$layout_classnames .= ' has-alignment-' . $alignment_position;
+		}
+
+		if ( $has_animations ) {
+			$layout_classnames .= ' has-animations';
 		}
 
 		if ( $custom_classes ) {

@@ -1058,6 +1058,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'unit' => 'px',
 					'size' => 360,
 				],
+				'mobile_default' => [
+					'unit' => 'vw',
+					'size' => 100,
+				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-width: {{SIZE}}{{UNIT}}',
@@ -1134,6 +1138,36 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
+
+		$this->start_controls_section(
+			'advanced_layout_section',
+			[
+				'label' => esc_html__( 'Layout', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_responsive_control(
+			'advanced_horizontal_position',
+			[
+				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'default' => 'end',
+				'toggle' => true,
+			]
+		);
+
+		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'advanced_custom_controls_section',

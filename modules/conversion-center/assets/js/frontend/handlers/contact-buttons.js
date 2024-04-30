@@ -4,6 +4,7 @@ export default class ContactButtonsHandler extends Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
+				main: '.e-contact-buttons',
 				content: '.e-contact-buttons__content',
 				contentWrapper: '.e-contact-buttons__content-wrapper',
 				chatButton: '.e-contact-buttons__chat-button',
@@ -16,6 +17,7 @@ export default class ContactButtonsHandler extends Base {
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
 		return {
+			main: this.$element[ 0 ].querySelector( selectors.main ),
 			content: this.$element[ 0 ].querySelector( selectors.content ),
 			contentWrapper: this.$element[ 0 ].querySelector( selectors.contentWrapper ),
 			chatButton: this.$element[ 0 ].querySelector( selectors.chatButton ),
@@ -79,12 +81,20 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	openChatBox() {
+		if ( this.elements.main.classList.contains( 'has-animations' ) ) {
+			this.chatBoxEntranceAnimation();
+		} else {
+			this.elements.content.classList.add( 'visible' );
+		}
 		this.elements.contentWrapper.classList.remove( 'hidden' );
-		this.chatBoxEntranceAnimation();
 	}
 
 	closeChatBox() {
-		this.chatBoxExitAnimation();
+		if ( this.elements.main.classList.contains( 'has-animations' ) ) {
+			this.chatBoxExitAnimation();
+		} else {
+			this.elements.content.classList.remove( 'visible' );
+		}
 		this.elements.contentWrapper.classList.add( 'hidden' );
 	}
 

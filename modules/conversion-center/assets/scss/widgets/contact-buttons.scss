@@ -40,6 +40,19 @@
     width: var(--e-contact-buttons-chat-box-width);
     z-index: 99;
 
+    @media (max-width: $screen-mobile-max) {
+        #{$end}: 0;
+    }
+
+    &.has-alignment-start {
+        #{$end}: unset;
+        #{$start}: 20px;
+
+        @media (max-width: $screen-mobile-max) {
+            #{$start}: 0;
+        }
+    }
+
     &.has-platform-whatsapp {
         --e-contact-buttons-button-bg: #25D366;
         --e-contact-buttons-button-bg-hover: #075E54;
@@ -136,18 +149,28 @@
         --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
     }
 
-    &__content-wrapper {
-        &.hidden {
-            overflow: hidden;
-			visibility: hidden;
-			transition: var(--e-contact-buttons-chat-box-animation-duration);
-		}
+    &:not(.has-animations) {
+        .e-contact-buttons__content-wrapper {
+            &.hidden {
+                display: none;
+            }
+        }
+    }
 
-        &.animated-wrapper {
-            visibility: hidden;
-            opacity: 0;
-            transform: initial;
-            animation: e-contact-buttons-close var(--e-contact-buttons-chat-box-animation-duration);
+    &.has-animations {
+        .e-contact-buttons__content-wrapper {
+            &.hidden {
+                display: block;
+                visibility: hidden;
+                transition: var(--e-contact-buttons-chat-box-animation-duration);
+            }
+
+            &.animated-wrapper {
+                visibility: hidden;
+                opacity: 0;
+                transform: initial;
+                animation: e-contact-buttons-close var(--e-contact-buttons-chat-box-animation-duration);
+            }
         }
     }
 
@@ -246,6 +269,23 @@
     &__chat-button-container {
         display: flex;
         justify-content: flex-end;
+
+        @media (max-width: $screen-mobile-max) {
+            #{$end}: 20px;
+            position: relative;
+        }
+    }
+
+    &.has-alignment-start {
+
+        .e-contact-buttons__chat-button-container {
+            justify-content: flex-start;
+
+            @media (max-width: $screen-mobile-max) {
+                #{$end}: unset;
+                #{$start}: 20px;
+            }
+        }
     }
     
     &__chat-button {
@@ -444,7 +484,7 @@
                 animation-iteration-count: 1;
                 animation-name: e-contact-buttons-disappear;
             }
-        
+
             .e-contact-buttons__bubble-container {
                 animation-delay: 2s;
                 animation-duration: .1s;
