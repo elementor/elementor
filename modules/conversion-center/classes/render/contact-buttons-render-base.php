@@ -53,7 +53,7 @@ abstract class Contact_Buttons_Render_Base {
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
-			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_html__( 'Open Contact Buttons', 'elementor' ); ?>">
+			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Open Contact Buttons', 'elementor' ); ?>">
 				<?php
 				$mapping = Social_Network_Provider::get_icon_mapping( $platform );
 				$icon_lib = explode( ' ', $mapping )[0];
@@ -98,7 +98,7 @@ abstract class Contact_Buttons_Render_Base {
 		] );
 		?>
 		<div class="e-contact-buttons__top-bar">
-			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_html__( 'Close Contact Buttons', 'elementor' ); ?>>
+			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_attr__( 'Close Contact Buttons', 'elementor' ); ?>>
 				<i class="eicon-close"></i>
 			</button>
 			<div <?php echo $this->widget->get_render_attribute_string( 'profile-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -163,7 +163,7 @@ abstract class Contact_Buttons_Render_Base {
 					<?php if ( $has_message_bubble_body ) { ?>
 						<p class="e-contact-buttons__message-bubble-body"><?php echo esc_html( $message_bubble_body ); ?></p>
 					<?php } ?>
-					<p class="e-contact-buttons__message-bubble-time" data-time-format="<?php echo esc_html( $time_format ); ?>"></p>
+					<p class="e-contact-buttons__message-bubble-time" data-time-format="<?php echo esc_attr( $time_format ); ?>"></p>
 				</div>
 			</div>
 		</div>
