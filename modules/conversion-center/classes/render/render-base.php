@@ -110,6 +110,7 @@ abstract class Render_Base {
 	}
 
 	protected function render_icons(): void {
+		$icons_props_show_border = $this->settings['icons_border_show_border'] ?? false;
 		$icons_props_size = $this->settings['icons_size'] ?? 'small';
 		$icons_value = $this->settings['icon'] ?? [];
 
@@ -125,8 +126,14 @@ abstract class Render_Base {
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
 
+				$icon_class_names = 'e-link-in-bio__icon has-size-' . $icons_props_size;
+
+				if ( $icons_props_show_border ) {
+					$icon_class_names .= ' has-border';
+				}
+
 				$this->widget->add_render_attribute( 'icon-' . $key, [
-					'class' => 'e-link-in-bio__icon has-size-' . $icons_props_size,
+					'class' => $icon_class_names,
 				] );
 
 				$this->widget->add_render_attribute( 'icon-link-' . $key, [
@@ -140,18 +147,25 @@ abstract class Render_Base {
 				?>
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php
-						$mapping = Social_Network_Provider::get_icon_mapping( $icon['icon_platform'] );
-						$icon_lib = explode( ' ', $mapping )[0];
-						$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
-						Icons_Manager::render_icon(
-							[
-								'library' => $library,
-								'value' => $mapping,
-							],
-							[ 'aria-hidden' => 'true' ]
-						);
-						?>
+						<span class="e-link-in-bio__icon-svg">
+							<?php
+							$mapping = Social_Network_Provider::get_icon_mapping( $icon['icon_platform'] );
+							$icon_lib = explode( ' ', $mapping )[0];
+							$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
+							Icons_Manager::render_icon(
+								[
+									'library' => $library,
+									'value' => $mapping,
+								],
+								[ 'aria-hidden' => 'true' ]
+							);
+							?>
+						</span>
+						<?php if ( ! empty( $icon['icon_text'] ) ) : ?>
+							<span class="e-link-in-bio__icon-label">
+								<?php echo esc_html( $icon['icon_text'] ) ?>
+							</span>
+						<?php endif; ?>
 					</a>
 				</div>
 			<?php } ?>

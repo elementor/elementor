@@ -34,9 +34,10 @@ trait Conversion_Center_Controls_Trait {
 		);
 	}
 
-	protected function add_images_per_row_control(
+	protected function add_icons_per_row_control(
 		string $name = 'icons_per_row',
 		$options = [
+			'1' => '1',
 			'2' => '2',
 			'3' => '3',
 		],
@@ -53,6 +54,9 @@ trait Conversion_Center_Controls_Trait {
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'default' => $default,
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-columns: {{VALUE}};',
+				],
 			]
 		);
 	}
