@@ -227,25 +227,6 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
-	protected function build_email_link() {
-		$email = $this->settings['chat_button_mail'] ?? '';
-		$subject = $this->settings['chat_button_mail_subject'] ?? '';
-		$body = $this->settings['chat_button_mail_body'] ?? '';
-		if ( ! $email ) {
-			return '';
-		}
-		$link = 'mailto:' . $email;
-		if ( $subject ) {
-			$link .= '?subject=' . $subject;
-		}
-		if ( $body ) {
-			$link .= $subject ? '&' : '?';
-			$link .= 'body=' . $body;
-		}
-
-		return $link;
-	}
-
 	public function build_viber_link() {
 		$chat_button_number = $this->settings['chat_button_number'];
 		$viber_action = $this->settings['chat_button_viber_action'];
@@ -253,10 +234,13 @@ abstract class Contact_Buttons_Render_Base {
 		if ( empty( $chat_button_number ) ) {
 			return '';
 		}
+
 		$action = 'contact';
+
 		if ( ! empty( $viber_action ) ) {
 			$action = $viber_action;
 		}
+
 		return add_query_arg( [
 			'number' => urlencode( $chat_button_number ),
 		], 'viber://' . $action );
@@ -267,10 +251,16 @@ abstract class Contact_Buttons_Render_Base {
 		$chat_button_username = $this->settings['chat_button_username'] ?? '';
 		$platform_skype_username = $this->settings['chat_button_skype_username'] ?? '';
 
+		$email_data = [
+			'chat_button_mail' => $this->settings['chat_button_mail'] ?? '',
+			'chat_button_mail_subject' => $this->settings['chat_button_mail_subject'] ?? '',
+			'chat_button_mail_body' => $this->settings['chat_button_mail_body'] ?? '',
+		];
+
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $platform ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = $this->build_email_link();
+				$formatted_link = Social_Network_Provider::build_email_link( $email_data, 'chat_button' );
 				break;
 			case Social_Network_Provider::SMS:
 				$formatted_link = ! empty( $chat_button_number ) ? 'sms:' . $chat_button_number : '';
