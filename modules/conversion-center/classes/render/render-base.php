@@ -183,28 +183,71 @@ abstract class Render_Base {
 		$bio_title_props_tag = $this->settings['bio_title_tag'] ?? 'h2';
 		$bio_title_value = $this->settings['bio_title'] ?? '';
 
-		$bio_description_value = $this->settings['bio_description'] ?? '';
+		if ( 'top' === $this->widget->get_description_position() ) {
+			$bio_about_heading_props_tag = $this->settings['bio_about_tag'] ?? 'h3';
+			$bio_about_heading_value = $this->settings['bio_about'] ?? '';
 
+			$bio_description_value = $this->settings['bio_description'] ?? '';
+		}
+
+		$has_bio_about_heading = ! empty( $bio_about_heading_value );
 		$has_bio_description = ! empty( $bio_description_value );
 		$has_bio_heading = ! empty( $bio_heading_value );
 		$has_bio_title = ! empty( $bio_title_value );
 
-		if ( $has_bio_title || $has_bio_description || $has_bio_heading ) {
+		if ( $has_bio_heading || $has_bio_title || $has_bio_about_heading || $has_bio_description ) {
 			?>
 			<div class="e-link-in-bio__bio">
 				<?php if ( $has_bio_heading ) {
 					$this->widget->add_render_attribute( 'heading', 'class', 'e-link-in-bio__heading' );
-					$bio_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_heading_props_tag ), $this->widget->get_render_attribute_string( 'heading' ), $bio_heading_value );
+					$bio_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_heading_props_tag ), $this->widget->get_render_attribute_string( 'heading' ), esc_html( $bio_heading_value ) );
 					Utils::print_unescaped_internal_string( $bio_heading_output );
 				} ?>
 				<?php if ( $has_bio_title ) {
 					$this->widget->add_render_attribute( 'title', 'class', 'e-link-in-bio__title' );
-					$bio_title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_title_props_tag ), $this->widget->get_render_attribute_string( 'title' ), $bio_title_value );
+					$bio_title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_title_props_tag ), $this->widget->get_render_attribute_string( 'title' ), esc_html( $bio_title_value ) );
 					Utils::print_unescaped_internal_string( $bio_title_output );
+				} ?>
+				<?php if ( $has_bio_about_heading ) {
+					$this->widget->add_render_attribute( 'about-heading', 'class', 'e-link-in-bio__about-heading' );
+					$bio_about_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_about_heading_props_tag ), $this->widget->get_render_attribute_string( 'about-heading' ), esc_html( $bio_about_heading_value ) );
+					Utils::print_unescaped_internal_string( $bio_about_heading_output );
 				} ?>
 				<?php if ( $has_bio_description ) {
 					$this->widget->add_render_attribute( 'description', 'class', 'e-link-in-bio__description' );
-					$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'description' ), $bio_description_value );
+					$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'description' ), esc_html( $bio_description_value ) );
+					Utils::print_unescaped_internal_string( $bio_description_output );
+				} ?>
+			</div>
+			<?php
+		}
+	}
+
+	protected function render_footer_bio(): void {
+
+		if ( 'bottom' !== $this->widget->get_description_position() ) {
+			return;
+		}
+
+		$bio_about_heading_props_tag = $this->settings['bio_about_tag'] ?? 'h3';
+		$bio_about_heading_value = $this->settings['bio_about'] ?? '';
+
+		$bio_description_value = $this->settings['bio_description'] ?? '';
+
+		$has_bio_description = ! empty( $bio_description_value );
+		$has_bio_about_heading = ! empty( $bio_about_heading_value );
+
+		if ( $has_bio_about_heading || $has_bio_description ) {
+			?>
+			<div class="e-link-in-bio__bio e-link-in-bio__bio--footer">
+				<?php if ( $has_bio_about_heading ) {
+					$this->widget->add_render_attribute( 'about-heading', 'class', 'e-link-in-bio__about-heading' );
+					$bio_about_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_about_heading_props_tag ), $this->widget->get_render_attribute_string( 'about-heading' ), esc_html( $bio_about_heading_value ) );
+					Utils::print_unescaped_internal_string( $bio_about_heading_output );
+				} ?>
+				<?php if ( $has_bio_description ) {
+					$this->widget->add_render_attribute( 'description', 'class', 'e-link-in-bio__description' );
+					$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'description' ), esc_html( $bio_description_value ) );
 					Utils::print_unescaped_internal_string( $bio_description_output );
 				} ?>
 			</div>

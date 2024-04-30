@@ -29,6 +29,7 @@
 	// Bio config
 	--e-link-in-bio-heading-color: inherit;
 	--e-link-in-bio-title-color: inherit;
+	--e-link-in-bio-about-heading-color: inherit;
 	--e-link-in-bio-description-color: #{$link-in-bio-text-color-alt};
 
 	// Icons config
@@ -224,6 +225,13 @@
 		line-height: 42px;
 	}
 
+	&__about-heading {
+		color: var(--e-link-in-bio-about-heading-color);
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
 	&__title {
 		color: var(--e-link-in-bio-title-color);
 		font-size: 20px;
@@ -237,6 +245,21 @@
 		font-weight: 300;
 		line-height: 24px;
 		margin-block-start: 20px;
+	}
+
+	&__bio--footer {
+		margin-block-start: 34px;
+
+		.e-link-in-bio__description {
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 20px;
+			margin-block-start: 0;
+		}
+
+		.e-link-in-bio__about-heading + .e-link-in-bio__description {
+			margin-block-start: 5px;
+		}
 	}
 
 	&__icons {

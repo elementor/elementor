@@ -874,7 +874,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_heading_tag' );
+		$this->add_html_tag_control( 'bio_heading_tag', 'h1' );
 
 		$this->add_control(
 			'bio_title',
@@ -889,7 +889,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_title_tag' );
+		$this->add_html_tag_control( 'bio_title_tag', 'h2' );
 
 		if ( $config['content']['bio_section']['has_about_field'] ) {
 			$this->add_control(
