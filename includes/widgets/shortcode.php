@@ -84,6 +84,10 @@ class Widget_Shortcode extends Widget_Base {
 		return true;
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register shortcode widget controls.
 	 *
