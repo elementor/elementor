@@ -658,6 +658,15 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
+			'style_top_bar_close_button_heading',
+			[
+				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+
+		$this->add_control(
 			'style_top_bar_close_button_color',
 			[
 				'label' => esc_html__( 'Close Button Color', 'elementor' ),
@@ -668,6 +677,15 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'condition' => [
 					'style_top_bar_colors' => 'custom',
 				],
+			]
+		);
+
+		$this->add_control(
+			'style_top_bar_background_heading',
+			[
+				'label' => esc_html__( 'Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
 			]
 		);
 
@@ -1012,10 +1030,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label'     => esc_html__( 'Background Color', 'elementor' ),
 				'type'      => Controls_Manager::COLOR,
-				// TODO: add correct selectors
-				// 'selectors' => [
-				// 	'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-bg: {{VALUE}}',
+				],
 				'condition' => [
 					'style_chat_box_bg_select' => 'custom',
 				],
@@ -1070,46 +1087,41 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'style_chat_box_entrance_animation',
 			[
-				'label'     => esc_html__( 'Entrance Animation', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => 'slide-in-up',
-				'options'   => [
-					'none'          => esc_html__( 'None', 'elementor' ),
-					'fade-in-up'    => esc_html__( 'Fade In Up', 'elementor' ),
-					'zoom-in-up'    => esc_html__( 'Zoom In Up', 'elementor' ),
-					'slide-in-up'   => esc_html__( 'Slide In Up', 'elementor' ),
-				],
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'style_chat_box_exit_animation',
 			[
-				'label'     => esc_html__( 'Exit Animation', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => 'slide-out-down',
-				'options'   => [
-					'none'             => esc_html__( 'None', 'elementor' ),
-					'fade-out-down'    => esc_html__( 'Fade Out Down', 'elementor' ),
-					'zoom-out-down'    => esc_html__( 'Zoom Out Down', 'elementor' ),
-					'slide-out-down'   => esc_html__( 'Slide Out Down', 'elementor' ),
-				],
+				'label' => esc_html__( 'Exit Animation', 'elementor' ),
+				'type' => Controls_Manager::EXIT_ANIMATION,
+				'frontend_available' => true,
 			]
 		);
 
 		$this->add_control(
 			'style_chat_box_animation_duration',
 			[
-				'label'     => esc_html__( 'Animation Duration', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => 'normal',
-				'options'   => [
-					'slow'    => esc_html__( 'Slow', 'elementor' ),
-					'normal'  => esc_html__( 'Normal', 'elementor' ),
-					'fast'    => esc_html__( 'Fast', 'elementor' ),
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 800,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-animation-duration: {{SIZE}}ms;',
 				],
 			]
 		);
