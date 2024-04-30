@@ -76,7 +76,10 @@ abstract class Render_Base {
 					'href' => esc_url( $formatted_link ),
 				] );
 
-				if ( 'File Download' === $cta['cta_link_type'] ) {
+				if (
+					Social_Network_Provider::FILE_DOWNLOAD === $cta['cta_link_type'] ||
+					Social_Network_Provider::VCF === $cta['cta_link_type']
+				) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [
 						'download' => 'download',
 					] );
@@ -314,6 +317,9 @@ abstract class Render_Base {
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
 				break;
 			case Social_Network_Provider::FILE_DOWNLOAD:
+				$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
+				break;
+			case Social_Network_Provider::VCF:
 				$formatted_link = ! empty( $cta['cta_link_file']['url'] ) ? $cta['cta_link_file']['url'] : '';
 				break;
 			default:
