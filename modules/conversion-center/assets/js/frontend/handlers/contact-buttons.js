@@ -47,9 +47,27 @@ export default class ContactButtonsHandler extends Base {
 		this.elements.messageBubbleTime.innerHTML = time;
 	}
 
+	getResponsiveSetting( controlName ) {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), controlName, '', currentDevice );
+	}
+
+	initChatButtonEntranceAnimation() {
+		const entranceAnimation = this.getResponsiveSetting( 'style_chat_button_animation' );
+
+		if ( 'none' === entranceAnimation ) {
+			return;
+		}
+
+		this.elements.chatButton.classList.add( 'animated' );
+		this.elements.chatButton.classList.add( entranceAnimation );
+	}
+
 	onInit( ...args ) {
 		super.onInit( ...args );
 
 		this.initMessageBubbleTime();
+
+		this.initChatButtonEntranceAnimation();
 	}
 }

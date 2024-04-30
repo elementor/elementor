@@ -8,6 +8,8 @@
     --e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
     --e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
     --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
+    --e-contact-button-chat-button-animation-duration: 200ms;
+    --e-contact-button-chat-button-animation-delay: 0;
 
     // Platform specific colors
     // Default used for email, sms
@@ -236,6 +238,11 @@
         display: flex;
         justify-content: center;
         position: relative;
+
+        &.animated {
+            animation-delay: var(--e-contact-button-chat-button-animation-delay);
+            animation-duration: var(--e-contact-button-chat-button-animation-duration);
+        }
 
         svg {
             fill: var(--e-contact-buttons-button-icon);
