@@ -455,7 +455,8 @@ class Admin_Notices extends Module {
 			'title' => esc_html__( 'Speed up your website with Image Optimizer by Elementor', 'elementor' ),
 			'description' => esc_html__( 'Automatically compress and optimize images, resize larger files, or convert to WebP. Optimize images individually, in bulk, or on upload.', 'elementor' ),
 			'id' => $notice_id,
-			'button' => [
+			'type' => 'cta',
+			'button_secondary' => [
 				'text' => $cta_text,
 				'url' => $url,
 				'type' => 'cta',
