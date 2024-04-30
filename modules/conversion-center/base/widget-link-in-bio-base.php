@@ -401,8 +401,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			]
 		);
 
-		do_action( 'elementor/conversion-center/content/controls/icons/before', $this );
-
 		if ( $config['content']['icon_section']['platform']['limit'] ) {
 			$this->add_control(
 				'custom_panel_alert',
@@ -899,6 +897,7 @@ JS;
 
 	protected function add_identity_section(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'identity_section',
 			[
@@ -970,6 +969,7 @@ JS;
 
 	protected function add_style_cta_section(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'cta_links_section_style',
 			[
@@ -1149,6 +1149,7 @@ JS;
 
 	protected function add_style_identity_controls(): void {
 		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'identity_section_style',
 			[
@@ -1163,8 +1164,6 @@ JS;
 				'identity_image_style' => 'profile',
 			];
 		}
-
-		// Profile image style controls
 
 		$this->add_responsive_control(
 			'identity_image_size',
@@ -1501,9 +1500,12 @@ JS;
 		];
 
 		$config = static::get_configuration();
+
+
 		if ( $config['style']['border_section']['field_options'] ) {
 			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
 		}
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
