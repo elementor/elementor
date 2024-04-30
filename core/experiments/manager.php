@@ -486,9 +486,9 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'New plugin onboarding.', 'elementor' ),
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'default' => self::STATE_INACTIVE,
+			'default' => self::STATE_ACTIVE,
 			'new_site' => [
-				'default_active' => false,
+				'default_active' => true,
 			],
 		] );
 	}
