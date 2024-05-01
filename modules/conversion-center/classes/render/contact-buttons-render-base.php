@@ -136,6 +136,7 @@ abstract class Contact_Buttons_Render_Base {
 		$has_message_bubble_body = ! empty( $message_bubble_body );
 		$has_typing_animation = 'yes' === $this->settings['chat_button_show_animation'];
 		$time_format = $this->settings['chat_button_time_format'];
+		$powered_by_url = 'https://elementor.com/pro';
 
 		$message_bubble_classnames = 'e-contact-buttons__message-bubble';
 
@@ -165,6 +166,11 @@ abstract class Contact_Buttons_Render_Base {
 					<?php } ?>
 					<p class="e-contact-buttons__message-bubble-time" data-time-format="<?php echo esc_attr( $time_format ); ?>"></p>
 				</div>
+			</div>
+			<div class="e-contact-buttons__powered-container">
+				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text">
+					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
+				</a>
 			</div>
 		</div>
 		<?php

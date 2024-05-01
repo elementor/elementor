@@ -407,6 +407,21 @@
         text-align: end;
     }
 
+    &__powered-container {
+        padding: 20px 20px 0;
+        text-align: center;
+    }
+
+    &__powered-text {
+        color: #{$contact-buttons-default-text-color};
+        font-size: 16px;
+        font-weight: 500;
+        
+        .elementor & {
+            text-decoration: underline;
+        }
+    }
+
     &__dots-container {
         background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
         border-radius: 15px;
