@@ -94,6 +94,14 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						'default' => 'button',
 					],
 					'has_corners' => true,
+					'corners_control' => [
+						'default' => 'rounded',
+						'options' => [
+							'round' => esc_html__( 'Round', 'elementor' ),
+							'rounded' => esc_html__( 'Rounded', 'elementor' ),
+							'sharp' => esc_html__( 'Sharp', 'elementor' ),
+						],
+					],
 					'has_padding' => true,
 					'has_background_control' => true,
 					'has_cta_control_text' => false,
@@ -1087,12 +1095,8 @@ JS;
 				[
 					'label' => esc_html__( 'Corners', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => 'rounded',
-					'options' => [
-						'round' => esc_html__( 'Round', 'elementor' ),
-						'rounded' => esc_html__( 'Rounded', 'elementor' ),
-						'sharp' => esc_html__( 'Sharp', 'elementor' ),
-					],
+					'default' => $config['style']['cta_section']['corners_control']['default'],
+					'options' => $config['style']['cta_section']['corners_control']['options'],
 					'condition' => [
 						'cta_links_type' => 'button',
 					],
