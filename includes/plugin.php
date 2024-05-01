@@ -656,29 +656,6 @@ class Plugin {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/init' );
-
-		// TODO: THIS IS A TEMPORARY POSITION OF THIS CODE. IT SHOULD BE MOVED TO A BETTER PLACE.s
-		add_shortcode( 'elementor-element', function ( $atts ) {
-			if ( empty( $atts['data'] ) ) {
-				return '';
-			}
-
-			$widget_data = json_decode( base64_decode( $atts['data'] ), true );
-
-			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
-				return '';
-			}
-
-			ob_start();
-
-			$element = Plugin::$instance->elements_manager->create_element_instance( $widget_data );
-
-			if ( $element ) {
-				$element->print_element();
-			}
-
-			return ob_get_clean();
-		} );
 	}
 
 	/**

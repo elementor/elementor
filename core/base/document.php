@@ -1783,14 +1783,8 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		$main_id = $this->get_main_id();
-
-		do_action( 'qm/start', "e_element_cache_{$main_id}" );
-
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
 			$this->do_print_elements( $elements_data );
-
-			do_action( 'qm/stop', "e_element_cache_{$main_id}" );
 
 			return;
 		}
@@ -1839,8 +1833,6 @@ abstract class Document extends Controls_Stack {
 		if ( ! empty( $cached_data['content'] ) ) {
 			echo $cached_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
-
-		do_action( 'qm/stop', "e_element_cache_{$main_id}" );
 	}
 
 	protected function do_print_elements( $elements_data ) {
