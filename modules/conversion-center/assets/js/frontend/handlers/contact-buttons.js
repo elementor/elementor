@@ -11,6 +11,18 @@ export default class ContactButtonsHandler extends Base {
 				closeButton: '.e-contact-buttons__close-button',
 				messageBubbleTime: '.e-contact-buttons__message-bubble-time',
 			},
+			constants: {
+				entranceAnimation: 'style_chat_box_entrance_animation',
+				exitAnimation: 'style_chat_box_exit_animation',
+				chatButtonAnimation: 'style_chat_button_animation',
+				animated: 'animated',
+				animatedWrapper: 'animated-wrapper',
+				visible: 'visible',
+				reverse: 'reverse',
+				hidden: 'hidden',
+				hasAnimations: 'has-animations',
+				none: 'none',
+			},
 		};
 	}
 
@@ -32,82 +44,89 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	bindEvents() {
-		this.elements.closeButton.addEventListener( 'click', this.onCloseButtonClick.bind( this ) );
+		this.elements.closeButton.addEventListener( 'click', this.closeChatBox.bind( this ) );
 		this.elements.chatButton.addEventListener( 'click', this.onChatButtonClick.bind( this ) );
 		this.elements.content.addEventListener( 'animationend', this.removeAnimationClasses.bind( this ) );
 	}
 
 	removeAnimationClasses() {
-		const isExitAnimation = this.elements.content.classList.contains( 'animated-reversed' ),
-			openAnimationClass = this.getResponsiveSetting( 'style_chat_box_entrance_animation' ),
-			exitAnimationClass = this.getResponsiveSetting( 'style_chat_box_exit_animation' );
+		const { reverse, entranceAnimation, exitAnimation, animated, visible } = this.getSettings( 'constants' );
+
+		const isExitAnimation = this.elements.content.classList.contains( reverse ),
+			openAnimationClass = this.getResponsiveSetting( entranceAnimation ),
+			exitAnimationClass = this.getResponsiveSetting( exitAnimation );
 
 		if ( isExitAnimation ) {
-			this.elements.content.classList.remove( 'animated' );
-			this.elements.content.classList.remove( 'animated-reversed' );
+			this.elements.content.classList.remove( animated );
+			this.elements.content.classList.remove( reverse );
 			this.elements.content.classList.remove( exitAnimationClass );
-			this.elements.content.classList.remove( 'visible' );
+			this.elements.content.classList.remove( visible );
 		} else {
-			this.elements.content.classList.remove( 'animated' );
+			this.elements.content.classList.remove( animated );
 			this.elements.content.classList.remove( openAnimationClass );
-			this.elements.content.classList.add( 'visible' );
+			this.elements.content.classList.add( visible );
 		}
 	}
 
 	chatBoxEntranceAnimation() {
-		const entranceAnimation = this.getResponsiveSetting( 'style_chat_box_entrance_animation' );
-		this.elements.content.classList.remove( 'is-hidden' );
+		const { entranceAnimation, animated, animatedWrapper, none } = this.getSettings( 'constants' );
 
-		if ( 'none' === entranceAnimation ) {
+		const entranceAnimationControl = this.getResponsiveSetting( entranceAnimation );
+
+		if ( none === entranceAnimationControl ) {
 			return;
 		}
 
-		this.elements.content.classList.add( 'animated' );
-		this.elements.content.classList.add( entranceAnimation );
-		this.elements.contentWrapper.classList.remove( 'animated-wrapper' );
+		this.elements.content.classList.add( animated );
+		this.elements.content.classList.add( entranceAnimationControl );
+		this.elements.contentWrapper.classList.remove( animatedWrapper );
 	}
 
 	chatBoxExitAnimation() {
-		const exitAnimation = this.getResponsiveSetting( 'style_chat_box_exit_animation' );
+		const { reverse, exitAnimation, animated, animatedWrapper, none } = this.getSettings( 'constants' );
 
-		if ( 'none' === exitAnimation ) {
+		const exitAnimationControl = this.getResponsiveSetting( exitAnimation );
+
+		if ( none === exitAnimationControl ) {
 			return;
 		}
 
-		this.elements.content.classList.add( 'animated' );
-		this.elements.content.classList.add( 'animated-reversed' );
-		this.elements.content.classList.add( exitAnimation );
-		this.elements.contentWrapper.classList.add( 'animated-wrapper' );
+		this.elements.content.classList.add( animated );
+		this.elements.content.classList.add( reverse );
+		this.elements.content.classList.add( exitAnimationControl );
+		this.elements.contentWrapper.classList.add( animatedWrapper );
 	}
 
 	openChatBox() {
-		if ( this.elements.main.classList.contains( 'has-animations' ) ) {
+		const { hasAnimations, visible, hidden } = this.getSettings( 'constants' );
+
+		if ( this.elements.main.classList.contains( hasAnimations ) ) {
 			this.chatBoxEntranceAnimation();
 		} else {
-			this.elements.content.classList.add( 'visible' );
+			this.elements.content.classList.add( visible );
 		}
-		this.elements.contentWrapper.classList.remove( 'hidden' );
+		this.elements.contentWrapper.classList.remove( hidden );
 	}
 
 	closeChatBox() {
-		if ( this.elements.main.classList.contains( 'has-animations' ) ) {
+		const { hasAnimations, visible, hidden } = this.getSettings( 'constants' );
+
+		if ( this.elements.main.classList.contains( hasAnimations ) ) {
 			this.chatBoxExitAnimation();
 		} else {
-			this.elements.content.classList.remove( 'visible' );
+			this.elements.content.classList.remove( visible );
 		}
-		this.elements.contentWrapper.classList.add( 'hidden' );
+		this.elements.contentWrapper.classList.add( hidden );
 	}
 
 	onChatButtonClick() {
-		if ( this.elements.contentWrapper.classList.contains( 'hidden' ) ) {
+		const { hidden } = this.getSettings( 'constants' );
+
+		if ( this.elements.contentWrapper.classList.contains( hidden ) ) {
 			this.openChatBox();
 		} else {
 			this.closeChatBox();
 		}
-	}
-
-	onCloseButtonClick() {
-		this.closeChatBox();
 	}
 
 	initMessageBubbleTime() {
@@ -123,14 +142,16 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	initChatButtonEntranceAnimation() {
-		const entranceAnimation = this.getResponsiveSetting( 'style_chat_button_animation' );
+		const { none, chatButtonAnimation, animated } = this.getSettings( 'constants' );
 
-		if ( 'none' === entranceAnimation ) {
+		const entranceAnimationControl = this.getResponsiveSetting( chatButtonAnimation );
+
+		if ( none === entranceAnimationControl ) {
 			return;
 		}
 
-		this.elements.chatButton.classList.add( 'animated' );
-		this.elements.chatButton.classList.add( entranceAnimation );
+		this.elements.chatButton.classList.add( animated );
+		this.elements.chatButton.classList.add( entranceAnimationControl );
 	}
 
 	onInit( ...args ) {

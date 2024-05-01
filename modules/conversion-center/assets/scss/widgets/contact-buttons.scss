@@ -1,17 +1,17 @@
 .e-contact-buttons {
     --e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
-    --e-contact-buttons-size-small: 65px;
-    --e-contact-buttons-size-medium: 75px;
-    --e-contact-buttons-size-large: 85px;
+    --e-contact-buttons-size-small: #{$contact-buttons-size-small};
+    --e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
+    --e-contact-buttons-size-large: #{$contact-buttons-size-large};
     --e-contact-buttons-dot: #{$contact-buttons-dots-color};
     --e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
     --e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
     --e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
     --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
-    --e-contact-button-chat-button-animation-duration: 800ms;
-    --e-contact-button-chat-button-animation-delay: 0;
-    --e-contact-buttons-chat-box-bg: #FFFFFF;
-    --e-contact-buttons-chat-box-animation-duration: 800ms;
+    --e-contact-button-chat-button-animation-duration: #{$contact-buttons-animation-duration};
+    --e-contact-button-chat-button-animation-delay: #{$contact-buttons-animation-delay};
+    --e-contact-buttons-chat-box-bg: #{$contact-buttons-chat-box-bg};
+    --e-contact-buttons-chat-box-animation-duration: #{$contact-buttons-animation-duration};
 
     // Platform specific colors
     // Default used for email, sms
@@ -150,6 +150,7 @@
     }
 
     &:not(.has-animations) {
+
         .e-contact-buttons__content-wrapper {
             &.hidden {
                 display: none;
@@ -158,7 +159,9 @@
     }
 
     &.has-animations {
+
         .e-contact-buttons__content-wrapper {
+
             &.hidden {
                 display: block;
                 visibility: hidden;

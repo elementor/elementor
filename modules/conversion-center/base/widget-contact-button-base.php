@@ -525,7 +525,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::NUMBER,
-				'default' => '',
+				'default' => 0,
 				'min' => 0,
 				'step' => 100,
 				'selectors' => [
