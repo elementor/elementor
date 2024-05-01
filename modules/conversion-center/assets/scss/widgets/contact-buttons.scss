@@ -8,6 +8,7 @@
     --e-contact-buttons-profile-dot-bg: #39AA59;
     --e-contact-buttons-box-shadow: 0 3px 3px 0 rgba(0,0,0,0.25);
     --e-contact-buttons-border-radius: 7px;
+    --e-contact-buttons-default-text-color: #000000;
 
     // Platform specific colors
     // Default used for email, sms
@@ -315,6 +316,21 @@
         line-height: 25px;
         font-weight: 600;
         text-align: end;
+    }
+
+    &__powered-container {
+        padding: 20px 20px 0;
+        text-align: center;
+    }
+
+    &__powered-text {
+        color: var(--e-contact-buttons-default-text-color);
+        font-size: 16px;
+        font-weight: 500;
+        
+        .elementor & {
+            text-decoration: underline;
+        }
     }
 
     &__dots-container {
