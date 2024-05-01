@@ -18,6 +18,7 @@
 		grid-template-rows: auto;
 		justify-content: unset;
 		justify-items: center;
+		margin-block-start: 34px;
 	}
 
 	.e-link-in-bio__icon-svg {
@@ -40,5 +41,9 @@
 				height: calc(var(--e-link-in-bio-icon-size) + 30px + calc(var(--e-link-in-bio-icon-border-width) * 2));
 			}
 		}
+	}
+
+	.e-link-in-bio__ctas {
+		margin-block-start: 34px;
 	}
 }
