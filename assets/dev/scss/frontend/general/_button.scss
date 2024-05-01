@@ -25,7 +25,6 @@
 	}
 
 	&-icon {
-
 		i {
 			color: var(--button-icon-color, inherit);
 		    font-size: var(--button-icon-size);
@@ -42,7 +41,6 @@
 			font-size: var(--button-icon-size);
 		}
 	}
-	
 	
 	&-text {
 		display: inline-block;
@@ -96,9 +94,7 @@
 	}
 
 	&:hover {
-
 		.elementor-button-icon {
-
 			i {
 				color: var(--button-icon-color-hover);
 				transition: all 0.3s;
@@ -112,16 +108,13 @@
 	}
 }
 
-
 .elementor-element.elementor-button- {
 	@include button-types( '.elementor-button' );
-
 }
 
 .elementor-widget-button {
 	.elementor-button {
 		.elementor-button- {
-
 			@include button-types( '' );
 		}
 	}
