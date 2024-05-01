@@ -22,11 +22,8 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'conversion-center';
 
-	const DOCUMENT_TYPE = 'conversion-center';
-	/**
-	 * LIB stands for Link in bio.
-	 */
-	const CPT_LIB = 'e-link-in-bio';
+	const DOCUMENT_TYPE = 'links-page';
+	const CPT_LIB = 'e-link-pages';
 	const ADMIN_PAGE_SLUG_LIB = 'edit.php?post_type=' . self::CPT_LIB;
 
 	private $has_lib = null;
@@ -166,7 +163,7 @@ class Module extends BaseModule {
 			<?php
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
-				esc_html__( 'Link in bio', 'elementor' ),
+				esc_html__( 'Links Page', 'elementor' ),
 				$this->get_add_new_lib_url(),
 				esc_html__( 'Build Effective Landing Pages for your business\' marketing campaigns.', 'elementor' )
 			);
@@ -213,19 +210,19 @@ class Module extends BaseModule {
 
 	private function register_lib_cpt() {
 		$labels = [
-			'name' => esc_html__( 'Links In Bio', 'elementor' ),
-			'singular_name' => esc_html__( 'Link In Bio', 'elementor' ),
+			'name' => esc_html__( 'Links Pages', 'elementor' ),
+			'singular_name' => esc_html__( 'Links Page', 'elementor' ),
 			'add_new' => esc_html__( 'Add New', 'elementor' ),
-			'add_new_item' => esc_html__( 'Add New Link In Bio', 'elementor' ),
-			'edit_item' => esc_html__( 'Edit Link In Bio', 'elementor' ),
-			'new_item' => esc_html__( 'New Link In Bio', 'elementor' ),
-			'all_items' => esc_html__( 'All Links In Bio', 'elementor' ),
-			'view_item' => esc_html__( 'View Link In Bio', 'elementor' ),
-			'search_items' => esc_html__( 'Search Links In Bio', 'elementor' ),
-			'not_found' => esc_html__( 'No Links In Bio found', 'elementor' ),
-			'not_found_in_trash' => esc_html__( 'No Links In Bio found in trash', 'elementor' ),
+			'add_new_item' => esc_html__( 'Add New Links Page', 'elementor' ),
+			'edit_item' => esc_html__( 'Edit Links Page', 'elementor' ),
+			'new_item' => esc_html__( 'New Links Page', 'elementor' ),
+			'all_items' => esc_html__( 'All Links Pages', 'elementor' ),
+			'view_item' => esc_html__( 'View Links Page', 'elementor' ),
+			'search_items' => esc_html__( 'Search Links Pages', 'elementor' ),
+			'not_found' => esc_html__( 'No Links Pages found', 'elementor' ),
+			'not_found_in_trash' => esc_html__( 'No Links Pages found in trash', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => esc_html__( 'Links In Bio', 'elementor' ),
+			'menu_name' => esc_html__( 'Links Pages', 'elementor' ),
 		];
 
 		$args = [
@@ -278,7 +275,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_admin_menu( MainMenu $menu ) {
-		$lib_title = esc_html__( 'Link In Bio', 'elementor' );
+		$lib_title = esc_html__( 'Links Page', 'elementor' );
 
 		$menu_args = array_merge( $this->get_menu_args(), [
 			'page_title' => $lib_title,

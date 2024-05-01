@@ -18,6 +18,7 @@ class Link_In_Bio  extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['has_elements'] = false;
 		$properties['support_kit'] = true;
 		$properties['show_in_library'] = true;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_LIB ];
@@ -41,7 +42,7 @@ class Link_In_Bio  extends PageBase {
 	 * @static
 	 */
 	public static function get_title() {
-		return esc_html__( 'Link In Bio', 'elementor' );
+		return esc_html__( 'Links Page', 'elementor' );
 	}
 
 	/**
@@ -49,7 +50,7 @@ class Link_In_Bio  extends PageBase {
 	 * @static
 	 */
 	public static function get_plural_title() {
-		return esc_html__( 'Links In Bio', 'elementor' );
+		return esc_html__( 'Links Pages', 'elementor' );
 	}
 
 	public static function get_create_url() {
@@ -80,8 +81,8 @@ class Link_In_Bio  extends PageBase {
 
 	protected function get_remote_library_config() {
 		$config = [
-			'type' => 'lib',
-			'default_route' => 'templates/link-in-bios',
+			'type' => static::get_type(),
+			'default_route' => 'templates/links-pages',
 			'autoImportSettings' => true,
 		];
 
