@@ -17,8 +17,8 @@ export default class NestedAccordion extends Base {
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionItemTitlesText: '.e-n-accordion-item-title-text',
 				accordionContent: '.e-n-accordion-item > .e-con',
-				directAccordionItems: '& > .e-n-accordion-item',
-				directAccordionItemTitles: '& > .e-n-accordion-item > .e-n-accordion-item-title',
+				directAccordionItems: ':scope > .e-n-accordion-item',
+				directAccordionItemTitles: ':scope > .e-n-accordion-item > .e-n-accordion-item-title',
 			},
 			default_state: 'expanded',
 			attributes: {
