@@ -93,8 +93,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'has_link_type' => [
 						'default' => 'button',
 					],
-					'has_corners' => true,
-					'corners_control' => [
+					'has_corners' => [
 						'default' => 'rounded',
 						'options' => [
 							'round' => esc_html__( 'Round', 'elementor' ),
@@ -1051,9 +1050,9 @@ JS;
 			]
 		);
 
-		$bga_color_condition = [];
+		$condition_if_has_links = [];
 		if ( $config['style']['cta_section']['has_link_type'] ) {
-			$bga_color_condition = [
+			$condition_if_has_links = [
 				'cta_links_type' => 'button',
 			];
 		}
@@ -1064,7 +1063,7 @@ JS;
 				[
 					'label' => esc_html__( 'Background Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
-					'condition' => $bga_color_condition,
+					'condition' => $condition_if_has_links,
 					'selectors' => [
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
 					],
@@ -1095,11 +1094,9 @@ JS;
 				[
 					'label' => esc_html__( 'Corners', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => $config['style']['cta_section']['corners_control']['default'],
-					'options' => $config['style']['cta_section']['corners_control']['options'],
-					'condition' => [
-						'cta_links_type' => 'button',
-					],
+					'default' => $config['style']['cta_section']['has_corners']['default'],
+					'options' => $config['style']['cta_section']['has_corners']['options'],
+					'condition' => $condition_if_has_links,
 				]
 			);
 		}
@@ -1122,9 +1119,7 @@ JS;
 						'unit' => 'px',
 						'isLinked' => false,
 					],
-					'condition' => [
-						'cta_links_type' => 'button',
-					],
+					'condition' => $condition_if_has_links,
 					'selectors' => [
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
