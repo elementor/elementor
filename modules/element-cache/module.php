@@ -31,10 +31,6 @@ class Module extends BaseModule {
 			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
 			'default' => ExperimentsManager::STATE_INACTIVE,
 		] );
-
-		add_shortcode( 'yakir-test', function ( $atts ) {
-			return 'Yakir Test----' . current_time( 'timestamp' );
-		} );
 	}
 
 	private function register_shortcode() {
