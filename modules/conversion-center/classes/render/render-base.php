@@ -353,7 +353,7 @@ abstract class Render_Base {
 			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
 
 			// Handle shape divider
-			if ( ! empty( $this->settings['identity_section_style_cover_divider'] ) ) {
+			if ( ! empty( $this->settings['identity_section_style_cover_divider_bottom'] ) ) {
 				$output_images['secondary_image']['props']['has_shape_divider'] = true;
 
 				// Remove border if a shaped divider is applied
