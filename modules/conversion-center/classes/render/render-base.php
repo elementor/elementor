@@ -400,9 +400,9 @@ abstract class Render_Base {
 
 							<?php }; ?>
 							<?php
-								if ( ! empty( $image['props']['has_shape_divider'] ) ) {
-									$this->print_shape_divider();
-								}
+							if ( ! empty( $image['props']['has_shape_divider'] ) ) {
+								$this->print_shape_divider();
+							}
 							?>
 						</div>
 					<?php
