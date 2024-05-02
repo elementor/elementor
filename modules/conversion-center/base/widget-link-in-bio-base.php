@@ -62,7 +62,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						[
 							'icon_platform' => Social_Network_Provider::TIKTOK,
 						],
-					]
+					],
 				],
 				'cta_section' => [
 					'cta_has_image' => false,

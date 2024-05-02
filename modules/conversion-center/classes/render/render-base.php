@@ -38,14 +38,14 @@ abstract class Render_Base {
 		 * $this->settings['cta_link'] if empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
-		$ctas_value = array_filter( $ctas_value_initial, function( $subArray ) {
+		$ctas_value = array_filter( $ctas_value_initial, function( $sub_array ) {
 			// Use array_filter on the sub array
-			$filteredSubArray = array_filter( $subArray, function($val) {
+			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
 				// Filter out empty or null values
 				return ! is_null( $val ) && $val !== '';
 			} );
 			// A non-empty result means the sub array contains some non-empty value(s)
-			return ! empty( $filteredSubArray );
+			return ! empty( $filtered_sub_array );
 		} );
 
 		$has_ctas = ! empty( $ctas_value );
@@ -181,7 +181,7 @@ abstract class Render_Base {
 						</span>
 						<?php if ( ! empty( $icon['icon_text'] ) ) : ?>
 							<span class="e-link-in-bio__icon-label">
-								<?php echo esc_html( $icon['icon_text'] ) ?>
+								<?php echo esc_html( $icon['icon_text'] ); ?>
 							</span>
 						<?php endif; ?>
 					</a>
@@ -270,7 +270,7 @@ abstract class Render_Base {
 		}
 	}
 
-	protected function get_shape_divider($side = 'bottom') {
+	protected function get_shape_divider( $side = 'bottom' ) {
 		$settings = $this->settings;
 		$base_setting_key = "identity_section_style_cover_divider_$side";
 		$file_name = $settings[ $base_setting_key ];
@@ -396,9 +396,9 @@ abstract class Render_Base {
 								?>
 								<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 								<?php
-									if ( !empty( $image['props']['has_shape_divider'] ) ) {
-										$this->print_shape_divider();
-									}
+								if ( ! empty( $image['props']['has_shape_divider'] ) ) {
+									$this->print_shape_divider();
+								}
 								?>
 							<?php }; ?>
 						</div>
