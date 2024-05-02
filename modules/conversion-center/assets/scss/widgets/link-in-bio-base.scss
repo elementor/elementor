@@ -153,6 +153,7 @@
 
 		.e-link-in-bio__identity-image {
 			display: flex;
+			position: relative;
 		}
 
 		.e-link-in-bio__identity-image-el {
@@ -169,7 +170,8 @@
 			grid-column: 1;
 			grid-row: 1;
 			margin-inline: calc(var(--e-link-in-bio-gutter-inline) * -1);
-			max-height: var(--e-link-in-bio-identity-image-cover-height);;
+			max-height: var(--e-link-in-bio-identity-image-cover-height);
+			overflow: hidden;
 			width: calc(100% + calc(var(--e-link-in-bio-gutter-inline) * 2));
 
 			&.has-border {

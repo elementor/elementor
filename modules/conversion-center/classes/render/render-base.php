@@ -6,6 +6,7 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Base\Widget_Link_In_Bio_Base;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Utils;
+use Elementor\Shapes;
 
 /**
  * Class Render_Base.
@@ -255,6 +256,49 @@ abstract class Render_Base {
 		}
 	}
 
+	protected function get_shape_divider($side = 'bottom') {
+		$settings = $this->settings;
+		$base_setting_key = "identity_section_style_cover_divider_$side";
+		$file_name = $settings[ $base_setting_key ];
+		if ( empty( $file_name ) ) {
+			return [];
+		}
+		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
+		$shape_path = Shapes::get_shape_path( $file_name, $negative );
+		if ( ! is_file( $shape_path ) || ! is_readable( $shape_path ) ) {
+			return [];
+		}
+
+		if ( $negative ) {
+			$file_name .= '-negative';
+		}
+
+		return [
+			'negative' => $negative,
+			'svg' => Utils::file_get_contents( $shape_path ),
+		];
+	}
+
+	protected function print_shape_divider( $side = 'bottom' ) {
+		$shape_divider = $this->get_shape_divider( $side );
+		if ( empty( $shape_divider ) ) {
+			return;
+		}
+		?>
+		<div
+			class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>"
+			data-negative="<?php
+				Utils::print_unescaped_internal_string( $shape_divider['negative'] ? 'true' : 'false' );
+			?>"
+		>
+			<?php
+				// PHPCS - The file content is being read from a strict file path structure.
+				echo $shape_divider['svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			?>
+		</div>
+		<?php
+	}
+
 	protected function render_identity_image(): void {
 		/**
 		 * Get base data for potential images
@@ -294,6 +338,14 @@ abstract class Render_Base {
 			$output_images['secondary_image']['props']['style'] = 'cover';
 			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
 
+			// Handle shape divider
+			if ( ! empty( $this->settings['identity_section_style_cover_divider'] ) ) {
+				$output_images['secondary_image']['props']['has_shape_divider'] = true;
+
+				// Remove border if a shaped divider is applied
+				$output_images['secondary_image']['props']['show_bottom_border'] = false;
+			}
+
 			// Force primary to be profile since this is cover
 			$output_images['primary_image']['props']['style'] = 'profile';
 		}
@@ -308,6 +360,9 @@ abstract class Render_Base {
 					}
 					if ( ! empty( $image['props']['shape'] ) && 'profile' === $image['props']['style'] ) {
 						$image_classnames .= ' has-style-' . $image['props']['shape'];
+					}
+					if ( ! empty( $image['props']['has_shape_divider'] ) ) {
+						$image_classnames .= ' has-shape-divider';
 					}
 					$this->widget->add_render_attribute( 'identity_image_' . $image_key, [
 						'class' => $image_classnames,
@@ -326,6 +381,11 @@ abstract class Render_Base {
 								] );
 								?>
 								<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+								<?php
+									if ( $image['props']['has_shape_divider'] ) {
+										$this->print_shape_divider();
+									}
+								?>
 							<?php }; ?>
 						</div>
 					<?php
