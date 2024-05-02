@@ -178,6 +178,11 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	protected function add_cta_controls() {
 		$config = static::get_configuration();
+
+		if ( empty( $config['content']['cta_section'] ) ) {
+			return;
+		}
+
 		$this->start_controls_section(
 			'cta_section',
 			[
@@ -1004,6 +1009,10 @@ JS;
 
 	protected function add_style_cta_section(): void {
 		$config = static::get_configuration();
+
+		if ( empty( $config['style']['cta_section'] ) ) {
+			return;
+		}
 
 		$this->start_controls_section(
 			'cta_links_section_style',
