@@ -36,20 +36,20 @@
 
     position: fixed;
     bottom: 20px;
-    #{$end}: 20px;
+    inset-inline-end: 20px;
     width: var(--e-contact-buttons-chat-box-width);
     z-index: 99;
 
     @media (max-width: $screen-mobile-max) {
-        #{$end}: 0;
+        inset-inline-end: 0;
     }
 
     &.has-alignment-start {
-        #{$end}: unset;
-        #{$start}: 20px;
+        inset-inline-end: 0;
+        inset-inline-start: 20px;
 
         @media (max-width: $screen-mobile-max) {
-            #{$start}: 0;
+            inset-inline-start: 0;
         }
     }
 
@@ -258,7 +258,7 @@
         color: var(--e-contact-buttons-close-button-color);
         padding: 0;
         position: absolute;
-        #{$end}: 20px;
+        inset-inline-end: 20px;
         top: 20px;
 
         &:hover,
@@ -274,7 +274,7 @@
         justify-content: flex-end;
 
         @media (max-width: $screen-mobile-max) {
-            #{$end}: 20px;
+            inset-inline-end: 20px;
             position: relative;
         }
     }
@@ -285,8 +285,8 @@
             justify-content: flex-start;
 
             @media (max-width: $screen-mobile-max) {
-                #{$end}: unset;
-                #{$start}: 20px;
+                inset-inline-end: unset;
+                inset-inline-start: 20px;
             }
         }
     }
@@ -373,7 +373,7 @@
             content: "";
             height: 0;
             position: absolute;
-            #{$start}: -20px;
+            inset-inline-start: -20px;
             top: 0;
             transform: rotate(0);
             width: 0;
