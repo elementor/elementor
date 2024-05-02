@@ -42,7 +42,7 @@ abstract class Render_Base {
 			// Use array_filter on the sub array
 			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
 				// Filter out empty or null values
-				return ! is_null( $val ) && $val !== '';
+				return ! is_null( $val ) && '' !== $val;
 			} );
 			// A non-empty result means the sub array contains some non-empty value(s)
 			return ! empty( $filtered_sub_array );
