@@ -32,11 +32,13 @@ export default function PageContentLayout( props ) {
 					<img src={ props.image } alt="Information" />
 				</div>
 			</Grid>
-			<div className="e-onboarding__notice-container">
-				{ props.noticeState || state.proNotice
-					? printNotices()
-					: <div className="e-onboarding__notice-empty-spacer" /> }
-			</div>
+			{ props.noticeState &&
+				<div className="e-onboarding__notice-container">
+					{ props.noticeState || state.proNotice
+						? printNotices()
+						: <div className="e-onboarding__notice-empty-spacer" /> }
+				</div>
+			}
 			<FooterButtons actionButton={ props.actionButton } skipButton={ props.skipButton } />
 		</>
 	);
