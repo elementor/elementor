@@ -39,12 +39,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->add_message_bubble_section();
 
+		$this->add_send_button_section();
+
 		// Styles
 		$this->add_style_chat_button_section();
 
 		$this->add_style_top_bar_section();
 
 		$this->add_style_message_bubble_section();
+
+		$this->add_style_send_button_section();
 
 		// Advanced
 		$this->add_advanced_tab();
@@ -79,7 +83,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'chat_button_email_address',
+			'chat_button_mail',
 			[
 				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -95,7 +99,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'chat_button_email_subject',
+			'chat_button_mail_subject',
 			[
 				'label' => esc_html__( 'Subject', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -110,7 +114,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'chat_button_email_message',
+			'chat_button_mail_body',
 			[
 				'label' => esc_html__( 'Message', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
@@ -121,7 +125,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'chat_button_sms_number',
+			'chat_button_number',
 			[
 				'label' => esc_html__( 'Number', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -131,29 +135,17 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition' => [
-					'chat_button_platform' => Social_Network_Provider::SMS,
+					'chat_button_platform' => [
+						Social_Network_Provider::SMS,
+						Social_Network_Provider::WHATSAPP,
+						Social_Network_Provider::VIBER,
+					],
 				],
 			],
 		);
 
 		$this->add_control(
-			'chat_button_whatsapp_number',
-			[
-				'label' => esc_html__( 'Number', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => true,
-				],
-				'label_block' => true,
-				'placeholder' => esc_html__( '+', 'elementor' ),
-				'condition' => [
-					'chat_button_platform' => Social_Network_Provider::WHATSAPP,
-				],
-			],
-		);
-
-		$this->add_control(
-			'chat_button_skype_username',
+			'chat_button_username',
 			[
 				'label' => esc_html__( 'Username', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -162,54 +154,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 				'label_block' => true,
 				'condition' => [
-					'chat_button_platform' => Social_Network_Provider::SKYPE,
-				],
-			],
-		);
-
-		$this->add_control(
-			'chat_button_skype_action',
-			[
-				'label' => esc_html__( 'Action', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'chat',
-				'options' => [
-					'chat' => 'Chat',
-					'phone' => 'Phone',
-				],
-				'condition' => [
-					'chat_button_platform' => Social_Network_Provider::SKYPE,
-				],
-			]
-		);
-
-		$this->add_control(
-			'chat_button_messenger_number',
-			[
-				'label' => esc_html__( 'Username', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => true,
-				],
-				'label_block' => true,
-				'condition' => [
-					'chat_button_platform' => Social_Network_Provider::MESSENGER,
-				],
-			],
-		);
-
-		$this->add_control(
-			'chat_button_viber_number',
-			[
-				'label' => esc_html__( 'Number', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => true,
-				],
-				'label_block' => true,
-				'placeholder' => esc_html__( '+', 'elementor' ),
-				'condition' => [
-					'chat_button_platform' => Social_Network_Provider::VIBER,
+					'chat_button_platform' => [
+						Social_Network_Provider::SKYPE,
+						Social_Network_Provider::MESSENGER,
+					],
 				],
 			],
 		);
@@ -361,6 +309,28 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function add_send_button_section(): void {
+		$this->start_controls_section(
+			'send_button_section',
+			[
+				'label' => esc_html__( 'Send Button', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		$this->add_control(
+			'send_button_text',
+			[
+				'label' => esc_html__( 'Text', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Click to start chat', 'elementor' ),
+				'placeholder' => esc_html__( 'Type your text here', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
 	private function add_style_chat_button_section(): void {
 		$this->start_controls_section(
 			'style_chat_button',
@@ -489,8 +459,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_control(
 			'style_button_color_hover_animation',
 			[
-				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
 				'frontend_available' => true,
 			]
 		);
@@ -814,6 +784,133 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_style_send_button_section(): void {
+		$this->start_controls_section(
+			'style_send_section',
+			[
+				'label' => esc_html__( 'Send Button', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs(
+			'style_send_tabs'
+		);
+
+		$this->start_controls_tab(
+			'style_send_tabs_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'style_send_normal_colors',
+			[
+				'label' => esc_html__( 'Colors', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom'  => esc_html__( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_send_normal_icon_color',
+			[
+				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon: {{VALUE}}',
+				],
+				'condition' => [
+					'style_send_normal_colors' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_send_normal_background_color',
+			[
+				'label'     => esc_html__( 'Background Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg: {{VALUE}}',
+				],
+				'condition' => [
+					'style_send_normal_colors' => 'custom',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'style_send_tabs_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'style_send_hover_colors',
+			[
+				'label'   => esc_html__( 'Colors', 'elementor' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom'  => esc_html__( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_send_hover_icon_color',
+			[
+				'label'     => esc_html__( 'Icon Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon-hover: {{VALUE}}',
+				],
+				'condition' => [
+					'style_send_hover_colors' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_send_hover_background_color',
+			[
+				'label'     => esc_html__( 'Background Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg-hover: {{VALUE}}',
+				],
+				'condition' => [
+					'style_send_hover_colors' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_send_hover_animation',
+			[
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
