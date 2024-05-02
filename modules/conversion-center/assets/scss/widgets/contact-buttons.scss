@@ -36,7 +36,7 @@
 
     position: fixed;
     bottom: 20px;
-    inset-inline-end: 20px;
+    inset-inline-end: $contact-buttons-offset-preset;
     width: var(--e-contact-buttons-chat-box-width);
     z-index: 99;
 
@@ -46,7 +46,7 @@
 
     &.has-alignment-start {
         inset-inline-end: 0;
-        inset-inline-start: 20px;
+        inset-inline-start: $contact-buttons-offset-preset;
 
         @media (max-width: $screen-mobile-max) {
             inset-inline-start: 0;
@@ -270,7 +270,7 @@
         justify-content: flex-end;
 
         @media (max-width: $screen-mobile-max) {
-            inset-inline-end: 20px;
+            inset-inline-end: $contact-buttons-offset-preset;
             position: relative;
         }
     }
@@ -282,7 +282,7 @@
 
             @media (max-width: $screen-mobile-max) {
                 inset-inline-end: unset;
-                inset-inline-start: 20px;
+                inset-inline-start: $contact-buttons-offset-preset;
             }
         }
     }
