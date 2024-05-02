@@ -187,10 +187,6 @@
         &.animated {
             animation-duration: var(--e-contact-buttons-chat-box-animation-duration);
         }
-    
-        &.animated-reversed {
-            animation-direction: reverse;
-        }
     }
 
     &__top-bar {
