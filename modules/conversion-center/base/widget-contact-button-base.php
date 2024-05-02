@@ -9,6 +9,7 @@ use Elementor\Modules\ConversionCenter\Classes\Render\Contact_Buttons_Core_Rende
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Widget_Base;
+use Elementor\Group_Control_Box_Shadow;
 
 abstract class Widget_Contact_Button_Base extends Widget_Base {
 
@@ -49,6 +50,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_style_message_bubble_section();
 
 		$this->add_style_send_button_section();
+
+		$this->add_style_chat_box_section();
 
 		// Advanced
 		$this->add_advanced_tab();
@@ -469,6 +472,73 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->end_controls_tabs();
 
+		$this->add_control(
+			'style_chat_button_box_divider',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'style_chat_button_box_shadow',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button',
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_chat_button_animation',
+			[
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'style_chat_button_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 800,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-button-chat-button-animation-duration: {{SIZE}}ms;',
+				],
+				'condition' => [
+					'style_chat_button_animation!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_button_animation_delay',
+			[
+				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'default' => 0,
+				'min' => 0,
+				'step' => 100,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-button-chat-button-animation-delay: {{SIZE}}ms;',
+				],
+				'condition' => [
+					'style_chat_button_animation!' => '',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -588,6 +658,15 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
+			'style_top_bar_close_button_heading',
+			[
+				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+
+		$this->add_control(
 			'style_top_bar_close_button_color',
 			[
 				'label' => esc_html__( 'Close Button Color', 'elementor' ),
@@ -598,6 +677,15 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'condition' => [
 					'style_top_bar_colors' => 'custom',
 				],
+			]
+		);
+
+		$this->add_control(
+			'style_top_bar_background_heading',
+			[
+				'label' => esc_html__( 'Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
 			]
 		);
 
@@ -915,11 +1003,197 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function add_style_chat_box_section(): void {
+		$this->start_controls_section(
+			'style_chat_box_section',
+			[
+				'label' => esc_html__( 'Chat Box', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_bg_select',
+			[
+				'label'   => esc_html__( 'Background Color', 'elementor' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom'  => esc_html__( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_bg_color',
+			[
+				'label'     => esc_html__( 'Background Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-bg: {{VALUE}}',
+				],
+				'condition' => [
+					'style_chat_box_bg_select' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_chat_box_width',
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 0,
+						'max' => 400,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+					'size' => 360,
+				],
+				'mobile_default' => [
+					'unit' => 'vw',
+					'size' => 100,
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-width: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_corners',
+			[
+				'label'     => esc_html__( 'Corners', 'elementor' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'rounded',
+				'options'   => [
+					'round'   => esc_html__( 'Round', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'style_chat_box_box_shadow',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__content',
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_chat_box_entrance_animation',
+			[
+				'label' => esc_html__( 'Open Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_chat_box_exit_animation',
+			[
+				'label' => esc_html__( 'Close Animation', 'elementor' ),
+				'type' => Controls_Manager::EXIT_ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'style_chat_box_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 800,
+				],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 3000,
+						'step' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-animation-duration: {{SIZE}}ms;',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
 	private function add_advanced_tab(): void {
 		Controls_Manager::add_tab(
 			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
+
+		$this->start_controls_section(
+			'advanced_layout_section',
+			[
+				'label' => esc_html__( 'Layout', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_responsive_control(
+			'advanced_horizontal_position',
+			[
+				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'default' => 'end',
+				'toggle' => true,
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_responsive_section',
+			[
+				'label' => esc_html__( 'Responsive', 'elementor' ),
+				'tab'   => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-descriptor',
+			]
+		);
+
+		$this->add_hidden_device_controls();
+
+		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'advanced_custom_controls_section',
