@@ -4,7 +4,7 @@ export class LinksPageRemoveLibraryTab extends $e.modules.hookUI.After {
 	}
 
 	getId() {
-		return 'elementor-landing-pages-remove-library-tab';
+		return 'elementor-links-pages-remove-library-tab';
 	}
 
 	getConditions( args ) {

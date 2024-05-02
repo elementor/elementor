@@ -38,8 +38,7 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 			isLinksPagesTrashPage = !! window.location.href.includes( settings.paths.linksPagesTrashPage ),
 			isLinksPagesCreateYourFirstPage = !! window.location.href.includes( settings.paths.linksPagesAddNewPage );
 
-		// If the current page is a Landing Pages Page (the Posts Table page, "Create Your First.." page, or a native
-		// WordPress dashboard page edit screen when using WordPress' Classic Editor).
+
 		if ( isLinksPagesTablePage || isLinksPagesTrashPage || isLinksPagesCreateYourFirstPage || settings.isLinksPageAdminEdit ) {
 			// Make sure the active admin top level menu item is 'Templates', and not 'Pages'.
 			this.highlightTopLevelMenuItem( this.elements.$templatesMenuItem, this.elements.$pagesMenuItemAndLink );

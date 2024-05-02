@@ -19,10 +19,11 @@ class Link_In_Bio  extends PageBase {
 		$properties = parent::get_properties();
 
 		// $properties['has_elements'] = false;
-		$properties['support_kit'] = true;
-		$properties['show_in_library'] = true;
+		$properties['support_kit'] = false;
+		$properties['show_in_library'] = false;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_LIB ];
-
+		$properties['show_navigator'] = false;
+		$properties['allow_adding_widgets'] = false;
 		return $properties;
 	}
 
