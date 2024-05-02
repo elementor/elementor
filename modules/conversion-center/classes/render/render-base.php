@@ -417,7 +417,7 @@ abstract class Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $cta['cta_link_type'] ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = $this->build_email_link( $cta, 'cta_link' );
+				$formatted_link = Social_Network_Provider::build_email_link( $cta, 'cta_link' );
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
@@ -446,26 +446,6 @@ abstract class Render_Base {
 		return $formatted_link;
 	}
 
-	protected function build_email_link( array $data, string $prefix ) {
-		$email = $data[ $prefix . '_mail' ] ?? '';
-		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
-		$body = $data[ $prefix . '_mail_body' ] ?? '';
-		if ( ! $email ) {
-			return '';
-		}
-		$link = 'mailto:' . $email;
-		if ( $subject ) {
-			$link .= '?subject=' . $subject;
-		}
-		if ( $body ) {
-			$link .= $subject ? '&' : '?';
-			$link .= 'body=' . $body;
-		}
-
-		return $link;
-
-	}
-
 	protected function get_formatted_link_for_icon( array $icon ): string {
 
 		$formatted_link = $icon['icon_url']['url'] ?? '';
@@ -473,7 +453,7 @@ abstract class Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $icon['icon_platform'] ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = $this->build_email_link( $icon, 'icon' );
+				$formatted_link = Social_Network_Provider::build_email_link( $icon, 'icon' );
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'tel:' . $icon['icon_number'] : '';
