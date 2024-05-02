@@ -484,6 +484,17 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_css_smooth_scroll',
+			'title' => esc_html__( 'CSS Smooth Scroll', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Use CSS Smooth Scroll to improve the user experience on your site. This experiment replaces the default JavaScript-based smooth scroll with a CSS-based solution.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
+			static::TYPE_HIDDEN => true,
+			'default' => self::STATE_INACTIVE,
+			'generator_tag' => true,
+		] );
 	}
 
 	/**

@@ -192,7 +192,6 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			baseVideoLoader: new BaseVideoLoader(),
-			anchors: new AnchorsModule(),
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
@@ -204,6 +203,10 @@ export default class Frontend extends elementorModules.ViewModule {
 			events: Events,
 			controls: new Controls(),
 		};
+
+		if ( ! this.config.experimentalFeatures[ 'e_css_smooth_scroll' ] ) {
+			this.utils.anchors = new AnchorsModule();
+		}
 
 		// TODO: BC since 2.4.0
 		this.modules = {

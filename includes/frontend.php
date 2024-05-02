@@ -635,6 +635,15 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'swiper' );
 
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_css_smooth_scroll' ) ) {
+				wp_enqueue_style(
+					'e-smooth-scroll',
+					$this->get_frontend_file_url('smooth-scroll.min.css', false),
+					[],
+					ELEMENTOR_VERSION
+				);
+			}
+
 			/**
 			 * After frontend styles enqueued.
 			 *
