@@ -382,7 +382,7 @@ abstract class Render_Base {
 								?>
 								<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 								<?php
-									if ( $image['props']['has_shape_divider'] ) {
+									if ( !empty( $image['props']['has_shape_divider'] ) ) {
 										$this->print_shape_divider();
 									}
 								?>
