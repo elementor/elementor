@@ -11,7 +11,8 @@ class Links_Empty_View_Menu_Item extends Links_Menu_Item implements Admin_Menu_I
 
 	private $render_callback;
 
-	public function __construct( callable $render_callback ) {
+	public function __construct( callable $render_callback, $parent_slug ) {
+		parent::__construct( $parent_slug );
 		$this->render_callback = $render_callback;
 	}
 

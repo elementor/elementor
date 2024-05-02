@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Documents\Link_In_Bio;
@@ -61,12 +62,14 @@ class Module extends BaseModule {
 
 		$slug = $menu_args['menu_slug'];
 		$function = $menu_args['function'];
-
+		$parent_slug = '#menu-conversion-center';
+		$admin_menu->register( $parent_slug, new Conversion_Center_Menu_Item() );
 		if ( is_callable( $function ) ) {
-			$admin_menu->register( $slug, new Links_Empty_View_Menu_Item( $function ) );
+			$admin_menu->register( $slug, new Links_Empty_View_Menu_Item( $function, $parent_slug ) );
 		} else {
-			$admin_menu->register( $slug, new Links_Menu_Item() );
+			$admin_menu->register( $slug, new Links_Menu_Item( $parent_slug ) );
 		}
+
 	}
 
 	public function __construct() {
@@ -188,7 +191,7 @@ class Module extends BaseModule {
 		$screen = get_current_screen();
 
 		if ( 'post' === $screen->base ) {
-			return $this->is_lib_admin_edit( get_post() );
+			return $this->is_elementor_links_page( get_post() );
 		}
 
 		return false;
@@ -197,11 +200,11 @@ class Module extends BaseModule {
 	private function admin_localize_settings( $settings ) {
 		$additional_settings = [
 			'urls' => [
-				'addNewLibUrl' => $this->get_add_new_lib_url(),
+				'addNewLinkUrl' => $this->get_add_new_lib_url(),
 			],
-			'landingPages' => [
-				'libHasPages' => $this->has_landing_pages(),
-				'isLibAdminEdit' => $this->is_lib_admin_edit(),
+			'linksPages' => [
+				'hasPages' => $this->has_landing_pages(),
+				'isAdminEdit' => $this->is_lib_admin_edit(),
 			],
 		];
 
@@ -255,7 +258,7 @@ class Module extends BaseModule {
 		return $this->has_lib;
 	}
 
-	public function is_elementor_lib( \WP_Post $post ): bool {
+	public function is_elementor_links_page( \WP_Post $post ): bool {
 		return self::CPT_LIB === $post->post_type;
 	}
 
@@ -274,15 +277,4 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu( MainMenu $menu ) {
-		$lib_title = esc_html__( 'Links Page', 'elementor' );
-
-		$menu_args = array_merge( $this->get_menu_args(), [
-			'page_title' => $lib_title,
-			'menu_title' => $lib_title,
-			'index' => 20,
-		] );
-
-		$menu->add_submenu( $menu_args );
-	}
 }

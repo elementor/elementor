@@ -18,7 +18,7 @@ class Link_In_Bio  extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['has_elements'] = false;
+		// $properties['has_elements'] = false;
 		$properties['support_kit'] = true;
 		$properties['show_in_library'] = true;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_LIB ];
