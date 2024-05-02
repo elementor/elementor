@@ -34,7 +34,7 @@
 		svg {
 			height: auto;
 			width: var(--button-icon-size, 1em);
-			fill: var(--button-icon-color, inherit);
+			fill: var(--button-icon-color, var(--button-title-color));
 		}
 
 		.e-font-icon-svg {
@@ -96,6 +96,7 @@
 
 	&:hover {
 		.elementor-button-icon {
+
 			i {
 				color: var(--button-icon-color-hover);
 				transition: all 0.3s;
@@ -117,7 +118,7 @@
 .elementor-widget-button {
 	.elementor-button {
 		.elementor-button- {
-			
+
 			@include button-types( '' );
 		}
 	}
