@@ -30,19 +30,19 @@
 			color: var(--button-icon-color, inherit);
 		    font-size: var(--button-icon-size);
 		}
-		
+
 		svg {
 			height: auto;
 			width: var(--button-icon-size, 1em);
 			fill: var(--button-icon-color, inherit);
 		}
-		
+
 		.e-font-icon-svg {
 			height: 1em;
 			font-size: var(--button-icon-size);
 		}
 	}
-	
+
 	&-text {
 		display: inline-block;
 	}
@@ -100,7 +100,7 @@
 				color: var(--button-icon-color-hover);
 				transition: all 0.3s;
 			}
-		
+
 			svg {
 				fill: var(--button-icon-color-hover);
 				transition: all 0.3s;
