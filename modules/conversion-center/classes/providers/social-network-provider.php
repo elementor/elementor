@@ -233,4 +233,27 @@ class Social_Network_Provider {
 			'name' => 'skype',
 		];
 	}
+
+	public static function build_email_link( array $data, string $prefix ) {
+		$email = $data[ $prefix . '_mail' ] ?? '';
+		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
+		$body = $data[ $prefix . '_mail_body' ] ?? '';
+
+		if ( ! $email ) {
+			return '';
+		}
+
+		$link = 'mailto:' . $email;
+
+		if ( $subject ) {
+			$link .= '?subject=' . $subject;
+		}
+
+		if ( $body ) {
+			$link .= $subject ? '&' : '?';
+			$link .= 'body=' . $body;
+		}
+
+		return $link;
+	}
 }

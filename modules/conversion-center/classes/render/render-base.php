@@ -216,21 +216,25 @@ abstract class Render_Base {
 				<?php if ( $has_bio_heading ) {
 					$this->widget->add_render_attribute( 'heading', 'class', 'e-link-in-bio__heading' );
 					$bio_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_heading_props_tag ), $this->widget->get_render_attribute_string( 'heading' ), esc_html( $bio_heading_value ) );
+					// Escaped above
 					Utils::print_unescaped_internal_string( $bio_heading_output );
 				} ?>
 				<?php if ( $has_bio_title ) {
 					$this->widget->add_render_attribute( 'title', 'class', 'e-link-in-bio__title' );
 					$bio_title_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_title_props_tag ), $this->widget->get_render_attribute_string( 'title' ), esc_html( $bio_title_value ) );
+					// Escaped above
 					Utils::print_unescaped_internal_string( $bio_title_output );
 				} ?>
 				<?php if ( $has_bio_about_heading ) {
 					$this->widget->add_render_attribute( 'about-heading', 'class', 'e-link-in-bio__about-heading' );
 					$bio_about_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_about_heading_props_tag ), $this->widget->get_render_attribute_string( 'about-heading' ), esc_html( $bio_about_heading_value ) );
+					// Escaped above
 					Utils::print_unescaped_internal_string( $bio_about_heading_output );
 				} ?>
 				<?php if ( $has_bio_description ) {
 					$this->widget->add_render_attribute( 'description', 'class', 'e-link-in-bio__description' );
 					$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'description' ), esc_html( $bio_description_value ) );
+					// Escaped above
 					Utils::print_unescaped_internal_string( $bio_description_output );
 				} ?>
 			</div>
@@ -258,11 +262,13 @@ abstract class Render_Base {
 				<?php if ( $has_bio_about_heading ) {
 					$this->widget->add_render_attribute( 'about-heading', 'class', 'e-link-in-bio__about-heading' );
 					$bio_about_heading_output = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $bio_about_heading_props_tag ), $this->widget->get_render_attribute_string( 'about-heading' ), esc_html( $bio_about_heading_value ) );
+					// Escaped above
 					Utils::print_unescaped_internal_string( $bio_about_heading_output );
 				} ?>
 				<?php if ( $has_bio_description ) {
 					$this->widget->add_render_attribute( 'description', 'class', 'e-link-in-bio__description' );
 					$bio_description_output = sprintf( '<p %1$s>%2$s</p>', $this->widget->get_render_attribute_string( 'description' ), esc_html( $bio_description_value ) );
+					// Escaped above
 					Utils::print_unescaped_internal_string( $bio_description_output );
 				} ?>
 			</div>
@@ -283,10 +289,6 @@ abstract class Render_Base {
 			return [];
 		}
 
-		if ( $negative ) {
-			$file_name .= '-negative';
-		}
-
 		return [
 			'negative' => $negative,
 			'svg' => Utils::file_get_contents( $shape_path ),
@@ -302,7 +304,7 @@ abstract class Render_Base {
 		<div
 			class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>"
 			data-negative="<?php
-				Utils::print_unescaped_internal_string( $shape_divider['negative'] ? 'true' : 'false' );
+				echo esc_attr( $shape_divider['negative'] ? 'true' : 'false' );
 			?>"
 		>
 			<?php
@@ -418,7 +420,7 @@ abstract class Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $cta['cta_link_type'] ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = $this->build_email_link( $cta, 'cta_link' );
+				$formatted_link = Social_Network_Provider::build_email_link( $cta, 'cta_link' );
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
@@ -447,26 +449,6 @@ abstract class Render_Base {
 		return $formatted_link;
 	}
 
-	protected function build_email_link( array $data, string $prefix ) {
-		$email = $data[ $prefix . '_mail' ] ?? '';
-		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
-		$body = $data[ $prefix . '_mail_body' ] ?? '';
-		if ( ! $email ) {
-			return '';
-		}
-		$link = 'mailto:' . $email;
-		if ( $subject ) {
-			$link .= '?subject=' . $subject;
-		}
-		if ( $body ) {
-			$link .= $subject ? '&' : '?';
-			$link .= 'body=' . $body;
-		}
-
-		return $link;
-
-	}
-
 	protected function get_formatted_link_for_icon( array $icon ): string {
 
 		$formatted_link = $icon['icon_url']['url'] ?? '';
@@ -474,7 +456,7 @@ abstract class Render_Base {
 		// Ensure we clear the default link value if the matching type value is empty
 		switch ( $icon['icon_platform'] ) {
 			case Social_Network_Provider::EMAIL:
-				$formatted_link = $this->build_email_link( $icon, 'icon' );
+				$formatted_link = Social_Network_Provider::build_email_link( $icon, 'icon' );
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'tel:' . $icon['icon_number'] : '';

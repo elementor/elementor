@@ -19,6 +19,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 				<?php
 				$this->render_top_bar();
 				$this->render_message_bubble();
+				$this->render_send_button();
 				?>
 			</div>
 			<?php
