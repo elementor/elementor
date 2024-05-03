@@ -43,27 +43,12 @@ define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modul
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
-add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
-
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '6.0', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
-}
-
-/**
- * Load Elementor textdomain.
- *
- * Load gettext translate for Elementor text domain.
- *
- * @since 1.0.0
- *
- * @return void
- */
-function elementor_load_plugin_textdomain() {
-	load_plugin_textdomain( 'elementor' );
 }
 
 /**
