@@ -285,6 +285,24 @@ export default class EditorBase extends Marionette.Application {
 			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
+				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
+
+				// TODO: Move this code to own file.
+				if ( this.widgetsCache[ widgetType ].controls?._element_cache ) {
+					let elementCacheDescription = __( 'The default behavior of this widget is:', 'elementor' ) + ' ';
+
+					elementCacheDescription += '<strong>';
+					if ( this.widgetsCache[ widgetType ]?.is_dynamic_content ) {
+						elementCacheDescription += __( 'Dynamic', 'elementor' );
+					} else {
+						elementCacheDescription += __( 'Static', 'elementor' );
+					}
+					elementCacheDescription += '</strong>';
+
+					this.widgetsCache[ widgetType ].controls._element_cache.description = elementCacheDescription;
+				}
+				// TODO: End of code to move.
+
 				this.widgetsCache[ widgetType ].commonMerged = true;
 			}
 
