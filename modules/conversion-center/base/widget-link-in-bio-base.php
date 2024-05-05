@@ -1501,7 +1501,6 @@ JS;
 
 		$config = static::get_configuration();
 
-
 		if ( $config['style']['border_section']['field_options'] ) {
 			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
 		}
