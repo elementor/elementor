@@ -508,10 +508,6 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['payload']['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
-
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
