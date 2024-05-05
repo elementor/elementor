@@ -163,6 +163,7 @@ abstract class Document extends Controls_Stack {
 			'support_kit' => false,
 			'show_navigator' => true,
 			'allow_adding_widgets' => true,
+			'support_page_layout' => true,
 		];
 	}
 

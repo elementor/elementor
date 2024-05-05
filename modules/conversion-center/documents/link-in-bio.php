@@ -18,17 +18,25 @@ class Link_In_Bio  extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		// $properties['has_elements'] = false;
 		$properties['support_kit'] = false;
 		$properties['show_in_library'] = false;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_LIB ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
+		$properties['support_page_layout'] = false;
 		return $properties;
 	}
 
 	public static function get_type() {
 		return ConversionCenterModule::DOCUMENT_TYPE;
+	}
+
+	public static function register_post_fields_control( $document ) {
+		//
+	}
+
+	public static function register_hide_title_control( $document ) {
+
 	}
 
 	/**
@@ -38,18 +46,9 @@ class Link_In_Bio  extends PageBase {
 		return ConversionCenterModule::DOCUMENT_TYPE;
 	}
 
-	/**
-	 * @access public
-	 * @static
-	 */
 	public static function get_title() {
 		return esc_html__( 'Links Page', 'elementor' );
 	}
-
-	/**
-	 * @access public
-	 * @static
-	 */
 	public static function get_plural_title() {
 		return esc_html__( 'Links Pages', 'elementor' );
 	}

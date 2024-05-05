@@ -80,6 +80,13 @@ class Module extends BaseModule {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Link_In_Bio::get_class_full_name() );
 		} );
 
+		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
+			if ( strpos( $current_screen->id ?? '', 'conversion-center' ) !== false ) {
+				return true;
+			}
+			return $is_top_bar_active;
+		}, 10, 2 );
+
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
