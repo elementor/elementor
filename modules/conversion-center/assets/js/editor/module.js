@@ -17,7 +17,7 @@ class LinksPageLibraryModule extends elementorModules.editor.utils.Module {
 			if ( 'links-page' === elementor.config.document.type ) {
 				const { contextMenu: { groups } } = behaviors;
 				const editedGroups = groups.map( ( group ) => {
-					const enabledCommands = [ 'edit', 'delete' ];
+					const enabledCommands = [ 'edit', 'delete', 'resetStyle', 'save' ];
 					const { name, actions } = group;
 					return {
 						name,
@@ -27,7 +27,7 @@ class LinksPageLibraryModule extends elementorModules.editor.utils.Module {
 				behaviors.contextMenu.groups = editedGroups;
 			}
 			return behaviors;
-		} );
+		}, 1000 );
 	}
 }
 

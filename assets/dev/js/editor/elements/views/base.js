@@ -925,7 +925,7 @@ BaseElementView = BaseContainer.extend( {
 		const command = elementor.hooks.applyFilters(
 			'elements/base/button/remove/action',
 			'document/elements/delete',
-			this
+			this,
 		);
 		$e.run( command, { container: this.getContainer() } );
 	},
