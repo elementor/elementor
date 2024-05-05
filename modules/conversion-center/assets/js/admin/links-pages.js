@@ -38,7 +38,6 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 			isLinksPagesTrashPage = !! window.location.href.includes( settings.paths.linksPagesTrashPage ),
 			isLinksPagesCreateYourFirstPage = !! window.location.href.includes( settings.paths.linksPagesAddNewPage );
 
-
 		if ( isLinksPagesTablePage || isLinksPagesTrashPage || isLinksPagesCreateYourFirstPage || settings.isLinksPageAdminEdit ) {
 			// Make sure the active admin top level menu item is 'Templates', and not 'Pages'.
 			this.highlightTopLevelMenuItem( this.elements.$templatesMenuItem, this.elements.$pagesMenuItemAndLink );
