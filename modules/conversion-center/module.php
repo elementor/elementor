@@ -61,7 +61,7 @@ class Module extends BaseModule {
 
 		$slug = $menu_args['menu_slug'];
 		$function = $menu_args['function'];
-		$parent_slug = '#menu-conversion-center';
+		$parent_slug = $slug . '#';
 		$admin_menu->register( $parent_slug, new Conversion_Center_Menu_Item() );
 		if ( is_callable( $function ) ) {
 			$admin_menu->register( $slug, new Links_Empty_View_Menu_Item( $function, $parent_slug ) );
@@ -76,27 +76,36 @@ class Module extends BaseModule {
 
 		$this->register_lib_cpt();
 
-		add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Link_In_Bio::get_class_full_name() );
 		} );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
-		add_action( 'elementor/admin/localize_settings', function( array $settings ) {
+		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
 		} );
 
-		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function( array $cpts ) {
+		add_action( 'admin_menu', function () {
+			global $submenu;
+			$menu_args = $this->get_menu_args();
+
+			$slug = $menu_args['menu_slug'] . '#';
+			unset( $submenu[ $slug ][0] );
+
+		}, 100 );
+
+		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
 			$cpts[] = self::CPT_LIB;
 
 			return $cpts;
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.
-		add_action( 'manage_' . static::CPT_LIB . '_posts_columns', function( $posts_columns ) {
+		add_action( 'manage_' . static::CPT_LIB . '_posts_columns', function ( $posts_columns ) {
 			/** @var Source_Local $source_local */
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 
@@ -104,7 +113,7 @@ class Module extends BaseModule {
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column row values.
-		add_action( 'manage_' . static::CPT_LIB . '_posts_custom_column', function( $column_name, $post_id ) {
+		add_action( 'manage_' . static::CPT_LIB . '_posts_custom_column', function ( $column_name, $post_id ) {
 			/** @var Landing_Page $document */
 			$document = Plugin::$instance->documents->get( $post_id );
 
@@ -113,7 +122,7 @@ class Module extends BaseModule {
 
 		// Overwrite the Admin Bar's 'New +' Landing Page URL with the link that creates the new LP in Elementor
 		// with the Template Library modal open.
-		add_action( 'admin_bar_menu', function( $admin_bar ) {
+		add_action( 'admin_bar_menu', function ( $admin_bar ) {
 			// Get the Landing Page menu node.
 			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
 
@@ -148,10 +157,11 @@ class Module extends BaseModule {
 	private function get_add_new_lib_url() {
 		if ( ! $this->new_lib_url ) {
 			$this->new_lib_url = Plugin::$instance->documents->get_create_new_post_url(
-				self::CPT_LIB,
-				self::DOCUMENT_TYPE
+					self::CPT_LIB,
+					self::DOCUMENT_TYPE
 				) . '#library';
 		}
+
 		return $this->new_lib_url;
 	}
 
@@ -233,11 +243,25 @@ class Module extends BaseModule {
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'capability_type' => 'page',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
-			'supports' => [ 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ],
+			'supports' => [
+				'title',
+				'editor',
+				'comments',
+				'revisions',
+				'trackbacks',
+				'author',
+				'excerpt',
+				'page-attributes',
+				'thumbnail',
+				'custom-fields',
+				'post-formats',
+				'elementor'
+			],
 		];
 
 		register_post_type( self::CPT_LIB, $args );
 	}
+
 	private function has_landing_pages(): bool {
 		if ( null !== $this->has_lib ) {
 			return $this->has_lib;
