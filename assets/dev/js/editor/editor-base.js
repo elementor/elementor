@@ -418,7 +418,6 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		// Adds the Links Page tab to the Template library modal when editing Links Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
 			this.modules.linksPageLibraryModule = new LinksPageLibraryModule();
 		}
