@@ -9,7 +9,7 @@ use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
-use Elementor\Modules\ConversionCenter\Documents\Link_In_Bio;
+use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -77,7 +77,7 @@ class Module extends BaseModule {
 		$this->register_lib_cpt();
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Link_In_Bio::get_class_full_name() );
+			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Links_Page::get_class_full_name() );
 		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {

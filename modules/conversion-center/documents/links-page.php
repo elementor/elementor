@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Link_In_Bio  extends PageBase {
+class Links_Page  extends PageBase {
 
 	use Library;
 
