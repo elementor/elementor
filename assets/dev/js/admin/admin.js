@@ -350,6 +350,7 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 			if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
 				new LinksPagesModule();
 			}
+
 			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();

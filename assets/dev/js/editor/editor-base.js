@@ -422,6 +422,7 @@ export default class EditorBase extends Marionette.Application {
 		if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
 			this.modules.linksPageLibraryModule = new LinksPageLibraryModule();
 		}
+
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 
 		this.modules.promotionModule = new PromotionModule();

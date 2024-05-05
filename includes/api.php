@@ -181,7 +181,7 @@ class Api {
 	 *
 	 * @return array The templates data.
 	 */
-	public static function get_library_data( $force_update = true ) {
+	public static function get_library_data( $force_update = false ) {
 		self::get_info_data( $force_update );
 
 		$library_data = get_option( self::LIBRARY_OPTION_KEY );

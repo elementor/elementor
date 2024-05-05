@@ -3,8 +3,6 @@
 namespace Elementor\Modules\ConversionCenter\Traits;
 
 use Elementor\Controls_Manager;
-use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
-use Elementor\Utils;
 
 trait Conversion_Center_Controls_Trait {
 

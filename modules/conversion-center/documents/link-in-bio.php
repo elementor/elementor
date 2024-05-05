@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Link_In_Bio  extends PageBase {
-	// Library Document Trait
+
 	use Library;
 
 	public static function get_properties() {
@@ -32,16 +32,13 @@ class Link_In_Bio  extends PageBase {
 	}
 
 	public static function register_post_fields_control( $document ) {
-		//
+
 	}
 
 	public static function register_hide_title_control( $document ) {
 
 	}
 
-	/**
-	 * @access public
-	 */
 	public function get_name() {
 		return ConversionCenterModule::DOCUMENT_TYPE;
 	}
