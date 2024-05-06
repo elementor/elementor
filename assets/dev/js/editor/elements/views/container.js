@@ -351,20 +351,22 @@ const ContainerView = BaseElementView.extend( {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
-		editTools.add = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
-			icon: 'plus',
-		};
+		if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			editTools.add = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
+				icon: 'plus',
+			};
 
-		editTools.edit = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-			icon: 'handle',
-		};
+			editTools.edit = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
+				icon: 'handle',
+			};
+		}
 
 		if ( ! this.getContainer().isLocked() ) {
-			if ( elementor.getPreferences( 'edit_buttons' ) ) {
+			if ( elementor.getPreferences( 'edit_buttons' ) && $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
 				editTools.duplicate = {
 					/* Translators: %s: Element Name. */
 					title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
@@ -379,7 +381,7 @@ const ContainerView = BaseElementView.extend( {
 			};
 		}
 
-		return elementor.hooks.applyFilters( 'elements/container/edit-buttons', editTools, this );
+		return editTools;
 	},
 
 	/**

@@ -923,16 +923,6 @@ BaseElementView = BaseContainer.extend( {
 		event.stopPropagation();
 
 		$e.run( 'document/elements/delete', { container: this.getContainer() } );
-
-		const extraCommand = elementor.hooks.applyFilters(
-			'elements/base/button/remove/action',
-			'',
-			this,
-		);
-
-		if ( extraCommand ) {
-			$e.run( extraCommand, { container: this.getContainer() } );
-		}
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`

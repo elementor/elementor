@@ -1,4 +1,4 @@
-import LandingPagesHandler from './links-pages';
+import LinksPagesHandler from './links-pages';
 
 export default class extends elementorModules.Module {
 	constructor() {
@@ -18,12 +18,12 @@ export default class extends elementorModules.Module {
 			},
 			args = {
 				path: elementorAdmin.config.linksPages?.hasPages ? paths.linksPagesTablePage : paths.linksPagesAddNewPage,
-				isLandingPageAdminEdit: elementorAdmin.config.linksPages?.isAdminEdit,
+				isLinksPageAdminEdit: elementorAdmin.config.linksPages?.isAdminEdit,
 				paths,
 			};
 
 		// This class modifies elements in the WordPress admin that are rendered "wrong" by the WordPress core
 		// and could not be modified in the backend.
-		new LandingPagesHandler( args );
+		new LinksPagesHandler( args );
 	}
 }

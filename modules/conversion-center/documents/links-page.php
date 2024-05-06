@@ -20,7 +20,7 @@ class Links_Page  extends PageBase {
 
 		$properties['support_kit'] = false;
 		$properties['show_in_library'] = false;
-		$properties['cpt'] = [ ConversionCenterModule::CPT_LIB ];
+		$properties['cpt'] = [ ConversionCenterModule::CPT_LINKS_PAGES ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
@@ -62,14 +62,6 @@ class Links_Page  extends PageBase {
 		return parent::save( $data );
 	}
 
-	/**
-	 * Admin Columns Content
-	 *
-	 * @since 3.22.0
-	 *
-	 * @param $column_name
-	 * @access public
-	 */
 	public function admin_columns_content( $column_name ) {
 		if ( 'elementor_library_type' === $column_name ) {
 			$this->print_admin_column_type();

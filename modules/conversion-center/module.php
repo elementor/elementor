@@ -11,6 +11,7 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
+use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -23,13 +24,12 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'conversion-center';
 
 	const DOCUMENT_TYPE = 'links-page';
-	const CPT_LIB = 'e-link-pages';
-	const ADMIN_PAGE_SLUG_LIB = 'edit.php?post_type=' . self::CPT_LIB;
+	const CPT_LINKS_PAGES = 'e-link-pages';
+	const ADMIN_PAGE_SLUG_LIB = 'edit.php?post_type=' . self::CPT_LINKS_PAGES;
 
-	private $has_lib = null;
-	private $trashed_lib;
-	private $new_lib_url;
-	private $permalink_structure;
+	private $has_links_pages = null;
+	private $trashed_links_pages;
+	private $new_links_pages_url;
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
@@ -72,9 +72,7 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		$this->permalink_structure = get_option( 'permalink_structure' );
-
-		$this->register_lib_cpt();
+		$this->register_links_pages_cpt();
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Links_Page::get_class_full_name() );
@@ -91,7 +89,6 @@ class Module extends BaseModule {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
-		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
 		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
 		} );
@@ -106,73 +103,67 @@ class Module extends BaseModule {
 		}, 100 );
 
 		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
-			$cpts[] = self::CPT_LIB;
+			$cpts[] = self::CPT_LINKS_PAGES;
 
 			return $cpts;
 		} );
 
-		// In the Landing Pages Admin Table page - Overwrite Template type column header title.
-		add_action( 'manage_' . static::CPT_LIB . '_posts_columns', function ( $posts_columns ) {
-			/** @var Source_Local $source_local */
+		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
 
-		// In the Landing Pages Admin Table page - Overwrite Template type column row values.
-		add_action( 'manage_' . static::CPT_LIB . '_posts_custom_column', function ( $column_name, $post_id ) {
-			/** @var Landing_Page $document */
+		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_custom_column', function( $column_name, $post_id ) {
 			$document = Plugin::$instance->documents->get( $post_id );
 
 			$document->admin_columns_content( $column_name );
 		}, 10, 2 );
 
-		// Overwrite the Admin Bar's 'New +' Landing Page URL with the link that creates the new LP in Elementor
-		// with the Template Library modal open.
+
 		add_action( 'admin_bar_menu', function ( $admin_bar ) {
-			// Get the Landing Page menu node.
-			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
+			$new_links_page_node = $admin_bar->get_node( 'new-e-links-page' );
 
-			if ( $new_landing_page_node ) {
-				$new_landing_page_node->href = $this->get_add_new_lib_url();
+			if ( $new_links_page_node ) {
+				$new_links_page_node->href = $this->get_add_new_links_page_url();
 
-				$admin_bar->add_node( $new_landing_page_node );
+				$admin_bar->add_node( $new_links_page_node );
 			}
 		}, 100 );
 	}
 
 	private function get_trashed_lib_posts(): array {
-		if ( $this->trashed_lib ) {
-			return $this->trashed_lib;
+		if ( $this->trashed_links_pages ) {
+			return $this->trashed_links_pages;
 		}
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
 		$trashed_posts_query = new \WP_Query( [
 			'no_found_rows' => true,
-			'post_type' => self::CPT_LIB,
+			'post_type' => self::CPT_LINKS_PAGES,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
-		$this->trashed_lib = $trashed_posts_query->posts;
+		$this->trashed_links_pages = $trashed_posts_query->posts;
 
-		return $this->trashed_lib;
+		return $this->trashed_links_pages;
 	}
 
-	private function get_add_new_lib_url() {
-		if ( ! $this->new_lib_url ) {
-			$this->new_lib_url = Plugin::$instance->documents->get_create_new_post_url(
-				self::CPT_LIB,
+	private function get_add_new_links_page_url() {
+		if ( ! $this->new_links_pages_url ) {
+			$this->new_links_pages_url = Plugin::$instance->documents->get_create_new_post_url(
+				self::CPT_LINKS_PAGES,
 				self::DOCUMENT_TYPE
 			) . '#library';
 		}
 
-		return $this->new_lib_url;
+		return $this->new_links_pages_url;
 	}
 
-	public function print_empty_landing_pages_page() {
+	public function print_empty_links_pages_page() {
 		$template_sources = Plugin::$instance->templates_manager->get_registered_sources();
 		$source_local = $template_sources['local'];
 		$trashed_posts = $this->get_trashed_lib_posts();
@@ -183,7 +174,7 @@ class Module extends BaseModule {
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
 				esc_html__( 'Links Page', 'elementor' ),
-				$this->get_add_new_lib_url(),
+				$this->get_add_new_links_page_url(),
 				esc_html__( 'Build Effective Landing Pages for your business\' marketing campaigns.', 'elementor' )
 			);
 
@@ -193,7 +184,7 @@ class Module extends BaseModule {
 					printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
-						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT_LIB ) ) . '">',
+						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT_LINKS_PAGES ) ) . '">',
 						'</a>'
 					);
 					?>
@@ -203,7 +194,7 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	private function is_lib_admin_edit() {
+	private function is_links_page_admin_edit() {
 		$screen = get_current_screen();
 
 		if ( 'post' === $screen->base ) {
@@ -216,18 +207,18 @@ class Module extends BaseModule {
 	private function admin_localize_settings( $settings ) {
 		$additional_settings = [
 			'urls' => [
-				'addNewLinkUrl' => $this->get_add_new_lib_url(),
+				'addNewLinkUrl' => $this->get_add_new_links_page_url(),
 			],
 			'linksPages' => [
-				'hasPages' => $this->has_landing_pages(),
-				'isAdminEdit' => $this->is_lib_admin_edit(),
+				'hasPages' => $this->has_links_pages(),
+				'isAdminEdit' => $this->is_links_page_admin_edit(),
 			],
 		];
 
 		return array_replace_recursive( $settings, $additional_settings );
 	}
 
-	private function register_lib_cpt() {
+	private function register_links_pages_cpt() {
 		$labels = [
 			'name' => esc_html__( 'Links Pages', 'elementor' ),
 			'singular_name' => esc_html__( 'Links Page', 'elementor' ),
@@ -266,39 +257,39 @@ class Module extends BaseModule {
 			],
 		];
 
-		register_post_type( self::CPT_LIB, $args );
+		register_post_type( self::CPT_LINKS_PAGES, $args );
 	}
 
-	private function has_landing_pages(): bool {
-		if ( null !== $this->has_lib ) {
-			return $this->has_lib;
+	private function has_links_pages(): bool {
+		if ( null !== $this->has_links_pages ) {
+			return $this->has_links_pages;
 		}
 
 		$posts_query = new \WP_Query( [
 			'no_found_rows' => true,
-			'post_type' => self::CPT_LIB,
+			'post_type' => self::CPT_LINKS_PAGES,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
-		$this->has_lib = $posts_query->post_count > 0;
+		$this->has_links_pages = $posts_query->post_count > 0;
 
-		return $this->has_lib;
+		return $this->has_links_pages;
 	}
 
 	public function is_elementor_links_page( \WP_Post $post ): bool {
-		return self::CPT_LIB === $post->post_type;
+		return self::CPT_LINKS_PAGES === $post->post_type;
 	}
 
 	private function get_menu_args(): array {
-		if ( $this->has_landing_pages() ) {
+		if ( $this->has_links_pages() ) {
 			$menu_slug = self::ADMIN_PAGE_SLUG_LIB;
 			$function = null;
 		} else {
-			$menu_slug = self::CPT_LIB;
-			$function = [ $this, 'print_empty_landing_pages_page' ];
+			$menu_slug = self::CPT_LINKS_PAGES;
+			$function = [ $this, 'print_empty_links_pages_page' ];
 		}
 
 		return [

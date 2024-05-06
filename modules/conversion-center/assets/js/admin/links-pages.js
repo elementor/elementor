@@ -2,19 +2,11 @@ import AdminMenuHandler from 'elementor-admin/menu-handler';
 
 export default class LinksPagesHandler extends AdminMenuHandler {
 	getDefaultSettings() {
-		const pageName = 'e-link-pages',
-			adminMenuSelectors = {
-				// The escaping is done because jQuery requires it for selectors.
-				linksPagesTablePage: 'a[href="edit.php?post_type=' + pageName + '"]',
-				linksPagesAddNewPage: 'a[href="edit.php?post_type=elementor_library&page=' + pageName + '"]',
-			};
-
 		return {
 			selectors: {
 				addButton: '.page-title-action:first',
 				pagesMenuItemAndLink: '#menu-pages, #menu-pages > a',
-				linksPagesMenuItem: `${ adminMenuSelectors.linksPagesTablePage }, ${ adminMenuSelectors.linksPagesAddNewPage }`,
-				templatesMenuItem: '.menu-icon-elementor_library',
+				templatesMenuItem: '#toplevel_page_e-link-pages-',
 			},
 		};
 	}
@@ -23,7 +15,6 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 		const selectors = this.getSettings( 'selectors' ),
 			elements = super.getDefaultElements();
 
-		elements.$landingPagesMenuItem = jQuery( selectors.linksPagesMenuItem );
 		elements.$templatesMenuItem = jQuery( selectors.templatesMenuItem );
 		elements.$pagesMenuItemAndLink = jQuery( selectors.pagesMenuItemAndLink );
 
@@ -39,10 +30,13 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 			isLinksPagesCreateYourFirstPage = !! window.location.href.includes( settings.paths.linksPagesAddNewPage );
 
 		if ( isLinksPagesTablePage || isLinksPagesTrashPage || isLinksPagesCreateYourFirstPage || settings.isLinksPageAdminEdit ) {
-			// Make sure the active admin top level menu item is 'Templates', and not 'Pages'.
-			this.highlightTopLevelMenuItem( this.elements.$templatesMenuItem, this.elements.$pagesMenuItemAndLink );
+			const activeClasses = 'wp-has-current-submenu wp-menu-open current';
 
-			this.highlightSubMenuItem( this.elements.$landingPagesMenuItem );
+			this.elements.$templatesMenuItem
+				.addClass( activeClasses )
+				.removeClass( 'wp-not-current-submenu' );
+
+			this.elements.$templatesMenuItem.find( 'li.wp-first-item' ).addClass( 'current' );
 
 			// Overwrite the 'Add New' button at the top of the page to open in Elementor with the library module open.
 			jQuery( settings.selectors.addButton ).attr( 'href', elementorAdminConfig.urls.addNewLinkUrl );

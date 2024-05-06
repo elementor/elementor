@@ -81,7 +81,7 @@ class Utils {
 		unset(
 			$post_types[ Landing_Pages_Module::CPT ],
 			$post_types[ Source_Local::CPT ],
-			$post_types[ Conversion_Center_Module::CPT_LIB ]
+			$post_types[ Conversion_Center_Module::CPT_LINKS_PAGES ]
 		);
 
 		return array_keys( $post_types );
