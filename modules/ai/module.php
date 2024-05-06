@@ -752,7 +752,7 @@ class Module extends BaseModule {
 
 		$result = $app->generate_layout(
 			$data,
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context( $data )
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -825,7 +825,7 @@ class Module extends BaseModule {
 		$result = $app->get_layout_prompt_enhanced(
 			$data['prompt'],
 			$data['enhance_type'],
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context( $data )
 		);
 
 		$this->throw_on_error( $result );
@@ -837,11 +837,12 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function prepare_generate_layout_context() {
+	private function prepare_generate_layout_context( $data ) {
+		$request_context = $this->get_request_context( $data );
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( ! $kit ) {
-			return [];
+			return $request_context;
 		}
 
 		$kits_data = Collection::make( $kit->get_data()['settings'] ?? [] );
@@ -896,12 +897,12 @@ class Module extends BaseModule {
 				];
 			} );
 
-		return [
-			'globals' => [
-				'colors' => $colors->all(),
-				'typography' => $typography->all(),
-			],
+		$request_context['globals'] = [
+			'colors' => $colors->all(),
+			'typography' => $typography->all(),
 		];
+
+		return $request_context;
 	}
 
 	private function upload_image( $image_url, $image_title, $parent_post_id = 0 ) {
