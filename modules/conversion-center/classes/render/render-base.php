@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Classes\Render;
 use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Base\Widget_Link_In_Bio_Base;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
+use Elementor\Modules\ConversionCenter\Traits\Conversion_Center_Controls_Trait;
 use Elementor\Utils;
 
 /**
@@ -15,6 +16,8 @@ use Elementor\Utils;
  * @since 3.23.0
  */
 abstract class Render_Base {
+
+	use Conversion_Center_Controls_Trait;
 
 	protected Widget_Link_In_Bio_Base $widget;
 
