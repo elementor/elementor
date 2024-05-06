@@ -280,11 +280,14 @@ abstract class Render_Base {
 		$settings = $this->settings;
 		$base_setting_key = "identity_section_style_cover_divider_$side";
 		$file_name = $settings[ $base_setting_key ];
+
 		if ( empty( $file_name ) ) {
 			return [];
 		}
+
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 		$shape_path = Shapes::get_shape_path( $file_name, $negative );
+
 		if ( ! is_file( $shape_path ) || ! is_readable( $shape_path ) ) {
 			return [];
 		}
@@ -297,6 +300,7 @@ abstract class Render_Base {
 
 	protected function print_shape_divider( $side = 'bottom' ) {
 		$shape_divider = $this->get_shape_divider( $side );
+
 		if ( empty( $shape_divider ) ) {
 			return;
 		}
