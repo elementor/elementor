@@ -65,7 +65,7 @@ class Links_Page  extends PageBase {
 	/**
 	 * Admin Columns Content
 	 *
-	 * @since 3.1.0
+	 * @since 3.22.0
 	 *
 	 * @param $column_name
 	 * @access public
