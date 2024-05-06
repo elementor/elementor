@@ -6,7 +6,6 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Base\Widget_Link_In_Bio_Base;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
 use Elementor\Utils;
-use Elementor\Shapes;
 
 /**
  * Class Render_Base.
@@ -243,7 +242,6 @@ abstract class Render_Base {
 	}
 
 	protected function render_footer_bio(): void {
-
 		if ( 'bottom' !== $this->widget->get_description_position() ) {
 			return;
 		}
@@ -276,49 +274,6 @@ abstract class Render_Base {
 		}
 	}
 
-	protected function get_shape_divider( $side = 'bottom' ) {
-		$settings = $this->settings;
-		$base_setting_key = "identity_section_style_cover_divider_$side";
-		$file_name = $settings[ $base_setting_key ];
-
-		if ( empty( $file_name ) ) {
-			return [];
-		}
-
-		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
-		$shape_path = Shapes::get_shape_path( $file_name, $negative );
-
-		if ( ! is_file( $shape_path ) || ! is_readable( $shape_path ) ) {
-			return [];
-		}
-
-		return [
-			'negative' => $negative,
-			'svg' => Utils::file_get_contents( $shape_path ),
-		];
-	}
-
-	protected function print_shape_divider( $side = 'bottom' ) {
-		$shape_divider = $this->get_shape_divider( $side );
-
-		if ( empty( $shape_divider ) ) {
-			return;
-		}
-		?>
-		<div
-			class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>"
-			data-negative="<?php
-				echo esc_attr( $shape_divider['negative'] ? 'true' : 'false' );
-			?>"
-		>
-			<?php
-				// PHPCS - The file content is being read from a strict file path structure.
-				echo $shape_divider['svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			?>
-		</div>
-		<?php
-	}
-
 	protected function render_identity_image(): void {
 		/**
 		 * Get base data for potential images
@@ -337,7 +292,6 @@ abstract class Render_Base {
 			],
 		];
 
-		// Bail early if there are no images to render
 		$output_images['primary_image']['should_render'] = ! empty( $output_images['primary_image']['value'] ) && ( ! empty( $output_images['primary_image']['value']['url'] || ! empty( $output_images['primary_image']['value']['id'] ) ) );
 		$output_images['secondary_image']['should_render'] = ! empty( $output_images['secondary_image']['value'] ) && ( ! empty( $output_images['secondary_image']['value']['url'] || ! empty( $output_images['secondary_image']['value']['id'] ) ) );
 
@@ -345,47 +299,16 @@ abstract class Render_Base {
 			return;
 		}
 
-		// Set props for primary image
-		if ( $output_images['primary_image']['should_render'] ) {
-			$output_images['primary_image']['props']['shape'] = $this->settings['identity_image_shape'] ?? 'circle';
-			$output_images['primary_image']['props']['style'] = $this->settings['identity_image_style'] ?? 'profile';
-			$output_images['primary_image']['props']['show_border'] = $this->settings['identity_image_show_border'] ?? false;
-			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
-		}
+		$output_images = $this->set_primary_image_properties( $output_images );
 
-		// Set props for secondary image
-		if ( $output_images['secondary_image']['should_render'] ) {
-			$output_images['secondary_image']['props']['style'] = 'cover';
-			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
-
-			// Handle shape divider
-			if ( ! empty( $this->settings['identity_section_style_cover_divider_bottom'] ) ) {
-				$output_images['secondary_image']['props']['has_shape_divider'] = true;
-
-				// Remove border if a shaped divider is applied
-				$output_images['secondary_image']['props']['show_bottom_border'] = false;
-			}
-
-			// Force primary to be profile since this is cover
-			$output_images['primary_image']['props']['style'] = 'profile';
-		}
+		$output_images = $this->set_secondary_image_properties( $output_images );
 		?>
 		<div class="e-link-in-bio__identity">
 			<?php
 			foreach ( $output_images as $image_key => $image ) :
 				if ( $image['should_render'] ) :
-					$image_classnames = 'e-link-in-bio__identity-image e-link-in-bio__identity-image-' . $image['props']['style'];
-					if ( ! empty( $image['props']['show_border'] ) || ! empty( $image['props']['show_bottom_border'] ) ) {
-						$image_classnames .= ' has-border';
-					}
-					if ( ! empty( $image['props']['shape'] ) && 'profile' === $image['props']['style'] ) {
-						$image_classnames .= ' has-style-' . $image['props']['shape'];
-					}
-					if ( ! empty( $image['props']['has_shape_divider'] ) ) {
-						$image_classnames .= ' has-shape-divider';
-					}
 					$this->widget->add_render_attribute( 'identity_image_' . $image_key, [
-						'class' => $image_classnames,
+						'class' => $this->get_image_classnames( $image ),
 					] );
 					?>
 						<div <?php echo $this->widget->get_render_attribute_string( 'identity_image_' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -417,8 +340,21 @@ abstract class Render_Base {
 		<?php
 	}
 
-	protected function get_formatted_link_based_on_type_for_cta( array $cta ): string {
+	protected function get_image_classnames( array $image ): string {
+		$image_classnames = 'e-link-in-bio__identity-image e-link-in-bio__identity-image-' . $image['props']['style'];
+		if ( ! empty( $image['props']['show_border'] ) || ! empty( $image['props']['show_bottom_border'] ) ) {
+			$image_classnames .= ' has-border';
+		}
+		if ( ! empty( $image['props']['shape'] ) && 'profile' === $image['props']['style'] ) {
+			$image_classnames .= ' has-style-' . $image['props']['shape'];
+		}
+		if ( ! empty( $image['props']['has_shape_divider'] ) ) {
+			$image_classnames .= ' has-shape-divider';
+		}
+		return $image_classnames;
+	}
 
+	protected function get_formatted_link_based_on_type_for_cta( array $cta ): string {
 		$formatted_link = $cta['cta_link_url']['url'] ?? '';
 
 		// Ensure we clear the default link value if the matching type value is empty
@@ -454,7 +390,6 @@ abstract class Render_Base {
 	}
 
 	protected function get_formatted_link_for_icon( array $icon ): string {
-
 		$formatted_link = $icon['icon_url']['url'] ?? '';
 
 		// Ensure we clear the default link value if the matching type value is empty
@@ -518,5 +453,34 @@ abstract class Render_Base {
 			'class' => $layout_classnames,
 			'id' => $this->settings['advanced_custom_css_id'],
 		] );
+	}
+
+	private function set_primary_image_properties( array $output_images ): array {
+		if ( $output_images['primary_image']['should_render'] ) {
+			$output_images['primary_image']['props']['shape'] = $this->settings['identity_image_shape'] ?? 'circle';
+			$output_images['primary_image']['props']['style'] = $this->settings['identity_image_style'] ?? 'profile';
+			$output_images['primary_image']['props']['show_border'] = $this->settings['identity_image_show_border'] ?? false;
+			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+		}
+
+		return $output_images;
+	}
+
+	private function set_secondary_image_properties( array $output_images ): array {
+		if ( $output_images['secondary_image']['should_render'] ) {
+			$output_images['secondary_image']['props']['style'] = 'cover';
+			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+
+			if ( ! empty( $this->settings['identity_section_style_cover_divider_bottom'] ) ) {
+				$output_images['secondary_image']['props']['has_shape_divider'] = true;
+
+				// Remove border if a shaped divider is applied
+				$output_images['secondary_image']['props']['show_bottom_border'] = false;
+			}
+
+			$output_images['primary_image']['props']['style'] = 'profile';
+		}
+
+		return $output_images;
 	}
 }
