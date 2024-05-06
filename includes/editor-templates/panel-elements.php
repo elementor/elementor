@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements">
-	<# if ( elementor.config.document.panel.allow_adding_widgets ) { #>
+	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets()) { #>
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
 		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo esc_html__( 'Elements', 'elementor' ); ?></button>
 		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></button>

@@ -210,12 +210,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showView( viewName ) {
+		if ( ! $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			return;
+		}
+
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {};
 
-		if ( elementor.config.document.panel.allow_adding_widgets ) {
-			viewDetails.region.show( new viewDetails.view( options ) );
-		}
+		viewDetails.region.show( new viewDetails.view( options ) );
 	},
 
 	clearSearchInput() {

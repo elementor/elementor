@@ -16,7 +16,7 @@ function echo_select_your_structure_title() {
 </script>
 
 <script type="text/template" id="tmpl-elementor-add-section">
-	<# if ( elementor.config.document.panel.allow_adding_widgets ) { #>
+	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
 	<div class="elementor-add-section-inner">
 		<div class="elementor-add-section-close elementor-wizard-icon">
 			<i class="eicon-close" aria-hidden="true"></i>

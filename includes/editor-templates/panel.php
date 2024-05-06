@@ -70,7 +70,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor' ); ?></span>
 	</button>
-	<# if ( elementor.config.document.panel.allow_adding_widgets ) { #>
+	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
 	<h2 id="elementor-panel-header-title"></h2>
 	<button id="elementor-panel-header-add-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
@@ -84,7 +84,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<i class="eicon-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</button>
-	<# if ( elementor.config.document.panel.show_navigator ) { #>
+	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>
 	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
 		echo $is_editor_v2_active
 			? esc_attr__( 'Structure', 'elementor' )
