@@ -250,6 +250,25 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.21.4 - 2024-04-30 =
+
+* Fix: Improved code enforcement of post Preview mode ([#25860](https://github.com/elementor/elementor/issues/25622))
+* Fix: Accordion is not displayed as expected when using Safari browser in Accordion widget ([#25905](https://github.com/elementor/elementor/issues/25905), [#25789](https://github.com/elementor/elementor/issues/25789))
+
+= 3.21.3 - 2024-04-25 =
+
+* Fix: Error notices appear in the editor and front end when using Icon Box widget ([#25837](https://github.com/elementor/elementor/issues/25837))
+
+= 3.21.2 - 2024-04-24 =
+
+* Fix: Improved code security enforcement in Heading widget
+* Fix: Icon Box widget disappears on the frontend if its Title and Description fields are empty
+
+= 3.21.1 - 2024-04-18 =
+
+* Fix: Compatibility issue between Elementor Settings screen and 3rd party plugins
+* Fix: AI-generated images are consistently square and do not follow the selected aspect ratio
+
 = 3.21.0 - 2024-04-15 =
 
 * New: Introducing Optimized Control Loading experiment - Improved TTFB by excluding UI controls from the frontend load, enhancing overall site speed
