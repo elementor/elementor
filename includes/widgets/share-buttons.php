@@ -33,7 +33,17 @@ class Widget_Share_Buttons extends Widget_Base {
 		'print',
 	];
 
+	/**
+	 * @deprecated will be removed in version 3.24
+	 */
 	public function get_name() {
+		return 'share-buttons-dummy';
+	}
+	
+	/**
+	 * @deprecated will be removed in version 3.24
+	 */
+	public function get_title() {
 		return 'share-buttons-dummy';
 	}
 
