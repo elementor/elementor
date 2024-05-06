@@ -107,7 +107,8 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="promotion" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
+			<Chip color="promotion" label={ __( 'Upgrade', 'elementor' ) }
+				icon={ <AIIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
