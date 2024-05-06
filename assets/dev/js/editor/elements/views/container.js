@@ -379,7 +379,7 @@ const ContainerView = BaseElementView.extend( {
 			};
 		}
 
-		return editTools;
+		return elementor.hooks.applyFilters( 'elements/container/edit-buttons', editTools, this );
 	},
 
 	/**

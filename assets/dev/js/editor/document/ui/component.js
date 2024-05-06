@@ -36,11 +36,12 @@ export default class Component extends ComponentBase {
 			},
 			duplicate: {
 				keys: 'ctrl+d',
-				dependency: () => shouldRun(),
+				dependency: () => shouldRun() && elementor.config.document.panel.allow_adding_widgets,
 			},
 			paste: {
 				keys: 'ctrl+v',
 				exclude: [ 'input' ],
+				dependency: () => elementor.config.document.panel.allow_adding_widgets,
 			},
 			'paste-style': {
 				keys: 'ctrl+shift+v',
