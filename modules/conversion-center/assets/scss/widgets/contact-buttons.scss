@@ -1,14 +1,17 @@
 .e-contact-buttons {
-    --e-contact-buttons-chat-box-width: 360px;
-    --e-contact-buttons-size-small: 65px;
-    --e-contact-buttons-size-medium: 75px;
-    --e-contact-buttons-size-large: 85px;
-    --e-contact-buttons-dot: #FF0000;
-    --e-contact-buttons-dot-size: 20px;
-    --e-contact-buttons-profile-dot-bg: #39AA59;
-    --e-contact-buttons-box-shadow: 0 3px 3px 0 rgba(0,0,0,0.25);
-    --e-contact-buttons-border-radius: 7px;
-    --e-contact-buttons-default-text-color: #000000;
+    --e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
+    --e-contact-buttons-size-small: #{$contact-buttons-size-small};
+    --e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
+    --e-contact-buttons-size-large: #{$contact-buttons-size-large};
+    --e-contact-buttons-dot: #{$contact-buttons-dots-color};
+    --e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
+    --e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
+    --e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
+    --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
+    --e-contact-button-chat-button-animation-duration: #{$contact-buttons-animation-duration};
+    --e-contact-button-chat-button-animation-delay: #{$contact-buttons-animation-delay};
+    --e-contact-buttons-chat-box-bg: #{$contact-buttons-chat-box-bg};
+    --e-contact-buttons-chat-box-animation-duration: #{$contact-buttons-animation-duration};
 
     // Platform specific colors
     // Default used for email, sms
@@ -33,9 +36,22 @@
 
     position: fixed;
     bottom: 20px;
-    min-width: var(--e-contact-buttons-chat-box-width);
-    #{$end}: 20px;
+    inset-inline-end: $contact-buttons-offset-preset;
+    width: var(--e-contact-buttons-chat-box-width);
     z-index: 99;
+
+    @media (max-width: $screen-mobile-max) {
+        inset-inline-end: 0;
+    }
+
+    &.has-alignment-start {
+        inset-inline-end: 0;
+        inset-inline-start: $contact-buttons-offset-preset;
+
+        @media (max-width: $screen-mobile-max) {
+            inset-inline-start: 0;
+        }
+    }
 
     &.has-platform-whatsapp {
         --e-contact-buttons-button-bg: #25D366;
@@ -121,23 +137,61 @@
         --e-contact-buttons-chat-box-bg: #FFFFFF;
     }
 
+    &.has-corners-rounded {
+        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
+    }
+
+    &.has-corners-round {
+        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-round};
+    }
+
+    &.has-corners-sharp {
+        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
+    }
+
+    &:not(.has-animations) {
+
+        .e-contact-buttons__content-wrapper {
+            &.hidden {
+                display: none;
+            }
+        }
+    }
+
+    &.has-animations {
+
+        .e-contact-buttons__content-wrapper {
+
+            &.hidden {
+                display: block;
+                visibility: hidden;
+                transition: var(--e-contact-buttons-chat-box-animation-duration);
+            }
+
+            &.animated-wrapper {
+                visibility: hidden;
+                opacity: 0;
+                transform: initial;
+                animation: e-contact-buttons-close var(--e-contact-buttons-chat-box-animation-duration);
+            }
+        }
+    }
+
     &__content {
         border-radius: var(--e-contact-buttons-border-radius);
         box-shadow: var(--e-contact-buttons-box-shadow);
-        display: none;
         font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
         margin-block-end: 20px;
+        overflow: hidden;
 
-        &.is-visible {
-            display: block; // will be replaced with animation
+        &.animated {
+            animation-duration: var(--e-contact-buttons-chat-box-animation-duration);
         }
     }
 
     &__top-bar {
         align-items: center;
         background-color: var(--e-contact-buttons-top-bar-bg);
-        border-top-left-radius: var(--e-contact-buttons-border-radius);
-        border-top-right-radius: var(--e-contact-buttons-border-radius);
         display: flex;
         gap: 20px;
         padding: 20px;
@@ -200,7 +254,7 @@
         color: var(--e-contact-buttons-close-button-color);
         padding: 0;
         position: absolute;
-        #{$end}: 20px;
+        inset-inline-end: 20px;
         top: 20px;
 
         &:hover,
@@ -214,6 +268,23 @@
     &__chat-button-container {
         display: flex;
         justify-content: flex-end;
+
+        @media (max-width: $screen-mobile-max) {
+            inset-inline-end: $contact-buttons-offset-preset;
+            position: relative;
+        }
+    }
+
+    &.has-alignment-start {
+
+        .e-contact-buttons__chat-button-container {
+            justify-content: flex-start;
+
+            @media (max-width: $screen-mobile-max) {
+                inset-inline-end: unset;
+                inset-inline-start: $contact-buttons-offset-preset;
+            }
+        }
     }
     
     &__chat-button {
@@ -224,6 +295,11 @@
         display: flex;
         justify-content: center;
         position: relative;
+
+        &.animated {
+            animation-delay: var(--e-contact-button-chat-button-animation-delay);
+            animation-duration: var(--e-contact-button-chat-button-animation-duration);
+        }
 
         svg {
             fill: var(--e-contact-buttons-button-icon);
@@ -269,6 +345,15 @@
         background-color: var(--e-contact-buttons-message-bubble-chat-bg);
         padding: 20px;
         padding-inline-start: 40px;
+
+        &.has-typing-animation {
+
+            .e-contact-buttons__bubble-container {
+                height: 0;
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
     }
 
     &__bubble {
@@ -284,7 +369,7 @@
             content: "";
             height: 0;
             position: absolute;
-            #{$start}: -20px;
+            inset-inline-start: -20px;
             top: 0;
             transform: rotate(0);
             width: 0;
@@ -324,7 +409,7 @@
     }
 
     &__powered-text {
-        color: var(--e-contact-buttons-default-text-color);
+        color: #{$contact-buttons-default-text-color};
         font-size: 16px;
         font-weight: 500;
         
@@ -341,7 +426,7 @@
     }
 
     &__dot {
-        animation: contactButtonsTypingJump 1s infinite;
+        animation: e-contact-buttons-typing-jump 1s infinite;
         background-color: var(--e-contact-buttons-message-bubble-name);
         border-radius: 50%;
         display: inline-block;
@@ -365,6 +450,7 @@
     }
 
     &__send-button {
+        background-color: var(--e-contact-buttons-chat-box-bg);
         padding: 20px;
     }
 
@@ -401,7 +487,7 @@
         }
     }
 
-    &__content.is-visible {
+    &__content.visible {
 
         .e-contact-buttons__message-bubble.has-typing-animation {
 
@@ -410,25 +496,21 @@
                 animation-duration: 2s;
                 animation-fill-mode: forwards;
                 animation-iteration-count: 1;
-                animation-name: contactButtonsDisappear;
+                animation-name: e-contact-buttons-disappear;
             }
-        
+
             .e-contact-buttons__bubble-container {
                 animation-delay: 2s;
                 animation-duration: .1s;
                 animation-fill-mode: forwards;
                 animation-iteration-count: 1;
-                animation-name: contactButtonsAppear;
-
-                height: 0;
-                opacity: 0;
-                visibility: hidden;
+                animation-name: e-contact-buttons-appear;
             }
         }
     }
 }
 
-@keyframes contactButtonsTypingJump {
+@keyframes e-contact-buttons-typing-jump {
     0% {
         bottom: 0px;
     }
@@ -440,7 +522,7 @@
     }
 }
 
-@keyframes contactButtonsAppear {
+@keyframes e-contact-buttons-appear {
     from {
         height: 0;
         opacity: 0;
@@ -453,11 +535,24 @@
     }
 }
 
-@keyframes contactButtonsDisappear {
+@keyframes e-contact-buttons-disappear {
     from {
         display: inline-flex;
     }
     to {
         display: none;
     }
+}
+
+@keyframes e-contact-buttons-close {
+	0%, 99.99% {
+		visibility: visible;
+		opacity: 1;
+	}
+
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		transform: initial;
+	}
 }
