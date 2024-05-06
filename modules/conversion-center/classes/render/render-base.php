@@ -105,12 +105,12 @@ abstract class Render_Base {
 						<span class="e-link-in-bio__cta-image">
 							<?php if ( ! empty( $cta_image['id'] ) ) {
 								echo wp_get_attachment_image( $cta_image['id'], 'thumbnail', false, [
-									'class' => 'e-link-in-bio__cta-image-el',
+									'class' => 'e-link-in-bio__cta-image-element',
 								] );
 							} else {
 								$this->widget->add_render_attribute( 'cta-link-image' . $key, [
 									'alt' => '',
-									'class' => 'e-link-in-bio__cta-image-el',
+									'class' => 'e-link-in-bio__cta-image-element',
 									'src' => esc_url( $cta_image['url'] ),
 								] );
 								?>
@@ -387,12 +387,12 @@ abstract class Render_Base {
 						<div <?php echo $this->widget->get_render_attribute_string( 'identity_image_' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 							<?php if ( ! empty( $image['value']['id'] ) ) {
 								echo wp_get_attachment_image( $image['value']['id'], 'medium', false, [
-									'class' => 'e-link-in-bio__identity-image-el',
+									'class' => 'e-link-in-bio__identity-image-element',
 								] );
 							} else {
 								$this->widget->add_render_attribute( 'identity_image_src' . $image_key, [
 									'alt' => '',
-									'class' => 'e-link-in-bio__identity-image-el',
+									'class' => 'e-link-in-bio__identity-image-element',
 									'src' => esc_url( $image['value']['url'] ),
 								] );
 								?>

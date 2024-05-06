@@ -156,7 +156,7 @@
 			position: relative;
 		}
 
-		.e-link-in-bio__identity-image-el {
+		.e-link-in-bio__identity-image-element {
 			display: block;
 			flex: 1 1 100%;
 			object-fit: cover;
@@ -203,7 +203,7 @@
 				--e-link-in-bio-identity-image-profile-border-radius: 0;
 			}
 
-			.e-link-in-bio__identity-image-el {
+			.e-link-in-bio__identity-image-element {
 				aspect-ratio: inherit;
 			}
 		}
@@ -352,7 +352,7 @@
 			flex: 0 0 min(50%, 140px);
 		}
 
-		.e-link-in-bio__cta-image-el {
+		.e-link-in-bio__cta-image-element {
 			aspect-ratio: 140 / 100;
 			display: block;
 			height: 100%;
