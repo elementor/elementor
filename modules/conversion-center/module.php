@@ -63,6 +63,7 @@ class Module extends BaseModule {
 		$function = $menu_args['function'];
 		$parent_slug = $slug . '#';
 		$admin_menu->register( $parent_slug, new Conversion_Center_Menu_Item() );
+
 		if ( is_callable( $function ) ) {
 			$admin_menu->register( $slug, new Links_Empty_View_Menu_Item( $function, $parent_slug ) );
 		} else {

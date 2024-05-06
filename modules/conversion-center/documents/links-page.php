@@ -3,7 +3,7 @@
 namespace Elementor\Modules\ConversionCenter\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
-use Elementor\Modules\Library\Traits\Library;
+use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
 
@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Links_Page  extends PageBase {
+class Links_Page extends PageBase {
 
-	use Library;
+	use Library_Trait;
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -31,13 +31,9 @@ class Links_Page  extends PageBase {
 		return ConversionCenterModule::DOCUMENT_TYPE;
 	}
 
-	public static function register_post_fields_control( $document ) {
+	public static function register_post_fields_control( $document ) {}
 
-	}
-
-	public static function register_hide_title_control( $document ) {
-
-	}
+	public static function register_hide_title_control( $document ) {}
 
 	public function get_name() {
 		return ConversionCenterModule::DOCUMENT_TYPE;

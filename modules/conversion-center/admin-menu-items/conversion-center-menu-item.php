@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Conversion_Center_Menu_Item implements Admin_Menu_Item, Admin_Menu_Item_Has_Position {
 
+	const POSITION = 58.7;
+
 	public function is_visible() {
 		return true;
 	}
@@ -31,6 +33,6 @@ class Conversion_Center_Menu_Item implements Admin_Menu_Item, Admin_Menu_Item_Ha
 	}
 
 	public function get_position() {
-		return 59;
+		return self::POSITION;
 	}
 }
