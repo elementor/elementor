@@ -83,6 +83,7 @@ class Module extends BaseModule {
 			if ( strpos( $current_screen->id ?? '', 'conversion-center' ) !== false ) {
 				return true;
 			}
+
 			return $is_top_bar_active;
 		}, 10, 2 );
 
