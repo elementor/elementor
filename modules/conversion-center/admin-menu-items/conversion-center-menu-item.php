@@ -33,6 +33,6 @@ class Conversion_Center_Menu_Item implements Admin_Menu_Item, Admin_Menu_Item_Ha
 	}
 
 	public function get_position() {
-		return self::POSITION;
+		return self::AFTER_ELEMENTOR;
 	}
 }
