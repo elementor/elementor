@@ -210,6 +210,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showView( viewName ) {
+		if ( ! $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			return;
+		}
+
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {};
 
