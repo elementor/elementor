@@ -575,6 +575,14 @@ class Ai extends Library {
 			$context['features']['supportedFeatures'][] = 'NestedElements';
 		}
 
+		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
+			$context['features']['supportedFeatures'][] = 'TaxonomyFilter';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
+			$context['features']['supportedFeatures'][] = 'MegaMenu';
+		}
+
 		$metadata = [
 			'context' => $context,
 			'api_version' => ELEMENTOR_VERSION,
