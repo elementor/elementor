@@ -24,6 +24,7 @@ class Links_Page extends PageBase {
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
+
 		return $properties;
 	}
 
