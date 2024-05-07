@@ -14,7 +14,6 @@ module.exports = Marionette.ItemView.extend( {
 		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
-		copyAndShareLink: '#elementor-panel-footer-sub-menu-item-copy-share-link',
 	},
 
 	events: {
@@ -24,7 +23,6 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
 		'click @ui.navigator': 'onNavigatorClick',
-		'click @ui.copyAndShareLink': 'onCopyAndShareLinkClick',
 	},
 
 	behaviors() {
@@ -114,15 +112,6 @@ module.exports = Marionette.ItemView.extend( {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onRender() {
-		const status = elementor.config.document.status.value ?? '';
-		if ( 'publish' !== status ) {
-			this.ui.copyAndShareLink.hide();
-		} else {
-			this.ui.copyAndShareLink.show();
-		}
-	},
-
 	onDeviceModeIconClick() {
 		if ( elementor.isDeviceModeActive() ) {
 			elementor.changeDeviceMode( 'desktop' );
@@ -138,16 +127,6 @@ module.exports = Marionette.ItemView.extend( {
 				elementor.enterDeviceMode();
 			}
 		}
-	},
-
-	onCopyAndShareLinkClick() {
-		const url =
-		navigator.clipboard.writeText( window.location.href );
-		const $title = this.ui.copyAndShareLink.find( '.elementor-title' );
-		$title.text( 'Link copied!' );
-		setTimeout( () => {
-			$title.text( 'Copy and share Link' );
-		}, 2000 );
 	},
 
 	onSaveTemplateClick() {

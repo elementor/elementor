@@ -9,6 +9,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
 			menuSaveDraft: '#elementor-panel-footer-sub-menu-item-save-draft',
 			lastEditedWrapper: '.elementor-last-edited-wrapper',
+			copyAndShareLink: '#elementor-panel-footer-sub-menu-item-copy-share-link',
 		};
 	}
 
@@ -17,6 +18,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			'click @ui.buttonPreview': 'onClickButtonPreview',
 			'click @ui.buttonPublish': 'onClickButtonPublish',
 			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
+			'click @ui.copyAndShareLink': 'onCopyAndShareLinkClick',
 		};
 	}
 
@@ -39,8 +41,34 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
 	}
 
+	activateCopyAndShareButton( postStatus, status ) {
+		if ( ! status ) {
+			return;
+		}
+		if ( 'publish' === postStatus ) {
+			this.ui.copyAndShareLink.removeClass( 'elementor-disabled' );
+		} else {
+			this.ui.copyAndShareLink.addClass( 'elementor-disabled' );
+		}
+	}
+
+	onCopyAndShareLinkClick() {
+		const url = elementor.config.document.urls.permalink ?? '';
+		if ( ! url ) {
+			return;
+		}
+		navigator.clipboard.writeText( url );
+		const $title = this.ui.copyAndShareLink.find( '.elementor-title' );
+		$title.text( 'Link copied!' );
+		setTimeout( () => {
+			$title.text( 'Copy and share Link' );
+		}, 2000 );
+	}
+
 	onRender() {
 		this.addTooltip();
+		const postStatus = elementor.config.document.status.value ?? '';
+		this.activateCopyAndShareButton( postStatus, true );
 	}
 
 	setLastEdited( lastEdited ) {

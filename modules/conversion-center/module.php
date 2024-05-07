@@ -98,8 +98,19 @@ class Module extends BaseModule {
 
 		add_action( 'admin_menu', function () {
 			global $submenu;
-			$menu_args = $this->get_menu_args();
+			global $menu;
 
+			$position = (string) Conversion_Center_Menu_Item::POSITION;
+			if ( strpos( $menu[Conversion_Center_Menu_Item::POSITION][2] ?? '', 'e-link-pages' ) !== false ) {
+				$menu[Conversion_Center_Menu_Item::POSITION][4] .= ' menu-item-elementor-conversions';
+			}
+
+			echo '<pre>';
+			print_r($menu[$position][2]);
+			echo '</pre>';
+			exit;
+
+			$menu_args = $this->get_menu_args();
 			$slug = $menu_args['menu_slug'] . '#';
 			unset( $submenu[ $slug ][0] );
 		}, 100 );

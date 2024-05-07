@@ -54,24 +54,28 @@ class Links_Page extends PageBase {
 	public function filter_admin_row_actions( $actions ) {
 		unset( $actions['edit'] );
 		unset( $actions['inline hide-if-no-js'] );
-		$built_with_elementor = parent::filter_admin_row_actions( [] );
+		$built_with_elementor = [];
 
-		$nonce = wp_create_nonce('set_as_homepage_' . $this->get_post()->ID);
+		if ( 'publish' === $this->get_post()->post_status ) {
+			$built_with_elementor = parent::filter_admin_row_actions( [] );
 
-		$page_on_front = get_option( 'page_on_front' );
+			$nonce = wp_create_nonce('set_as_homepage_' . $this->get_post()->ID);
 
-		if ( $page_on_front == $this->get_post()->ID ) {
-			$actions['set_as_homepage'] = sprintf(
-				'<span>%s</span>',
-				__( 'This is the Homepage!', 'elementor' )
-			);
-		} else {
-			$actions['set_as_homepage'] = sprintf(
-				'<a href="?post=%s&action=set_as_homepage&_wpnonce=%s">%s</a>',
-				$this->get_post()->ID,
-				$nonce,
-				__( 'Set as Homepage', 'elementor' )
-			);
+			$page_on_front = get_option( 'page_on_front' );
+
+			if ( $page_on_front == $this->get_post()->ID ) {
+				$actions['set_as_homepage'] = sprintf(
+					'<span>%s</span>',
+					__( 'This is the Homepage!', 'elementor' )
+				);
+			} else {
+				$actions['set_as_homepage'] = sprintf(
+					'<a href="?post=%s&action=set_as_homepage&_wpnonce=%s">%s</a>',
+					$this->get_post()->ID,
+					$nonce,
+					__( 'Set as Homepage', 'elementor' )
+				);
+			}
 		}
 
 		$delete = $actions['trash'];
