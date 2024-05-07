@@ -389,7 +389,7 @@ class Settings extends Settings_Page {
 						'label' => esc_html__( 'Performance', 'elementor' ),
 						'callback' => function() {
 							printf(
-								'<p>%s</p><hr>',
+								'<p>%s</p><br><hr><br>',
 								esc_html__( 'Improve loading times on your site by selecting the optimization tools that best fit your requirements. ', 'elementor' )
 							);
 						},
