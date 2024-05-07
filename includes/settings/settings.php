@@ -386,6 +386,13 @@ class Settings extends Settings_Page {
 				'label' => esc_html__( 'Performance', 'elementor' ),
 				'sections' => [
 					'performance' => [
+						'label' => esc_html__( 'Performance', 'elementor' ),
+						'callback' => function() {
+							printf(
+								'<p>%s</p><hr>',
+								esc_html__( 'Improve loading times on your site by selecting the optimization tools that best fit your requirements. ', 'elementor' )
+							);
+						},
 						'fields' => [
 							'css_print_method' => [
 								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
