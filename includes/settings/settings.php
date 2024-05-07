@@ -404,9 +404,9 @@ class Settings extends Settings_Page {
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">'
+									'desc' => '<div class="description elementor-css-print-method-description" data-value="external" style="display: none">'
 										. esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' )
-										. '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">'
+										. '</div><div class="description elementor-css-print-method-description" data-value="internal" style="display: none">'
 										. esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' )
 										. '</div>',
 								],
