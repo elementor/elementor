@@ -97,16 +97,9 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'admin_menu', function () {
-			global $submenu;
-			global $menu;
+			$this->add_class_to_conversion_menu();
 
-			if ( strpos( $menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][2] ?? '', 'e-link-pages' ) !== false ) {
-				$menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][4] .= ' menu-item-elementor-conversions'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			}
-
-			$menu_args = $this->get_menu_args();
-			$slug = $menu_args['menu_slug'] . '#';
-			unset( $submenu[ $slug ][0] );
+			$this->remove_conversion_menu_link();
 		}, 100 );
 
 		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
@@ -181,6 +174,22 @@ class Module extends BaseModule {
 				$admin_bar->add_node( $new_links_page_node );
 			}
 		}, 100 );
+	}
+
+	private function add_class_to_conversion_menu() {
+		global $menu;
+
+		if ( strpos( $menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][2] ?? '', 'e-link-pages' ) !== false ) {
+			$menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][4] .= ' menu-item-elementor-conversions'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		}
+	}
+
+	private function remove_conversion_menu_link() {
+		global $submenu;
+
+		$menu_args = $this->get_menu_args();
+		$slug = $menu_args['menu_slug'] . '#';
+		unset( $submenu[ $slug ][0] );
 	}
 
 	private function get_trashed_lib_posts(): array {
