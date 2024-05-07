@@ -121,8 +121,6 @@ class Module extends BaseModule {
 
 			$document->admin_columns_content( $column_name );
 		}, 10, 2 );
-
-
 		add_action( 'admin_bar_menu', function ( $admin_bar ) {
 			$new_links_page_node = $admin_bar->get_node( 'new-e-links-page' );
 
