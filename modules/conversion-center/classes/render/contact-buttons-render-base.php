@@ -56,23 +56,23 @@ abstract class Contact_Buttons_Render_Base {
 		<div class="e-contact-buttons__chat-button-container">
 			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Open Contact Buttons', 'elementor' ); ?>">
 				<?php
-					if ( $platform ) {
-						$mapping = Social_Network_Provider::get_icon_mapping( $platform );
-						$icon_lib = explode( ' ', $mapping )[0];
-						$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
-						Icons_Manager::render_icon(
-							[
-								'library' => $library,
-								'value' => $mapping,
-							],
-							[ 'aria-hidden' => 'true' ]
-						);
-					}
+				if ( $platform ) {
+					$mapping = Social_Network_Provider::get_icon_mapping( $platform );
+					$icon_lib = explode( ' ', $mapping )[0];
+					$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
+					Icons_Manager::render_icon(
+						[
+							'library' => $library,
+							'value' => $mapping,
+						],
+						[ 'aria-hidden' => 'true' ]
+					);
+				}
 
-					if ( $custom_icon ) {
-						Icons_Manager::render_icon( $custom_icon );
-					}
-					
+				if ( $custom_icon ) {
+					Icons_Manager::render_icon( $custom_icon );
+				}
+
 				?>
 			</button>
 		</div>
@@ -189,7 +189,7 @@ abstract class Contact_Buttons_Render_Base {
 		$send_button_text = $this->settings['send_button_text'];
 		$hover_animation = $this->settings['style_send_hover_animation'];
 		$cta_classnames = 'e-contact-buttons__send-cta';
-		
+
 		if ( $platform ) {
 			$formatted_link = $this->get_formatted_link_based_on_platform( $platform );
 		}

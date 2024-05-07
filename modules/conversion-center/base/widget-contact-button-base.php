@@ -25,7 +25,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			],
 			'style' => [
 				'has_platform_colors' => true,
-			]
+			],
 		];
 	}
 
