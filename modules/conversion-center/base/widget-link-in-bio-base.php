@@ -1017,7 +1017,7 @@ JS;
 		$this->start_controls_section(
 			'cta_links_section_style',
 			[
-				'label' => esc_html__( 'CTA Links', 'elementor' ),
+				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
