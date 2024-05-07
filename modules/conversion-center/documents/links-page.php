@@ -24,7 +24,7 @@ class Links_Page extends PageBase {
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
-
+		$properties['show_copy_and_share'] = true;
 		return $properties;
 	}
 
@@ -49,6 +49,36 @@ class Links_Page extends PageBase {
 
 	public static function get_create_url() {
 		return parent::get_create_url() . '#library';
+	}
+
+	public function filter_admin_row_actions( $actions ) {
+		unset( $actions['edit'] );
+		unset( $actions['inline hide-if-no-js'] );
+		$built_with_elementor = parent::filter_admin_row_actions( [] );
+
+		$nonce = wp_create_nonce('set_as_homepage_' . $this->get_post()->ID);
+
+		$page_on_front = get_option( 'page_on_front' );
+
+		if ( $page_on_front == $this->get_post()->ID ) {
+			$actions['set_as_homepage'] = sprintf(
+				'<span>%s</span>',
+				__( 'This is the Homepage!', 'elementor' )
+			);
+		} else {
+			$actions['set_as_homepage'] = sprintf(
+				'<a href="?post=%s&action=set_as_homepage&_wpnonce=%s">%s</a>',
+				$this->get_post()->ID,
+				$nonce,
+				__( 'Set as Homepage', 'elementor' )
+			);
+		}
+
+		$delete = $actions['trash'];
+		unset( $actions['trash'] );
+		$actions['trash'] = $delete;
+
+		return $built_with_elementor + $actions;
 	}
 
 	public function save( $data ) {

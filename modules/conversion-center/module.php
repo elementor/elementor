@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
+use DOMDocument;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
@@ -101,7 +102,6 @@ class Module extends BaseModule {
 
 			$slug = $menu_args['menu_slug'] . '#';
 			unset( $submenu[ $slug ][0] );
-
 		}, 100 );
 
 		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
@@ -110,8 +110,55 @@ class Module extends BaseModule {
 			return $cpts;
 		} );
 
+		add_action( 'admin_init', function () {
+			$action = filter_input( INPUT_GET, 'action' );
+
+			if ( 'set_as_homepage' === $action ) {
+				$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+				check_admin_referer( 'set_as_homepage_' . $post );
+				update_option( 'page_on_front', $post );
+				update_option( 'show_on_front', 'page' );
+				$menu_args = $this->get_menu_args();
+
+				wp_redirect( $menu_args['menu_slug'] );
+				exit;
+			}
+		} );
+
+		add_filter( 'wp_dropdown_pages', function ( $output, $parsed_args ) {
+			if ( isset( $parsed_args['name'] ) && $parsed_args['name'] === 'page_on_front' ) {
+				$args = array(
+					'posts_per_page' => 500,
+					'post_type' => self::CPT_LINKS_PAGES,
+				);
+
+				$posts = get_posts( $args );
+				$dom = new DOMDocument();
+				$dom->loadHTML( $output, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+				$select = $dom->getElementById( 'page_on_front' );
+
+				foreach ( $posts as $post ) {
+					$option = $dom->createElement( 'option', $post->post_title );
+					$option->setAttribute( 'value', $post->ID );
+					if ( (int) $parsed_args['selected'] === $post->ID ) {
+						$option->setAttribute( 'selected', 'selected' );
+					}
+
+					$select->appendChild( $option );
+				}
+
+				return $dom->saveHTML();
+			}
+
+			return $output;
+		}, 10, 2 );
+
+
+
 		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
+			unset( $posts_columns['date'] );
+			unset( $posts_columns['comments'] );
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
@@ -122,7 +169,7 @@ class Module extends BaseModule {
 			$document->admin_columns_content( $column_name );
 		}, 10, 2 );
 		add_action( 'admin_bar_menu', function ( $admin_bar ) {
-			$new_links_page_node = $admin_bar->get_node( 'new-e-links-page' );
+			$new_links_page_node = $admin_bar->get_node( 'new-e-link-pages' );
 
 			if ( $new_links_page_node ) {
 				$new_links_page_node->href = $this->get_add_new_links_page_url();
