@@ -125,27 +125,7 @@ class Module extends BaseModule {
 
 		add_filter( 'wp_dropdown_pages', function ( $output, $parsed_args ) {
 			if ( isset( $parsed_args['name'] ) && 'page_on_front' === $parsed_args['name'] ) {
-				$args = array(
-					'posts_per_page' => 500,
-					'post_type' => self::CPT_LINKS_PAGES,
-				);
-
-				$posts = get_posts( $args );
-				$dom = new DOMDocument();
-				$dom->loadHTML( $output, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-				$select = $dom->getElementById( 'page_on_front' );
-
-				foreach ( $posts as $post ) {
-					$option = $dom->createElement( 'option', $post->post_title );
-					$option->setAttribute( 'value', $post->ID );
-					if ( (int) $parsed_args['selected'] === $post->ID ) {
-						$option->setAttribute( 'selected', 'selected' );
-					}
-
-					$select->appendChild( $option );
-				}
-
-				return $dom->saveHTML();
+				return $this->add_links_pages_to_homepage_dropdowm( $output, $parsed_args['selected'] );
 			}
 
 			return $output;
@@ -356,6 +336,34 @@ class Module extends BaseModule {
 			'menu_slug' => $menu_slug,
 			'function' => $function,
 		];
+	}
+
+	private function add_links_pages_to_homepage_dropdowm( $output, $selected ) {
+		$args = array(
+			'posts_per_page' => 500,
+			'post_type' => self::CPT_LINKS_PAGES,
+		);
+
+		$posts = get_posts( $args );
+
+		try {
+			$dom = new DOMDocument();
+			$dom->loadHTML( $output, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+			$select = $dom->getElementById( 'page_on_front' );
+			foreach ( $posts as $post ) {
+				$option = $dom->createElement( 'option', $post->post_title );
+				$option->setAttribute( 'value', $post->ID );
+				if ( (int) $selected === $post->ID ) {
+					$option->setAttribute( 'selected', 'selected' );
+				}
+
+				$select->appendChild( $option );
+			}
+
+			return $dom->saveHTML();
+		} catch ( \DOMException $e ) {
+			return $output;
+		}
 	}
 
 }
