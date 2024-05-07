@@ -441,17 +441,6 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
-		$fields['attachment_alert'] = [
-			'type' => Controls_Manager::RAW_HTML,
-			'content_classes' => 'elementor-control-field-description',
-			'raw' => esc_html__( 'Note: Attachment Fixed may not works on some older mobile browsers.', 'elementor' ),
-			'condition' => [
-				'background' => [ 'classic' ],
-				'image[url]!' => '',
-				'attachment' => 'fixed',
-			],
-		];
-
 		$fields['repeat'] = [
 			'label' => esc_html_x( 'Repeat', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,

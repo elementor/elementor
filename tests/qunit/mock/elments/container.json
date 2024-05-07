@@ -1571,23 +1571,6 @@
 			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-attachment",
 			"name": "background_attachment"
 		},
-		"background_attachment_alert": {
-			"type": "raw_html",
-			"tab": "style",
-			"section": "section_style",
-			"content_classes": "elementor-control-field-description",
-			"raw": "Note: Attachment Fixed may not works on some older mobile browsers.",
-			"separator": "none",
-			"condition": {
-				"background_background": [
-					"classic"
-				],
-				"background_image[url]!": "",
-				"background_attachment": "fixed"
-			},
-			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-attachment_alert",
-			"name": "background_attachment_alert"
-		},
 		"background_repeat": {
 			"type": "select",
 			"tab": "style",

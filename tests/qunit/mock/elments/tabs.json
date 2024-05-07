@@ -3106,25 +3106,6 @@
 			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-attachment",
 			"name": "_background_attachment"
 		},
-		"_background_attachment_alert": {
-			"type": "raw_html",
-			"tab": "advanced",
-			"tabs_wrapper": "_tabs_background",
-			"inner_tab": "_tab_background_normal",
-			"section": "_section_background",
-			"content_classes": "elementor-control-field-description",
-			"raw": "Note: Attachment Fixed may not works on some older mobile browsers.",
-			"separator": "none",
-			"condition": {
-				"_background_background": [
-					"classic"
-				],
-				"_background_image[url]!": "",
-				"_background_attachment": "fixed"
-			},
-			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-attachment_alert",
-			"name": "_background_attachment_alert"
-		},
 		"_background_repeat": {
 			"type": "select",
 			"tab": "advanced",
@@ -4470,25 +4451,6 @@
 			},
 			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-attachment",
 			"name": "_background_hover_attachment"
-		},
-		"_background_hover_attachment_alert": {
-			"type": "raw_html",
-			"tab": "advanced",
-			"tabs_wrapper": "_tabs_background",
-			"inner_tab": "_tab_background_hover",
-			"section": "_section_background",
-			"content_classes": "elementor-control-field-description",
-			"raw": "Note: Attachment Fixed may not works on some older mobile browsers.",
-			"separator": "none",
-			"condition": {
-				"_background_hover_background": [
-					"classic"
-				],
-				"_background_hover_image[url]!": "",
-				"_background_hover_attachment": "fixed"
-			},
-			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-attachment_alert",
-			"name": "_background_hover_attachment_alert"
 		},
 		"_background_hover_repeat": {
 			"type": "select",
