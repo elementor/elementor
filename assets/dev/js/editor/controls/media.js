@@ -409,7 +409,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				id: attachment.id,
 				alt: attachment.alt,
 				source: attachment.source,
-				size: this.model.get( 'default' ).size,
+				size: this.model.get( 'default_value' ).size,
 			} );
 
 			if ( this.model.get( 'responsive' ) ) {
