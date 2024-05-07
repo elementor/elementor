@@ -4,7 +4,7 @@ namespace Elementor\Modules\ConversionCenter\Classes\Render;
 
 use Elementor\Icons_Manager;
 use Elementor\Modules\ConversionCenter\Classes\Providers\Social_Network_Provider;
-use Elementor\Modules\ConversionCenter\Widgets\Contact_Buttons;
+use Elementor\Modules\ConversionCenter\Base\Widget_Contact_Button_Base;
 
 /**
  * Class Contact_Buttons_Render_Base.
@@ -15,23 +15,24 @@ use Elementor\Modules\ConversionCenter\Widgets\Contact_Buttons;
  */
 abstract class Contact_Buttons_Render_Base {
 
-	protected Contact_Buttons $widget;
+	protected Widget_Contact_Button_Base $widget;
 
 	protected array $settings;
 
 
 	abstract public function render(): void;
 
-	public function __construct( Contact_Buttons $widget ) {
-		$this->widget   = $widget;
+	public function __construct( Widget_Contact_Button_Base $widget ) {
+		$this->widget = $widget;
 		$this->settings = $widget->get_settings_for_display();
 	}
 
 	protected function render_chat_button(): void {
 		$platform = $this->settings['chat_button_platform'] ?? '';
-		$display_dot = $this->settings['chat_button_show_dot'];
+		$display_dot = $this->settings['chat_button_show_dot'] ?? '';
 		$button_size = $this->settings['style_chat_button_size'];
 		$hover_animation = $this->settings['style_button_color_hover_animation'];
+		$custom_icon = $this->settings['chat_button_icon'] ?? '';
 
 		$button_classnames = 'e-contact-buttons__chat-button';
 
@@ -55,16 +56,23 @@ abstract class Contact_Buttons_Render_Base {
 		<div class="e-contact-buttons__chat-button-container">
 			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Open Contact Buttons', 'elementor' ); ?>">
 				<?php
-				$mapping = Social_Network_Provider::get_icon_mapping( $platform );
-				$icon_lib = explode( ' ', $mapping )[0];
-				$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
-				Icons_Manager::render_icon(
-					[
-						'library' => $library,
-						'value' => $mapping,
-					],
-					[ 'aria-hidden' => 'true' ]
-				);
+					if ( $platform ) {
+						$mapping = Social_Network_Provider::get_icon_mapping( $platform );
+						$icon_lib = explode( ' ', $mapping )[0];
+						$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
+						Icons_Manager::render_icon(
+							[
+								'library' => $library,
+								'value' => $mapping,
+							],
+							[ 'aria-hidden' => 'true' ]
+						);
+					}
+
+					if ( $custom_icon ) {
+						Icons_Manager::render_icon( $custom_icon );
+					}
+					
 				?>
 			</button>
 		</div>
@@ -181,7 +189,10 @@ abstract class Contact_Buttons_Render_Base {
 		$send_button_text = $this->settings['send_button_text'];
 		$hover_animation = $this->settings['style_send_hover_animation'];
 		$cta_classnames = 'e-contact-buttons__send-cta';
-		$formatted_link = $this->get_formatted_link_based_on_platform( $platform );
+		
+		if ( $platform ) {
+			$formatted_link = $this->get_formatted_link_based_on_platform( $platform );
+		}
 
 		if ( ! empty( $hover_animation ) ) {
 			$cta_classnames .= ' elementor-animation-' . $hover_animation;
@@ -278,7 +289,7 @@ abstract class Contact_Buttons_Render_Base {
 
 	protected function build_layout_render_attribute(): void {
 		$layout_classnames = 'e-contact-buttons';
-		$platform = $this->settings['chat_button_platform'];
+		$platform = $this->settings['chat_button_platform'] ?? '';
 		$border_radius = $this->settings['style_chat_box_corners'];
 		$alignment_position = $this->settings['advanced_horizontal_position'];
 		$has_animations = ! empty( $this->settings['style_chat_box_exit_animation'] ) || ! empty( $this->settings['style_chat_box_entrance_animation'] );

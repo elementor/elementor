@@ -38,6 +38,10 @@ module.exports = function( $ ) {
 		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/conversion-center/assets/js/frontend/handlers/contact-buttons' );
 	}
 
+	if ( elementorFrontendConfig.experimentalFeatures[ 'conversion-center' ] ) {
+		this.elementsHandlers[ 'contact-buttons-var-1.default' ] = () => import( /* webpackChunkName: 'contact-buttons-var-1' */ 'elementor/modules/conversion-center/assets/js/frontend/handlers/contact-buttons' );
+	}
+
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
