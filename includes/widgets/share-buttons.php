@@ -5,6 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * @deprecated will be removed in version 3.24
+ */
 class Widget_Share_Buttons extends Widget_Base {
 
 	private static $supported_networks = [
@@ -30,11 +33,31 @@ class Widget_Share_Buttons extends Widget_Base {
 		'print',
 	];
 
+	/**
+	 * @deprecated will be removed in version 3.24
+	 */
 	public function get_name() {
-		return 'share-buttons';
+		return 'share-buttons-dummy';
 	}
 
-	public static function get_supported_networks() {
+	/**
+	 * @deprecated will be removed in version 3.24
+	 */
+	public function get_title() {
+		return 'share-buttons-dummy';
+	}
+
+	/**
+	 * @deprecated will be removed in version 3.24
+	 */
+	public function show_in_panel(): bool {
+		return false;
+	}
+
+	/**
+	 * @deprecated will be removed in version 3.24
+	 */
+	public static function get_supported_networks(): array {
 		return self::$supported_networks;
 	}
 }
