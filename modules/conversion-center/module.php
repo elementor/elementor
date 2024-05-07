@@ -81,7 +81,7 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
-			if ( strpos( $current_screen->id ?? '', 'conversion-center' ) !== false ) {
+			if ( strpos( $current_screen->id ?? '', 'e-link-pages' ) !== false ) {
 				return true;
 			}
 
@@ -100,15 +100,9 @@ class Module extends BaseModule {
 			global $submenu;
 			global $menu;
 
-			$position = (string) Conversion_Center_Menu_Item::POSITION;
-			if ( strpos( $menu[Conversion_Center_Menu_Item::POSITION][2] ?? '', 'e-link-pages' ) !== false ) {
-				$menu[Conversion_Center_Menu_Item::POSITION][4] .= ' menu-item-elementor-conversions';
+			if ( strpos( $menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][2] ?? '', 'e-link-pages' ) !== false ) {
+				$menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][4] .= ' menu-item-elementor-conversions'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
-
-			echo '<pre>';
-			print_r($menu[$position][2]);
-			echo '</pre>';
-			exit;
 
 			$menu_args = $this->get_menu_args();
 			$slug = $menu_args['menu_slug'] . '#';
@@ -137,7 +131,7 @@ class Module extends BaseModule {
 		} );
 
 		add_filter( 'wp_dropdown_pages', function ( $output, $parsed_args ) {
-			if ( isset( $parsed_args['name'] ) && $parsed_args['name'] === 'page_on_front' ) {
+			if ( isset( $parsed_args['name'] ) && 'page_on_front' === $parsed_args['name'] ) {
 				$args = array(
 					'posts_per_page' => 500,
 					'post_type' => self::CPT_LINKS_PAGES,
@@ -164,8 +158,6 @@ class Module extends BaseModule {
 			return $output;
 		}, 10, 2 );
 
-
-
 		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 			unset( $posts_columns['date'] );
@@ -179,6 +171,7 @@ class Module extends BaseModule {
 
 			$document->admin_columns_content( $column_name );
 		}, 10, 2 );
+
 		add_action( 'admin_bar_menu', function ( $admin_bar ) {
 			$new_links_page_node = $admin_bar->get_node( 'new-e-link-pages' );
 

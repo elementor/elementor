@@ -54,13 +54,10 @@ class Links_Page extends PageBase {
 	public function filter_admin_row_actions( $actions ) {
 		unset( $actions['edit'] );
 		unset( $actions['inline hide-if-no-js'] );
-		$built_with_elementor = [];
+		$built_with_elementor = parent::filter_admin_row_actions( [] );
 
 		if ( 'publish' === $this->get_post()->post_status ) {
-			$built_with_elementor = parent::filter_admin_row_actions( [] );
-
-			$nonce = wp_create_nonce('set_as_homepage_' . $this->get_post()->ID);
-
+			$nonce = wp_create_nonce( 'set_as_homepage_' . $this->get_post()->ID );
 			$page_on_front = get_option( 'page_on_front' );
 
 			if ( $page_on_front == $this->get_post()->ID ) {
