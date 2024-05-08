@@ -42,7 +42,10 @@ module.exports = Marionette.Behavior.extend( {
 			afterGroupIndex = contextMenuGroups.length;
 		}
 
-		if ( 'preview' === this.getOption( 'context' ) ) {
+		if (
+			'preview' === this.getOption( 'context' ) &&
+			$e.components.get( 'document/elements' ).utils.allowAddingWidgets()
+		) {
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',
 				actions: [
