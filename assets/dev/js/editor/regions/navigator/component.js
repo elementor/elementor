@@ -20,7 +20,8 @@ export default class Component extends ComponentBase {
 		return {
 			toggle: {
 				keys: 'ctrl+i',
-				dependency: () => elementor.getPreviewContainer().isEditable(),
+				dependency: () => elementor.getPreviewContainer().isEditable() &&
+					$e.components.get( 'document/elements' ).utils.allowAddingWidgets(),
 			},
 		};
 	}
