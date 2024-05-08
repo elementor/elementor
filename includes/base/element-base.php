@@ -285,6 +285,16 @@ abstract class Element_Base extends Controls_Stack {
 		return true;
 	}
 
+	/**
+	 * Whether the element returns dynamic content.
+	 *
+	 * sed to determine whether to cache the element output of not.
+	 *
+	 * @since 3.22.0
+	 * @access protected
+	 *
+	 * @return bool Whether to cache the element output.
+	 */
 	protected function is_dynamic_content(): bool {
 		return true;
 	}

@@ -43,7 +43,7 @@ abstract class Document extends Controls_Stack {
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
-	const CACHE_META_KEY = '_e_element_cache';
+	const CACHE_META_KEY = '_elementor_element_cache';
 
 	/**
 	 * Document publish status.

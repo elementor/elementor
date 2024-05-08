@@ -289,9 +289,9 @@ export default class EditorBase extends Marionette.Application {
 
 				// TODO: Move this code to own file.
 				if ( this.widgetsCache[ widgetType ].controls?._element_cache ) {
-					let elementCacheDescription = __( 'The default behavior of this widget is:', 'elementor' ) + ' ';
+					let elementCacheDescription = __( 'The default behavior of this widget is:', 'elementor' );
 
-					elementCacheDescription += '<strong>';
+					elementCacheDescription += ' <strong>';
 					if ( this.widgetsCache[ widgetType ]?.is_dynamic_content ) {
 						elementCacheDescription += __( 'Dynamic', 'elementor' );
 					} else {
