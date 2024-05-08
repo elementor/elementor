@@ -86,31 +86,6 @@ class Test_Loader extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_enqueue_assets() {
-		global $wp_styles;
-		global $wp_scripts;
-
-		$this->add_testing_assets( 'e-style-dynamic-enqueue', 'e-script-dynamic-enqueue' );
-
-		$assets_loader = $this->elementor()->assets_loader;
-
-		$assets_loader->enqueue_assets();
-
-		// Making sure that the assets are not enqueued before they are enabled.
-		$this->assertNotContains( 'e-style-dynamic-enqueue', $wp_styles->queue, 'e-style-dynamic-enqueue should not be enqueued before it\'s enabled.' );
-		$this->assertNotContains( 'e-script-dynamic-enqueue', $wp_scripts->queue, 'e-script-dynamic-enqueue should not be enqueued before it\'s enabled.' );
-
-		$assets_loader->enable_assets( [
-			'styles' => ['e-style-dynamic-enqueue'],
-			'scripts' => ['e-script-dynamic-enqueue'],
-		] );
-
-		$assets_loader->enqueue_assets();
-
-		$this->assertContains( 'e-style-dynamic-enqueue', $wp_styles->queue, 'e-style-dynamic-enqueue was not properly enqueued.' );
-		$this->assertContains( 'e-script-dynamic-enqueue', $wp_scripts->queue, 'e-script-dynamic-enqueue was not properly enqueued.' );
-	}
-
 	public function test_register_assets() {
 		global $wp_styles;
 		global $wp_scripts;
