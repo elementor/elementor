@@ -1426,11 +1426,15 @@ JS;
 				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
-					'px' => [
+					'%' => [
 						'max' => 1,
 						'min' => 0.10,
 						'step' => 0.01,
 					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0.5,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
