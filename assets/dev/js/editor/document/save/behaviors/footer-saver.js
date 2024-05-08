@@ -72,7 +72,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	onRender() {
 		this.addTooltip();
 
-		const postStatus = elementor.config.document.status.value ?? '';
+		const postStatus = elementor?.config?.document?.status?.value ?? '';
 		this.activateCopyAndShareButton( postStatus, true );
 	}
 
