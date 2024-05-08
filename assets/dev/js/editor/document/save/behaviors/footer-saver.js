@@ -57,16 +57,20 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		if ( ! url ) {
 			return;
 		}
+
 		navigator.clipboard.writeText( url );
+
 		const $title = this.ui.copyAndShareLink.find( '.elementor-title' );
-		$title.text( 'Link copied!' );
+		$title.text( __( 'Link copied!', 'elementor' ) );
+
 		setTimeout( () => {
-			$title.text( 'Copy and share Link' );
+			$title.text( __( 'Copy and share Link', 'elementor' ) );
 		}, 2000 );
 	}
 
 	onRender() {
 		this.addTooltip();
+
 		const postStatus = elementor.config.document.status.value ?? '';
 		this.activateCopyAndShareButton( postStatus, true );
 	}
