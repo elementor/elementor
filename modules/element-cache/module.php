@@ -25,11 +25,12 @@ class Module extends BaseModule {
 	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'e_element_cache',
-			'title' => esc_html__( 'Element Cache', 'elementor' ),
+			'title' => esc_html__( 'Element Caching', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Enable Element Cache to improve the performance of your site by caching the rendered content of Elementor widgets.', 'elementor' ),
+			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
 			'default' => ExperimentsManager::STATE_INACTIVE,
+			'generator_tag' => true,
 		] );
 	}
 
