@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Conversion_Center_Menu_Item implements Admin_Menu_Item, Admin_Menu_Item_Has_Position {
 
-	const AFTER_ELEMENTOR = '58.7';
+	const AFTER_ELEMENTOR = 58.7;
 
 	public function is_visible() {
 		return true;

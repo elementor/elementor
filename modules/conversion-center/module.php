@@ -119,17 +119,9 @@ class Module extends BaseModule {
 				$menu_args = $this->get_menu_args();
 
 				wp_redirect( $menu_args['menu_slug'] );
-				wp_die();
+				exit;
 			}
 		} );
-
-		add_filter( 'wp_dropdown_pages', function ( $output, $parsed_args ) {
-			if ( isset( $parsed_args['name'] ) && 'page_on_front' === $parsed_args['name'] ) {
-				return $this->add_links_pages_to_homepage_dropdowm( $output, $parsed_args['selected'] );
-			}
-
-			return $output;
-		}, 10, 2 );
 
 		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
@@ -159,8 +151,9 @@ class Module extends BaseModule {
 	private function add_class_to_conversion_menu() {
 		global $menu;
 
-		if ( strpos( $menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][2] ?? '', 'e-link-pages' ) !== false ) {
-			$menu[ Conversion_Center_Menu_Item::AFTER_ELEMENTOR ][4] .= ' menu-item-elementor-conversions'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$position = (string) Conversion_Center_Menu_Item::AFTER_ELEMENTOR;
+		if ( strpos( $menu[ $position ][2] ?? '', 'e-link-pages' ) !== false ) {
+			$menu[ $position ][4] .= ' menu-item-elementor-conversions'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 	}
 
@@ -336,34 +329,6 @@ class Module extends BaseModule {
 			'menu_slug' => $menu_slug,
 			'function' => $function,
 		];
-	}
-
-	private function add_links_pages_to_homepage_dropdowm( $output, $selected ) {
-		$args = array(
-			'posts_per_page' => 500,
-			'post_type' => self::CPT_LINKS_PAGES,
-		);
-
-		$posts = get_posts( $args );
-
-		try {
-			$dom = new DOMDocument();
-			$dom->loadHTML( $output, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-			$select = $dom->getElementById( 'page_on_front' );
-			foreach ( $posts as $post ) {
-				$option = $dom->createElement( 'option', $post->post_title );
-				$option->setAttribute( 'value', $post->ID );
-				if ( (int) $selected === $post->ID ) {
-					$option->setAttribute( 'selected', 'selected' );
-				}
-
-				$select->appendChild( $option );
-			}
-
-			return $dom->saveHTML();
-		} catch ( \DOMException $e ) {
-			return $output;
-		}
 	}
 
 }
