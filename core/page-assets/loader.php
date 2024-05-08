@@ -79,6 +79,9 @@ class Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
+	/**
+	 * @deprecated 3.22.0
+	 */
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
