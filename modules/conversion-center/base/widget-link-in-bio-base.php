@@ -1436,6 +1436,9 @@ JS;
 					'unit' => '%',
 					'size' => 0.5,
 				],
+				'condition' => [
+					'background_border_background_overlay_group_background!' => '',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
 				],
