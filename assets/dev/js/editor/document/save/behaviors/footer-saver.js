@@ -45,6 +45,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 		if ( ! status ) {
 			return;
 		}
+
 		if ( 'publish' === postStatus ) {
 			this.ui.copyAndShareLink.removeClass( 'elementor-disabled' );
 		} else {
