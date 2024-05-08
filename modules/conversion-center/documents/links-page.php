@@ -25,6 +25,7 @@ class Links_Page extends PageBase {
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
 		$properties['show_copy_and_share'] = true;
+
 		return $properties;
 	}
 
