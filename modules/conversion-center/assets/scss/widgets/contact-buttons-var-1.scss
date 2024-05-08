@@ -1,17 +1,17 @@
 .e-contact-buttons-var-1 {
 	--e-contact-buttons-button-bg: #324A6D;
-    --e-contact-buttons-button-bg-hover: #1C2448;
+	--e-contact-buttons-button-bg-hover: #1C2448;
 	--e-contact-buttons-contact-button-icon: #ffffff;
-    --e-contact-buttons-contact-button-icon-hover: #ffffff;
-    --e-contact-buttons-contact-button-bg: #467FF7;
-    --e-contact-buttons-contact-button-bg-hover: #1C2448;
+	--e-contact-buttons-contact-button-icon-hover: #ffffff;
+	--e-contact-buttons-contact-button-bg: #467FF7;
+	--e-contact-buttons-contact-button-bg-hover: #1C2448;
 	--e-contact-buttons-top-bar-bg: #324A6D;
 	--e-contact-buttons-message-bubble-name: #1C2448;
-    --e-contact-buttons-message-bubble-body: #1C2448;
-    --e-contact-buttons-message-bubble-time: #1C2448;
-    --e-contact-buttons-message-bubble-bubble-bg: #C8D5DC;
-    --e-contact-buttons-message-bubble-chat-bg: #FFFFFF;
-    --e-contact-buttons-contact-text: #1C2448;
+	--e-contact-buttons-message-bubble-body: #1C2448;
+	--e-contact-buttons-message-bubble-time: #1C2448;
+	--e-contact-buttons-message-bubble-bubble-bg: #C8D5DC;
+	--e-contact-buttons-message-bubble-chat-bg: #FFFFFF;
+	--e-contact-buttons-contact-text: #1C2448;
 
 	.e-contact-buttons__contact {
 		align-items: center;
@@ -20,7 +20,11 @@
 		flex-direction: column;
 		gap: 20px;
 		justify-content: center;
-		padding: 20px;
+		padding: 0 20px 20px 20px;
+	}
+
+	.e-contact-buttons__message-bubble {
+		background-color: var(--e-contact-buttons-chat-box-bg);
 	}
 
 	.e-contact-buttons__contact-text {
@@ -41,10 +45,8 @@
 		background-color: var(--e-contact-buttons-contact-button-bg);
 		border-radius: 50px;
 		display: inline-flex;
-		height: 50px;
 		justify-content: center;
 		transition: $transition-hover;
-		width: 50px;
 
 		svg {
 			fill: var(--e-contact-buttons-contact-button-icon);
