@@ -9,6 +9,11 @@ export class FooterSaverActiveCopyAndShare extends HookUIAfter {
 		return 'footer-saver-activate-copy-share';
 	}
 
+	getConditions( args ) {
+		const document = elementor.documents.get( args.id );
+		return 'links-page' === document.config.type;
+	}
+
 	apply( args ) {
 		const { status, document } = args;
 
