@@ -65,6 +65,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 				],
 				'cta_section' => [
+					'cta_max' => 0,
 					'cta_has_image' => false,
 					'cta_repeater_defaults' => [
 						[
@@ -191,17 +192,19 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'cta_section_alert',
-			[
-				'type' => Controls_Manager::ALERT,
-				'alert_type' => 'info',
-				'content' => sprintf(
-					__( 'Add up to <b>%d</b> CTA links', 'elementor' ),
-					4
-				),
-			]
-		);
+		if ( ! empty( $config['content']['cta_section']['cta_max'] ) ) {
+			$this->add_control(
+				'cta_section_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => sprintf(
+						__( 'Add up to <b>%d</b> CTA links', 'elementor' ),
+						$config['content']['cta_section']['cta_max']
+					),
+				]
+			);
+		}
 
 		$repeater = new Repeater();
 
@@ -414,7 +417,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'cta_link',
 			[
 				'type' => Controls_Manager::REPEATER,
-				'max_items' => 4,
+				'max_items' => $config['content']['cta_section']['cta_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
 				'title_field' => '{{{ cta_link_text }}}',
 				'prevent_empty' => true,
@@ -1160,7 +1163,7 @@ JS;
 			$this->add_control(
 				'cta_links_divider_width',
 				[
-					'label' => esc_html__( 'Width', 'elementor' ) . ' (px)',
+					'label' => esc_html__( 'Weight', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'px' ],
 					'range' => [
