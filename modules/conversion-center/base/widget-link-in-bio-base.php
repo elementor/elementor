@@ -1379,6 +1379,12 @@ JS;
 			'background' => [
 				'default' => 'classic',
 			],
+			'size' => [
+				'default' => 'cover',
+			],
+			'position' => [
+				'default' => 'center center',
+			],
 		];
 
 		$config = static::get_configuration();
