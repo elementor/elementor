@@ -79,6 +79,12 @@ export default class Component extends ComponentBase {
 					( opt ) => !! opt,
 				);
 			},
+			allowAddingWidgets() {
+				return elementor.config.document.panel.allow_adding_widgets ?? true;
+			},
+			showNavigator() {
+				return elementor.config.document.panel.show_navigator ?? true;
+			},
 		};
 	}
 }
