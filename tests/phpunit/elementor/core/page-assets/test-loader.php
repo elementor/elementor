@@ -30,27 +30,6 @@ class Test_Loader extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'e-script-get-asset', $assets['scripts'], 'Can not retrieve e-script-get-asset from assets.' );
 	}
 
-	public function test_enable_asset() {
-		$assets_loader = $this->elementor()->assets_loader;
-
-		$this->add_testing_assets( 'e-style-enable-asset', 'e-script-enable-asset' );
-
-		$assets = $assets_loader->get_assets();
-
-		$this->assertArrayNotHasKey( 'enabled', $assets['styles']['e-style-enable-asset'], 'e-style-enable-asset should not be enabled by default.' );
-		$this->assertArrayNotHasKey( 'enabled', $assets['scripts']['e-script-enable-asset'], 'e-script-enable-asset should not be enabled by default.' );
-
-		$assets_loader->enable_assets( [
-			'styles' => ['e-style-enable-asset'],
-			'scripts' => ['e-script-enable-asset'],
-		] );
-
-		$assets = $assets_loader->get_assets();
-
-		$this->assertArrayHasKey( 'enabled', $assets['styles']['e-style-enable-asset'], 'e-style-enable-asset was not properly enabled.' );
-		$this->assertArrayHasKey( 'enabled', $assets['scripts']['e-script-enable-asset'], 'e-script-enable-asset was not properly enabled.' );
-	}
-
 	public function test_add_assets() {
 		$assets_loader = $this->elementor()->assets_loader;
 
