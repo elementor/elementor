@@ -68,20 +68,3 @@
 		}
 	}
 }
-
-#tab-experiments {
-
-	.form-table tr {
-		border-block-end: 1px solid #dcdcde;
-
-		&:last-child {
-			border-block-end: none;
-		}
-
-		.description {
-			font-size: 0.9em;
-			margin: 10px 0;
-			max-width: 820px;
-		}
-	}
-}

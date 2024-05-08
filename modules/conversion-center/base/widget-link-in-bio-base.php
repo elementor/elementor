@@ -1160,7 +1160,7 @@ JS;
 			$this->add_control(
 				'cta_links_divider_width',
 				[
-					'label' => esc_html__( 'Width', 'elementor' ) . ' (px)',
+					'label' => esc_html__( 'Weight', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ 'px' ],
 					'range' => [
