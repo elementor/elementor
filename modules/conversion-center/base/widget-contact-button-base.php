@@ -22,6 +22,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_platform' => true,
 					'has_icon' => false,
 				],
+				'message_bubble_section' => [
+					'has_typing_animation' => true,
+				],
 			],
 			'style' => [
 				'has_platform_colors' => true,
@@ -286,6 +289,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	private function add_message_bubble_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'message_bubble_section',
 			[
@@ -331,17 +336,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'chat_button_show_animation',
-			[
-				'label' => esc_html__( 'Display Typing Animation', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => 'yes',
-			]
-		);
+		if ( $config['content']['message_bubble_section']['has_typing_animation'] ) {
+			$this->add_control(
+				'chat_button_show_animation',
+				[
+					'label' => esc_html__( 'Display Typing Animation', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'Yes', 'elementor' ),
+					'label_off' => esc_html__( 'No', 'elementor' ),
+					'return_value' => 'yes',
+					'default' => 'yes',
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -670,9 +677,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-name: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_top_bar_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -701,9 +708,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-title: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_top_bar_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -732,9 +739,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-color: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_top_bar_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -755,9 +762,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-bg: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_top_bar_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -803,9 +810,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-name: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -834,9 +841,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-body: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -865,9 +872,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-time: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -876,6 +883,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'name' => 'style_bubble_time_typography',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__message-bubble-time',
+				'condition' => $this->get_platform_color_condition( [
+					'style_bubble_colors' => 'custom',
+				] ),
 			]
 		);
 
@@ -885,9 +895,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'label' => esc_html__( 'Bubble Background', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => false,
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -899,9 +909,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-bubble-bg: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -911,9 +921,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'label' => esc_html__( 'Chat Background', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => false,
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -925,9 +935,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-chat-bg: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
-				],
+				] ),
 			]
 		);
 

@@ -137,26 +137,9 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
-	protected function render_message_bubble(): void {
-		$message_bubble_name = $this->settings['message_bubble_name'] ?? '';
-		$message_bubble_body = $this->settings['message_bubble_body'] ?? '';
-		$has_message_bubble_name = ! empty( $message_bubble_name );
-		$has_message_bubble_body = ! empty( $message_bubble_body );
+	protected function render_message_bubble_typing_animation(): void {
 		$has_typing_animation = 'yes' === $this->settings['chat_button_show_animation'];
-		$time_format = $this->settings['chat_button_time_format'];
-		$powered_by_url = 'https://elementor.com/pro';
-
-		$message_bubble_classnames = 'e-contact-buttons__message-bubble';
-
-		if ( $has_typing_animation ) {
-			$message_bubble_classnames .= ' has-typing-animation';
-		}
-
-		$this->widget->add_render_attribute( 'message-bubble', [
-			'class' => $message_bubble_classnames,
-		] );
 		?>
-		<div <?php echo $this->widget->get_render_attribute_string( 'message-bubble' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( $has_typing_animation ) { ?>
 				<div class="e-contact-buttons__dots-container">
 					<span class="e-contact-buttons__dot e-contact-buttons__dot-1"></span>
@@ -164,6 +147,16 @@ abstract class Contact_Buttons_Render_Base {
 					<span class="e-contact-buttons__dot e-contact-buttons__dot-3"></span>
 				</div>
 			<?php } ?>
+		<?php
+	}
+
+	protected function render_message_bubble_container(): void {
+		$message_bubble_name = $this->settings['message_bubble_name'] ?? '';
+		$message_bubble_body = $this->settings['message_bubble_body'] ?? '';
+		$has_message_bubble_name = ! empty( $message_bubble_name );
+		$has_message_bubble_body = ! empty( $message_bubble_body );
+		$time_format = $this->settings['chat_button_time_format'];
+		?>
 			<div class="e-contact-buttons__bubble-container">
 				<div class="e-contact-buttons__bubble">
 					<?php if ( $has_message_bubble_name ) { ?>
@@ -175,11 +168,39 @@ abstract class Contact_Buttons_Render_Base {
 					<p class="e-contact-buttons__message-bubble-time" data-time-format="<?php echo esc_attr( $time_format ); ?>"></p>
 				</div>
 			</div>
+		<?php
+	}
+
+	protected function render_message_bubble_powered_by(): void {
+		$powered_by_url = 'https://elementor.com/pro';
+		?>
 			<div class="e-contact-buttons__powered-container">
 				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
 				</a>
 			</div>
+		<?php
+	}
+
+	protected function render_message_bubble(): void {
+		$message_bubble_classnames = 'e-contact-buttons__message-bubble';
+		$show_animation = $this->settings['chat_button_show_animation'] ?? false;
+		$has_typing_animation = $show_animation && 'yes' === $show_animation;
+
+		if ( $has_typing_animation ) {
+			$message_bubble_classnames .= ' has-typing-animation';
+		}
+
+		$this->widget->add_render_attribute( 'message-bubble', [
+			'class' => $message_bubble_classnames,
+		] );
+		?>
+		<div <?php echo $this->widget->get_render_attribute_string( 'message-bubble' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php
+				$this->render_message_bubble_typing_animation();
+				$this->render_message_bubble_container();
+				$this->render_message_bubble_powered_by();
+			?>
 		</div>
 		<?php
 	}
