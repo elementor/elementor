@@ -119,7 +119,7 @@ class Module extends BaseModule {
 				$menu_args = $this->get_menu_args();
 
 				wp_redirect( $menu_args['menu_slug'] );
-				exit;
+				wp_die();
 			}
 		} );
 
