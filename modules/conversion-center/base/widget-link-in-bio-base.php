@@ -18,8 +18,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	use Conversion_Center_Controls_Trait;
 
-	const TAB_ADVANCED = 'advanced-tab-links-in-bio';
-
 	public static function get_configuration() {
 		return [
 			'content' => [
@@ -160,6 +158,10 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	public function get_stack( $with_common_controls = true ): array {
 		return parent::get_stack( false );
+	}
+
+	protected function register_transform_section( $element_selector = '' ) {
+
 	}
 
 	protected function register_controls(): void {
@@ -707,7 +709,7 @@ JS;
 
 	protected function add_advanced_tab(): void {
 		Controls_Manager::add_tab(
-			static::TAB_ADVANCED,
+			Controls_Manager::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
@@ -715,7 +717,7 @@ JS;
 			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab' => static::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
@@ -822,7 +824,7 @@ JS;
 			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab' => static::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
@@ -861,9 +863,9 @@ JS;
 
 		$this->end_controls_section();
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, Controls_Manager::TAB_ADVANCED );
 
-		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, Controls_Manager::TAB_ADVANCED );
 	}
 
 	protected function add_bio_section(): void {
