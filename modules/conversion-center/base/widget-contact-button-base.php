@@ -56,13 +56,13 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							'contact_icon_platform' => Social_Network_Provider::VIBER,
 						],
 					],
-				]
+				],
 			],
 			'style' => [
 				'has_platform_colors' => true,
 				'message_bubble_section' => [
 					'has_chat_background' => true,
-				]
+				],
 			],
 		];
 	}
@@ -1164,7 +1164,7 @@ JS;
 					] ),
 				]
 			);
-	
+
 			$this->add_control(
 				'style_bubble_chat_color',
 				[

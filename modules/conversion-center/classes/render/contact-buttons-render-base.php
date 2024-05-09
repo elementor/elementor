@@ -27,7 +27,7 @@ abstract class Contact_Buttons_Render_Base {
 		$this->settings = $widget->get_settings_for_display();
 	}
 
-	protected function render_chat_button_icon( ): void {
+	protected function render_chat_button_icon(): void {
 		$platform = $this->settings['chat_button_platform'] ?? '';
 
 		$mapping = Social_Network_Provider::get_icon_mapping( $platform );
@@ -210,13 +210,13 @@ abstract class Contact_Buttons_Render_Base {
 		$hover_animation = $this->settings['style_contact_button_hover_animation'];
 		?>
 		<div class="e-contact-buttons__contact">
-			<?php if ( !empty ( $contact_cta_text ) ) { ?>
+			<?php if ( ! empty( $contact_cta_text ) ) { ?>
 				<p class="e-contact-buttons__contact-text"><?php echo esc_html( $contact_cta_text ); ?></p>
 			<?php } ?>
 			<div class="e-contact-buttons__contact-links">
 				<?php
 				foreach ( $contact_icons as $key => $icon ) {
-					
+
 					$link = [
 						'platform' => $icon['contact_icon_platform'],
 						'number' => $icon['contact_icon_number'] ?? '',
@@ -228,7 +228,7 @@ abstract class Contact_Buttons_Render_Base {
 						],
 						'viber_action' => $icon['contact_icon_viber_action'],
 					];
-			
+
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
 
 					$icon_classnames = 'e-contact-buttons__contact-icon-link has-size-' . $icons_size;
@@ -341,7 +341,7 @@ abstract class Contact_Buttons_Render_Base {
 				$formatted_link = ! empty( $link['number'] ) ? 'https://wa.me/' . $link['number'] : '';
 				break;
 			case Social_Network_Provider::VIBER:
-				$formatted_link = Social_Network_Provider::build_viber_link( $link['viber_action'], $link['number']);
+				$formatted_link = Social_Network_Provider::build_viber_link( $link['viber_action'], $link['number'] );
 				break;
 			case Social_Network_Provider::SKYPE:
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
@@ -360,7 +360,6 @@ abstract class Contact_Buttons_Render_Base {
 		$alignment_position = $this->settings['advanced_horizontal_position'];
 		$has_animations = ! empty( $this->settings['style_chat_box_exit_animation'] ) || ! empty( $this->settings['style_chat_box_entrance_animation'] );
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
-
 
 		$icon_name_mapping = Social_Network_Provider::get_name_mapping( $platform );
 
