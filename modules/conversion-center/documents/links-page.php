@@ -61,9 +61,11 @@ class Links_Page extends PageBase {
 			$actions = $this->add_set_as_homepage( $actions );
 		}
 
-		$delete = $actions['trash'];
-		unset( $actions['trash'] );
-		$actions['trash'] = $delete;
+		if ( isset( $actions['trash'] ) ) {
+			$delete = $actions['trash'];
+			unset( $actions['trash'] );
+			$actions['trash'] = $delete;
+		}
 
 		return $built_with_elementor + $actions;
 	}
