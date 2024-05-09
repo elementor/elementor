@@ -10,7 +10,8 @@ export class FooterSaverActiveCopyAndShare extends HookUIAfter {
 	}
 
 	getConditions( args ) {
-		const document = elementor.documents.get( args.id );
+		const { document } = args;
+
 		return 'links-page' === document.config.type;
 	}
 
