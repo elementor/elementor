@@ -233,16 +233,14 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'label' => esc_html__( 'Icon', 'elementor' ),
 					'type' => Controls_Manager::ICONS,
 					'default' => [
-						// TODO: check why it's pulling from solid instead of regular
-						'value' => 'fa fa-comment-dots',
+						'value' => 'far fa-comment-dots',
 						'library' => 'fa-regular',
 					],
-					// TODO: check why some of these don't work
 					'recommended' => [
 						'fa-regular' => [
-							'message',
 							'comment',
 							'comment-dots',
+							'comment-alt',
 						],
 						'fa-solid' => [
 							'ellipsis-v',
