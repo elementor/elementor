@@ -1,4 +1,8 @@
 // Shared button style.
+.elementor-widget-button {
+	--button-icon-transition: all 0.3s;
+}
+
 .elementor-button {
 	display: inline-block;
 	line-height: 1;
@@ -9,7 +13,7 @@
 	color: #fff;
 	fill: #fff;
 	text-align: center;
-	transition: $transition-hover;
+	transition: var(--button-icon-transition);
 
 	&:hover,
 	&:focus,
@@ -29,12 +33,14 @@
 		i {
 			color: var(--button-icon-color, inherit);
 		    font-size: var(--button-icon-size);
+			transition: var(--button-icon-transition);
 		}
 
 		svg {
 			height: auto;
 			width: var(--button-icon-size, 1em);
 			fill: var(--button-icon-color, var(--button-title-color));
+			transition: var(--button-icon-transition);
 		}
 
 		.e-font-icon-svg {
@@ -95,16 +101,15 @@
 	}
 
 	&:hover {
+
 		.elementor-button-icon {
 
 			i {
 				color: var(--button-icon-color-hover);
-				transition: all 0.3s;
 			}
 
 			svg {
 				fill: var(--button-icon-color-hover);
-				transition: all 0.3s;
 			}
 		}
 	}

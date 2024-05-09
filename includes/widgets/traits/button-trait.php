@@ -373,7 +373,7 @@ trait Button_Trait {
 					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'transition-duration: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--button-icon-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
