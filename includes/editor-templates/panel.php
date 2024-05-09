@@ -146,6 +146,12 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 					<i class="elementor-icon eicon-folder" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo esc_html__( 'Save as Template', 'elementor' ); ?></span>
 				</div>
+				<# if ( $e.components.get( 'document/elements' ).utils.showCopyAndShareButton() ) { #>
+				<div id="elementor-panel-footer-sub-menu-item-copy-share-link" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon eicon-link" aria-hidden="true"></i>
+					<span class="elementor-title"><?php echo esc_html__( 'Copy and Share Link', 'elementor' ); ?></span>
+				</div>
+				<# } #>
 			</div>
 		</div>
 	</div>
