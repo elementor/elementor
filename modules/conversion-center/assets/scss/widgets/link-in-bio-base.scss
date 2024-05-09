@@ -86,31 +86,27 @@
 		}
 	}
 
-	&.-is-full-height-mobile {
+	&.is-full-height-mobile {
 		@include full-height($screen-mobile-max);
 	}
 
-	&.-is-full-height-mobile_extra {
+	&.is-full-height-mobile_extra {
 		@include full-height($screen-mobile-extra-max);
 	}
 
-	&.-is-full-height-tablet {
+	&.is-full-height-tablet {
 		@include full-height($screen-tablet-max);
 	}
 
-	&.-is-full-height-tablet_extra {
+	&.is-full-height-tablet_extra {
 		@include full-height($screen-tablet-extra-max);
 	}
 
-	&.-is-full-height-laptop {
+	&.is-full-height-laptop {
 		@include full-height($screen-laptop-max);
 	}
 
-	&.-is-full-height-desktop {
-		@include full-height($screen-desktop-max);
-	}
-
-	&.-is-full-height-widescreen {
+	&.is-full-height-widescreen {
 		@include full-height(99999px);
 	}
 
