@@ -553,7 +553,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$repeater->add_control(
 			'icon_mail',
 			[
-				'label' => esc_html__( 'Mail', 'elementor' ),
+				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 				'dynamic' => [
@@ -1020,7 +1020,7 @@ JS;
 		$this->start_controls_section(
 			'cta_links_section_style',
 			[
-				'label' => esc_html__( 'CTA Links', 'elementor' ),
+				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -1382,6 +1382,12 @@ JS;
 			'background' => [
 				'default' => 'classic',
 			],
+			'size' => [
+				'default' => 'cover',
+			],
+			'position' => [
+				'default' => 'center center',
+			],
 		];
 
 		$config = static::get_configuration();
@@ -1518,10 +1524,16 @@ JS;
 			[
 				'label' => esc_html__( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 150,
+					],
+				],
 				'default' => [
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'condition' => $condition,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
