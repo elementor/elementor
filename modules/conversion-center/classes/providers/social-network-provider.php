@@ -256,4 +256,15 @@ class Social_Network_Provider {
 
 		return $link;
 	}
+
+
+	public static function build_viber_link( string $action, string $number ) {
+		if ( empty( $number ) ) {
+			return '';
+		}
+
+		return add_query_arg( [
+			'number' => urlencode( $number ),
+		], 'viber://' . $action );
+	}
 }
