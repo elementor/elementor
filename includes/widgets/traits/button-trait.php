@@ -283,6 +283,7 @@ trait Button_Trait {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
+					'{{WRAPPER}}' => '--button-title-color: {{VALUE}};',
 				],
 				'condition' => $args['section_condition'],
 			]
