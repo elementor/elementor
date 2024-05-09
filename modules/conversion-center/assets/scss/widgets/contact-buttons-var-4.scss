@@ -5,7 +5,8 @@
 	--e-contact-buttons-button-bg-hover: #324A6D;
 	--e-contact-buttons-close-button-color: #1C2448;
 
-	.e-contact-buttons__chat-button {
+	.e-contact-buttons__chat-button,
+	.e-contact-buttons__contact-icon-link {
 
 		&.has-size-small {
 
@@ -37,8 +38,9 @@
 	}
 
 	.e-contact-buttons__close-button {
+		background-color: $contact-buttons-default-bg-color;
 		border-radius: 50%;
-		box-shadow: 0 3px 3px 0 rgba(0,0,0,0.25);
+		box-shadow: #{$contact-buttons-box-shadow};
 		inset-inline-end: unset;
 		inset-inline-start: unset;
 		position: relative;
@@ -92,8 +94,6 @@
 
 		svg {
 			fill: var(--e-contact-buttons-contact-button-icon);
-			height: 28px;
-			width: 28px;
 		}
 
 		&:hover,
