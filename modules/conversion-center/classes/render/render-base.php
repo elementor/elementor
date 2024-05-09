@@ -115,7 +115,7 @@ abstract class Render_Base {
 
 				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $cta['cta_link_url']['custom_attributes'] ?? '' ) );
 
-				foreach ($url_combined_attrs as $attr_key => $attr_value) {
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [
 						$attr_key => $attr_value,
 					] );
