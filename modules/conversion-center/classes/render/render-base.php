@@ -139,14 +139,17 @@ abstract class Render_Base {
 			return;
 		}
 
+		$this->widget->add_render_attribute( 'icons', [
+			'class' => 'e-link-in-bio__icons has-size-' . $icons_props_size,
+		] );
 		?>
-		<div class="e-link-in-bio__icons">
+		<div <?php echo $this->widget->get_render_attribute_string( 'icons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $icons_value as $key => $icon ) {
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
 
-				$icon_class_names = 'e-link-in-bio__icon has-size-' . $icons_props_size;
+				$icon_class_names = 'e-link-in-bio__icon is-size-' . $icons_props_size;
 
 				if ( $icons_props_show_border ) {
 					$icon_class_names .= ' has-border';
