@@ -1149,7 +1149,9 @@ class NestedTabs extends Widget_Nested_Base {
 		};
 
 		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
-		$children[ $index ]->print_element();
+		if ( isset( $children[ $index ] ) ) {
+			$children[ $index ]->print_element();
+		}
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 
@@ -1282,10 +1284,6 @@ class NestedTabs extends Widget_Nested_Base {
 			<span {{{ view.getRenderAttributeString( 'tab-title-container' ) }}}>{{{ data.tab_title }}}</span>
 		</button>
 		<?php
-	}
-
-	protected function supports_atomic_repeaters() {
-		return true;
 	}
 
 	protected function content_template() {

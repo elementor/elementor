@@ -23,7 +23,7 @@ export default function HelloTheme() {
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText ),
 		navigate = useNavigate(),
 		pageId = 'hello',
-		nextStep = 'siteName',
+		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		goToNextScreen = () => navigate( 'onboarding/' + nextStep );
 
 	/**
@@ -269,9 +269,9 @@ export default function HelloTheme() {
 				<p>
 					{ __( 'Hello is Elementor\'s official blank canvas theme optimized to build your website exactly the way you want.', 'elementor' ) }
 				</p>
-				<p>
+				{ ! elementorAppConfig.onboarding.experiment && <p>
 					{ __( 'Here\'s why:', 'elementor' ) }
-				</p>
+				</p> }
 				<ul className="e-onboarding__feature-list">
 					<li>{ __( 'Light-weight and fast loading', 'elementor' ) }</li>
 					<li>{ __( 'Great for SEO', 'elementor' ) }</li>

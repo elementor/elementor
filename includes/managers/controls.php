@@ -1179,12 +1179,12 @@ class Controls_Manager {
 	 *
 	 * @param Controls_Stack $controls_stack.
 	 */
-	public function add_custom_attributes_controls( Controls_Stack $controls_stack ) {
+	public function add_custom_attributes_controls( Controls_Stack $controls_stack, string $tab = self::TAB_ADVANCED ) {
 		$controls_stack->start_controls_section(
 			'section_custom_attributes_pro',
 			[
 				'label' => esc_html__( 'Attributes', 'elementor' ),
-				'tab' => self::TAB_ADVANCED,
+				'tab' => $tab,
 			]
 		);
 

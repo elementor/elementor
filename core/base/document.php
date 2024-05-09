@@ -161,6 +161,10 @@ abstract class Document extends Controls_Stack {
 			'show_in_finder' => true,
 			'show_on_admin_bar' => true,
 			'support_kit' => false,
+			'show_navigator' => true,
+			'allow_adding_widgets' => true,
+			'support_page_layout' => true,
+			'show_copy_and_share' => false,
 		];
 	}
 
@@ -190,6 +194,9 @@ abstract class Document extends Controls_Stack {
 					static::get_title()
 				),
 			],
+			'show_navigator' => static::get_property( 'show_navigator' ),
+			'allow_adding_widgets' => static::get_property( 'allow_adding_widgets' ),
+			'show_copy_and_share' => static::get_property( 'show_copy_and_share' ),
 		];
 	}
 

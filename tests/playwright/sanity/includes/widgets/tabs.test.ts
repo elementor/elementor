@@ -11,7 +11,7 @@ test.describe( 'Tabs widget tests', () => {
 			container: 'active',
 			'nested-elements': 'active',
 		} );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		// Act.
 		await editor.addWidget( 'tabs' );
