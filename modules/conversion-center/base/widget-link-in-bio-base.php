@@ -553,7 +553,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$repeater->add_control(
 			'icon_mail',
 			[
-				'label' => esc_html__( 'Mail', 'elementor' ),
+				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 				'dynamic' => [
@@ -1429,11 +1429,18 @@ JS;
 				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
-					'px' => [
+					'%' => [
 						'max' => 1,
 						'min' => 0.10,
 						'step' => 0.01,
 					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0.5,
+				],
+				'condition' => [
+					'background_border_background_overlay_group_background!' => '',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
