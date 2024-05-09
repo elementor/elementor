@@ -146,7 +146,7 @@ export default class AiBehavior extends Marionette.Behavior {
 			return;
 		}
 
-		if ( ! shouldShowPromotionIntroduction() ) {
+		if ( ! shouldShowPromotionIntroduction( sessionStorage ) ) {
 			return;
 		}
 		setTimeout( () => {
