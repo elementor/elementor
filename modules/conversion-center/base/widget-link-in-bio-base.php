@@ -1518,10 +1518,16 @@ JS;
 			[
 				'label' => esc_html__( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 150,
+					],
+				],
 				'default' => [
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'condition' => $condition,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
