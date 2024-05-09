@@ -15,6 +15,20 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-contact-buttons';
 
+	public static function get_configuration() {
+		return [
+			'content' => [
+				'chat_button_section' => [
+					'has_platform' => true,
+					'has_icon' => false,
+				],
+			],
+			'style' => [
+				'has_platform_colors' => true,
+			],
+		];
+	}
+
 	public function get_icon(): string {
 		return 'eicon-commenting-o';
 	}
@@ -33,57 +47,14 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	protected function register_controls(): void {
 
-		// Controls
-		$this->add_chat_button_section();
+		$this->add_content_tab();
 
-		$this->add_top_bar_section();
+		$this->add_style_tab();
 
-		$this->add_message_bubble_section();
-
-		$this->add_send_button_section();
-
-		// Styles
-		$this->add_style_chat_button_section();
-
-		$this->add_style_top_bar_section();
-
-		$this->add_style_message_bubble_section();
-
-		$this->add_style_send_button_section();
-
-		$this->add_style_chat_box_section();
-
-		// Advanced
 		$this->add_advanced_tab();
 	}
 
-	private function add_chat_button_section(): void {
-		$this->start_controls_section(
-			'chat_button_section',
-			[
-				'label' => esc_html__( 'Chat Button', 'elementor' ),
-				'tab' => Controls_Manager::TAB_CONTENT,
-			]
-		);
-
-		$this->add_control(
-			'chat_button_platform',
-			[
-				'label' => esc_html__( 'Platform', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => Social_Network_Provider::WHATSAPP,
-				'options' => Social_Network_Provider::get_social_networks_text(
-					[
-						Social_Network_Provider::EMAIL,
-						Social_Network_Provider::SMS,
-						Social_Network_Provider::WHATSAPP,
-						Social_Network_Provider::SKYPE,
-						Social_Network_Provider::MESSENGER,
-						Social_Network_Provider::VIBER,
-					]
-				),
-			]
-		);
+	private function social_media_controls(): void {
 
 		$this->add_control(
 			'chat_button_mail',
@@ -180,6 +151,69 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
+	}
+
+	private function add_chat_button_section(): void {
+		$config = static::get_configuration();
+
+		$this->start_controls_section(
+			'chat_button_section',
+			[
+				'label' => esc_html__( 'Chat Button', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		if ( $config['content']['chat_button_section']['has_platform'] ) {
+
+			$this->add_control(
+				'chat_button_platform',
+				[
+					'label' => esc_html__( 'Platform', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => Social_Network_Provider::WHATSAPP,
+					'options' => Social_Network_Provider::get_social_networks_text(
+						[
+							Social_Network_Provider::EMAIL,
+							Social_Network_Provider::SMS,
+							Social_Network_Provider::WHATSAPP,
+							Social_Network_Provider::SKYPE,
+							Social_Network_Provider::MESSENGER,
+							Social_Network_Provider::VIBER,
+						]
+					),
+				]
+			);
+
+			$this->social_media_controls();
+		}
+
+		if ( $config['content']['chat_button_section']['has_icon'] ) {
+			$this->add_control(
+				'chat_button_icon',
+				[
+					'label' => esc_html__( 'Icon', 'elementor' ),
+					'type' => Controls_Manager::ICONS,
+					'default' => [
+						// TODO: check why it's pulling from solid instead of regular
+						'value' => 'fa fa-comment-dots',
+						'library' => 'fa-regular',
+					],
+					// TODO: check why some of these don't work
+					'recommended' => [
+						'fa-solid' => [
+							'ellipsis-vertical',
+							'message',
+						],
+						'fa-regular' => [
+							'comment-dots',
+							'comments',
+							'message',
+						],
+					],
+				]
+			);
+		}
 
 		$this->add_control(
 			'chat_button_show_dot',
@@ -334,7 +368,29 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function add_content_tab(): void {
+		$this->add_chat_button_section();
+
+		$this->add_top_bar_section();
+
+		$this->add_message_bubble_section();
+
+		$this->add_send_button_section();
+	}
+
+	private function get_platform_color_condition( $condition ) {
+		$config = static::get_configuration();
+
+		if ( true == $config['style']['has_platform_colors'] ) {
+			return $condition;
+		}
+
+		return null;
+	}
+
 	private function add_style_chat_button_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'style_chat_button',
 			[
@@ -368,18 +424,20 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'style_button_color_select',
-			[
-				'label' => esc_html__( 'Colors', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['style']['has_platform_colors'] ) {
+			$this->add_control(
+				'style_button_color_select',
+				[
+					'label' => esc_html__( 'Colors', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => [
+						'default' => esc_html__( 'Default', 'elementor' ),
+						'custom' => esc_html__( 'Custom', 'elementor' ),
+					],
+				]
+			);
+		}
 
 		$this->add_control(
 			'style_button_color_icon',
@@ -389,9 +447,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_button_color_select' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -403,9 +461,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_button_color_select' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -439,9 +497,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon-hover: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_button_color_select_hover' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -453,9 +511,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg-hover: {{VALUE}}',
 				],
-				'condition' => [
+				'condition' => $this->get_platform_color_condition( [
 					'style_button_color_select_hover' => 'custom',
-				],
+				] ),
 			]
 		);
 
@@ -1133,6 +1191,18 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function add_style_tab(): void {
+		$this->add_style_chat_button_section();
+
+		$this->add_style_top_bar_section();
+
+		$this->add_style_message_bubble_section();
+
+		$this->add_style_send_button_section();
+
+		$this->add_style_chat_box_section();
+	}
+
 	private function add_advanced_tab(): void {
 		Controls_Manager::add_tab(
 			static::TAB_ADVANCED,
@@ -1151,7 +1221,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'advanced_horizontal_position',
 			[
 				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
