@@ -1601,11 +1601,6 @@ JS;
 	}
 
 	private function add_advanced_tab(): void {
-		Controls_Manager::add_tab(
-			Controls_Manager::TAB_ADVANCED,
-			esc_html__( 'Advanced', 'elementor' )
-		);
-
 		$this->start_controls_section(
 			'advanced_layout_section',
 			[
