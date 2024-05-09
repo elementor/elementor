@@ -6,7 +6,6 @@ describe( 'Promotion Introduction Session Validator', () => {
 	let mockSession;
 
 	beforeEach( async () => {
-		// Create a mock session object with getItem and setItem methods
 		mockSession = {
 			getItem: jest.fn(),
 			setItem: jest.fn(),
