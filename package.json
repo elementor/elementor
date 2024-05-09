@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "3.22.0",
+	"version": "3.23.0",
 	"last_beta_version": "3.12.0-beta3",
 	"last_cloud_version": "3.13.0-cloud2",
 	"last_dev_version": "3.9.0-dev2",
@@ -135,7 +135,7 @@
 		"@lodder/grunt-postcss": "^3.1.1",
 		"@reach/router": "1.3.4",
 		"@reduxjs/toolkit": "^1.8.3",
-		"@wordpress/components": "^25.11.0",
+		"@wordpress/components": "^27.4.0",
 		"@wordpress/dom-ready": "^3.45.0",
 		"@wordpress/element": "^5.22.0",
 		"acorn": "^8.7.1",

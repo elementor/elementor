@@ -49,6 +49,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	registerAiLayoutBehavior( behaviors ) {
 		behaviors.ai = {
 			behaviorClass: AiLayoutBehavior,
+			context: { documentType: window.elementor.documents.getCurrent().config.type },
 		};
 
 		return behaviors;
