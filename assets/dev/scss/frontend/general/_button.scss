@@ -29,6 +29,7 @@
 	}
 
 	&-icon {
+		display: flex;
 
 		i {
 			color: var(--button-icon-color, inherit);
@@ -37,14 +38,10 @@
 		}
 
 		svg {
-			height: auto;
-			width: var(--button-icon-size, 1em);
-			fill: var(--button-icon-color, var(--button-title-color));
+			height: var(--button-icon-size, 1em);
+			width: auto;
+			fill: var(--button-icon-color, inherit);
 			transition: var(--button-icon-transition);
-		}
-
-		.e-font-icon-svg {
-			height: 1em;
 		}
 	}
 

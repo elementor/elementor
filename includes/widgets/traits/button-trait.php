@@ -132,7 +132,7 @@ trait Button_Trait {
 			]
 		);
 
-		
+
 		$this->add_control(
 			'button_css_id',
 			[
@@ -283,7 +283,6 @@ trait Button_Trait {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
-					'{{WRAPPER}}' => '--button-title-color: {{VALUE}};',
 				],
 				'condition' => $args['section_condition'],
 			]
@@ -457,7 +456,7 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				
+
 				'options' => [
 					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
@@ -495,8 +494,8 @@ trait Button_Trait {
 			]
 		);
 
-		$this->add_responsive_control( 
-			'icon_size', 
+		$this->add_responsive_control(
+			'icon_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -547,11 +546,11 @@ trait Button_Trait {
 			]
 		);
 
-		
+
 		$this->start_controls_tabs( 'icons_button_style', [
 			'condition' => $args['section_condition'],
 		] );
-				
+
 		$this->start_controls_tab(
 			'icon_button_normal',
 				[
@@ -559,7 +558,7 @@ trait Button_Trait {
 					'condition' => $args['section_condition'],
 				]
 					);
-					
+
 				$this->add_control( 'icon_color', [
 						'label' => esc_html__( 'Color', 'elementor' ),
 						'type' => Controls_Manager::COLOR,
@@ -567,10 +566,10 @@ trait Button_Trait {
 							'{{WRAPPER}}' => '--button-icon-color: {{VALUE}};',
 						],
 					] );
-						
+
 				$this->end_controls_tab();
-						
-				
+
+
 				$this->start_controls_tab(
 						'icon_button_hover',
 						[
@@ -586,9 +585,9 @@ trait Button_Trait {
 						'{{WRAPPER}}' => '--button-icon-color-hover: {{VALUE}};',
 					],
 					] );
-					
+
 				$this->end_controls_tab();
-					
+
 
 		$this->end_controls_tabs();
 
