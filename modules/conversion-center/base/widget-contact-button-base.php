@@ -239,14 +239,13 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					],
 					// TODO: check why some of these don't work
 					'recommended' => [
-						'fa-solid' => [
-							'ellipsis-vertical',
-							'message',
-						],
 						'fa-regular' => [
-							'comment-dots',
-							'comments',
 							'message',
+							'comment',
+							'comment-dots',
+						],
+						'fa-solid' => [
+							'ellipsis-v',
 						],
 					],
 				]
