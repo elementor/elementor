@@ -440,10 +440,10 @@ trait Button_Trait {
 
 	protected function register_icon_style_controls( $args = [] ) {
 		$default_args = [
-				'section_condition' => [],
-				'alignment_default' => '',
-				'alignment_control_prefix_class' => 'elementor%s-align-',
-				'content_alignment_default' => '',
+			'section_condition' => [],
+			'alignment_default' => '',
+			'alignment_control_prefix_class' => 'elementor%s-align-',
+			'content_alignment_default' => '',
 		];
 
 		$args = wp_parse_args( $args, $default_args );
