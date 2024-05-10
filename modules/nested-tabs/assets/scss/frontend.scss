@@ -170,7 +170,8 @@
 	.e-n-tab {
 
 		&-title {
-			all: unset;
+			background-color: initial;
+			border-style: none;
 			user-select: none;
 			display: flex;
 			align-items: var(--n-tabs-title-align-items-toggle, var(--n-tabs-title-align-items));
