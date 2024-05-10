@@ -413,6 +413,8 @@ export default class NestedTabs extends Base {
 	updateListeners( view ) {
 		this.elements.$tabContents = view.find( this.getSettings( 'selectors.tabContent' ) );
 		this.elements.$tabTitles = view.find( this.getSettings( 'selectors.tabTitle' ) );
+
+		this.elements.$tabTitles.on( this.getTabEvents() );
 	}
 
 	updateIndexValues() {
