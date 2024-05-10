@@ -74,6 +74,8 @@ abstract class Render_Base {
 					( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) ) &&
 					'button' === $ctas_props_type;
 
+				// Manage Link class variations
+
 				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
 				if ( 'button' === $ctas_props_type && $ctas_props_show_border ) {
@@ -88,17 +90,34 @@ abstract class Render_Base {
 					$ctas_classnames .= ' has-corners-' . $ctas_props_corners;
 				}
 
-				$this->widget->add_render_attribute( 'cta-' . $key, [
+				// Manage Link attributes : Start
+
+				$url_attrs = [
 					'class' => $ctas_classnames,
 					'href' => esc_url( $formatted_link ),
-				] );
+				];
 
 				if (
 					Social_Network_Provider::FILE_DOWNLOAD === $cta['cta_link_type'] ||
 					Social_Network_Provider::VCF === $cta['cta_link_type']
 				) {
+					$url_attrs['download'] = 'download';
+				}
+
+				if ( ! empty( $cta['cta_link_url']['is_external'] ) ) {
+					$url_attrs['target'] = '_blank';
+					$url_attrs['rel'] = 'noopener ';
+				}
+
+				if ( ! empty( $cta['cta_link_url']['nofollow'] ) ) {
+					$url_attrs['rel'] .= 'nofollow ';
+				}
+
+				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $cta['cta_link_url']['custom_attributes'] ?? '' ) );
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [
-						'download' => 'download',
+						$attr_key => $attr_value,
 					] );
 				}
 				?>
