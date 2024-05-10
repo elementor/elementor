@@ -20,14 +20,28 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return [
 			'content' => [
 				'chat_button_section' => [
+					'section_name' => esc_html__( 'Chat Button', 'elementor' ),
 					'has_platform' => true,
 					'has_icon' => false,
+					'icon_default' => [
+						'value' => 'far fa-comment-dots',
+						'library' => 'fa-regular',
+					],
+					'has_notification_dot' => true,
 				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
 				],
 				'contact_section' => [
-					'has_text' => false,
+					'section_name' => esc_html__( 'Contact', 'elementor' ),
+					'has_icon_text' => false,
+					'has_cta_text' => true,
+					'has_buttons_heading' => true,
+					'has_buttons_size' => true,
+					'has_box_shadow' => false,
+					'has_buttons_spacing' => false,
+					'has_hover_animation' => true,
+					'icon_text_label' => esc_html__( 'Text', 'elementor' ),
 					'platform' => [
 						'group-1' => [
 							Social_Network_Provider::EMAIL,
@@ -197,7 +211,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->start_controls_section(
 			'chat_button_section',
 			[
-				'label' => esc_html__( 'Chat Button', 'elementor' ),
+				'label' => $config['content']['chat_button_section']['section_name'],
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -232,10 +246,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				[
 					'label' => esc_html__( 'Icon', 'elementor' ),
 					'type' => Controls_Manager::ICONS,
-					'default' => [
-						'value' => 'far fa-comment-dots',
-						'library' => 'fa-regular',
-					],
+					'default' => $config['content']['chat_button_section']['icon_default'],
 					'recommended' => [
 						'fa-regular' => [
 							'comment',
@@ -250,17 +261,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			);
 		}
 
-		$this->add_control(
-			'chat_button_show_dot',
-			[
-				'label' => esc_html__( 'Display Notification Dot', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => 'yes',
-			]
-		);
+		if ( $config['content']['chat_button_section']['has_notification_dot'] ) {
+			$this->add_control(
+				'chat_button_show_dot',
+				[
+					'label' => esc_html__( 'Display Notification Dot', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'Yes', 'elementor' ),
+					'label_off' => esc_html__( 'No', 'elementor' ),
+					'return_value' => 'yes',
+					'default' => 'yes',
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -391,20 +404,22 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->start_controls_section(
 			'contact_section',
 			[
-				'label' => esc_html__( 'Contact', 'elementor' ),
+				'label' => $config['content']['contact_section']['section_name'],
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
-		$this->add_control(
-			'contact_cta_text',
-			[
-				'label' => esc_html__( 'Call to Action Text', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Start conversation:', 'elementor' ),
-				'placeholder' => esc_html__( 'Type your text here', 'elementor' ),
-			]
-		);
+		if ( $config['content']['contact_section']['has_cta_text'] ) {
+			$this->add_control(
+				'contact_cta_text',
+				[
+					'label' => esc_html__( 'Call to Action Text', 'elementor' ),
+					'type' => Controls_Manager::TEXT,
+					'default' => esc_html__( 'Start conversation:', 'elementor' ),
+					'placeholder' => esc_html__( 'Type your text here', 'elementor' ),
+				]
+			);
+		}
 
 		if ( $config['content']['contact_section']['platform']['limit'] ) {
 			$this->add_control(
@@ -434,11 +449,11 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			],
 		);
 
-		if ( $config['content']['contact_section']['has_text'] ) {
+		if ( $config['content']['contact_section']['has_icon_text'] ) {
 			$repeater->add_control(
 				'contact_icon_text',
 				[
-					'label' => esc_html__( 'Text', 'elementor' ),
+					'label' => $config['content']['contact_section']['icon_text_label'],
 					'type' => Controls_Manager::TEXT,
 					'dynamic' => [
 						'active' => true,
@@ -637,7 +652,7 @@ JS;
 		$this->start_controls_section(
 			'style_chat_button',
 			[
-				'label' => esc_html__( 'Chat Button', 'elementor' ),
+				'label' => $config['content']['chat_button_section']['section_name'],
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -647,7 +662,7 @@ JS;
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'medium',
+				'default' => 'small',
 				'options' => [
 					'small' => esc_html__( 'Small', 'elementor' ),
 					'medium' => esc_html__( 'Medium', 'elementor' ),
@@ -1184,70 +1199,78 @@ JS;
 	}
 
 	protected function add_style_contact_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'style_contact_section',
 			[
-				'label' => esc_html__( 'Contact', 'elementor' ),
+				'label' => $config['content']['contact_section']['section_name'],
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_control(
-			'style_contact_text_heading',
-			[
-				'label' => esc_html__( 'Call to Action Text', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => false,
-				'condition' => $this->get_platform_color_condition( [
-					'style_bubble_colors' => 'custom',
-				] ),
-			]
-		);
+		if ( $config['content']['contact_section']['has_cta_text'] ) {
+			$this->add_control(
+				'style_contact_text_heading',
+				[
+					'label' => esc_html__( 'Call to Action Text', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => false,
+					'condition' => $this->get_platform_color_condition( [
+						'style_bubble_colors' => 'custom',
+					] ),
+				]
+			);
 
-		$this->add_control(
-			'style_contact_text_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-text: {{VALUE}}',
-				],
-			]
-		);
+			$this->add_control(
+				'style_contact_text_color',
+				[
+					'label' => esc_html__( 'Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-text: {{VALUE}}',
+					],
+				]
+			);
 
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'style_contact_text_typography',
-				'selector' => '{{WRAPPER}} .e-contact-buttons__contact-text',
-			]
-		);
+			$this->add_group_control(
+				Group_Control_Typography::get_type(),
+				[
+					'name' => 'style_contact_text_typography',
+					'selector' => '{{WRAPPER}} .e-contact-buttons__contact-text',
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_contact_buttons_heading',
-			[
-				'label' => esc_html__( 'Buttons', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => false,
-				'condition' => $this->get_platform_color_condition( [
-					'style_bubble_colors' => 'custom',
-				] ),
-			]
-		);
+		if ( $config['content']['contact_section']['has_buttons_heading'] ) {
+			$this->add_control(
+				'style_contact_buttons_heading',
+				[
+					'label' => esc_html__( 'Buttons', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => false,
+					'condition' => $this->get_platform_color_condition( [
+						'style_bubble_colors' => 'custom',
+					] ),
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_contact_button_size',
-			[
-				'label' => esc_html__( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'medium',
-				'options' => [
-					'small' => esc_html__( 'Small', 'elementor' ),
-					'medium' => esc_html__( 'Medium', 'elementor' ),
-					'large' => esc_html__( 'Large', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['content']['contact_section']['has_buttons_size'] ) {
+			$this->add_control(
+				'style_contact_button_size',
+				[
+					'label' => esc_html__( 'Size', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'medium',
+					'options' => [
+						'small' => esc_html__( 'Small', 'elementor' ),
+						'medium' => esc_html__( 'Medium', 'elementor' ),
+						'large' => esc_html__( 'Large', 'elementor' ),
+					],
+				]
+			);
+		}
 
 		$this->start_controls_tabs(
 			'style_contact_button_color_tabs'
@@ -1313,18 +1336,48 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_contact_button_hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-				'frontend_available' => true,
-			]
-		);
+		if ( $config['content']['contact_section']['has_hover_animation'] ) {
+			$this->add_control(
+				'style_contact_button_hover_animation',
+				[
+					'label' => esc_html__( 'Hover Animation', 'elementor' ),
+					'type' => Controls_Manager::HOVER_ANIMATION,
+					'frontend_available' => true,
+				]
+			);
+		}
 
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
+
+		if ( $config['content']['contact_section']['has_buttons_spacing'] ) {
+			$this->add_responsive_control(
+				'style_contact_buttons_spacing',
+				[
+					'label' => esc_html__( 'Buttons Spacing', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'%' => [
+							'min' => 10,
+							'max' => 100,
+						],
+						'px' => [
+							'min' => 0,
+							'max' => 100,
+						],
+					],
+					'default' => [
+						'unit' => 'px',
+						'size' => 15,
+					],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-gap: {{SIZE}}{{UNIT}}',
+					],
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
