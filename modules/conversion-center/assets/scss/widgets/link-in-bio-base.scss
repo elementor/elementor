@@ -131,10 +131,7 @@
 	}
 
 	&.is-full-height-widescreen {
-
-		@media (min-width:$screen-widescreen-min) {
-			@include full-height();
-		}
+		@include full-height($screen-widescreen-min, null);
 	}
 
 	&.is-full-width {
