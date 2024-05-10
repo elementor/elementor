@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import ButtonWidget from '../pages/widgets/button_widget';
-import _path from "path";
+import _path from 'path';
 
 const defaultBtnName = 'Click here';
 
@@ -86,14 +86,14 @@ test( 'Verify Button with Icon styling', async ( { page }, testInfo ) => {
 	await editor.closeNavigatorIfOpen();
 
 	// Assert
-	await expect.soft( editor.getPreviewFrame().locator( '.e-con' ) ).toHaveScreenshot( 'container-row.png' );
+	await expect.soft( editor.getPreviewFrame().locator( '.e-con' ) ).toHaveScreenshot( 'button-container.png' );
 
-	const buttonFirst = editor.getPreviewFrame().locator( '.elementor-widget-button' ).first();
+	const buttonFirst = editor.getPreviewFrame().locator( '.elementor-widget-button a' ).first();
 	await buttonFirst.hover();
 
 	await expect.soft( buttonFirst ).toHaveScreenshot( 'button-hover-first.png' );
 
-	const buttonLast = editor.getPreviewFrame().locator( '.elementor-widget-button' ).last();
+	const buttonLast = editor.getPreviewFrame().locator( '.elementor-widget-button a' ).last();
 	await buttonLast.hover();
 
 	await expect.soft( buttonLast ).toHaveScreenshot( 'button-hover-last.png' );
