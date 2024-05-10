@@ -1,550 +1,570 @@
 .e-contact-buttons {
-    --e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
-    --e-contact-buttons-size-small: #{$contact-buttons-size-small};
-    --e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
-    --e-contact-buttons-size-large: #{$contact-buttons-size-large};
-    --e-contact-buttons-dot: #{$contact-buttons-dots-color};
-    --e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
-    --e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
-    --e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
-    --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
-    --e-contact-button-chat-button-animation-duration: #{$contact-buttons-animation-duration};
-    --e-contact-button-chat-button-animation-delay: #{$contact-buttons-animation-delay};
-    --e-contact-buttons-chat-box-bg: #{$contact-buttons-chat-box-bg};
-    --e-contact-buttons-chat-box-animation-duration: #{$contact-buttons-animation-duration};
-    --e-contact-buttons-icon-size-small: #{$contact-buttons-icon-size-small};
-    --e-contact-buttons-icon-size-medium: #{$contact-buttons-icon-size-medium};
-    --e-contact-buttons-icon-size-large: #{$contact-buttons-icon-size-large};
+	--e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
+	--e-contact-buttons-size-small: #{$contact-buttons-size-small};
+	--e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
+	--e-contact-buttons-size-large: #{$contact-buttons-size-large};
+	--e-contact-buttons-dot: #{$contact-buttons-dots-color};
+	--e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
+	--e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
+	--e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
+	--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
+	--e-contact-button-chat-button-animation-duration: #{$contact-buttons-animation-duration};
+	--e-contact-button-chat-button-animation-delay: #{$contact-buttons-animation-delay};
+	--e-contact-buttons-chat-box-bg: #{$contact-buttons-chat-box-bg};
+	--e-contact-buttons-chat-box-animation-duration: #{$contact-buttons-animation-duration};
+	--e-contact-buttons-icon-size-small: #{$contact-buttons-icon-size-small};
+	--e-contact-buttons-icon-size-medium: #{$contact-buttons-icon-size-medium};
+	--e-contact-buttons-icon-size-large: #{$contact-buttons-icon-size-large};
+	--e-contact-buttons-contact-gap: #{$contact-buttons-contact-gap};
 
-    // Platform specific colors
-    // Default used for email, sms
-    --e-contact-buttons-button-bg: #467FF7;
-    --e-contact-buttons-button-bg-hover: #1C2448;
-    --e-contact-buttons-button-icon: #ffffff;
-    --e-contact-buttons-button-icon-hover: #ffffff;
-    --e-contact-buttons-top-bar-bg: #1C2448;
-    --e-contact-buttons-top-bar-name: #ffffff;
-    --e-contact-buttons-top-bar-title: #ffffff;
-    --e-contact-buttons-close-button-color: #ffffff;
-    --e-contact-buttons-message-bubble-name: #000000;
-    --e-contact-buttons-message-bubble-body: #000000;
-    --e-contact-buttons-message-bubble-time: #000000;
-    --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
-    --e-contact-buttons-message-bubble-chat-bg: #C8D5DC;
-    --e-contact-buttons-send-button-icon: #ffffff;
-    --e-contact-buttons-send-button-bg: #467FF7;
-    --e-contact-buttons-send-button-icon-hover: #ffffff;
-    --e-contact-buttons-send-button-bg-hover: #1C2448;
-    --e-contact-buttons-chat-box-bg: #FFFFFF;
+	// Platform specific colors
+	// Default used for email, sms
+	--e-contact-buttons-button-bg: #467FF7;
+	--e-contact-buttons-button-bg-hover: #1C2448;
+	--e-contact-buttons-button-icon: #ffffff;
+	--e-contact-buttons-button-icon-hover: #ffffff;
+	--e-contact-buttons-top-bar-bg: #1C2448;
+	--e-contact-buttons-top-bar-name: #ffffff;
+	--e-contact-buttons-top-bar-title: #ffffff;
+	--e-contact-buttons-close-button-color: #ffffff;
+	--e-contact-buttons-message-bubble-name: #000000;
+	--e-contact-buttons-message-bubble-body: #000000;
+	--e-contact-buttons-message-bubble-time: #000000;
+	--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+	--e-contact-buttons-message-bubble-chat-bg: #C8D5DC;
+	--e-contact-buttons-send-button-icon: #ffffff;
+	--e-contact-buttons-send-button-bg: #467FF7;
+	--e-contact-buttons-send-button-icon-hover: #ffffff;
+	--e-contact-buttons-send-button-bg-hover: #1C2448;
+	--e-contact-buttons-chat-box-bg: #FFFFFF;
+	--e-contact-buttons-contact-button-icon: #ffffff;
+	--e-contact-buttons-contact-button-icon-hover: #ffffff;
+	--e-contact-buttons-contact-button-bg: #467FF7;
+	--e-contact-buttons-contact-button-bg-hover: #1C2448;
 
-    position: fixed;
-    bottom: 20px;
-    inset-inline-end: $contact-buttons-offset-preset;
-    width: var(--e-contact-buttons-chat-box-width);
-    z-index: 99;
+	position: fixed;
+	bottom: 20px;
+	inset-inline-end: $contact-buttons-offset-preset;
+	width: var(--e-contact-buttons-chat-box-width);
+	z-index: 99;
 
-    @media (max-width: $screen-mobile-max) {
-        inset-inline-end: 0;
-    }
-
-    &.has-alignment-start {
-        inset-inline-end: 0;
-        inset-inline-start: $contact-buttons-offset-preset;
-
-        @media (max-width: $screen-mobile-max) {
-            inset-inline-start: 0;
-        }
-    }
-
-    &.has-platform-whatsapp {
-        --e-contact-buttons-button-bg: #25D366;
-        --e-contact-buttons-button-bg-hover: #075E54;
-        --e-contact-buttons-button-icon: #ffffff;
-        --e-contact-buttons-button-icon-hover: #ffffff;
-        --e-contact-buttons-top-bar-bg: #075E54;
-        --e-contact-buttons-top-bar-name: #ffffff;
-        --e-contact-buttons-top-bar-title: #ffffff;
-        --e-contact-buttons-close-button-color: #ffffff;
-        --e-contact-buttons-message-bubble-body: #000000;
-        --e-contact-buttons-message-bubble-time: #000000;
-        --e-contact-buttons-message-bubble-name: #000000;
-        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
-        --e-contact-buttons-message-bubble-chat-bg: #ECE5DD;
-        --e-contact-buttons-send-button-icon: #ffffff;
-        --e-contact-buttons-send-button-bg: #25D366;
-        --e-contact-buttons-send-button-icon-hover: #ffffff;
-        --e-contact-buttons-send-button-bg-hover: #075E54;
-        --e-contact-buttons-chat-box-bg: #FFFFFF;
-    }
-
-    &.has-platform-skype {
-        --e-contact-buttons-button-bg: #00AFF0;
-        --e-contact-buttons-button-bg-hover: #0D72CF;
-        --e-contact-buttons-button-icon: #ffffff;
-        --e-contact-buttons-button-icon-hover: #ffffff;
-        --e-contact-buttons-top-bar-bg: #0D72CF;
-        --e-contact-buttons-top-bar-name: #ffffff;
-        --e-contact-buttons-top-bar-title: #ffffff;
-        --e-contact-buttons-close-button-color: #ffffff;
-        --e-contact-buttons-message-bubble-body: #000000;
-        --e-contact-buttons-message-bubble-time: #000000;
-        --e-contact-buttons-message-bubble-name: #000000;
-        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
-        --e-contact-buttons-message-bubble-chat-bg: #CDF7FF;
-        --e-contact-buttons-send-button-icon: #ffffff;
-        --e-contact-buttons-send-button-bg: #00AFF0;
-        --e-contact-buttons-send-button-icon-hover: #ffffff;
-        --e-contact-buttons-send-button-bg-hover: #0D72CF;
-        --e-contact-buttons-chat-box-bg: #FFFFFF;
-    }
-
-    &.has-platform-messenger {
-        --e-contact-buttons-button-bg: #168AFF;
-        --e-contact-buttons-button-bg-hover: #168AFF;
-        --e-contact-buttons-button-icon: #ffffff;
-        --e-contact-buttons-button-icon-hover: #ffffff;
-        --e-contact-buttons-top-bar-bg: #168AFF;
-        --e-contact-buttons-top-bar-name: #ffffff;
-        --e-contact-buttons-top-bar-title: #ffffff;
-        --e-contact-buttons-close-button-color: #ffffff;
-        --e-contact-buttons-message-bubble-body: #000000;
-        --e-contact-buttons-message-bubble-time: #000000;
-        --e-contact-buttons-message-bubble-name: #000000;
-        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
-        --e-contact-buttons-message-bubble-chat-bg: #F0F0F0;
-        --e-contact-buttons-send-button-icon: #ffffff;
-        --e-contact-buttons-send-button-bg: #168AFF;
-        --e-contact-buttons-send-button-icon-hover: #ffffff;
-        --e-contact-buttons-send-button-bg-hover: #168AFF;
-        --e-contact-buttons-chat-box-bg: #FFFFFF;
-    }
-
-    &.has-platform-viber {
-        --e-contact-buttons-button-bg: #7360F2;
-        --e-contact-buttons-button-bg-hover: #4E4879;
-        --e-contact-buttons-button-icon: #ffffff;
-        --e-contact-buttons-button-icon-hover: #ffffff;
-        --e-contact-buttons-top-bar-bg: #4E4879;
-        --e-contact-buttons-top-bar-name: #ffffff;
-        --e-contact-buttons-top-bar-title: #ffffff;
-        --e-contact-buttons-close-button-color: #ffffff;
-        --e-contact-buttons-message-bubble-body: #000000;
-        --e-contact-buttons-message-bubble-time: #000000;
-        --e-contact-buttons-message-bubble-name: #000000;
-        --e-contact-buttons-message-bubble-bubble-bg: #ffffff;
-        --e-contact-buttons-message-bubble-chat-bg: #E5E1FF;
-        --e-contact-buttons-send-button-icon: #ffffff;
-        --e-contact-buttons-send-button-bg: #7360F2;
-        --e-contact-buttons-send-button-icon-hover: #ffffff;
-        --e-contact-buttons-send-button-bg-hover: #4E4879;
-        --e-contact-buttons-chat-box-bg: #FFFFFF;
-    }
-
-    &.has-corners-rounded {
-        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
-    }
-
-    &.has-corners-round {
-        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-round};
-    }
-
-    &.has-corners-sharp {
-        --e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
-    }
-
-    &:not(.has-animations) {
-
-        .e-contact-buttons__content-wrapper {
-            &.hidden {
-                display: none;
-            }
-        }
-    }
-
-    &.has-animations {
-
-        .e-contact-buttons__content-wrapper {
-
-            &.hidden {
-                display: block;
-                visibility: hidden;
-                transition: var(--e-contact-buttons-chat-box-animation-duration);
-            }
-
-            &.animated-wrapper {
-                visibility: hidden;
-                opacity: 0;
-                transform: initial;
-                animation: e-contact-buttons-close var(--e-contact-buttons-chat-box-animation-duration);
-            }
-        }
-    }
-
-    &__content {
-        border-radius: var(--e-contact-buttons-border-radius);
-        box-shadow: var(--e-contact-buttons-box-shadow);
-        font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
-        margin-block-end: 20px;
-        overflow: hidden;
-
-        &.animated {
-            animation-duration: var(--e-contact-buttons-chat-box-animation-duration);
-        }
-    }
-
-    &__top-bar {
-        align-items: center;
-        background-color: var(--e-contact-buttons-top-bar-bg);
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-    }
-
-    &__top-bar-name {
-        color: var(--e-contact-buttons-top-bar-name);
-        font-size: 24px;
-        font-weight: bold;
-        margin-block-end: 0;
-    }
-
-    &__top-bar-title {
-        color: var(--e-contact-buttons-top-bar-title);
-        font-size: 20px;
-        margin-block-end: 0;
-    }
-
-    &__profile-image {
-        align-items: center;
-        display: flex;
-        position: relative;
-
-        img {
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        &.has-size-small img {
-            height: var(--e-contact-buttons-size-small);
-            width: var(--e-contact-buttons-size-small);
-        }
-
-        &.has-size-medium img {
-            height: var(--e-contact-buttons-size-medium);
-            width: var(--e-contact-buttons-size-medium);
-        }
-
-        &.has-size-large img {
-            height: var(--e-contact-buttons-size-large);
-            width: var(--e-contact-buttons-size-large);
-        }
-
-        &.has-dot::after {
-            background-color: var(--e-contact-buttons-profile-dot-bg);
-            border: 3px solid var(--e-contact-buttons-top-bar-bg);
-            border-radius: 50%;
-            bottom: 5px;
-            content: "";
-            height: 20px;
-            position: absolute;
-            right: 0;
-            width: 20px;
-        }
-    }
-
-    &__close-button {
-        background: none;
-        border: 0;
-        color: var(--e-contact-buttons-close-button-color);
-        padding: 0;
-        position: absolute;
-        inset-inline-end: 20px;
-        top: 20px;
-
-        &:hover,
-        &:focus {
-            background: none;
-            border: 0;
-            color: var(--e-contact-buttons-close-button-color);
-        }
-    }
-
-    &__chat-button-container {
-        display: flex;
-        justify-content: flex-end;
-
-        @media (max-width: $screen-mobile-max) {
-            inset-inline-end: $contact-buttons-offset-preset;
-            position: relative;
-        }
-    }
-
-    &.has-alignment-start {
-
-        .e-contact-buttons__chat-button-container {
-            justify-content: flex-start;
-
-            @media (max-width: $screen-mobile-max) {
-                inset-inline-end: unset;
-                inset-inline-start: $contact-buttons-offset-preset;
-            }
-        }
-    }
-    
-    &__chat-button {
-        align-items: center;
-        background-color: var(--e-contact-buttons-button-bg);
-        border-radius: 50%;
-        border: 0;
-        display: flex;
-        justify-content: center;
-        position: relative;
-
-        &.animated {
-            animation-delay: var(--e-contact-button-chat-button-animation-delay);
-            animation-duration: var(--e-contact-button-chat-button-animation-duration);
-        }
-
-        svg {
-            fill: var(--e-contact-buttons-button-icon);
-        }
-        
-        &:hover,
-        &:focus {
-            background-color: var(--e-contact-buttons-button-bg-hover);
-            
-            svg {
-                fill: var(--e-contact-buttons-button-icon-hover);
-            }
-        }
-
-        &.has-dot::after {
-            background-color: var(--e-contact-buttons-dot);
-            border-radius: 50%;
-            content: "";
-            height: var(--e-contact-buttons-dot-size);
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: var(--e-contact-buttons-dot-size);
-        }
-
-        &.has-size-small {
-            height: var(--e-contact-buttons-size-small);
-            width: var(--e-contact-buttons-size-small);
-        }
-
-        &.has-size-medium {
-            height: var(--e-contact-buttons-size-medium);
-            width: var(--e-contact-buttons-size-medium);
-        }
-
-        &.has-size-large {
-            height: var(--e-contact-buttons-size-large);
-            width: var(--e-contact-buttons-size-large);
-        }
+	@media (max-width: $screen-mobile-max) {
+		inset-inline-end: 0;
 	}
 
-    &__message-bubble {
-        background-color: var(--e-contact-buttons-message-bubble-chat-bg);
-        padding: 20px;
-        padding-inline-start: 40px;
+	&.has-alignment-start {
+		inset-inline-end: 0;
+		inset-inline-start: $contact-buttons-offset-preset;
 
-        &.has-typing-animation {
+		@media (max-width: $screen-mobile-max) {
+			inset-inline-start: 0;
+		}
+	}
 
-            .e-contact-buttons__bubble-container {
-                height: 0;
-                opacity: 0;
-                visibility: hidden;
-            }
-        }
-    }
+	&.has-platform-whatsapp {
+		--e-contact-buttons-button-bg: #25D366;
+		--e-contact-buttons-button-bg-hover: #075E54;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #075E54;
+		--e-contact-buttons-top-bar-name: #ffffff;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #ECE5DD;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #25D366;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #075E54;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
 
-    &__bubble {
-        background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
-        border-radius: 15px;
-        padding: 20px;
-        position: relative;
+	&.has-platform-skype {
+		--e-contact-buttons-button-bg: #00AFF0;
+		--e-contact-buttons-button-bg-hover: #0D72CF;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #0D72CF;
+		--e-contact-buttons-top-bar-name: #ffffff;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #CDF7FF;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #00AFF0;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #0D72CF;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
 
-        &::after {
-            border-color: transparent var(--e-contact-buttons-message-bubble-bubble-bg) transparent transparent;
-            border-style: solid;
-            border-width: 0 40px 40px 0;
-            content: "";
-            height: 0;
-            position: absolute;
-            inset-inline-start: -20px;
-            top: 0;
-            transform: rotate(0);
-            width: 0;
-            
-            @if $direction == rtl {
-                transform: rotate(-90deg);
-            }
-        }
-    }
+	&.has-platform-messenger {
+		--e-contact-buttons-button-bg: #168AFF;
+		--e-contact-buttons-button-bg-hover: #168AFF;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #168AFF;
+		--e-contact-buttons-top-bar-name: #ffffff;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #F0F0F0;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #168AFF;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #168AFF;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
 
-    &__message-bubble-name {
-        color: var(--e-contact-buttons-message-bubble-name);
-        font-size: 20px;
-        line-height: 25px;
-        font-weight: 600;
-        margin-block-end: 8px;
-    }
+	&.has-platform-viber {
+		--e-contact-buttons-button-bg: #7360F2;
+		--e-contact-buttons-button-bg-hover: #4E4879;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #4E4879;
+		--e-contact-buttons-top-bar-name: #ffffff;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #E5E1FF;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #7360F2;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #4E4879;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
 
-    &__message-bubble-body {
-        color: var(--e-contact-buttons-message-bubble-body);
-        font-size: 20px;
-        line-height: 25px;
-        margin-block-end: 8px;
-    }
+	&.has-corners-rounded {
+		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
+	}
 
-    &__message-bubble-time {
-        color: var(--e-contact-buttons-message-bubble-time);
-        font-size: 20px;
-        line-height: 25px;
-        font-weight: 600;
-        text-align: end;
-    }
+	&.has-corners-round {
+		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-round};
+	}
 
-    &__powered-container {
-        padding: 20px 20px 0;
-        text-align: center;
-    }
+	&.has-corners-sharp {
+		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
+	}
 
-    &__powered-text {
-        color: #{$contact-buttons-default-text-color};
-        font-size: 16px;
-        font-weight: 500;
-        
-        .elementor & {
-            text-decoration: underline;
-        }
-    }
+	&:not(.has-animations) {
 
-    &__dots-container {
-        background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
-        border-radius: 15px;
-        display: inline-flex;
-        padding: 10px 12px;
-    }
+		.e-contact-buttons__content-wrapper {
+			&.hidden {
+				display: none;
+			}
+		}
+	}
 
-    &__dot {
-        animation: e-contact-buttons-typing-jump 1s infinite;
-        background-color: var(--e-contact-buttons-message-bubble-name);
-        border-radius: 50%;
-        display: inline-block;
-        height: 7px;
-        margin-left: auto;
-        margin-right: 3px;
-        position: relative;
-        width: 7px;
-    }
+	&.has-animations {
 
-    &__dot-1 {
-        animation-delay: 200ms;
-    }
-    
-    &__dot-2 {
-        animation-delay: 400ms;
-    }
-    
-    &__dot-3 {
-        animation-delay: 600ms;
-    }
+		.e-contact-buttons__content-wrapper {
 
-    &__send-button {
-        background-color: var(--e-contact-buttons-chat-box-bg);
-        padding: 20px;
-    }
+			&.hidden {
+				display: block;
+				visibility: hidden;
+				transition: var(--e-contact-buttons-chat-box-animation-duration);
+			}
 
-    &__send-cta {
-        align-items: center;
-        background-color: var(--e-contact-buttons-send-button-bg);
-        border-radius: 30px;
-        color: var(--e-contact-buttons-send-button-icon);
-        display: flex;
-        font-size: 18px;
-        font-weight: 500;
-        justify-content: center;
-        padding: 10px;
-        text-align: center;
-        transition: $transition-hover;
-        width: 100%;
+			&.animated-wrapper {
+				visibility: hidden;
+				opacity: 0;
+				transform: initial;
+				animation: e-contact-buttons-close var(--e-contact-buttons-chat-box-animation-duration);
+			}
+		}
+	}
 
-        svg {
-            fill: var(--e-contact-buttons-send-button-icon);
-            height: 28px;
-            margin-inline-end: 8px;
-            width: 28px;
-        }
+	&__content {
+		border-radius: var(--e-contact-buttons-border-radius);
+		box-shadow: var(--e-contact-buttons-box-shadow);
+		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
+		margin-block-end: 20px;
+		overflow: hidden;
 
-        &:hover,
-        &:focus {
-            background-color: var(--e-contact-buttons-send-button-bg-hover);
-            color: var(--e-contact-buttons-send-button-icon-hover);
-            transition: $transition-hover;
+		&.animated {
+			animation-duration: var(--e-contact-buttons-chat-box-animation-duration);
+		}
+	}
 
-            svg {
-                fill: var(--e-contact-buttons-send-button-icon-hover);
-            }
-        }
-    }
+	&__top-bar {
+		align-items: center;
+		background-color: var(--e-contact-buttons-top-bar-bg);
+		display: flex;
+		gap: 20px;
+		padding: 20px;
+	}
 
-    &__content.visible {
+	&__top-bar-name {
+		color: var(--e-contact-buttons-top-bar-name);
+		font-size: 24px;
+		font-weight: bold;
+		margin-block-end: 0;
+	}
 
-        .e-contact-buttons__message-bubble.has-typing-animation {
+	&__top-bar-title {
+		color: var(--e-contact-buttons-top-bar-title);
+		font-size: 20px;
+		margin-block-end: 0;
+	}
 
-            .e-contact-buttons__dots-container {
-                animation-delay: 0;
-                animation-duration: 2s;
-                animation-fill-mode: forwards;
-                animation-iteration-count: 1;
-                animation-name: e-contact-buttons-disappear;
-            }
+	&__profile-image {
+		align-items: center;
+		display: flex;
+		position: relative;
 
-            .e-contact-buttons__bubble-container {
-                animation-delay: 2s;
-                animation-duration: .1s;
-                animation-fill-mode: forwards;
-                animation-iteration-count: 1;
-                animation-name: e-contact-buttons-appear;
-            }
-        }
-    }
+		img {
+			border-radius: 50%;
+			object-fit: cover;
+		}
+
+		&.has-size-small img {
+			height: var(--e-contact-buttons-size-small);
+			width: var(--e-contact-buttons-size-small);
+		}
+
+		&.has-size-medium img {
+			height: var(--e-contact-buttons-size-medium);
+			width: var(--e-contact-buttons-size-medium);
+		}
+
+		&.has-size-large img {
+			height: var(--e-contact-buttons-size-large);
+			width: var(--e-contact-buttons-size-large);
+		}
+
+		&.has-dot::after {
+			background-color: var(--e-contact-buttons-profile-dot-bg);
+			border: 3px solid var(--e-contact-buttons-top-bar-bg);
+			border-radius: 50%;
+			bottom: 5px;
+			content: "";
+			height: 20px;
+			position: absolute;
+			right: 0;
+			width: 20px;
+		}
+	}
+
+	&__close-button {
+		background: none;
+		border: 0;
+		color: var(--e-contact-buttons-close-button-color);
+		padding: 0;
+		position: absolute;
+		inset-inline-end: 20px;
+		top: 20px;
+
+		&:hover,
+		&:focus {
+			background: none;
+			border: 0;
+			color: var(--e-contact-buttons-close-button-color);
+		}
+	}
+
+	&__chat-button-container {
+		display: flex;
+		justify-content: flex-end;
+
+		@media (max-width: $screen-mobile-max) {
+			inset-inline-end: $contact-buttons-offset-preset;
+			position: relative;
+		}
+	}
+
+	&.has-alignment-start {
+
+		.e-contact-buttons__chat-button-container {
+			justify-content: flex-start;
+
+			@media (max-width: $screen-mobile-max) {
+				inset-inline-end: unset;
+				inset-inline-start: $contact-buttons-offset-preset;
+			}
+		}
+	}
+	
+	&__chat-button {
+		align-items: center;
+		background-color: var(--e-contact-buttons-button-bg);
+		border-radius: 50%;
+		border: 0;
+		display: flex;
+		justify-content: center;
+		position: relative;
+
+		&.animated {
+			animation-delay: var(--e-contact-button-chat-button-animation-delay);
+			animation-duration: var(--e-contact-button-chat-button-animation-duration);
+		}
+
+		svg {
+			fill: var(--e-contact-buttons-button-icon);
+		}
+		
+		&:hover,
+		&:focus {
+			background-color: var(--e-contact-buttons-button-bg-hover);
+			
+			svg {
+				fill: var(--e-contact-buttons-button-icon-hover);
+			}
+		}
+
+		&.has-dot::after {
+			background-color: var(--e-contact-buttons-dot);
+			border-radius: 50%;
+			content: "";
+			height: var(--e-contact-buttons-dot-size);
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: var(--e-contact-buttons-dot-size);
+		}
+
+		&.has-size-small {
+			height: var(--e-contact-buttons-size-small);
+			width: var(--e-contact-buttons-size-small);
+
+			svg {
+				height: 38px;
+				width: 38px;
+			}
+		}
+
+		&.has-size-medium {
+			height: var(--e-contact-buttons-size-medium);
+			width: var(--e-contact-buttons-size-medium);
+
+			svg {
+				height: 42px;
+				width: 42px;
+			}
+		}
+
+		&.has-size-large {
+			height: var(--e-contact-buttons-size-large);
+			width: var(--e-contact-buttons-size-large);
+
+			svg {
+				height: 50px;
+				width: 50px;
+			}
+		}
+	}
+
+	&__message-bubble {
+		background-color: var(--e-contact-buttons-message-bubble-chat-bg);
+		padding: 20px;
+		padding-inline-start: 40px;
+
+		&.has-typing-animation {
+
+			.e-contact-buttons__bubble-container {
+				height: 0;
+				opacity: 0;
+				visibility: hidden;
+			}
+		}
+	}
+
+	&__bubble {
+		background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
+		border-radius: 15px;
+		padding: 20px;
+		position: relative;
+
+		&::after {
+			border-color: transparent var(--e-contact-buttons-message-bubble-bubble-bg) transparent transparent;
+			border-style: solid;
+			border-width: 0 40px 40px 0;
+			content: "";
+			height: 0;
+			position: absolute;
+			inset-inline-start: -20px;
+			top: 0;
+			transform: rotate(0);
+			width: 0;
+			
+			@if $direction == rtl {
+				transform: rotate(-90deg);
+			}
+		}
+	}
+
+	&__message-bubble-name {
+		color: var(--e-contact-buttons-message-bubble-name);
+		font-size: 20px;
+		line-height: 25px;
+		font-weight: 600;
+		margin-block-end: 8px;
+	}
+
+	&__message-bubble-body {
+		color: var(--e-contact-buttons-message-bubble-body);
+		font-size: 20px;
+		line-height: 25px;
+		margin-block-end: 8px;
+	}
+
+	&__message-bubble-time {
+		color: var(--e-contact-buttons-message-bubble-time);
+		font-size: 20px;
+		line-height: 25px;
+		font-weight: 600;
+		text-align: end;
+	}
+
+	&__powered-container {
+		padding: 20px 20px 0;
+		text-align: center;
+	}
+
+	&__powered-text {
+		color: #{$contact-buttons-default-text-color};
+		font-size: 16px;
+		font-weight: 500;
+		
+		.elementor & {
+			text-decoration: underline;
+		}
+	}
+
+	&__dots-container {
+		background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
+		border-radius: 15px;
+		display: inline-flex;
+		padding: 10px 12px;
+	}
+
+	&__dot {
+		animation: e-contact-buttons-typing-jump 1s infinite;
+		background-color: var(--e-contact-buttons-message-bubble-name);
+		border-radius: 50%;
+		display: inline-block;
+		height: 7px;
+		margin-left: auto;
+		margin-right: 3px;
+		position: relative;
+		width: 7px;
+	}
+
+	&__dot-1 {
+		animation-delay: 200ms;
+	}
+	
+	&__dot-2 {
+		animation-delay: 400ms;
+	}
+	
+	&__dot-3 {
+		animation-delay: 600ms;
+	}
+
+	&__send-button {
+		background-color: var(--e-contact-buttons-chat-box-bg);
+		padding: 20px;
+	}
+
+	&__send-cta {
+		align-items: center;
+		background-color: var(--e-contact-buttons-send-button-bg);
+		border-radius: 30px;
+		color: var(--e-contact-buttons-send-button-icon);
+		display: flex;
+		font-size: 18px;
+		font-weight: 500;
+		justify-content: center;
+		padding: 10px;
+		text-align: center;
+		transition: $transition-hover;
+		width: 100%;
+
+		svg {
+			fill: var(--e-contact-buttons-send-button-icon);
+			height: 28px;
+			margin-inline-end: 8px;
+			width: 28px;
+		}
+
+		&:hover,
+		&:focus {
+			background-color: var(--e-contact-buttons-send-button-bg-hover);
+			color: var(--e-contact-buttons-send-button-icon-hover);
+			transition: $transition-hover;
+
+			svg {
+				fill: var(--e-contact-buttons-send-button-icon-hover);
+			}
+		}
+	}
+
+	&__content.visible {
+
+		.e-contact-buttons__message-bubble.has-typing-animation {
+
+			.e-contact-buttons__dots-container {
+				animation-delay: 0;
+				animation-duration: 2s;
+				animation-fill-mode: forwards;
+				animation-iteration-count: 1;
+				animation-name: e-contact-buttons-disappear;
+			}
+
+			.e-contact-buttons__bubble-container {
+				animation-delay: 2s;
+				animation-duration: .1s;
+				animation-fill-mode: forwards;
+				animation-iteration-count: 1;
+				animation-name: e-contact-buttons-appear;
+			}
+		}
+	}
 }
 
 @keyframes e-contact-buttons-typing-jump {
-    0% {
-        bottom: 0px;
-    }
-    20% {
-        bottom: 5px;
-    }
-    40% {
-        bottom: 0px;
-    }
+	0% {
+		bottom: 0px;
+	}
+	20% {
+		bottom: 5px;
+	}
+	40% {
+		bottom: 0px;
+	}
 }
 
 @keyframes e-contact-buttons-appear {
-    from {
-        height: 0;
-        opacity: 0;
-        visibility: hidden;
-    }
-    to {
-        height: auto;
-        opacity: 1;
-        visibility: visible;
-    }
+	from {
+		height: 0;
+		opacity: 0;
+		visibility: hidden;
+	}
+	to {
+		height: auto;
+		opacity: 1;
+		visibility: visible;
+	}
 }
 
 @keyframes e-contact-buttons-disappear {
-    from {
-        display: inline-flex;
-    }
-    to {
-        display: none;
-    }
+	from {
+		display: inline-flex;
+	}
+	to {
+		display: none;
+	}
 }
 
 @keyframes e-contact-buttons-close {

@@ -77,6 +77,14 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
+	protected function render_close_button(): void {
+		?>
+			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_attr__( 'Close Contact Buttons', 'elementor' ); ?>>
+				<i class="eicon-close"></i>
+			</button>
+		<?php
+	}
+
 	protected function render_top_bar(): void {
 		$profile_image_value = $this->settings['top_bar_image'] ?? [];
 		$has_profile_image = ! empty( $profile_image_value ) && ( ! empty( $profile_image_value['url'] || ! empty( $profile_image_value['id'] ) ) );
@@ -104,9 +112,7 @@ abstract class Contact_Buttons_Render_Base {
 		] );
 		?>
 		<div class="e-contact-buttons__top-bar">
-			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_attr__( 'Close Contact Buttons', 'elementor' ); ?>>
-				<i class="eicon-close"></i>
-			</button>
+			<?php $this->render_close_button(); ?>
 			<div <?php echo $this->widget->get_render_attribute_string( 'profile-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php if ( ! empty( $profile_image_value['id'] ) ) {
 					echo wp_get_attachment_image( $profile_image_value['id'], 'medium', false, [
