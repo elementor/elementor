@@ -9,9 +9,14 @@
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
 	--e-link-in-bio-content-width: #{$link-in-bio-default-content-width};
+	--e-link-in-bio-full-height: 100vh;
 	--e-link-in-bio-gutter-block-end: 45px;
 	--e-link-in-bio-gutter-block-start: 38px;
 	--e-link-in-bio-gutter-inline: 40px;
+
+	@supports (height: 100dvh) {
+		--e-link-in-bio-full-height: 100dvh;
+	}
 
 	// Identity config - Cover
 	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
@@ -78,11 +83,7 @@
 
 	@mixin full-height($breakpoint) {
 		@media (max-width: $breakpoint) {
-			--e-link-in-bio-container-height: 100vh;
-
-			@supports (height: 100dvh) {
-				--e-link-in-bio-container-height: 100dvh;
-			}
+			--e-link-in-bio-container-height: var(--e-link-in-bio-full-height, 100vh);
 		}
 	}
 
@@ -104,6 +105,10 @@
 
 	&.is-full-height-laptop {
 		@include full-height($screen-laptop-max);
+	}
+
+	&.is-full-height-desktop {
+		@include full-height($screen-desktop-max);
 	}
 
 	&.is-full-height-widescreen {
