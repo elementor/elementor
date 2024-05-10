@@ -10,8 +10,17 @@ export class OpenLibraryAfterDelete extends After {
 	}
 
 	getConditions( args ) {
+<<<<<<< HEAD
 		const { container: { document } } = args;
 		return 'links-page' === document.config.type;
+=======
+		let type = args?.container?.document?.config?.type;
+		if ( ! type ) {
+			type = args?.containers[ 0 ]?.document?.config?.type;
+		}
+
+		return 'links-page' === type;
+>>>>>>> elementor/main
 	}
 
 	apply() {

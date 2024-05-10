@@ -44,7 +44,11 @@ module.exports = Marionette.Behavior.extend( {
 
 		if (
 			'preview' === this.getOption( 'context' ) &&
+<<<<<<< HEAD
 			$e.components.get( 'document/elements' ).utils.allowAddingWidgets()
+=======
+			$e.components.get( 'document/elements' ).utils.showNavigator()
+>>>>>>> elementor/main
 		) {
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',

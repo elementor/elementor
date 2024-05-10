@@ -164,6 +164,10 @@ abstract class Document extends Controls_Stack {
 			'show_navigator' => true,
 			'allow_adding_widgets' => true,
 			'support_page_layout' => true,
+<<<<<<< HEAD
+=======
+			'show_copy_and_share' => false,
+>>>>>>> elementor/main
 		];
 	}
 
@@ -195,6 +199,10 @@ abstract class Document extends Controls_Stack {
 			],
 			'show_navigator' => static::get_property( 'show_navigator' ),
 			'allow_adding_widgets' => static::get_property( 'allow_adding_widgets' ),
+<<<<<<< HEAD
+=======
+			'show_copy_and_share' => static::get_property( 'show_copy_and_share' ),
+>>>>>>> elementor/main
 		];
 	}
 

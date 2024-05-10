@@ -2,6 +2,10 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
+<<<<<<< HEAD
+=======
+use DOMDocument;
+>>>>>>> elementor/main
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
@@ -80,7 +84,11 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
+<<<<<<< HEAD
 			if ( strpos( $current_screen->id ?? '', 'conversion-center' ) !== false ) {
+=======
+			if ( strpos( $current_screen->id ?? '', 'e-link-pages' ) !== false ) {
+>>>>>>> elementor/main
 				return true;
 			}
 
@@ -96,12 +104,18 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'admin_menu', function () {
+<<<<<<< HEAD
 			global $submenu;
 			$menu_args = $this->get_menu_args();
 
 			$slug = $menu_args['menu_slug'] . '#';
 			unset( $submenu[ $slug ][0] );
 
+=======
+			$this->add_class_to_conversion_menu();
+
+			$this->remove_conversion_menu_link();
+>>>>>>> elementor/main
 		}, 100 );
 
 		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
@@ -110,8 +124,30 @@ class Module extends BaseModule {
 			return $cpts;
 		} );
 
+<<<<<<< HEAD
 		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
+=======
+		add_action( 'admin_init', function () {
+			$action = filter_input( INPUT_GET, 'action' );
+
+			if ( 'set_as_homepage' === $action ) {
+				$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+				check_admin_referer( 'set_as_homepage_' . $post );
+				update_option( 'page_on_front', $post );
+				update_option( 'show_on_front', 'page' );
+				$menu_args = $this->get_menu_args();
+
+				wp_redirect( $menu_args['menu_slug'] );
+				exit;
+			}
+		} );
+
+		add_action( 'manage_' . self::CPT_LINKS_PAGES . '_posts_columns', function( $posts_columns ) {
+			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
+			unset( $posts_columns['date'] );
+			unset( $posts_columns['comments'] );
+>>>>>>> elementor/main
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
@@ -121,8 +157,14 @@ class Module extends BaseModule {
 
 			$document->admin_columns_content( $column_name );
 		}, 10, 2 );
+<<<<<<< HEAD
 		add_action( 'admin_bar_menu', function ( $admin_bar ) {
 			$new_links_page_node = $admin_bar->get_node( 'new-e-links-page' );
+=======
+
+		add_action( 'admin_bar_menu', function ( $admin_bar ) {
+			$new_links_page_node = $admin_bar->get_node( 'new-e-link-pages' );
+>>>>>>> elementor/main
 
 			if ( $new_links_page_node ) {
 				$new_links_page_node->href = $this->get_add_new_links_page_url();
@@ -132,6 +174,26 @@ class Module extends BaseModule {
 		}, 100 );
 	}
 
+<<<<<<< HEAD
+=======
+	private function add_class_to_conversion_menu() {
+		global $menu;
+
+		$position = (string) Conversion_Center_Menu_Item::AFTER_ELEMENTOR;
+		if ( strpos( $menu[ $position ][2] ?? '', 'e-link-pages' ) !== false ) {
+			$menu[ $position ][4] .= ' menu-item-elementor-conversions'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		}
+	}
+
+	private function remove_conversion_menu_link() {
+		global $submenu;
+
+		$menu_args = $this->get_menu_args();
+		$slug = $menu_args['menu_slug'] . '#';
+		unset( $submenu[ $slug ][0] );
+	}
+
+>>>>>>> elementor/main
 	private function get_trashed_lib_posts(): array {
 		if ( $this->trashed_links_pages ) {
 			return $this->trashed_links_pages;

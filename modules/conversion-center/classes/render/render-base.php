@@ -139,14 +139,21 @@ abstract class Render_Base {
 			return;
 		}
 
+		$this->widget->add_render_attribute( 'icons', [
+			'class' => 'e-link-in-bio__icons has-size-' . $icons_props_size,
+		] );
 		?>
-		<div class="e-link-in-bio__icons">
+		<div <?php echo $this->widget->get_render_attribute_string( 'icons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $icons_value as $key => $icon ) {
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
 
+<<<<<<< HEAD
 				$icon_class_names = 'e-link-in-bio__icon has-size-' . $icons_props_size;
+=======
+				$icon_class_names = 'e-link-in-bio__icon is-size-' . $icons_props_size;
+>>>>>>> elementor/main
 
 				if ( $icons_props_show_border ) {
 					$icon_class_names .= ' has-border';
@@ -463,7 +470,11 @@ abstract class Render_Base {
 			$output_images['primary_image']['props']['shape'] = $this->settings['identity_image_shape'] ?? 'circle';
 			$output_images['primary_image']['props']['style'] = $this->settings['identity_image_style'] ?? 'profile';
 			$output_images['primary_image']['props']['show_border'] = $this->settings['identity_image_show_border'] ?? false;
+<<<<<<< HEAD
 			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+=======
+			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_bottom_show_border'] ?? false;
+>>>>>>> elementor/main
 		}
 
 		return $output_images;
@@ -472,7 +483,11 @@ abstract class Render_Base {
 	private function set_secondary_image_properties( array $output_images ): array {
 		if ( $output_images['secondary_image']['should_render'] ) {
 			$output_images['secondary_image']['props']['style'] = 'cover';
+<<<<<<< HEAD
 			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+=======
+			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_bottom_show_border'] ?? false;
+>>>>>>> elementor/main
 
 			if ( ! empty( $this->settings['identity_section_style_cover_divider_bottom'] ) ) {
 				$output_images['secondary_image']['props']['has_shape_divider'] = true;

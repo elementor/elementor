@@ -148,6 +148,13 @@ trait Conversion_Center_Controls_Trait {
 				'px' => $this->border_width_range,
 			],
 			'condition' => $condition,
+<<<<<<< HEAD
+=======
+			'default' => [
+				'unit' => 'px',
+				'size' => 1,
+			],
+>>>>>>> elementor/main
 		];
 
 		$this->add_control(
@@ -168,6 +175,10 @@ trait Conversion_Center_Controls_Trait {
 			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'condition' => $condition,
+<<<<<<< HEAD
+=======
+			'default' => '#000000',
+>>>>>>> elementor/main
 		];
 
 		$this->add_control(

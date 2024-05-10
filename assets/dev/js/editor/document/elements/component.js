@@ -85,6 +85,12 @@ export default class Component extends ComponentBase {
 			showNavigator() {
 				return elementor.config.document.panel.show_navigator ?? true;
 			},
+<<<<<<< HEAD
+=======
+			showCopyAndShareButton() {
+				return elementor.config.document.panel.show_copy_and_share ?? false;
+			},
+>>>>>>> elementor/main
 		};
 	}
 }

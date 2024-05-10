@@ -553,7 +553,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$repeater->add_control(
 			'icon_mail',
 			[
-				'label' => esc_html__( 'Mail', 'elementor' ),
+				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 				'dynamic' => [
@@ -1020,7 +1020,7 @@ JS;
 		$this->start_controls_section(
 			'cta_links_section_style',
 			[
-				'label' => esc_html__( 'CTA Links', 'elementor' ),
+				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -1346,7 +1346,11 @@ JS;
 		$this->add_control(
 			'icons_size',
 			[
+<<<<<<< HEAD
 				'label' => esc_html__( 'Size', 'elementor' ),
+=======
+				'label' => esc_html__( 'Icon Size', 'elementor' ),
+>>>>>>> elementor/main
 				'type' => Controls_Manager::SELECT,
 				'default' => 'small',
 				'options' => [
@@ -1382,12 +1386,28 @@ JS;
 			'background' => [
 				'default' => 'classic',
 			],
+<<<<<<< HEAD
+=======
+			'size' => [
+				'default' => 'cover',
+			],
+			'position' => [
+				'default' => 'center center',
+			],
+>>>>>>> elementor/main
 		];
 
 		$config = static::get_configuration();
 
 		if ( $config['style']['border_section']['field_options'] ) {
+<<<<<<< HEAD
 			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
+=======
+			$bg_image_field_options = array_merge(
+				$bg_image_field_options,
+				$config['style']['border_section']['field_options']
+			);
+>>>>>>> elementor/main
 		}
 
 		$this->add_group_control(
@@ -1455,6 +1475,7 @@ JS;
 			]
 		);
 
+<<<<<<< HEAD
 		$this->add_control(
 			'background_show_border',
 			[
@@ -1493,6 +1514,19 @@ JS;
 				'condition' => [
 					'background_show_border' => 'yes',
 				],
+=======
+		$this->add_borders_control(
+			'background',
+			[
+				'selectors' => [],
+			],
+			[
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
+				],
+			],
+			[
+>>>>>>> elementor/main
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
 				],
@@ -1502,6 +1536,7 @@ JS;
 		$this->end_controls_section();
 	}
 
+<<<<<<< HEAD
 	protected function get_border_width_range(): array {
 		return [
 			'min' => 0,
@@ -1510,6 +1545,8 @@ JS;
 		];
 	}
 
+=======
+>>>>>>> elementor/main
 	protected function add_identity_image_profile_controls( array $condition ): void {
 		$config = static::get_configuration();
 
@@ -1518,10 +1555,16 @@ JS;
 			[
 				'label' => esc_html__( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 150,
+					],
+				],
 				'default' => [
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'condition' => $condition,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
@@ -1545,22 +1588,13 @@ JS;
 			);
 		}
 
-		$this->add_control(
-			'identity_image_show_border',
+		$this->add_borders_control(
+			'identity_image',
 			[
-				'label' => esc_html__( 'Border', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => '',
 				'condition' => $condition,
-			]
-		);
-
-		$this->add_responsive_control(
-			'identity_image_border_width',
+			],
 			[
+<<<<<<< HEAD
 				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px' ],
@@ -1573,23 +1607,15 @@ JS;
 						'identity_image_show_border' => 'yes',
 					]
 				),
+=======
+				'condition' => $condition,
+>>>>>>> elementor/main
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'identity_image_border_color',
+			],
 			[
-				'label' => esc_html__( 'Border Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'condition' => array_merge(
-					$condition,
-					[
-						'identity_image_show_border' => 'yes',
-					]
-				),
+				'condition' => $condition,
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
 				],
@@ -1625,10 +1651,12 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'identity_image_show_bottom_border',
+		$this->add_borders_control(
+			'identity_image_bottom',
 			[
+				'condition' => $condition,
 				'label' => esc_html__( 'Bottom Border', 'elementor' ),
+<<<<<<< HEAD
 				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'Yes', 'elementor' ),
 				'label_off' => esc_html__( 'No', 'elementor' ),
@@ -1653,15 +1681,17 @@ JS;
 						'identity_image_show_bottom_border' => 'yes',
 					]
 				),
+=======
+			],
+			[
+				'condition' => $condition,
+>>>>>>> elementor/main
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-bottom-width: {{SIZE}}{{UNIT}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'identity_image_bottom_border_color',
+			],
 			[
+<<<<<<< HEAD
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'condition' => array_merge(
@@ -1669,6 +1699,9 @@ JS;
 						'identity_image_show_bottom_border' => 'yes',
 					]
 				),
+=======
+				'condition' => $condition,
+>>>>>>> elementor/main
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-color: {{VALUE}};',
 				],

@@ -19,6 +19,14 @@
 		justify-content: unset;
 		justify-items: center;
 		margin-block-start: 34px;
+<<<<<<< HEAD
+=======
+
+		// Required to override defaults
+		&.has-size-large {
+			--e-link-in-bio-icon-gap: 20px 10px;
+		}
+>>>>>>> elementor/main
 	}
 
 	.e-link-in-bio__icon-svg {
