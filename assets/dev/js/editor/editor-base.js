@@ -29,6 +29,7 @@ import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
 import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
+import LinksPageLibraryModule from 'elementor/modules/conversion-center/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -417,6 +418,10 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
+		if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
+			this.modules.linksPageLibraryModule = new LinksPageLibraryModule();
+		}
+
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 
 		this.modules.promotionModule = new PromotionModule();
@@ -616,6 +621,10 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initNavigator() {
+		if ( ! $e.components.get( 'document/elements' ).utils.showNavigator() ) {
+			return;
+		}
+
 		this.addRegions( {
 			navigator: {
 				el: '#elementor-navigator',
