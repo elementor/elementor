@@ -121,9 +121,7 @@
 
 	&.is-full-height-desktop {
 
-		&:where(:not(.is-full-height-widescreen)) {
-			@include full-height($screen-desktop-min, null);
-		}
+		@include full-height($screen-desktop-min, null);
 
 		&.is-full-height-widescreen {
 			@include full-height($screen-desktop-min, $screen-desktop-max);
