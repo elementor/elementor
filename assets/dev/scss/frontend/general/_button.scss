@@ -93,7 +93,7 @@
 
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
-		align-self: center;
+		// Align-self: center; // This might be causing a Backwards Compatibility issue.
 	}
 
 	&:hover {
