@@ -29,11 +29,11 @@
 	}
 
 	&-icon {
-		display: flex;
+		// Display: flex; // This seems to be causing Backwards Compatibility issues.
 
 		i {
 			color: var(--button-icon-color, inherit);
-		    font-size: var(--button-icon-size);
+		    	font-size: var(--button-icon-size);
 			transition: var(--button-icon-transition);
 		}
 
