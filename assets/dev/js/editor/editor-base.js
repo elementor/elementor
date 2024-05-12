@@ -290,15 +290,17 @@ export default class EditorBase extends Marionette.Application {
 
 				// TODO: Move this code to own file.
 				if ( this.widgetsCache[ widgetType ].controls?._element_cache ) {
-					let elementCacheDescription = __( 'The default behavior of this widget is:', 'elementor' );
+					let elementCacheDescription = __( 'The default cache status for this element:', 'elementor' );
 
 					elementCacheDescription += ' <strong>';
 					if ( this.widgetsCache[ widgetType ]?.is_dynamic_content ) {
-						elementCacheDescription += __( 'Dynamic', 'elementor' );
+						elementCacheDescription += __( 'Inactive', 'elementor' );
 					} else {
-						elementCacheDescription += __( 'Static', 'elementor' );
+						elementCacheDescription += __( 'Active', 'elementor' );
 					}
-					elementCacheDescription += '</strong>';
+					elementCacheDescription += '</strong><br />';
+					elementCacheDescription += __( 'Activating cache improves loading times by storing a static version of this element.', 'elementor' );
+					elementCacheDescription += ' <a href="https://go.elementor.com/element-caching-help/" target="_blank">' + __( 'Learn more', 'elementor' ) + '</a>.';
 
 					this.widgetsCache[ widgetType ].controls._element_cache.description = elementCacheDescription;
 				}

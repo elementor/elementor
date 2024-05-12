@@ -66,13 +66,13 @@ class Module extends BaseModule {
 		);
 
 		$control_data = [
-			'label' => esc_html__( 'Cache', 'elementor' ),
+			'label' => esc_html__( 'Cache Settings', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'yes' => esc_html__( 'Dynamic', 'elementor' ),
-				'no' => esc_html__( 'Static', 'elementor' ),
+				'yes' => esc_html__( 'Inactive', 'elementor' ),
+				'no' => esc_html__( 'Active', 'elementor' ),
 			],
 		];
 
