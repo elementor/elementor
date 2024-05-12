@@ -1900,7 +1900,6 @@ abstract class Document extends Controls_Stack {
 		if ( null === $should_store_cache_elements ) {
 			$should_store_cache_elements = (
 				! is_admin()
-				// && ! is_user_logged_in()
 				&& ! Plugin::$instance->preview->is_preview_mode()
 			);
 		}

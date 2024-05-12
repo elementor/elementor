@@ -559,11 +559,17 @@ abstract class Element_Base extends Controls_Stack {
 			return true;
 		}
 
-		if ( empty( $raw_data['settings']['__dynamic__'] ) && empty( $raw_data['settings']['e_display_conditions'] ) ) {
+		if ( empty( $raw_data['settings']['__dynamic__'] ) ) {
 			return false;
 		}
 
-		return true;
+		$is_dynamic_content = apply_filters( 'elementor/element/is_dynamic_content', false, $raw_data, $this );
+
+		if ( $is_dynamic_content ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
