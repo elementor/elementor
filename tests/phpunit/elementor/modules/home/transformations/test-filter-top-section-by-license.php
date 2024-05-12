@@ -40,7 +40,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		$original_data = $this->mock_top_section_no_licence_data();
 
 		$transformation = new Filter_Top_Section_By_License( [] );
-//		$transformation->has_pro = true;
+		$transformation->has_pro = true;
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
