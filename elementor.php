@@ -99,14 +99,10 @@ function elementor_fail_wp_version() {
 	echo wp_kses_post( $html_message );
 }
 
-function update_admin_email() {
-	update_option( 'admin_email', 'louis@elementor.red' );
+if ( ! defined( 'WP_DEBUG' ) ) {
+	define( 'WP_DEBUG', true );
+	define( 'WP_DEBUG_LOG', true );
+	define( 'WP_DEBUG_DISPLAY', true );
 }
 
-register_activation_hook( __FILE__, 'update_admin_email' );
-
-update_option( 'admin_email', 'louis@elementor.red' );
-
-define( 'WP_DEBUG', true );
-define( 'WP_DEBUG_LOG', true );
-define( 'WP_DEBUG_DISPLAY', true );
+define( 'WP_MEMORY_LIMIT', '1536M' );

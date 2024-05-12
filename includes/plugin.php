@@ -646,8 +646,6 @@ class Plugin {
 
 		$this->init_components();
 
-		update_option( 'admin_email', 'louis@elementor.red' );
-
 		/**
 		 * Elementor init.
 		 *
