@@ -113,6 +113,9 @@ async function get( request: APIRequestContext, entity: string, status: string =
 			Failed to get a ${ entity }: ${ response.status() }.
 			${ await response.text() }
 		` );
+	} else {
+		console.log( await response.text() );
+		console.log( await response.json() );
 	}
 	const data = await response.json();
 	return data;

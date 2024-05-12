@@ -47,6 +47,6 @@ module.exports = async ( config: FullConfig ) => {
 	// Teardown function.
 	return async () => {
 		await deleteDefaultMedia( apiContext, imageIds );
-		// await cleanUpTestPages( apiContext );
+		await cleanUpTestPages( apiContext );
 	};
 };
