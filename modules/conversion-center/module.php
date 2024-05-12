@@ -160,23 +160,21 @@ class Module extends BaseModule {
 
 	private function is_editing_existing_links_page() {
 		$action = filter_input( INPUT_GET, 'action', FILTER_UNSAFE_RAW );
-		$post_id = filter_input(  INPUT_GET, 'post', FILTER_VALIDATE_INT );
+		$post_id = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 
 		return 'elementor' === $action && $this->is_links_page_type_meta_key( $post_id );
 	}
 
 	private function is_creating_links_page() {
 		$action = filter_input( INPUT_POST, 'action', FILTER_UNSAFE_RAW );
-		$post_id= filter_input(  INPUT_POST, 'editor_post_id', FILTER_VALIDATE_INT );
+		$post_id = filter_input( INPUT_POST, 'editor_post_id', FILTER_VALIDATE_INT );
 
 		return 'elementor_ajax' === $action && $this->is_links_page_type_meta_key( $post_id );
 	}
 
 	private function is_links_page_type_meta_key( $post_id ) {
-		error_log( 'meta ' . get_post_meta( $post_id, Document::TYPE_META_KEY, true ) );
 		return ConversionCenterModule::DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 	}
-
 
 	private function add_class_to_conversion_menu() {
 		global $menu;
