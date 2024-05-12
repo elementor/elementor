@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
-use DOMDocument;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
@@ -11,10 +11,10 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Ite
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
-use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use ElementorPro\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -77,6 +77,14 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_links_pages_cpt();
+
+		add_filter( 'elementor/widget/common/register_controls', function( $register_common_controls ) {
+			if ( $this->is_editing_existing_links_page() || $this->is_creating_links_page() ) {
+				return false;
+			}
+
+			return $register_common_controls;
+		} );
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Links_Page::get_class_full_name() );
@@ -149,6 +157,26 @@ class Module extends BaseModule {
 			}
 		}, 100 );
 	}
+
+	private function is_editing_existing_links_page() {
+		$action = filter_input( INPUT_GET, 'action', FILTER_UNSAFE_RAW );
+		$post_id = filter_input(  INPUT_GET, 'post', FILTER_VALIDATE_INT );
+
+		return 'elementor' === $action && $this->is_links_page_type_meta_key( $post_id );
+	}
+
+	private function is_creating_links_page() {
+		$action = filter_input( INPUT_POST, 'action', FILTER_UNSAFE_RAW );
+		$post_id= filter_input(  INPUT_POST, 'editor_post_id', FILTER_VALIDATE_INT );
+
+		return 'elementor_ajax' === $action && $this->is_links_page_type_meta_key( $post_id );
+	}
+
+	private function is_links_page_type_meta_key( $post_id ) {
+		error_log( 'meta ' . get_post_meta( $post_id, Document::TYPE_META_KEY, true ) );
+		return ConversionCenterModule::DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+	}
+
 
 	private function add_class_to_conversion_menu() {
 		global $menu;
@@ -313,6 +341,7 @@ class Module extends BaseModule {
 
 		return $this->has_links_pages;
 	}
+
 
 	public function is_elementor_links_page( \WP_Post $post ): bool {
 		return self::CPT_LINKS_PAGES === $post->post_type;

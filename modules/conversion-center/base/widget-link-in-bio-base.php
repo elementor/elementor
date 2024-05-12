@@ -160,10 +160,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		return parent::get_stack( false );
 	}
 
-	protected function register_transform_section( $element_selector = '' ) {
-
-	}
-
 	protected function register_controls(): void {
 
 		$this->add_content_tab();
