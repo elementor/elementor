@@ -26,9 +26,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		if ( ! is_array( $home_screen_data['top'] ) ) {
-			return $home_screen_data;
-		} else {
+		if ( is_array($home_screen_data['top']) && count($home_screen_data['top']) > 1  && is_array($home_screen_data['top'][0]) ){
 			$new_top = [];
 
 			foreach ( $home_screen_data['top'] as $index => $item ) {
@@ -38,6 +36,10 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 			}
 
 			$home_screen_data['top'] = reset( $new_top );
+
+			return $home_screen_data;
+
+		} else {
 
 			return $home_screen_data;
 		}

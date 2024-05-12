@@ -35,6 +35,21 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		$this->assertEquals( $transformed_data, $expected_data );
 	}
 
+	public function test_transform__no_licence_json_plugin() {
+		// Arrange
+		$original_data = $this->mock_top_section_no_licence_data();
+
+		$transformation = new Filter_Top_Section_By_License( [] );
+//		$transformation->has_pro = true;
+
+		// Act
+		$transformed_data = $transformation->transform( $original_data );
+		$expected_data = $this->mock_top_section_no_licence_data_transformed();
+
+		// Assert
+		$this->assertEquals( $transformed_data, $expected_data );
+	}
+
 	private function mock_top_section_data() {
 		return [
 			'top' => [
@@ -87,6 +102,34 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 				],
 				'license' => [
 					'pro'
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_top_section_no_licence_data() {
+		return [
+			'top' => [
+				'thing' => [
+					'key' => 'value',
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_top_section_no_licence_data_transformed() {
+		return [
+			'top' => [
+				'thing' => [
+					'key' => 'value',
 				],
 			],
 			'misc' => [
