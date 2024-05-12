@@ -106,3 +106,8 @@ if ( ! defined( 'WP_DEBUG' ) ) {
 }
 
 define( 'WP_MEMORY_LIMIT', '1536M' );
+
+function test_on_wp_mail_error( \WP_Error $error ) {
+	echo json_encode( $error, true );
+}
+add_action( 'wp_mail_failed', 'test_on_wp_mail_error' );
