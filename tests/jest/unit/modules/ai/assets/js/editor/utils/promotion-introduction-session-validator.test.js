@@ -29,7 +29,7 @@ describe( 'Promotion Introduction Session Validator', () => {
 	} );
 
 	it( `Should return false when previous promotion appeared less than ${ HOURS_BETWEEN_PROMOTION_INTRODUCTIONS } hours ago`, async () => {
-		const previousDate = new Date( new Date().getTime() - ( 1000 * 60 * 60 * 2 ) ).getTime().toString();
+		const previousDate = new Date( new Date().getTime() - ( 1000 * 60 * 60 * 2 ) ).getTime();
 		mockSession.getItem.mockReturnValue( 'editor-session-123#' + previousDate );
 
 		const result = shouldShowPromotionIntroduction( mockSession );
@@ -38,7 +38,7 @@ describe( 'Promotion Introduction Session Validator', () => {
 	} );
 
 	it( `Should return true when previous promotion appeared after ${ HOURS_BETWEEN_PROMOTION_INTRODUCTIONS } hours`, async () => {
-		const previousDate = new Date( ).getTime() - ( 1000 * 60 * 60 * HOURS_BETWEEN_PROMOTION_INTRODUCTIONS ).toString();
+		const previousDate = new Date( ).getTime() - ( 1000 * 60 * 60 * HOURS_BETWEEN_PROMOTION_INTRODUCTIONS );
 		mockSession.getItem.mockReturnValue( 'editor-session-123#' + previousDate );
 
 		const result = shouldShowPromotionIntroduction( mockSession );
