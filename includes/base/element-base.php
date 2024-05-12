@@ -288,7 +288,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Whether the element returns dynamic content.
 	 *
-	 * sed to determine whether to cache the element output of not.
+	 * set to determine whether to cache the element output or not.
 	 *
 	 * @since 3.22.0
 	 * @access protected
