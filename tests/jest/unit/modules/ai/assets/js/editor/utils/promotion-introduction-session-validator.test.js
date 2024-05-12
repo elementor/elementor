@@ -29,8 +29,7 @@ describe( 'Promotion Introduction Session Validator', () => {
 	} );
 
 	it( `Should return false when previous promotion appeared less than ${ HOURS_BETWEEN_PROMOTION_INTRODUCTIONS } hours ago`, async () => {
-		const currentDate = new Date( 2024, 5, 3, 15 );
-		const previousDate = new Date( currentDate.getTime() - ( 1000 * 60 * 60 * 2 ) ).getTime().toString();
+		const previousDate = new Date( new Date().getTime() - ( 1000 * 60 * 60 * 2 ) ).getTime().toString();
 		mockSession.getItem.mockReturnValue( 'editor-session-123#' + previousDate );
 
 		const result = shouldShowPromotionIntroduction( mockSession );
