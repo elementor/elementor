@@ -21,7 +21,7 @@ class Conversion_Center_Menu_Item implements Admin_Menu_Item, Admin_Menu_Item_Ha
 	}
 
 	public function get_label() {
-		return esc_html__( 'Conversion Center', 'elementor' );
+		return esc_html__( 'Conversions', 'elementor' );
 	}
 
 	public function get_page_title() {

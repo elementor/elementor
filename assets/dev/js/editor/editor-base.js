@@ -639,6 +639,10 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initNavigator() {
+		if ( ! $e.components.get( 'document/elements' ).utils.showNavigator() ) {
+			return;
+		}
+
 		this.addRegions( {
 			navigator: {
 				el: '#elementor-navigator',
