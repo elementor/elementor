@@ -17,7 +17,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function valid_item( $item ) {
-		if( isset( $item['license'] ) ) {
+		if ( isset( $item['license'] ) ) {
 			$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
 			$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
 
@@ -26,7 +26,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		if ( is_array($home_screen_data['top']) && count($home_screen_data['top']) > 1  && is_array($home_screen_data['top'][0]) ){
+		if ( is_array( $home_screen_data['top'] ) && count( $home_screen_data['top'] ) > 1 && is_array( $home_screen_data['top'][0] ) ) {
 			$new_top = [];
 
 			foreach ( $home_screen_data['top'] as $index => $item ) {
