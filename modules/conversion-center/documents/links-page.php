@@ -23,7 +23,7 @@ class Links_Page extends PageBase {
 		$properties['cpt'] = [ ConversionCenterModule::CPT_LINKS_PAGES ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
-		$properties['support_page_layout'] = true;
+		$properties['support_page_layout'] = false;
 		$properties['show_copy_and_share'] = true;
 
 		return $properties;
