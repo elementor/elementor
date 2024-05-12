@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Modules\ElementCache;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Element_Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +21,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_experiments();
+		$this->add_advanced_tab_actions();
 		$this->register_shortcode();
 	}
 
@@ -32,6 +35,50 @@ class Module extends BaseModule {
 			'default' => ExperimentsManager::STATE_INACTIVE,
 			'generator_tag' => true,
 		] );
+	}
+
+	private function add_advanced_tab_actions() {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			return;
+		}
+
+		$hooks = array(
+			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets
+		);
+
+		foreach ( $hooks as $hook => $injection_position ) {
+			add_action(
+				$hook,
+				function( $element, $args ) use ( $injection_position ) {
+					$this->add_control_to_advanced_tab( $element, $args, $injection_position );
+				},
+				10,
+				2
+			);
+		}
+	}
+
+	private function add_control_to_advanced_tab( Element_Base $element, $args, $injection_position ) {
+		$element->start_injection(
+			[
+				'of' => $injection_position,
+			]
+		);
+
+		$control_data = [
+			'label' => esc_html__( 'Cache', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'default' => '',
+			'options' => [
+				'' => esc_html__( 'Default', 'elementor' ),
+				'yes' => esc_html__( 'Dynamic', 'elementor' ),
+				'no' => esc_html__( 'Static', 'elementor' ),
+			],
+		];
+
+		$element->add_control( '_element_cache', $control_data );
+
+		$element->end_injection();
 	}
 
 	private function register_shortcode() {
