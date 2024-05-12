@@ -19,11 +19,11 @@ class Links_Page extends PageBase {
 		$properties = parent::get_properties();
 
 		$properties['support_kit'] = false;
-		$properties['show_in_library'] = false;
+		$properties['show_in_library'] = true;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_LINKS_PAGES ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
-		$properties['support_page_layout'] = false;
+		$properties['support_page_layout'] = true;
 		$properties['show_copy_and_share'] = true;
 
 		return $properties;
