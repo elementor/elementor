@@ -445,7 +445,8 @@ abstract class Element_Base extends Controls_Stack {
 		$element_type = $this->get_type();
 
 		if ( $this->should_render_shortcode() ) {
-			echo '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			$shortcode = '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			echo do_shortcode( $shortcode );
 			return;
 		}
 
