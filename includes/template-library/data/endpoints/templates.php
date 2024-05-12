@@ -59,7 +59,7 @@ class Templates extends Endpoint {
 	 */
 	private function reorder_categories( array $library_data ): array {
 		$not_found_category = '404 page';
-		error_log(print_r($library_data, true));
+
 		$key = array_search( $not_found_category, $library_data['config']['block']['categories'] );
 		if ( false === $key ) {
 			return $library_data;
