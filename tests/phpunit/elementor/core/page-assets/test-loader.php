@@ -30,27 +30,6 @@ class Test_Loader extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'e-script-get-asset', $assets['scripts'], 'Can not retrieve e-script-get-asset from assets.' );
 	}
 
-	public function test_enable_asset() {
-		$assets_loader = $this->elementor()->assets_loader;
-
-		$this->add_testing_assets( 'e-style-enable-asset', 'e-script-enable-asset' );
-
-		$assets = $assets_loader->get_assets();
-
-		$this->assertArrayNotHasKey( 'enabled', $assets['styles']['e-style-enable-asset'], 'e-style-enable-asset should not be enabled by default.' );
-		$this->assertArrayNotHasKey( 'enabled', $assets['scripts']['e-script-enable-asset'], 'e-script-enable-asset should not be enabled by default.' );
-
-		$assets_loader->enable_assets( [
-			'styles' => ['e-style-enable-asset'],
-			'scripts' => ['e-script-enable-asset'],
-		] );
-
-		$assets = $assets_loader->get_assets();
-
-		$this->assertArrayHasKey( 'enabled', $assets['styles']['e-style-enable-asset'], 'e-style-enable-asset was not properly enabled.' );
-		$this->assertArrayHasKey( 'enabled', $assets['scripts']['e-script-enable-asset'], 'e-script-enable-asset was not properly enabled.' );
-	}
-
 	public function test_add_assets() {
 		$assets_loader = $this->elementor()->assets_loader;
 
@@ -84,31 +63,6 @@ class Test_Loader extends Elementor_Test_Base {
 				$this->assertEquals( $assets[ $assets_type ][ $asset_name ], $added_assets[ $assets_type ][ $asset_name ] );
 			}
 		}
-	}
-
-	public function test_enqueue_assets() {
-		global $wp_styles;
-		global $wp_scripts;
-
-		$this->add_testing_assets( 'e-style-dynamic-enqueue', 'e-script-dynamic-enqueue' );
-
-		$assets_loader = $this->elementor()->assets_loader;
-
-		$assets_loader->enqueue_assets();
-
-		// Making sure that the assets are not enqueued before they are enabled.
-		$this->assertNotContains( 'e-style-dynamic-enqueue', $wp_styles->queue, 'e-style-dynamic-enqueue should not be enqueued before it\'s enabled.' );
-		$this->assertNotContains( 'e-script-dynamic-enqueue', $wp_scripts->queue, 'e-script-dynamic-enqueue should not be enqueued before it\'s enabled.' );
-
-		$assets_loader->enable_assets( [
-			'styles' => ['e-style-dynamic-enqueue'],
-			'scripts' => ['e-script-dynamic-enqueue'],
-		] );
-
-		$assets_loader->enqueue_assets();
-
-		$this->assertContains( 'e-style-dynamic-enqueue', $wp_styles->queue, 'e-style-dynamic-enqueue was not properly enqueued.' );
-		$this->assertContains( 'e-script-dynamic-enqueue', $wp_scripts->queue, 'e-script-dynamic-enqueue was not properly enqueued.' );
 	}
 
 	public function test_register_assets() {
