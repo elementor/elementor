@@ -392,7 +392,6 @@ class Widget_Image extends Widget_Base {
 				],
 				'condition' => [
 					'height[size]!' => '',
-					'object-fit' => 'cover',
 				],
 			]
 		);
