@@ -468,11 +468,11 @@ trait Button_Trait {
 					],
 					'column' => [
 						'title' => esc_html__( 'Above', 'elementor' ),
-						'icon' => "eicon-v-align-top",
+						'icon' => 'eicon-v-align-top',
 					],
 					'column-reverse' => [
 						'title' => esc_html__( 'Below', 'elementor' ),
-						'icon' => "eicon-v-align-bottom",
+						'icon' => 'eicon-v-align-bottom',
 					],
 				],
 				'selectors_dictionary' => [
@@ -514,7 +514,7 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}}' => '--button-icon-size: {{SIZE}}{{UNIT}}',
 				],
-		] );
+            ]);
 
 		$this->add_control(
 			'icon_indent',
@@ -546,48 +546,44 @@ trait Button_Trait {
 			]
 		);
 
-
 		$this->start_controls_tabs( 'icons_button_style', [
 			'condition' => $args['section_condition'],
 		] );
 
 		$this->start_controls_tab(
 			'icon_button_normal',
-				[
-					'label' => esc_html__( 'Normal', 'elementor' ),
-					'condition' => $args['section_condition'],
+			[
+            'label' => esc_html__( 'Normal', 'elementor' ),
+			'condition' => $args['section_condition'],
+			]);
+
+		$this->add_control( 'icon_color', [
+			'label' => esc_html__( 'Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--button-icon-color: {{VALUE}};',
+			],
+			]);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_button_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+				'condition' => $args['section_condition'],
 				]
-					);
+			);
 
-				$this->add_control( 'icon_color', [
-						'label' => esc_html__( 'Color', 'elementor' ),
-						'type' => Controls_Manager::COLOR,
-						'selectors' => [
-							'{{WRAPPER}}' => '--button-icon-color: {{VALUE}};',
-						],
-					] );
+		$this->add_control( 'icon_color_hover', [
+			'label' => esc_html__( 'Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--button-icon-color-hover: {{VALUE}};',
+			],
+			]);
 
-				$this->end_controls_tab();
-
-
-				$this->start_controls_tab(
-						'icon_button_hover',
-						[
-							'label' => esc_html__( 'Hover', 'elementor' ),
-							'condition' => $args['section_condition'],
-							]
-						);
-
-				$this->add_control( 'icon_color_hover', [
-					'label' => esc_html__( 'Color', 'elementor' ),
-					'type' => Controls_Manager::COLOR,
-					'selectors' => [
-						'{{WRAPPER}}' => '--button-icon-color-hover: {{VALUE}};',
-					],
-					] );
-
-				$this->end_controls_tab();
-
+		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
 
