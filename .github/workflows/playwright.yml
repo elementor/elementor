@@ -50,7 +50,7 @@ jobs:
       matrix:
         testSuite: [
           'ai',
-          #'onBoarding',
+          'onBoarding',
           'video',
           'elements-regression',
           'default',

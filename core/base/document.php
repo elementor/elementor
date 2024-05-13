@@ -1801,16 +1801,25 @@ abstract class Document extends Controls_Stack {
 		if ( false === $cached_data ) {
 			add_filter( 'elementor/element/should_render_shortcode', '__return_true' );
 
+			$scripts_to_queue = [];
+			$styles_to_queue = [];
+
 			global $wp_scripts, $wp_styles;
-			$scripts_ignored = $wp_scripts->queue;
-			$styles_ignored = $wp_styles->queue;
+
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles;
+			if ( $should_store_scripts ) {
+				$scripts_ignored = $wp_scripts->queue;
+				$styles_ignored = $wp_styles->queue;
+			}
 
 			ob_start();
 
 			$this->do_print_elements( $elements_data );
 
-			$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
-			$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
+			if ( $should_store_scripts ) {
+				$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
+				$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
+			}
 
 			$cached_data = [
 				'content' => ob_get_clean(),
