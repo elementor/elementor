@@ -1049,6 +1049,10 @@ class Widget_Image_Carousel extends Widget_Base {
 			return $attachment_post->post_title;
 		}
 
+		if ( empty( $attachment_post->post_content ) ) {
+			return '';
+		}
+
 		return $attachment_post->post_content;
 	}
 
