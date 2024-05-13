@@ -15,8 +15,6 @@
 	"config": {
 		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
 		"SCRIPT_DEBUG": false,
-		"WP_DEBUG": true,
-		"WP_DEBUG_LOG": true,
-		"WP_DEBUG_DISPLAY": true
+		"WP_DEBUG": false
 	}
 }
