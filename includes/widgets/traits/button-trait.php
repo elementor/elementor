@@ -475,8 +475,10 @@ trait Button_Trait {
 					],
 				],
 				'selectors_dictionary' => [
-					'row' => is_rtl() ? '--button-flex-direction: row-reverse' : '--button-flex-direction: row',
-					'row-reverse' => is_rtl() ? '--button-flex-direction: row' : '--button-flex-direction: row-reverse',
+					'left' => is_rtl() ? '--button-flex-direction: row-reverse' : '--button-flex-direction: row',
+					'right' => is_rtl() ? '--button-flex-direction: row' : '--button-flex-direction: row-reverse',
+					'row' => '--button-flex-direction: row',
+					'row-reverse' => '--button-flex-direction: row-reverse',
 					'column' => '--button-flex-direction: column; --button-align-self: center; --button-icon-display: flex;',
 					'column-reverse' => '--button-flex-direction: column-reverse; --button-align-self: center; --button-icon-display: flex;',
 				],
