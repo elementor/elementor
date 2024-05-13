@@ -286,6 +286,26 @@ export default class EditorBase extends Marionette.Application {
 			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
+				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
+
+				// TODO: Move this code to own file.
+				if ( this.widgetsCache[ widgetType ].controls?._element_cache ) {
+					let elementCacheDescription = __( 'The default cache status for this element:', 'elementor' );
+
+					elementCacheDescription += ' <strong>';
+					if ( this.widgetsCache[ widgetType ]?.is_dynamic_content ) {
+						elementCacheDescription += __( 'Inactive', 'elementor' );
+					} else {
+						elementCacheDescription += __( 'Active', 'elementor' );
+					}
+					elementCacheDescription += '</strong><br />';
+					elementCacheDescription += __( 'Activating cache improves loading times by storing a static version of this element.', 'elementor' );
+					elementCacheDescription += ' <a href="https://go.elementor.com/element-caching-help/" target="_blank">' + __( 'Learn more', 'elementor' ) + '</a>.';
+
+					this.widgetsCache[ widgetType ].controls._element_cache.description = elementCacheDescription;
+				}
+				// TODO: End of code to move.
+
 				this.widgetsCache[ widgetType ].commonMerged = true;
 			}
 
