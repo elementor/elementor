@@ -90,6 +90,10 @@ class Widget_Text_Editor extends Widget_Base {
 		return [ 'text', 'editor' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register text editor widget controls.
 	 *
