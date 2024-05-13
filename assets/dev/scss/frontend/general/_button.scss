@@ -1,6 +1,9 @@
 // Shared button style.
 .elementor-widget-button {
+	--button-flex-direction: row;
+	--button-align-self: initial;
 	--button-icon-transition: all 0.3s;
+	--button-icon-display: initial;
 }
 
 .elementor-button {
@@ -24,16 +27,16 @@
 	&-content-wrapper {
 		display: flex;
 		justify-content: center;
-		flex-direction: row;
+		flex-direction: var(--button-flex-direction);
 		gap: 5px;
 	}
 
 	&-icon {
-		// Display: flex; // This seems to be causing Backwards Compatibility issues.
+		display: var(--button-icon-display);
 
 		i {
 			color: var(--button-icon-color, inherit);
-		    	font-size: var(--button-icon-size);
+	        font-size: var(--button-icon-size);
 			transition: var(--button-icon-transition);
 		}
 
@@ -93,7 +96,7 @@
 
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
-		// Align-self: center; // This might be causing a Backwards Compatibility issue.
+		align-self: var(--button-align-self);
 	}
 
 	&:hover {
