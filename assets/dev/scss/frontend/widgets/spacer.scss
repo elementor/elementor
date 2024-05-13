@@ -19,6 +19,7 @@
 
 		& > .elementor-widget-container {
 			height: 100%;
+			width: 100%;
 
 			& > .elementor-spacer {
 				height: 100%;
@@ -27,6 +28,24 @@
 					height: var( --container-widget-height, var( --spacer-size ) );
 				}
 			}
+		}
+	}
+
+	& > .elementor-widget-spacer.elementor-widget-empty {
+		position: relative;
+		min-height: 22px;
+		min-width: 22px;
+
+		.elementor-widget-empty-icon {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			padding: 0;
+			width: 22px;
+			height: 22px;
 		}
 	}
 }

@@ -4,8 +4,6 @@
 @import "../../global/global";
 @import "../../direction/theme-light";
 
-@import "../container";
-
 @import "../units";
 @import "../breakpoints";
 @import "../dynamic-tags";
@@ -26,8 +24,8 @@
 
 // mixins
 @mixin e-grid-outline-base {
-	padding-top: var(--padding-top);
-	padding-bottom: var(--padding-bottom);
+	padding-block-start: var(--bc-padding-block-start, var(--padding-block-start));
+	padding-block-end: var(--bc-padding-block-end, var(--padding-block-end));
 	display: grid;
 	position: absolute;
 	top: 0;
@@ -50,15 +48,15 @@
 
 @mixin e-grid-outline-full-width {
 	@include e-grid-outline-base;
-	padding-right: var(--padding-right);
-	padding-left: var(--padding-left);
+	padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
+	padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
 	width: 100%;
 	left: 0;
 }
 
 // Hidden WP Admin Bar
 html.elementor-html {
-	margin-top: 0 !important;
+	margin-block-start: 0 !important;
 }
 
 .elementor-edit-area {
@@ -130,7 +128,7 @@ html.elementor-html {
 	.elementor-inner-section {
 
 		&:first-child {
-			margin-top: 15px;
+			margin-block-start: 15px;
 		}
 	}
 
@@ -161,7 +159,11 @@ html.elementor-html {
 		}
 
 		&.elementor-element-editable {
-			box-shadow: 0 0 0 1px var(--e-p-border-widget-active);
+
+			&,
+			&:hover {
+				box-shadow: 0 0 0 2px var(--e-p-border-widget);
+			}
 		}
 
 		&:not(:hover) {
@@ -377,7 +379,7 @@ html.elementor-html {
 
 	.icon {
 		font-size: 28px;
-		padding-top: 15px;
+		padding-block-start: 15px;
 		line-height: 1;
 	}
 
@@ -531,3 +533,4 @@ html.elementor-html {
 @import "column";
 @import "widget";
 @import "container";
+@import "presets";

@@ -3,7 +3,7 @@ var SortableBehavior;
 /**
  * @typedef {import('../../../container/container')} Container
  */
- SortableBehavior = Marionette.Behavior.extend( {
+SortableBehavior = Marionette.Behavior.extend( {
 	defaults: {
 		elChildType: 'widget',
 	},

@@ -22,7 +22,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 			height: initial;
 			min-height: 0;
 			padding: 0;
-			text-align: $start;
+			text-align: start;
 		}
 	}
 
@@ -32,7 +32,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		i {
 			font-size: 16px;
-			@include margin-end(15px);
+			margin-inline-end: 15px;
 		}
 
 		&__input {
@@ -75,7 +75,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		&__title {
 			padding: 5px 25px;
 			font-size: $font-size-xs;
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 		}
 
 		&--dynamic {
@@ -137,7 +137,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		}
 
 		&__description {
-			@include margin-start(5px);
+			margin-inline-start: 5px;
 			font-style: italic;
 		}
 

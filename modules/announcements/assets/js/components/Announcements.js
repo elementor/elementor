@@ -1,11 +1,12 @@
 import { AnnouncementsHeader, Announcement } from './';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Announcements( props ) {
-	const { announcements } = props;
-	const announcementTitle = Object.values( announcements )[ 0 ].title;
+	const { announcements, unMount } = props;
+	const [ currentAnnouncement, setCurrentAnnouncement ] = useState( 0 );
+	const announcementTitle = Object.values( announcements )[ 0 ].title || '';
 
 	// Send event when the popup is presented
 	useEffect( () => {
@@ -19,15 +20,19 @@ export default function Announcements( props ) {
 		}, 200 );
 
 		return () => clearTimeout( timer );
-	}, [] );
+	}, [ announcements ] );
 
 	const onCloseHandle = ( eventName ) => {
 		const eventArgs = {
 			event_name: 'element_click',
 			element_type: 'button',
 		};
-		document.getElementById( 'e-announcements-root' ).remove();
 		eventTrackingHandle( eventName, eventArgs );
+		announcements.shift();
+		if ( 0 === announcements.length ) {
+			return unMount();
+		}
+		setCurrentAnnouncement( currentAnnouncement + 1 );
 	};
 
 	const eventTrackingHandle = ( eventName, additionalArgs ) => {
@@ -54,11 +59,12 @@ export default function Announcements( props ) {
 	return (
 		<div className="announcements-container">
 			<AnnouncementsHeader onClose={ onCloseHandle } />
-			{ Object.values( announcements ).map( ( announcement, index ) => <Announcement key={ `announcement${ index }` } announcement={ announcement } onClose={ onCloseHandle } /> ) }
+			<Announcement key={ `announcement-${ currentAnnouncement }` } announcement={ announcements[ 0 ] } onClose={ onCloseHandle } />
 		</div>
 	);
 }
 
 Announcements.propTypes = {
 	announcements: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ).isRequired,
+	unMount: PropTypes.func.isRequired,
 };

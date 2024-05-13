@@ -115,6 +115,17 @@ export default class Component extends ComponentBase {
 		return elementor.config.initial_document.id;
 	}
 
+	setInitialById( id ) {
+		const document = this.get( id );
+
+		if ( ! document ) {
+			return;
+		}
+
+		elementor.config.initial_document = document.config;
+		elementorCommon.ajax.addRequestConstant( 'initial_document_id', document.id );
+	}
+
 	/**
 	 * Function setCurrent().
 	 *
@@ -150,8 +161,15 @@ export default class Component extends ComponentBase {
 		return elementorCommon.ajax.load( this.getRequestArgs( id ), true );
 	}
 
-	invalidateCache( id ) {
-		elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+	invalidateCache( id = null ) {
+		if ( id ) {
+			elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+			return;
+		}
+
+		Object.keys( this.documents ).forEach( ( docId ) => {
+			elementorCommon.ajax.invalidateCache( this.getRequestArgs( docId ) );
+		} );
 	}
 
 	getRequestArgs( id ) {

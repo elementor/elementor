@@ -50,10 +50,10 @@
 
 			&-options {
 				display: none;
-				padding-top: 10px;
+				padding-block-start: 10px;
 
 				.elementor-control-field-description {
-					margin-top: 10px;
+					margin-block-start: 10px;
 				}
 			}
 
@@ -72,7 +72,7 @@
 			align-items: center;
 
 			&:not(:last-child) {
-				padding-bottom: 10px;
+				padding-block-end: 10px;
 			}
 
 			input,
@@ -100,7 +100,7 @@
 
 			input {
 				width: 100%;
-				margin-top: 10px;
+				margin-block-start: 10px;
 			}
 		}
 	}
@@ -154,6 +154,6 @@
 
 	.elementor-autocomplete-item-info {
 		font-size: 10px;
-		padding-top: 2px;
+		padding-block-start: 2px;
 	}
 }

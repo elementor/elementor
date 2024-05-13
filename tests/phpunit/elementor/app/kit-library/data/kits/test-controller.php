@@ -20,7 +20,7 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	private $app_mock;
 
-	public function setUp(  ) {
+	public function setUp(): void {
 		$this->traitSetUP();
 
 		$this->app_mock = $this->getMockBuilder( Kit_Library::class )
@@ -59,6 +59,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'title' => 'kit_1',
 				'thumbnail_url' => 'https://localhost/image.png',
 				'access_level' => 0,
+				'access_tier' => Module::ACCESS_TIER_FREE,
 				'keywords' => [ 'word', 'word2' ],
 				'taxonomies' => ['a', 'b', 'c', 'd', 'e',  'f', 'g', 'h',Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
 				'is_favorite' => false,
@@ -73,8 +74,9 @@ class Test_Controller extends Elementor_Test_Base {
 				'title' => 'kit_2',
 				'thumbnail_url' => 'https://localhost/image2.png',
 				'access_level' => 1,
+				'access_tier' => Module::ACCESS_TIER_ESSENTIAL,
 				'keywords' => [],
-				'taxonomies' => ['1', '2', '3', '4', '5', '6', '7', '8',$subscription_plans[Module::ACCESS_LEVEL_PRO]['label']], // Subscription plan also added as taxonomy
+				'taxonomies' => ['1', '2', '3', '4', '5', '6', '7', '8', $subscription_plans[Module::ACCESS_TIER_ESSENTIAL]['label']], // Subscription plan also added as taxonomy
 				'is_favorite' => true,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -103,6 +105,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'title' => 'kit_1',
 			'thumbnail_url' => 'https://localhost/image.png',
 			'access_level' => 0,
+			'access_tier' => Module::ACCESS_TIER_FREE,
 			'keywords' => [ 'word', 'word2' ],
 			'taxonomies' => ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
 			'is_favorite' => false,
@@ -185,6 +188,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'slug' => 'kit_1',
 				'thumbnail' => 'https://localhost/image.png',
 				'access_level' => 0,
+				'access_tier' => Module::ACCESS_TIER_FREE,
 				'trend_index' => 20,
 				'featured_index' => 30,
 				'popularity_index' => 40,
@@ -221,6 +225,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'slug' => 'kit_2',
 				'thumbnail' => 'https://localhost/image2.png',
 				'access_level' => 1,
+				'access_tier' => Module::ACCESS_TIER_ESSENTIAL,
 				'trend_index' => 20,
 				'featured_index' => 30,
 				'popularity_index' => 40,

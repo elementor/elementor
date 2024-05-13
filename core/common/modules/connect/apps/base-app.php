@@ -79,8 +79,11 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			/* translators: %s: Remote user. */
-			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
+			$title = sprintf(
+				/* translators: %s: Remote user. */
+				esc_html__( 'Connected as %s', 'elementor' ),
+				'<strong>' . esc_html( $remote_user->email ) . '</strong>'
+			);
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
@@ -498,6 +501,10 @@ abstract class Base_App {
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
+			if ( ! $code ) {
+				$code = $response_code;
+			}
+
 			if ( 401 === $code ) {
 				$this->delete();
 
@@ -506,6 +513,10 @@ abstract class Base_App {
 				if ( $should_retry ) {
 					$this->action_authorize();
 				}
+			}
+
+			if ( isset( $options['with_error_data'] ) && true === $options['with_error_data'] ) {
+				return new \WP_Error( $code, $message, $body );
 			}
 
 			return new \WP_Error( $code, $message );

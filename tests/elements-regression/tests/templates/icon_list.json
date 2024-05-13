@@ -1,0 +1,283 @@
+{
+    "content": [
+        {
+            "id": "3c5f0805",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "57ff1891",
+                    "settings": {
+                        "icon_list": [
+                            {
+                                "text": "My list #1",
+                                "_id": "2160cd3"
+                            },
+                            {
+                                "text": "My list  #2",
+                                "selected_icon": {
+                                    "value": "fas fa-times",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "87bc45b"
+                            },
+                            {
+                                "text": "My list #3",
+                                "selected_icon": {
+                                    "value": "fas fa-dragon",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "8733d04"
+                            }
+                        ],
+                        "space_between": {
+                            "unit": "px",
+                            "size": 14,
+                            "sizes": []
+                        },
+                        "icon_align": "left",
+                        "divider": "yes",
+                        "divider_color": "#0201E5",
+                        "icon_size": {
+                            "unit": "px",
+                            "size": 37,
+                            "sizes": []
+                        },
+                        "text_indent": {
+                            "unit": "px",
+                            "size": 16,
+                            "sizes": []
+                        },
+                        "icon_self_align": "right",
+                        "icon_self_vertical_align": "flex-start",
+                        "icon_typography_typography": "custom",
+                        "icon_typography_font_family": "Roboto",
+                        "icon_typography_font_weight": "600",
+                        "text_shadow_text_shadow_type": "yes",
+                        "text_shadow_text_shadow": {
+                            "horizontal": 21,
+                            "vertical": -6,
+                            "blur": 6,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "text_color": "#7A7A7A",
+                        "__globals__": {
+                            "icon_typography_typography": "",
+                            "text_color": "globals\/colors?id=text"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "icon-list",
+                    "elType": "widget"
+                },
+                {
+                    "id": "d369bed",
+                    "settings": {
+                        "view": "inline",
+                        "icon_list": [
+                            {
+                                "text": "List Item #1",
+                                "_id": "2160cd3"
+                            },
+                            {
+                                "text": "List Item #2",
+                                "selected_icon": {
+                                    "value": "fas fa-times",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "87bc45b"
+                            },
+                            {
+                                "text": "List Item #3",
+                                "selected_icon": {
+                                    "value": "fas fa-dot-circle",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "8733d04"
+                            }
+                        ],
+                        "space_between": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "icon_align": "center",
+                        "divider": "yes",
+                        "divider_style": "double",
+                        "divider_weight": {
+                            "unit": "px",
+                            "size": 5,
+                            "sizes": []
+                        },
+                        "divider_height": {
+                            "unit": "%",
+                            "size": 63,
+                            "sizes": []
+                        },
+                        "icon_self_align": "right",
+                        "icon_self_vertical_align": "center",
+                        "icon_typography_typography": "custom",
+                        "icon_typography_font_family": "Times New Roman",
+                        "icon_typography_font_size": {
+                            "unit": "px",
+                            "size": 46,
+                            "sizes": []
+                        },
+                        "icon_typography_font_weight": "400",
+                        "icon_typography_text_transform": "uppercase",
+                        "icon_typography_font_style": "italic",
+                        "icon_typography_text_decoration": "underline",
+                        "icon_typography_line_height": {
+                            "unit": "px",
+                            "size": 79,
+                            "sizes": []
+                        },
+                        "icon_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 2.8,
+                            "sizes": []
+                        },
+                        "icon_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 11,
+                            "sizes": []
+                        },
+                        "text_color": "#AEAE09",
+                        "__globals__": {
+                            "divider_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "icon-list",
+                    "elType": "widget"
+                },
+                {
+                    "id": "e59441",
+                    "settings": {
+                        "view": "inline",
+                        "icon_list": [
+                            {
+                                "text": "List Item #1",
+                                "selected_icon": {
+                                    "value": "fas fa-check-circle",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "2160cd3"
+                            },
+                            {
+                                "text": "List Item #2",
+                                "selected_icon": {
+                                    "value": "fas fa-times",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "87bc45b"
+                            },
+                            {
+                                "text": "List Item #3",
+                                "selected_icon": {
+                                    "value": "fas fa-dot-circle",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "8733d04"
+                            },
+                            {
+                                "_id": "50e5795",
+                                "text": "List Item",
+                                "selected_icon": {
+                                    "value": "far fa-calendar",
+                                    "library": "fa-regular"
+                                }
+                            },
+                            {
+                                "_id": "b9cd83a",
+                                "text": "List Item"
+                            },
+                            {
+                                "_id": "21b6ce4",
+                                "text": "List Item",
+                                "selected_icon": {
+                                    "value": "fab fa-apple",
+                                    "library": "fa-brands"
+                                }
+                            },
+                            {
+                                "_id": "e3212c3",
+                                "text": "List Item"
+                            }
+                        ],
+                        "icon_align": "right",
+                        "icon_color": "#6EC1E4",
+                        "icon_self_vertical_align": "flex-end",
+                        "icon_vertical_offset": {
+                            "unit": "px",
+                            "size": -1,
+                            "sizes": []
+                        },
+                        "icon_typography_typography": "custom",
+                        "icon_typography_font_family": "Roboto Flex",
+                        "icon_typography_font_weight": "300",
+                        "icon_typography_text_transform": "lowercase",
+                        "icon_typography_text_decoration": "line-through",
+                        "icon_typography_line_height": {
+                            "unit": "px",
+                            "size": 57,
+                            "sizes": []
+                        },
+                        "icon_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 1.5,
+                            "sizes": []
+                        },
+                        "icon_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 5,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "icon-list",
+                    "elType": "widget"
+                },
+                {
+                    "id": "62f93bf9",
+                    "settings": {
+                        "icon_list": [
+                            {
+                                "text": "Just default icon list #1",
+                                "_id": "9599ffd"
+                            },
+                            {
+                                "text": "List Item #2",
+                                "selected_icon": {
+                                    "value": "fas fa-times",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "53876fc"
+                            },
+                            {
+                                "text": "List Item #3",
+                                "selected_icon": {
+                                    "value": "fas fa-dot-circle",
+                                    "library": "fa-solid"
+                                },
+                                "_id": "11ea65a"
+                            }
+                        ]
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "icon-list",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "icon_list",
+    "type": "page"
+}

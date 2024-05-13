@@ -15,6 +15,7 @@ export default class extends Marionette.CompositeView {
 			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
 			indicator: '> .elementor-navigator__item > .elementor-navigator__element__indicators > .elementor-navigator__element__indicator',
 			elements: '> .elementor-navigator__elements',
+			icon: '> .elementor-navigator__item .elementor-navigator__element__element-type',
 		};
 	}
 
@@ -22,6 +23,7 @@ export default class extends Marionette.CompositeView {
 		return {
 			contextmenu: 'onContextMenu',
 			'click @ui.item': 'onItemClick',
+			'keydown @ui.item': 'onItemPress',
 			'click @ui.toggle': 'onToggleClick',
 			'click @ui.toggleList': 'onToggleListClick',
 			'click @ui.indicator': 'onIndicatorClick',
@@ -314,7 +316,7 @@ export default class extends Marionette.CompositeView {
 			return;
 		}
 
-		this.ui.item.css( 'padding-' + ( elementorCommon.config.isRTL ? 'right' : 'left' ), this.getIndent() );
+		this.ui.item.css( 'padding-inline-start', this.getIndent() + 'px' );
 
 		this.toggleHiddenClass();
 
@@ -332,6 +334,14 @@ export default class extends Marionette.CompositeView {
 			this.ui.title.text( this.model.getTitle() );
 		}
 
+		if ( undefined !== settingsModel.changed.presetTitle && undefined === settingsModel._title ) {
+			this.ui.title.text( this.model.getTitle() );
+		}
+
+		if ( undefined !== settingsModel.changed.presetIcon ) {
+			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
+		}
+
 		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
 			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
 				this.renderIndicators();
@@ -339,6 +349,20 @@ export default class extends Marionette.CompositeView {
 				return false;
 			}
 		} );
+	}
+
+	onItemPress( event ) {
+		const ENTER_KEY = 13,
+			SPACE_KEY = 32;
+
+		if ( ENTER_KEY === event.keyCode ) {
+			this.onItemClick( event );
+			return;
+		}
+
+		if ( SPACE_KEY === event.keyCode ) {
+			this.onToggleListClick( event );
+		}
 	}
 
 	onItemClick( event ) {

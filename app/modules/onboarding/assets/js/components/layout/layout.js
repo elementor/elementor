@@ -31,7 +31,7 @@ export default function Layout( props ) {
 		goProButtonRef = useRef(),
 		createAccountButton = {
 			id: 'create-account',
-			text: __( 'Create Account', 'elementor-pro' ),
+			text: __( 'Create Account', 'elementor' ),
 			hideText: false,
 			elRef: useRef(),
 			url: elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectTopBar,
@@ -53,7 +53,7 @@ export default function Layout( props ) {
 	if ( state.isLibraryConnected ) {
 		headerButtons.push( {
 			id: 'my-elementor',
-			text: __( 'My Elementor', 'elementor-pro' ),
+			text: __( 'My Elementor', 'elementor' ),
 			hideText: false,
 			icon: 'eicon-user-circle-o',
 			url: 'https://my.elementor.com/websites/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,

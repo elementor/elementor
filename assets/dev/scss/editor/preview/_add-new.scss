@@ -86,21 +86,21 @@
 	display: flex;
 	outline: none;
 	border: none;
-	background-color: var(--e-a-btn-bg);
-	color: var(--e-a-btn-color-invert);
+	background-color: var(--e-a-bg-active);
+	color: var(--e-a-color-black);
 	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
 	&:hover {
-		background-color: var(--e-a-btn-bg-hover);
-		color: var(--e-a-btn-color-invert);
+		background-color: var(--e-a-bg-active-bold);
+		color: var(--e-a-color-black);
 	}
 
 	i {
 		margin: 0;
 	}
 
-	&.elementor-add-section-button {
+	&.e-button-primary {
 		background-color: var(--e-a-btn-bg-primary);
 		color: var(--e-a-btn-color);
 
@@ -122,7 +122,7 @@
 .elementor-add-section-drag-title {
 	font-style: italic;
 	font-weight: normal;
-	margin-top: 10px;
+	margin-block-start: 10px;
 	width: 100%;
 }
 

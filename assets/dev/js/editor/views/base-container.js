@@ -74,6 +74,10 @@ module.exports = Marionette.CompositeView.extend( {
 			options.onBeforeAdd();
 		}
 
+		if ( this.filterSettings ) {
+			this.filterSettings( newItem );
+		}
+
 		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
@@ -114,6 +118,10 @@ module.exports = Marionette.CompositeView.extend( {
 			model.isInner = true;
 		}
 
+		if ( model?.isPreset ?? false ) {
+			model.settings = model.preset_settings;
+		}
+
 		const historyId = $e.internal( 'document/history/start-log', {
 			type: this.getHistoryType( options.event ),
 			title: elementor.helpers.getModelLabel( model ),
@@ -131,6 +139,7 @@ module.exports = Marionette.CompositeView.extend( {
 				columns: Number( ! containerExperiment ),
 				options: {
 					at: options.at,
+					scrollIntoView: options.scrollIntoView,
 				},
 			} );
 

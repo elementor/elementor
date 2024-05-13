@@ -30,7 +30,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
-		} );
+			} );
 	}
 
 	attachDocumentToPreview( document, args ) {
@@ -60,13 +60,10 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
 
 			if ( ! isInitialDocument ) {
-				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+				elementor.documents.getCurrent().$element.addClass( 'elementor-embedded-editor' );
 			}
 
-			$e.internal( 'document/elements/populate', {
-				document,
-				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
-			} );
+			elementor.initElements();
 
 			elementor.initPreviewView( document );
 

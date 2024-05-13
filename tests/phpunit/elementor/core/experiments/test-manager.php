@@ -20,10 +20,28 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments;
 
-	public function setUp() {
+	/**
+	 * @var array The state of the experiments before the bootstrap file of the tests changes it.
+	 */
+	private $experiments_state = [];
+
+	public function setUp(): void {
 		parent::setUp();
 
+		add_action( 'elementor/experiments/feature-registered', [ $this, 'set_original_experiments_state' ], 1, 2 );
+
+		add_action( 'elementor/experiments/feature-registered', [ $this, 'reset_experiments_state' ], 9999, 2 );
+
 		$this->experiments = new Experiments_Manager();
+	}
+
+	public function set_original_experiments_state( Experiments_Manager $experiments_manager, array $experimental_data ) {
+		$this->experiments_state[ $experimental_data['name'] ] = $experimental_data['default'];
+	}
+
+	public function reset_experiments_state( Experiments_Manager $experiments_manager, array $experimental_data ) {
+		$original_experiment_state = $this->experiments_state[ $experimental_data['name'] ];
+		$experiments_manager->set_feature_default_state( $experimental_data['name'], $original_experiment_state );
 	}
 
 	public function test_add_feature() {
@@ -205,7 +223,7 @@ class Test_Manager extends Elementor_Test_Base {
 							'label' => 'Second tag',
 						],
 					],
-				]
+				],
 			],
 			'New feature passing tags to both "tag" and "tags"' => [
 				'name' => 'test_feature_with_tags7',
@@ -372,36 +390,74 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active() {
-		$this->add_test_feature();
+		$this->add_test_feature( [
+			'name' => 'test_feature',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
 
 		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
 
 		$this->assertTrue( $is_test_feature_active );
 	}
 
-	public function test_is_feature_active__new_site() {
-		update_option( Manager::INSTALLS_HISTORY_META, [
-			time() => '3.1.0',
-		] );
+    public function is_feature_active_new_site_with_beta_data_provider() {
+        return [
+            'new_site_active' => [
+                'versions_history' => [
+                    '3.1.0' => time(),
+                ],
+                'minimum_installation_version' => '3.1.0',
+                'expected' => true,
+            ],
+            'new_site_inactive' => [
+                'versions_history' => [
+                    '3.0.0' => time(),
+                ],
+                'minimum_installation_version' => '3.1.0',
+                'expected' => false,
+            ],
+            'new_site_with_beta_active' => [
+                'versions_history' => [
+                    '3.1.0-beta1' => time(),
+                    '3.1.0-beta2' => time() + 1,
 
-		$this->add_test_feature( [
+                ],
+                'minimum_installation_version' => '3.1.0',
+                'expected' => true,
+            ],
+            'new_site_with_beta_inactive' => [
+                'versions_history' => [
+                    '3.0.0-beta' => time(),
+                ],
+                'minimum_installation_version' => '3.1.0',
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider is_feature_active_new_site_with_beta_data_provider
+     */
+	public function test_is_feature_active__new_site( $versions_history, $minimum_installation_version, $expected ) {
+		update_option( Manager::get_install_history_meta(), $versions_history );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_feature',
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => true,
-				'minimum_installation_version' => '3.1.0',
+				'minimum_installation_version' => $minimum_installation_version,
 			],
 		] );
 
-		$experiments = $this->experiments;
+		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
 
-		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
-
-		$this->assertTrue( $is_test_feature_active );
+		$this->assertEquals( $expected, $is_test_feature_active );
 	}
 
 	public function test_is_feature_active__immutable() {
-		update_option( Manager::INSTALLS_HISTORY_META, [
-			time() => '3.1.0',
+		update_option( Manager::get_install_history_meta(), [
+			'3.1.0' => time(),
 		] );
 
 		$this->add_test_feature( [
@@ -564,6 +620,127 @@ class Test_Manager extends Elementor_Test_Base {
 			Experiments_Manager::STATE_INACTIVE,
 			get_option( $this->experiments->get_feature_option_key( $dependant['name'] ) )
 		);
+	}
+
+	public function test_sort_allowed_options_by_dependencies() {
+		// Arrange.
+		$this->experiments->add_feature( [
+			'name' => 'test_A',
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_B',
+			'dependencies' => [
+				'test_A',
+				'non-existing-dep-that-should-be-ignored',
+			],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_C',
+			'dependencies' => [ 'test_B' ],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_D',
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_E',
+			'dependencies' => [ 'test_A' ],
+		] );
+
+		// Act.
+		$result = apply_filters(
+			'allowed_options',
+			[
+				'not-elementor' => [
+					'option_a',
+				],
+				'elementor' => [
+					'not_experiment',
+					'elementor_experiment-test_C',
+					'elementor_experiment-test_B',
+					'elementor_experiment-test_D',
+					'elementor_experiment-test_E',
+					'not_experiment_2',
+					'elementor_experiment-test_A',
+				],
+			]
+		);
+
+		// Assert.
+		$this->assertEqualSets(
+			[
+				'not-elementor' => [
+					'option_a',
+				],
+				'elementor' => [
+					'not_experiment',
+					'not_experiment_2',
+					'elementor_experiment-test_A',
+					'elementor_experiment-test_B',
+					'elementor_experiment-test_C',
+					'elementor_experiment-test_D',
+					'elementor_experiment-test_E',
+				],
+			],
+			$result
+		);
+
+		// Teardown.
+		$this->experiments->remove_feature( 'test_A' );
+		$this->experiments->remove_feature( 'test_B' );
+		$this->experiments->remove_feature( 'test_C' );
+		$this->experiments->remove_feature( 'test_D' );
+		$this->experiments->remove_feature( 'test_E' );
+	}
+
+	public function test_sort_allowed_options_by_dependencies__circular_deps() {
+		// Arrange.
+		$this->experiments->add_feature( [
+			'name' => 'test_A',
+			'dependencies' => [ 'test_C' ],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_B',
+			'dependencies' => [ 'test_A' ],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_C',
+			'dependencies' => [ 'test_B' ],
+		] );
+
+		// Act.
+		$result = apply_filters(
+			'allowed_options',
+			[
+				'elementor' => [
+					'elementor_experiment-test_B',
+					'elementor_experiment-test_C',
+					'elementor_experiment-test_A',
+				],
+			]
+		);
+
+		// Assert.
+		$this->assertEqualSets(
+			[
+				'elementor' => [
+					'elementor_experiment-test_C',
+					'elementor_experiment-test_A',
+					'elementor_experiment-test_B',
+				],
+			],
+			$result
+		);
+
+		// Teardown.
+		$this->experiments->remove_feature( 'test_A' );
+		$this->experiments->remove_feature( 'test_B' );
+		$this->experiments->remove_feature( 'test_C' );
 	}
 
 	private function add_test_feature( array $args = [] ) {

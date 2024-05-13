@@ -468,6 +468,10 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * @param {Function} callback - A callback function.
+	 * @deprecated since 3.5.0, use `container.children.findRecursive( callback )` instead.
+	 */
 	findChildrenRecursive( callback ) {
 		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
@@ -478,6 +482,10 @@ export default class Container extends ArgsObject {
 		return this.children.findRecursive( callback );
 	}
 
+	/**
+	 * @param {Function} callback - A callback function.
+	 * @deprecated since 3.5.0, use `container.children.forEachRecursive( callback )` instead.
+	 */
 	forEachChildrenRecursive( callback ) {
 		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
@@ -519,6 +527,10 @@ export default class Container extends ArgsObject {
 
 	isDesignable() {
 		return elementor.userCan( 'design' ) && this.isEditable();
+	}
+
+	isGridContainer() {
+		return 'grid' === this.parent.settings.get( 'container_type' );
 	}
 
 	/**

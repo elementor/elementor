@@ -4,7 +4,7 @@ import Document from './document';
 /**
  * @typedef {import('./content-type')} ContentType
  */
- export default class Kit extends BaseModel {
+export default class Kit extends BaseModel {
 	id = '';
 	title = '';
 	description = '';
@@ -35,6 +35,7 @@ import Document from './document';
 			thumbnailUrl: kit.thumbnail_url,
 			previewUrl: kit.preview_url,
 			accessLevel: kit.access_level,
+			accessTier: kit.access_tier,
 			trendIndex: kit.trend_index,
 			popularityIndex: kit.popularity_index,
 			featuredIndex: kit.featured_index,

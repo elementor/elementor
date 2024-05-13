@@ -14,14 +14,17 @@
 .elementor-panel-alert {
     background-color: var(--e-a-bg-primary);
 	padding: 15px;
-    @include border-start(3px solid var(--e-a-color-primary));
+	border-inline-start: 3px solid var(--e-a-color-primary);
 	position: relative;
 	font-size: 12px;
 	font-weight: 300;
 	font-style: italic;
 	line-height: 1.5;
-	text-align: $start;
-	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	text-align: start;
+	border-start-start-radius: 0;
+	border-start-end-radius: 3px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 3px;
 
 	a {
 		color: inherit;
@@ -40,7 +43,7 @@
 		}
 
 		&warning {
-			@include border-start(3px solid var(--e-a-color-warning));
+			border-inline-start: 3px solid var(--e-a-color-warning);
 			background: var(--e-a-bg-warning);
 		}
 
@@ -66,7 +69,7 @@
 	left: 0;
 	right: 0;
 	margin: -4px auto 5px;
-	padding-top: 15px;
+	padding-block-start: 15px;
 	width: 90%;
 	z-index: $super-layer; // Above the select2 select boxes
 	background-color: var(--e-a-bg-default);
@@ -79,7 +82,7 @@
 		top: -$triangle-size * 2;
 		@include end(22px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: var(--e-a-bg-default);
+		border-block-end-color: var(--e-a-bg-default);
 	}
 
 	div.elementor-control { // Harder selector to override default settings
@@ -96,7 +99,7 @@
 	.elementor-nerd-box {
 
 		.elementor-nerd-box-icon {
-			margin-top: 20px;
+			margin-block-start: 20px;
 		}
 	}
 }

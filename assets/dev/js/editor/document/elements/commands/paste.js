@@ -36,7 +36,9 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 		if ( storageData.siteurl !== elementorCommon.config.urls.rest ) {
 			try {
-				storageDataElements = await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'import_from_json', {
+				storageDataElements = await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest(
+					'import_from_json',
+					{
 						data: {
 							elements: JSON.stringify( storageDataElements ),
 						},
@@ -74,13 +76,20 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		const result = [];
 
 		containers.forEach( ( targetContainer ) => {
-			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
+			const createNewElementAtTheBottomOfThePage = 'undefined' === typeof at;
+			let index = createNewElementAtTheBottomOfThePage ? targetContainer.view.collection.length : at;
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
 					case 'container': {
 						// Push the cloned container to the 'document'.
-						result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
+						result.push( this.pasteTo(
+							[ targetContainer ],
+							[ model ],
+							{
+								at: createNewElementAtTheBottomOfThePage ? ++index : index,
+							} ),
+						);
 					}
 						break;
 
@@ -135,8 +144,6 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						break;
 
 					default: {
-						const createNewElementAtTheBottomOfThePage = 'undefined' === typeof at;
-
 						// The 'default' case is widget.
 						let target;
 

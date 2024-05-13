@@ -42,10 +42,14 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'announcements-app',
 			$this->get_js_assets_url( 'announcements-app' ),
-			[],
+			[
+				'wp-i18n',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'announcements-app', 'elementor' );
 
 		$this->print_config( 'announcements-app' );
 	}
@@ -88,34 +92,42 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		return [
+		$raw_announcements = [
 			[
-				'title' => 'Activate Containers for Brilliant Layouts',
-				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
+				'title' => 'Unlock the Power of Elementor AI ',
+				'description' => '<p>Design a website true to your brand with natively integrated AI tools.</p>
+				<ul>
+					<li>Generate containers using text or any website you reference from the web and get a wireframe layout to start with. Use the container variations capability to bring the wireframe to life with design and content.</li>
+					<li>Let AI write or edit your text in the context of your brand, tone of voice and optimal length. Also generate custom code or CSS that seamlessly integrates into your website.</li>
+					<li>Create one-of-a-kind images, add, or erase content from existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Use Elementor’s AI History Panel to efficiently access previously-generated text, code or image prompts, and ensure consistency across your site.</li>
+				</ul>',
 				'media' => [
 					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
 				],
 				'cta' => [
 					[
-						'label' => 'Activate Containers',
+						'label' => 'Continue',
 						'variant' => 'primary',
 						'target' => '_blank',
-						'url' => ElementorSettings::get_url() . '#tab-experiments',
 					],
 					[
-						'label' => 'Try It First',
+						'label' => 'Learn More',
 						'target' => '_blank',
-						'url' => 'https://go.elementor.com/whats-new-popup/',
+						'url' => 'https://go.elementor.com/whats-new-popup-learn-elementor-ai/',
 					],
 				],
 				'triggers' => [
 					[
-						'action' => 'isFlexContainerInactive',
+						'action' => 'aiStared',
 					],
 				],
 			],
 		];
+
+		// DO NOT USE THIS FILTER
+		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 
 	/**
@@ -149,10 +161,15 @@ class Module extends BaseApp {
 	}
 
 	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+	}
+
+	public function on_elementor_init() {
 		if ( empty( $this->get_active_announcements() ) ) {
 			return;
 		}
-		parent::__construct();
 
 		add_action( 'elementor/editor/footer', function () {
 			$this->render_app_wrapper();

@@ -4,6 +4,8 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
+import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
+import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -344,6 +346,11 @@ import TemplateControls from './new-template/template-controls.js';
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+
+			if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
+				new LinksPagesModule();
+			}
+
 			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();
@@ -383,7 +390,9 @@ import TemplateControls from './new-template/template-controls.js';
 		},
 
 		initTemplatesImport() {
-			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
+			const canImport = elementorAdminConfig.user.is_administrator || ( elementorAdminConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
+
+			if ( ! canImport || ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
@@ -404,19 +413,58 @@ import TemplateControls from './new-template/template-controls.js';
 				$( '#elementor-import-template-area' ).toggle();
 			} );
 
-			$importForm.on( 'submit', ( event ) => {
+			const messages = {
+				jsonUploadWarning: {
+					shown: false,
+				},
+				enableUnfilteredFiles: {
+					shown: false,
+				},
+			};
+			const originalButtonValue = $importNowButton[ 0 ].value;
+
+			$importForm.on( 'submit', async ( event ) => {
 				$importNowButton[ 0 ].disabled = true;
 				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
 
-				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+				if ( ! messages.jsonUploadWarning.shown ) {
+					event.preventDefault();
+
+					try {
+						await showJsonUploadWarningMessageIfNeeded( {
+							IntroductionClass: window.elementorModules.admin.utils.Introduction,
+							introductionMap: window.elementorAdmin.config.user.introduction,
+							waitForSetViewed: true,
+						} );
+
+						messages.jsonUploadWarning.shown = true;
+						$importForm.trigger( 'submit' );
+					} catch ( e ) {
+						$importNowButton[ 0 ].disabled = false;
+						$importNowButton[ 0 ].value = originalButtonValue;
+					}
+
+					return;
+				}
+
+				const hasImportedFiles = $importFormFileInput[ 0 ].files.length;
+				const areUnfilteredFilesEnabled = elementorCommon.config.filesUpload.unfilteredFiles;
+
+				if ( hasImportedFiles && ! areUnfilteredFilesEnabled && ! messages.enableUnfilteredFiles.shown ) {
 					event.preventDefault();
 
 					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						messages.enableUnfilteredFiles.shown = true;
 						$importForm.trigger( 'submit' );
 					} );
 
 					enableUnfilteredFilesModal.show();
+
+					return;
 				}
+
+				messages.jsonUploadWarning.shown = false;
+				messages.enableUnfilteredFiles.shown = false;
 			} );
 		},
 

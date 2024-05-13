@@ -1,3 +1,3 @@
-import ControlBaseDataView from './base-data';
+import { default as ControlBaseDataView } from './base-data';
 
 module.exports = ControlBaseDataView.extend( {}, { onPasteStyle: () => false } );

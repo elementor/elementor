@@ -3,9 +3,7 @@
 // this should emulate external packages consumption
 @import "./card-api";
 
-$root: $eps-prefix + card;
-
-.#{$root} {
+.#{$eps-prefix}card {
 	border: var(--card-border);
 	border-radius: $card-border-radius;
 	transition: $card-transition;
@@ -13,7 +11,7 @@ $root: $eps-prefix + card;
 
 	&__header {
 		padding: $card-header-padding;
-		border-bottom: var(--card-header-footer-border);
+		border-block-end: var(--card-header-footer-border);
 		min-height: $card-header-height;
 		display: flex;
 		align-items: center;
@@ -29,14 +27,14 @@ $root: $eps-prefix + card;
 
 	&__headline {
 		color: var(--card-headline-color);
-		margin-bottom: 0;
+		margin-block-end: 0;
 		font-weight: $card-headline-font-weight;
 		flex-grow: 1;
 		@include text-truncate();
 	}
 
 	&__body {
-		padding: $card-body-padding-y $card-body-padding-x;
+		padding: $card-body-padding-block $card-body-padding-inline;
 
 		&--padding {
 			padding: var(--eps-card-body-padding);
@@ -47,7 +45,7 @@ $root: $eps-prefix + card;
 	&__figure {
 		background-color: var(--card-figure-background-color);
 		position: relative;
-		padding-bottom: $card-image-aspect-ratio;
+		padding-block-end: $card-image-aspect-ratio;
 		overflow: hidden;
 		height: 0;
 	}
@@ -58,7 +56,7 @@ $root: $eps-prefix + card;
 		object-position: top;
 		position: absolute;
 		top: 0;
-		left: 0;
+		@include start(0);
 	}
 
 	&__image-overlay {
@@ -78,7 +76,7 @@ $root: $eps-prefix + card;
 
 	&__footer {
 		padding: $card-padding;
-		border-top: var(--card-header-footer-border);
+		border-block-start: var(--card-header-footer-border);
 		font-size: $card-footer-font-size;
 
 		&--padding {
@@ -86,4 +84,3 @@ $root: $eps-prefix + card;
 		}
 	}
 }
-

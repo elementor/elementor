@@ -30,7 +30,7 @@ $root: e-kit-library__kit-item;
 
 		& > i {
 			font-size: 2rem;
-			margin-bottom: 5px;
+			margin-block-end: 5px;
 		}
 
 		& > span {
@@ -57,7 +57,7 @@ $root: e-kit-library__kit-item;
 	&-subscription-plan-badge {
 		position: absolute;
 		top: 0;
-		right: 0;
+		@include end(0);
 		margin: spacing(5);
 		background-color: var(--e-a-color-brand);
 		color: theme-colors( light );

@@ -1,0 +1,26 @@
+name: Set Postfix Value
+description: Set the POSTFIX value for according the received channel and pre-release values.
+
+inputs:
+  PRERELEASE:
+    required: false
+    description: 'Is this a pre-release?'
+outputs:
+  postfix:
+    description: "One click Postfix value."
+    value: ${{ steps.set-postfix-value.outputs.postfix }}
+runs:
+  using: "composite"
+  steps:
+    - name: Set POSTFIX value
+      id: set-postfix-value
+      shell: bash
+      run: |
+        # Set the postfix value
+
+        POSTFIX=""
+        if [[ ${{ inputs.PRERELEASE }} == 'true' ]]; then
+          POSTFIX="-test"
+        fi
+
+        echo "POSTFIX=$POSTFIX" >> $GITHUB_OUTPUT

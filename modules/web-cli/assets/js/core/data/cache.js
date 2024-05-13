@@ -210,15 +210,15 @@ export default class Cache {
 				pureEndpointParts = pureEndpoint.split( '/' ),
 				lastEndpointPart = pureEndpointParts[ pureEndpointParts.length - 1 ];
 
-				pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
-					if ( pureEndpointPart === lastEndpointPart ) {
-						// Null, means delete.
-						accumulator[ pureEndpointPart ] = null;
-					} else {
-						accumulator[ pureEndpointPart ] = {};
-					}
-					return accumulator[ pureEndpointPart ];
-				}, newData );
+			pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
+				if ( pureEndpointPart === lastEndpointPart ) {
+					// Null, means delete.
+					accumulator[ pureEndpointPart ] = null;
+				} else {
+					accumulator[ pureEndpointPart ] = {};
+				}
+				return accumulator[ pureEndpointPart ];
+			}, newData );
 
 			if ( Object.keys( oldData ).length ) {
 				const deleteKeys = ( target, nullsObject ) => {

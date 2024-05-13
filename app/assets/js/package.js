@@ -42,6 +42,8 @@ import useAjax from './hooks/use-ajax';
 import useAction from './hooks/use-action';
 import usePageTitle from './hooks/use-page-title';
 import useQueryParams from './hooks/use-query-params';
+import useIntroduction from './hooks/use-introduction';
+import useConfirmAction from './hooks/use-confirm-action';
 
 export const appUi = {
 	AddNewButton,
@@ -89,4 +91,6 @@ export const hooks = {
 	useAction,
 	usePageTitle,
 	useQueryParams,
+	useIntroduction,
+	useConfirmAction,
 };

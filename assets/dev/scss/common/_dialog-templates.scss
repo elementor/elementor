@@ -21,13 +21,13 @@
 	.dialog {
 
 		&-header {
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 			padding: 0;
 			z-index: 1;
 		}
 
 		&-buttons-wrapper {
-			border-top: var(--e-a-border);
+			border-block-start: var(--e-a-border);
 			padding: 10px;
 			display: flex;
 			justify-content: flex-end;
@@ -64,8 +64,8 @@
 			cursor: pointer;
 
 			&-area {
-				text-align: $start;
-				@include padding-start(15px);
+				text-align: start;
+				padding-inline-start: 15px;
 
 				> * {
 					display: flex;
@@ -74,13 +74,13 @@
 			}
 
 			&__icon-wrapper {
-				@include margin-end(10px);
+				margin-inline-end: 10px;
 				font-size: 12px;
 			}
 
 			&__title {
 				color: var(--e-a-color-txt-active);
-				padding-top: 2px;
+				padding-block-start: 2px;
 			}
 		}
 
@@ -111,7 +111,7 @@
 
 			&--normal {
 				width: 47px;
-				@include border-start(var(--e-a-border));
+				border-inline-start: var(--e-a-border);
 
 				i {
 					font-size: 18px;
@@ -120,20 +120,19 @@
 
 			&--skip {
 				padding: 10px;
-				@include padding-start(20px);
-				@include margin-end(10px);
+				padding-inline-start: 20px;
+				margin-inline-end: 10px;
 				font-size: 11px;
 				font-weight: normal;
 				line-height: 1;
-				text-transform: uppercase;
-				border-radius: 2px;
+				border-radius: var(--e-a-border-radius);
 				cursor: pointer;
 
 				> i {
 					font-size: inherit;
-					@include padding-start(10px);
-					@include margin-start(15px);
-					@include border-start(1px solid);
+					padding-inline-start: 10px;
+					margin-inline-start: 15px;
+					border-inline-start: 1px solid;
 
 					&:not(:hover) { // Overwrite the default
 						color: var(--e-a-color-white);

@@ -73,6 +73,27 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'description' => esc_html__( 'Use interesting masonry layouts and other overlay features with Elementor\'s Pro Gallery widget.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-basic-gallery-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
+	/**
 	 * Register image gallery widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -84,7 +105,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->start_controls_section(
 			'section_gallery',
 			[
-				'label' => esc_html__( 'Image Gallery', 'elementor' ),
+				'label' => esc_html__( 'Basic Gallery', 'elementor' ),
 			]
 		);
 
@@ -105,7 +126,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'exclude' => [ 'custom' ],
-				'separator' => 'none',
 			]
 		);
 
@@ -119,6 +139,22 @@ class Widget_Image_Gallery extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 4,
 				'options' => $gallery_columns,
+			]
+		);
+
+		$this->add_control(
+			'gallery_display_caption',
+			[
+				'label' => esc_html__( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'' => esc_html__( 'Attachment Caption', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
+				],
 			]
 		);
 
@@ -172,15 +208,6 @@ class Widget_Image_Gallery extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -211,12 +238,18 @@ class Widget_Image_Gallery extends Widget_Base {
 		$this->add_control(
 			'image_spacing_custom',
 			[
-				'label' => esc_html__( 'Image Spacing', 'elementor' ),
+				'label' => esc_html__( 'Custom Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'show_label' => false,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'default' => [
@@ -260,21 +293,8 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'gallery_display_caption',
-			[
-				'label' => esc_html__( 'Display', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => esc_html__( 'Show', 'elementor' ),
-					'none' => esc_html__( 'Hide', 'elementor' ),
-				],
-				'selectors' => [
-					'{{WRAPPER}} .gallery-item .gallery-caption' => 'display: {{VALUE}};',
+				'condition' => [
+					'gallery_display_caption' => '',
 				],
 			]
 		);
@@ -346,6 +366,24 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'caption_shadow',
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'caption_space',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
 			]
 		);
 

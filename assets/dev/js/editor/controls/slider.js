@@ -1,6 +1,8 @@
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlSliderItemView;
 
+import { convertSizeToFrString } from 'elementor-editor-utils/helpers';
+
 ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	ui() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
@@ -149,8 +151,16 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		if ( 'size' === dataChanged && this.isSliderInitialized() ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		} else if ( 'unit' === dataChanged ) {
+			this.handleUnitChange();
+		}
+	},
+
+	handleUnitChange() {
+		if ( ! this.isCustomUnit() ) {
 			this.resetSize();
 		}
+
+		this.maybeDoFractionToCustomConversions();
 	},
 
 	updateUnitChoices() {
@@ -170,10 +180,59 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		}
 	},
 
+	maybeDoFractionToCustomConversions() {
+		if ( this.isMultiple() ) {
+			return;
+		}
+
+		/*
+		We want our code to run only when the user switched from 'fr' to 'custom'.
+		But currently we do not have the previous state, so we won't know the user was previously on 'fr'.
+		So we make the assumption that if the control only has two units ('fr' and 'custom'), and we
+		are switching to custom now, then we can run our conversion logic.
+		In future, we might want to investigate a way to build some kind of 'previous state cache' to know
+		where we switched from.
+		*/
+		const sizeUnits = this.model.get( 'size_units' ),
+			isFrToCustom = 2 === sizeUnits?.length && sizeUnits.includes( 'fr' ) && sizeUnits.includes( 'custom' );
+
+		if ( ! isFrToCustom ) {
+			return;
+		}
+
+		const currentSize = this.getSize(),
+			alreadyConverted = 'string' === typeof currentSize && currentSize.includes( 'fr' );
+
+		if ( alreadyConverted ) {
+			return;
+		}
+
+		const sizeValue = this.isCustomUnit()
+			? convertSizeToFrString( currentSize )
+			: this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size;
+
+		this.setValue( 'size', sizeValue );
+		this.render();
+	},
+
 	onBeforeDestroy() {
 		this.destroySlider();
 
 		this.$el.remove();
+	},
+
+	onDeviceModeChange() {
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			isMobile = 'mobile' === currentDeviceMode,
+			isMobileValue = this.model.get( 'name' ).includes( '_mobile' ),
+			hasDefault = this.model.get( 'default' ),
+			shouldRunConversion = isMobile && isMobileValue && hasDefault && this.isCustomUnit();
+
+		if ( shouldRunConversion ) {
+			setTimeout( () => {
+				this.maybeDoFractionToCustomConversions();
+			} );
+		}
 	},
 } );
 

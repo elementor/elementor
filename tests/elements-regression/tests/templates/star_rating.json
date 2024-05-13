@@ -1,0 +1,127 @@
+{
+    "content": [
+        {
+            "id": "4fc6d446",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "8c26672",
+                    "settings": {
+                        "rating_scale": "10",
+                        "rating": 5.5,
+                        "title": "This is a test rating",
+                        "align": "left",
+                        "title_color": "#7A7A7A",
+                        "title_shadow_text_shadow_type": "yes",
+                        "title_shadow_text_shadow": {
+                            "horizontal": 7,
+                            "vertical": -9,
+                            "blur": 6,
+                            "color": "rgba(0,0,0,0.3)"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "star-rating",
+                    "elType": "widget"
+                },
+                {
+                    "id": "7174364a",
+                    "settings": {
+                        "rating": 3,
+                        "star_style": "star_unicode",
+                        "unmarked_star_style": "outline",
+                        "align": "center"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "star-rating",
+                    "elType": "widget"
+                },
+                {
+                    "id": "153d6df6",
+                    "settings": {
+                        "align": "right"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "star-rating",
+                    "elType": "widget"
+                },
+                {
+                    "id": "78943293",
+                    "settings": {
+                        "align": "justify",
+                        "icon_size": {
+                            "unit": "px",
+                            "size": 37,
+                            "sizes": []
+                        },
+                        "icon_space": {
+                            "unit": "px",
+                            "size": 25,
+                            "sizes": []
+                        },
+                        "stars_color": "#E1CF2E",
+                        "stars_unmarked_color": "#A83B3B"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "star-rating",
+                    "elType": "widget"
+                },
+                {
+                    "id": "53b13817",
+                    "settings": {
+                        "title": "Test title",
+                        "title_color": "#6EC1E4",
+                        "title_typography_typography": "custom",
+                        "title_typography_font_family": "Times New Roman",
+                        "title_typography_font_weight": "500",
+                        "title_typography_text_transform": "uppercase",
+                        "title_typography_font_style": "italic",
+                        "title_typography_text_decoration": "underline",
+                        "title_typography_line_height": {
+                            "unit": "px",
+                            "size": 52,
+                            "sizes": []
+                        },
+                        "title_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 2,
+                            "sizes": []
+                        },
+                        "title_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 21,
+                            "sizes": []
+                        },
+                        "title_gap": {
+                            "unit": "px",
+                            "size": 22,
+                            "sizes": []
+                        },
+                        "stars_color": "#6EC1E4",
+                        "stars_unmarked_color": "#7A7A7A",
+                        "__globals__": {
+                            "stars_color": "globals\/colors?id=primary",
+                            "stars_unmarked_color": "globals\/colors?id=text",
+                            "title_color": "globals\/colors?id=primary",
+                            "title_typography_typography": ""
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "star-rating",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "icon_box",
+    "type": "page"
+}

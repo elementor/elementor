@@ -1,0 +1,245 @@
+{
+    "content": [
+        {
+            "id": "78f8f4e",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "1b643f63",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "My test accordion #1",
+                                "tab_content": "<p style=\"text-align: left;\"><span style=\"text-decoration: underline;\"><em><strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/strong><\/em><\/span><\/p><p style=\"text-align: center;\"><span style=\"text-decoration: underline;\"><em><strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/strong><\/em><\/span><\/p><p style=\"text-align: right;\"><span style=\"text-decoration: underline;\"><em><strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/strong><\/em><\/span><\/p>",
+                                "_id": "6f0980e"
+                            },
+                            {
+                                "tab_title": "Accordion #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "6ada516"
+                            }
+                        ],
+                        "selected_icon": {
+                            "value": "fas fa-cat",
+                            "library": "fa-solid"
+                        },
+                        "selected_active_icon": {
+                            "value": "fas fa-plane",
+                            "library": "fa-solid"
+                        },
+                        "border_width": {
+                            "unit": "px",
+                            "size": 7,
+                            "sizes": []
+                        },
+                        "title_padding": {
+                            "unit": "px",
+                            "top": "11",
+                            "right": "11",
+                            "bottom": "11",
+                            "left": "11",
+                            "isLinked": true
+                        },
+                        "icon_color": "#BA2A2A",
+                        "icon_active_color": "#F814DB",
+                        "icon_space": {
+                            "unit": "px",
+                            "size": 17,
+                            "sizes": []
+                        },
+                        "content_padding": {
+                            "unit": "px",
+                            "top": "12",
+                            "right": "12",
+                            "bottom": "12",
+                            "left": "12",
+                            "isLinked": true
+                        },
+                        "__globals__": {
+                            "border_color": "globals\/colors?id=primary",
+                            "title_background": "globals\/colors?id=secondary",
+                            "title_color": "globals\/colors?id=text",
+                            "content_background_color": "globals\/colors?id=accent",
+                            "content_color": "globals\/colors?id=text"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "accordion",
+                    "elType": "widget"
+                },
+                {
+                    "id": "25ac50ee",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Accordion #1",
+                                "tab_content": "<ul><li><span style=\"color: #ff6600;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/span><\/li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/li><\/ul>",
+                                "_id": "6f0980e"
+                            },
+                            {
+                                "tab_title": "Accordion #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "6ada516"
+                            }
+                        ],
+                        "border_width": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "title_background": "#5663B8",
+                        "title_color": "#EBF2F5",
+                        "tab_active_color": "#21FF3F",
+                        "title_typography_typography": "custom",
+                        "title_typography_font_family": "Romanesco",
+                        "title_typography_font_size": {
+                            "unit": "px",
+                            "size": 50,
+                            "sizes": []
+                        },
+                        "title_typography_font_weight": "600",
+                        "title_typography_text_transform": "uppercase",
+                        "title_typography_font_style": "italic",
+                        "title_typography_text_decoration": "underline",
+                        "title_typography_line_height": {
+                            "unit": "px",
+                            "size": 52,
+                            "sizes": []
+                        },
+                        "title_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 4.3,
+                            "sizes": []
+                        },
+                        "title_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 18,
+                            "sizes": []
+                        },
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "title_padding": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "icon_align": "right",
+                        "icon_color": "#F4F4F4",
+                        "icon_active_color": "#CB11D1",
+                        "icon_space": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "content_background_color": "#D0D0D0",
+                        "content_color": "#0A0606",
+                        "content_typography_typography": "custom",
+                        "content_typography_font_family": "Roboto",
+                        "content_typography_font_weight": "400",
+                        "content_shadow_text_shadow_type": "yes",
+                        "content_shadow_text_shadow": {
+                            "horizontal": 28,
+                            "vertical": -7,
+                            "blur": 9,
+                            "color": "rgba(0,0,0,0.3)"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "accordion",
+                    "elType": "widget"
+                },
+                {
+                    "id": "58c7596c",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Accordion #1",
+                                "tab_content": "<ol><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/li><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/li><\/ol>",
+                                "_id": "6f0980e"
+                            },
+                            {
+                                "tab_title": "Accordion #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "6ada516"
+                            }
+                        ],
+                        "border_width": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "title_typography_typography": "custom",
+                        "title_typography_font_family": "Roboto",
+                        "title_typography_font_size": {
+                            "unit": "px",
+                            "size": 34,
+                            "sizes": []
+                        },
+                        "title_typography_font_weight": "600",
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "title_shadow_text_shadow_type": "yes",
+                        "title_shadow_text_shadow": {
+                            "horizontal": 40,
+                            "vertical": 21,
+                            "blur": 20,
+                            "color": "rgba(8.592391304347826, 52.70000000000002, 16.455051984877155, 0.3)"
+                        },
+                        "icon_space": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "content_typography_typography": "custom",
+                        "content_typography_font_family": "Roboto",
+                        "content_typography_font_weight": "400"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "accordion",
+                    "elType": "widget"
+                },
+                {
+                    "id": "590ef353",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Accordion #1",
+                                "tab_content": "<blockquote><p style=\"padding-left: 40px;\"><del>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/del><\/p><\/blockquote><p style=\"padding-left: 40px;\"><del>\u00a9Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/del><\/p><p style=\"padding-left: 40px;\"><del>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/del><\/p>",
+                                "_id": "6f0980e"
+                            },
+                            {
+                                "tab_title": "Accordion #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "6ada516"
+                            }
+                        ]
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "accordion",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "accordion",
+    "type": "page"
+}

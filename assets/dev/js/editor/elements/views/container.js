@@ -3,6 +3,8 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
+import { SetDirectionMode } from 'elementor-document/hooks';
+import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -10,8 +12,15 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: EmptyView,
 
+	destroyEmptyView() {
+		// Do not remove the empty view for Grid Containers.
+		if ( this.isFlexContainer() ) {
+			return Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		}
+	},
+
 	getChildViewContainer() {
-		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		this.childViewContainer = this.isBoxedWidth()
 			? '> .e-con-inner'
 			: '';
 
@@ -19,7 +28,18 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
+	},
+
+	filterSettings( newItem ) {
+		const parentContainer = this;
+
+		if ( parentContainer.isBoxedWidth() ) {
+			newItem.settings.content_width = 'full';
+		} else if ( 0 !== parentContainer.getNestingLevel() ) {
+			newItem.settings.content_width = 'full';
+		}
 	},
 
 	childViewOptions() {
@@ -42,11 +62,18 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const currentDirection = this.container.settings.get( this.getDirectionSettingKey() );
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
+			directionSettingKey = this.getDirectionSettingKey() + deviceSuffix,
+			currentDirection = this.container.settings.get( directionSettingKey );
 
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
+	},
+
+	onDeviceModeChange() {
+		SetDirectionMode.set( this.getContainer() );
 	},
 
 	getDirectionSettingKey() {
@@ -79,6 +106,16 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+
+		this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+
+		elementor.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	onDestroy() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
+
+		elementor.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	/**
@@ -115,6 +152,12 @@ const ContainerView = BaseElementView.extend( {
 		return parent.view.getNestingLevel() + 1;
 	},
 
+	isNestedElementContentContainer() {
+		const widgetType = this.container.parent.model.get( 'widgetType' );
+
+		return widgetType && widgetType.trim() !== '' && isWidgetSupportNesting( widgetType );
+	},
+
 	getDroppableAxis() {
 		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
 			currentDirection = this.getContainer().settings.get( this.getDirectionSettingKey() );
@@ -131,9 +174,9 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
-		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
-		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+		const items = this.isBoxedWidth()
+			? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
+			: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
 			axis: this.getDroppableAxis(),
@@ -168,7 +211,7 @@ const ContainerView = BaseElementView.extend( {
 				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
-				if ( [ 'bottom', 'right' ].includes( side ) ) {
+				if ( this.shouldIncrementIndex( side ) ) {
 					newIndex++;
 				}
 
@@ -245,7 +288,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Add a `Save as Template` button to the context menu.
 	 *
 	 * @return {Object} groups
-	 *
 	 */
 	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
@@ -259,6 +301,7 @@ const ContainerView = BaseElementView.extend( {
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
 					callback: this.saveAsTemplate.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
 		} );
@@ -308,20 +351,22 @@ const ContainerView = BaseElementView.extend( {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
-		editTools.add = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
-			icon: 'plus',
-		};
+		if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			editTools.add = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
+				icon: 'plus',
+			};
 
-		editTools.edit = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-			icon: 'handle',
-		};
+			editTools.edit = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
+				icon: 'handle',
+			};
+		}
 
 		if ( ! this.getContainer().isLocked() ) {
-			if ( elementor.getPreferences( 'edit_buttons' ) ) {
+			if ( elementor.getPreferences( 'edit_buttons' ) && $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
 				editTools.duplicate = {
 					/* Translators: %s: Element Name. */
 					title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
@@ -343,7 +388,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
 	 *
 	 * @return {void}
-	 *
 	 */
 	onAddButtonClick() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
@@ -380,6 +424,16 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.model.set( 'isInner', this.isNestedElementContentContainer() || this.getNestingLevel() > 0 );
+			}
+
+			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
+			if ( this.isGridContainer() ) {
+				this.reInitEmptyView();
+			}
+
 			this.droppableInitialize( this.container.settings );
 		} );
 	},
@@ -390,15 +444,60 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
+
+		if ( this.isGridContainer() ) {
+			this.handleGridEmptyView();
+		}
 	},
 
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
+			if ( this.isGridContainer() ) {
+				this.reInitEmptyView();
+			}
+
+			// Make sure the Empty view is removed if we changed from grid to flex and there were widgets.
+			if ( this.isFlexContainer() && ! this.isEmpty() ) {
+				this.getCorrectContainerElement().find( '> .elementor-empty-view' ).remove();
+			}
+
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
+
+		if ( settings.changed.container_type ) {
+			this.updatePanelTitlesAndIcons();
+		}
+	},
+
+	updatePanelTitlesAndIcons() {
+		const title = this.getPanelTitle(),
+			icon = this.getPanelIcon();
+
+		this.model.set( 'icon', icon );
+		this.model.set( 'title', title );
+
+		this.model.get( 'settings' ).set( 'presetTitle', title );
+		this.model.get( 'settings' ).set( 'presetIcon', icon );
+
+		/* Translators: %s: Element name. */
+		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
+
+		this.updateNeedHelpLink();
+	},
+
+	getPanelTitle() {
+		return this.isFlexContainer()
+			? __( 'Container', 'elementor' )
+			: __( 'Grid', 'elementor' );
+	},
+
+	getPanelIcon() {
+		return this.isFlexContainer()
+			? 'eicon-container'
+			: 'eicon-container-grid';
 	},
 
 	onDragStart() {
@@ -466,6 +565,84 @@ const ContainerView = BaseElementView.extend( {
 			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
 		} else {
 			this.$el.html5Droppable( this.getDroppableOptions() );
+		}
+	},
+
+	handleGridEmptyView() {
+		const currentContainer = this.getCorrectContainerElement();
+		const emptyViewItem = currentContainer.find( '> .elementor-empty-view' );
+
+		this.moveElementToLastChild(
+			currentContainer,
+			emptyViewItem,
+		);
+	},
+
+	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
+		const parent = parentWrapperElement.get( 0 ),
+			child = childElementToMove.get( 0 );
+
+		if ( ! parent || ! child ) {
+			return;
+		}
+
+		if ( parent.lastChild === child ) {
+			return;
+		}
+
+		parent.appendChild( child );
+	},
+
+	getCorrectContainerElement() {
+		return this.isBoxedWidth()
+			? this.$el.find( '> .e-con-inner' )
+			: this.$el;
+	},
+
+	shouldIncrementIndex( side ) {
+		if ( ! this.draggingOnBottomOrRightSide( side ) ) {
+			return false;
+		}
+
+		return ! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
+	},
+
+	draggingOnBottomOrRightSide( side ) {
+		return [ 'bottom', 'right' ].includes( side );
+	},
+
+	isGridContainer() {
+		return 'grid' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	isFlexContainer() {
+		return 'flex' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	isBoxedWidth() {
+		return 'boxed' === this.getContainer().settings.get( 'content_width' );
+	},
+
+	emptyViewIsCurrentlyBeingDraggedOver() {
+		return this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	},
+
+	reInitEmptyView() {
+		if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
+			delete this._showingEmptyView; // Marionette property that needs to be falsy for showEmptyView() to fully execute.
+			this.showEmptyView(); // Marionette function.
+			this.handleGridEmptyView();
+		}
+	},
+
+	updateNeedHelpLink() {
+		const $linkElement = jQuery( '#elementor-panel__editor__help__link' );
+		const href = this.isGridContainer()
+			? 'https://go.elementor.com/widget-container-grid'
+			: 'https://go.elementor.com/widget-container';
+
+		if ( $linkElement ) {
+			$linkElement.attr( 'href', href );
 		}
 	},
 } );

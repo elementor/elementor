@@ -22,8 +22,8 @@ $card-headline-color: tints(600);
 $card-headline-font-weight: $eps-font-weight-medium;
 $card-headline-line-height: $line-height-2;
 
-$card-body-padding-y: $card-padding;
-$card-body-padding-x: $card-padding;
+$card-body-padding-block: $card-padding;
+$card-body-padding-inline: $card-padding;
 
 $card-figure-background-color: tints(200);
 $card-image-aspect-ratio: var(--card-image-aspect-ratio, #{$ratio-portrait});

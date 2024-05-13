@@ -9,7 +9,7 @@ $root: e-app-wizard-footer;
 	padding: spacing(8);
 
 	&__separator {
-		border-top: 1px solid var(--e-app-wizard-footer-border-color);
+		border-block-start: 1px solid var(--e-app-wizard-footer-border-color);
 	}
 }
 

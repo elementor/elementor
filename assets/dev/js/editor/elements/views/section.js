@@ -8,24 +8,20 @@ const DEFAULT_INNER_SECTION_COLUMNS = 2,
 
 const SectionView = BaseElementView.extend( {
 	childViewContainer() {
-		let containerSelector = '> .elementor-container';
-
-		if ( ! elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
-			containerSelector += ' > .elementor-row';
-		}
-
-		return containerSelector;
+		return '> .elementor-container';
 	},
 
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
 
 	addSectionView: null,
 
+	/**
+	 * @deprecated since 2.9.0, use `toggleSectionIsFull()` instead.
+	 */
 	_checkIsFull() {
 		this.toggleSectionIsFull();
 
-		elementorDevTools.deprecation.deprecated( '_checkIsFull', '2.9.0',
-			'toggleSectionIsFull()' );
+		elementorDevTools.deprecation.deprecated( '_checkIsFull()', '2.9.0', 'toggleSectionIsFull()' );
 	},
 
 	toggleSectionIsFull() {

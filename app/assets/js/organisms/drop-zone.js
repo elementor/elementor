@@ -11,21 +11,21 @@ import './drop-zone.scss';
 export default function DropZone( props ) {
 	const classes = [ 'e-app-drop-zone', props.className ],
 		dragDropEvents = {
-		onDrop: ( event ) => {
-			if ( ! props.isLoading ) {
-				const file = event.dataTransfer.files[ 0 ];
+			onDrop: ( event ) => {
+				if ( ! props.isLoading ) {
+					const file = event.dataTransfer.files[ 0 ];
 
-				if ( file && isOneOf( file.type, props.filetypes ) ) {
-					props.onFileSelect( file, event, 'drop' );
-				} else {
-					props.onError( {
-						id: 'file_not_allowed',
-						message: __( 'This file type is not allowed', 'elementor' ),
-					} );
+					if ( file && isOneOf( file.type, props.filetypes ) ) {
+						props.onFileSelect( file, event, 'drop' );
+					} else {
+						props.onError( {
+							id: 'file_not_allowed',
+							message: __( 'This file type is not allowed', 'elementor' ),
+						} );
+					}
 				}
-			}
-		},
-	};
+			},
+		};
 
 	return (
 		<section className={ arrayToClassName( classes ) }>

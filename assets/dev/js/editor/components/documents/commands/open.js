@@ -4,7 +4,7 @@ export class Open extends $e.modules.CommandBase {
 	}
 
 	apply( args ) {
-		const { id, selector, shouldScroll = true } = args,
+		const { id, selector, shouldScroll = true, setAsInitial = false } = args,
 			currentDocument = elementor.documents.getCurrent();
 
 		// Already opened.
@@ -17,12 +17,21 @@ export class Open extends $e.modules.CommandBase {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
+		if ( setAsInitial ) {
+			// Set the new initial document id to be sent with all requests.
+			// The next request needs to have the new initial document id in order to have the correct preview URL.
+			elementorCommon.ajax.addRequestConstant( 'initial_document_id', id );
+
+			// Because the initial document has changed, we need to clear cached values (e.g. header wp_preview URL),
+			elementor.documents.invalidateCache();
+		}
+
 		return elementor.documents.request( id )
 			.then( ( config ) => {
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 				// Tell the editor to load the document.
-				return $e.internal( 'editor/documents/load', { config, selector, shouldScroll } );
+				return $e.internal( 'editor/documents/load', { config, selector, setAsInitial, shouldScroll } );
 			} )
 			.always( () => {
 				// TODO: move to $e.hooks.ui.

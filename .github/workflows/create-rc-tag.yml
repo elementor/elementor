@@ -22,12 +22,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
       - name: Get Configuration
         id: configuration
-        uses: maork-elementor/json-to-variables@main
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
         with:
             filename: './.github/workflows/config.json'
             prefix: config
@@ -37,15 +37,16 @@ jobs:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Env Vars Configure
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
           REF: ${{ github.ref }}
+          POSTFIX: '-rc'
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -89,7 +90,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                          "text": "Hi All :smile:\n\nWe just Published RC Tag of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                         }
                       },
                       {
@@ -99,7 +100,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                          "text": "GitHub RC Tag *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
                         },
                         "accessory": {
                           "type": "button",

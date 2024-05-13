@@ -200,6 +200,9 @@ class Global_Typography extends Tab_Base {
 				'description' => esc_html__( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 				'label_block' => true,
 				'separator' => 'before',
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 

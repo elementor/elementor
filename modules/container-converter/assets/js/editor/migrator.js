@@ -15,7 +15,7 @@ export default class Migrator {
 				flex_direction: 'row', // Force it to be row.
 				// Defaults (since default settings are removed):
 				flex_align_items: settings.flex_align_items || 'stretch',
-				flex_gap: settings.flex_gap || { size: 10, unit: 'px' },
+				flex_gap: settings.flex_gap || { size: 10, column: '10', row: '10', unit: 'px' },
 				// Inner section overrides:
 				...( isInner ? { content_width: 'full' } : {} ),
 			} ),

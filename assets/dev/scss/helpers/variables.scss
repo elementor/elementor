@@ -26,6 +26,7 @@ $e-teal-300:	#5EEAD4;
 $e-teal-400:	#1DDDBF;
 $e-teal-500:	#12AA9A;
 $e-teal-600:	#0A875A;
+$e-teal-700:	#047857;
 $e-teal-900:	#032317;
 
 //Editor Facelift 2023 - Pink
@@ -39,6 +40,12 @@ $e-pink-700:	#E315F5;
 $e-pink-800:	#D004D4;
 $e-pink-900:	#C00BB9;
 $e-pink-a100:	#310132;
+
+//Promotion Colors (Using in promotion CTA)
+$e-rose-600:	#A93365;
+$e-rose-700:	#8F1A4C;
+$e-rose-800:	#93003f;
+$e-rose-promotion:	#D6107C;
 
 //Editor Facelift 2023 - Indigo
 $e-indigo-600:	#524CFF;
@@ -54,7 +61,8 @@ $e-success:				$e-teal-600;
 $e-info: 				#2563EB;
 $e-danger:				#DC2626;
 $e-warning: 			#F59E0B;
-$e-accent: 				$e-purple;
+$e-accent: 				$e-rose-800;
+$e-accent-promotion:	$e-rose-promotion;
 $e-primary-bg:			$e-pink-50;
 $e-success-bg:			#F2FDF5;
 $e-danger-bg:			#FEF1F4;
@@ -131,6 +139,8 @@ $wp-warning: #ffb900;
 $wp-warning-text: #f56e28;
 $wp-success: #46b450;
 $wp-success-text: #79ba49;
+//BC for wp-admin (previous version)
+$wp-admin-brand-color: $e-accent;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -139,6 +149,7 @@ $panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 $slides_gui: rgba(238, 238, 238, .9);
 
 $transition-hover: all .3s;
+$default-border-radius: 3px;
 $control-unit: 27px;
 $panel-width: 280px;
 $panel-xl-width: 300px;
@@ -147,7 +158,7 @@ $panel-xl-width: 300px;
 $platform-primary: #040080;
 $platform-secondary: #6A727C;
 $platform-text: #46F2B6;
-$platform-accent: #871A40;
+$platform-accent: $e-accent;
 $platform-darkest-gray: #0C0D0E;
 $platform-darker-gray: #3A3F45;
 $platform-dark-gray: #525861;
@@ -261,6 +272,7 @@ $steam:			#00adee;
 $stumbleupon:	#EB4924;
 $telegram:		#2CA5E0;
 $thumbtack:		#1aa1d8;
+$threads:		#000000;
 $tripadvisor:	#589442;
 $tumblr:		#35465c;
 $twitch:		#6441A5;
@@ -273,6 +285,7 @@ $weixin:		#31A918; //WeChat
 $whatsapp:		#25d366;
 $wordpress:		#21759b;
 $xing:			#026466;
+$x-twitter:		#000000;
 $yelp:			#af0606;
 $youtube:		#cd201f;
 $five-h-px:		#0099e5; //500px

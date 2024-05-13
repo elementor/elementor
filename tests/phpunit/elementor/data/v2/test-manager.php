@@ -10,7 +10,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as 
 
 class Test_Manager extends Data_Test_Base {
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager->kill_server();
@@ -290,6 +290,9 @@ class Test_Manager extends Data_Test_Base {
 			'send-event/index' => 'send-event/{id}',
 			'kit-elements-defaults/index' => 'kit-elements-defaults/{id}',
 			'site-navigation/recent-posts' => 'site-navigation/recent-posts',
+			'site-navigation/add-new-post' => 'site-navigation/add-new-post',
+			'site-navigation/duplicate-post' => 'site-navigation/duplicate-post',
+			'site-navigation/homepage' => 'site-navigation/homepage',
 		], $this->manager->command_formats );
 	}
 }

@@ -4,6 +4,8 @@
  */
 const path = require( 'path' );
 
+const packagesConfigs = require( './webpack.packages.js' );
+
 // Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
@@ -109,25 +111,32 @@ const entry = {
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
+	'nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/editor/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
 	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
-	'editor-loader-v1': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v1.js' ),
-	'editor-loader-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v2.js' ),
+	'editor-loader-v1': path.resolve( __dirname, '../core/editor/loader/v1/js/editor-loader-v1.js' ),
+	'editor-loader-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-loader-v2.js' ),
+	'editor-environment-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-environment-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
+	'admin-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/admin.js' ),
+	'editor-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/editor.js' ),
+	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
+	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
+	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
+	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
-	'preloaded-modules': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-modules.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
@@ -139,8 +148,11 @@ const externals = {
 	'@elementor/hooks': 'elementorAppPackages.hooks',
 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	'@elementor/router': 'elementorAppPackages.router',
-	'@elementor/ui': '__UNSTABLE__elementorPackages.ui',
-	'@elementor/icons': '__UNSTABLE__elementorPackages.icons',
+	'@elementor/ui': 'elementorV2.ui',
+	'@elementor/icons': 'elementorV2.icons',
+	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
+	'@wordpress/dom-ready': 'wp.domReady',
+	'@wordpress/components': 'wp.components',
 };
 
 const plugins = [
@@ -204,6 +216,7 @@ const webpackConfig = [
 		},
 		entry: frontendEntries,
 	},
+	packagesConfigs.dev,
 ];
 
 const prodSharedOptimization = {
@@ -288,6 +301,9 @@ webpackProductionConfig.forEach( ( config, index ) => {
 	}
 } );
 
+// The 'packages' config doesn't need a `.min` suffix (it has its own config).
+webpackProductionConfig.push( packagesConfigs.prod );
+
 const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
 } );
@@ -301,6 +317,7 @@ const gruntWebpackConfig = {
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
+	packages: packagesConfigs.dev,
 };
 
 module.exports = gruntWebpackConfig;

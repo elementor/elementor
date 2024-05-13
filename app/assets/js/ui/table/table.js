@@ -13,9 +13,9 @@ import './table.scss';
 
 export default function Table( { className, initialSelected, initialDisabled, selection, children, onSelect } ) {
 	const [ selected, setSelected ] = useState( initialSelected ),
-	[ disabled, setDisabled ] = useState( initialDisabled ),
-	classNameBase = 'eps-table',
-	classes = [ classNameBase, { [ classNameBase + '--selection' ]: selection }, className ];
+		[ disabled, setDisabled ] = useState( initialDisabled ),
+		classNameBase = 'eps-table',
+		classes = [ classNameBase, { [ classNameBase + '--selection' ]: selection }, className ];
 
 	useEffect( () => {
 		if ( onSelect ) {

@@ -10,8 +10,8 @@
 		&-gallery-status {
 			font-size: 12px;
 			height: 27px;
-			@include padding-start(10px);
-			border-bottom: var(--e-a-border-bold);
+			padding-inline-start: 10px;
+			border-block-end: var(--e-a-border-bold);
 			display: flex;
 
 			> * {
@@ -27,13 +27,6 @@
 		&-gallery-content {
 			position: relative;
 			overflow: hidden;
-
-			&:not(:hover) {
-
-				.elementor-control-gallery-edit {
-					opacity: 0;
-				}
-			}
 		}
 
 		&-gallery-thumbnails {
@@ -42,14 +35,26 @@
 			grid-gap: 10px;
 			cursor: pointer;
 			padding: 10px;
+
+			&:hover,
+			&:focus {
+
+				+ .elementor-control-gallery-edit {
+					opacity: 1;
+				}
+			}
 		}
 
 		&-gallery-thumbnail {
 			width: 48px;
 			height: 48px;
-			background-size: cover;
-			background-position: 50% 50%;
+			object-fit: cover;
 			border: var(--e-a-border);
+
+			+ .unoptimized__image {
+				outline: 2px solid var( --e-a-btn-bg-danger-active );
+				opacity: 0.6;
+			}
 		}
 
 		&-gallery-edit {
@@ -64,7 +69,7 @@
 			transition: all .3s ease-in-out;
 			pointer-events: none;
 			cursor: pointer;
-			opacity: 1;
+			opacity: 0;
 
 			span {
 				position: absolute;
@@ -122,15 +127,19 @@
 	&.elementor-control-dynamic {
 
 		.elementor-control-gallery-clear {
-			@include border-start(var(--e-a-border));
+			border-inline-start: var(--e-a-border);
 		}
 	}
 
 	.elementor-control-gallery-clear {
+		color: currentColor;
+		background-color: transparent;
+		border: none;
 		cursor: pointer;
 		justify-content: center;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--e-a-color-danger);
 		}
 	}
@@ -138,7 +147,7 @@
 	.elementor-control-dynamic-switcher {
 		border-width: 0;
 		border-inline-start-width: 1px;
-		border-bottom-width: 1px;
+		border-block-end-width: 1px;
 		border-radius: 0;
 	}
 }

@@ -68,12 +68,12 @@
 			}
 
 			.select2-selection__rendered {
-				padding-bottom: 5px;
+				padding-block-end: 5px;
 			}
 
 			.select2-selection__choice__remove{
 				color: var(--e-a-btn-color-invert);
-				@include margin-end(3px);
+				margin-inline-end: 3px;
 			}
 		}
 	}

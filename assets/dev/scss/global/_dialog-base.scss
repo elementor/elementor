@@ -18,7 +18,7 @@
 .dialog-close-button {
 	cursor: pointer;
 	position: absolute;
-	margin-top: 15px;
+	margin-block-start: 15px;
 	@include end(15px);
 	color: var(--e-a-color-txt);
 	font-size: 15px;

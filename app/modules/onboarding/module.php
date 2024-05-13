@@ -92,6 +92,7 @@ class Module extends BaseModule {
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
 				] ),
+				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
 				'signUp' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',
@@ -113,6 +114,7 @@ class Module extends BaseModule {
 				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
+			'experiment' => Plugin::$instance->experiments->is_feature_active( 'e_onboarding' ),
 		] );
 	}
 
@@ -129,7 +131,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'you are not allowed to perform this action', 'elementor' ),
+				'error_message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ),
 			],
 		];
 	}
@@ -147,7 +149,7 @@ class Module extends BaseModule {
 		$problem_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site name', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site name.', 'elementor' ),
 			],
 		];
 
@@ -204,7 +206,7 @@ class Module extends BaseModule {
 		$data_error = [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'There was a problem setting your site logo', 'elementor' ),
+				'error_message' => esc_html__( 'There was a problem setting your site logo.', 'elementor' ),
 			],
 		];
 
@@ -254,7 +256,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_upload_logo_image() {
-		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
 
@@ -339,7 +341,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
+		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
 

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * list of icons.
  *
  * @since 1.0.0
- * @deprecated 2.6.0 use `Control_Icons` instead.
+ * @deprecated 2.6.0 Use `Control_Icons` class instead.
  */
 class Control_Icon extends Base_Data_Control {
 
@@ -23,6 +23,7 @@ class Control_Icon extends Base_Data_Control {
 	 * Retrieve the control type, in this case `icon`.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
 	 * @access public
 	 *
 	 * @return string Control type.
@@ -37,6 +38,7 @@ class Control_Icon extends Base_Data_Control {
 	 * Retrieve all the available icons.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
 	 * @access public
 	 * @static
 	 *
@@ -842,6 +844,7 @@ class Control_Icon extends Base_Data_Control {
 	 * settings while initializing the icons control.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
 	 * @access protected
 	 *
 	 * @return array Control default settings.
@@ -862,6 +865,7 @@ class Control_Icon extends Base_Data_Control {
 	 * object.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
 	 * @access public
 	 */
 	public function content_template() {

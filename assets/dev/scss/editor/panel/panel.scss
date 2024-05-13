@@ -39,6 +39,11 @@
 		> .ui-resizable-w {
 			display: none;
 		}
+
+		#elementor-panel-elements-wrapper {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 
 	.ps__rail-y {
@@ -60,26 +65,23 @@
 		}
 	}
 
-    // Header
-    @import "header";
+  // Header
+  @import "header";
 
-    // Categories
-    @import "categories";
+  // Categories
+  @import "categories";
 
-    // Schemes
-    //@import "schemes"; //TODO: deprecated v3.0.0
+  // Menu
+  @import "menu";
 
-	// Menu
-	@import "menu";
+  // Document Settings
+  @import "document-settings";
 
-	// Document Settings
-	@import "document-settings";
+  // Element Edit
+  @import "element-settings";
 
-	// Element Edit
-    @import "element-settings";
-
-    //Footer
-    @import "footer";
+  //Footer
+  @import "footer";
 }
 
 // Panel Elements
@@ -102,18 +104,50 @@
 
 .elementor-panel-container {
 	clear: both;
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-inline-start: 15px;
+	padding-inline-end: 15px;
 }
 
 #elementor-panel-get-pro-elements {
 
 	.elementor-nerd-box-message {
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 
 	.elementor-nerd-box-icon {
-		margin-top: 20px;
+		margin-block-start: 20px;
+	}
+}
+
+#elementor-panel-get-pro-elements-sticky {
+	position: sticky;
+	bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.6;
+	margin-block-end: -10px;
+
+	.elementor-get-pro-sticky-message {
+		margin-top: -14px;
+		min-height: 40px;
+		display: block;
+		padding: 9px min(35px, 5%);
+		gap: 10px;
+		background-color: var(--e-a-color-white);
+		color: var(--e-a-color-black);
+		text-align: center;
+		box-shadow: 0px -10px 14px -6px rgba(0, 0, 0, 0.05);
+
+		a {
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--e-a-btn-bg-accent);
+		}
+	}
+
+	img {
+		margin-left: 17px;
 	}
 }
 
@@ -121,14 +155,36 @@
 	width: 90%;
 	margin: 0 auto;
 	font-style: unset;
-	margin-bottom: 15px;
+	margin-block-end: 15px;
+
 	a {
 		font-weight: bold;
 		font-style: italic;
-		border-bottom: 2px dotted var(--e-a-color-info);
+		border-block-end: 2px dotted var(--e-a-color-info);
 		display: inline-block;
 	}
 }
+
+// Notification Center (v1)
+body.e-has-notification {
+	&:not(.e-route-panel-menu) #elementor-panel-header-menu-button,
+	.elementor-panel-menu-item.elementor-panel-menu-item-notification-center .elementor-panel-menu-item-icon {
+		position: relative;
+
+		&:after {
+			position: absolute;
+			content: '';
+			display: block;
+			background: var(--e-a-color-primary);
+			border-radius: 50%;
+			width: 8px;
+			height: 8px;
+			top: 5px;
+			right: 5px;
+		}
+	}
+}
+
 
 //Compatibility
 @import "compatibility";

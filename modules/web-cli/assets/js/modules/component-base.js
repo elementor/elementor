@@ -58,12 +58,11 @@ export default class ComponentBase extends Module {
 		ForceMethodImplementation();
 	}
 
+	/**
+	 * @deprecated since 3.7.0, use `getServiceName()` instead.
+	 */
 	getRootContainer() {
-		Deprecation.deprecated(
-			'getRootContainer()',
-			'3.7.0',
-			'getServiceName()',
-		);
+		Deprecation.deprecated( 'getRootContainer()', '3.7.0', 'getServiceName()' );
 
 		return this.getServiceName();
 	}

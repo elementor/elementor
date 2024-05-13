@@ -16,7 +16,7 @@ $root: e-app-import-export-loader;
 	&--absolute-center {
 		position: absolute;
 		top: 50%;
-		left: 50%;
+		@include start(50%);
 		transform: translateX(-50%) translateY(-50%);
 	}
 }

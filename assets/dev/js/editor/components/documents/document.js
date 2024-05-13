@@ -5,7 +5,7 @@ import Editor from './models/editor';
 /**
  * @typedef {import('../../container/container')} Container
  */
- export default class Document {
+export default class Document {
 	/**
 	 * Document id.
 	 *

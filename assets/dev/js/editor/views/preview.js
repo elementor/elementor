@@ -6,7 +6,15 @@ const Preview = BaseSectionsContainerView.extend( {
 	initialize() {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
+		this.config = {
+			allowEdit: true,
+		};
+
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+	},
+
+	setConfig( config ) {
+		this.config = Object.assign( this.config, config );
 	},
 
 	getChildViewContainer() {
@@ -78,27 +86,54 @@ const Preview = BaseSectionsContainerView.extend( {
 		);
 	},
 
-	onRender() {
-		let $contentContainer;
-
-		if ( elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
-			$contentContainer = this.$el;
-		} else {
-			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );
-
-			this.$el.html( $inner );
-
-			$contentContainer = $inner;
+	addElementFromPanel( options ) {
+		if ( ! this.config.allowEdit || elementor.helpers.maybeDisableWidget() ) {
+			return;
 		}
 
-		$contentContainer.html( this.$childViewContainer );
+		const isContainerActive = ! ! elementorCommon.config.experimentalFeatures.container;
 
-		if ( elementor.userCan( 'design' ) ) {
+		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
+			historyId = $e.internal( 'document/history/start-log', {
+				type: 'add',
+				title: elementor.helpers.getModelLabel( selectedElement.model ),
+			} ),
+			containingElement = $e.run( 'document/elements/create', {
+				model: {
+					elType: isContainerActive ? 'container' : 'section',
+				},
+				container: elementor.getPreviewContainer(),
+				columns: 1,
+				options: {
+					at: this.getOption( 'at' ),
+					...options,
+				},
+			} );
+
+		if ( ! isContainerActive ) {
+			// Create the element in column.
+			containingElement.view.children.findByIndex( 0 ).addElementFromPanel( options );
+		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
+			// Create the element in a Container, only if the dragged element is not a Container already.
+			containingElement.view.addElementFromPanel( options );
+		}
+
+		$e.internal( 'document/history/end-log', { id: historyId } );
+	},
+
+	shouldRenderAddNewSectionArea() {
+		return this.config.allowEdit && elementor.userCan( 'design' );
+	},
+
+	onRender() {
+		this.$el.html( this.$childViewContainer );
+
+		if ( this.shouldRenderAddNewSectionArea() ) {
 			const addNewSectionView = new AddSectionView();
 
 			addNewSectionView.render();
 
-			$contentContainer.append( addNewSectionView.$el );
+			this.$el.append( addNewSectionView.$el );
 		}
 	},
 } );

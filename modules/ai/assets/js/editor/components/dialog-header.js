@@ -1,6 +1,7 @@
-import { DialogTitle, Stack, SvgIcon, Typography, IconButton, styled } from '@elementor/ui';
+import { AppBar, Toolbar, Stack, SvgIcon, IconButton, Chip, Typography, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { XIcon } from '@elementor/icons';
-import StyledChip from './ui/styled-chip';
 
 const ElementorLogo = ( props ) => {
 	return (
@@ -11,8 +12,8 @@ const ElementorLogo = ( props ) => {
 };
 
 const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
-	width: theme.sizing[ '400' ],
-	height: theme.sizing[ '400' ],
+	width: theme.spacing( 3 ),
+	height: theme.spacing( 3 ),
 	'& path': {
 		fill: theme.palette.text.primary,
 	},
@@ -20,27 +21,30 @@ const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
 
 const DialogHeader = ( props ) => {
 	return (
-		<DialogTitle component="div" sx={ { fontWeight: 'normal' } }>
-			<Stack direction="row" justifyContent="space-between" alignItems="center">
-				<Stack direction="row" spacing={ 3 } alignItems="center">
-					<StyledElementorLogo />
+		<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
+			<Toolbar variant="dense">
+				<StyledElementorLogo sx={ { mr: 1 } } />
 
-					<Typography variant="h6" sx={ { color: 'text.primary' } }>
-						{ __( 'AI', 'elementor' ) }
-					</Typography>
+				<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+					{ __( 'AI', 'elementor' ) }
+				</Typography>
 
-					<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" />
-				</Stack>
+				<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
 
-				<Stack direction="row" spacing={ 3 } alignItems="center">
+				<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: 'auto' } }>
 					{ props.children }
 
-					<IconButton aria-label="close" onClick={ props.onClose } sx={ { '&.MuiButtonBase-root': { mr: -4 } } }>
+					<IconButton
+						size="small"
+						aria-label="close"
+						onClick={ props.onClose }
+						sx={ { '&.MuiButtonBase-root': { mr: -1 } } }
+					>
 						<XIcon />
 					</IconButton>
 				</Stack>
-			</Stack>
-		</DialogTitle>
+			</Toolbar>
+		</AppBar>
 	);
 };
 

@@ -101,7 +101,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				width: videoSize.width,
 				autoplay: true,
 				loop: ! elementSettings.background_play_once,
-				transparent: false,
+				transparent: true,
 				background: true,
 				muted: true,
 			};
@@ -252,7 +252,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			}
 		}
 
-		elementorFrontend.elements.$window.on( 'resize', this.changeVideoSize );
+		elementorFrontend.elements.$window.on( 'resize elementor/bg-video/recalc', this.changeVideoSize );
 	}
 
 	deactivate() {

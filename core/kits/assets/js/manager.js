@@ -63,6 +63,14 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			title: __( 'Site Settings', 'elementor' ),
 			type: 'page',
 			callback: () => {
+				elementor.editorEvents.dispatchEvent( {
+					action: elementor.editorEvents.config.actions.click,
+					type: elementor.editorEvents.config.types.button,
+					section: elementor.editorEvents.config.sections.topbar,
+					element_name: elementor.editorEvents.config.elementNames.siteSettings,
+					outcome: null,
+					entity: null,
+				} );
 				$e.run( 'panel/global/open', {
 					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
 				} );
@@ -79,11 +87,11 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	}
 
 	addHeaderBehavior( behaviors ) {
-			behaviors.kit = {
-				behaviorClass: PanelHeaderBehavior,
-			};
+		behaviors.kit = {
+			behaviorClass: PanelHeaderBehavior,
+		};
 
-			return behaviors;
+		return behaviors;
 	}
 
 	addGlobalsBehavior( behaviors, view ) {
@@ -175,8 +183,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		}
 
 		const cssParser = new ControlsCSSParser( {
-			id: 'e-global-style',
-		} ),
+				id: 'e-global-style',
+			} ),
 			defaultColorsEnabled = elementor.config.globals.defaults_enabled.colors,
 			defaultTypographyEnabled = elementor.config.globals.defaults_enabled.typography;
 

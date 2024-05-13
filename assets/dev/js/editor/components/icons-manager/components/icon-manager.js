@@ -4,7 +4,7 @@ import {
 	Fragment,
 	createRef,
 } from 'react';
-import { render } from 'react-dom';
+import ReactUtils from 'elementor-utils/react';
 import Tab from './tab';
 import IconsGoPro from './icons-go-pro';
 
@@ -289,11 +289,12 @@ export default IconsManager;
 const renderIconManager = function( props ) {
 	const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-	return render( <IconsManager
-		{ ... props }
-		containerElement={ containerElement } />,
-		containerElement,
-	);
+	return ReactUtils.render( (
+		<IconsManager
+			{ ... props }
+			containerElement={ containerElement }
+		/>
+	), containerElement );
 };
 export { renderIconManager };
 

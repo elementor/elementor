@@ -37,10 +37,10 @@ $root: eps-table;
 	}
 
 	&__row {
-		border-bottom: $eps-border;
+		border-block-end: $eps-border;
 
 		&:last-child {
-			border-bottom: none;
+			border-block-end: none;
 		}
 	}
 

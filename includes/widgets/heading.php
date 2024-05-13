@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 
 /**
  * Elementor heading widget.
@@ -15,7 +16,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
  *
  * @since 1.0.0
  */
-class Widget_Heading extends Widget_Base {
+class Widget_Heading extends Widget_Base implements Sanitizable {
 
 	/**
 	 * Get widget name.
@@ -90,6 +91,53 @@ class Widget_Heading extends Widget_Base {
 	}
 
 	/**
+	 * Remove data attributes from the html.
+	 *
+	 * @param string $content Heading title
+	 * @return string
+	 */
+	public function sanitize( $content ): string {
+		$allowed_tags = wp_kses_allowed_html( 'post' );
+		$allowed_tags_for_heading = [];
+		$non_allowed_tags = [ 'img' ];
+
+		foreach ( $allowed_tags as $tag => $attributes ) {
+			if ( in_array( $tag, $non_allowed_tags, true ) ) {
+				continue;
+			}
+
+			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
+				return ! str_starts_with( $attribute, 'data-' );
+			}, ARRAY_FILTER_USE_KEY );
+
+			$allowed_tags_for_heading[ $tag ] = $filtered_attributes;
+		}
+
+		return wp_kses( $content, $allowed_tags_for_heading );
+	}
+
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-heading-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
+	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -101,7 +149,7 @@ class Widget_Heading extends Widget_Base {
 		$this->start_controls_section(
 			'section_title',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Heading', 'elementor' ),
 			]
 		);
 
@@ -132,7 +180,6 @@ class Widget_Heading extends Widget_Base {
 				'default' => [
 					'url' => '',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -141,7 +188,6 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
 				'options' => [
 					'default' => esc_html__( 'Default', 'elementor' ),
 					'small' => esc_html__( 'Small', 'elementor' ),
@@ -149,6 +195,10 @@ class Widget_Heading extends Widget_Base {
 					'large' => esc_html__( 'Large', 'elementor' ),
 					'xl' => esc_html__( 'XL', 'elementor' ),
 					'xxl' => esc_html__( 'XXL', 'elementor' ),
+				],
+				'default' => 'default',
+				'condition' => [
+					'size!' => 'default', // a workaround to hide the control, unless it's in use (not default).
 				],
 			]
 		);
@@ -170,6 +220,16 @@ class Widget_Heading extends Widget_Base {
 					'p' => 'p',
 				],
 				'default' => 'h2',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_title_style',
+			[
+				'label' => esc_html__( 'Heading', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -200,25 +260,6 @@ class Widget_Heading extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_title_style',
-			[
-				'label' => esc_html__( 'Title', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -270,23 +311,22 @@ class Widget_Heading extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => esc_html__( 'Normal', 'elementor' ),
-					'multiply' => 'Multiply',
-					'screen' => 'Screen',
-					'overlay' => 'Overlay',
-					'darken' => 'Darken',
-					'lighten' => 'Lighten',
-					'color-dodge' => 'Color Dodge',
-					'saturation' => 'Saturation',
-					'color' => 'Color',
-					'difference' => 'Difference',
-					'exclusion' => 'Exclusion',
-					'hue' => 'Hue',
-					'luminosity' => 'Luminosity',
+					'multiply' => esc_html__( 'Multiply', 'elementor' ),
+					'screen' => esc_html__( 'Screen', 'elementor' ),
+					'overlay' => esc_html__( 'Overlay', 'elementor' ),
+					'darken' => esc_html__( 'Darken', 'elementor' ),
+					'lighten' => esc_html__( 'Lighten', 'elementor' ),
+					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
+					'saturation' => esc_html__( 'Saturation', 'elementor' ),
+					'color' => esc_html__( 'Color', 'elementor' ),
+					'difference' => esc_html__( 'Difference', 'elementor' ),
+					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
+					'hue' => esc_html__( 'Hue', 'elementor' ),
+					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -312,6 +352,8 @@ class Widget_Heading extends Widget_Base {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$this->add_render_attribute( 'title', 'class', 'elementor-size-default' );
 		}
 
 		$this->add_inline_editing_attributes( 'title' );
@@ -341,13 +383,19 @@ class Widget_Heading extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		var title = settings.title;
+		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );
 
 		if ( '' !== settings.link.url ) {
-			title = '<a href="' + settings.link.url + '">' + title + '</a>';
+			title = '<a href="' + _.escape( settings.link.url ) + '">' + title + '</a>';
 		}
 
-		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title', 'elementor-size-' + settings.size ] );
+		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title' ] );
+
+		if ( '' !== settings.size ) {
+			view.addRenderAttribute( 'title', 'class', [ 'elementor-size-' + settings.size ] );
+		} else {
+			view.addRenderAttribute( 'title', 'class', [ 'elementor-size-default' ] );
+		}
 
 		view.addInlineEditingAttributes( 'title' );
 

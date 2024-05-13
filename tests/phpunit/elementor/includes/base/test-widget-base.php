@@ -19,13 +19,13 @@ class Test_Widget_Base extends Elementor_Test_Base {
 	 */
 	protected $default_render_mode;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->default_render_mode = Plugin::$instance->frontend->render_mode_manager;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->frontend->render_mode_manager = $this->default_render_mode;
@@ -67,7 +67,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render_static/', ob_get_clean() );
+		$this->assertMatchesRegularExpression( '/render_static/', ob_get_clean() );
 	}
 
 	public function test_render_content__should_render_normally() {
@@ -79,7 +79,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render/', ob_get_clean() );
+		$this->assertMatchesRegularExpression( '/render/', ob_get_clean() );
 	}
 
 	public function test_render_content__should_render_skin_static() {
@@ -96,7 +96,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render_skin_static/', ob_get_clean() );
+		$this->assertMatchesRegularExpression( '/render_skin_static/', ob_get_clean() );
 	}
 
 	public function test_render_content__should_render_skin_normally() {
@@ -111,7 +111,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render_skin/', ob_get_clean() );
+		$this->assertMatchesRegularExpression( '/render_skin/', ob_get_clean() );
 	}
 
 	protected function arrange_static_render_mode() {

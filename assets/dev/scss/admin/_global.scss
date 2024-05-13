@@ -8,22 +8,23 @@
 			content: "\e813";
 			font-family: eicons;
 			font-size: 18px;
-			margin-top: 1px;
+			margin-block-start: 1px;
 		}
 
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
 			font-weight: 600;
-			background-color: var(--e-a-btn-bg-accent);
-			color: var(--e-a-btn-color-invert);
+			background-color: $wp-admin-brand-color;
+			color: $white;
 			margin: 3px 10px 0;
 			display: block;
 			text-align: center;
-			border-radius: var(--e-a-border-radius);
-			transition: var(--e-a-transition);
+			border-radius: $default-border-radius;
+			transition: $transition-hover;
 
-			&:hover {
-				background-color: var(--e-a-btn-bg-accent-hover);
+			&:hover,
+			&:focus {
+				background-color: lighten($wp-admin-brand-color, 10%);
 				box-shadow: none;
 			}
 		}
@@ -47,9 +48,13 @@
 }
 
 .elementor-plugins-gopro {
-	color: $editor-accent;
-	text-shadow: 1px 1px 1px #eee;
+	color: $wp-admin-brand-color;
 	font-weight: bold;
+
+	&:hover,
+	&:focus {
+		color: lighten($wp-admin-brand-color, 10%);
+	}
 }
 
 // Switcher Editor
@@ -63,7 +68,7 @@
 	cursor: pointer;
 
 	i {
-		@include margin-end(3px);
+		margin-inline-end: 3px;
 		font-size: 125%;
 		font-style: normal;
 	}
@@ -131,12 +136,22 @@ body {
 		}
 
 		#elementor-editor {
-			margin-bottom: 50px;
+			margin-block-end: 50px;
 		}
 
 		.edit-post-text-editor__body {
 			.editor-post-text-editor {
 				display: none;
+			}
+		}
+
+		// Override Gutenberg styles to ensure the containers don't take the full height
+		// so we can append our button without breaking the layout.
+		:is( .is-desktop-preview, .is-tablet-preview, .is-mobile-preview ) {
+			:is( .editor-styles-wrapper, iframe[name="editor-canvas"] ) {
+				height: auto !important;
+				padding: 0 !important;
+				flex: 0 !important;
 			}
 		}
 	}
@@ -153,7 +168,7 @@ body {
 				line-height: 1;
 
 				i {
-					@include padding-end(5px);
+					padding-inline-end: 5px;
 				}
 			}
 		}
@@ -216,8 +231,8 @@ body {
 		speak: none;
 		display: inline-block;
 		padding: 0;
-		top: 8px;
-		@include start(-4px);
+		inset-block-start: 8px;
+		inset-inline-start: -4px;
 		position: relative;
 		vertical-align: top;
 		content: "\f463";
@@ -250,14 +265,14 @@ body {
 		font-size: 32px;
 		font-weight: 300;
 		color: inherit;
-		margin: 40px 0 10px;
+		margin: 20px 0 10px;
 		line-height: 1.2;
 	}
 
 	p {
 		font-size: 16px;
 		font-weight: normal;
-		margin-bottom: 40px;
+		margin-block-end: 40px;
 	}
 
 	.elementor-button {
@@ -274,7 +289,7 @@ body {
 
 // Settings
 .elementor-settings-form-page {
-	padding-top: 30px;
+	padding-block-start: 30px;
 
 	&:not(.elementor-active) {
 		display: none;
@@ -283,6 +298,27 @@ body {
 
 ._elementor_settings_update_time {
 	display: none;
+}
+
+#tab-advanced,
+#tab-performance,
+#tab-experiments {
+
+	.form-table {
+	
+		tr {
+
+			&:not(:last-child) {
+				border-block-end: 1px solid #dcdcde;
+			}
+
+			.description {
+				font-size: 0.9em;
+				margin: 10px 0;
+				max-width: 820px;
+			}
+		}
+	}
 }
 
 // Fix SVG preview in admin media listing alternate view
@@ -295,7 +331,7 @@ body {
 }
 
 .e-major-update-warning {
-	margin-bottom: 5px;
+	margin-block-end: 5px;
 	max-width: 1000px;
 	display: flex;
 
@@ -305,13 +341,13 @@ body {
 
 	&__icon {
 		font-size: 17px;
-		@include margin-end(9px);
-		@include margin-start(2px);
+		margin-inline-end: 9px;
+		margin-inline-start: 2px;
 	}
 
 	&__title {
 		font-weight: 600;
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 	}
 
 	+ p {
@@ -353,10 +389,10 @@ body {
 			background: transparent;
 			box-shadow: none;
 			border: none;
-			padding-top: 5px;
-			padding-bottom: 5px;
-			@include padding-end(15px);
-			@include padding-start(0);
+			padding-block-start: 5px;
+			padding-block-end: 5px;
+			padding-inline-end: 15px;
+			padding-inline-start: 0;
 		}
 	}
 }

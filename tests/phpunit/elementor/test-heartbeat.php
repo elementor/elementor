@@ -8,7 +8,7 @@ class Elementor_Test_Heartbeat extends Elementor_Test_Base {
 	protected $user_own_post;
 	protected $user_editor;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Create new instance again

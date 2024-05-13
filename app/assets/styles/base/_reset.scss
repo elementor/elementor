@@ -44,8 +44,8 @@ h1, h2, h3, h4, h5, h6 {
 
 // Reset margins on paragraphs
 p {
-  margin-top: 0;
-  margin-bottom: $eps-paragraph-margin-bottom;
+  margin-block-start: 0;
+  margin-block-end: $eps-paragraph-margin-block-end;
 }
 
 b,
@@ -188,5 +188,5 @@ textarea {
 // Opinionated resets:
 hr {
 	border: 0 none;
-	border-bottom: 1px solid var(--hr-color);
+	border-block-end: 1px solid var(--hr-color);
 }

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getUserInformation } from '../api';
 
 const useUserInfo = () => {
+	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ userInfo, setUserInfo ] = useState( {
 		is_connected: false,
@@ -15,6 +16,7 @@ const useUserInfo = () => {
 	} );
 
 	const credits = userInfo.usage.quota - userInfo.usage.usedQuota;
+	const usagePercentage = ( userInfo.usage.usedQuota / userInfo.usage.quota ) * 100;
 
 	const fetchData = async () => {
 		setIsLoading( true );
@@ -23,20 +25,25 @@ const useUserInfo = () => {
 
 		setUserInfo( ( prevState ) => ( { ...prevState, ...userInfoResult } ) );
 
+		setIsLoaded( true );
+
 		setIsLoading( false );
 	};
 
-	useEffect( () => {
+	if ( ! isLoaded && ! isLoading ) {
 		fetchData();
-	}, [] );
+	}
 
 	return {
 		isLoading,
+		isLoaded,
 		isConnected: userInfo.is_connected,
 		isGetStarted: userInfo.is_get_started,
 		connectUrl: userInfo.connect_url,
+		builderUrl: userInfo.usage.builderUrl,
 		hasSubscription: userInfo.usage.hasAiSubscription,
 		credits: credits < 0 ? 0 : credits,
+		usagePercentage: Math.round( usagePercentage ),
 		fetchData,
 	};
 };

@@ -3,6 +3,7 @@ namespace Elementor\Core\Logger;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module;
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Logger\Loggers\Logger_Interface;
 use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
@@ -126,6 +127,10 @@ class Manager extends BaseModule {
 		// PHPCS ignore is added throughout this method because nonce verification happens in the $ajax->verify_request_nonce() method.
 		if ( ! $ajax->verify_request_nonce() || empty( $_POST['data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			wp_send_json_error();
+		}
+
+		if ( ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
 		}
 
 		// PHPCS - See comment above.

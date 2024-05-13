@@ -1,6 +1,8 @@
 name: PHPUnit
 
-on: [pull_request]
+on:
+  pull_request:
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -16,7 +18,7 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check PHP files diff
         id: php_diff_files
         uses: technote-space/get-diff-action@v6
@@ -25,16 +27,16 @@ jobs:
             **/*.php
             composer.+(json|lock)
             .github/**/*.yml
-
+            install-wp-tests.sh
   test:
     runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
+    if: ${{ github.event.pull_request.title == null || needs.file-diff.outputs.php_diff }}
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['nightly', 'latest', '6.0', '5.9']
-        php_versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
+        wordpress_versions: ['nightly', 'latest', '6.0', '6.1', '6.2']
+        php_versions: ['7.4', '8.0']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
@@ -49,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup PHP

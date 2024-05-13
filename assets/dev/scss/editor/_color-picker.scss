@@ -23,20 +23,25 @@
 		background-image: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
 		background-size: cover;
 		background-color: transparent;
-		border: var(--e-a-border);
 	}
 }
 
 .pickr {
 	border: var(--e-a-border);
-	padding: 2px;
+	height: 27px;
 
 	.pcr-button {
-		height: 21px;
-		width: 21px;
+		height: 100%;
+		width: 100%;
+		border-radius: var(--e-a-border-radius);
 
+		&:before,
 		&:after {
-			border-radius: none;
+			height: 12px;
+			width: 12px;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 		}
 	}
 }
@@ -66,8 +71,15 @@
 			}
 		}
 
+		.pcr-selection {
+
+			.pcr-picker {
+				box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
+			}
+		}
+
 		.pcr-interaction {
-			padding-bottom: 20px;
+			padding-block-end: 20px;
 
 			input.pcr-result {
 				border: var(--e-a-border);
@@ -103,7 +115,7 @@
 	}
 
 	&-selection {
-		padding-top: 20px;
+		padding-block-start: 20px;
 	}
 
 	.elementor-control-dynamic-switcher {
