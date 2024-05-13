@@ -456,7 +456,6 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-
 				'options' => [
 					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
@@ -476,13 +475,15 @@ trait Button_Trait {
 					],
 				],
 				'selectors_dictionary' => [
-					'left' => is_rtl() ? 'row-reverse' : 'row',
-					'right' => is_rtl() ? 'row' : 'row-reverse',
-					'above' => is_rtl() ? 'column-reverse' : 'column',
-					'below' => is_rtl() ? 'column' : 'column-reverse',
+					'left' => is_rtl() ? '--button-flex-direction: row-reverse' : '--button-flex-direction: row',
+					'right' => is_rtl() ? '--button-flex-direction: row' : '--button-flex-direction: row-reverse',
+					'row' => '--button-flex-direction: row',
+					'row-reverse' => '--button-flex-direction: row-reverse',
+					'column' => '--button-flex-direction: column; --button-align-self: center; --button-icon-display: flex;',
+					'column-reverse' => '--button-flex-direction: column-reverse; --button-align-self: center; --button-icon-display: flex;',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
+					'{{WRAPPER}}' => '{{VALUE}};',
 				],
 				'condition' => array_merge(
 					$args['section_condition'],
@@ -512,7 +513,7 @@ trait Button_Trait {
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--button-icon-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--button-icon-size: {{SIZE}}{{UNIT}}; --button-icon-display: flex; --button-align-self: center;',
 				],
             ]);
 

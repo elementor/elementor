@@ -1,0 +1,54 @@
+.e-link-in-bio-var-7 {
+	--e-link-in-bio-icon-background-color: #{$link-in-bio-cta-bg-color};
+	--e-link-in-bio-icon-color: #{$white};
+	--e-link-in-bio-icon-gap: 20px 10px;
+
+	.e-link-in-bio__identity .e-link-in-bio__identity-image-cover {
+		height: var(--e-link-in-bio-identity-image-cover-height, auto);
+	}
+
+	// TODO: Move this icons styling to a re-usable utility class
+
+	.e-link-in-bio__icons {
+		align-items: start;
+		display: grid;
+		flex-flow: unset;
+		grid-auto-flow: rows;
+		grid-template-columns: repeat(var(--e-link-in-bio-icon-columns, 3), minmax(0, 1fr));
+		grid-template-rows: auto;
+		justify-content: unset;
+		justify-items: center;
+		margin-block-start: 34px;
+
+		// Required to override defaults
+		&.has-size-large {
+			--e-link-in-bio-icon-gap: 20px 10px;
+		}
+	}
+
+	.e-link-in-bio__icon-svg {
+		aspect-ratio: 1;
+		background-color: var(--e-link-in-bio-icon-background-color);
+		border-radius: 100%;
+		height: calc(var(--e-link-in-bio-icon-size) + 30px);
+		padding: 15px;
+	}
+
+	.e-link-in-bio__icon {
+		--e-link-in-bio-icon-border-style: solid;
+
+		&.has-border {
+
+			.e-link-in-bio__icon-svg {
+				border-color: var(--e-link-in-bio-icon-border-color);
+				border-style: var(--e-link-in-bio-icon-border-style);
+				border-width: var(--e-link-in-bio-icon-border-width);
+				height: calc(var(--e-link-in-bio-icon-size) + 30px + calc(var(--e-link-in-bio-icon-border-width) * 2));
+			}
+		}
+	}
+
+	.e-link-in-bio__ctas {
+		margin-block-start: 34px;
+	}
+}
