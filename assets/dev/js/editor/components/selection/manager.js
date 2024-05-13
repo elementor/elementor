@@ -186,6 +186,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * updating the navigator.
 	 */
 	updateNavigator() {
+		if ( ! $e.components.get( 'document/elements' ).utils.showNavigator() ) {
+			return;
+		}
+
 		elementor.navigator.getLayout()
 			.elements.currentView.recursiveChildInvoke( 'updateSelection' );
 	}
