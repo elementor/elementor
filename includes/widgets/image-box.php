@@ -73,6 +73,10 @@ class Widget_Image_Box extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'box' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register image box widget controls.
 	 *

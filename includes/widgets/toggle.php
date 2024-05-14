@@ -74,6 +74,10 @@ class Widget_Toggle extends Widget_Base {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Hide widget from panel.
 	 *

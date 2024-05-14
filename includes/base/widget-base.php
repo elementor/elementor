@@ -380,6 +380,7 @@ abstract class Widget_Base extends Element_Base {
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
 			'upsale_data' => $this->get_upsale_data(),
+			'is_dynamic_content' => $this->is_dynamic_content(),
 		];
 
 		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
