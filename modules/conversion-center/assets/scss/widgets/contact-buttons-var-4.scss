@@ -144,9 +144,15 @@
 		position: relative;
 
 		&::after {
-			border-color: transparent transparent transparent var(--e-contact-buttons-tooltip-bg);
 			border-style: solid;
-			border-width: 8px 0 8px 10px;
+			border-inline-start-width: 10px;
+			border-inline-end-width: 0;
+			border-block-start-width: 8px;
+			border-block-end-width: 8px;
+			border-inline-start-color: var(--e-contact-buttons-tooltip-bg);
+			border-inline-end-color: transparent;
+			border-block-start-color: transparent;
+			border-block-end-color: transparent;
 			content: "";
 			height: 0;
 			position: absolute;
@@ -154,11 +160,6 @@
 			top: 50%;
 			transform: translateY(-50%);
 			width: 0;
-			
-			@if $direction == rtl {
-				border-width: 8px 10px 8px 0;
-				border-color: transparent var(--e-contact-buttons-tooltip-bg) transparent transparent;
-			}
 		}
 	}
 }
