@@ -1356,6 +1356,10 @@ class Controls_Manager {
 			return false;
 		}
 
+		if ( ! empty( $control_data['control_type'] ) && 'content' === $control_data['control_type'] ) {
+			return false;
+		}
+
 		if ( ! empty( $control_data['prefix_class'] ) ) {
 			return false;
 		}
