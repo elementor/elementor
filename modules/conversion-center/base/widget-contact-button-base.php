@@ -835,7 +835,7 @@ JS;
 					'label' => esc_html__( 'Active', 'elementor' ),
 				]
 			);
-	
+
 			$this->add_control(
 				'style_button_color_icon_active',
 				[
@@ -846,7 +846,7 @@ JS;
 					],
 				]
 			);
-	
+
 			$this->add_control(
 				'style_button_color_background_active',
 				[
@@ -857,7 +857,7 @@ JS;
 					],
 				]
 			);
-	
+
 			$this->end_controls_tab();
 		}
 
