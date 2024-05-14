@@ -27,6 +27,7 @@
 	--e-contact-buttons-top-bar-name: #ffffff;
 	--e-contact-buttons-top-bar-title: #ffffff;
 	--e-contact-buttons-close-button-color: #ffffff;
+	--e-contact-buttons-close-button-bg: #ffffff;
 	--e-contact-buttons-message-bubble-name: #000000;
 	--e-contact-buttons-message-bubble-body: #000000;
 	--e-contact-buttons-message-bubble-time: #000000;
@@ -41,6 +42,8 @@
 	--e-contact-buttons-contact-button-icon-hover: #ffffff;
 	--e-contact-buttons-contact-button-bg: #467FF7;
 	--e-contact-buttons-contact-button-bg-hover: #1C2448;
+	--e-contact-buttons-tooltip-text: #1C2448;
+	--e-contact-buttons-tooltip-bg: #ffffff;
 
 	position: fixed;
 	bottom: 20px;
@@ -386,20 +389,21 @@
 		position: relative;
 
 		&::after {
-			border-color: transparent var(--e-contact-buttons-message-bubble-bubble-bg) transparent transparent;
 			border-style: solid;
-			border-width: 0 40px 40px 0;
+			border-inline-start-width: 0;
+			border-inline-end-width: 40px;
+			border-block-start-width: 0;
+			border-block-end-width: 40px;
+			border-inline-start-color: transparent;
+			border-inline-end-color: var(--e-contact-buttons-message-bubble-bubble-bg);
+			border-block-start-color: transparent;
+			border-block-end-color: transparent;
 			content: "";
 			height: 0;
 			position: absolute;
 			inset-inline-start: -20px;
 			top: 0;
-			transform: rotate(0);
 			width: 0;
-			
-			@if $direction == rtl {
-				transform: rotate(-90deg);
-			}
 		}
 	}
 

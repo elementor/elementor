@@ -38,7 +38,7 @@
 	}
 
 	.e-contact-buttons__close-button {
-		background-color: $contact-buttons-default-bg-color;
+		background-color: var(--e-contact-buttons-close-button-bg);
 		border-radius: 50%;
 		box-shadow: #{$contact-buttons-box-shadow};
 		inset-inline-end: unset;
@@ -74,6 +74,7 @@
 		border-radius: 0;
 		box-shadow: none;
 		margin: 0;
+		overflow: visible;
 	}
 
 	.e-contact-buttons__contact-links {
@@ -84,13 +85,20 @@
 		margin-bottom: var(--e-contact-buttons-contact-gap);
 	}
 
-	.e-contact-buttons__contact-icon-link {
+	.e-contact-buttons__contact-icon-container {
 		align-items: center;
 		background-color: var(--e-contact-buttons-contact-button-bg);
 		border-radius: 50px;
 		display: inline-flex;
 		justify-content: center;
 		transition: $transition-hover;
+	}
+
+	.e-contact-buttons__contact-icon-link {
+		align-items: center;
+		display: flex;
+		flex-direction: row;
+		gap: 14px;
 
 		svg {
 			fill: var(--e-contact-buttons-contact-button-icon);
@@ -98,27 +106,60 @@
 
 		&:hover,
 		&:focus {
-			background-color: var(--e-contact-buttons-contact-button-bg-hover);
-			transition: $transition-hover;
+
+			.e-contact-buttons__contact-icon-container {
+				background-color: var(--e-contact-buttons-contact-button-bg-hover);
+				transition: $transition-hover;
+			}
 
 			svg {
 				fill: var(--e-contact-buttons-contact-button-icon-hover);
 			}
 		}
 
-		&.has-size-small {
+		&.has-size-small .e-contact-buttons__contact-icon-container {
 			height: var(--e-contact-buttons-icon-size-small);
 			width: var(--e-contact-buttons-icon-size-small);
 		}
 
-		&.has-size-medium {
+		&.has-size-medium .e-contact-buttons__contact-icon-container {
 			height: var(--e-contact-buttons-icon-size-medium);
 			width: var(--e-contact-buttons-icon-size-medium);
 		}
 
-		&.has-size-large {
+		&.has-size-large .e-contact-buttons__contact-icon-container {
 			height: var(--e-contact-buttons-icon-size-large);
 			width: var(--e-contact-buttons-icon-size-large);
+		}
+	}
+
+	.e-contact-buttons__contact-tooltip {
+		background-color: var(--e-contact-buttons-tooltip-bg);
+		border-radius: 16px;
+		box-shadow: 2px 4px 4px 0 rgba(0, 0, 0, 0.15);
+		color: var(--e-contact-buttons-tooltip-text);
+		font-size: 13px;
+		line-height: 25px;
+		padding: 4px 14px;
+		position: relative;
+
+		&::after {
+			border-style: solid;
+			border-inline-start-width: 10px;
+			border-inline-end-width: 0;
+			border-block-start-width: 8px;
+			border-block-end-width: 8px;
+			border-inline-start-color: var(--e-contact-buttons-tooltip-bg);
+			border-inline-end-color: transparent;
+			border-block-start-color: transparent;
+			border-block-end-color: transparent;
+			content: "";
+			height: 0;
+			position: absolute;
+			inset-inline-end: -8px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 0;
 		}
 	}
 }
