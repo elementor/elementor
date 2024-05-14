@@ -37,8 +37,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							Social_Network_Provider::SKYPE,
 							Social_Network_Provider::MESSENGER,
 							Social_Network_Provider::VIBER,
-						]
-					]
+						],
+					],
 				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
