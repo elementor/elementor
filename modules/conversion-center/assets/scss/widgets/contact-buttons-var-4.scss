@@ -156,7 +156,8 @@
 			width: 0;
 			
 			@if $direction == rtl {
-				transform: rotate(0);
+				border-width: 8px 10px 8px 0;
+				border-color: transparent var(--e-contact-buttons-tooltip-bg) transparent transparent;
 			}
 		}
 	}
