@@ -82,7 +82,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						],
 					],
 				],
-
+				'link_images_section' => false,
 			],
 			'style' => [
 				'identity_section' => [
@@ -175,6 +175,92 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$render_strategy = new Core_Render( $this );
 
 		$render_strategy->render();
+	}
+
+	protected function add_link_images_controls() {
+		$config = static::get_configuration();
+
+		if ( empty( $config['content']['link_images_section'] ) ) {
+			return;
+		}
+
+		$this->start_controls_section(
+			'link_images_section',
+			[
+				'label' => esc_html__( 'Image Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		if ( ! empty( $config['content']['link_images_section']['images_max'] ) ) {
+			$this->add_control(
+				'link_images_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => sprintf(
+						__( 'Add up to <b>%d</b> Images', 'elementor' ),
+						$config['content']['link_images_section']['images_max']
+					),
+				]
+			);
+		}
+
+		$this->add_images_per_row_control(
+			'link_images_per_row',
+			[
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+			],
+			'2',
+			esc_html__( 'Images Per Row', 'elementor' ),
+			'--e-link-in-bio-image-links-columns',
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'link_images_image',
+			[
+				'label' => esc_html__( 'Choose Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'label_block' => true,
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
+			]
+		);
+
+
+		$repeater->add_control(
+			'link_images_url',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'autocomplete' => true,
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+			],
+		);
+
+		$this->add_control(
+			'link_images_link',
+			[
+				'type' => Controls_Manager::REPEATER,
+				'max_items' => $config['content']['link_images_section']['images_max'] ?? 0,
+				'fields' => $repeater->get_controls(),
+				'title_field' => __( 'Image', 'elementor' ),
+				'prevent_empty' => true,
+				'button_text' => esc_html__( 'Add item', 'elementor' ),
+				'default' => $config['content']['link_images_section']['images_repeater_defaults'] ?? [],
+			]
+		);
+
+		$this->end_controls_section();
 	}
 
 	protected function add_cta_controls() {
@@ -1223,6 +1309,8 @@ JS;
 		$this->add_icons_controls();
 
 		$this->add_cta_controls();
+
+		$this->add_link_images_controls();
 	}
 
 	protected function add_style_bio_controls(): void {

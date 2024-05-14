@@ -67,7 +67,8 @@ trait Conversion_Center_Controls_Trait {
 			'3' => '3',
 		],
 		string $default = '3',
-		$label = ''
+		$label = '',
+		$selector_custom_property = '--e-link-in-bio-icon-columns'
 	): void {
 		if ( ! $label ) {
 			$label = esc_html__( 'Icons Per Row', 'elementor' );
@@ -80,7 +81,7 @@ trait Conversion_Center_Controls_Trait {
 				'options' => $options,
 				'default' => $default,
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-columns: {{VALUE}};',
+					'{{WRAPPER}} .e-link-in-bio' => $selector_custom_property . ': {{VALUE}};',
 				],
 			]
 		);
