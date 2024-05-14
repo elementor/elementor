@@ -596,9 +596,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			],
 		);
 
-		// YOU ARE HERE
-		// TODO: add controls for URL and WAZE + build links
-
 		$repeater->add_control(
 			'contact_icon_viber_action',
 			[
