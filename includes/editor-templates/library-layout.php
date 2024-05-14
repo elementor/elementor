@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-templates-modal__header__menu-area"></div>
 	<div class="elementor-templates-modal__header__items-area">
 		<# if ( closeType ) { #>
-			<div data-tooltip="Back to dashboard" class="elementor-templates-modal__header__close elementor-templates-modal__header__close--{{{ closeType }}} elementor-templates-modal__header__item">
+			<div class="elementor-templates-modal__header__close elementor-templates-modal__header__close--{{{ closeType }}} elementor-templates-modal__header__item">
 				<# if ( 'skip' === closeType ) { #>
 				<span><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
 				<# } #>

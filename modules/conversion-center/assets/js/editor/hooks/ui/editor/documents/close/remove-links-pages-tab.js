@@ -17,11 +17,6 @@ export class LinksPageRemoveLibraryTab extends $e.modules.hookUI.After {
 
 		$e.components.get( 'library' ).addTab( 'templates/pages' );
 		$e.components.get( 'library' ).addTab( 'templates/blocks' );
-
-		console.log(elementor.config?.admin_conversion_center_url, 'elementor.config?.admin_conversion_center_url');
-		if ( elementor.config?.admin_conversion_center_url ) {
-			window.location.href = elementor.config.admin_conversion_center_url;
-		}
 	}
 }
 
