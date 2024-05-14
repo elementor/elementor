@@ -36,29 +36,6 @@ trait Conversion_Center_Controls_Trait {
 		);
 	}
 
-	protected function add_images_per_row_control(
-		string $name = 'icons_per_row',
-		$options = [
-			'2' => '2',
-			'3' => '3',
-		],
-		string $default = '3',
-		$label = ''
-	): void {
-		if ( ! $label ) {
-			$label = esc_html__( 'Icons Per Row', 'elementor' );
-		}
-		$this->add_control(
-			$name,
-			[
-				'label' => $label,
-				'type' => Controls_Manager::SELECT,
-				'options' => $options,
-				'default' => $default,
-			]
-		);
-	}
-
 	protected function add_icons_per_row_control(
 		string $name = 'icons_per_row',
 		$options = [

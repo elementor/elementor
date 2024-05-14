@@ -30,6 +30,94 @@ abstract class Render_Base {
 		$this->settings = $widget->get_settings_for_display();
 	}
 
+	protected function render_link_images(): void {
+		$link_images_value_initial = $this->settings['link_images'] ?? [];
+		$link_images_columns_value = $this->settings['link_images_per_row'] ?? 2;
+
+		/**
+		 * if empty returns a sub-array with all empty values
+		 * Check for this here to avoid rendering container when empty
+		 */
+		$link_images_value = array_filter( $link_images_value_initial, function( $sub_array ) {
+			// Use array_filter on the sub array
+			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
+				// Filter out empty or null values
+				return ! is_null( $val ) && '' !== $val;
+			} );
+			// A non-empty result means the sub array contains some non-empty value(s)
+			return ! empty( $filtered_sub_array );
+		} );
+
+		$has_link_images = ! empty( $link_images_value );
+		if ( ! $has_link_images ) {
+			return;
+		}
+
+		$link_images_classnames = 'e-link-in-bio__link-images';
+
+		if ( ! empty( $link_images_columns_value ) ) {
+			$link_images_classnames .= ' has-' . $link_images_columns_value . '-columns';
+		}
+
+		$this->widget->add_render_attribute( 'link-images', [
+			'class' => $link_images_classnames,
+		] );
+		?>
+
+		<div <?php echo $this->widget->get_render_attribute_string( 'link-images' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php
+			foreach ( $link_images_value as $key => $link_image ) {
+				$formatted_link = $link_image['link_images_url']['url'] ?? '';
+				$link_image_image = $link_image['link_images_image'] ?? [];
+
+				// Manage Link class variations
+
+				$link_image_classnames = 'e-link-in-bio__link-image-link';
+
+				// Manage Link attributes : Start
+
+				$url_attrs = [
+					'class' => $link_image_classnames,
+					'href' => esc_url( $formatted_link ),
+				];
+
+				if ( ! empty( $link_image['link_images_url']['is_external'] ) ) {
+					$url_attrs['target'] = '_blank';
+					$url_attrs['rel'] = 'noopener ';
+				}
+
+				if ( ! empty( $link_image['link_images_url']['nofollow'] ) ) {
+					$url_attrs['rel'] .= 'nofollow ';
+				}
+
+				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $link_image['link_images_url']['custom_attributes'] ?? '' ) );
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
+					$this->widget->add_render_attribute( 'link-image-link' . $key, [
+						$attr_key => $attr_value,
+					] );
+				}
+				?>
+				<a <?php echo $this->widget->get_render_attribute_string( 'link-image-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<?php if ( ! empty( $link_image_image['id'] ) ) {
+						echo wp_get_attachment_image( $link_image_image['id'], 'thumbnail', false, [
+							'class' => 'e-link-in-bio__link-image-element',
+						] );
+					} else {
+						$this->widget->add_render_attribute( 'link-image-element-' . $key, [
+							'alt' => '',
+							'class' => 'e-link-in-bio__link-image-element',
+							'src' => esc_url( $link_image_image['url'] ),
+						] );
+						?>
+						<img <?php echo $this->widget->get_render_attribute_string( 'link-image-element-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+					<?php }; ?>
+				</a>
+			<?php } ?>
+		</div>
+		<?php
+	}
+
 	protected function render_ctas(): void {
 		$ctas_props_corners = $this->settings['cta_links_corners'] ?? 'rounded';
 		$ctas_props_show_border = $this->settings['cta_links_show_border'] ?? false;

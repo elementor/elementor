@@ -206,7 +206,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			);
 		}
 
-		$this->add_images_per_row_control(
+		$this->add_icons_per_row_control(
 			'link_images_per_row',
 			[
 				'1' => '1',
@@ -215,7 +215,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			],
 			'2',
 			esc_html__( 'Images Per Row', 'elementor' ),
-			'--e-link-in-bio-image-links-columns',
+			'--e-link-in-bio-link-images-columns',
 		);
 
 		$repeater = new Repeater();
@@ -232,7 +232,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			]
 		);
 
-
 		$repeater->add_control(
 			'link_images_url',
 			[
@@ -248,7 +247,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'link_images_link',
+			'link_images',
 			[
 				'type' => Controls_Manager::REPEATER,
 				'max_items' => $config['content']['link_images_section']['images_max'] ?? 0,

@@ -24,6 +24,8 @@ class Core_Render extends Render_Base {
 
 				$this->render_icons();
 
+				$this->render_link_images();
+
 				$this->render_ctas();
 
 				$this->render_footer_bio();

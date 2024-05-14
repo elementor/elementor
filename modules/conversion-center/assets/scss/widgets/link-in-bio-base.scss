@@ -56,7 +56,9 @@
 	--e-link-in-bio-ctas-text-color: #{$white};
 
 	// Link images config
-	--e-link-in-bio-image-links-columns: 2;
+	--e-link-in-bio-link-images-columns: 2;
+	--e-link-in-bio-link-images-gap: 10px;
+	--e-link-in-bio-link-images-height: auto;
 
 	// Background config
 	--background-overlay-opacity: 0.5;
@@ -318,6 +320,33 @@
 			font-weight: 500;
 			line-height: 20px;
 			text-align: center;
+		}
+	}
+
+	&__link-images {
+		display: grid;
+		grid-template-columns: repeat(var(--e-link-in-bio-link-images-columns, 2), minmax(0, 1fr));
+		grid-template-rows: auto;
+		gap: var(--e-link-in-bio-link-images-gap);
+		margin-block-start: 24px;
+
+		&.has-1-columns {
+			--e-link-in-bio-link-images-columns: 1;
+			--e-link-in-bio-link-images-gap: 14px;
+		}
+
+		&.has-3-columns {
+			--e-link-in-bio-link-images-columns: 3;
+			--e-link-in-bio-link-images-gap: 5px;
+		}
+
+		// Specificity required to override .elementor img defaults
+		img.e-link-in-bio__link-image-element {
+			aspect-ratio: 1;
+			display: block;
+			height: var(--e-link-in-bio-link-images-height, auto);
+			object-fit: cover;
+			width: 100%;
 		}
 	}
 
