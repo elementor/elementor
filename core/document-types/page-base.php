@@ -171,6 +171,29 @@ abstract class PageBase extends Document {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
+	public static function get_labels() : array {
+		$plural_label   = static::get_plural_title();
+		$singular_label = static::get_title();
+
+		$labels = [
+			'name' => $plural_label, // Already translated.
+			'singular_name' => $singular_label, // Already translated.
+			'all_items' => sprintf( __( 'All %s', 'nobel-prize' ), $plural_label ),
+			'add_new' => esc_html__( 'Add New', 'elementor' ),
+			'add_new_item' => sprintf( __( 'Add New %s', 'nobel-prize' ), $singular_label ),
+			'edit_item' => sprintf( __( 'Edit %s', 'nobel-prize' ), $singular_label ),
+			'new_item' => sprintf( __( 'New %s', 'nobel-prize' ), $singular_label ),
+			'view_item' => sprintf( __( 'View %s', 'nobel-prize' ), $singular_label ),
+			'search_items' => sprintf( __( 'Search %s', 'nobel-prize' ), $plural_label ),
+			'not_found' => sprintf( __( 'No %s found.', 'nobel-prize' ), strtolower( $plural_label ) ),
+			'not_found_in_trash' => sprintf( __( 'No %s found in Trash.', 'nobel-prize' ), strtolower( $plural_label ) ),
+			'parent_item_colon' => '',
+			'menu_name' => $plural_label,
+		];
+
+		return $labels;
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public

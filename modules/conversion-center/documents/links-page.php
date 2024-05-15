@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\ConversionCenter\Documents;
 
-use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
@@ -32,7 +31,7 @@ class Links_Page extends PageBase {
 	}
 
 	public static function get_type() {
-		return ConversionCenterModule::DOCUMENT_TYPE;
+		return ConversionCenterModule::LINKS_PAGE_DOCUMENT_TYPE;
 	}
 
 	public static function register_post_fields_control( $document ) {}
@@ -40,7 +39,7 @@ class Links_Page extends PageBase {
 	public static function register_hide_title_control( $document ) {}
 
 	public function get_name() {
-		return ConversionCenterModule::DOCUMENT_TYPE;
+		return ConversionCenterModule::LINKS_PAGE_DOCUMENT_TYPE;
 	}
 
 	public static function get_title() {

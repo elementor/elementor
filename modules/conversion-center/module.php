@@ -24,13 +24,21 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'conversion-center';
 
-	const DOCUMENT_TYPE = 'links-page';
+	const LINKS_PAGE_DOCUMENT_TYPE = 'links-page';
 	const CPT_LINKS_PAGES = 'e-link-pages';
-	const ADMIN_PAGE_SLUG_LIB = 'edit.php?post_type=' . self::CPT_LINKS_PAGES;
+	const ADMIN_PAGE_SLUG_LINKS = 'edit.php?post_type=' . self::CPT_LINKS_PAGES;
+
+	const CONTACT_PAGE_DOCUMENT_TYPE = 'contact-buttons';
+	const CPT_CONTACT_PAGES = 'e-contact-pages';
+	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=' . self::CPT_LINKS_PAGES;
 
 	private $has_links_pages = null;
 	private $trashed_links_pages;
 	private $new_links_pages_url;
+
+	private $has_contact_pages = null;
+	private $trashed_contact_pages;
+	private $new_contact_pages_url;
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
@@ -77,7 +85,7 @@ class Module extends BaseModule {
 		$this->register_links_pages_cpt();
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Links_Page::get_class_full_name() );
+			$documents_manager->register_document_type( self::LINKS_PAGE_DOCUMENT_TYPE, Links_Page::get_class_full_name() );
 		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
@@ -183,7 +191,7 @@ class Module extends BaseModule {
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
-			'meta_value' => self::DOCUMENT_TYPE,
+			'meta_value' => self::LINKS_PAGE_DOCUMENT_TYPE,
 		] );
 
 		$this->trashed_links_pages = $trashed_posts_query->posts;
@@ -195,7 +203,7 @@ class Module extends BaseModule {
 		if ( ! $this->new_links_pages_url ) {
 			$this->new_links_pages_url = Plugin::$instance->documents->get_create_new_post_url(
 				self::CPT_LINKS_PAGES,
-				self::DOCUMENT_TYPE
+				self::LINKS_PAGE_DOCUMENT_TYPE
 			) . '#library';
 		}
 
@@ -258,22 +266,13 @@ class Module extends BaseModule {
 	}
 
 	private function register_links_pages_cpt() {
-		$labels = [
-			'name' => esc_html__( 'Links Pages', 'elementor' ),
-			'singular_name' => esc_html__( 'Links Page', 'elementor' ),
-			'add_new' => esc_html__( 'Add New', 'elementor' ),
-			'add_new_item' => esc_html__( 'Add New Links Page', 'elementor' ),
-			'edit_item' => esc_html__( 'Edit Links Page', 'elementor' ),
-			'new_item' => esc_html__( 'New Links Page', 'elementor' ),
-			'all_items' => esc_html__( 'All Links Pages', 'elementor' ),
-			'view_item' => esc_html__( 'View Links Page', 'elementor' ),
-			'search_items' => esc_html__( 'Search Links Pages', 'elementor' ),
-			'not_found' => esc_html__( 'No Links Pages found', 'elementor' ),
-			'not_found_in_trash' => esc_html__( 'No Links Pages found in trash', 'elementor' ),
-			'parent_item_colon' => '',
-			'menu_name' => esc_html__( 'Links Pages', 'elementor' ),
-		];
+		$this->register_post_type(
+			Links_Page::get_labels(),
+			self::CPT_LINKS_PAGES
+		);
+	}
 
+	private function register_post_type( array $labels, string $cpt ) {
 		$args = [
 			'labels' => $labels,
 			'public' => true,
@@ -296,7 +295,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		register_post_type( self::CPT_LINKS_PAGES, $args );
+		register_post_type( $cpt, $args );
 	}
 
 	private function has_links_pages(): bool {
@@ -310,7 +309,7 @@ class Module extends BaseModule {
 			'post_status' => 'any',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
-			'meta_value' => self::DOCUMENT_TYPE,
+			'meta_value' => self::LINKS_PAGE_DOCUMENT_TYPE,
 		] );
 
 		$this->has_links_pages = $posts_query->post_count > 0;
@@ -318,13 +317,13 @@ class Module extends BaseModule {
 		return $this->has_links_pages;
 	}
 
-	public function is_elementor_links_page( \WP_Post $post ): bool {
+	private function is_elementor_links_page( \WP_Post $post ): bool {
 		return self::CPT_LINKS_PAGES === $post->post_type;
 	}
 
 	private function get_menu_args(): array {
 		if ( $this->has_links_pages() ) {
-			$menu_slug = self::ADMIN_PAGE_SLUG_LIB;
+			$menu_slug = self::ADMIN_PAGE_SLUG_LINKS;
 			$function = null;
 		} else {
 			$menu_slug = self::CPT_LINKS_PAGES;
