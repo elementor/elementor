@@ -246,7 +246,10 @@ class Module extends BaseModule {
 	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof PageBase || $document instanceof LibraryPageDocument ) {
+		if (
+			( $document instanceof PageBase || $document instanceof LibraryPageDocument ) &&
+			$document::get_property( 'support_page_layout' )
+		) {
 			$this->register_template_control( $document );
 		}
 	}
