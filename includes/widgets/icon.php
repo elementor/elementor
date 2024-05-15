@@ -88,6 +88,10 @@ class Widget_Icon extends Widget_Base {
 		return [ 'icon' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register icon widget controls.
 	 *

@@ -73,6 +73,10 @@ class Widget_Star_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'rate', 'review' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Hide widget from panel.
 	 *

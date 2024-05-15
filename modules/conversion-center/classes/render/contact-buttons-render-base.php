@@ -48,7 +48,7 @@ abstract class Contact_Buttons_Render_Base {
 		$button_size = $this->settings['style_chat_button_size'];
 		$hover_animation = $this->settings['style_button_color_hover_animation'];
 
-		$button_classnames = 'e-contact-buttons__chat-button';
+		$button_classnames = 'e-contact-buttons__chat-button e-contact-buttons__chat-button-shadow';
 
 		if ( ! empty( $button_size ) ) {
 			$button_classnames .= ' has-size-' . $button_size;
@@ -233,6 +233,8 @@ abstract class Contact_Buttons_Render_Base {
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
 						'viber_action' => $icon['contact_icon_viber_action'],
+						'url' => $icon['contact_icon_url'] ?? '',
+						'location' => $icon['contact_icon_waze'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
@@ -351,6 +353,12 @@ abstract class Contact_Buttons_Render_Base {
 				break;
 			case Social_Network_Provider::SKYPE:
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
+				break;
+			case Social_Network_Provider::WAZE:
+				$formatted_link = ! empty( $link['location'] ) ? 'https://www.waze.com/ul?ll=' . $link['location'] . '&navigate=yes' : '';
+				break;
+			case Social_Network_Provider::URL:
+				$formatted_link = ! empty( $link['location'] ) ? $link['url'] : '';
 				break;
 			default:
 				break;

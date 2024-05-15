@@ -88,6 +88,10 @@ class Widget_Google_Maps extends Widget_Base {
 		return [ 'google', 'map', 'embed', 'location' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register google maps widget controls.
 	 *

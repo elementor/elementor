@@ -89,6 +89,10 @@ class Widget_Image extends Widget_Base {
 		return [ 'image', 'photo', 'visual' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register image widget controls.
 	 *

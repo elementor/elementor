@@ -43,6 +43,8 @@ abstract class Document extends Controls_Stack {
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
+	const CACHE_META_KEY = '_elementor_element_cache';
+
 	/**
 	 * Document publish status.
 	 */
@@ -857,6 +859,9 @@ abstract class Document extends Controls_Stack {
 
 		$post_css->delete();
 
+		// Remove Document Cache
+		$this->delete_cache();
+
 		/**
 		 * After document save.
 		 *
@@ -1447,7 +1452,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param string $value Meta data value.
+	 * @param mixed $value Meta data value.
 	 *
 	 * @return bool|int
 	 */
@@ -1785,6 +1790,68 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			$this->do_print_elements( $elements_data );
+
+			return;
+		}
+
+		$cached_data = $this->get_document_cache();
+
+		if ( false === $cached_data ) {
+			add_filter( 'elementor/element/should_render_shortcode', '__return_true' );
+
+			$scripts_to_queue = [];
+			$styles_to_queue = [];
+
+			global $wp_scripts, $wp_styles;
+
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles;
+			if ( $should_store_scripts ) {
+				$scripts_ignored = $wp_scripts->queue;
+				$styles_ignored = $wp_styles->queue;
+			}
+
+			ob_start();
+
+			$this->do_print_elements( $elements_data );
+
+			if ( $should_store_scripts ) {
+				$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
+				$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
+			}
+
+			$cached_data = [
+				'content' => ob_get_clean(),
+				'scripts' => $scripts_to_queue,
+				'styles' => $styles_to_queue,
+			];
+
+			if ( $this->should_store_cache_elements() ) {
+				$this->set_document_cache( $cached_data );
+			}
+
+			remove_filter( 'elementor/element/should_render_shortcode', '__return_true' );
+		} else {
+			if ( ! empty( $cached_data['scripts'] ) ) {
+				foreach ( $cached_data['scripts'] as $script_handle ) {
+					wp_enqueue_script( $script_handle );
+				}
+			}
+
+			if ( ! empty( $cached_data['styles'] ) ) {
+				foreach ( $cached_data['styles'] as $style_handle ) {
+					wp_enqueue_style( $style_handle );
+				}
+			}
+		}
+
+		if ( ! empty( $cached_data['content'] ) ) {
+			echo $cached_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+	}
+
+	protected function do_print_elements( $elements_data ) {
 		// Collect all data updaters that should be updated on runtime.
 		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
 
@@ -1801,6 +1868,52 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	public function set_document_cache( $value ) {
+		$expiration = '+12 hours';
+
+		$data = [
+			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
+			'value' => $value,
+		];
+
+		$this->update_json_meta( static::CACHE_META_KEY, $data );
+	}
+
+	private function get_document_cache() {
+		$cache = $this->get_json_meta( static::CACHE_META_KEY );
+
+		if ( empty( $cache['timeout'] ) ) {
+			return false;
+		}
+
+		if ( current_time( 'timestamp' ) > $cache['timeout'] ) {
+			return false;
+		}
+
+		if ( ! is_array( $cache['value'] ) ) {
+			return false;
+		}
+
+		return $cache['value'];
+	}
+
+	protected function delete_cache() {
+		$this->delete_meta( static::CACHE_META_KEY );
+	}
+
+	private function should_store_cache_elements() {
+		static $should_store_cache_elements = null;
+
+		if ( null === $should_store_cache_elements ) {
+			$should_store_cache_elements = (
+				! is_admin()
+				&& ! Plugin::$instance->preview->is_preview_mode()
+			);
+		}
+
+		return $should_store_cache_elements;
 	}
 
 	protected function register_document_controls() {

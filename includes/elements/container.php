@@ -27,6 +27,10 @@ class Container extends Element_Base {
 	 */
 	private $active_kit;
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Container constructor.
 	 *
