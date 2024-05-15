@@ -36,6 +36,5 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 		unset( $home_screen_data['top'] );
 
 		return $home_screen_data;
-
 	}
 }
