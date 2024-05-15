@@ -178,15 +178,15 @@ abstract class PageBase extends Document {
 		$labels = [
 			'name' => $plural_label, // Already translated.
 			'singular_name' => $singular_label, // Already translated.
-			'all_items' => sprintf( __( 'All %s', 'nobel-prize' ), $plural_label ),
+			'all_items' => sprintf( __( 'All %s', 'elementor' ), $plural_label ),
 			'add_new' => esc_html__( 'Add New', 'elementor' ),
-			'add_new_item' => sprintf( __( 'Add New %s', 'nobel-prize' ), $singular_label ),
-			'edit_item' => sprintf( __( 'Edit %s', 'nobel-prize' ), $singular_label ),
-			'new_item' => sprintf( __( 'New %s', 'nobel-prize' ), $singular_label ),
-			'view_item' => sprintf( __( 'View %s', 'nobel-prize' ), $singular_label ),
-			'search_items' => sprintf( __( 'Search %s', 'nobel-prize' ), $plural_label ),
-			'not_found' => sprintf( __( 'No %s found.', 'nobel-prize' ), strtolower( $plural_label ) ),
-			'not_found_in_trash' => sprintf( __( 'No %s found in Trash.', 'nobel-prize' ), strtolower( $plural_label ) ),
+			'add_new_item' => sprintf( __( 'Add New %s', 'elementor' ), $singular_label ),
+			'edit_item' => sprintf( __( 'Edit %s', 'elementor' ), $singular_label ),
+			'new_item' => sprintf( __( 'New %s', 'elementor' ), $singular_label ),
+			'view_item' => sprintf( __( 'View %s', 'elementor' ), $singular_label ),
+			'search_items' => sprintf( __( 'Search %s', 'elementor' ), $plural_label ),
+			'not_found' => sprintf( __( 'No %s found.', 'elementor' ), strtolower( $plural_label ) ),
+			'not_found_in_trash' => sprintf( __( 'No %s found in Trash.', 'elementor' ), strtolower( $plural_label ) ),
 			'parent_item_colon' => '',
 			'menu_name' => $plural_label,
 		];

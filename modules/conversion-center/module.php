@@ -215,8 +215,9 @@ class Module extends BaseModule {
 		$menu_args = $this->get_links_menu_args();
 		$slug = $menu_args['menu_slug'] . '#';
 		unset( $submenu[ $slug ][0] );
-		$submenu[ $slug ][1][4] = 'submenu-e-links';
-		$submenu[ $slug ][2][4] = 'submenu-e-contact';
+
+		$submenu[ $slug ][1][4] = 'submenu-e-links';  // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$submenu[ $slug ][2][4] = 'submenu-e-contact'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	private function get_trashed_links_posts(): array {
@@ -272,9 +273,9 @@ class Module extends BaseModule {
 	private function get_add_new_contact_page_url() {
 		if ( ! $this->new_contact_pages_url ) {
 			$this->new_contact_pages_url = Plugin::$instance->documents->get_create_new_post_url(
-					self::CPT_CONTACT_PAGES,
-					self::CONTACT_PAGE_DOCUMENT_TYPE
-				) . '#library';
+				self::CPT_CONTACT_PAGES,
+				self::CONTACT_PAGE_DOCUMENT_TYPE
+			) . '#library';
 		}
 
 		return $this->new_contact_pages_url;
@@ -311,7 +312,7 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	public function print_empty_contact_pages_page(  ) {
+	public function print_empty_contact_pages_page() {
 		$template_sources = Plugin::$instance->templates_manager->get_registered_sources();
 		$source_local = $template_sources['local'];
 		$trashed_posts = $this->get_trashed_contact_posts();
@@ -354,7 +355,7 @@ class Module extends BaseModule {
 
 	private function admin_localize_settings( $settings ) {
 		$contact_menu_slug = $this->get_contact_menu_args()['menu_slug'];
-		if ( $contact_menu_slug === self::CPT_CONTACT_PAGES ) {
+		if ( self::CPT_CONTACT_PAGES === $contact_menu_slug ) {
 			$contact_menu_slug = 'admin.php?page=' . $contact_menu_slug;
 		}
 		$additional_settings = [
@@ -489,7 +490,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	function override_admin_bar_add_link( $admin_bar ): void {
+	public function override_admin_bar_add_link( $admin_bar ): void {
 		$new_links_page_node = $admin_bar->get_node( 'new-e-link-pages' );
 
 		if ( $new_links_page_node ) {
@@ -499,7 +500,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	function override_admin_bar_add_contact( $admin_bar ): void {
+	public function override_admin_bar_add_contact( $admin_bar ): void {
 		$new_contact_page_node = $admin_bar->get_node( 'new-e-contact-pages' );
 
 		if ( $new_contact_page_node ) {
