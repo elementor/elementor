@@ -20,7 +20,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			return;
 		}
 
-		if ( ! shouldShowPromotionIntroduction() ) {
+		if ( ! shouldShowPromotionIntroduction( sessionStorage ) ) {
 			return;
 		}
 
