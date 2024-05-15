@@ -5,7 +5,6 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 		return {
 			selectors: {
 				addButton: '.page-title-action:first',
-				pagesMenuItemAndLink: '#menu-pages, #menu-pages > a',
 				conversionMenuItem: '.menu-item-elementor-conversions',
 			},
 		};

@@ -22,7 +22,6 @@ export default class extends elementorModules.Module {
 			},
 			args = {
 				path: elementorAdmin.config.linksPages?.hasPages ? paths.linksPagesTablePage : paths.linksPagesAddNewPage,
-				pathContact: elementorAdmin.config.contactPages?.hasPages ? paths.contactPagesTablePage : paths.contactPagesAddNewPage,
 				isLinksPageAdminEdit: elementorAdmin.config.linksPages?.isAdminEdit,
 				paths,
 			};
