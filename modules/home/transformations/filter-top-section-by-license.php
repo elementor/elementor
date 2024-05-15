@@ -32,9 +32,10 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 			}
 		}
 
-			$home_screen_data['top_with_licences'] = reset( $new_top );
+		$home_screen_data['top_with_licences'] = reset( $new_top );
+		unset( $home_screen_data['top'] );
 
-			return $home_screen_data;
+		return $home_screen_data;
 
 	}
 }
