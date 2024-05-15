@@ -253,7 +253,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'type' => Controls_Manager::REPEATER,
 				'max_items' => $config['content']['image_links_section']['images_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
-				'title_field' => __( 'Image', 'elementor' ),
+				'title_field' => 'Image #{{{ itemIndex }}}',
 				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add item', 'elementor' ),
 				'default' => $config['content']['image_links_section']['images_repeater_defaults'] ?? [],
