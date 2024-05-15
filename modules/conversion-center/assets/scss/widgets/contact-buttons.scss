@@ -306,6 +306,7 @@
 		display: flex;
 		justify-content: center;
 		position: relative;
+		transition: $transition-hover;
 
 		&.animated {
 			animation-delay: var(--e-contact-button-chat-button-animation-delay);
@@ -319,6 +320,7 @@
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-button-bg-hover);
+			transition: $transition-hover;
 			
 			svg {
 				fill: var(--e-contact-buttons-button-icon-hover);
@@ -341,8 +343,8 @@
 			width: var(--e-contact-buttons-size-small);
 
 			svg {
-				height: 38px;
-				width: 38px;
+				height: 26px;
+				width: 26px;
 			}
 		}
 
@@ -351,8 +353,8 @@
 			width: var(--e-contact-buttons-size-medium);
 
 			svg {
-				height: 42px;
-				width: 42px;
+				height: 30px;
+				width: 30px;
 			}
 		}
 
@@ -361,8 +363,8 @@
 			width: var(--e-contact-buttons-size-large);
 
 			svg {
-				height: 50px;
-				width: 50px;
+				height: 32px;
+				width: 32px;
 			}
 		}
 	}
