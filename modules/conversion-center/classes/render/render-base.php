@@ -74,23 +74,17 @@ abstract class Render_Base {
 
 				$link_image_classnames = 'e-link-in-bio__link-image-link';
 
-				// Manage Link attributes : Start
+				// Manage Link attributes
 
 				$url_attrs = [
 					'class' => $link_image_classnames,
 					'href' => esc_url( $formatted_link ),
 				];
 
-				if ( ! empty( $link_image['link_images_url']['is_external'] ) ) {
-					$url_attrs['target'] = '_blank';
-					$url_attrs['rel'] = 'noopener ';
-				}
-
-				if ( ! empty( $link_image['link_images_url']['nofollow'] ) ) {
-					$url_attrs['rel'] .= 'nofollow ';
-				}
-
-				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $link_image['link_images_url']['custom_attributes'] ?? '' ) );
+				$url_combined_attrs = $this->get_link_attributes(
+					$link_image['link_images_url'],
+					$url_attrs
+				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'link-image-link' . $key, [
@@ -178,7 +172,7 @@ abstract class Render_Base {
 					$ctas_classnames .= ' has-corners-' . $ctas_props_corners;
 				}
 
-				// Manage Link attributes : Start
+				// Manage Link attributes
 
 				$url_attrs = [
 					'class' => $ctas_classnames,
@@ -192,16 +186,10 @@ abstract class Render_Base {
 					$url_attrs['download'] = 'download';
 				}
 
-				if ( ! empty( $cta['cta_link_url']['is_external'] ) ) {
-					$url_attrs['target'] = '_blank';
-					$url_attrs['rel'] = 'noopener ';
-				}
-
-				if ( ! empty( $cta['cta_link_url']['nofollow'] ) ) {
-					$url_attrs['rel'] .= 'nofollow ';
-				}
-
-				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $cta['cta_link_url']['custom_attributes'] ?? '' ) );
+				$url_combined_attrs = $this->get_link_attributes(
+					$cta['cta_link_url'],
+					$url_attrs
+				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [

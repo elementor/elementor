@@ -36,6 +36,38 @@ trait Conversion_Center_Controls_Trait {
 		);
 	}
 
+	protected function get_link_attributes(
+		$link = [],
+		$other_attributes = []
+	) {
+		$url_attrs = [];
+
+		if ( ! empty( $link['url'] ) ) {
+			$url_attrs['href'] = esc_url( $link['url'] );
+		}
+
+		if ( ! empty( $link['is_external'] ) ) {
+			$url_attrs['target'] = '_blank';
+			$url_attrs['rel'] = 'noopener ';
+		}
+
+		if ( ! empty( $link['nofollow'] ) ) {
+			$url_attrs['rel'] .= 'nofollow ';
+		}
+
+		/**
+		 * Note - we deliberately merge $other_attributes second
+		 * to allow overriding default attributes values such as a more formatted href
+		 */
+		$url_combined_attrs = array_merge(
+			$url_attrs,
+			$other_attributes,
+			Utils::parse_custom_attributes( $link['custom_attributes'] ?? '' ),
+		);
+
+		return $url_combined_attrs;
+	}
+
 	protected function add_icons_per_row_control(
 		string $name = 'icons_per_row',
 		$options = [
