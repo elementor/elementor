@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
@@ -66,7 +67,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_menu_args();
+		$menu_args = $this->get_links_menu_args();
 
 		$slug = $menu_args['menu_slug'];
 		$function = $menu_args['function'];
@@ -78,6 +79,8 @@ class Module extends BaseModule {
 		} else {
 			$admin_menu->register( $slug, new Links_Menu_Item( $parent_slug ) );
 		}
+
+		$admin_menu->register( $slug, new Contact_Menu_Item( $parent_slug ) );
 
 	}
 
@@ -105,7 +108,7 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/editor/localize_settings', function ( $data ) {
-			$menu_args = $this->get_menu_args();
+			$menu_args = $this->get_links_menu_args();
 			$data['admin_conversion_center_url'] = admin_url( $menu_args['menu_slug'] );
 			return $data;
 		} );
@@ -130,7 +133,7 @@ class Module extends BaseModule {
 				check_admin_referer( 'set_as_homepage_' . $post );
 				update_option( 'page_on_front', $post );
 				update_option( 'show_on_front', 'page' );
-				$menu_args = $this->get_menu_args();
+				$menu_args = $this->get_links_menu_args();
 
 				wp_redirect( $menu_args['menu_slug'] );
 				exit;
@@ -174,29 +177,48 @@ class Module extends BaseModule {
 	private function remove_conversion_menu_link() {
 		global $submenu;
 
-		$menu_args = $this->get_menu_args();
+		$menu_args = $this->get_links_menu_args();
 		$slug = $menu_args['menu_slug'] . '#';
 		unset( $submenu[ $slug ][0] );
 	}
 
-	private function get_trashed_lib_posts(): array {
+	private function get_trashed_links_posts(): array {
 		if ( $this->trashed_links_pages ) {
 			return $this->trashed_links_pages;
 		}
 
-		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
-		$trashed_posts_query = new \WP_Query( [
+		$this->trashed_links_pages = $this->get_trashed_posts(
+			self::CPT_LINKS_PAGES,
+			self::LINKS_PAGE_DOCUMENT_TYPE
+		);
+
+		return $this->trashed_links_pages;
+	}
+
+	private function get_trashed_contact_posts(): array {
+		if ( $this->trashed_contact_pages ) {
+			return $this->trashed_contact_pages;
+		}
+
+		$this->trashed_contact_pages = $this->get_trashed_posts(
+			self::CPT_CONTACT_PAGES,
+			self::CONTACT_PAGE_DOCUMENT_TYPE
+		);
+
+		return $this->trashed_contact_pages;
+	}
+
+	private function get_trashed_posts( string $cpt, string $document_type ) {
+		$query = new \WP_Query( [
 			'no_found_rows' => true,
-			'post_type' => self::CPT_LINKS_PAGES,
+			'post_type' => $cpt,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
-			'meta_value' => self::LINKS_PAGE_DOCUMENT_TYPE,
+			'meta_value' => $document_type,
 		] );
 
-		$this->trashed_links_pages = $trashed_posts_query->posts;
-
-		return $this->trashed_links_pages;
+		return $query->posts;
 	}
 
 	private function get_add_new_links_page_url() {
@@ -210,10 +232,21 @@ class Module extends BaseModule {
 		return $this->new_links_pages_url;
 	}
 
+	private function get_add_new_contact_page_url() {
+		if ( ! $this->new_contact_pages_url ) {
+			$this->new_contact_pages_url = Plugin::$instance->documents->get_create_new_post_url(
+					self::CPT_CONTACT_PAGES,
+					self::CONTACT_PAGE_DOCUMENT_TYPE
+				) . '#library';
+		}
+
+		return $this->new_contact_pages_url;
+	}
+
 	public function print_empty_links_pages_page() {
 		$template_sources = Plugin::$instance->templates_manager->get_registered_sources();
 		$source_local = $template_sources['local'];
-		$trashed_posts = $this->get_trashed_lib_posts();
+		$trashed_posts = $this->get_trashed_links_posts();
 
 		?>
 		<div class="e-landing-pages-empty">
@@ -232,6 +265,37 @@ class Module extends BaseModule {
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
 						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT_LINKS_PAGES ) ) . '">',
+						'</a>'
+					);
+					?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	public function print_empty_contact_pages_page(  ) {
+		$template_sources = Plugin::$instance->templates_manager->get_registered_sources();
+		$source_local = $template_sources['local'];
+		$trashed_posts = $this->get_trashed_contact_posts();
+
+		?>
+		<div class="e-landing-pages-empty">
+			<?php
+			/** @var Source_Local $source_local */
+			$source_local->print_blank_state_template(
+				esc_html__( 'Contact Button', 'elementor' ),
+				$this->get_add_new_contact_page_url(),
+				esc_html__( 'Add a Contact button so your users can easily get in touch!', 'elementor' )
+			);
+
+			if ( ! empty( $trashed_posts ) ) : ?>
+				<div class="e-trashed-items">
+					<?php
+					printf(
+					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT_CONTACT_PAGES ) ) . '">',
 						'</a>'
 					);
 					?>
@@ -303,31 +367,67 @@ class Module extends BaseModule {
 			return $this->has_links_pages;
 		}
 
+		$this->has_links_pages = $this->has_pages(
+			self::CPT_LINKS_PAGES,
+			self::LINKS_PAGE_DOCUMENT_TYPE
+		);
+
+		return $this->has_links_pages;
+	}
+
+	private function has_contact_pages(): bool {
+		if ( null !== $this->has_contact_pages ) {
+			return $this->has_contact_pages;
+		}
+
+		$this->has_contact_pages = $this->has_pages(
+			self::CPT_CONTACT_PAGES,
+			self::CONTACT_PAGE_DOCUMENT_TYPE
+		);
+
+		return $this->has_contact_pages;
+	}
+
+	private function has_pages( string $cpt, string $document_type ): bool {
 		$posts_query = new \WP_Query( [
 			'no_found_rows' => true,
-			'post_type' => self::CPT_LINKS_PAGES,
+			'post_type' => $cpt,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
-			'meta_value' => self::LINKS_PAGE_DOCUMENT_TYPE,
+			'meta_value' => $document_type,
 		] );
 
-		$this->has_links_pages = $posts_query->post_count > 0;
+		return $posts_query->post_count > 0;
 
-		return $this->has_links_pages;
 	}
 
 	private function is_elementor_links_page( \WP_Post $post ): bool {
 		return self::CPT_LINKS_PAGES === $post->post_type;
 	}
 
-	private function get_menu_args(): array {
+	private function get_links_menu_args(): array {
 		if ( $this->has_links_pages() ) {
 			$menu_slug = self::ADMIN_PAGE_SLUG_LINKS;
 			$function = null;
 		} else {
 			$menu_slug = self::CPT_LINKS_PAGES;
 			$function = [ $this, 'print_empty_links_pages_page' ];
+		}
+
+		return [
+			'menu_slug' => $menu_slug,
+			'function' => $function,
+		];
+	}
+
+	private function get_contact_menu_args(): array {
+		if ( $this->has_links_pages() ) {
+			$menu_slug = self::ADMIN_PAGE_SLUG_CONTACT;
+			$function = null;
+		} else {
+			$menu_slug = self::CPT_CONTACT_PAGES;
+			$function = [ $this, 'print_empty_contact_pages_page' ];
 		}
 
 		return [
