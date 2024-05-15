@@ -180,7 +180,6 @@
 			gap: var(--n-tabs-icon-gap);
 			border-width: var(--n-tabs-border-width);
 			position: relative;
-			cursor: pointer;
 			outline: none;
 			flex-grow: var(--n-tabs-title-flex-grow);
 			flex-basis: var(--n-tabs-title-flex-basis);
@@ -203,8 +202,6 @@
 				-webkit-text-stroke-width var(--n-tabs-title-transition ),
 				-webkit-text-stroke-color var(--n-tabs-title-transition ),
 				transform var(--n-tabs-title-transition);
-
-			@include button-focus-outline;
 
 			& span svg,
 			& span i {

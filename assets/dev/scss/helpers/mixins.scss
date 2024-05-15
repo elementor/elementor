@@ -252,7 +252,7 @@
 	}
 }
 
-@mixin button-focus-outline() {
+@mixin focus-outline() {
 
 	&:focus-visible {
 		outline: 5px auto -webkit-focus-ring-color;
