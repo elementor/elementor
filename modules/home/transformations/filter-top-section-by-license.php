@@ -26,22 +26,15 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		if ( is_array( $home_screen_data['top'] ) && count( $home_screen_data['top'] ) > 1 && is_array( $home_screen_data['top'][0] ) ) {
-			$new_top = [];
-
-			foreach ( $home_screen_data['top'] as $index => $item ) {
+			foreach ( $home_screen_data['top_with_licences'] as $index => $item ) {
 				if ( $this->valid_item( $item ) ) {
 					$new_top[] = $item;
 				}
 			}
 
-			$home_screen_data['top'] = reset( $new_top );
+			$home_screen_data['top_with_licences'] = reset( $new_top );
 
 			return $home_screen_data;
 
-		} else {
-
-			return $home_screen_data;
-		}
 	}
 }
