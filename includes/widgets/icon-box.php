@@ -73,6 +73,10 @@ class Widget_Icon_Box extends Widget_Base {
 		return [ 'icon box', 'icon' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register icon box widget controls.
 	 *

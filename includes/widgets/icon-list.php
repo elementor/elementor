@@ -73,6 +73,10 @@ class Widget_Icon_List extends Widget_Base {
 		return [ 'icon list', 'icon', 'list' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register icon list widget controls.
 	 *

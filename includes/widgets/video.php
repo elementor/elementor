@@ -88,6 +88,10 @@ class Widget_Video extends Widget_Base {
 		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion', 'videopress' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register video widget controls.
 	 *
