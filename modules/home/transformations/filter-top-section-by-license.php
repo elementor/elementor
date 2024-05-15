@@ -26,11 +26,11 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-			foreach ( $home_screen_data['top_with_licences'] as $index => $item ) {
-				if ( $this->valid_item( $item ) ) {
-					$new_top[] = $item;
-				}
+		foreach ( $home_screen_data['top_with_licences'] as $index => $item ) {
+			if ( $this->valid_item( $item ) ) {
+				$new_top[] = $item;
 			}
+		}
 
 			$home_screen_data['top_with_licences'] = reset( $new_top );
 
