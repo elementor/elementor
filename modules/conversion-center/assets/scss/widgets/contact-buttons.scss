@@ -27,6 +27,7 @@
 	--e-contact-buttons-top-bar-name: #ffffff;
 	--e-contact-buttons-top-bar-title: #ffffff;
 	--e-contact-buttons-close-button-color: #ffffff;
+	--e-contact-buttons-close-button-bg: #ffffff;
 	--e-contact-buttons-message-bubble-name: #000000;
 	--e-contact-buttons-message-bubble-body: #000000;
 	--e-contact-buttons-message-bubble-time: #000000;
@@ -41,6 +42,8 @@
 	--e-contact-buttons-contact-button-icon-hover: #ffffff;
 	--e-contact-buttons-contact-button-bg: #467FF7;
 	--e-contact-buttons-contact-button-bg-hover: #1C2448;
+	--e-contact-buttons-tooltip-text: #1C2448;
+	--e-contact-buttons-tooltip-bg: #ffffff;
 
 	position: fixed;
 	bottom: 20px;
@@ -303,6 +306,7 @@
 		display: flex;
 		justify-content: center;
 		position: relative;
+		transition: $transition-hover;
 
 		&.animated {
 			animation-delay: var(--e-contact-button-chat-button-animation-delay);
@@ -316,6 +320,7 @@
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-button-bg-hover);
+			transition: $transition-hover;
 			
 			svg {
 				fill: var(--e-contact-buttons-button-icon-hover);
@@ -338,8 +343,8 @@
 			width: var(--e-contact-buttons-size-small);
 
 			svg {
-				height: 38px;
-				width: 38px;
+				height: 26px;
+				width: 26px;
 			}
 		}
 
@@ -348,8 +353,8 @@
 			width: var(--e-contact-buttons-size-medium);
 
 			svg {
-				height: 42px;
-				width: 42px;
+				height: 30px;
+				width: 30px;
 			}
 		}
 
@@ -358,8 +363,8 @@
 			width: var(--e-contact-buttons-size-large);
 
 			svg {
-				height: 50px;
-				width: 50px;
+				height: 32px;
+				width: 32px;
 			}
 		}
 	}
@@ -386,20 +391,21 @@
 		position: relative;
 
 		&::after {
-			border-color: transparent var(--e-contact-buttons-message-bubble-bubble-bg) transparent transparent;
 			border-style: solid;
-			border-width: 0 40px 40px 0;
+			border-inline-start-width: 0;
+			border-inline-end-width: 40px;
+			border-block-start-width: 0;
+			border-block-end-width: 40px;
+			border-inline-start-color: transparent;
+			border-inline-end-color: var(--e-contact-buttons-message-bubble-bubble-bg);
+			border-block-start-color: transparent;
+			border-block-end-color: transparent;
 			content: "";
 			height: 0;
 			position: absolute;
 			inset-inline-start: -20px;
 			top: 0;
-			transform: rotate(0);
 			width: 0;
-			
-			@if $direction == rtl {
-				transform: rotate(-90deg);
-			}
 		}
 	}
 

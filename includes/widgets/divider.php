@@ -90,6 +90,10 @@ class Widget_Divider extends Widget_Base {
 		return [ 'divider', 'hr', 'line', 'border' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	private static function get_additional_styles() {
 		static $additional_styles = null;
 
