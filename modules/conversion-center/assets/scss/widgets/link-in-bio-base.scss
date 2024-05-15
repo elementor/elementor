@@ -55,10 +55,13 @@
 	--e-link-in-bio-ctas-padding-inline-start: 20px;
 	--e-link-in-bio-ctas-text-color: #{$white};
 
-	// Link images config
-	--e-link-in-bio-link-images-columns: 2;
-	--e-link-in-bio-link-images-gap: 10px;
-	--e-link-in-bio-link-images-height: auto;
+	// Image links config
+	--e-link-in-bio-image-links-border-color: transparent;
+	--e-link-in-bio-image-links-border-style: solid;
+	--e-link-in-bio-image-links-border-width: 0;
+	--e-link-in-bio-image-links-columns: 2;
+	--e-link-in-bio-image-links-gap: 10px;
+	--e-link-in-bio-image-links-height: auto;
 
 	// Background config
 	--background-overlay-opacity: 0.5;
@@ -323,28 +326,35 @@
 		}
 	}
 
-	&__link-images {
+	&__image-links {
 		display: grid;
-		grid-template-columns: repeat(var(--e-link-in-bio-link-images-columns, 2), minmax(0, 1fr));
+		grid-template-columns: repeat(var(--e-link-in-bio-image-links-columns, 2), minmax(0, 1fr));
 		grid-template-rows: auto;
-		gap: var(--e-link-in-bio-link-images-gap);
+		gap: var(--e-link-in-bio-image-links-gap);
 		margin-block-start: 24px;
 
 		&.has-1-columns {
-			--e-link-in-bio-link-images-columns: 1;
-			--e-link-in-bio-link-images-gap: 14px;
+			--e-link-in-bio-image-links-columns: 1;
+			--e-link-in-bio-image-links-gap: 14px;
 		}
 
 		&.has-3-columns {
-			--e-link-in-bio-link-images-columns: 3;
-			--e-link-in-bio-link-images-gap: 5px;
+			--e-link-in-bio-image-links-columns: 3;
+			--e-link-in-bio-image-links-gap: 5px;
+		}
+
+		.e-link-in-bio__image-link-link {
+			display: grid;
 		}
 
 		// Specificity required to override .elementor img defaults
-		img.e-link-in-bio__link-image-element {
+		img.e-link-in-bio__image-link-img {
 			aspect-ratio: 1;
+			border-color: var(--e-link-in-bio-image-links-border-color);
+			border-style: var(--e-link-in-bio-image-links-border-style);
+			border-width: var(--e-link-in-bio-image-links-border-width);
 			display: block;
-			height: var(--e-link-in-bio-link-images-height, auto);
+			height: var(--e-link-in-bio-image-links-height, auto);
 			object-fit: cover;
 			width: 100%;
 		}

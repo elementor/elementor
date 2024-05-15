@@ -30,73 +30,73 @@ abstract class Render_Base {
 		$this->settings = $widget->get_settings_for_display();
 	}
 
-	protected function render_link_images(): void {
-		$link_images_value_initial = $this->settings['link_images'] ?? [];
-		$link_images_columns_value = $this->settings['link_images_per_row'] ?? 2;
+	protected function render_image_links(): void {
+		$image_links_value_initial = $this->settings['image_links'] ?? [];
+		$image_links_columns_value = $this->settings['image_links_per_row'] ?? 2;
 
 		/**
 		 * if empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
-		$link_images_value = $this->clean_array( $link_images_value_initial );
-		$has_link_images = ! empty( $link_images_value );
+		$image_links_value = $this->clean_array( $image_links_value_initial );
+		$has_image_links = ! empty( $image_links_value );
 
-		if ( ! $has_link_images ) {
+		if ( ! $has_image_links ) {
 			return;
 		}
 
-		$link_images_classnames = 'e-link-in-bio__link-images';
+		$image_links_classnames = 'e-link-in-bio__image-links';
 
-		if ( ! empty( $link_images_columns_value ) ) {
-			$link_images_classnames .= ' has-' . $link_images_columns_value . '-columns';
+		if ( ! empty( $image_links_columns_value ) ) {
+			$image_links_classnames .= ' has-' . $image_links_columns_value . '-columns';
 		}
 
-		$this->widget->add_render_attribute( 'link-images', [
-			'class' => $link_images_classnames,
+		$this->widget->add_render_attribute( 'image-links', [
+			'class' => $image_links_classnames,
 		] );
 		?>
 
-		<div <?php echo $this->widget->get_render_attribute_string( 'link-images' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php echo $this->widget->get_render_attribute_string( 'image-links' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
-			foreach ( $link_images_value as $key => $link_image ) {
-				$formatted_link = $link_image['link_images_url']['url'] ?? '';
-				$link_image_image = $link_image['link_images_image'] ?? [];
+			foreach ( $image_links_value as $key => $image_link ) {
+				$formatted_link = $image_link['image_links_url']['url'] ?? '';
+				$image_link_image = $image_link['image_links_image'] ?? [];
 
 				// Manage Link class variations
 
-				$link_image_classnames = 'e-link-in-bio__link-image-link';
+				$image_link_classnames = 'e-link-in-bio__image-link-link';
 
 				// Manage Link attributes
 
 				$url_attrs = [
-					'class' => $link_image_classnames,
+					'class' => $image_link_classnames,
 					'href' => esc_url( $formatted_link ),
 				];
 
 				$url_combined_attrs = $this->get_link_attributes(
-					$link_image['link_images_url'],
+					$image_link['image_links_url'],
 					$url_attrs
 				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-					$this->widget->add_render_attribute( 'link-image-link' . $key, [
+					$this->widget->add_render_attribute( 'image-link-link' . $key, [
 						$attr_key => $attr_value,
 					] );
 				}
 				?>
-				<a <?php echo $this->widget->get_render_attribute_string( 'link-image-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php if ( ! empty( $link_image_image['id'] ) ) {
-						echo wp_get_attachment_image( $link_image_image['id'], 'thumbnail', false, [
-							'class' => 'e-link-in-bio__link-image-element',
+				<a <?php echo $this->widget->get_render_attribute_string( 'image-link-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<?php if ( ! empty( $image_link_image['id'] ) ) {
+						echo wp_get_attachment_image( $image_link_image['id'], 'thumbnail', false, [
+							'class' => 'e-link-in-bio__image-link-img',
 						] );
 					} else {
-						$this->widget->add_render_attribute( 'link-image-element-' . $key, [
+						$this->widget->add_render_attribute( 'image-link-img-' . $key, [
 							'alt' => '',
-							'class' => 'e-link-in-bio__link-image-element',
-							'src' => esc_url( $link_image_image['url'] ),
+							'class' => 'e-link-in-bio__image-link-img',
+							'src' => esc_url( $image_link_image['url'] ),
 						] );
 						?>
-						<img <?php echo $this->widget->get_render_attribute_string( 'link-image-element-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+						<img <?php echo $this->widget->get_render_attribute_string( 'image-link-img-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 					<?php }; ?>
 				</a>
 			<?php } ?>

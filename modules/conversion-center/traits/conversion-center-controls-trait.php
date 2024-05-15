@@ -182,7 +182,7 @@ trait Conversion_Center_Controls_Trait {
 			],
 		];
 
-		$this->add_control(
+		$this->add_responsive_control(
 			$prefix . '_border_width',
 			array_merge( $border_width, $border_width_args ),
 		);
