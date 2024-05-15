@@ -36,6 +36,24 @@ trait Conversion_Center_Controls_Trait {
 		);
 	}
 
+	/**
+	 * Remove any child arrays where all properties are empty
+	 */
+	protected function clean_array(
+		$input_array = []
+	) {
+		$output_array = array_filter( $input_array, function( $sub_array ) {
+			// Use array_filter on the sub array
+			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
+				// Filter out empty or null values
+				return ! is_null( $val ) && '' !== $val;
+			} );
+			// A non-empty result means the sub array contains some non-empty value(s)
+			return ! empty( $filtered_sub_array );
+		} );
+		return $output_array;
+	}
+
 	protected function get_link_attributes(
 		$link = [],
 		$other_attributes = []

@@ -38,17 +38,9 @@ abstract class Render_Base {
 		 * if empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
-		$link_images_value = array_filter( $link_images_value_initial, function( $sub_array ) {
-			// Use array_filter on the sub array
-			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
-				// Filter out empty or null values
-				return ! is_null( $val ) && '' !== $val;
-			} );
-			// A non-empty result means the sub array contains some non-empty value(s)
-			return ! empty( $filtered_sub_array );
-		} );
-
+		$link_images_value = $this->clean_array( $link_images_value_initial );
 		$has_link_images = ! empty( $link_images_value );
+
 		if ( ! $has_link_images ) {
 			return;
 		}
@@ -122,17 +114,9 @@ abstract class Render_Base {
 		 * $this->settings['cta_link'] if empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
-		$ctas_value = array_filter( $ctas_value_initial, function( $sub_array ) {
-			// Use array_filter on the sub array
-			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
-				// Filter out empty or null values
-				return ! is_null( $val ) && '' !== $val;
-			} );
-			// A non-empty result means the sub array contains some non-empty value(s)
-			return ! empty( $filtered_sub_array );
-		} );
-
+		$ctas_value = $this->clean_array( $ctas_value_initial );
 		$has_ctas = ! empty( $ctas_value );
+
 		if ( ! $has_ctas ) {
 			return;
 		}
