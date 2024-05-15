@@ -1847,7 +1847,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $cached_data['content'] ) ) {
-			echo $cached_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo do_shortcode( $cached_data['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
