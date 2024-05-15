@@ -202,6 +202,10 @@
 				-webkit-text-stroke-color var(--n-tabs-title-transition ),
 				transform var(--n-tabs-title-transition);
 
+			&:focus:not(:focus-visible) {
+				outline: none;
+			}
+
 			& span svg,
 			& span i {
 				transition: color var(--n-tabs-title-transition ),
