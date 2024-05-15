@@ -358,7 +358,10 @@ abstract class Contact_Buttons_Render_Base {
 				$formatted_link = ! empty( $link['location'] ) ? 'https://www.waze.com/ul?ll=' . $link['location'] . '&navigate=yes' : '';
 				break;
 			case Social_Network_Provider::URL:
-				$formatted_link = ! empty( $link['location'] ) ? $link['url'] : '';
+				$formatted_link = ! empty( $link['url'] ) ? $link['url'] : '';
+				break;
+			case Social_Network_Provider::TELEPHONE:
+				$formatted_link = ! empty( $link['number'] ) ? 'tel:' . $link['number'] : '';
 				break;
 			default:
 				break;

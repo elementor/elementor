@@ -29,6 +29,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					],
 					'has_notification_dot' => true,
 					'has_active_tab' => false,
+					'platform' => [
+						'group' => [
+							Social_Network_Provider::EMAIL,
+							Social_Network_Provider::SMS,
+							Social_Network_Provider::WHATSAPP,
+							Social_Network_Provider::SKYPE,
+							Social_Network_Provider::MESSENGER,
+							Social_Network_Provider::VIBER,
+						],
+					],
 				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
@@ -167,6 +177,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::SMS,
 						Social_Network_Provider::WHATSAPP,
 						Social_Network_Provider::VIBER,
+						Social_Network_Provider::TELEPHONE,
 					],
 				],
 			],
@@ -205,6 +216,24 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_control(
+			'chat_button_waze',
+			[
+				'label' => esc_html__( 'Location', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
+				'condition' => [
+					'chat_button_platform' => [
+						Social_Network_Provider::WAZE,
+					],
+				],
+			],
+		);
 	}
 
 	protected function add_chat_button_section(): void {
@@ -227,14 +256,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'type' => Controls_Manager::SELECT,
 					'default' => Social_Network_Provider::WHATSAPP,
 					'options' => Social_Network_Provider::get_social_networks_text(
-						[
-							Social_Network_Provider::EMAIL,
-							Social_Network_Provider::SMS,
-							Social_Network_Provider::WHATSAPP,
-							Social_Network_Provider::SKYPE,
-							Social_Network_Provider::MESSENGER,
-							Social_Network_Provider::VIBER,
-						]
+						$config['content']['chat_button_section']['platform']['group']
 					),
 				]
 			);
