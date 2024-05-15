@@ -18,7 +18,7 @@ export class LinksPageAddLibraryTab extends $e.modules.hookUI.After {
 			filter: {
 				source: 'remote',
 				type: 'block',
-				subType: 'hero',
+				subtype: 'hero',
 			},
 		}, 2 );
 

@@ -18,7 +18,7 @@ export class ContactPageAddLibraryTab extends $e.modules.hookUI.After {
 			filter: {
 				source: 'remote',
 				type: 'block',
-				subType: 'Quote',
+				subtype: 'Quote',
 			},
 		}, 2 );
 

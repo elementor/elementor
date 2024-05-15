@@ -123,9 +123,8 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/editor/localize_settings', function ( $data ) {
-			$data['admin_conversion_center_links_url'] = admin_url( $this->get_links_menu_args()['menu_slug'] );
-			$data['admin_conversion_center_contact_url'] = admin_url( $this->get_contact_menu_args()['menu_slug'] );
-			return $data;
+			return $this->editor_localize_settings( $data );
+
 		} );
 
 		add_action( 'admin_menu', function () {
@@ -508,6 +507,12 @@ class Module extends BaseModule {
 
 			$admin_bar->add_node( $new_contact_page_node );
 		}
+	}
+
+	public function editor_localize_settings( $data ) {
+		$data['admin_conversion_center_links_url'] = admin_url( $this->get_links_menu_args()['menu_slug'] );
+		$data['admin_conversion_center_contact_url'] = admin_url( $this->get_contact_menu_args()['menu_slug'] );
+		return $data;
 	}
 
 }
