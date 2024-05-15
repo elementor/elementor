@@ -343,12 +343,12 @@
 			--e-link-in-bio-image-links-gap: 5px;
 		}
 
-		.e-link-in-bio__image-link-link {
+		.e-link-in-bio__image-links-link {
 			display: grid;
 		}
 
 		// Specificity required to override .elementor img defaults
-		img.e-link-in-bio__image-link-img {
+		img.e-link-in-bio__image-links-img {
 			aspect-ratio: 1;
 			border-color: var(--e-link-in-bio-image-links-border-color);
 			border-style: var(--e-link-in-bio-image-links-border-style);

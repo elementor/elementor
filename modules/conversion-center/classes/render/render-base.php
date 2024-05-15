@@ -64,7 +64,7 @@ abstract class Render_Base {
 
 				// Manage Link class variations
 
-				$image_link_classnames = 'e-link-in-bio__image-link-link';
+				$image_link_classnames = 'e-link-in-bio__image-links-link';
 
 				// Manage Link attributes
 
@@ -79,24 +79,24 @@ abstract class Render_Base {
 				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-					$this->widget->add_render_attribute( 'image-link-link' . $key, [
+					$this->widget->add_render_attribute( 'image-links-link' . $key, [
 						$attr_key => $attr_value,
 					] );
 				}
 				?>
-				<a <?php echo $this->widget->get_render_attribute_string( 'image-link-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<a <?php echo $this->widget->get_render_attribute_string( 'image-links-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php if ( ! empty( $image_link_image['id'] ) ) {
 						echo wp_get_attachment_image( $image_link_image['id'], 'thumbnail', false, [
-							'class' => 'e-link-in-bio__image-link-img',
+							'class' => 'e-link-in-bio__image-links-img',
 						] );
 					} else {
-						$this->widget->add_render_attribute( 'image-link-img-' . $key, [
+						$this->widget->add_render_attribute( 'image-links-img-' . $key, [
 							'alt' => '',
-							'class' => 'e-link-in-bio__image-link-img',
+							'class' => 'e-link-in-bio__image-links-img',
 							'src' => esc_url( $image_link_image['url'] ),
 						] );
 						?>
-						<img <?php echo $this->widget->get_render_attribute_string( 'image-link-img-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+						<img <?php echo $this->widget->get_render_attribute_string( 'image-links-img-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 					<?php }; ?>
 				</a>
 			<?php } ?>
