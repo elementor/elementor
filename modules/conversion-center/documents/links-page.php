@@ -97,7 +97,7 @@ class Links_Page extends PageBase {
 
 	protected function get_remote_library_config() {
 		$config = [
-			'type' => static::get_type(),
+			'type' => 'link_page',
 			'default_route' => 'templates/links-pages',
 			'autoImportSettings' => true,
 		];
