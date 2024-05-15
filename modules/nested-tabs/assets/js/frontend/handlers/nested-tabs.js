@@ -400,18 +400,21 @@ export default class NestedTabs extends Base {
 	linkContainer( event ) {
 		const { container } = event.detail,
 			id = container.model.get( 'id' ),
-			currentId = this.$element.data( 'id' );
+			currentId = this.$element.data( 'id' ),
+			view = container.view.$el;
 
 		if ( id === currentId ) {
 			this.updateIndexValues();
-			this.updateListeners();
-
+			this.updateListeners( view );
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 	}
 
-	updateListeners() {
-		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ] );
+	updateListeners( view ) {
+		this.elements.$tabContents = view.find( this.getSettings( 'selectors.tabContent' ) );
+		this.elements.$tabTitles = view.find( this.getSettings( 'selectors.tabTitle' ) );
+
+		this.elements.$tabTitles.on( this.getTabEvents() );
 	}
 
 	updateIndexValues() {

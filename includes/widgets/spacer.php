@@ -86,6 +86,10 @@ class Widget_Spacer extends Widget_Base {
 		return [ 'space' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register spacer widget controls.
 	 *

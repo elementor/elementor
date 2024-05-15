@@ -74,6 +74,10 @@ class Widget_Alert extends Widget_Base {
 		return [ 'alert', 'notice', 'message' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register alert widget controls.
 	 *
