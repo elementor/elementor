@@ -73,6 +73,10 @@ class Widget_Testimonial extends Widget_Base {
 		return [ 'testimonial', 'blockquote' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *

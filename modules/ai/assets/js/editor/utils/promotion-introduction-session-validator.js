@@ -1,8 +1,22 @@
+export const HOURS_BETWEEN_PROMOTION_INTRODUCTIONS = 48;
+const HOURS_DELTA_IN_MILLISECONDS = HOURS_BETWEEN_PROMOTION_INTRODUCTIONS * 60 * 60 * 1000;
 
-export function shouldShowPromotionIntroduction() {
-	const editorSessionValue = sessionStorage.getItem( 'ai_promotion_introduction_editor_session_key' );
-	if ( ! editorSessionValue || editorSessionValue !== EDITOR_SESSION_ID ) {
-		sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', EDITOR_SESSION_ID );
+function passedRequiredHoursSinceLastPromotion( currentTimestamp, lastPromotionTimestamp ) {
+	return currentTimestamp - parseInt( lastPromotionTimestamp ) >= HOURS_DELTA_IN_MILLISECONDS;
+}
+
+export function shouldShowPromotionIntroduction( session ) {
+	const editorSessionValue = session.getItem( 'ai_promotion_introduction_editor_session_key' );
+	const lastPromotionTimestamp = editorSessionValue?.split( '#' )[ 1 ];
+
+	if ( editorSessionValue === window.EDITOR_SESSION_ID ) {
+		return false;
+	}
+
+	const currentTimestamp = new Date().getTime();
+
+	if ( ! editorSessionValue || ! lastPromotionTimestamp || passedRequiredHoursSinceLastPromotion( currentTimestamp, lastPromotionTimestamp ) ) {
+		session.setItem( 'ai_promotion_introduction_editor_session_key', `${ window.EDITOR_SESSION_ID }#${ currentTimestamp }` );
 		return true;
 	}
 

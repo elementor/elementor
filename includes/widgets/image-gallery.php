@@ -72,6 +72,10 @@ class Widget_Image_Gallery extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'gallery' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *
