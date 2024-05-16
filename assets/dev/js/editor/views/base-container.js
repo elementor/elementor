@@ -267,3 +267,18 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
 
 	return childView;
 };
+
+Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffer ) {
+	var $container = this.getChildViewContainer( compositeView );
+
+	if ( this.options.model?.config?.support_improved_repeaters && this.options.model?.config?.is_interlaced ) {
+		const $items = $container.find( this.options.model?.config?.default_child_container );
+		$items.each( ( index, item ) => {
+			item.appendChild( buffer.childNodes[ 0 ] );
+			buffer.appendChild( item );
+		} );
+	}
+
+	$container.append( buffer );
+};
+
