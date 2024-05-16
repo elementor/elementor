@@ -314,9 +314,9 @@ abstract class Controls_Stack extends Base_Object {
 		$stack = $this->get_stack();
 
 		if ( null !== $control_id ) {
-			$control_data = $this->get_items( $stack['controls'], $control_id );
+			$control_data = self::get_items( $stack['controls'], $control_id );
 			if ( null === $control_data && ! empty( $stack['style_controls'] ) ) {
-				$control_data = $this->get_items( $stack['style_controls'], $control_id );
+				$control_data = self::get_items( $stack['style_controls'], $control_id );
 			}
 
 			return $control_data;
