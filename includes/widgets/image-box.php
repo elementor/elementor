@@ -692,9 +692,8 @@ class Widget_Image_Box extends Widget_Base {
 			};
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
-			const hover_animation = elementor.helpers.sanitize( settings.hover_animation, 'text' );
 
-			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + hover_animation + '" />';
+			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + _.escape( settings.hover_animation ) + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + _.escape( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
@@ -707,11 +706,11 @@ class Widget_Image_Box extends Widget_Base {
 			html += '<div class="elementor-image-box-content">';
 
 			if ( settings.title_text ) {
-				var title_html = elementor.helpers.sanitize( settings.title_text ),
+				var title_html = settings.title_text,
 					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link.url ) {
-					title_html = '<a href="' + _.escape( settings.link.url ) + '">' + title_html + '</a>';
+					title_html = '<a href="' + _.escape( settings.link.url ) + '">' + _.escape( title_html ) + '</a>';
 				}
 
 				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );
