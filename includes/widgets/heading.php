@@ -90,6 +90,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		return [ 'heading', 'title', 'text' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Remove data attributes from the html.
 	 *

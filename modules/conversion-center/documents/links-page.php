@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter\Documents;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
@@ -25,6 +26,7 @@ class Links_Page extends PageBase {
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
 		$properties['show_copy_and_share'] = true;
+		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 
 		return $properties;
 	}
@@ -52,6 +54,16 @@ class Links_Page extends PageBase {
 		return parent::get_create_url() . '#library';
 	}
 
+	public function get_edit_url() {
+		$url = parent::get_edit_url();
+
+		if ( ! $this->get_post()->post_content ) {
+			$url .= '#library';
+		}
+
+		return $url;
+	}
+
 	public function filter_admin_row_actions( $actions ) {
 		unset( $actions['edit'] );
 		unset( $actions['inline hide-if-no-js'] );
@@ -61,9 +73,11 @@ class Links_Page extends PageBase {
 			$actions = $this->add_set_as_homepage( $actions );
 		}
 
-		$delete = $actions['trash'];
-		unset( $actions['trash'] );
-		$actions['trash'] = $delete;
+		if ( isset( $actions['trash'] ) ) {
+			$delete = $actions['trash'];
+			unset( $actions['trash'] );
+			$actions['trash'] = $delete;
+		}
 
 		return $built_with_elementor + $actions;
 	}

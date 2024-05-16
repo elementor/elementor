@@ -69,6 +69,10 @@ class Widget_Read_More extends Widget_Base {
 		return [ 'read', 'more', 'tag', 'excerpt' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register HTML widget controls.
 	 *
