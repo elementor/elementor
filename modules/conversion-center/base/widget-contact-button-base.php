@@ -48,6 +48,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_tooltip' => false,
 					'has_cta_text' => true,
 					'icon_text_label' => esc_html__( 'Text', 'elementor' ),
+					'has_fixed_default' => false,
 					'platform' => [
 						'group-1' => [
 							Social_Network_Provider::EMAIL,
@@ -126,11 +127,11 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_chat_box_animation' => false,
 					'has_icon_bg_color' => true,
 					'has_button_bar' => false,
-				]
+				],
 			],
 			'advanced' => [
 				'has_horizontal_position' => true,
-			]
+			],
 		];
 	}
 
@@ -486,7 +487,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			);
 		}
 
-		if ( $config['content']['contact_section']['platform']['limit'] ) {
+		if ( $config['content']['contact_section']['platform']['limit'] && ! $config['content']['contact_section']['has_fixed_default'] ) {
 			$this->add_control(
 				'contact_custom_panel_alert',
 				[
@@ -679,18 +680,84 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'contact_repeater',
-			[
-				'max_items' => $config['content']['contact_section']['platform']['limit'],
-				'type' => Controls_Manager::REPEATER,
-				'fields' => $repeater->get_controls(),
-				'title_field' => $this->get_icon_title_field(),
-				'prevent_empty' => true,
-				'button_text' => esc_html__( 'Add Icon', 'elementor' ),
-				'default' => $config['content']['contact_section']['default'],
-			]
-		);
+		if ( ! $config['content']['contact_section']['has_fixed_default'] ) {
+			$this->add_control(
+				'contact_repeater',
+				[
+					'max_items' => $config['content']['contact_section']['platform']['limit'],
+					'type' => Controls_Manager::REPEATER,
+					'fields' => $repeater->get_controls(),
+					'title_field' => $this->get_icon_title_field(),
+					'prevent_empty' => true,
+					'button_text' => esc_html__( 'Add Icon', 'elementor' ),
+					'default' => $config['content']['contact_section']['default'],
+				]
+			);
+		}
+
+		if ( $config['content']['contact_section']['has_fixed_default'] ) {
+			$this->add_control(
+				'contact_repeater_number_select',
+				[
+					'label' => esc_html__( 'Action', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => '4',
+					'dynamic' => [
+						'active' => true,
+					],
+					'options' => [
+						'2' => '2',
+						'3' => '3',
+						'4' => '4',
+					],
+				]
+			);
+
+			$this->add_control(
+				'contact_repeater_number_2',
+				[
+					'type' => Controls_Manager::REPEATER,
+					'max_items' => 2,
+					'fields' => $repeater->get_controls(),
+					'title_field' => $this->get_icon_title_field(),
+					'prevent_empty' => true,
+					'default' => $config['content']['contact_section']['default-2'],
+					'condition' => [
+						'contact_repeater_number_select' => '2',
+					],
+				]
+			);
+
+			$this->add_control(
+				'contact_repeater_number_3',
+				[
+					'type' => Controls_Manager::REPEATER,
+					'max_items' => 3,
+					'fields' => $repeater->get_controls(),
+					'title_field' => $this->get_icon_title_field(),
+					'prevent_empty' => true,
+					'default' => $config['content']['contact_section']['default-3'],
+					'condition' => [
+						'contact_repeater_number_select' => '3',
+					],
+				]
+			);
+
+			$this->add_control(
+				'contact_repeater_number_4',
+				[
+					'type' => Controls_Manager::REPEATER,
+					'max_items' => 4,
+					'fields' => $repeater->get_controls(),
+					'title_field' => $this->get_icon_title_field(),
+					'prevent_empty' => true,
+					'default' => $config['content']['contact_section']['default-4'],
+					'condition' => [
+						'contact_repeater_number_select' => '4',
+					],
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
