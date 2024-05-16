@@ -572,7 +572,15 @@ class Ai extends Library {
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
-			$context['features']['supportedFeatures'][] = 'NestedElements';
+			$context['features']['supportedFeatures'][] = 'Nested';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
+			$context['features']['supportedFeatures'][] = 'Taxonomy';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
+			$context['features']['supportedFeatures'][] = 'MegaMenu';
 		}
 
 		$metadata = [
