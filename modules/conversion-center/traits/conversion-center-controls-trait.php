@@ -248,7 +248,7 @@ trait Conversion_Center_Controls_Trait {
 		$devices_options = [];
 
 		foreach ( $active_devices as $device_key ) {
-			$device_label = 'desktop' === $device_key ? esc_html__( 'Desktop', 'elementor-pro' ) : $active_breakpoint_instances[ $device_key ]->get_label();
+			$device_label = 'desktop' === $device_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoint_instances[ $device_key ]->get_label();
 
 			$devices_options[ $device_key ] = $device_label;
 		}
