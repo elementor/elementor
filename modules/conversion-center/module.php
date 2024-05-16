@@ -335,7 +335,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	public function editor_localize_settings( $data ) {
+	private function editor_localize_settings( $data ) {
 		$menu_args = $this->get_menu_args();
 		$data['admin_conversion_center_url'] = admin_url( $menu_args['menu_slug'] );
 
