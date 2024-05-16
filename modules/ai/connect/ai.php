@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Ai extends Library {
-	const API_URL = 'https://my.elementor.com/api/v2/ai/';
+	// todo - remove
+	const API_URL = 'http://host.docker.internal:3000/api/v2/ai/';
 
 	const STYLE_PRESET = 'style_preset';
 	const IMAGE_TYPE = 'image_type';
@@ -453,16 +454,17 @@ class Ai extends Library {
 			'POST',
 			'image/image-to-image/outpainting',
 			[
-				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => '',
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'size' => wp_json_encode($image_data['size']),
+				'position' => wp_json_encode($image_data['position']),
+				$image_data['image'],
 			],
 			[
 				[
-					'name' => 'image',
+					'name' => 'mask_image',
 					'type' => 'image',
 					'path' => $mask_file,
 				],
