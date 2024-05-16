@@ -481,15 +481,20 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
 	}
 
-	async changeUiTheme( uiMode: string ) {
+	async openUserPreferences() {
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button' ).nth( 0 ).click();
+		await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
+	}
+
+	async changeDisplayMode( uiMode: string ) {
 		const uiThemeOptions = {
-			light: '.eicon-light-mode',
-			dark: '.eicon-dark-mode',
-			auto: '.eicon-header',
+			light: 'eicon-light-mode',
+			dark: 'eicon-dark-mode',
+			auto: 'eicon-header',
 		};
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
-		await this.page.locator( `.elementor-control-ui_theme ${ uiThemeOptions[ uiMode ] }` ).click();
+
+		await this.openUserPreferences();
+		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
 	/**

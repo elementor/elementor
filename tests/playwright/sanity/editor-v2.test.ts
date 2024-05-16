@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Editor v2', () => {
+test.describe( 'Editor Top Bar', () => {
 	let editor;
 	let wpAdminPage;
 	let context;
@@ -13,16 +13,10 @@ test.describe( 'Editor v2', () => {
 
 		wpAdminPage = new WpAdminPage( page, testInfo );
 
-		await wpAdminPage.setExperiments( { editor_v2: true } );
-
 		editor = await wpAdminPage.openNewPage();
 	} );
 
-	test.afterAll( async () => {
-		await wpAdminPage.setExperiments( { editor_v2: false } );
-	} );
-
-	test( 'check that app-bar exists', async () => {
+	test( 'check that top bar exists', async () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 
