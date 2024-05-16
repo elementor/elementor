@@ -281,6 +281,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						Social_Network_Provider::FILE_DOWNLOAD,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 			],
 		);
 
