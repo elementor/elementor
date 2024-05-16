@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter\Documents;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
