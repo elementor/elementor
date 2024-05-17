@@ -272,8 +272,8 @@ Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffe
 	var $container = this.getChildViewContainer( compositeView );
 
 	if ( this.options.model?.config?.support_improved_repeaters && this.options.model?.config?.is_interlaced ) {
-		const $items = $container.find( this.options.model?.config?.default_child_container );
-		$items.each( ( index, item ) => {
+		const $items = $container.find( this.options.model?.config?.child_container_placeholder_selector );
+		$items.each( ( _ , item ) => {
 			item.appendChild( buffer.childNodes[ 0 ] );
 			buffer.appendChild( item );
 		} );

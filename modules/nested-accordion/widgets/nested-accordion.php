@@ -895,7 +895,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'support_improved_repeaters' => true,
 				'target_container' => [ '.e-n-accordion' ],
 				'node' => 'details',
-				'default_child_container' => $this->get_default_children_container_placeholder_selector(),
 				'is_interlaced' => true,
 			] );
 		}
