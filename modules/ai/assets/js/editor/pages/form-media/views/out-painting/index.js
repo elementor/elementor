@@ -30,12 +30,8 @@ const OutPainting = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
-		// TODO - remove prompt
-		// The fallback instruction should be hidden for the user.
-		const finalPrompt = 'Fill based on the surroundings';
 		setGenerate();
-		send( { prompt: finalPrompt, settings, image: editImage, mask, size: imageSize, position } );
+		send( { settings, image: editImage, mask, size: imageSize, position } );
 	};
 
 	return (
