@@ -268,12 +268,23 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
 	return childView;
 };
 
+/**
+ * This function overrides the original attachBuffer.
+ * Some of our nested widgets contain a container inside a wrapper.
+ * We wanted to load the Container inside the wrapper as its initially loads in the editor.
+ * This modification will change the `buffer.childNodes` content. it checks if the item should be interlaced,
+ * if so it will place the Container, inside the widget's item wrapper which is defined as `child_container_placeholder_selector`
+ */
+
+/**
+ * @inheritDoc
+ */
 Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffer ) {
 	var $container = this.getChildViewContainer( compositeView );
 
-	if ( this.options.model?.config?.support_improved_repeaters && this.options.model?.config?.is_interlaced ) {
-		const $items = $container.find( this.options.model?.config?.child_container_placeholder_selector );
-		$items.each( ( _ , item ) => {
+	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced ) {
+		const $items = $container.find( this.model?.config?.defaults?.child_container_placeholder_selector );
+		$items.each( ( _, item ) => {
 			item.appendChild( buffer.childNodes[ 0 ] );
 			buffer.appendChild( item );
 		} );
