@@ -726,10 +726,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.addWidget( widgets.button, containerId );
 
-		await page.click( '#elementor-panel-saver-button-publish-label' );
-		await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
-
-		await page.reload();
+		await editor.saveAndReloadPage();
 		await editor.ensurePanelLoaded();
 
 		await page.locator( '#elementor-panel-footer-settings' ).click();

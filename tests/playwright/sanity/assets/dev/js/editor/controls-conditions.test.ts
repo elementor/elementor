@@ -31,7 +31,7 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	await backgroundClassicButton.click();
 
 	// Go to mobile device mode.
-	const responsiveSwitcher = await page.waitForSelector( '.elementor-control-background_image .elementor-responsive-switcher' );
+	const responsiveSwitcher = page.locator( '.elementor-control-background_image .elementor-control-responsive-switchers' );
 
 	await responsiveSwitcher.click();
 

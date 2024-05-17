@@ -78,7 +78,7 @@ export default class WpAdminPage extends BasePage {
 
 		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
 		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
-		await this.page.locator( '#elementor-panel-header-add-button' ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
 	}
 
 	async convertFromGutenberg() {
@@ -199,8 +199,7 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async openSiteSettings() {
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( 'text=Site Settings' );
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Site Settings' } ).click();
 	}
 
 	/*

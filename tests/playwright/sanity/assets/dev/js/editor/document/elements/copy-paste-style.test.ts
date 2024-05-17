@@ -29,7 +29,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	// Assert.
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
 
-	const publishButton = page.locator( '#elementor-panel-saver-button-publish' );
+	const publishButton = page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Publish' } );
 
 	// Check that the panel footer save button is enabled.
 	await expect( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );

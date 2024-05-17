@@ -83,7 +83,7 @@ export default class EditorPage extends BasePage {
 		);
 
 		if ( ! isOpen ) {
-			await this.page.click( '#elementor-panel-footer-navigator' );
+			await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Structure' } ).click();
 		}
 	}
 
@@ -91,7 +91,7 @@ export default class EditorPage extends BasePage {
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
-			await this.page.click( '#elementor-navigator__close' );
+			await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Structure' } ).click();
 		}
 	}
 
@@ -481,9 +481,26 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
 	}
 
+	async openElementsPanel() {
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
+	}
+
+	async openSiteSettings() {
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Site Settings' } ).click();
+	}
+
+	async openPageSettings() {
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Page Settings' } ).click();
+	}
+
 	async openUserPreferences() {
 		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button' ).nth( 0 ).click();
 		await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
+	}
+
+	async ExitToWordPress() {
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button' ).nth( 0 ).click();
+		await this.page.locator( 'body' ).getByText( 'Exit to WordPress' ).click();
 	}
 
 	async changeDisplayMode( uiMode: string ) {
@@ -517,20 +534,21 @@ export default class EditorPage extends BasePage {
 	}
 
 	async publishPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Publish' } ).click();
 		await this.page.waitForLoadState();
-		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Publish' } ).waitFor();
 	}
 
 	async publishAndViewPage() {
 		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
-		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Preview Changes' } ).click();
+		// await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Save Options' } ).click();
+		// await this.page.locator( 'body' ).getByRole( 'button', { name: 'View Page' } ).click();
 		await this.page.waitForLoadState();
 	}
 
 	async saveAndReloadPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Publish' } ).click();
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();

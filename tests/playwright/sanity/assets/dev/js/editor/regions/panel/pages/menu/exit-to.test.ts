@@ -5,13 +5,9 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.openNewPage();
 
-	await editor.page.click( '#elementor-panel-header-menu-button' );
-
 	// Trigger dialog by click on the "Exit" button
-	await editor.page.click( 'text=Exit' );
-	await editor.page.click( 'a:has-text("User Preferences")' );
-
-	await editor.page.click( '#elementor-panel-header-menu-button' );
+	await editor.ExitToWordPress();
+	await editor.openUserPreferences();
 
 	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
 	let exitHref = '';
@@ -41,5 +37,4 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 const setExitUserPreference = async ( page: Page, option: string ) => {
 	await page.click( '.elementor-panel-menu-item-editor-preferences' );
 	await page.selectOption( '.elementor-control-exit_to >> select', option );
-	await page.click( '#elementor-panel-header-menu-button' );
 };
