@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Ai extends Library {
-	// todo - remove
 	const API_URL = 'https://my.elementor.com/api/v2/ai/';
 
 	const STYLE_PRESET = 'style_preset';
