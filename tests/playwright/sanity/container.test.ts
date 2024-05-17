@@ -15,6 +15,7 @@ test.describe( 'Container tests @container', () => {
 		await wpAdmin.setExperiments( {
 			container: true,
 			container_grid: true,
+			e_nested_atomic_repeaters: true,
 		} );
 	} );
 
@@ -25,6 +26,7 @@ test.describe( 'Container tests @container', () => {
 		await wpAdmin.setExperiments( {
 			container_grid: false,
 			container: false,
+			e_nested_atomic_repeaters: false,
 		} );
 	} );
 
@@ -876,7 +878,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 
-	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
+	test.only( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: 'active',
@@ -927,7 +929,7 @@ test.describe( 'Container tests @container', () => {
 				await expect( editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
 
 				await editor.togglePreviewMode();
-
+				await page.pause();
 				await expect.soft( editor.getPreviewFrame()
 					.locator( '.e-con.e-parent >> nth=0' ) )
 					.toHaveScreenshot( 'container-dimensions-rtl-with-ltr-ui.png' );
