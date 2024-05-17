@@ -460,6 +460,7 @@ class Ai extends Library {
 				'site_lang' => get_bloginfo( 'language' ),
 				'size' => wp_json_encode($image_data['size']),
 				'position' => wp_json_encode($image_data['position']),
+				'image_url' => $image_data['image_url'],
 				$image_data['image'],
 			],
 			[

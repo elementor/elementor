@@ -696,6 +696,7 @@ class Module extends BaseModule {
 			'size' => $data['payload']['size'],
 			'position' => $data['payload']['position'],
 			'mask' => $data['payload']['mask'],
+			'image_url' => $data['payload']['image']['url'],
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
