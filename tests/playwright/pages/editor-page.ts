@@ -542,6 +542,7 @@ export default class EditorPage extends BasePage {
 	async publishAndViewPage() {
 		await this.publishPage();
 		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Preview Changes' } ).click();
+		// eslint-disable-next-line capitalized-comments
 		// await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Save Options' } ).click();
 		// await this.page.locator( 'body' ).getByRole( 'button', { name: 'View Page' } ).click();
 		await this.page.waitForLoadState();
