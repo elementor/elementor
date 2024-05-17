@@ -21,9 +21,9 @@ const OutPainting = () => {
 
 	const { setGenerate } = useRequestIds();
 	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
-	const { settings, updateSettings, resetSettings } = usePromptSettings( { aspectRatio: initialAspectRatio } );
+	const { settings, updateSettings } = usePromptSettings( { aspectRatio: initialAspectRatio } );
 	const { use, edit, isLoading: isUploading } = useImageActions();
-	const { data, send, isLoading: isGenerating, error, reset } = useOutPainting();
+	const { data, send, isLoading: isGenerating, error } = useOutPainting();
 	const isLoading = isGenerating || isUploading;
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ data?.result ] );
 	const hasGeneratedResult = !! data?.result;
