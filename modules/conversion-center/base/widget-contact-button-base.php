@@ -1004,7 +1004,7 @@ JS;
 			]
 		);
 
-		if ( $config['style']['has_platform_colors']) {
+		if ( $config['style']['has_platform_colors'] ) {
 			$this->add_control(
 				'style_top_bar_colors',
 				[
