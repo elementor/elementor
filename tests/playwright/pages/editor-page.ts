@@ -207,7 +207,7 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.openPageSettings();
 		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
 	}
@@ -222,7 +222,7 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.openPageSettings();
 		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
 	}
@@ -459,7 +459,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async changeEditorLayout( layout: string ) {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		await this.openPageSettings();
 		await this.page.selectOption( '[data-setting=template]', layout );
 		await this.ensurePreviewReload();
 	}
@@ -522,15 +522,13 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async changeResponsiveView( device: string ) {
-		const hasResponsiveViewBar = await this.page.evaluate( () => {
-			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
-		} );
+		const deviceMap = {
+			desktop: 'Desktop',
+			tablet: 'Tablet Portrait (up to 1024px)',
+			mobile: 'Mobile Portrait (up to 767px)',
+		};
 
-		if ( ! hasResponsiveViewBar ) {
-			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-		}
-
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: deviceMap[ device ] } ).click();
 	}
 
 	async publishPage() {
@@ -558,7 +556,7 @@ export default class EditorPage extends BasePage {
 	async previewChanges( context: BrowserContext ) {
 		const previewPagePromise = context.waitForEvent( 'page' );
 
-		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Preview Changes' } ).click();
 		await this.page.waitForLoadState( 'networkidle' );
 
 		const previewPage = await previewPagePromise;

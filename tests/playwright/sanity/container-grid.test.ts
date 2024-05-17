@@ -46,17 +46,12 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Mobile rows unit are on FR', async () => {
-			// Open responsive bar and select mobile view
-			await page.locator( '#elementor-panel-footer-responsive i' ).click();
-			await page.waitForSelector( '#e-responsive-bar' );
-			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+			await editor.changeResponsiveView( 'mobile' );
 
 			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
 			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
-			// Reset desktop view
-			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
-			await page.locator( '#e-responsive-bar__close-button' ).click();
+			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
@@ -224,10 +219,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert mobile is in one column', async () => {
-			// Open responsive bar and select mobile view
-			await page.locator( '#elementor-panel-footer-responsive i' ).click();
-			await page.waitForSelector( '#e-responsive-bar' );
-			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+			await editor.changeResponsiveView( 'mobile' );
 
 			const gridTemplateColumnsCssValue = await container.evaluate( ( element ) => {
 				return window.getComputedStyle( element ).getPropertyValue( 'grid-template-columns' );
@@ -238,8 +230,7 @@ test.describe( 'Container Grid tests @container', () => {
 			expect( isOneColumn ).toBeTruthy();
 
 			// Reset desktop view
-			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
-			await page.locator( '#e-responsive-bar__close-button' ).click();
+			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Elements with class .ui-resizable-e inside grid-containers should not be visible', async () => {

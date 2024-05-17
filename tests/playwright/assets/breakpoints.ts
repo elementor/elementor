@@ -16,8 +16,9 @@ export default class {
 	}
 
 	async addAllBreakpoints( experimentPostId?: string ) {
-		await this.page.click( '#elementor-panel-footer-responsive' );
-		await this.page.click( '#e-responsive-bar__settings-button' );
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Site Settings' } ).click();
+		await this.page.click( '.elementor-panel-menu-item-settings-layout' );
+		await this.page.click( '.elementor-control-section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];

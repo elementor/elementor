@@ -292,10 +292,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
 		await page.locator( '.elementor-tab-control-style' ).click();
 
-		// Open responsive bar and select mobile view
-		await page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await page.waitForSelector( '#e-responsive-bar' );
-		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+		// Select mobile view
+		await editor.changeResponsiveView( 'mobile' );
 
 		// Set controls values.
 		await page.locator( '.elementor-control-tabs_title_spacing_mobile .elementor-slider-input input' ).fill( '50' );

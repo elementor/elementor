@@ -71,13 +71,13 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async setPageName() {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Page Settings' } ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
 		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
 
-		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
-		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Save Options' } ).click();
+		await this.page.locator( 'body' ).getByRole( 'button', { name: 'Save Draft' } ).click();
 		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
 	}
 
