@@ -77,13 +77,22 @@ export default class EditorPage extends BasePage {
 		} );
 	}
 
+	/**
+	 * Add element to the page using a model.
+	 *
+	 * @param {string} text
+	 */
+	async clickTopBarItem( text: string ) {
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: text } ).click();
+	}
+
 	async openNavigator( ) {
 		const isOpen = await this.previewFrame.evaluate( () =>
 			elementor.navigator.isOpen(),
 		);
 
 		if ( ! isOpen ) {
-			await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Structure' } ).click();
+			await this.clickTopBarItem( 'Structure' );
 		}
 	}
 
@@ -91,7 +100,7 @@ export default class EditorPage extends BasePage {
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
-			await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Structure' } ).click();
+			await this.clickTopBarItem( 'Structure' );
 		}
 	}
 
@@ -482,15 +491,15 @@ export default class EditorPage extends BasePage {
 	}
 
 	async openElementsPanel() {
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
+		await this.clickTopBarItem( 'Add Element' );
 	}
 
 	async openSiteSettings() {
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Site Settings' } ).click();
+		await this.clickTopBarItem( 'Site Settings' );
 	}
 
 	async openPageSettings() {
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Page Settings' } ).click();
+		await this.clickTopBarItem( 'Page Settings' );
 	}
 
 	async openUserPreferences() {
@@ -527,8 +536,10 @@ export default class EditorPage extends BasePage {
 			tablet: 'Tablet Portrait (up to 1024px)',
 			mobile: 'Mobile Portrait (up to 767px)',
 		};
+		const breakpoint = deviceMap[ device ] || 'Desktop';
 
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: deviceMap[ device ] } ).click();
+		// await this.page.locator( '#elementor-editor-wrapper-v2' ).getByText( 'Switch Device' ).getByRole( 'button', { name: deviceMap[ device ] } ).click();
+		await this.clickTopBarItem( breakpoint );
 	}
 
 	async publishPage() {
@@ -539,15 +550,15 @@ export default class EditorPage extends BasePage {
 
 	async publishAndViewPage() {
 		await this.publishPage();
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Preview Changes' } ).click();
+		await this.clickTopBarItem( 'Preview Changes' );
 		// eslint-disable-next-line capitalized-comments
-		// await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Save Options' } ).click();
+		// await this.clickTopBarItem( 'Save Options' );
 		// await this.page.locator( 'body' ).getByRole( 'button', { name: 'View Page' } ).click();
 		await this.page.waitForLoadState();
 	}
 
 	async saveAndReloadPage() {
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Publish' } ).click();
+		await this.clickTopBarItem( 'Publish' );
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
@@ -556,7 +567,7 @@ export default class EditorPage extends BasePage {
 	async previewChanges( context: BrowserContext ) {
 		const previewPagePromise = context.waitForEvent( 'page' );
 
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Preview Changes' } ).click();
+		await this.clickTopBarItem( 'Preview Changes' );
 		await this.page.waitForLoadState( 'networkidle' );
 
 		const previewPage = await previewPagePromise;

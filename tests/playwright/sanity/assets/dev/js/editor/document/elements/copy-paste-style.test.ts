@@ -6,7 +6,6 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
 
-	// Close Navigator
 	await editor.closeNavigatorIfOpen();
 
 	const heading1 = await editor.addWidget( 'heading' );

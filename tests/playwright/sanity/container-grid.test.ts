@@ -340,7 +340,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert outline matches responsive grid', async () => {
 			gridOutlineChildrenInitialValue = 4;
 
-			// Open responsive bar and select mobile view
+			// Set mobile view
 			const firstGridOutlineChildren = gridOutline.first().locator( '.e-grid-outline-item' );
 			await editor.changeResponsiveView( 'tablet' );
 			await editor.setSliderControlValue( 'grid_columns_grid_tablet', '2' );

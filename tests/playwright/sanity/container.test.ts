@@ -66,7 +66,6 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
 
@@ -288,7 +287,6 @@ test.describe( 'Container tests @container', () => {
 		// Set flex-wrap: wrap.
 		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
@@ -420,7 +418,6 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 		// Hide editor elements from the screenshots.
 		await editor.hideEditorElements();

@@ -30,7 +30,7 @@ export default class {
 			}
 		}
 
-		await this.page.click( 'text=Save Changes' );
+		await this.page.locator( '#elementor-panel' ).getByText( 'Save Changes' ).click();
 		await this.page.waitForSelector( '#elementor-toast' );
 
 		if ( experimentPostId ) {
