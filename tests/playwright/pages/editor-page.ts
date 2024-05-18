@@ -538,8 +538,7 @@ export default class EditorPage extends BasePage {
 		};
 		const breakpoint = deviceMap[ device ] || 'Desktop';
 
-		// await this.page.locator( '#elementor-editor-wrapper-v2' ).getByText( 'Switch Device' ).getByRole( 'button', { name: deviceMap[ device ] } ).click();
-		await this.clickTopBarItem( breakpoint );
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByText( 'Switch Device' ).getByRole( 'button', { name: breakpoint } ).click();
 	}
 
 	async publishPage() {
