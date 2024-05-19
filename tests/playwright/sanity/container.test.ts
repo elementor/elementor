@@ -929,7 +929,6 @@ test.describe( 'Container tests @container', () => {
 				await expect( editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
 
 				await editor.togglePreviewMode();
-				await page.pause();
 				await expect.soft( editor.getPreviewFrame()
 					.locator( '.e-con.e-parent >> nth=0' ) )
 					.toHaveScreenshot( 'container-dimensions-rtl-with-ltr-ui.png' );
