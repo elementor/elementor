@@ -113,11 +113,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	},
 
 	toggleMinRowsClass() {
-		if ( ! this.model.get( 'prevent_empty' ) ) {
-			return;
+		let minItems = 0;
+		if ( this.model.get( 'min_items' ) && Number.isInteger( this.model.get( 'min_items' ) ) ) {
+			minItems = this.model.get( 'min_items' );
+		} else if ( this.model.get( 'prevent_empty' ) ) {
+			minItems = 1;
 		}
 
-		this.$el.toggleClass( 'elementor-repeater-has-minimum-rows', 1 >= this.collection.length );
+		this.$el.toggleClass( 'elementor-repeater-has-minimum-rows', minItems >= this.collection.length );
 	},
 
 	updateActiveRow() {
