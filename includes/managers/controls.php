@@ -829,11 +829,10 @@ class Controls_Manager {
 		}
 
 		if ( $control_type_instance instanceof Has_Validation ) {
-
 			try {
 				$control_type_instance->validate( $control_data );
 			} catch ( \Exception $e ) {
-				_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), $e->getMessage(), '1.0.0' );
+				_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), esc_html__( $e->getMessage() ), '1.0.0' );
 				return false;
 			}
 		}

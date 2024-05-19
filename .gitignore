@@ -39,3 +39,6 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+
+# phpunit
+.phpunit.result.cache

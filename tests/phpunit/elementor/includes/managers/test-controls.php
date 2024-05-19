@@ -58,6 +58,25 @@ class Test_Controls extends Elementor_Test_Base {
 		$this->assertNull( Plugin::$instance->controls_manager->get_stacks( $widget->get_unique_name() ) );
 	}
 
+	public function test_doing_it_wrong_is_called_when_adding_a_control_with_min_value() {
+		$control_data = [
+			'type'=> Controls_Manager::REPEATER,
+			'tab'=>'content',
+			'section'=>'section_repeat',
+			'label'=>'Repeater Type',
+			'min_items' => 2,
+		];
+
+		$widget = new Mock_Widget( [
+			'settings' => [],
+			'id' => '1',
+		], [] );
+
+		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data, [] );
+
+		$this->assertEquals( false, $added );
+	}
+
 	public function test_clear_stack_cache() {
 		// Arrange
 		$control_data = [
