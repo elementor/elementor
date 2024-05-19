@@ -58,7 +58,7 @@ class Test_Controls extends Elementor_Test_Base {
 		$this->assertNull( Plugin::$instance->controls_manager->get_stacks( $widget->get_unique_name() ) );
 	}
 
-	public function test_doing_it_wrong_is_called_when_adding_a_control_with_min_value() {
+	public function test_control_not_added_if_min_value_greather_than_default_items() {
 		$control_data = [
 			'type'=> Controls_Manager::REPEATER,
 			'tab'=>'content',
