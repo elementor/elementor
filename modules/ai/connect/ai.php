@@ -464,7 +464,7 @@ class Ai extends Library {
 			],
 			[
 				[
-					'name' => 'mask_image',
+					'name' => 'image',
 					'type' => 'image',
 					'path' => $mask_file,
 				],
