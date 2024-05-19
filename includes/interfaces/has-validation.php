@@ -1,5 +1,7 @@
 <?php
+
 namespace Elementor;
+
 /**
  * Elementor has validation interface.
  *

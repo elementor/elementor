@@ -185,6 +185,7 @@ class Control_Repeater extends Base_Data_Control implements Has_Validation {
 
 	public function validate( array $control_data ): bool {
 		if ( isset( $control_data['min_items'] ) ) {
+
 			if (
 				! isset( $control_data['default'] ) ||
 				count( $control_data['default'] ) < $control_data['min_items']

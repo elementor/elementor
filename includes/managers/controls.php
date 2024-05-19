@@ -829,6 +829,7 @@ class Controls_Manager {
 		}
 
 		if ( $control_type_instance instanceof Has_Validation ) {
+
 			try {
 				$control_type_instance->validate( $control_data );
 			} catch ( \Exception $e ) {
