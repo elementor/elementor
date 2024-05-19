@@ -78,6 +78,23 @@ class Test_Controls extends Elementor_Test_Base {
 		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
 
 		$this->assertFalse( $added );
+
+		$control_data['default'] = [
+			['key' => 'value'],
+		];
+
+		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
+
+		$this->assertFalse( $added );
+
+		$control_data['default'] = [
+			['key' => 'value'],
+			['key' => 'value'],
+		];
+
+		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
+
+		$this->assertTrue( $added );
 	}
 
 	public function test_clear_stack_cache() {
