@@ -33,7 +33,7 @@ class Test_Controls extends Elementor_Test_Base {
 	}
 
 	public function test_get_responsive_control_device_suffix_tablet() {
-		$device_suffix = Controls_Manager::get_responsive_control_device_suffix( static::$responsive_control_tablet_mock )
+		$device_suffix = Controls_Manager::get_responsive_control_device_suffix( static::$responsive_control_tablet_mock );
 		$this->assertEquals( '_tablet', $device_suffix );
 	}
 
@@ -59,7 +59,7 @@ class Test_Controls extends Elementor_Test_Base {
 
 	/**
 	 *
-	 * @expectedDeprecated Elementor\Controls_Manager::add_control_to_stack
+	 * @expectedDeprecated
 	 */
 	public function test_control_not_added_if_min_value_greather_than_default_items() {
 		$control_data = [
