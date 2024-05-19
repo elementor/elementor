@@ -96,6 +96,10 @@ class Module extends BaseModule {
 			return $this->admin_localize_settings( $settings );
 		} );
 
+		add_action( 'elementor/editor/localize_settings', function ( $data ) {
+			return $this->editor_localize_settings( $data );
+		} );
+
 		add_action( 'admin_menu', function () {
 			$this->add_class_to_conversion_menu();
 
@@ -329,6 +333,13 @@ class Module extends BaseModule {
 			'menu_slug' => $menu_slug,
 			'function' => $function,
 		];
+	}
+
+	private function editor_localize_settings( $data ) {
+		$menu_args = $this->get_menu_args();
+		$data['admin_conversion_center_url'] = admin_url( $menu_args['menu_slug'] );
+
+		return $data;
 	}
 
 }
