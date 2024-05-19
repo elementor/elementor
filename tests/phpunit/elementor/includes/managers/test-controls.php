@@ -79,7 +79,7 @@ class Test_Controls extends Elementor_Test_Base {
 
 		print_r( $added  ) . "ADDED";
 
-		$this->assertEquals( false, $added );
+		$this->assertFalse( $added );
 	}
 
 	public function test_clear_stack_cache() {
