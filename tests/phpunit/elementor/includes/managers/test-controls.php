@@ -59,7 +59,7 @@ class Test_Controls extends Elementor_Test_Base {
 
 	/**
 	 *
-	 * @expectedDeprecated Elementor\Controls_Manager::add_control_to_stack
+	 * @expectedDeprecated In a Repeater control, if you specify a minimum number of items, you must also specify a default value that contains at least that number of items. (This message was added in version 3.23.0.)
 	 */
 	public function test_control_not_added_if_min_value_greather_than_default_items() {
 		$control_data = [
@@ -76,7 +76,9 @@ class Test_Controls extends Elementor_Test_Base {
 		], [] );
 
 		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
-		print_r( $added );
+
+		$this->expectDeprecated();
+
 		$this->assertEquals( false, $added );
 	}
 
