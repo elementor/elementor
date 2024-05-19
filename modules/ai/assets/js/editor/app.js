@@ -1,8 +1,8 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import PageContent from './page-content';
-import { onConnect } from './helpers';
 import { RequestIdsProvider } from './context/requests-ids';
+import { onConnect } from './utils/editor-integration';
 
 const App = ( props ) => {
 	return (
