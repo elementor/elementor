@@ -269,11 +269,11 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
 };
 
 /**
- * This function overrides the original attachBuffer.
- * Some of our nested widgets contain a container inside a wrapper.
- * We wanted to load the Container inside the wrapper as its initially loads in the editor.
- * This modification will change the `buffer.childNodes` content. it checks if the item should be interlaced,
- * if so it will place the Container, inside the widget's item wrapper which is defined as `child_container_placeholder_selector`
+ * This function overrides the original Marionette `attachBuffer` function.
+ * This modification targets nested widgets that should contain a container within a wrapper.
+ * The goal is to load the container inside the wrapper when initially loading in the editor.
+ * This function updates the `buffer.childNodes` content by checking if an item should be interlaced.
+ * If interlacing is needed, it places the container inside the widget's `child_container_placeholder_selector`.
  */
 
 /**
