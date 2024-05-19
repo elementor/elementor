@@ -832,7 +832,7 @@ class Controls_Manager {
 			try {
 				$control_type_instance->validate( $control_data );
 			} catch ( \Exception $e ) {
-				_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), esc_html( $e->getMessage() ), '1.0.0' );
+				_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), esc_html( $e->getMessage() ), '3.23.0' );
 				return false;
 			}
 		}
