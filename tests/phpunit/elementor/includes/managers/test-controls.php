@@ -77,8 +77,6 @@ class Test_Controls extends Elementor_Test_Base {
 
 		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
 
-		print_r( $added  ) . "ADDED";
-
 		$this->assertFalse( $added );
 	}
 
