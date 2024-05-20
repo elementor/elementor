@@ -88,6 +88,9 @@ export default class Component extends ComponentBase {
 			showCopyAndShareButton() {
 				return elementor.config.document.panel.show_copy_and_share ?? false;
 			},
+			getTitleForLibraryClose() {
+				return elementor.config.document.panel.library_close_title ?? '';
+			},
 		};
 	}
 }
