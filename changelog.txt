@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 3.21.6 - 2024-05-20 =
+
+* Security Fix: Improved code security enforcement in Icon Box and Image Box widgets
+* Fix: Console error related to the AI tooltip
+* Fix: Redirecting issue in AI Connect flow
+
 = 3.21.5 - 2024-05-08 =
 
 * Tweak: Improved AI Image variations to use an updated and simplified model
