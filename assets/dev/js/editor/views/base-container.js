@@ -280,11 +280,12 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
  * @inheritDoc
  */
 Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffer ) {
-	var $container = this.getChildViewContainer( compositeView );
+	const $container = this.getChildViewContainer( compositeView );
 
 	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced ) {
 		const $items = $container.find( this.model?.config?.defaults?.child_container_placeholder_selector );
-		$items.each( ( _, item ) => {
+
+		_.each( $items, function( item ) {
 			item.appendChild( buffer.childNodes[ 0 ] );
 			buffer.appendChild( item );
 		} );
