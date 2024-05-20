@@ -533,12 +533,12 @@ export default class EditorPage extends BasePage {
 	async changeResponsiveView( device: string ) {
 		const deviceMap = {
 			desktop: 'Desktop',
-			tablet: 'Tablet Portrait (up to 1024px)',
-			mobile: 'Mobile Portrait (up to 767px)',
+			tablet: 'Tablet Portrait',
+			mobile: 'Mobile Portrait',
 		};
 		const breakpoint = deviceMap[ device ] || 'Desktop';
 
-		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByText( 'Switch Device' ).getByRole( 'button', { name: breakpoint } ).click();
+		await this.page.locator( `#elementor-editor-wrapper-v2 [aria-label*="${ breakpoint }"]` ).click();
 	}
 
 	async publishPage() {
