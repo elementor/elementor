@@ -15,6 +15,7 @@ import { PromptHistoryActionProvider } from './components/prompt-history/context
 import { PromptHistoryProvider } from './components/prompt-history/context/prompt-history-context';
 import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
+import LoaderAI from './loader';
 
 const PageContent = (
 	{
@@ -74,13 +75,7 @@ const PageContent = (
 
 	if ( isLoading ) {
 		return (
-			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
-				<PromptDialog.Header onClose={ onClose } />
-
-				<PromptDialog.Content dividers>
-					<Loader />
-				</PromptDialog.Content>
-			</PromptDialog>
+			<LoaderAI type={ type } onClose={ onClose } promptDialogStyleProps={ promptDialogStyleProps } />
 		);
 	}
 
@@ -205,7 +200,7 @@ PageContent.propTypes = {
 	type: PropTypes.string,
 	controlType: PropTypes.string,
 	onClose: PropTypes.func.isRequired,
-	onConnect: PropTypes.func.isRequired,
+	onConnect: PropTypes.func,
 	getControlValue: PropTypes.func.isRequired,
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,

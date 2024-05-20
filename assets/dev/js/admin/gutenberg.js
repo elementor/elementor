@@ -1,6 +1,159 @@
+
 /* global ElementorGutenbergSettings */
+import App from '../../../../modules/ai/assets/js/editor/app';
+import PromptDialog from '../../../../modules/ai/assets/js/editor/components/prompt-dialog';
+import Loader from '../../../../modules/ai/assets/js/editor/components/loader';
+import LoaderAI from '../../../../modules/ai/assets/js/editor/loader';
+import { ThemeProvider } from '@elementor/ui';
+import GenerateExcerptWithAI from './excerpt-ai';
+
 ( function( $ ) {
 	'use strict';
+	//
+	// 	const { registerPlugin } = wp.plugins;
+	// 	const { PluginDocumentSettingPanel } = wp.editPost;
+	// 	const { PanelBody, Button } = wp.components;
+	// 	const { Fragment } = wp.element;
+	// 	const { useSelect } = wp.data;
+	// 	const { __ } = wp.i18n;
+	// 	const { addFilter } = wp.hooks;
+	//
+	// // Custom button component to be added to the Excerpt panel
+	// 	const CustomButton = () => {
+	// 		const handleClick = () => {
+	// 			alert('Custom Excerpt Button clicked!');
+	// 		};
+	//
+	// 		return (
+	// 			<Button isPrimary onClick={handleClick}>
+	// 				{__('Custom Button', 'custom-excerpt-button')}
+	// 			</Button>
+	// 		);
+	// 	};
+	//
+	// // Higher-order component to add the custom button to the Excerpt panel
+	// 	const withCustomExcerptButton = (OriginalComponent) => (props) => {
+	// 		return (
+	// 			<Fragment>
+	// 				<OriginalComponent {...props} />
+	// 				<div>
+	// 					<CustomButton />
+	// 				</div>
+	// 			</Fragment>
+	// 		);
+	// 	};
+	//
+	// // Apply the filter to extend the Excerpt panel
+	// 	addFilter(
+	// 		'editor.PostFeaturedImage',
+	// 		'custom-excerpt-button/with-custom-excerpt-button',
+	// 		withCustomExcerptButton,
+	// 	);
+
+	// Wait for the Gutenberg editor to initialize
+	wp.domReady( () => {
+		// Define a function to add the custom link to the excerpt panel
+		const addGenerateExcerptWithAI = () => {
+			// Get the excerpt panel
+			const excerptPanel = document.querySelector( '.editor-post-excerpt' );
+
+			// Check if the excerpt panel exists and the custom link hasn't been added
+			if ( excerptPanel && ! document.querySelector( '.elementor-generate-excerpt-with-ai-link' ) ) {
+				// Create a new link element
+				const generateExcerptWithAILink = document.createElement( 'a' );
+				// Add a class to the link for styling
+				generateExcerptWithAILink.classList.add( 'elementor-generate-excerpt-with-ai-link', 'e-excerpt-ai' );
+				// Add text content to the link
+				generateExcerptWithAILink.textContent = 'Generate with Elementor AI';
+				// Add an event listener to the link
+				generateExcerptWithAILink.addEventListener( 'click', ( event ) => {
+					event.preventDefault();
+
+					const isRTL = elementorCommon.config.isRTL;
+
+					const rootElement = document.createElement( 'div' );
+					document.body.append( rootElement );
+
+					const urlSearchParams = new URLSearchParams( window.location.search );
+					elementorCommon.ajax.addRequestConstant( 'editor_post_id', urlSearchParams.get( 'post' ) );
+
+					function onClose() {
+						ReactDOM.unmountComponentAtNode( rootElement ); // eslint-disable-line react/no-deprecated
+						rootElement.parentNode.removeChild( rootElement );
+					}
+
+					// eslint-disable-next-line react/no-deprecated
+					ReactDOM.render(
+						<GenerateExcerptWithAI onClose={ onClose } />,
+						rootElement,
+					);
+				} );
+
+				// Find the existing link with class "components-external-link"
+				const existingExcerptLink = excerptPanel.querySelector( '.components-external-link' );
+				// Create a div element to wrap the existing link
+				const existingExcerptLinkWrapper = document.createElement( 'div' );
+				existingExcerptLinkWrapper.classList.add( 'existing-excerpt-link-wrapper' );
+
+				// Append the existing link to the wrapper
+				if ( existingExcerptLink ) {
+					existingExcerptLinkWrapper.appendChild( existingExcerptLink );
+					// Append the wrapper to the excerpt panel
+					excerptPanel.appendChild( existingExcerptLinkWrapper );
+					// Append the new link before the wrapper
+					excerptPanel.insertBefore( generateExcerptWithAILink, existingExcerptLinkWrapper );
+				} else {
+					// Append the new link to the excerpt panel
+					excerptPanel.appendChild( generateExcerptWithAILink );
+				}
+
+				// Create the <i> element with the class "eicon-ai"
+				const iconElement = document.createElement( 'i' );
+				iconElement.classList.add( 'eicon-ai', 'e-excerpt-ai' );
+				excerptPanel.insertBefore( iconElement, generateExcerptWithAILink );
+
+				// Add the custom styles to the document head
+				const style = `<style>
+				.eicon-ai:before {
+				  content: "\e9be";
+				}
+				.eicon-ai {
+					padding-right: 0.5em;
+				}
+				.e-excerpt-ai,
+				a.e-excerpt-ai:hover {
+					color: #C00BB9;
+				}
+				.elementor-generate-excerpt-with-ai-link {
+				  cursor: pointer;
+				  font-family: inherit;
+				  font-size: inherit;
+				}
+				.elementor-generate-excerpt-with-ai-link:hover {
+				  text-decoration: underline;
+				}
+				.existing-excerpt-link-wrapper {
+				  padding-top: 0.6em;
+				  display: flex;
+				  flex-direction: column;
+				}
+			</style>`;
+				const styleElement = document.createElement( 'style' );
+				styleElement.innerHTML = style;
+				document.head.appendChild( styleElement );
+			}
+		};
+
+		// Add the custom link to the excerpt panel when the editor sidebar is rendered
+		wp.data.subscribe( () => {
+			const isSidebarOpened = wp.data.select( 'core/edit-post' ).isEditorPanelOpened( 'post-excerpt' );
+			if ( isSidebarOpened ) {
+				setTimeout( function() {
+					addGenerateExcerptWithAI();
+				}, 1 );
+			}
+		} );
+	} );
 
 	var ElementorGutenbergApp = {
 
