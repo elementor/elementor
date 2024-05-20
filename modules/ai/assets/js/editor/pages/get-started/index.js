@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stack, Typography, Button, Link, Checkbox, Box } from '@elementor/ui';
+import { Stack, Typography, Button, Link, Checkbox } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { setGetStarted } from '../../api';
