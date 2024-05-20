@@ -44,7 +44,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_typing_animation' => true,
 				],
 				'contact_section' => [
-					'section_name' => esc_html__( 'Contact', 'elementor' ),
 					'has_tooltip' => false,
 					'has_cta_text' => true,
 					'icon_text_label' => esc_html__( 'Text', 'elementor' ),
@@ -64,9 +63,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							'contact_icon_platform' => Social_Network_Provider::WHATSAPP,
 						],
 						[
-							'contact_icon_platform' => Social_Network_Provider::MESSENGER,
-						],
-						[
 							'contact_icon_platform' => Social_Network_Provider::EMAIL,
 						],
 						[
@@ -74,6 +70,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 						[
 							'contact_icon_platform' => Social_Network_Provider::VIBER,
+						],
+						[
+							'contact_icon_platform' => Social_Network_Provider::MESSENGER,
 						],
 					],
 				],
@@ -436,7 +435,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->start_controls_section(
 			'contact_section',
 			[
-				'label' => $config['content']['contact_section']['section_name'],
+				'label' => esc_html__( 'Contact Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -664,14 +663,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	protected function get_icon_title_field(): string {
 		$platform_icons_js = json_encode( Social_Network_Provider::get_social_networks_icons() );
+		$platform_text_js = json_encode( Social_Network_Provider::get_social_networks_text() );
 
 		return <<<JS
 	<#
 	elementor.helpers.enqueueIconFonts( 'fa-solid' );
 	elementor.helpers.enqueueIconFonts( 'fa-brands' );
 	const mapping = {$platform_icons_js};
+	const text_mapping = {$platform_text_js};
 	#>
-	<i class='{{{ mapping[contact_icon_platform] }}}' ></i> {{{ contact_icon_platform }}}
+	<i class='{{{ mapping[contact_icon_platform] }}}' ></i> {{{ text_mapping[contact_icon_platform] }}}
 JS;
 	}
 
@@ -972,6 +973,7 @@ JS;
 	}
 
 	protected function add_style_top_bar_section(): void {
+		$config = static::get_configuration();
 
 		$this->start_controls_section(
 			'style_top_bar_section',
@@ -1011,18 +1013,20 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_top_bar_colors',
-			[
-				'label' => esc_html__( 'Colors', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['style']['has_platform_colors'] ) {
+			$this->add_control(
+				'style_top_bar_colors',
+				[
+					'label' => esc_html__( 'Colors', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => [
+						'default' => esc_html__( 'Default', 'elementor' ),
+						'custom' => esc_html__( 'Custom', 'elementor' ),
+					],
+				]
+			);
+		}
 
 		$this->add_control(
 			'style_top_bar_name_heading',
@@ -1317,7 +1321,7 @@ JS;
 		$this->start_controls_section(
 			'style_contact_section',
 			[
-				'label' => $config['content']['contact_section']['section_name'],
+				'label' => esc_html__( 'Contact Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
