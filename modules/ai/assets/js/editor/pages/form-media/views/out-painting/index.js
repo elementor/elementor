@@ -18,7 +18,6 @@ const OutPainting = () => {
 	const [ imageSize, setImageSize ] = useState( { width: 0, height: 0 } );
 	const [ position, setPosition ] = useState( { x: 0.5, y: 0.5 } );
 	const [ mask, setMask ] = useState( '' );
-
 	const { setGenerate } = useRequestIds();
 	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
 	const { settings, updateSettings } = usePromptSettings( { aspectRatio: initialAspectRatio } );
