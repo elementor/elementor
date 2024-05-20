@@ -194,7 +194,7 @@
 * New: Introducing Elementor AI for Text-Based Container Generation – Effortlessly generate uniquely designed containers by simply providing a single textual prompt
 * New: Introducing Elementor AI for Elementor-Based Container Variations – Customize your existing Elementor layouts by editing container content, images, fonts, colors, and icons
 * Tweak: Added support for Elementor AI Web-Based Container generation – Create containers by providing a specified URL to generate Elementor-compatible layouts
-* Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
+* Tweak: Enhanced TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
 * Tweak: Implemented accessibility improvements in Progress Bar widget
 * Tweak: Added responsive control and size units to navigation size in Image Carousel widget
 * Tweak: Promoted Global Style Guide feature to a Stable status
