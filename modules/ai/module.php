@@ -682,10 +682,6 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['payload']['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
-
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
@@ -697,8 +693,10 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_out_painting( [
-			'prompt' => $data['payload']['prompt'],
+			'size' => $data['payload']['size'],
+			'position' => $data['payload']['position'],
 			'mask' => $data['payload']['mask'],
+			'image_url' => $data['payload']['image']['url'],
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
