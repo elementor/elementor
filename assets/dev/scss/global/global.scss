@@ -10,6 +10,10 @@
 	display: none;
 }
 
+.elementor-visibility-hidden {
+	visibility: hidden;
+}
+
 .elementor-screen-only,
 .screen-reader-text, // wp - common.css
 .screen-reader-text span, // wp - common.css
