@@ -453,12 +453,14 @@ class Ai extends Library {
 			'POST',
 			'image/image-to-image/outpainting',
 			[
-				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => '',
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'size' => wp_json_encode( $image_data['size'] ),
+				'position' => wp_json_encode( $image_data['position'] ),
+				'image_url' => $image_data['image_url'],
+				$image_data['image'],
 			],
 			[
 				[
