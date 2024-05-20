@@ -132,7 +132,6 @@ trait Button_Trait {
 			]
 		);
 
-
 		$this->add_control(
 			'button_css_id',
 			[
@@ -515,7 +514,7 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}}' => '--button-icon-size: {{SIZE}}{{UNIT}}; --button-icon-display: flex; --button-align-self: center;',
 				],
-            ]);
+        ]);
 
 		$this->add_control(
 			'icon_indent',
@@ -544,45 +543,49 @@ trait Button_Trait {
 						'selected_icon[value]!' => '',
 					]
 				),
-			]
-		);
+		]);
 
-		$this->start_controls_tabs( 'icons_button_style', [
+		$this->start_controls_tabs(
+			'icons_button_style',
+		    [
 			'condition' => $args['section_condition'],
-		] );
+		]);
 
 		$this->start_controls_tab(
 			'icon_button_normal',
-			[
-            'label' => esc_html__( 'Normal', 'elementor' ),
-			'condition' => $args['section_condition'],
-			]);
+		    [
+                'label' => esc_html__( 'Normal', 'elementor' ),
+			    'condition' => $args['section_condition'],
+		]);
 
-		$this->add_control( 'icon_color', [
+		$this->add_control(
+			'icon_color', 
+		    [
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--button-icon-color: {{VALUE}};',
 			],
-			]);
+		]);
 
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
 			'icon_button_hover',
-			[
+            [
 				'label' => esc_html__( 'Hover', 'elementor' ),
 				'condition' => $args['section_condition'],
-				]
-			);
+        ]);
 
-		$this->add_control( 'icon_color_hover', [
+		$this->add_control(
+			'icon_color_hover',
+		    [
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
 				'{{WRAPPER}}' => '--button-icon-color-hover: {{VALUE}};',
 			],
-			]);
+        ]);
 
 		$this->end_controls_tab();
 
