@@ -3,6 +3,9 @@
 	--e-contact-buttons-size-small: #{$contact-buttons-size-small};
 	--e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
 	--e-contact-buttons-size-large: #{$contact-buttons-size-large};
+	--e-contact-buttons-profile-image-size-small: #{$contact-buttons-profile-image-size-small};
+	--e-contact-buttons-profile-image-size-medium: #{$contact-buttons-profile-image-size-medium};
+	--e-contact-buttons-profile-image-size-large: #{$contact-buttons-profile-image-size-large};
 	--e-contact-buttons-dot: #{$contact-buttons-dots-color};
 	--e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
 	--e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
@@ -232,18 +235,18 @@
 		}
 
 		&.has-size-small img {
-			height: var(--e-contact-buttons-size-small);
-			width: var(--e-contact-buttons-size-small);
+			height: var(--e-contact-buttons-profile-image-size-small);
+			width: var(--e-contact-buttons-profile-image-size-small);
 		}
 
 		&.has-size-medium img {
-			height: var(--e-contact-buttons-size-medium);
-			width: var(--e-contact-buttons-size-medium);
+			height: var(--e-contact-buttons-profile-image-size-medium);
+			width: var(--e-contact-buttons-profile-image-size-medium);
 		}
 
 		&.has-size-large img {
-			height: var(--e-contact-buttons-size-large);
-			width: var(--e-contact-buttons-size-large);
+			height: var(--e-contact-buttons-profile-image-size-large);
+			width: var(--e-contact-buttons-profile-image-size-large);
 		}
 
 		&.has-dot::after {
@@ -303,6 +306,7 @@
 		background-color: var(--e-contact-buttons-button-bg);
 		border-radius: 50%;
 		border: 0;
+		box-shadow: var(--e-contact-buttons-box-shadow);
 		display: flex;
 		justify-content: center;
 		position: relative;
@@ -343,8 +347,8 @@
 			width: var(--e-contact-buttons-size-small);
 
 			svg {
-				height: 26px;
-				width: 26px;
+				height: 32px;
+				width: 32px;
 			}
 		}
 
@@ -353,8 +357,8 @@
 			width: var(--e-contact-buttons-size-medium);
 
 			svg {
-				height: 30px;
-				width: 30px;
+				height: 38px;
+				width: 38px;
 			}
 		}
 
@@ -363,8 +367,8 @@
 			width: var(--e-contact-buttons-size-large);
 
 			svg {
-				height: 32px;
-				width: 32px;
+				height: 42px;
+				width: 42px;
 			}
 		}
 	}

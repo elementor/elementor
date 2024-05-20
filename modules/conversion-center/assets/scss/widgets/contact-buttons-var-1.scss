@@ -46,8 +46,6 @@
 
 		svg {
 			fill: var(--e-contact-buttons-contact-button-icon);
-			height: 28px;
-			width: 28px;
 		}
 
 		&:hover,
@@ -63,16 +61,31 @@
 		&.has-size-small {
 			height: var(--e-contact-buttons-icon-size-small);
 			width: var(--e-contact-buttons-icon-size-small);
+
+			svg {
+				height: 26px;
+				width: 26px;
+			}
 		}
 
 		&.has-size-medium {
 			height: var(--e-contact-buttons-icon-size-medium);
 			width: var(--e-contact-buttons-icon-size-medium);
+
+			svg {
+				height: 28px;
+				width: 28px;
+			}
 		}
 
 		&.has-size-large {
 			height: var(--e-contact-buttons-icon-size-large);
 			width: var(--e-contact-buttons-icon-size-large);
+
+			svg {
+				height: 32px;
+				width: 32px;
+			}
 		}
 	}
 }
