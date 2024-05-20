@@ -549,10 +549,8 @@ export default class EditorPage extends BasePage {
 
 	async publishAndViewPage() {
 		await this.publishPage();
-		await this.clickTopBarItem( 'Preview Changes' );
-		// eslint-disable-next-line capitalized-comments
-		// await this.clickTopBarItem( 'Save Options' );
-		// await this.page.locator( 'body' ).getByRole( 'button', { name: 'View Page' } ).click();
+		await this.clickTopBarItem( 'Save Options' );
+		await this.page.locator( 'body' ).getByText( 'View Page' ).click();
 		await this.page.waitForLoadState();
 	}
 
