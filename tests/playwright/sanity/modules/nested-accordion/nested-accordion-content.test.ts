@@ -367,18 +367,12 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
 
 			expect.soft( itemVisibilityBeforeAnimation ).toEqual( true );
-
 			await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
 			// Wait for the closing animation to complete
-			await page.waitForTimeout( animationDuration );
-
-			// Check the computed height
-			const maxHeightAfterClose = await frame.locator( '.e-n-accordion-item:first-child > .e-con' ).evaluate( ( element ) =>
-				window.getComputedStyle( element ).getPropertyValue( 'height' ),
-			);
-
-			expect.soft( maxHeightAfterClose ).toEqual( '0px' );
+			await expect.poll( async () => {
+				return await editor.getPreviewFrame().locator( '.e-n-accordion-item:first-child .elementor-add-section' ).isVisible();
+			} ).toBe( false );
 		} );
 
 		await test.step( 'Check open animation', async () => {
