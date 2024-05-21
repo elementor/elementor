@@ -873,4 +873,13 @@ class Utils {
 
 		return $cache;
 	}
+
+	public static function is_sale_time(): bool {
+		$sale_start_time = gmmktime( 12, 0, 0, 5, 28, 2024 );
+		$sale_end_time = gmmktime( 4, 59, 0, 6, 4, 2024 );
+
+		$now_time = gmdate( 'U' );
+
+		return $now_time >= $sale_start_time && $now_time <= $sale_end_time;
+	}
 }
