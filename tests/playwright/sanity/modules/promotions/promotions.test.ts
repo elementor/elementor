@@ -109,7 +109,7 @@ test.describe( 'Promotion tests @promotions', () => {
 			editor = await wpAdminPage.openNewPage(),
 			promotionContainer = '#elementor-navigator__footer';
 
-		await editor.changeDisplayMode( 'dark' );
+		await editor.setDisplayMode( 'dark' );
 
 		// Act.
 		const promoContainer = page.locator( promotionContainer );

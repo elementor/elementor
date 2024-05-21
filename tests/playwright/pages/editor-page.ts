@@ -550,7 +550,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @param {string} uiMode - Either 'light', 'dark', or 'auto';
 	 */
-	async changeDisplayMode( uiMode: string ) {
+	async setDisplayMode( uiMode: string ) {
 		const uiThemeOptions = {
 			light: 'eicon-light-mode',
 			dark: 'eicon-dark-mode',
