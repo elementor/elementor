@@ -1,6 +1,7 @@
 .e-link-in-bio-var-7 {
 	--e-link-in-bio-icon-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-icon-color: #{$white};
+	--e-link-in-bio-icon-text-color: inherit;
 	--e-link-in-bio-icon-gap: 20px 10px;
 
 	.e-link-in-bio__identity .e-link-in-bio__identity-image-cover {
@@ -46,6 +47,10 @@
 				height: calc(var(--e-link-in-bio-icon-size) + 30px + calc(var(--e-link-in-bio-icon-border-width) * 2));
 			}
 		}
+	}
+
+	.e-link-in-bio__icon-label {
+		color: var(--e-link-in-bio-icon-text-color);
 	}
 
 	.e-link-in-bio__ctas {
