@@ -82,7 +82,7 @@ function elementor_fail_php_version() {
 		sprintf(
 			/* translators: %s: PHP version. */
 			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
-			'7.4',
+			'7.4'
 		),
 		esc_html__( 'Show me how', 'elementor' )
 	);
@@ -106,7 +106,7 @@ function elementor_fail_wp_version() {
 		sprintf(
 			/* translators: %s: WordPress version. */
 			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
-			'6.0',
+			'6.0'
 		),
 		esc_html__( 'Show me how', 'elementor' )
 	);
