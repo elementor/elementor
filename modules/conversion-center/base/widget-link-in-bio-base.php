@@ -87,6 +87,8 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'style' => [
 				'identity_section' => [
 					'has_profile_image_shape' => true,
+					'profile_image_max' => 115,
+					'cover_image_max' => 1000,
 				],
 				'cta_section' => [
 					'has_dividers' => false,
@@ -366,6 +368,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'cta_link_type' => [
 						Social_Network_Provider::FILE_DOWNLOAD,
 					],
+				],
+				'ai' => [
+					'active' => false,
 				],
 			],
 		);
@@ -976,7 +981,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_heading_tag', 'h1' );
+		$this->add_html_tag_control( 'bio_heading_tag', 'h2' );
 
 		$this->add_control(
 			'bio_title',
@@ -991,7 +996,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_title_tag', 'h2' );
+		$this->add_html_tag_control( 'bio_title_tag', 'h3' );
 
 		if ( $config['content']['bio_section']['has_about_field'] ) {
 			$this->add_control(
@@ -1285,7 +1290,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'cta_links_divider_color',
 				[
 					'label' => esc_html__( 'Color', 'elementor' ),
@@ -1634,7 +1639,7 @@ JS;
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 150,
+						'max' => $config['style']['identity_section']['profile_image_max'] ?? 150,
 					],
 				],
 				'default' => [
@@ -1693,7 +1698,7 @@ JS;
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1000,
+						'max' => $config['style']['identity_section']['cover_image_max'] ?? 1000,
 						'step' => 1,
 					],
 					'%' => [
