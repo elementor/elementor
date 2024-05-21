@@ -664,9 +664,9 @@ class Module extends BaseModule {
 
 		$result = $app->get_image_to_image_mask( [
 			'prompt' => $data['payload']['prompt'],
-			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
 			'mask' => $data['payload']['mask'],
+			'image_url' => $data['payload']['image']['url'],
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
