@@ -1,7 +1,6 @@
 const EditorSelectors = {
 	previewIframe: '#elementor-preview-iframe',
 	container: '[data-element_type="container"]',
-	closeNavigatorBtn: '#elementor-navigator__close',
 	elementsPanelItem: ( title: string ) => `.elementor-panel-category-items :text-is('${ title }')`,
 	searchWidgetLabel: 'Search Widget...',
 	addNewPresetLbl: 'Add New Container',
@@ -39,6 +38,11 @@ const EditorSelectors = {
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
 			menuPanelItem: '.elementor-panel-menu-item-editor-preferences',
+		},
+		navigator: {
+			wrapper: '#elementor-navigator',
+			closeButton: '#elementor-navigator__close',
+			footerButton: '#elementor-panel-footer-navigator i',
 		},
 	},
 	media: {
