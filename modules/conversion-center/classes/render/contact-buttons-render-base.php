@@ -179,7 +179,7 @@ abstract class Contact_Buttons_Render_Base {
 		$powered_by_url = 'https://elementor.com/pro';
 		?>
 			<div class="e-contact-buttons__powered-container">
-				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text">
+				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text" target="_blank">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
 				</a>
 			</div>
@@ -259,7 +259,7 @@ abstract class Contact_Buttons_Render_Base {
 
 					?>
 
-					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> target="_blank">
 						<?php
 							$mapping = Social_Network_Provider::get_icon_mapping( $icon['contact_icon_platform'] );
 							$icon_lib = explode( ' ', $mapping )[0];
@@ -322,7 +322,7 @@ abstract class Contact_Buttons_Render_Base {
 		<div class="e-contact-buttons__send-button">
 			<div class="e-contact-buttons__send-button-container">
 				<?php if ( $send_button_text ) { ?>
-					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> target="_blank">
 						<?php
 							$mapping = Social_Network_Provider::get_icon_mapping( $platform );
 							$icon_lib = explode( ' ', $mapping )[0];
