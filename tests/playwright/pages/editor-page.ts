@@ -494,7 +494,8 @@ export default class EditorPage extends BasePage {
 	 * Open the menu panel.
 	 */
 	async openMenuPanel() {
-		await this.page.locator( EditorSelectors.panels.menu.button ).click();
+		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
+		await this.page.waitForSelector( EditorSelectors.panels.menu.wrapper );
 	}
 
 	/**
@@ -506,8 +507,10 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elements' ).click();
 		} else {
-			await this.page.locator( EditorSelectors.panels.elements.button ).click();
+			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
+
+		await this.page.waitForSelector( EditorSelectors.panels.elements.wrapper );
 	}
 
 	/**
@@ -519,8 +522,10 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Page Settings' ).click();
 		} else {
-			await this.page.locator( EditorSelectors.panels.elements.button ).click();
+			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
+
+		await this.page.waitForSelector( EditorSelectors.panels.elements.wrapper );
 	}
 
 	/**
@@ -534,8 +539,10 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
 		} else {
 			await this.openMenuPanel();
-			await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
+			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
 		}
+
+		await this.page.waitForSelector( EditorSelectors.panels.userPreferences.wrapper );
 	}
 
 	/**
