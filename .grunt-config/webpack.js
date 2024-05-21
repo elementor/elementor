@@ -98,6 +98,7 @@ const entry = {
 	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
+	'excerpt-ai': path.resolve( __dirname, '../assets/dev/js/admin/excerpt-ai.js' ),
 	'new-template': path.resolve( __dirname, '../assets/dev/js/admin/new-template/new-template.js' ),
 	'app': path.resolve( __dirname, '../app/assets/js/index.js' ),
 	'app-loader': path.resolve( __dirname, '../app/assets/js/app-loader' ),

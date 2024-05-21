@@ -78,8 +78,6 @@ class Module extends BaseModule {
 					'jquery',
 					'elementor-v2-ui',
 					'elementor-v2-icons',
-//					'react',
-//					'select2',
 				],
 				ELEMENTOR_VERSION, true );
 

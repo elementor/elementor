@@ -1,10 +1,4 @@
-
 /* global ElementorGutenbergSettings */
-import App from '../../../../modules/ai/assets/js/editor/app';
-import PromptDialog from '../../../../modules/ai/assets/js/editor/components/prompt-dialog';
-import Loader from '../../../../modules/ai/assets/js/editor/components/loader';
-import LoaderAI from '../../../../modules/ai/assets/js/editor/loader';
-import { ThemeProvider } from '@elementor/ui';
 import GenerateExcerptWithAI from './excerpt-ai';
 
 ( function( $ ) {
@@ -68,8 +62,6 @@ import GenerateExcerptWithAI from './excerpt-ai';
 				// Add an event listener to the link
 				generateExcerptWithAILink.addEventListener( 'click', ( event ) => {
 					event.preventDefault();
-
-					const isRTL = elementorCommon.config.isRTL;
 
 					const rootElement = document.createElement( 'div' );
 					document.body.append( rootElement );

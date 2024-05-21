@@ -3,7 +3,6 @@ import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';
 import GetStarted from './pages/get-started';
-import Loader from './components/loader';
 import useUserInfo from './hooks/use-user-info';
 import WizardDialog from './components/wizard-dialog';
 import PromptDialog from './components/prompt-dialog';
@@ -29,7 +28,7 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const {
-		isLoading,
+		isLoading: isLoadingUserInfo,
 		isConnected,
 		isGetStarted,
 		connectUrl,
@@ -38,6 +37,7 @@ const PageContent = (
 		credits,
 		usagePercentage,
 	} = useUserInfo();
+	const isLoading = isLoadingUserInfo || additionalOptions.isLoadingExtraData;
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
@@ -49,6 +49,9 @@ const PageContent = (
 				willChange: 'height',
 				transition: 'height 300ms ease-in-out',
 				position: 'relative',
+			},
+			'& .MuiBox-root': {
+				boxSizing: 'border-box',
 			},
 		},
 		PaperProps: {
@@ -75,7 +78,7 @@ const PageContent = (
 
 	if ( isLoading ) {
 		return (
-			<LoaderAI type={ type } onClose={ onClose } promptDialogStyleProps={ promptDialogStyleProps } />
+			<LoaderAI type={ type } onClose={ onClose } style={ promptDialogStyleProps } title={ additionalOptions.loadingTitle } />
 		);
 	}
 

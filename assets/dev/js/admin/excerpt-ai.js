@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 const GenerateExcerptWithAI = ( { onClose } ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
-	const isRTL = false; // Assuming you have a way to determine if it's RTL
+	const isRTL = elementorCommon.config.isRTL;
 
 	useEffect( () => {
 		// Simulate a server call
@@ -23,23 +23,22 @@ const GenerateExcerptWithAI = ( { onClose } ) => {
 		// 	} );
 		setTimeout( () => {
 			setIsLoading( false );
-		}, 2000 );
+		}, 5000 );
 	}, [] );
 
 	return (
 		<>
-
-			{ isLoading && ( <ThemeProvider colorScheme={ 'auto' }>
-				<LoaderAI type={ 'text' } onClose={ onClose } title={ __( 'Analyzing your post to craft an excerpt...', 'elementor' ) } />
-			</ThemeProvider> ) }
-			{ ! isLoading &&
-			( <App
+			<App
 				type={ 'text' }
 				getControlValue={ () => 'dsdsds' }
 				setControlValue={ ( value ) => console.log( value ) }
 				onClose={ onClose }
 				isRTL={ isRTL }
-			/> ) }
+				additionalOptions={ {
+					isLoadingExtraData: isLoading,
+					loadingTitle: __( 'Analyzing your post to craft an excerpt...', 'elementor' ),
+				} }
+			/>
 		</>
 	);
 };
