@@ -259,7 +259,7 @@ abstract class Contact_Buttons_Render_Base {
 
 					?>
 
-					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> target="_blank">
+					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php
 							$mapping = Social_Network_Provider::get_icon_mapping( $icon['contact_icon_platform'] );
 							$icon_lib = explode( ' ', $mapping )[0];
@@ -316,13 +316,14 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
+			'target' => '_blank',
 		] );
 
 		?>
 		<div class="e-contact-buttons__send-button">
 			<div class="e-contact-buttons__send-button-container">
 				<?php if ( $send_button_text ) { ?>
-					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> target="_blank">
+					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php
 							$mapping = Social_Network_Provider::get_icon_mapping( $platform );
 							$icon_lib = explode( ' ', $mapping )[0];
