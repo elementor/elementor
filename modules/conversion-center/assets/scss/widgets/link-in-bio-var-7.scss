@@ -1,30 +1,32 @@
 .e-link-in-bio-var-7 {
 	--e-link-in-bio-icon-background-color: #{$link-in-bio-cta-bg-color};
 	--e-link-in-bio-icon-color: #{$white};
+	--e-link-in-bio-icon-gap-col: 10px;
+	--e-link-in-bio-icon-gap-row: 20px;
+	--e-link-in-bio-icon-gap: var(--e-link-in-bio-icon-gap-row) 0;
 	--e-link-in-bio-icon-text-color: inherit;
-	--e-link-in-bio-icon-gap: 20px 10px;
 
 	.e-link-in-bio__identity .e-link-in-bio__identity-image-cover {
 		height: var(--e-link-in-bio-identity-image-cover-height, auto);
 	}
 
-	// TODO: Move this icons styling to a re-usable utility class
-
 	.e-link-in-bio__icons {
 		align-items: start;
-		display: grid;
-		flex-flow: unset;
-		grid-auto-flow: rows;
-		grid-template-columns: repeat(var(--e-link-in-bio-icon-columns, 3), minmax(0, 1fr));
-		grid-template-rows: auto;
-		justify-content: unset;
-		justify-items: center;
+		gap: var(--e-link-in-bio-icon-gap);
 		margin-block-start: 34px;
+		margin-inline: auto;
+		max-width: 254px;
 
 		// Required to override defaults
 		&.has-size-large {
-			--e-link-in-bio-icon-gap: 20px 10px;
+			--e-link-in-bio-icon-gap: var(--e-link-in-bio-icon-gap-row) 0;
 		}
+	}
+
+	.e-link-in-bio__icon {
+		flex: 1 1 calc(100% / var(--e-link-in-bio-icon-columns));
+		max-width: calc(100% / var(--e-link-in-bio-icon-columns));
+		padding-inline: calc(var(--e-link-in-bio-icon-gap-col) / 2);
 	}
 
 	.e-link-in-bio__icon-svg {
