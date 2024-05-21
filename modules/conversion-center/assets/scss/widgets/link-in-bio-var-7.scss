@@ -4,6 +4,7 @@
 	--e-link-in-bio-icon-gap-col: 10px;
 	--e-link-in-bio-icon-gap-row: 20px;
 	--e-link-in-bio-icon-gap: var(--e-link-in-bio-icon-gap-row) 0;
+	--e-link-in-bio-icon-text-color: inherit;
 
 	.e-link-in-bio__identity .e-link-in-bio__identity-image-cover {
 		height: var(--e-link-in-bio-identity-image-cover-height, auto);
@@ -48,6 +49,10 @@
 				height: calc(var(--e-link-in-bio-icon-size) + 30px + calc(var(--e-link-in-bio-icon-border-width) * 2));
 			}
 		}
+	}
+
+	.e-link-in-bio__icon-label {
+		color: var(--e-link-in-bio-icon-text-color);
 	}
 
 	.e-link-in-bio__ctas {
