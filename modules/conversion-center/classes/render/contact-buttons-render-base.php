@@ -48,7 +48,7 @@ abstract class Contact_Buttons_Render_Base {
 		$button_size = $this->settings['style_chat_button_size'];
 		$hover_animation = $this->settings['style_button_color_hover_animation'];
 
-		$button_classnames = 'e-contact-buttons__chat-button';
+		$button_classnames = 'e-contact-buttons__chat-button e-contact-buttons__chat-button-shadow';
 
 		if ( ! empty( $button_size ) ) {
 			$button_classnames .= ' has-size-' . $button_size;
@@ -209,16 +209,20 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
-	protected function render_contact_section(): void {
+	protected function render_contact_text(): void {
 		$contact_cta_text = $this->settings['contact_cta_text'] ?? '';
+		?>
+			<?php if ( ! empty( $contact_cta_text ) ) { ?>
+				<p class="e-contact-buttons__contact-text"><?php echo esc_html( $contact_cta_text ); ?></p>
+			<?php } ?>
+		<?php
+	}
+
+	protected function render_contact_links(): void {
 		$contact_icons = $this->settings['contact_repeater'] ?? [];
 		$icons_size = $this->settings['style_contact_button_size'] ?? 'small';
 		$hover_animation = $this->settings['style_contact_button_hover_animation'];
 		?>
-		<div class="e-contact-buttons__contact">
-			<?php if ( ! empty( $contact_cta_text ) ) { ?>
-				<p class="e-contact-buttons__contact-text"><?php echo esc_html( $contact_cta_text ); ?></p>
-			<?php } ?>
 			<div class="e-contact-buttons__contact-links">
 				<?php
 				foreach ( $contact_icons as $key => $icon ) {
@@ -233,6 +237,8 @@ abstract class Contact_Buttons_Render_Base {
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
 						'viber_action' => $icon['contact_icon_viber_action'],
+						'url' => $icon['contact_icon_url'] ?? '',
+						'location' => $icon['contact_icon_waze'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
@@ -246,7 +252,7 @@ abstract class Contact_Buttons_Render_Base {
 					$this->widget->add_render_attribute( 'icon-link-' . $key, [
 						'aria-label' => esc_attr( $icon['contact_icon_platform'] ),
 						'class' => $icon_classnames,
-						'href' => esc_url( $formatted_link ),
+						'href' => $formatted_link,
 						'rel' => 'noopener noreferrer',
 						'target' => '_blank',
 					] );
@@ -269,7 +275,16 @@ abstract class Contact_Buttons_Render_Base {
 					</a>
 				<?php } ?>
 			</div>
+		<?php
+	}
 
+	protected function render_contact_section(): void {
+		?>
+		<div class="e-contact-buttons__contact">
+			<?php
+				$this->render_contact_text();
+				$this->render_contact_links();
+			?>
 		</div>
 		<?php
 	}
@@ -352,11 +367,20 @@ abstract class Contact_Buttons_Render_Base {
 			case Social_Network_Provider::SKYPE:
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
 				break;
+			case Social_Network_Provider::WAZE:
+				$formatted_link = ! empty( $link['location'] ) ? 'https://www.waze.com/ul?ll=' . $link['location'] . '&navigate=yes' : '';
+				break;
+			case Social_Network_Provider::URL:
+				$formatted_link = ! empty( $link['url'] ) ? $link['url'] : '';
+				break;
+			case Social_Network_Provider::TELEPHONE:
+				$formatted_link = ! empty( $link['number'] ) ? 'tel:' . $link['number'] : '';
+				break;
 			default:
 				break;
 		}
 
-		return $formatted_link;
+		return esc_html( $formatted_link );
 	}
 
 	protected function build_layout_render_attribute(): void {

@@ -62,7 +62,6 @@ trait Conversion_Center_Controls_Trait {
 	protected function add_icons_per_row_control(
 		string $name = 'icons_per_row',
 		$options = [
-			'1' => '1',
 			'2' => '2',
 			'3' => '3',
 		],
