@@ -29,7 +29,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			editor.openUserPreferences(),
+			editor.openUserPreferencesPanel(),
 		] );
 
 		const userPreferencesStyleguideSwitcherSelector = 'input[type=checkbox][data-setting="enable_styleguide_preview"]';
@@ -45,7 +45,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			wpAdmin.openSiteSettings(),
+			wpAdmin.openSiteSettingsPanel(),
 		] );
 
 		// Assert.
@@ -103,14 +103,14 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			editor.openUserPreferences(),
+			editor.openUserPreferencesPanel(),
 		] );
 
 		const userPreferencesStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="enable_styleguide_preview"]' );
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			wpAdmin.openSiteSettings( ),
+			wpAdmin.openSiteSettingsPanel(),
 		] );
 
 		// Assert.
@@ -494,7 +494,7 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 
 	await Promise.all( [
 		page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-		wpAdmin.openSiteSettings( ),
+		wpAdmin.openSiteSettingsPanel(),
 	] );
 
 	await page.waitForTimeout( 1000 );

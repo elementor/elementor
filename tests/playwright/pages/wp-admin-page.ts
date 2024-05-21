@@ -198,7 +198,7 @@ export default class WpAdminPage extends BasePage {
 		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
 	}
 
-	async openSiteSettings() {
+	async openSiteSettingsPanel() {
 		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Site Settings' } ).click();
 	}
 

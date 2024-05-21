@@ -216,7 +216,7 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		await this.openPageSettings();
+		await this.openPageSettingsPanel();
 		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
 	}
@@ -231,7 +231,7 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		await this.openPageSettings();
+		await this.openPageSettingsPanel();
 		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
 	}
@@ -468,7 +468,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async changeEditorLayout( layout: string ) {
-		await this.openPageSettings();
+		await this.openPageSettingsPanel();
 		await this.page.selectOption( '[data-setting=template]', layout );
 		await this.ensurePreviewReload();
 	}
@@ -494,15 +494,15 @@ export default class EditorPage extends BasePage {
 		await this.clickTopBarItem( 'Add Element' );
 	}
 
-	async openSiteSettings() {
+	async openSiteSettingsPanel() {
 		await this.clickTopBarItem( 'Site Settings' );
 	}
 
-	async openPageSettings() {
+	async openPageSettingsPanel() {
 		await this.clickTopBarItem( 'Page Settings' );
 	}
 
-	async openUserPreferences() {
+	async openUserPreferencesPanel() {
 		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button' ).nth( 0 ).click();
 		await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
 	}
@@ -519,7 +519,7 @@ export default class EditorPage extends BasePage {
 			auto: 'eicon-header',
 		};
 
-		await this.openUserPreferences();
+		await this.openUserPreferencesPanel();
 		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
@@ -789,7 +789,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set Dimentions controls value
+	 * Set Dimensions controls value
 	 *
 	 * @param {string} selector
 	 * @param {string} value

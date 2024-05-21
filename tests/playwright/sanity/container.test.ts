@@ -78,7 +78,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.addWidget( widgets.toggle, containerId );
 		await editor.addWidget( widgets.video, containerId );
 
-		// Set background colour to spacer.
+		// Set background color to spacer.
 		await editor.setBackgroundColor( '#A81830', spacer );
 		// Select container.
 		await editor.selectElement( containerId );
@@ -427,7 +427,7 @@ test.describe( 'Container tests @container', () => {
 		// Act.
 		// Add widgets.
 		const spacer = await editor.addWidget( 'spacer', containerId );
-		// Set background colour and custom width.
+		// Set background color and custom width.
 		await editor.activatePanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.setBackgroundColor( '#A81830', spacer );
@@ -728,7 +728,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.saveAndReloadPage();
 		await editor.ensurePanelLoaded();
 
-		await editor.openPageSettings();
+		await editor.openPageSettingsPanel();
 
 		expect.soft( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );

@@ -7,7 +7,7 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 
 	// Trigger dialog by click on the "Exit" button
 	await editor.ExitToWordPress();
-	await editor.openUserPreferences();
+	await editor.openUserPreferencesPanel();
 
 	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
 	let exitHref = '';
