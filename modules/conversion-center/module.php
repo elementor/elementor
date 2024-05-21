@@ -74,6 +74,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		parent::__construct();
+
 		$this->register_links_pages_cpt();
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {

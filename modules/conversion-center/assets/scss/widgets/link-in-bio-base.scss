@@ -119,6 +119,9 @@
 	}
 
 	&__bg {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
 		display: grid;
 		inset: 0;
 		position: absolute;
@@ -126,6 +129,9 @@
 	}
 
 	&__bg-overlay {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
 		opacity: var(--background-overlay-opacity);
 	}
 
