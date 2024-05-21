@@ -36,9 +36,10 @@ export default class extends Marionette.LayoutView {
 	onCloseModalClick() {
 		this._parent._parent._parent.hideModal();
 
-		if ( elementor.config?.admin_conversion_center_links_url && 'links-page' === elementor.config.document?.type ) {
-			window.location.href = elementor.config.admin_conversion_center_links_url;
-		} else if ( elementor.config?.admin_conversion_center_contact_url && 'contact-buttons' === elementor.config.document?.type ) {
+		if (
+			window.elementor && elementor.config?.admin_conversion_center_contact_url &&
+			'contact-buttons' === elementor.config?.document?.type
+		) {
 			window.location.href = elementor.config.admin_conversion_center_contact_url;
 		}
 	}

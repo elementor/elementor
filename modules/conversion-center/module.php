@@ -93,6 +93,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		parent::__construct();
+
 		$this->register_links_pages_cpt();
 
 		$this->register_contact_pages_cpt();
