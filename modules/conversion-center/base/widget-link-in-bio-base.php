@@ -1151,7 +1151,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'cta_links_divider_color',
 				[
 					'label' => esc_html__( 'Color', 'elementor' ),
