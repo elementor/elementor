@@ -9,7 +9,6 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 		editor = await wpAdmin.openNewPage();
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
-	// Close Navigator
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'image-gallery' );
 
@@ -34,9 +33,9 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 
 	const editor = await wpAdmin.openNewPage();
 
-	// Close Navigator
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'image-gallery' );
+
 	// Act.
 	await testBasicSwiperGallery( editor, imageCarousel );
 
@@ -56,7 +55,6 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 
 	const editor = await wpAdmin.openNewPage();
 
-	// Close Navigator
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'image-gallery' );
 
