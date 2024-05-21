@@ -495,7 +495,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async openMenuPanel() {
 		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
-		await this.page.waitForSelector( EditorSelectors.panels.menu.wrapper );
+		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
 	}
 
 	/**
@@ -510,7 +510,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
 
-		await this.page.waitForSelector( EditorSelectors.panels.elements.wrapper );
+		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
 	}
 
 	/**
@@ -525,7 +525,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
 		}
 
-		await this.page.waitForSelector( EditorSelectors.panels.pageSettings.wrapper );
+		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
 	/**
@@ -542,7 +542,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
 		}
 
-		await this.page.waitForSelector( EditorSelectors.panels.userPreferences.wrapper );
+		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
 	}
 
 	/**
