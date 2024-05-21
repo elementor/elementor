@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 import ImageCarousel from '../pages/widgets/image-carousel';
+import EditorPage from '../pages/editor-page';
 
 test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	// Arrange.
@@ -37,7 +38,7 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'image-gallery' );
 	// Act.
-	await testBasicSwiperGallery( editor, page, imageCarousel );
+	await testBasicSwiperGallery( editor, imageCarousel );
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: false,
@@ -60,17 +61,20 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 	await editor.addWidget( 'image-gallery' );
 
 	// Act.
-	await testBasicSwiperGallery( editor, page, imageCarousel );
+	await testBasicSwiperGallery( editor, imageCarousel );
 } );
 
-async function testBasicSwiperGallery( editor, page, imageCarousel ) {
+async function testBasicSwiperGallery( editor: EditorPage, imageCarousel: ImageCarousel ) {
 	// Act.
 	await imageCarousel.addImageGallery();
 
 	await editor.togglePreviewMode();
 	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
+	await editor.page.waitForTimeout( 1000 );
+	await editor.getPreviewFrame().locator( '.swiper-slide-active img[data-title="A"]' ).waitFor();
 	await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ).first().click();
-	await page.waitForTimeout( 500 );
+	await editor.getPreviewFrame().locator( '.swiper-slide-active img[data-title="B"]' ).waitFor();
 
-	expect( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper.jpeg' );
+	await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ) )
+		.toHaveScreenshot( 'gallery-lightbox-swiper.png' );
 }

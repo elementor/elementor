@@ -2,9 +2,8 @@ import { chromium, request, type FullConfig } from '@playwright/test';
 import { cleanUpTestPages, createApiContext, createDefaultMedia, deleteDefaultMedia, loginApi } from './assets/api-requests';
 import { WindowType } from './types/types';
 
-module.exports = async ( config: FullConfig ) => {
+async function globalSetup( config: FullConfig ) {
 	const { baseURL, headless } = config.projects[ 0 ].use;
-
 	const browser = await chromium.launch( { headless } );
 	const context = await browser.newContext();
 	const page = await context.newPage();
@@ -49,4 +48,5 @@ module.exports = async ( config: FullConfig ) => {
 		await deleteDefaultMedia( apiContext, imageIds );
 		await cleanUpTestPages( apiContext );
 	};
-};
+}
+export default globalSetup;
