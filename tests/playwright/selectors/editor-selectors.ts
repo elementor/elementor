@@ -26,15 +26,15 @@ const EditorSelectors = {
 	panels: {
 		menu: {
 			wrapper: 'elementor-panel-page-menu',
-			button: '#elementor-panel-header-menu-button',
+			button: '#elementor-panel-header-menu-button i',
 		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',
-			button: '#elementor-panel-header-add-button',
+			button: '#elementor-panel-header-add-button i',
 		},
 		pageSettings: {
 			wrapper: '#elementor-panel-page-settings',
-			button: '#elementor-panel-footer-settings',
+			button: '#elementor-panel-footer-settings i',
 		},
 	},
 	media: {
