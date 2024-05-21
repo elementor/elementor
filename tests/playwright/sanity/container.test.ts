@@ -734,7 +734,7 @@ test.describe( 'Container tests @container', () => {
 		await page.reload();
 		await editor.ensurePanelLoaded();
 
-		await page.locator( '#elementor-panel-footer-settings' ).click();
+		await editor.openPageSettingsPanel();
 
 		expect.soft( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
