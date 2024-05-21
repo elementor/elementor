@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
 import ContextMenu from '../pages/widgets/context-menu';
-import EditorSelectors from '../selectors/editor-selectors';
 import Style from '../pages/elementor-panel-tabs/style';
 
 test.describe( 'Context menu', () => {
