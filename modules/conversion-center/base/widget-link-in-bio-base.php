@@ -281,6 +281,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						Social_Network_Provider::FILE_DOWNLOAD,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 			],
 		);
 
@@ -888,7 +891,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_heading_tag', 'h1' );
+		$this->add_html_tag_control( 'bio_heading_tag', 'h2' );
 
 		$this->add_control(
 			'bio_title',
@@ -903,7 +906,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_title_tag', 'h2' );
+		$this->add_html_tag_control( 'bio_title_tag', 'h3' );
 
 		if ( $config['content']['bio_section']['has_about_field'] ) {
 			$this->add_control(
