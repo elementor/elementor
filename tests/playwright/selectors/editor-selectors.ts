@@ -25,16 +25,20 @@ const EditorSelectors = {
 	},
 	panels: {
 		menu: {
-			wrapper: 'elementor-panel-page-menu',
-			button: '#elementor-panel-header-menu-button i',
+			wrapper: '#elementor-panel-page-menu',
+			footerButton: '#elementor-panel-header-menu-button i',
 		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',
-			button: '#elementor-panel-header-add-button i',
+			footerButton: '#elementor-panel-header-add-button i',
 		},
 		pageSettings: {
 			wrapper: '#elementor-panel-page-settings',
-			button: '#elementor-panel-footer-settings i',
+			footerButton: '#elementor-panel-footer-settings i',
+		},
+		userPreferences: {
+			wrapper: '#elementor-panel-editorPreferences-settings-controls',
+			menuPanelItem: '.elementor-panel-menu-item-editor-preferences',
 		},
 	},
 	media: {
