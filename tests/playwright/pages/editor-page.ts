@@ -83,7 +83,7 @@ export default class EditorPage extends BasePage {
 		);
 
 		if ( ! isOpen ) {
-			await this.page.click( '#elementor-panel-footer-navigator' );
+			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
 		}
 	}
 
@@ -91,7 +91,7 @@ export default class EditorPage extends BasePage {
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
-			await this.page.click( '#elementor-navigator__close' );
+			await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
 		}
 	}
 
@@ -522,10 +522,10 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Page Settings' ).click();
 		} else {
-			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
+			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
 		}
 
-		await this.page.waitForSelector( EditorSelectors.panels.elements.wrapper );
+		await this.page.waitForSelector( EditorSelectors.panels.pageSettings.wrapper );
 	}
 
 	/**
