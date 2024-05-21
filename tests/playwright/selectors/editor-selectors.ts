@@ -2,14 +2,12 @@ const EditorSelectors = {
 	previewIframe: '#elementor-preview-iframe',
 	container: '[data-element_type="container"]',
 	closeNavigatorBtn: '#elementor-navigator__close',
-	widgetsPanelIcon: '#elementor-panel-header-add-button i',
 	elementsPanelItem: ( title: string ) => `.elementor-panel-category-items :text-is('${ title }')`,
 	searchWidgetLabel: 'Search Widget...',
 	addNewPresetLbl: 'Add New Container',
 	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
 	viewPageBtn: 'View Page',
 	updateBtn: 'Update',
-	menuIcon: '#elementor-panel-header-menu-button i',
 	widget: '[data-element_type="widget"]',
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	loadingElement: ( id: string ) => `.elementor-element-${ id }.elementor-loading`,
@@ -22,6 +20,23 @@ const EditorSelectors = {
 	item: '.elementor-repeater-row-item-title',
 	addNewItem: 'button.elementor-button elementor-repeater-add',
 	plusIcon: '.eicon-plus-circle',
+	topBar: {
+		wrapper: '#elementor-editor-wrapper-v2',
+	},
+	panels: {
+		menu: {
+			wrapper: 'elementor-panel-page-menu',
+			button: '#elementor-panel-header-menu-button',
+		},
+		elements: {
+			wrapper: '#elementor-panel-page-elements',
+			button: '#elementor-panel-header-add-button',
+		},
+		pageSettings: {
+			wrapper: '#elementor-panel-page-settings',
+			button: '#elementor-panel-footer-settings',
+		},
+	},
 	media: {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle: string ) => `[aria-label="${ imageTitle }"]`,
