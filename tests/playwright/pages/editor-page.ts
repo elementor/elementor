@@ -490,10 +490,16 @@ export default class EditorPage extends BasePage {
 		return await this.page.locator( EditorSelectors.topBar.wrapper ).isVisible();
 	}
 
+	/**
+	 * Open the menu panel.
+	 */
 	async openMenuPanel() {
 		await this.page.locator( EditorSelectors.panels.menu.button ).click();
 	}
 
+	/**
+	 * Open the elements/widgets panel.
+	 */
 	async openElementsPanel() {
 		const hasTopBar = await this.hasTopBar();
 
@@ -504,6 +510,9 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
+	/**
+	 * Open the page settings panel.
+	 */
 	async openPageSettingsPanel() {
 		const hasTopBar = await this.hasTopBar();
 
@@ -514,9 +523,9 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	// async openSiteSettingsPanel() {
-	// }
-
+	/**
+	 * Open the user preferences panel.
+	 */
 	async openUserPreferencesPanel() {
 		const hasTopBar = await this.hasTopBar();
 
@@ -529,6 +538,11 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
+	/**
+	 * Change the display mode of the editor.
+	 *
+	 * @param {string} uiMode - Either 'light', 'dark', or 'auto';
+	 */
 	async changeDisplayMode( uiMode: string ) {
 		const uiThemeOptions = {
 			light: 'eicon-light-mode',
