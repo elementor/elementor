@@ -63,11 +63,6 @@ abstract class Render_Base {
 		<div <?php echo $this->widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
-				// Bail if no text
-				if ( empty( $cta['cta_link_text'] ) ) {
-					break;
-				}
-
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
 				$cta_image = $cta['cta_link_image'] ?? [];
 				$cta_has_image = ! empty( $cta_image ) &&
