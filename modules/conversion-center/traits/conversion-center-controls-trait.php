@@ -36,27 +36,54 @@ trait Conversion_Center_Controls_Trait {
 		);
 	}
 
-	protected function add_images_per_row_control(
-		string $name = 'icons_per_row',
-		$options = [
-			'2' => '2',
-			'3' => '3',
-		],
-		string $default = '3',
-		$label = ''
-	): void {
-		if ( ! $label ) {
-			$label = esc_html__( 'Icons Per Row', 'elementor' );
+	/**
+	 * Remove any child arrays where all properties are empty
+	 */
+	protected function clean_array(
+		$input_array = []
+	) {
+		$output_array = array_filter( $input_array, function( $sub_array ) {
+			// Use array_filter on the sub array
+			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
+				// Filter out empty or null values
+				return ! is_null( $val ) && '' !== $val;
+			} );
+			// A non-empty result means the sub array contains some non-empty value(s)
+			return ! empty( $filtered_sub_array );
+		} );
+		return $output_array;
+	}
+
+	protected function get_link_attributes(
+		$link = [],
+		$other_attributes = []
+	) {
+		$url_attrs = [];
+
+		if ( ! empty( $link['url'] ) ) {
+			$url_attrs['href'] = esc_url( $link['url'] );
 		}
-		$this->add_control(
-			$name,
-			[
-				'label' => $label,
-				'type' => Controls_Manager::SELECT,
-				'options' => $options,
-				'default' => $default,
-			]
+
+		if ( ! empty( $link['is_external'] ) ) {
+			$url_attrs['target'] = '_blank';
+			$url_attrs['rel'] = 'noopener ';
+		}
+
+		if ( ! empty( $link['nofollow'] ) ) {
+			$url_attrs['rel'] .= 'nofollow ';
+		}
+
+		/**
+		 * Note - we deliberately merge $other_attributes second
+		 * to allow overriding default attributes values such as a more formatted href
+		 */
+		$url_combined_attrs = array_merge(
+			$url_attrs,
+			$other_attributes,
+			Utils::parse_custom_attributes( $link['custom_attributes'] ?? '' ),
 		);
+
+		return $url_combined_attrs;
 	}
 
 	protected function add_icons_per_row_control(
@@ -66,7 +93,8 @@ trait Conversion_Center_Controls_Trait {
 			'3' => '3',
 		],
 		string $default = '3',
-		$label = ''
+		$label = '',
+		$selector_custom_property = '--e-link-in-bio-icon-columns'
 	): void {
 		if ( ! $label ) {
 			$label = esc_html__( 'Icons Per Row', 'elementor' );
@@ -79,7 +107,7 @@ trait Conversion_Center_Controls_Trait {
 				'options' => $options,
 				'default' => $default,
 				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-columns: {{VALUE}};',
+					'{{WRAPPER}} .e-link-in-bio' => $selector_custom_property . ': {{VALUE}};',
 				],
 			]
 		);
@@ -153,7 +181,7 @@ trait Conversion_Center_Controls_Trait {
 			],
 		];
 
-		$this->add_control(
+		$this->add_responsive_control(
 			$prefix . '_border_width',
 			array_merge( $border_width, $border_width_args ),
 		);
