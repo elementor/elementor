@@ -42,7 +42,6 @@
 	.e-contact-buttons__close-button {
 		background-color: var(--e-contact-buttons-close-button-bg);
 		border-radius: 50%;
-		box-shadow: #{$contact-buttons-box-shadow};
 		inset-inline-end: unset;
 		inset-inline-start: unset;
 		position: relative;
@@ -91,7 +90,6 @@
 		align-items: center;
 		background-color: var(--e-contact-buttons-contact-button-bg);
 		border-radius: 50px;
-		box-shadow: #{$contact-buttons-box-shadow};
 		display: inline-flex;
 		justify-content: center;
 		transition: $transition-hover;
