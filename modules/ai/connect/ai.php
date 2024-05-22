@@ -197,6 +197,20 @@ class Ai extends Library {
 		);
 	}
 
+	public function get_excerpt( $prompt, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'text/get-excerpt',
+			[
+				'content' => $prompt,
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
 	/**
 	 * get_image_prompt_enhanced
 	 * @param $prompt

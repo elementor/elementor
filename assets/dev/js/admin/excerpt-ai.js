@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import App from '../../../../modules/ai/assets/js/editor/app';
 import PropTypes from 'prop-types';
 import useUserInfo from '../../../../modules/ai/assets/js/editor/hooks/use-user-info';
-import useTextPrompt from '../../../../modules/ai/assets/js/editor/hooks/use-text-prompt';
+import useExcerptPrompt from '../../../../modules/ai/assets/js/editor/hooks/use-excerpt-prompt';
 
 const { useSelect, useDispatch } = wp.data;
-// TODO: validate requestId, error, and subscription
+
 const GenerateExcerptWithAI = ( { onClose } ) => {
 	const { editPost } = useDispatch( 'core/editor' );
 	const currExcerpt = useSelect(
@@ -22,7 +22,7 @@ const GenerateExcerptWithAI = ( { onClose } ) => {
 		credits,
 		usagePercentage,
 	} = useUserInfo( true );
-	const { data: newExcerpt, isLoading: isLoadingExcerpt, error, setResult, reset, send, sendUsageData } = useTextPrompt( {
+	const { data: newExcerpt, isLoading: isLoadingExcerpt, error, send } = useExcerptPrompt( {
 		result: currExcerpt,
 		credits,
 	} );
@@ -41,7 +41,7 @@ const GenerateExcerptWithAI = ( { onClose } ) => {
 	useEffect( () => {
 		if ( ! generateExcerptOnce.current && send ) {
 			generateExcerptOnce.current = true;
-			send( { prompt: currExcerpt } );
+			send( { content: currExcerpt } );
 		}
 	}, [ currExcerpt, send ] );
 
@@ -61,7 +61,7 @@ const GenerateExcerptWithAI = ( { onClose } ) => {
 					loadingTitle: __( 'Analyzing your post to craft an excerpt...', 'elementor' ),
 					useCustomInit: initHook,
 					initError: error,
-					initRetry: () => send( { prompt: currExcerpt } ),
+					initRetry: () => send( { content: currExcerpt } ),
 				} }
 			/>
 		</>

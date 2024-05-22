@@ -26,6 +26,8 @@ export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
 
+export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
+
 export const getEditText = ( payload ) => request( 'ai_get_edit_text', { payload } );
 
 export const getCustomCode = ( payload ) => request( 'ai_get_custom_code', { payload } );
