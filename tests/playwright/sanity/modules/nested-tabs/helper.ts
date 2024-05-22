@@ -96,9 +96,9 @@ export async function setTabBorderColor(
 	borderStyle: string = 'solid',
 ) {
 	await editor.activatePanelTab( 'style' );
-	await page.locator( `.elementor-control-section_tabs_style` ).click();
+	await editor.openSection( 'section_tabs_style' );
 	await page.locator( `.elementor-control-tabs_title_${ state }` ).click();
-	await page.selectOption( `.elementor-control-tabs_title_border${ stateExtended }_border >> select`, borderStyle );
+	await editor.setSelectControlValue( `tabs_title_border${ stateExtended }_border`, borderStyle );
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` )
 		.first()
 		.fill( borderWidth );

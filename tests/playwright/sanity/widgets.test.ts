@@ -16,7 +16,7 @@ test.describe( 'Widget tests', () => {
 
 		// Act.
 		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-_section_transform .elementor-panel-heading-title' ).click();
+		await editor.openSection( '_section_transform' );
 		// Set rotation.
 		await page.locator( '.elementor-control-_transform_rotate_popover .elementor-control-popover-toggle-toggle-label' ).click();
 		await page.locator( '.elementor-control-_transform_rotateZ_effect .elementor-control-input-wrapper input' ).fill( '2' );

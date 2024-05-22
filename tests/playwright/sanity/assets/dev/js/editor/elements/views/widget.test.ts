@@ -79,7 +79,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'video' );
-		await page.selectOption( '.elementor-control-video_type >> select', 'hosted' );
+		await editor.setSelectControlValue( 'video_type', 'hosted' );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 

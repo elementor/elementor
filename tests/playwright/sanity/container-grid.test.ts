@@ -90,22 +90,22 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
-			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
-			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
+			await editor.setChooseControlValue( 'grid_justify_content', 'start' );
+			await editor.setChooseControlValue( 'grid_align_content', 'start' );
 			await expect( container ).toHaveCSS( 'justify-content', 'start' );
 			await expect( container ).toHaveCSS( 'align-content', 'start' );
 		} );
 
 		await test.step( 'Assert justify align and content middle', async () => {
-			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
-			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
+			await editor.setChooseControlValue( 'grid_justify_content', 'center' );
+			await editor.setChooseControlValue( 'grid_align_content', 'center' );
 			await expect( container ).toHaveCSS( 'justify-content', 'center' );
 			await expect( container ).toHaveCSS( 'align-content', 'center' );
 		} );
 
 		await test.step( 'Assert justify align and content end', async () => {
-			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
-			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
+			await editor.setChooseControlValue( 'grid_justify_content', 'end' );
+			await editor.setChooseControlValue( 'grid_align_content', 'end' );
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
 		} );
@@ -118,32 +118,32 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert justify align and content start on full width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
-			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
-			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
+			await editor.setSelectControlValue( 'content_width', 'full' );
+			await editor.setChooseControlValue( 'grid_justify_content', 'start' );
+			await editor.setChooseControlValue( 'grid_align_content', 'start' );
 			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'start' );
 			await expect( container ).toHaveCSS( 'align-content', 'start' );
 		} );
 
 		await test.step( 'Assert justify align and content middle on full width', async () => {
-			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
-			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
+			await editor.setChooseControlValue( 'grid_justify_content', 'center' );
+			await editor.setChooseControlValue( 'grid_align_content', 'center' );
 			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'center' );
 			await expect( container ).toHaveCSS( 'align-content', 'center' );
 		} );
 
 		await test.step( 'Assert justify align and content end on full width', async () => {
-			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
-			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
+			await editor.setChooseControlValue( 'grid_justify_content', 'end' );
+			await editor.setChooseControlValue( 'grid_align_content', 'end' );
 			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
 		} );
 
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame()
 				.locator( '.elementor-empty-view' )
 				.evaluate( ( element: HTMLElement ) => {
@@ -153,8 +153,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert boxed width content alignment', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-			await page.locator( '.elementor-control-grid_columns_grid .elementor-slider-input input' ).fill( '' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
+			await editor.setSliderControlValue( 'grid_columns_grid', '' );
 
 			// Add flex container.
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' );

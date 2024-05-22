@@ -198,8 +198,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
-		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
+		await editor.openSection( 'section_tabs_responsive' );
+		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 
 		const desktopTabWrapper = editor.getPreviewFrame().locator( '.e-n-tabs-heading' );
 
@@ -288,8 +288,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
-		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
+		await editor.openSection( 'section_tabs_responsive' );
+		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 		await page.locator( '.elementor-tab-control-style' ).click();
 
 		// Open responsive bar and select mobile view
@@ -298,8 +298,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
 
 		// Set controls values.
-		await page.locator( '.elementor-control-tabs_title_spacing_mobile .elementor-slider-input input' ).fill( '50' );
-		await page.locator( '.elementor-control-tabs_title_space_between_mobile .elementor-slider-input input' ).fill( '25' );
+		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
+		await editor.setSliderControlValue( 'tabs_title_space_between_mobile', '25' );
 
 		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ),
 			lastTab = editor.getPreviewFrame().locator( '.e-n-tab-title' ).last();
@@ -325,7 +325,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_title_style' ).click();
+		await editor.openSection( 'section_title_style' );
 		await page.locator( '.elementor-control-title_hover' ).click();
 		await page.locator( '.elementor-control-title_text_color_hover .pcr-button' ).click();
 		await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', '#ff0000' );
@@ -654,7 +654,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Close shadow panel
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
 		// Set border radius
-		await page.locator( '.elementor-control-tabs_title_border_radius .elementor-control-dimensions li:first-child input' ).fill( '15' );
+		await editor.setDimensionsValue( 'tabs_title_border_radius', '15' );
 
 		// Act.
 		await editor.publishAndViewPage();
@@ -711,7 +711,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
 		await editor.activatePanelTab( 'content' );
 		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_tabs_style' ).click();
+		await editor.openSection( 'section_tabs_style' );
 
 		// Hover tab styling: text color: red, border color: red and icon color: pink.
 		// Set text color.
@@ -723,7 +723,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
 		await editor.activatePanelTab( 'content' );
 		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_tabs_style' ).click();
+		await editor.openSection( 'section_tabs_style' );
 
 		// Active tab styling: text color: blue, border color: blue and icon color: brown.
 		// Set text color.
@@ -1202,9 +1202,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Add nested tabs and select none as breakpoint', async () => {
 			await editor.addWidget( 'nested-tabs', container );
-
-			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
+			await editor.openSection( 'section_tabs_responsive' );
+			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
 		} );
 
 		await test.step( 'Assert no accordion on mobile view', async () => {
@@ -1275,7 +1274,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
-			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			await editor.setSelectControlValue( 'horizontal_scroll', 'enable' );
 
 			await editor.openSection( 'section_tabs' );
 			Array.from( { length: 3 }, async () => {
@@ -1378,8 +1377,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
-			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
-			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
+			await editor.setSelectControlValue( 'horizontal_scroll', 'enable' );
 
 			await editor.openSection( 'section_tabs' );
 			Array.from( { length: 3 }, async () => {

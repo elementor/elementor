@@ -72,7 +72,7 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 	}
 
 	async function setBorderType() {
-		await editor.page.selectOption( '.elementor-control-accordion_border_' + state + '_border >> select', { value: borderType } );
+		await editor.setSelectControlValue( 'accordion_border_' + state + '_border', borderType );
 	}
 
 	async function setBorderWidth() {

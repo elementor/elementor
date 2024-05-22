@@ -208,7 +208,7 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.openPageSettingsPanel();
-		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
+		await this.setSelectControlValue( 'template', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
 	}
 
@@ -223,7 +223,7 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.openPageSettingsPanel();
-		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
+		await this.setSelectControlValue( 'template', 'default' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
 	}
 
@@ -306,7 +306,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async setWidgetCustomWidth( width = '100' ) {
 		await this.activatePanelTab( 'advanced' );
-		await this.page.selectOption( '.elementor-control-_element_width >> select', 'initial' );
+		await this.setSelectControlValue( '_element_width', 'initial' );
 		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
 	}
 
@@ -336,7 +336,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setWidgetToFlexGrow() {
-		await this.page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
+		await this.setChooseControlValue( '_flex_size', 'grow' );
 	}
 
 	/**
@@ -345,11 +345,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setWidgetMask() {
-		await this.page.locator( '.elementor-control-_section_masking' ).click();
-		await this.page.locator( '.elementor-control-_mask_switch .elementor-control-input-wrapper .elementor-switch .elementor-switch-label' ).click();
-		await this.page.selectOption( '.elementor-control-_mask_size >> select', 'custom' );
-		await this.page.locator( '.elementor-control-_mask_size_scale .elementor-control-input-wrapper input' ).fill( '30' );
-		await this.page.selectOption( '.elementor-control-_mask_position >> select', 'top right' );
+		await this.openSection( '_section_masking' );
+		await this.setSwitcherControlValue( '_mask_switch', true );
+		await this.setSelectControlValue( '_mask_size', 'custom' );
+		await this.setSliderControlValue( '_mask_size_scale', '30' );
+		await this.setSelectControlValue( '_mask_position', 'top right' );
 	}
 
 	/**

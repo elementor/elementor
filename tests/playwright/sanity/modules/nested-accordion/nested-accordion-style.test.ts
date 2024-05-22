@@ -105,7 +105,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 		await test.step( 'Set Border controls', async () => {
 			// Act
-			await editor.page.selectOption( '.elementor-control-content_border_border >> select', { value: borderStyle.solid } );
+			await editor.setSelectControlValue( 'content_border_border', borderStyle.solid );
 			await editor.setDimensionsValue( 'content_border_width', '5' );
 			await editor.setColorControlValue( colors.blue.hex, 'content_border_color' );
 			await editor.setDimensionsValue( 'content_border_radius', '25' );
@@ -135,7 +135,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
 				await editor.setColorControlValue( colors.black.hex, 'background_color' );
 				await editor.openSection( 'section_border' );
-				await editor.page.selectOption( '.elementor-control-border_border >> select', { value: borderStyle.dotted } );
+				await editor.setSelectControlValue( 'border_border', borderStyle.dotted );
 				await editor.setDimensionsValue( 'border_width', '12' );
 				await editor.setColorControlValue( colors.purple.hex, 'border_color' );
 				await editor.setDimensionsValue( 'border_radius', '30' );

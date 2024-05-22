@@ -34,7 +34,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 
 	await editor.setBackgroundColor( '#ef9595', sectionID, false );
 	await editor.activatePanelTab( 'layout' );
-	await page.selectOption( '.elementor-control-layout select', 'boxed' );
+	await editor.setSelectControlValue( 'layout', 'boxed' );
 
 	const spacerID = await editor.addWidget( 'spacer', sectionID, true );
 	await editor.selectElement( spacerID );
@@ -54,7 +54,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 
 	// Act.
 	await editor.selectElement( sectionID );
-	await page.locator( '.elementor-control-stretch_section .elementor-switch' ).click();
+	await editor.setSwitcherControlValue( 'stretch_section', true );
 
 	// Assert (Stretched).
 	expect( await sectionElement.screenshot( {
