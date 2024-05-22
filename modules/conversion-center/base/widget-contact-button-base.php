@@ -125,6 +125,21 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_advanced_tab();
 	}
 
+	const BOX_SHADOW_FIELDS_OPTIONS = [
+		'box_shadow_type' => [
+			'default' => 'yes',
+		],
+		'box_shadow' => [
+			'default' => [
+				'horizontal' => 4,
+				'vertical' => 4,
+				'blur' => 10,
+				'spread' => 0,
+				'color' => 'rgba(0,0,0,0.15)',
+			],
+		],
+	];
+
 	private function social_media_controls(): void {
 
 		$this->add_control(
@@ -740,6 +755,7 @@ JS;
 					'medium' => esc_html__( 'Medium', 'elementor' ),
 					'large' => esc_html__( 'Large', 'elementor' ),
 				],
+				'separator' => 'after',
 			]
 		);
 
@@ -887,6 +903,7 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-bg: {{VALUE}}',
 					],
+					'separator' => 'after',
 				]
 			);
 
@@ -895,25 +912,12 @@ JS;
 
 		$this->end_controls_tabs();
 
-		$this->add_control(
-			'style_chat_button_box_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'style_chat_button_box_shadow',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button-shadow',
-			]
-		);
-
-		$this->add_control(
-			'style_chat_button_animation_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
@@ -923,6 +927,7 @@ JS;
 				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -1006,13 +1011,6 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_top_bar_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
 		if ( $config['style']['has_platform_colors'] ) {
 			$this->add_control(
 				'style_top_bar_colors',
@@ -1024,6 +1022,7 @@ JS;
 						'default' => esc_html__( 'Default', 'elementor' ),
 						'custom' => esc_html__( 'Custom', 'elementor' ),
 					],
+					'separator' => 'before',
 				]
 			);
 		}
@@ -1033,7 +1032,7 @@ JS;
 			[
 				'label' => esc_html__( 'Name', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'separator' => false,
+				'separator' => ! $config['style']['has_platform_colors'] ? 'before' : false,
 			]
 		);
 
@@ -1474,13 +1473,6 @@ JS;
 
 		if ( $config['style']['contact_section']['has_buttons_spacing'] ) {
 
-			$this->add_control(
-				'style_contact_buttons_spacing_divider',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
-
 			$this->add_responsive_control(
 				'style_contact_buttons_spacing',
 				[
@@ -1504,6 +1496,7 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-gap: {{SIZE}}{{UNIT}}',
 					],
+					'separator' => 'before',
 				]
 			);
 		}
@@ -1514,6 +1507,7 @@ JS;
 				[
 					'name' => 'style_contact_icons_box_shadow',
 					'selector' => '{{WRAPPER}} .e-contact-buttons__contact-box-shadow',
+					'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 				]
 			);
 		}
@@ -1560,13 +1554,6 @@ JS;
 		}
 
 		if ( $config['style']['contact_section']['has_chat_box_animation'] ) {
-			$this->add_control(
-				'style_contact_animation_divider',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
-
 			$this->chat_box_animation_controls();
 		}
 
@@ -1605,13 +1592,6 @@ JS;
 				]
 			);
 
-			$this->add_control(
-				'style_contact_button_bar_hr',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
-
 			$this->add_responsive_control(
 				'style_contact_button_bar_padding',
 				[
@@ -1625,6 +1605,7 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-button-bar-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
+					'separator' => 'before',
 				]
 			);
 		}
@@ -1766,6 +1747,7 @@ JS;
 				'label' => esc_html__( 'Open Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -1889,6 +1871,7 @@ JS;
 			[
 				'name' => 'style_chat_box_box_shadow',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__content',
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
