@@ -15,21 +15,6 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsInternal );
 	}
 
-	defaultStates() {
-		return {
-			'': {
-				initialState: {},
-				reducers: {
-					create: this.commands.create.reducer,
-					delete: this.commands.delete.reducer,
-					empty: this.commands.empty.reducer,
-					populate: this.commandsInternal.populate.reducer,
-					settings: this.commandsInternal[ 'set-settings' ].reducer,
-				},
-			},
-		};
-	}
-
 	defaultUtils() {
 		return {
 			isValidChild: ( childModel, parentModel ) => parentModel.isValidChild( childModel ),
@@ -93,6 +78,18 @@ export default class Component extends ComponentBase {
 				return Object.values( pasteOptions ).some(
 					( opt ) => !! opt,
 				);
+			},
+			allowAddingWidgets() {
+				return elementor.config.document.panel.allow_adding_widgets ?? true;
+			},
+			showNavigator() {
+				return elementor.config.document.panel.show_navigator ?? true;
+			},
+			showCopyAndShareButton() {
+				return elementor.config.document.panel.show_copy_and_share ?? false;
+			},
+			getTitleForLibraryClose() {
+				return elementor.config.document.panel.library_close_title ?? '';
 			},
 		};
 	}

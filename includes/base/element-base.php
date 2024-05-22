@@ -286,6 +286,20 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Whether the element returns dynamic content.
+	 *
+	 * set to determine whether to cache the element output or not.
+	 *
+	 * @since 3.22.0
+	 * @access protected
+	 *
+	 * @return bool Whether to cache the element output.
+	 */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/**
 	 * Get child elements.
 	 *
 	 * Retrieve all the child elements of this element.
@@ -318,6 +332,21 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function get_default_args( $item = null ) {
 		return self::get_items( $this->default_args, $item );
+	}
+
+	/**
+	 * Get panel presets.
+	 *
+	 * Used for displaying the widget in the panel multiple times, but with different defaults values,
+	 * icon, title etc.
+	 *
+	 * @since 3.16.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_panel_presets() {
+		return [];
 	}
 
 	/**
@@ -415,6 +444,11 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$element_type = $this->get_type();
 
+		if ( $this->should_render_shortcode() ) {
+			echo '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			return;
+		}
+
 		/**
 		 * Before frontend element render.
 		 *
@@ -506,6 +540,34 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( 'elementor/frontend/after_render', $this );
+	}
+
+	protected function should_render_shortcode() {
+		$should_render_shortcode = apply_filters( 'elementor/element/should_render_shortcode', false );
+
+		if ( ! $should_render_shortcode ) {
+			return false;
+		}
+
+		$raw_data = $this->get_raw_data();
+
+		if ( ! empty( $raw_data['settings']['_element_cache'] ) ) {
+			return 'yes' === $raw_data['settings']['_element_cache'];
+		}
+
+		if ( $this->is_dynamic_content() ) {
+			return true;
+		}
+
+		$is_dynamic_content = apply_filters( 'elementor/element/is_dynamic_content', false, $raw_data, $this );
+
+		$has_dynamic_tag = ! empty( $raw_data['settings']['__dynamic__'] );
+
+		if ( $is_dynamic_content || $has_dynamic_tag ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -647,10 +709,10 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.3.0
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `add_render_attribute()` method instead.
 	 */
 	protected function _add_render_attributes() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::add_render_attributes()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'add_render_attributes()' );
 
 		return $this->add_render_attributes();
 	}
@@ -683,7 +745,13 @@ abstract class Element_Base extends Controls_Stack {
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
-				$class_settings[ $setting_key ] = $setting;
+				if ( isset( $controls[ $setting_key ]['classes_dictionary'][ $setting ] ) ) {
+					$value = $controls[ $setting_key ]['classes_dictionary'][ $setting ];
+				} else {
+					$value = $setting;
+				}
+
+				$class_settings[ $setting_key ] = $value;
 			}
 		}
 
@@ -801,7 +869,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateZ_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate', 'elementor' ),
+					'label' => esc_html__( 'Rotate', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -839,7 +907,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateX_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate X', 'elementor' ),
+					'label' => esc_html__( 'Rotate X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -862,7 +930,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateY_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate Y', 'elementor' ),
+					'label' => esc_html__( 'Rotate Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -885,11 +953,10 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_perspective_effect{$tab}",
 				[
-					'label' => esc_html__( 'Perspective', 'elementor' ),
+					'label' => esc_html__( 'Perspective', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 1000,
 						],
 					],
@@ -923,7 +990,7 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'range' => [
 						'%' => [
 							'min' => -100,
@@ -949,7 +1016,7 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 					'range' => [
 						'%' => [
 							'min' => -100,
@@ -1002,7 +1069,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1025,7 +1091,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1048,7 +1113,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1081,7 +1145,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_skewX_effect{$tab}",
 				[
-					'label' => esc_html__( 'Skew X', 'elementor' ),
+					'label' => esc_html__( 'Skew X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -1103,7 +1167,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_skewY_effect{$tab}",
 				[
-					'label' => esc_html__( 'Skew Y', 'elementor' ),
+					'label' => esc_html__( 'Skew Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -1166,13 +1230,14 @@ abstract class Element_Base extends Controls_Stack {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 						'type' => Controls_Manager::SLIDER,
 						'device_args' => $default_unit_values_ms,
 						'range' => [
 							'px' => [
-								'min' => 100,
+								'min' => 0,
 								'max' => 10000,
+								'step' => 100,
 							],
 						],
 						'selectors' => [
@@ -1292,8 +1357,11 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_control(
 				'hide_' . $breakpoint_key,
 				[
-					/* translators: %s: Device name. */
-					'label' => sprintf( __( 'Hide On %s', 'elementor' ), $label ),
+					'label' => sprintf(
+						/* translators: %s: Device name. */
+						esc_html__( 'Hide On %s', 'elementor' ),
+						$label
+					),
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',
 					'prefix_class' => 'elementor-',
@@ -1333,10 +1401,10 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `print_content()` method instead.
 	 */
 	protected function _print_content() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::print_content()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'print_content()' );
 
 		$this->print_content();
 	}

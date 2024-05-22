@@ -1,0 +1,24 @@
+name: Post To Slack Created RC Release
+description: Post a message to a Slack channel
+
+inputs:
+  SLACK_BOT_TOKEN:
+    description: 'The Slack token to use'
+    required: true
+  SLACK_TAG_CHANNELS:
+    description: 'The Slack channel to post to'
+    required: true
+  PAYLOAD:
+    description: 'The payload to send to Slack'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+      - name: Post to a Slack channel
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: ${{ inputs.SLACK_TAG_CHANNELS }}
+          payload: ${{ inputs.PAYLOAD }}
+        env:
+          SLACK_BOT_TOKEN: ${{ inputs.SLACK_BOT_TOKEN }}

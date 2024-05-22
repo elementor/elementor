@@ -1,6 +1,8 @@
 name: Elementor Tests / Init
 
-on: [push, pull_request_target]
+on:
+  pull_request:
+  merge_group:
 
 jobs:
   run:
@@ -9,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Block non-permitted users
         uses: StyleShit/action-whitelist-users@b8abcef5472afd0c7bcfaadf08c70a082437e459
         with:

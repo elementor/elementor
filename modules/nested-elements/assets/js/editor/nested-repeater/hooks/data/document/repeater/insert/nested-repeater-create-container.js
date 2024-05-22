@@ -1,5 +1,8 @@
 import Base from '../../../base';
-import { extractNestedItemTitle } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	extractNestedItemTitle,
+	shouldUseAtomicRepeaters,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 /**
  * Hook responsible for:
@@ -38,6 +41,20 @@ export class NestedRepeaterCreateContainer extends Base {
 				edit: false, // Not losing focus.
 			},
 		} );
+
+		const widgetType = container.settings.get( 'widgetType' );
+
+		if ( shouldUseAtomicRepeaters( widgetType ) ) {
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/atomic-repeater', {
+					detail: {
+						container,
+						action: {
+							type: 'create',
+						},
+					} },
+				) );
+		}
 	}
 }
 

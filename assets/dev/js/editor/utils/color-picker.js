@@ -9,12 +9,15 @@ export default class ColorPicker extends elementorModules.Module {
 		return {
 			picker: {
 				theme: 'monolith',
-				position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
+				position: 'bottom-middle',
 				components: {
 					opacity: true,
 					hue: true,
 					interaction: {
 						input: true,
+						hex: true,
+						rgba: true,
+						hsla: true,
 					},
 				},
 			},
@@ -44,7 +47,8 @@ export default class ColorPicker extends elementorModules.Module {
 		this.picker
 			.on( 'change', () => this.onPickerChange() )
 			.on( 'clear', () => this.onPickerClear() )
-			.on( 'show', () => this.onPickerShow() );
+			.on( 'show', () => this.onPickerShow() )
+			.on( 'hide', () => this.onPickerHide() );
 
 		this.$pickerAppContainer = jQuery( this.picker.getRoot().app );
 
@@ -115,7 +119,7 @@ export default class ColorPicker extends elementorModules.Module {
 	createClearButton() {
 		const { classes } = this.getSettings();
 
-		this.$clearButton = jQuery( '<div>', { class: classes.clearButton + ' ' + classes.pickerTool } )
+		this.$clearButton = jQuery( '<button>', { class: classes.clearButton + ' ' + classes.pickerTool } )
 			.html( '<i class="eicon-undo"></i>' );
 
 		this.$clearButton.on( 'click', () => this.picker._clearColor() );
@@ -172,12 +176,23 @@ export default class ColorPicker extends elementorModules.Module {
 
 	onPickerShow() {
 		const { result: resultInput } = this.picker.getRoot().interaction;
+		const onPickerShow = this.getSettings( 'onPickerShow' );
+
+		if ( onPickerShow ) {
+			onPickerShow();
+		}
 
 		setTimeout( () => {
 			resultInput.select();
-
-			this.picker._recalc = true;
 		}, 100 );
+	}
+
+	onPickerHide() {
+		const onPickerHide = this.getSettings( 'onPickerHide' );
+
+		if ( onPickerHide ) {
+			onPickerHide();
+		}
 	}
 
 	onAddButtonClick() {

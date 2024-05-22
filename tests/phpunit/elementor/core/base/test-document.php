@@ -226,7 +226,7 @@ class Test_Document extends Elementor_Test_Base {
 		wp_set_current_user( $before_user->ID );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		remove_action( 'elementor/element/section/section_layout/after_section_start', [ __CLASS__, 'add_external_control' ] );

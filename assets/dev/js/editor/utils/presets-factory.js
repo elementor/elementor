@@ -15,7 +15,7 @@ presetsFactory = {
 	},
 
 	getAbsolutePresetValues( preset ) {
-		var clonedPreset = elementorCommon.helpers.cloneObject( preset ),
+		var clonedPreset = structuredClone( preset ),
 			presetDictionary = this.getPresetsDictionary();
 
 		_.each( clonedPreset, function( unitValue, unitIndex ) {
@@ -28,7 +28,7 @@ presetsFactory = {
 	},
 
 	getPresets( columnsCount, presetIndex ) {
-		var presets = elementorCommon.helpers.cloneObject( elementor.config.elements.section.presets );
+		var presets = structuredClone( elementor.config.elements.section.presets );
 
 		if ( columnsCount ) {
 			presets = presets[ columnsCount ];
@@ -45,6 +45,18 @@ presetsFactory = {
 		var parsedStructure = this.getParsedStructure( structure );
 
 		return this.getPresets( parsedStructure.columnsCount, parsedStructure.presetIndex );
+	},
+
+	// Grid preset looks like 1-2 ( 1 rows, 2 columns )
+	getParsedGridStructure( selectedStructure ) {
+		selectedStructure += ''; // Make sure this is a string
+
+		const chunks = selectedStructure.split( '-' );
+
+		return {
+			rows: chunks[ 0 ],
+			columns: chunks[ 1 ],
+		};
 	},
 
 	getParsedStructure( structure ) {
@@ -214,7 +226,7 @@ presetsFactory = {
 				</svg>
 			`,
 			r100: `
-				<svg viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<svg class="exclude-rtl-scale" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<title>${ __( 'Direction Row', 'elementor' ) }</title>
 					<rect width="89" height="44"/>
 					<path d="M47.856 23.352L45.948 25.296C45.796 25.448 45.72 25.624 45.72 25.824C45.72 26.024 45.796 26.2 45.948 26.352C46.1 26.504 46.276 26.58 46.476 26.58C46.676 26.58 46.852 26.504 47.004 26.352L50.256 23.004C50.408 22.852 50.484 22.676 50.484 22.476C50.484 22.276 50.408 22.1 50.256 21.948L47.052 18.804C46.9 18.652 46.724 18.576 46.524 18.576C46.324 18.576 46.148 18.652 45.996 18.804C45.844 18.956 45.768 19.132 45.768 19.332C45.768 19.524 45.844 19.696 45.996 19.848L48.048 21.852L40.248 21.804C40.048 21.804 39.872 21.88 39.72 22.032C39.576 22.176 39.504 22.348 39.504 22.548C39.504 22.748 39.576 22.924 39.72 23.076C39.872 23.228 40.048 23.304 40.248 23.304L47.856 23.352Z"/>
@@ -247,6 +259,73 @@ presetsFactory = {
 			'33-33-33-33-33-33',
 			'33-33-33-33-66',
 			'66-33-33-66',
+		];
+	},
+
+	generateContainerGridPreset( preset ) {
+		const presets = {
+			'1-2': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g opacity="0.8">
+						<rect x="0.941406" y="1" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M45.9414 1.12402V45.3768" stroke="#515962" stroke-dasharray="3 3"/>
+					</g>
+				</svg>
+			`,
+			'2-1': `
+				<svg width="92" height="47" viewBox="0 0 92 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="91.2227" y="1.35059" width="44.5" height="90" transform="rotate(90 91.2227 1.35059)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+					<path d="M91.0957 23.6006L1.34961 23.6006" stroke="#515962" stroke-dasharray="3 3"/>
+				</svg>
+			`,
+			'1-3': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g opacity="0.8">
+						<rect x="0.941895" y="0.944336" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M30.9419 1.19824V45.4443" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M60.9419 1.19824V45.4443" stroke="#515962" stroke-dasharray="3 3"/>
+					</g>
+				</svg>
+			`,
+			'3-1': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g opacity="0.8">
+						<rect x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M90.6155 15.5654L1.26713 15.5654" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M90.6155 30.1875L1.26713 30.1875" stroke="#515962" stroke-dasharray="3 3"/>
+					</g>
+				</svg>
+			`,
+			'2-2': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g opacity="0.8">
+						<rect x="0.941895" y="0.944336" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M45.9419 1.19727V45.4443" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M90.9419 23.3213L0.941896 23.3213" stroke="#515962" stroke-dasharray="3 3"/>
+					</g>
+				</svg>
+			`,
+			'2-3': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect opacity="0.8" x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+					<path d="M0.941895 22.3711L90.9419 22.3711" stroke="#515962" stroke-dasharray="3 3"/>
+					<path d="M60.9419 45.4443L60.9419 1.56836" stroke="#515962" stroke-dasharray="3 3"/>
+					<path d="M30.9419 45.4443L30.9419 1.56836" stroke="#515962" stroke-dasharray="3 3"/>
+				</svg>
+			`,
+		};
+
+		return presets[ preset ];
+	},
+
+	getContainerGridPresets() {
+		return [
+			'1-2',
+			'2-1',
+			'1-3',
+			'3-1',
+			'2-2',
+			'2-3',
 		];
 	},
 };

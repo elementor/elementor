@@ -30,7 +30,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
-		} );
+			} );
 	}
 
 	attachDocumentToPreview( document, args ) {
@@ -39,7 +39,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
 			if ( ! document ) {
-				return reject();
+				return reject( `Can't attach preview, there is no open document.` );
 			}
 
 			if ( ! document.config.elements ) {
@@ -54,19 +54,16 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 					elementor.onPreviewElNotFound();
 				}
 
-				return reject();
+				return reject( `Can't attach preview to document '${ document.id }', element '${ selector }' was not found.` );
 			}
 
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
 
 			if ( ! isInitialDocument ) {
-				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+				elementor.documents.getCurrent().$element.addClass( 'elementor-embedded-editor' );
 			}
 
-			$e.internal( 'document/elements/populate', {
-				document,
-				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
-			} );
+			elementor.initElements();
 
 			elementor.initPreviewView( document );
 

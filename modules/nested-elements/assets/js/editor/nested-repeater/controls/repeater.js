@@ -23,6 +23,16 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		};
 	}
 
+	onChildviewClickDuplicate( childView ) {
+		$e.run( 'document/repeater/duplicate', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			index: childView._index,
+		} );
+
+		this.toggleMinRowsClass();
+	}
+
 	updateActiveRow() {
 		if ( ! this.currentEditableChild ) {
 			return;

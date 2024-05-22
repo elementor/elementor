@@ -13,21 +13,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Files Upload Handler
  *
- * Deprecated, use Elementor\Core\Files\Uploads_Manager instead.
- *
- * @deprecated 3.5.0
+ * @deprecated 3.5.0 Use `Elementor\Core\Files\Uploads_Manager` class instead.
  */
 abstract class Files_Upload_Handler {
+
+	/**
+	 * @deprecated 3.5.0
+	 */
 	const OPTION_KEY = 'elementor_unfiltered_files_upload';
 
+	/**
+	 * @deprecated 3.5.0
+	 */
 	abstract public function get_mime_type();
 
+	/**
+	 * @deprecated 3.5.0
+	 */
 	abstract public function get_file_type();
 
 	/**
 	 * Is Elementor Media Upload
 	 *
-	 * @deprecated 3.5.0
+	 * @deprecated 3.5.0 Use `Elementor\Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled()` instead.
 	 *
 	 * @return bool
 	 */
@@ -40,7 +48,7 @@ abstract class Files_Upload_Handler {
 	/**
 	 * Is Enabled
 	 *
-	 * @deprecated 3.5.0
+	 * @deprecated 3.5.0 Use `Elementor\Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled()` instead.
 	 *
 	 * @return bool
 	 */
@@ -50,6 +58,9 @@ abstract class Files_Upload_Handler {
 		return Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled();
 	}
 
+	/**
+	 * @deprecated 3.5.0 Use `Elementor\Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled()` instead.
+	 */
 	final public function support_unfiltered_files_upload( $existing_mimes ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Plugin::$instance->uploads_manager->support_unfiltered_file_uploads()' );
 
@@ -59,7 +70,7 @@ abstract class Files_Upload_Handler {
 	/**
 	 * handle_upload_prefilter
 	 *
-	 * @deprecated 3.5.0
+	 * @deprecated 3.5.0 Use `Elementor\Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload()` instead.
 	 *
 	 * @param $file
 	 *
@@ -91,7 +102,7 @@ abstract class Files_Upload_Handler {
 	/**
 	 * file_sanitizer_can_run
 	 *
-	 * @deprecated 3.5.0
+	 * @deprecated 3.5.0 Use `Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run()` instead.
 	 *
 	 * @return bool
 	 */
@@ -109,7 +120,7 @@ abstract class Files_Upload_Handler {
 	 * ref: https://core.trac.wordpress.org/ticket/39550
 	 * ref: https://core.trac.wordpress.org/ticket/40175
 	 *
-	 * @deprecated 3.5.0
+	 * @deprecated 3.5.0 Use `Elementor\Plugin::$instance->uploads_manager->check_filetype_and_ext()` instead.
 	 *
 	 * @param $data
 	 * @param $file

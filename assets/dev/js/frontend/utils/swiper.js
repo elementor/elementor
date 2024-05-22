@@ -7,16 +7,16 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
-		// The Swiper will overlap the column width when applying custom margin values on the column.
-		jQuery( container ).closest( '.elementor-widget-wrap' ).addClass( 'e-swiper-container' );
+		if ( container instanceof jQuery ) {
+			container = container[ 0 ];
+		}
 
-		jQuery( container ).closest( '.elementor-widget' ).addClass( 'e-widget-swiper' );
+		// The Swiper will overlap the column width when applying custom margin values on the column.
+		container.closest( '.elementor-widget-wrap' )?.classList.add( 'e-swiper-container' );
+
+		container.closest( '.elementor-widget' )?.classList.add( 'e-widget-swiper' );
 
 		return new Promise( ( resolve ) => {
-			if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
-				return resolve( this.createSwiperInstance( container, this.config ) );
-			}
-
 			elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' )
 				.then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
 		} );
@@ -27,7 +27,7 @@ export default class Swiper {
 
 		SwiperSource.prototype.adjustConfig = this.adjustConfig;
 
-		return new SwiperSource( container[ 0 ], config );
+		return new SwiperSource( container, config );
 	}
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)

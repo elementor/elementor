@@ -16,8 +16,6 @@ import {
 } from '@elementor/e-icons';
 
 module.exports = elementorModules.ViewModule.extend( {
-	oldAspectRatio: null,
-
 	oldAnimation: null,
 
 	swiper: null,
@@ -29,11 +27,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
 			classes: {
-				aspectRatio: 'elementor-aspect-ratio-%s',
 				item: 'elementor-lightbox-item',
 				image: 'elementor-lightbox-image',
 				videoContainer: 'elementor-video-container',
-				videoWrapper: 'elementor-fit-aspect-ratio',
+				videoWrapper: 'elementor-video-wrapper',
 				playButton: 'elementor-custom-embed-play',
 				playButtonIcon: 'fa',
 				playing: 'elementor-playing',
@@ -110,8 +107,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			closeButtonOptions: {
 				...closeIcon,
 				attributes: {
-					tabindex: 0,
 					role: 'button',
+					tabindex: 0,
 					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
 				},
 			},
@@ -174,24 +171,24 @@ module.exports = elementorModules.ViewModule.extend( {
 
 				break;
 			case 'image': {
-					const slides = [ {
-						image: options.url,
-						index: 0,
-						title: options.title,
-						description: options.description,
-						hash: options.hash,
-					} ];
+				const slides = [ {
+					image: options.url,
+					index: 0,
+					title: options.title,
+					description: options.description,
+					hash: options.hash,
+				} ];
 
-					options.slideshow = {
-						slides,
-						swiper: {
-							loop: false,
-							pagination: false,
-						},
-					};
-					self.setSlideshowContent( options.slideshow );
-					break;
-				}
+				options.slideshow = {
+					slides,
+					swiper: {
+						loop: false,
+						pagination: false,
+					},
+				};
+				self.setSlideshowContent( options.slideshow );
+				break;
+			}
 			case 'slideshow':
 				self.setSlideshowContent( options.slideshow );
 				break;
@@ -240,7 +237,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setHTMLContent( html ) {
 		if ( window.elementorCommon ) {
-			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent()', '3.1.4' );
 		}
 
 		this.getModal().setMessage( html );
@@ -270,16 +267,18 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
+			aspectRatio = this.getRatioDictionry( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
 			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
-			$videoWrapper = $( '<div>', { class: classes.videoWrapper } );
+			$videoWrapper = $( '<div>', {
+				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,
+				style: '--video-aspect-ratio: ' + aspectRatio },
+			);
 
 		$videoWrapper.append( $videoElement );
 		$videoContainer.append( $videoWrapper );
 
 		const modal = this.getModal();
 		modal.setMessage( $videoContainer );
-
-		this.setVideoAspectRatio();
 
 		const onHideMethod = modal.onHide;
 
@@ -289,8 +288,33 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.$buttons = jQuery();
 			this.focusedButton = null;
 
-			modal.getElements( 'message' ).removeClass( 'elementor-fit-aspect-ratio' );
+			modal.getElements( 'message' ).removeClass( 'elementor-video-wrapper' );
 		};
+	},
+
+	getRatioDictionry( ratio ) {
+		const aspectRatiosDictionary = {
+			219: 2.33333, // 21/9
+			169: 1.77777, // 16/9
+			43: 1.33333, // 4/3
+			32: 1.5, // 3/2
+			11: 1, // 1/1
+			916: 0.5625, // 9/16
+		};
+
+		return aspectRatiosDictionary[ ratio ] || ratio;
+	},
+
+	getRatioType( ratio ) {
+		let type = '';
+
+		if ( 1 === ratio ) {
+			type = 'square';
+		} else {
+			type = ( ratio < 1 ) ? 'portrait' : 'landscape';
+		}
+
+		return type;
 	},
 
 	getShareLinks() {
@@ -328,7 +352,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		$.each( socialNetworks, ( key, data ) => {
 			const networkLabel = data.label,
 				$link = $( '<a>', { href: this.createShareLink( key, itemUrl, $activeSlide.attr( 'data-e-action-hash' ) ), target: '_blank' } ).text( networkLabel ),
-				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
+				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key, 'aria-hidden': 'true' } );
 
 			$link.prepend( $socialNetworkIconElement );
 			$linkList.append( $link );
@@ -382,6 +406,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			elements.$iconShare = $( iconElement, {
 				class: slideshowClasses.iconShare,
 				role: 'button',
+				tabindex: 0,
 				'aria-label': i18n.share,
 				'aria-expanded': false,
 			} ).append( $( '<span>' ) );
@@ -406,6 +431,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				showZoomElements = [],
 				showZoomAttrs = {
 					role: 'switch',
+					tabindex: 0,
 					'aria-checked': false,
 					'aria-label': i18n.zoom,
 				},
@@ -440,6 +466,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				fullScreenElements = [],
 				fullScreenAttrs = {
 					role: 'switch',
+					tabindex: 0,
 					'aria-checked': false,
 					'aria-label': i18n.fullscreen,
 				},
@@ -690,11 +717,13 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			const $prevButtonIcon = this.isFontIconSvgExperiment ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon } ),
-				$nextButtonIcon = this.isFontIconSvgExperiment ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon } );
+			const $prevButtonIcon = this.isFontIconSvgExperiment ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon, 'aria-hidden': 'true' } ),
+				$nextButtonIcon = this.isFontIconSvgExperiment ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon, 'aria-hidden': 'true' } ),
+				$prevButtonLabel = $( '<span>', { class: 'screen-reader-text' } ).html( i18n.previous ),
+				$nextButtonLabel = $( '<span>', { class: 'screen-reader-text' } ).html( i18n.next );
 
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $prevButtonIcon );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $nextButtonIcon );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).append( $prevButtonIcon, $prevButtonLabel );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).append( $nextButtonIcon, $nextButtonLabel );
 
 			$container.append(
 				$nextButton,
@@ -744,8 +773,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			if ( ! isSingleSlide ) {
 				swiperOptions.navigation = {
-					prevEl: $prevButton,
-					nextEl: $nextButton,
+					prevEl: $prevButton[ 0 ],
+					nextEl: $nextButton[ 0 ],
 				};
 			}
 
@@ -759,8 +788,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			// Expose the swiper instance in the frontend
 			$container.data( 'swiper', this.swiper );
-
-			this.setVideoAspectRatio();
 
 			this.playSlideVideo();
 
@@ -846,24 +873,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 	},
 
-	setVideoAspectRatio( aspectRatio ) {
-		aspectRatio = aspectRatio || this.getSettings( 'modalOptions.videoAspectRatio' );
-
-		const $widgetContent = this.getModal().getElements( 'widgetContent' ),
-			oldAspectRatio = this.oldAspectRatio,
-			aspectRatioClass = this.getSettings( 'classes.aspectRatio' );
-
-		this.oldAspectRatio = aspectRatio;
-
-		if ( oldAspectRatio ) {
-			$widgetContent.removeClass( aspectRatioClass.replace( '%s', oldAspectRatio ) );
-		}
-
-		if ( aspectRatio ) {
-			$widgetContent.addClass( aspectRatioClass.replace( '%s', aspectRatio ) );
-		}
-	},
-
 	getSlide( slideState ) {
 		return jQuery( this.swiper.slides ).filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
 	},
@@ -894,8 +903,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
+			aspectRatio = this.getRatioDictionry( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
 			$videoContainer = jQuery( '<div>', { class: classes.videoContainer + ' ' + classes.invisible } ),
-			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
+			$videoWrapper = jQuery( '<div>', {
+				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,
+				style: '--video-aspect-ratio: ' + aspectRatio },
+			),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
 		let videoType, apiProvider;

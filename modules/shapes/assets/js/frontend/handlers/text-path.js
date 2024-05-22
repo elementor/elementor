@@ -1,4 +1,5 @@
 import { escapeHTML } from 'elementor-frontend/utils/utils';
+import DOMPurify from 'dompurify';
 
 export default class TextPathHandler extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
@@ -58,7 +59,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		return fetch( url )
 			.then( ( res ) => res.text() )
 			.then( ( svg ) => {
-				this.elements.pathContainer.innerHTML = svg;
+				this.elements.pathContainer.innerHTML = DOMPurify.sanitize( svg );
 
 				// Re-initialize the elements, so the SVG tag will be added.
 				this.elements = this.getDefaultElements();
@@ -163,10 +164,11 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 */
 	setText( newText ) {
 		const {
-			url,
 			is_external: isExternal,
 			nofollow,
 		} = this.getElementSettings().link;
+
+		const { linkUrl: url } = this.elements.pathContainer.dataset;
 
 		const target = isExternal ? '_blank' : '',
 			rel = nofollow ? 'nofollow' : '';
@@ -174,6 +176,9 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		// Add link attributes.
 		if ( url ) {
 			newText = `<a href="${ escapeHTML( url ) }" rel="${ rel }" target="${ target }">${ escapeHTML( newText ) }</a>`;
+			newText = DOMPurify.sanitize( newText, {
+				ADD_ATTR: [ 'target' ],
+			} );
 		}
 
 		// Set the text.

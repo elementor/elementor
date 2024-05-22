@@ -68,12 +68,15 @@ class Control_Popover_Toggle extends Base_Data_Control {
 					<span class="elementor-screen-only"><?php echo esc_html__( 'Edit', 'elementor' ); ?></span>
 				</label>
 				<input id="<?php $this->print_control_uid(); ?>-default" class="elementor-control-popover-toggle-reset" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
-				<label class="elementor-control-popover-toggle-reset-label tooltip-target" for="<?php $this->print_control_uid(); ?>-default" data-tooltip="<?php echo esc_html__( 'Back to default', 'elementor' ); ?>" data-tooltip-pos="s">
+				<label class="elementor-control-popover-toggle-reset-label tooltip-target" for="<?php $this->print_control_uid(); ?>-default" data-tooltip="<?php echo esc_attr__( 'Back to default', 'elementor' ); ?>" data-tooltip-pos="s">
 					<i class="eicon-undo" aria-hidden="true"></i>
 					<span class="elementor-screen-only"><?php echo esc_html__( 'Back to default', 'elementor' ); ?></span>
 				</label>
 			</div>
 		</div>
+		<# if ( data.description ) { #>
+			<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
 		<?php
 	}
 }

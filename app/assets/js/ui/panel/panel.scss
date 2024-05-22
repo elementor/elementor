@@ -1,7 +1,7 @@
-$eps-panel-header-background-color: theme-colors(light);
-$eps-panel-header-dark-background-color: dark-tints(600);
-$eps-panel-body-background-color: rgba(theme-colors(light), $opacity-05);
-$eps-panel-body-dark-background-color: rgba(dark-tints(600), $opacity-05);
+$eps-panel-header-background-color: transparent;
+$eps-panel-header-dark-background-color: transparent;
+$eps-panel-body-background-color: transparent;
+$eps-panel-body-dark-background-color: transparent;
 
 $root: eps-panel;
 

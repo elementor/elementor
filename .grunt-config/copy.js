@@ -28,7 +28,6 @@ const getBuildFiles = [
 	'!docs/**',
 	'!Gruntfile.js',
 	'!local-site/**',
-	'!logo.png',
 	'!modules/**/assets/**',
 	'!nightwatch.conf.js',
 	'!node_modules/**',

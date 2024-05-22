@@ -7,8 +7,7 @@
 	.elementor-panel-navigation-tab {
 		text-align: center;
 		padding: 10px 0;
-		font-size: 11px;
-		text-transform: uppercase;
+		font-size: $font-size-sm;
 		cursor: pointer;
 	}
 }
@@ -35,15 +34,15 @@
 
 	.eicon-loading {
 		font-size: 25px;
-		color: $editor-info;
+		color: var(--e-a-color-txt-accent);
 	}
 }
 
 #elementor-panel-elements-search-area {
+	background-color: var(--e-a-bg-default);
 	position: sticky;
 	top: 0;
-	padding: 10px;
-	background-color: $editor-background;
+	padding: 15px;
 	z-index: $first-layer;
 }
 
@@ -52,42 +51,43 @@
 }
 
 #elementor-panel-elements-search-input {
-	background-color: rgba(255,255,255,.7);
 	font-size: 11px;
-	@include padding(10px, 10px, 10px, 29px);
+	padding-block: 10px;
+	padding-inline: 29px 10px;
 	font-style: italic;
-	color: $editor-light;
-	border: none;
+	border: var(--e-a-border-bold);
+	border-radius: 0;
 	transition: all 1s;
-	border-radius: 3px;
 	appearance: none;
 
 	+ i {
 		position: absolute;
 		@include start(10px);
 		top: 50%;
-		color: $editor-light;
+		color: var(--e-a-color-txt-disabled);
 		transform: translateY(-50%);
 	}
 
 	&:focus {
-		background-color: rgba(255,255,255,1);
-		@include padding-end(15px);
+		border-color: var(--e-a-border-color-focus);
+		padding-inline-end: 15px;
 	}
 }
 
 .elementor-panel {
 
 	.elementor-element {
+		font-family: var(--e-a-font-family);
+		color: var(--e-a-color-txt);
+		line-height: 1;
+		text-align: center;
+		border: var(--e-a-border-bold);
 		border-radius: 3px;
-		background-color: #fff;
 		cursor: move;
 		position: relative;
-
-		&-wrapper {
-			text-align: center;
-			box-sizing: border-box;
-		}
+		transition: var(--e-a-transition-hover);
+		width: 100%;
+		background-color: transparent;
 
 		&--promotion {
 
@@ -97,42 +97,43 @@
 			}
 		}
 
-		.icon,
-		.title {
-			color: $editor-darker;
-			transition: $transition-hover;
-		}
+		&:hover,
+		&:focus {
+			background-color: var(--e-a-bg-hover);
+			border-color: var(--e-a-border-color-bold);
 
-		&:hover {
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-
-			.icon, .title {
-				color: $editor-accent;
+			> .eicon-lock {
+				color: var(--e-a-color-accent);
 			}
 		}
 
 		.icon {
 			font-size: 28px;
-			padding-top: 15px;
+			padding-block-start: 15px;
 		}
 
-		.elementor-element-title-wrapper {
-			display: table;
-			width: 100%;
+		.title-wrapper {
+			display: flex;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
 		}
 
 		.title {
-			font-size: 11px;
-			display: table-cell;
-			vertical-align: middle;
-			height: 40px;
+			font-size: 12px;
 		}
 
 		> .eicon-lock {
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: $editor-background;
+			color: var(--e-a-color-txt-disabled);
+		}
+
+		&:active {
+			background-color: var(--e-a-bg-hover);
+			border-color: var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
 		}
 	}
 }
@@ -141,9 +142,9 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: #fff;
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
+	background-color: var(--e-a-bg-default);
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
 
 	&:after {
 		content: '';
@@ -152,7 +153,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, #fff);
+		border-inline-end-color: var(--e-a-bg-default);
 	}
 
 	&__title {
@@ -164,19 +165,81 @@
 		&-header {
 			display: flex;
 			padding: 20px;
-			color: $editor-darkest;
-			border-bottom: 1px solid $editor-background;
+			border-block-end: var(--e-a-border);
 			font-weight: 500;
 
 			.eicon-pro-icon {
 				flex-grow: 1;
-				@include margin-start(10px);
+				margin-inline-start: 10px;
+				font-size: 14px;
+				color: var(--e-a-color-accent);
+			}
+
+			.eicon-close {
+				cursor: pointer;
+				color: var(--e-a-color-txt-disabled);
+
+				&:hover {
+					color: var(--e-a-color-txt-muted);
+				}
+			}
+		}
+
+		&-message {
+			padding: 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 20px;
+		}
+
+		&-button {
+			padding: 7px 25px;
+			font-size: 12px;
+		}
+	}
+}
+
+.dialog-tooltip-widget {
+	position: absolute;
+	width: 300px;
+	z-index: 1;
+	background-color: $editor-background;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 15px;
+		@include end(100%);
+		transform: scaleY(0.7);
+		border: 10px solid transparent;
+		border-inline-end-color: $editor-background;
+	}
+
+	&__title {
+		font-size: 14px;
+	}
+
+	.dialog-tooltip {
+		&-header {
+			display: flex;
+			padding: 20px 20px 0;
+			color: $editor-darkest;
+			border-block-end: 1px solid $editor-background;
+			font-weight: 500;
+
+			.eicon-pro-icon {
+				flex-grow: 1;
+				margin-inline-start: 10px;
 				font-size: 14px;
 				color: $editor-accent;
 			}
 
 			.eicon-close {
 				cursor: pointer;
+				margin-inline-start: auto;
 				color: $editor-light;
 			}
 		}
@@ -187,6 +250,7 @@
 
 		&-buttons-wrapper {
 			padding: 0 20px 20px 20px;
+			text-align: end;
 		}
 
 		&-button {
@@ -194,7 +258,7 @@
 			font-size: 12px;
 
 			&::-moz-focus-inner {
-				border: 0;
+			border: 0;
 			}
 		}
 	}

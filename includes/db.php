@@ -26,35 +26,35 @@ class DB {
 	/**
 	 * Post publish status.
 	 *
-	 * @deprecated 3.1.0 Use `Document::STATUS_PUBLISH` instead
+	 * @deprecated 3.1.0 Use `Document::STATUS_PUBLISH` const instead.
 	 */
 	const STATUS_PUBLISH = Document::STATUS_PUBLISH;
 
 	/**
 	 * Post draft status.
 	 *
-	 * @deprecated 3.1.0 Use `Document::STATUS_DRAFT` instead
+	 * @deprecated 3.1.0 Use `Document::STATUS_DRAFT` const instead.
 	 */
 	const STATUS_DRAFT = Document::STATUS_DRAFT;
 
 	/**
 	 * Post private status.
 	 *
-	 * @deprecated 3.1.0 Use `Document::STATUS_PRIVATE` instead
+	 * @deprecated 3.1.0 Use `Document::STATUS_PRIVATE` const instead.
 	 */
 	const STATUS_PRIVATE = Document::STATUS_PRIVATE;
 
 	/**
 	 * Post autosave status.
 	 *
-	 * @deprecated 3.1.0 Use `Document::STATUS_AUTOSAVE` instead
+	 * @deprecated 3.1.0 Use `Document::STATUS_AUTOSAVE` const instead.
 	 */
 	const STATUS_AUTOSAVE = Document::STATUS_AUTOSAVE;
 
 	/**
 	 * Post pending status.
 	 *
-	 * @deprecated 3.1.0 Use `Document::STATUS_PENDING` instead
+	 * @deprecated 3.1.0 Use `Document::STATUS_PENDING` const instead.
 	 */
 	const STATUS_PENDING = Document::STATUS_PENDING;
 
@@ -88,7 +88,7 @@ class DB {
 	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )` instead
+	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )` instead.
 	 * @access public
 	 *
 	 * @param int     $post_id           Post ID.
@@ -156,7 +156,7 @@ class DB {
 	 * Set whether the page is using Elementor or not.
 	 *
 	 * @since 1.5.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->set_is_build_with_elementor( $is_elementor )` instead
+	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->set_is_build_with_elementor( $is_elementor )` instead.
 	 * @access public
 	 *
 	 * @param int  $post_id      Post ID.
@@ -352,7 +352,7 @@ class DB {
 	 * Check whether the post was built with Elementor.
 	 *
 	 * @since 1.0.10
-	 * @deprecated 3.2.0 Use `Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()` instead
+	 * @deprecated 3.2.0 Use `Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()` instead.
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.

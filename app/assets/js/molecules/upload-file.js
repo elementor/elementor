@@ -11,8 +11,8 @@ export default function UploadFile( props ) {
 		baseClassName = 'e-app-upload-file',
 		classes = [ baseClassName, props.className ];
 
-		// For 'wp-media' type.
-		let frame;
+	// For 'wp-media' type.
+	let frame;
 
 	return (
 		<div className={ arrayToClassName( classes ) }>

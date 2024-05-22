@@ -67,7 +67,15 @@ class Widget_Html extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'html', 'code' ];
+		return [ 'html', 'code', 'embed', 'script' ];
+	}
+
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	public function show_in_panel() {
+		return User::is_current_user_can_use_custom_html();
 	}
 
 	/**
@@ -89,14 +97,14 @@ class Widget_Html extends Widget_Base {
 		$this->add_control(
 			'html',
 			[
-				'label' => '',
+				'label' => esc_html__( 'HTML Code', 'elementor' ),
 				'type' => Controls_Manager::CODE,
 				'default' => '',
 				'placeholder' => esc_html__( 'Enter your code', 'elementor' ),
-				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],
+				'is_editable' => User::is_current_user_can_use_custom_html(),
 			]
 		);
 

@@ -7,7 +7,7 @@
 	left: 0;
 	bottom: 0;
 	right: 0;
-	background: $editor-background-light;
+	background: var(--e-a-bg-default);
 	z-index: $editor-layer;
 }
 
@@ -22,34 +22,11 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
 
 	i {
-		color: $editor-lightest;
+		color: var(--e-a-color-txt-disabled);
 		font-size: 50px;
-	}
-}
-
-// Modal Confirm (the_content missing)
-#elementor-fatal-error-dialog {
-
-	button.dialog-ok {
-		color: $editor-info;
-	}
-
-	.dialog-header {
-		color: $editor-dark;
-	}
-}
-
-#elementor-flexbox-attention-dialog {
-
-	.dialog-cancel {
-		color: $editor-success;
-	}
-
-	.dialog-ok {
-		color: $editor-dark;
 	}
 }
 
@@ -59,32 +36,35 @@
 
 	&-icon {
 		width: 100px;
-		margin-right: 10px;
 	}
 
 	&-title {
-		margin-top: 20px;
+		margin-block-start: 20px;
 		font-size: 16px;
 		font-weight: bold;
 		line-height: 1.4;
 	}
 
 	&-message {
-		margin-top: 5px;
+		margin-block-start: 5px;
 		line-height: 1.8;
 		font-size: 11px;
 	}
 
-	.elementor-button.elementor-nerd-box-link {
-		background-color: $editor-accent;
-		color: #ffffff;
-		padding: 7px 25px;
-		margin-top: 20px;
-		box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 2px rgba(0, 0, 0, 0.1);
-		transition: .5s;
+	.elementor-button {
+		margin-block-start: 20px;
+	}
 
-		&:hover {
-			background-color: lighten($editor-accent, 10%);
+	&--upsale {
+		padding: 15px 30px 30px;
+
+		.elementor-nerd-box-title {
+			font-weight: 500;
+			line-height: 1.2;
+		}
+
+		.elementor-nerd-box-message {
+			line-height: 1.5;
 		}
 	}
 }
@@ -114,8 +94,8 @@
 	font-weight: bold;
 	font-size: 12px;
 	padding: 10px;
-	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-	margin-bottom: 15px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	margin-block-end: 15px;
 }
 
 .e-control-tools {
@@ -130,7 +110,7 @@
 	margin: 0 3px 0;
 	border: 0;
 	position: relative;
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
 
 	&:not(.e-control-tool-disabled) {
 		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
@@ -138,11 +118,11 @@
 	}
 
 	&-disabled {
-		background: $editor-background;
+		background: var(--e-a-bg-default);
 		pointer-events: none;
 
 		i {
-			color: #fff;
+			color: var(--e-a-color-txt-disabled);
 		}
 	}
 
@@ -151,15 +131,8 @@
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
-		color: $editor-dark;
+		color: var(--e-a-color-txt-default);
 		font-size: 13px;
-	}
-}
-
-#e-enable-unfiltered-files-dialog {
-
-	.dialog-confirm-ok {
-		color: $editor-success;
 	}
 }
 

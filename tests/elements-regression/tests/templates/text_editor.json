@@ -1,0 +1,151 @@
+{
+    "content": [
+        {
+            "id": "426b7899",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "72494fe3",
+                    "settings": {
+                        "editor": "<ul><li><strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/strong><\/li><li><em>Testing italic<\/em><\/li><li><span style=\"text-decoration: underline;\">Testing underline<\/span><\/li><\/ul>",
+                        "column_gap": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-editor",
+                    "elType": "widget"
+                },
+                {
+                    "id": "286dbfab",
+                    "settings": {
+                        "editor": "<p>Alignment - center, color - promary, text shadow: blur -8, horizontal -20, vertical - 10. Topography - primary<\/p>",
+                        "align": "center",
+                        "text_shadow_text_shadow_type": "yes",
+                        "text_shadow_text_shadow": {
+                            "horizontal": 20,
+                            "vertical": 10,
+                            "blur": 9,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "__globals__": {
+                            "text_color": "globals\/colors?id=primary",
+                            "typography_typography": "globals\/typography?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-editor",
+                    "elType": "widget"
+                },
+                {
+                    "id": "6ba92155",
+                    "settings": {
+                        "editor": "<ol><li>Numeric list<\/li><li>alignment left\u00a0<\/li><li>Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/li><\/ol>",
+                        "align": "right"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-editor",
+                    "elType": "widget"
+                },
+                {
+                    "id": "2ef6df34",
+                    "settings": {
+                        "editor": "<p><strong>Testing 4 columns: <\/strong><\/p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/p><p><strong>Gep is 30 px<\/strong><\/p>",
+                        "text_columns": "4",
+                        "column_gap": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-editor",
+                    "elType": "widget"
+                },
+                {
+                    "id": "26378b4",
+                    "settings": {
+                        "editor": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/p><p>Drop Cap<\/p>",
+                        "drop_cap": "yes",
+                        "drop_cap_border_radius": {
+                            "unit": "%",
+                            "size": 0,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-editor",
+                    "elType": "widget"
+                },
+                {
+                    "id": "21946593",
+                    "settings": {
+                        "drop_cap": "yes",
+                        "drop_cap_view": "stacked",
+                        "drop_cap_secondary_color": "#BE1717",
+                        "drop_cap_shadow_text_shadow_type": "yes",
+                        "drop_cap_shadow_text_shadow": {
+                            "horizontal": 51,
+                            "vertical": 12,
+                            "blur": 1,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "drop_cap_size": {
+                            "unit": "px",
+                            "size": 10,
+                            "sizes": []
+                        },
+                        "drop_cap_space": {
+                            "unit": "px",
+                            "size": 26,
+                            "sizes": []
+                        },
+                        "drop_cap_border_radius": {
+                            "unit": "%",
+                            "size": 25,
+                            "sizes": []
+                        },
+                        "drop_cap_typography_typography": "custom",
+                        "drop_cap_typography_font_family": "Arial",
+                        "drop_cap_typography_font_size": {
+                            "unit": "px",
+                            "size": 101,
+                            "sizes": []
+                        },
+                        "drop_cap_typography_font_weight": "800",
+                        "drop_cap_typography_text_transform": "none",
+                        "drop_cap_typography_font_style": "italic",
+                        "drop_cap_typography_text_decoration": "underline",
+                        "drop_cap_typography_line_height": {
+                            "unit": "px",
+                            "size": 75,
+                            "sizes": []
+                        },
+                        "drop_cap_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 26,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-editor",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "text_editor",
+    "type": "page"
+}

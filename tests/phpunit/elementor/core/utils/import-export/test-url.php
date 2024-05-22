@@ -17,7 +17,7 @@ class Test_Url extends Elementor_Test_Base {
 
 	private $wp_rewrite;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		global $wp_rewrite;
 
@@ -25,8 +25,7 @@ class Test_Url extends Elementor_Test_Base {
 		$this->page = $this->factory()->post->create_and_get( [ 'post_type' => 'page' ] );
 	}
 
-	public function tearDown()
-	{
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->wp_rewrite->set_permalink_structure( static::PERMALINK_STRUCTURE_PLAIN );

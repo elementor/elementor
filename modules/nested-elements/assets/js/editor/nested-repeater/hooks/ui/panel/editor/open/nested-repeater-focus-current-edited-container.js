@@ -61,7 +61,7 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 			}, NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT * depth );
 
 			++depth;
-        } );
+		} );
 	}
 
 	getNavigationMapForContainers( containers ) {

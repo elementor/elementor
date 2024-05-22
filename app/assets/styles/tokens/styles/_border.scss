@@ -8,8 +8,8 @@ $eps-border-width: 1px;
 $eps-border-width-md: 2px;
 $eps-border-width-lg: 3px;
 
-$eps-border-color: $eps-gray-200;
-$eps-border-color-light: lighten($eps-border-color, 10%);
-$eps-border-color-dark: darken($eps-border-color, 5%);
+$eps-border-color: var(--e-a-border-color);
+$eps-border-color-light: $eps-gray-50;
+$eps-border-color-dark: $eps-gray-200;
 
 $eps-border: $eps-border-width $eps-border-style $eps-border-color;

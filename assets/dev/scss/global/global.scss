@@ -1,13 +1,17 @@
+// Global for all (editor, admin, preview, front-end USER)
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
-@import "dialog";
+@import "dialog-base";
+@import "dialog-lightbox";
+@import "dialog-confirm";
 @import "flatpicker";
-@import "modal-wrapper";
-@import "notifications";
-@import "app/modules/site-editor/assets/scss/admin/admin-bar";
 
 .elementor-hidden {
 	display: none;
+}
+
+.elementor-visibility-hidden {
+	visibility: hidden;
 }
 
 .elementor-screen-only,
@@ -36,25 +40,14 @@
 
 //Elementor icon logo wrapper
 .e-logo-wrapper {
-	background: $editor-accent;
+	background: var(--e-a-bg-logo);
 	display: inline-block;
 	padding: 0.75em;
 	border-radius: 50%;
 	line-height: 1;
 
 	i {
-		color: #fff;
+		color: var(--e-a-color-logo);
 		font-size: 1em;
-	}
-}
-
-#e-enable-unfiltered-files-dialog-import-template {
-
-	.dialog-confirm-ok {
-		color: $editor-success;
-	}
-
-	.dialog-confirm-cancel {
-		color: $editor-warning;
 	}
 }

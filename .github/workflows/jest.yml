@@ -1,6 +1,8 @@
 name: Jest
 
-on: [push, pull_request]
+on:
+  pull_request:
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -9,14 +11,14 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -27,28 +29,24 @@ jobs:
             .github/**/*.yml
 
   jest:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
+    if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     name: Test
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
+          node-version: 20.x
+      - uses: actions/cache@v4
+        id: npm-cache
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-node-
       - name: Install Dependencies
         run: npm ci
       - name: "Run Jest"

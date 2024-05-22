@@ -98,6 +98,20 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
+	toggleClasses() {
+		this.toggleMinRowsClass();
+		this.toggleMaxRowsClass();
+	},
+
+	toggleMaxRowsClass() {
+		const maxItems = this.model.get( 'max_items' );
+		if ( ! maxItems || ! Number.isInteger( maxItems ) ) {
+			return;
+		}
+
+		this.$el.toggleClass( 'elementor-repeater-has-maximum-rows', maxItems <= this.collection.length );
+	},
+
 	toggleMinRowsClass() {
 		if ( ! this.model.get( 'prevent_empty' ) ) {
 			return;
@@ -131,6 +145,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			axis: 'y',
 			handle: '.elementor-repeater-row-tools',
 			items: ' > :not(.elementor-repeater-row--disable-sort)',
+			cancel: '', // Elements that do not allow sorting (by default it includs buttons).
 		};
 	},
 
@@ -141,7 +156,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.ui.fieldContainer.sortable( this.getSortableParams() );
 		}
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onSortStart( event, ui ) {
@@ -186,9 +201,14 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onAddChild() {
 		this.updateChildIndexes();
 		this.updateActiveRow();
+		this.toggleClasses();
 	},
 
-	// BC since 3.0.0, ensure a new child is appear in container children.
+	/**
+	 * Update container to ensure that new child elements appear in container children.
+	 *
+	 * @param {*} model - Container model.
+	 */
 	updateContainer( model ) {
 		const container = this.options.container.repeaters[ this.model.get( 'name' ) ],
 			isInChildren = container.children.filter( ( child ) => {
@@ -201,7 +221,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	// BC since 3.0.0, ensure a container children are reset on collection reset.
+	/**
+	 * Reset container to ensure that container children are reset on collection reset.
+	 *
+	 * @deprecated since 3.0.0, use `$e.run( 'document/repeater/remove' )` instead.
+	 */
 	resetContainer() {
 		elementorDevTools.deprecation.deprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
 		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];
@@ -218,6 +242,18 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		return defaults;
 	},
 
+	getChildControlView( id ) {
+		return this.getControlViewByModel( this.getControlModel( id ) );
+	},
+
+	getControlViewByModel( model ) {
+		return this.children.findByModelCid( model.cid );
+	},
+
+	getControlModel( _id ) {
+		return this.collection.findWhere( { _id } );
+	},
+
 	onButtonAddRowClick() {
 		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
@@ -229,7 +265,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.editRow( newChild );
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickRemove( childView ) {
@@ -246,7 +282,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 		this.updateChildIndexes();
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickDuplicate( childView ) {
@@ -256,7 +292,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			index: childView._index,
 		} );
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickEdit( childView ) {

@@ -1,5 +1,9 @@
 import Base from '../../../base';
-import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	findChildContainerOrFail,
+	shouldUseAtomicRepeaters,
+	sortViewsByModels,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterDuplicateContainer extends Base {
 	getId() {
@@ -11,12 +15,32 @@ export class NestedRepeaterDuplicateContainer extends Base {
 	}
 
 	apply( { container, index } ) {
-		$e.run( 'document/elements/duplicate', {
+		const result = $e.run( 'document/elements/duplicate', {
 			container: findChildContainerOrFail( container, index ),
 			options: {
 				edit: false, // Not losing focus.
 			},
 		} );
+
+		const widgetType = container.settings.get( 'widgetType' );
+
+		if ( shouldUseAtomicRepeaters( widgetType ) ) {
+			container.view.children._views = sortViewsByModels( container );
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/atomic-repeater', {
+					detail: {
+						container,
+						targetContainer: result,
+						index,
+						action: {
+							type: 'duplicate',
+						},
+					} },
+				) );
+		} else {
+			container.render();
+		}
 	}
 }
 

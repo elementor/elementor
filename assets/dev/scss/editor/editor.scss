@@ -8,7 +8,6 @@
 @import "wrapper";
 @import "global";
 @import "loader";
-@import "buttons";
 @import "forms";
 
 // Components
@@ -17,12 +16,13 @@
 @import "panel/panel";
 @import "panel/controls";
 @import "mode-switcher";
-@import "responsive-bar";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
+@import "../../../../modules/promotions/assets/scss/editor";
 @import "../../../../core/kits/assets/css/panel";
 
 @import "animations";
+@import "buttons";
 @import "devices";
 @import "templates-modal";
 @import "dynamic-tags";

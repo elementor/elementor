@@ -287,6 +287,9 @@ class Elements_Manager {
 			],
 			'pro-elements' => [
 				'title' => esc_html__( 'Pro', 'elementor' ),
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+				],
 			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
@@ -295,10 +298,16 @@ class Elements_Manager {
 			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-site-widget-panel/' ),
+				],
 			],
 			'woocommerce-elements' => [
 				'title' => esc_html__( 'WooCommerce', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-woocommerce-widget-panel/' ),
+				],
 			],
 		];
 
@@ -326,11 +335,6 @@ class Elements_Manager {
 		 * @param Elements_Manager $this Elements manager instance.
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
-
-		$this->categories['pojo'] = [
-			'title' => esc_html__( 'Pojo Themes', 'elementor' ),
-			'icon' => 'eicon-pojome',
-		];
 
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),

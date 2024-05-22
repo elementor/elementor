@@ -1,18 +1,31 @@
+.elementor-panel-revisions-buttons {
+	display: flex;
+	justify-content: space-between;
+	padding: 15px 20px;
+	border-block-end: var(--e-a-border);
+}
+
 .elementor-history- {
 
 	&item {
 		display: flex;
 		align-items: center;
-		border: 1px solid $editor-lightest;
+		text-align: start;
+		border: var(--e-a-border);
+		border-radius: var(--e-a-border-radius);
 		padding: 10px 15px;
-		margin-bottom: 10px;
+		margin-block-end: 10px;
+		width: 100%;
 		font-size: 11px;
 		line-height: 1.4;
+		background-color: transparent;
 		cursor: pointer;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
-		&:hover {
-			background-color: fade_out($editor-background, 0.7) ;
+		&:hover:not(.elementor-history-item-current),
+		&:focus:not(.elementor-history-item-current) {
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-txt-color-hover);
 
 			.elementor-history-item__icon{
 				.eicon:before {
@@ -21,15 +34,15 @@
 			}
 		}
 
-		&-applied {
-			color: $editor-light;
-		}
-
 		&-current {
-			background: $editor-background;
-			cursor: default;
+			border-color: var(--e-a-border-color-accent);
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-txt-color-active);
 
-			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
+			.elementor-history-item__icon,
+			&:hover .elementor-history-item__icon,
+			&:focus .elementor-history-item__icon {
+
 				.eicon:before {
 					content:'\e90e';
 				}
@@ -52,32 +65,28 @@
 			font-style: italic;
 			text-decoration: underline;
 		}
-
-		.__icon {
-			 float: $end;
-		 }
 	}
 
 	&revisions-message{
 		font-size: 11px;
 		text-align: center;
-		padding-top: 5px;
+		padding-block-start: 5px;
 	}
 }
 
 #elementor-panel-history {
-	padding: 20px 20px 15px;
+	padding: 20px;
+	padding-block-end: 15px;
 
 	&.elementor-empty {
 
 		.elementor-history-revisions-message {
-			padding-top: 20px;
+			padding-block-start: 20px;
 		}
 	}
 
 	&:not(.elementor-empty) {
-		background-color: #fff;
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 }
 
@@ -86,6 +95,6 @@
 	text-align: center;
 
 	.elementor-nerd-box-icon {
-		margin-top: 20px;
+		margin-block-start: 20px;
 	}
 }

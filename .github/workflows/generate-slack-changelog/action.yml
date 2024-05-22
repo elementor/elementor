@@ -1,0 +1,35 @@
+name: Generate Slack Changelog
+description: Generate a changelog for Slack notification, The changelog will be used in slack-notify action.
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
+
+            # replace * with •
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\*/•/g')
+
+            # Replace ED-xxxx with a link to the corresponding Jira issue
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/<https:\/\/elementor.atlassian.net\/browse\/ED-\1|\*ED-\1*\>/g')
+
+            # Remove parentheses and everything inside them (e.g. "(#21267)" )
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/([^)]*)//g')
+
+            # Escape double quotes and add two line breaks after each newline
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
+
+            # Slack max content length is 3000 characters, so we need to truncate the changelog if it's too long.
+            if [ ${#CHANGELOG_CONTENT} -gt 3000 ]; then
+                # Truncate the changelog to 2997 characters (3000 - 3 for the "...")
+                CHANGELOG_CONTENT=${CHANGELOG_CONTENT:0:2997}
+                CHANGELOG_CONTENT="$CHANGELOG_CONTENT..."
+            fi
+
+            # Multi-line env vars are not supported,
+            # so we need to create a new env var with the content of the changelog file.
+            # This env var will be used in slack-notify action.
+            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
+            echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV

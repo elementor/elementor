@@ -1,25 +1,22 @@
+@import "../../../../../assets/dev/scss/helpers/variables";
+
 //
 // Panel Controls
 //
 
 .elementor-control {
 	--control-title-size: 12px;
-	background-color: #fff;
 	position: relative;
 	padding: 0 20px 15px;
 
 	a {
 		font-weight: 500;
 		text-decoration: none;
-		border-bottom: 1px dotted transparent;
+		border-block-end: 1px dotted transparent;
 		transition: all ease-in-out .3s;
 
 		&:hover {
-			border-bottom-color: inherit;
-		}
-
-		&.elementor-responsive-switcher {
-			border-bottom: 0;
+			border-block-end-color: inherit;
 		}
 	}
 
@@ -32,7 +29,11 @@
 	.elementor-control-title {
 		font-size: var(--control-title-size);
 		line-height: 1;
-		@include margin-end(5px);
+		margin-inline-end: 5px;
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	.elementor-control-spinner {
@@ -42,49 +43,31 @@
 
 	&.elementor-control-type-divider {
 		padding: 0;
-		background-color: transparent;
+
 
 		.elementor-control-content {
 			border-width: 0;
-			border-color: $editor-background;
-			border-style: solid;
-			border-top-width: 1px;
+			border-block-start: var(--e-a-border);
 
 			//For the next control in the panel
-			background-color: #ffffff;
+			background-color: var(--e-a-bg-default);
 			height: 15px;
 		}
 	}
 
 	&.elementor-control-separator- {
 
-		&default:not(.elementor-control-type-divider) {
-
-			// WP Widgets
-			&.elementor-control-wp {
-				margin-top: 15px;
-
-				&:before {
-					content: '';
-					height: 1px;
-					display: block;
-					margin-bottom: 15px;
-					background-color: transparent;
-				}
-			}
-		}
-
 		&before {
-			padding-top: 15px;
+			padding-block-start: 15px;
 
 			&:before {
 				content: '';
 				position: absolute;
 				height: 1px;
-				width: 100%;
+				width: calc(100% - 40px);
 				top: 0;
-				left: 0;
-				background-color: $editor-background;
+				@include start(20px);
+				background-color: var(--e-a-border-color);
 			}
 		}
 
@@ -94,26 +77,26 @@
 				content: '';
 				position: absolute;
 				height: 1px;
-				width: 100%;
+				width: calc(100% - 40px);
 				bottom: 0;
-				left: 0;
-				background-color: $editor-background;
+				@include start(20px);
+				background-color: var(--e-a-border-color);
 			}
 
 			+ .elementor-control-type-tabs,
 			&:not(.elementor-hidden-control) {
 				+ .elementor-control-separator-default {
-					padding-top: 15px;
+					padding-block-start: 15px;
 				}
 			}
 		}
 	}
 
 	&.elementor-control-deprecated {
-		color: $editor-warning;
+		color: var(--e-a-color-warning);
 
 		.elementor-control-field-description {
-			color: $editor-warning;
+			color:var(--e-a-color-warning);
 		}
 	}
 
@@ -155,20 +138,18 @@
 		.elementor-nerd-box {
 
 			&-message {
-				margin-top: 5px;
+				margin-block-start: 5px;
 			}
 		}
-	}
-
-	&.elementor-control-custom_css_title {
-		font-size: 12px;
 	}
 }
 
 .elementor-control,
+.elementor-panel-category,
 .elementor-panel-scheme-item {
 
-	&.elementor-open {
+	&.e-open,
+	&.elementor-active{
 
 		.elementor-panel-heading-toggle {
 
@@ -181,7 +162,7 @@
 		}
 	}
 
-	&:not(.elementor-open) {
+	&:not(.e-open):not(.elementor-active) {
 
 		.elementor-panel-heading-toggle {
 
@@ -196,36 +177,62 @@
 }
 
 .elementor-panel-heading {
-	display: table;
-	table-layout: fixed;
-	height: 40px;
-	padding: 0 20px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	height: 48px;
+	padding-inline: 20px;
 	width: 100%;
-	border-bottom: 1px solid $editor-background;
+	border: 0;
+	border-block-start: var(--e-a-border); //todo: remove
+	border-block-start-width: 2px;
+	background-color: transparent;
+	color: var(--e-a-color-txt-accent);
 	cursor: pointer;
 
-	> * {
-		display: table-cell;
-		vertical-align: middle;
-	}
-
 	&-toggle {
-		width: 20px;
-		color: $editor-darkest;
+		width: 10px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	&-title {
-		color: $editor-darkest;
 		font-weight: bold;
+	}
+
+	&-promotion {
+		margin-inline-start: auto;
+
+		a {
+			color: var(--e-a-color-accent-promotion);
+			font-family: 'Roboto', sans-serif;
+			font-weight: 500;
+			font-size: 13px;
+
+			i {
+				margin-inline-end: 4px;
+				font-size: 14px;
+			}
+
+			&:hover {
+				color: var(--e-a-color-accent-promotion);
+			}
+		}
+	}
+
+	&:focus-visible {
+		color: var(--e-a-color-txt-hover);
 	}
 }
 
-// WP Widgets
-.elementor-control-wp {
-	line-height: 1.5;
+#elementor-controls {
 
-	p {
-		margin: 15px 0;
+	.elementor-control-type-section:first-child {
+
+		.elementor-panel-heading {
+			border-block-start: none;
+		}
 	}
 }
 
@@ -244,7 +251,7 @@
 			> .elementor-control-input-wrapper {
 				width: 100%;
 				max-width: 100%;
-				margin-top: 10px;
+				margin-block-start: 10px;
 
 				// TODO: Hack to make choices full width when label is block.
 				> .elementor-choices {
@@ -267,7 +274,7 @@
 			> .elementor-control-field {
 
 				> .elementor-control-input-wrapper {
-					margin-top: 0;
+					margin-block-start: 0;
 				}
 			}
 		}
@@ -280,7 +287,7 @@
 			> .elementor-control-field {
 
 				> .elementor-control-input-wrapper {
-					margin-top: 0;
+					margin-block-start: 0;
 				}
 			}
 		}
@@ -299,7 +306,7 @@
 			}
 
 			> .elementor-control-input-wrapper {
-				@include margin-start(auto);
+				margin-inline-start: auto;
 			}
 		}
 	}
@@ -307,25 +314,22 @@
 
 .elementor-control-field-description {
 	@extend .elementor-descriptor;
-	margin-top: 10px;
+	margin-block-start: 10px;
 }
 
 .elementor-group-control-attachment_alert {
 
 	.elementor-control-field-description {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
-}
-
-.elementor-required {
-	color: $editor-warning;
 }
 
 @if $direction == rtl {
 
 	.elementor-control-start-end {
 
-		.eicon-h-align-left, .eicon-h-align-right {
+		.eicon-h-align-left,
+		.eicon-h-align-right {
 			transform: rotate(180deg);
 		}
 	}
@@ -339,12 +343,11 @@
 
 .elementor-update-preview-button-wrapper {
 	flex-grow: 1;
-	text-align: $end;
+	text-align: end;
 }
 
 .elementor-update-preview-button {
 	padding: 8px 15px;
-	text-transform: uppercase;
 }
 
 // = Set direction control by class
@@ -369,6 +372,8 @@
 
 @import "controls-utility";
 
+@import "controls/alert";
+
 @import "controls/button";
 
 @import "controls/choose";
@@ -378,6 +383,8 @@
 @import "controls/control-group-css-filters";
 
 @import "controls/dimensions";
+
+@import "controls/gaps";
 
 @import "controls/icons";
 
@@ -393,9 +400,7 @@
 
 @import "controls/media";
 
-@import "controls/number";
-
-@import "controls/order";
+@import "controls/notice";
 
 @import "controls/popover-toggle";
 
@@ -422,7 +427,3 @@
 @import "controls/wp-widget";
 
 @import "controls/wysiwyg";
-
-@import "controls/text";
-
-@import "controls/date-time";

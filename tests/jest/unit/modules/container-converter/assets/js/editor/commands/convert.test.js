@@ -4,8 +4,10 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 	beforeAll( async () => {
 		global.$e = {
 			modules: {
-				document: {
-					CommandHistory: class {},
+				editor: {
+					document: {
+						CommandHistoryBase: class {},
+					},
 				},
 			},
 		};
@@ -132,6 +134,8 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 	const sectionDefaultSettings = {
 		flex_gap: {
 			size: 10,
+			column: '10',
+			row: '10',
 			unit: 'px',
 		},
 		flex_align_items: 'stretch',
@@ -216,6 +220,8 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			},
 			flex_gap: {
 				size: 15,
+				column: '15',
+				row: '15',
 				unit: 'px',
 			},
 			flex_align_items: 'flex-start',
@@ -485,14 +491,20 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			flex_justify_content_mobile: 'flex-end',
 			flex_gap: {
 				size: 10,
+				column: '10',
+				row: '10',
 				unit: 'px',
 			},
 			flex_gap_tablet: {
 				size: 20,
+				column: '20',
+				row: '20',
 				unit: 'px',
 			},
 			flex_gap_mobile: {
 				size: 30,
+				column: '30',
+				row: '30',
 				unit: 'px',
 			},
 			content_width: 'full', // Default setting.

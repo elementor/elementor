@@ -64,7 +64,14 @@ class Module extends \Elementor\Core\Base\Module {
 		return $value;
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public function ajax_enable_safe_mode( $data ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		// It will run `$this->>update_safe_mode`.
 		update_option( 'elementor_safe_mode', 'yes' );
 
@@ -151,11 +158,12 @@ class Module extends \Elementor\Core\Base\Module {
 				bottom: 10px;
 				width: 400px;
 				line-height: 30px;
-				background: white;
+				color: var(--e-a-color-txt);
+				background: var(--e-a-bg-default);
 				padding: 20px 25px 25px;
 				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 				border-radius: 5px;
-				font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+				font-family: var(--e-a-font-family);
 			}
 
 			body.rtl .elementor-safe-mode-toast {
@@ -173,17 +181,16 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast .elementor-toast-content {
 				font-size: 13px;
 				line-height: 22px;
-				color: #6D7882;
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content a {
-				color: #138FFF;
+				color: var(--e-a-color-info);
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content hr {
 				margin: 15px auto;
 				border: 0 none;
-				border-top: 1px solid #F1F3F5;
+				border-block-start: var(--e-a-border);
 			}
 
 			.elementor-safe-mode-toast header {
@@ -191,59 +198,34 @@ class Module extends \Elementor\Core\Base\Module {
 				align-items: center;
 				justify-content: space-between;
 				flex-wrap: wrap;
-				margin-bottom: 20px;
+				margin-block-end: 20px;
 			}
 
 			.elementor-safe-mode-toast header > * {
-				margin-top: 10px;
-			}
-
-			.elementor-safe-mode-toast .elementor-safe-mode-button {
-				display: inline-block;
-				font-weight: 500;
-				font-size: 11px;
-				text-transform: uppercase;
-				color: white;
-				padding: 10px 15px;
-				line-height: 1;
-				background: #A4AFB7;
-				border-radius: 3px;
-			}
-
-			#elementor-try-safe-mode .elementor-safe-mode-button {
-				background: #39B54A;
+				margin-block-start: 10px;
 			}
 
 			.elementor-safe-mode-toast header i {
 				font-size: 25px;
-				color: #fcb92c;
+				color: var(--e-a-color-warning);
 			}
 
-			body:not(.rtl) .elementor-safe-mode-toast header i {
-				margin-right: 10px;
-			}
-
-			body.rtl .elementor-safe-mode-toast header i {
-				margin-left: 10px;
+			.elementor-safe-mode-toast header i {
+				margin-inline-end: 10px;
 			}
 
 			.elementor-safe-mode-toast header h2 {
 				flex-grow: 1;
 				font-size: 18px;
-				color: #6D7882;
 			}
 
 			.elementor-safe-mode-list-item {
-				margin-top: 10px;
+				margin-block-start: 10px;
 				list-style: outside;
 			}
 
-			body:not(.rtl) .elementor-safe-mode-list-item {
-				margin-left: 15px;
-			}
-
-			body.rtl .elementor-safe-mode-list-item {
-				margin-right: 15px;
+			.elementor-safe-mode-list-item {
+				margin-inline-start: 15px;
 			}
 
 			.elementor-safe-mode-list-item b {
@@ -252,7 +234,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 			.elementor-safe-mode-list-item-content {
 				font-style: italic;
-				color: #a4afb7;
+				color: var(--e-a-color-txt);
 			}
 
 			.elementor-safe-mode-list-item-title {
@@ -260,8 +242,9 @@ class Module extends \Elementor\Core\Base\Module {
 			}
 
 			.elementor-safe-mode-mu-plugins {
-				background-color: #f1f3f5;
-				margin-top: 20px;
+				background-color: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt-hover);
+				margin-block-start: 20px;
 				padding: 10px 15px;
 			}
 		</style>
@@ -275,7 +258,7 @@ class Module extends \Elementor\Core\Base\Module {
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo esc_html__( 'Safe Mode ON', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
+				<a class="elementor-button elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
 					<?php echo esc_html__( 'Disable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
@@ -351,7 +334,7 @@ class Module extends \Elementor\Core\Base\Module {
 									}
 								},
 								error: function() {
-									alert( 'An error occurred' );
+									alert( 'An error occurred.' );
 								},
 							},
 							true
@@ -383,7 +366,7 @@ class Module extends \Elementor\Core\Base\Module {
 			<header>
 				<i class="eicon-warning"></i>
 				<h2><?php echo esc_html__( 'Can\'t Edit?', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
+				<a class="elementor-button e-primary elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
 					<?php echo esc_html__( 'Enable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
@@ -425,7 +408,7 @@ class Module extends \Elementor\Core\Base\Module {
 									location.assign( url );
 								},
 								error: function() {
-									alert( 'An error occurred' );
+									alert( 'An error occurred.' );
 								},
 							},
 							true

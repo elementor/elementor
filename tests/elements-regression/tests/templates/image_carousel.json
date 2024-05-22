@@ -1,0 +1,330 @@
+{
+    "content": [
+        {
+            "id": "b4bd9df",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "ef6d051",
+                    "settings": {
+                        "carousel": [
+                            {
+                                "id": 521,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image1.jpg"
+                            },
+                            {
+                                "id": 522,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg"
+                            }
+                        ],
+                        "navigation": "arrows",
+                        "autoplay": "no",
+                        "arrows_size": {
+                            "unit": "px",
+                            "size": 45,
+                            "sizes": []
+                        },
+                        "_element_width": "initial",
+                        "_element_custom_width": {
+                            "unit": "%",
+                            "size": 80.966
+                        },
+                        "_flex_size": "none",
+                        "__globals__": {
+                            "arrows_color": "globals\/colors?id=primary"
+                        },
+                        "image_spacing": "custom",
+                        "image_spacing_custom": {
+                            "unit": "px",
+                            "size": 80,
+                            "sizes": []
+                        },
+                        "gallery_vertical_align": "flex-end"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-carousel",
+                    "elType": "widget"
+                },
+                {
+                    "id": "3f0d9b35",
+                    "settings": {
+                        "carousel": [
+                            {
+                                "id": 522,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg"
+                            },
+                            {
+                                "id": 521,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image1.jpg"
+                            }
+                        ],
+                        "thumbnail_size": "medium_large",
+                        "slides_to_show": "2",
+                        "slides_to_scroll": "1",
+                        "navigation": "arrows",
+                        "autoplay": "no",
+                        "arrows_position": "outside",
+                        "arrows_size": {
+                            "unit": "px",
+                            "size": 36,
+                            "sizes": []
+                        },
+                        "arrows_color": "#2D15A7",
+                        "gallery_vertical_align": "center",
+                        "image_border_border": "double",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "image_border_radius": {
+                            "unit": "px",
+                            "top": "2",
+                            "right": "2",
+                            "bottom": "2",
+                            "left": "2",
+                            "isLinked": true
+                        },
+                        "_element_width": "initial",
+                        "_element_custom_width": {
+                            "unit": "%",
+                            "size": 80.966
+                        },
+                        "_flex_size": "none"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-carousel",
+                    "elType": "widget"
+                },
+                {
+                    "id": "5c17e599",
+                    "settings": {
+                        "carousel": [
+                            {
+                                "id": 522,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg"
+                            },
+                            {
+                                "id": 521,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image1.jpg"
+                            }
+                        ],
+                        "thumbnail_size": "large",
+                        "slides_to_show": "4",
+                        "slides_to_scroll": "1",
+                        "image_stretch": "yes",
+                        "navigation_previous_icon": {
+                            "value": "fas fa-angle-double-left",
+                            "library": "fa-solid"
+                        },
+                        "navigation_next_icon": {
+                            "value": "fas fa-arrow-circle-right",
+                            "library": "fa-solid"
+                        },
+                        "autoplay": "no",
+                        "arrows_size": {
+                            "unit": "px",
+                            "size": 42,
+                            "sizes": []
+                        },
+                        "dots_size": {
+                            "unit": "px",
+                            "size": 9,
+                            "sizes": []
+                        },
+                        "gallery_vertical_align": "flex-start",
+                        "image_border_border": "groove",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "image_border_color": "#E8E4E4",
+                        "image_border_radius": {
+                            "unit": "px",
+                            "top": "4",
+                            "right": "4",
+                            "bottom": "4",
+                            "left": "4",
+                            "isLinked": true
+                        },
+                        "caption_align": "right",
+                        "caption_shadow_text_shadow_type": "yes",
+                        "caption_shadow_text_shadow": {
+                            "horizontal": 10,
+                            "vertical": 10,
+                            "blur": 11,
+                            "color": "rgba(0, 0, 0, 0.88)"
+                        },
+                        "_element_width": "initial",
+                        "_element_custom_width": {
+                            "unit": "%",
+                            "size": 80.966
+                        },
+                        "_flex_size": "none",
+                        "__globals__": {
+                            "arrows_color": "globals\/colors?id=accent",
+                            "dots_inactive_color": "globals\/colors?id=primary",
+                            "dots_color": "globals\/colors?id=secondary",
+                            "caption_text_color": "globals\/colors?id=text"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-carousel",
+                    "elType": "widget"
+                },
+                {
+                    "id": "77556dae",
+                    "settings": {
+                        "0": "#",
+                        "1": "6",
+                        "2": "1",
+                        "3": "C",
+                        "4": "E",
+                        "5": "7",
+                        "6": "0",
+                        "carousel": [
+                            {
+                                "id": 522,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg"
+                            },
+                            {
+                                "id": 521,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image1.jpg"
+                            }
+                        ],
+                        "thumbnail_size": "full",
+                        "navigation": "dots",
+                        "caption_type": "description",
+                        "autoplay": "no",
+                        "dots_position": "inside",
+                        "dots_size": {
+                            "unit": "px",
+                            "size": 9,
+                            "sizes": []
+                        },
+                        "dots_inactive_color": "#41B696",
+                        "dots_color": "#E00000",
+                        "gallery_vertical_align": "flex-end",
+                        "image_border_border": "dotted",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "3",
+                            "right": "3",
+                            "bottom": "3",
+                            "left": "3",
+                            "isLinked": true
+                        },
+                        "image_border_radius": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "caption_align": "left",
+                        "caption_typography_typography": "custom",
+                        "caption_typography_font_family": "Helvetica",
+                        "caption_typography_font_size": {
+                            "unit": "px",
+                            "size": 45,
+                            "sizes": []
+                        },
+                        "caption_typography_font_weight": "900",
+                        "caption_typography_text_transform": "capitalize",
+                        "caption_typography_font_style": "italic",
+                        "caption_typography_text_decoration": "underline",
+                        "caption_typography_line_height": {
+                            "unit": "px",
+                            "size": 79,
+                            "sizes": []
+                        },
+                        "caption_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 3.6,
+                            "sizes": []
+                        },
+                        "caption_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "_element_width": "initial",
+                        "_element_custom_width": {
+                            "unit": "%",
+                            "size": 80.966
+                        },
+                        "_flex_size": "none",
+                        "__globals__": {
+                            "image_border_color": "globals\/colors?id=primary",
+                            "caption_text_color": "globals\/colors?id=secondary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-carousel",
+                    "elType": "widget"
+                },
+                {
+                    "id": "30fd2c92",
+                    "settings": {
+                        "carousel": [
+                            {
+                                "id": 522,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg"
+                            },
+                            {
+                                "id": 521,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image1.jpg"
+                            }
+                        ],
+                        "navigation": "none",
+                        "autoplay": "no",
+                        "gallery_vertical_align": "center",
+                        "image_spacing": "custom",
+                        "image_spacing_custom": {
+                            "unit": "px",
+                            "size": 100,
+                            "sizes": []
+                        },
+                        "image_border_border": "solid",
+                        "image_border_radius": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "_element_width": "initial",
+                        "_element_custom_width": {
+                            "unit": "%",
+                            "size": 80.966
+                        },
+                        "_flex_size": "none"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-carousel",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "image_carousel",
+    "type": "page"
+}

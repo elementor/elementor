@@ -20,11 +20,11 @@ export default class Icon extends Component {
 }
 
 Icon.propTypes = {
-  className: PropTypes.string,
-  containerClass: PropTypes.string,
-  data: PropTypes.object,
-  keyID: PropTypes.string,
-  library: PropTypes.string,
-  selector: PropTypes.string,
-  setSelectedHandler: PropTypes.func,
+	className: PropTypes.string,
+	containerClass: PropTypes.string,
+	data: PropTypes.object,
+	keyID: PropTypes.string,
+	library: PropTypes.string,
+	selector: PropTypes.string,
+	setSelectedHandler: PropTypes.func,
 };

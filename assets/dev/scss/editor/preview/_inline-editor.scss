@@ -19,7 +19,7 @@
 			content: '';
 			position: absolute;
 			border: 6px solid transparent;
-			border-top-color: $editor-dark;
+			border-block-start-color: $editor-dark;
 			left: 50%;
 			transform: translateX(-50%);
 		}
@@ -78,7 +78,7 @@
 			font-family: eicons;
 			font-size: 12px;
 			content: '\e92a';
-			padding-left: 4px;
+			padding-inline-start: 4px;
 			color: $editor-info;
 		}
 	}
@@ -92,8 +92,8 @@
 				font-size: 12px;
 				line-height: 1.5;
 				padding: 0;
-				@include padding-start(10px);
-				@include padding-end(10px);
+				padding-inline-start: 10px;
+				padding-inline-end: 10px;
 				width: 250px;
 				direction: ltr; // Force LTR also in RTL languages
 
@@ -113,7 +113,7 @@
 
 		&-label {
 			margin: 0;
-			@include margin-end(-1px);
+			margin-inline-end: -1px;
 		}
 	}
 

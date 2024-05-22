@@ -102,29 +102,29 @@ describe( `$e.run( 'kit-elements-defaults/create' )`, () => {
 	] )(
 		'should support multiple types: elType: $elType, widgetType: $widgetType',
 		( { elType, widgetType, isInner = false, expectedType } ) => {
-				// Arrange
-				const command = new CreateCommand();
+			// Arrange
+			const command = new CreateCommand();
 
-				const container = createContainer( {
-					elType,
-					widgetType,
-					isInner,
-					id: '123',
-					settings: {
-						width: '100px',
-					},
-					controls: {
-						width: {},
-					},
-				} );
+			const container = createContainer( {
+				elType,
+				widgetType,
+				isInner,
+				id: '123',
+				settings: {
+					width: '100px',
+				},
+				controls: {
+					width: {},
+				},
+			} );
 
-				// Act
-				command.apply( { container } );
+			// Act
+			command.apply( { container } );
 
-				// Assert
-				expect( updateElementDefaults ).toHaveBeenNthCalledWith( 1, expectedType, { width: '100px' } );
-			},
-		);
+			// Assert
+			expect( updateElementDefaults ).toHaveBeenNthCalledWith( 1, expectedType, { width: '100px' } );
+		},
+	);
 
 	it( 'should restore to previous settings on undo', async () => {
 		// Arrange

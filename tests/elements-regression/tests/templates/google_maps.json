@@ -1,0 +1,72 @@
+{
+    "content": [
+        {
+            "id": "3578c35a",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "54de7c65",
+                    "settings": {
+                        "address": "Tel Aviv",
+                        "zoom": {
+                            "unit": "px",
+                            "size": 8,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "google_maps",
+                    "elType": "widget"
+                },
+                {
+                    "id": "4eba753",
+                    "settings": {
+                        "address": "new york",
+                        "zoom": {
+                            "unit": "px",
+                            "size": 8,
+                            "sizes": []
+                        },
+                        "css_filters_css_filter": "custom",
+                        "css_filters_blur": {
+                            "unit": "px",
+                            "size": 0.7,
+                            "sizes": []
+                        },
+                        "css_filters_brightness": {
+                            "unit": "px",
+                            "size": 68,
+                            "sizes": []
+                        },
+                        "css_filters_contrast": {
+                            "unit": "px",
+                            "size": 138,
+                            "sizes": []
+                        },
+                        "css_filters_saturate": {
+                            "unit": "px",
+                            "size": 99,
+                            "sizes": []
+                        },
+                        "css_filters_hue": {
+                            "unit": "px",
+                            "size": 31,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "google_maps",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "google_maps",
+    "type": "page"
+}

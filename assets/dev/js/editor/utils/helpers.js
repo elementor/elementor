@@ -1,6 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import DOMPurify from 'dompurify';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -51,9 +52,22 @@ module.exports = {
 		},
 	},
 
-	enqueueCSS( url, $document ) {
-		const selector = 'link[href="' + url + '"]',
-			link = '<link href="' + url + '" rel="stylesheet" type="text/css">';
+	/**
+	 * @param {string}                   url
+	 * @param {jQuery}                   $document
+	 * @param {{ crossOrigin: boolean }} options
+	 */
+	enqueueCSS( url, $document, options = {} ) {
+		const selector = 'link[href="' + url + '"]';
+		const link = document.createElement( 'link' );
+
+		link.href = url;
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+
+		if ( options.crossOrigin ) {
+			link.crossOrigin = 'anonymous';
+		}
 
 		if ( ! $document ) {
 			return;
@@ -74,7 +88,7 @@ module.exports = {
 
 	/**
 	 * @param {string} url
-	 * @deprecated 2.6.0
+	 * @deprecated since 2.6.0, use `elementor.helpers.enqueuePreviewStylesheet()` instead.
 	 */
 	enqueueStylesheet( url ) {
 		elementorDevTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
@@ -154,7 +168,7 @@ module.exports = {
 	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
 	 * @param {string} tag        - default i - html tag to render
 	 * @param {*}      returnType - default value - retrun type
-	 * @return {string|boolean|*} result
+	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
 		if ( ! icon || ! icon.library ) {
@@ -183,7 +197,7 @@ module.exports = {
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
 			}
-			const tagUniqueID = tag + this.getUniqueID();
+			const tagUniqueID = tag + elementorCommon.helpers.getUniqueId();
 			view.addRenderAttribute( tagUniqueID, attributes );
 			view.addRenderAttribute( tagUniqueID, 'class', iconValue );
 			const htmlTag = '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
@@ -251,6 +265,8 @@ module.exports = {
 				he_IL: 'hebrew',
 			};
 
+		const enqueueOptions = {};
+
 		let	fontUrl;
 
 		switch ( fontType ) {
@@ -261,13 +277,17 @@ module.exports = {
 					fontUrl += '&subset=' + subsets[ elementor.config.locale ];
 				}
 
+				enqueueOptions.crossOrigin = true;
+
 				break;
 
 			case 'earlyaccess': {
-					const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-					fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-					break;
-				}
+				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+
+				enqueueOptions.crossOrigin = true;
+				break;
+			}
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
@@ -275,7 +295,7 @@ module.exports = {
 				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
 				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
 			} else {
-				this.enqueueCSS( fontUrl, elementor.$previewContents );
+				this.enqueueCSS( fontUrl, elementor.$previewContents, enqueueOptions );
 			}
 		}
 
@@ -323,6 +343,9 @@ module.exports = {
 		return result;
 	},
 
+	/**
+	 * @deprecated since 3.0.0, use `elementorCommon.helpers.getUniqueId()` instead.
+	 */
 	getUniqueID() {
 		elementorDevTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
@@ -421,10 +444,14 @@ module.exports = {
 		return false;
 	},
 
-	/*
-	* @deprecated 2.0.0
-	*/
+	/**
+	 * @param {string} string
+	 * @param {string} replaces
+	 * @deprecated since 2.0.0, use native JS `.replace()` method.
+	 */
 	stringReplaceAll( string, replaces ) {
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.stringReplaceAll()', '2.0.0', 'Use native JS `.replace()` method.' );
+
 		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
 
 		return string.replace( re, function( matched ) {
@@ -455,8 +482,12 @@ module.exports = {
 		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
+	/**
+	 * @param {Object} object - An object to clone.
+	 * @deprecated since 2.3.0, use `elementorCommon.helpers.cloneObject()` instead.
+	 */
 	cloneObject( object ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject( object )', '2.3.0', 'elementorCommon.helpers.cloneObject( object )' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -490,8 +521,12 @@ module.exports = {
 		} );
 	},
 
+	/**
+	 * @param {*} $element
+	 * @deprecated since 2.8.0, use `new ColorPicker( { picker: { el: $element } } )` instead.
+	 */
 	wpColorPicker( $element ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker( $element )', '2.8.0', 'new ColorPicker( { picker: { el: $element } } )' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},
@@ -655,5 +690,18 @@ module.exports = {
 	 */
 	validateHTMLTag( tag ) {
 		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
+	},
+
+	convertSizeToFrString( size ) {
+		if ( 'number' !== typeof size || size <= 0 ) {
+			return size;
+		}
+
+		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
+		return frString;
+	},
+
+	sanitize( value, options ) {
+		return DOMPurify.sanitize( value, options );
 	},
 };

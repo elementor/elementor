@@ -85,6 +85,10 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function ajax_get_category_items( array $data ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		$category = $this->categories_manager->get_categories( $data['category'] );
 
 		return $category->get_category_items( $data );

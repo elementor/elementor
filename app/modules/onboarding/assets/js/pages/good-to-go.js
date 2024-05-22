@@ -14,7 +14,9 @@ export default function GoodToGo() {
 	return (
 		<Layout pageId={ pageId }>
 			<h1 className="e-onboarding__page-content-section-title">
-				{ __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
+				{ elementorAppConfig.onboarding.experiment
+					? __( 'Welcome aboard! What\'s next?', 'elementor' )
+					: __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
 			</h1>
 			<div className="e-onboarding__page-content-section-text">
 				{ __( 'There are two ways to get started with Elementor:', 'elementor' ) }
@@ -31,7 +33,7 @@ export default function GoodToGo() {
 					name="template"
 					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Library.svg' }
 					imageAlt={ __( 'Click here to go to Elementor\'s Kit Library', 'elementor' ) }
-					text={ __( 'Browse from +100 templates or import your own', 'elementor' ) }
+					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
 					link={ kitLibraryLink }
 					clickAction={ () => {
 						// The location is reloaded to make sure the Kit Library's state is re-created.
