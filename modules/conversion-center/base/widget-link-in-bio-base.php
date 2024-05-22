@@ -87,6 +87,8 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'style' => [
 				'identity_section' => [
 					'has_profile_image_shape' => true,
+					'profile_image_max' => 115,
+					'cover_image_max' => 1000,
 				],
 				'cta_section' => [
 					'has_dividers' => false,
@@ -1151,7 +1153,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'cta_links_divider_color',
 				[
 					'label' => esc_html__( 'Color', 'elementor' ),
@@ -1498,7 +1500,7 @@ JS;
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 150,
+						'max' => $config['style']['identity_section']['profile_image_max'] ?? 150,
 					],
 				],
 				'default' => [
@@ -1557,7 +1559,7 @@ JS;
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1000,
+						'max' => $config['style']['identity_section']['cover_image_max'] ?? 1000,
 						'step' => 1,
 					],
 					'%' => [
