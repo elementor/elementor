@@ -1,11 +1,18 @@
 import AdminMenuHandler from 'elementor-admin/menu-handler';
 
-export default class LinksPagesHandler extends AdminMenuHandler {
+export default class ConversionCenterHandler extends AdminMenuHandler {
 	getDefaultSettings() {
+		const pageName = 'e-contact-pages',
+			adminMenuSelectors = {
+				// The escaping is done because jQuery requires it for selectors.
+				contactPagesTablePage: 'a[href="edit.php?post_type=' + pageName + '"]',
+				contactPagesAddNewPage: 'a[href="edit.php?post_type=elementor_library&page=' + pageName + '"]',
+			};
 		return {
 			selectors: {
 				addButton: '.page-title-action:first',
-				conversionMenuItem: '.menu-item-elementor-conversions',
+				templatesMenuItem: '.menu-icon-elementor_library',
+				contactPagesMenuItem: `${ adminMenuSelectors.contactPagesTablePage }, ${ adminMenuSelectors.contactPagesAddNewPage }`,
 			},
 		};
 	}
@@ -14,8 +21,8 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 		const selectors = this.getSettings( 'selectors' ),
 			elements = super.getDefaultElements();
 
-		elements.$conversionMenuItem = jQuery( selectors.conversionMenuItem );
-
+		elements.$templatesMenuItem = jQuery( selectors.templatesMenuItem );
+		elements.$contactPagesMenuItem = jQuery( selectors.contactPagesMenuItem );
 		return elements;
 	}
 
@@ -30,21 +37,18 @@ export default class LinksPagesHandler extends AdminMenuHandler {
 		// We need this because there is a complex bug in the WordPress admin menu that causes the Contact Menu to be broken
 		// When the links page has at least one post and the contact page has none.
 		if ( elementorAdminConfig.urls?.viewContactPageUrl ) {
-			this.elements.$conversionMenuItem.find( 'li.submenu-e-contact a' )
+			this.elements.$templatesMenuItem.find( 'li.submenu-e-contact a' )
 				.attr( 'href', elementorAdminConfig.urls.viewContactPageUrl );
 		}
 
 		if ( isContactPagesTablePage || isContactPagesTrashPage || isLContactPagesCreateYourFirstPage ) {
-			const activeClasses = 'wp-has-current-submenu wp-menu-open current';
 
-			this.elements.$conversionMenuItem
-				.addClass( activeClasses )
-				.removeClass( 'wp-not-current-submenu' );
+			this.highlightTopLevelMenuItem( this.elements.$templatesMenuItem, this.elements.$pagesMenuItemAndLink );
 
-			this.elements.$conversionMenuItem.find( 'li.submenu-e-contact' ).addClass( 'current' );
+			this.highlightSubMenuItem( this.elements.$contactPagesMenuItem );
 
 			// Overwrite the 'Add New' button at the top of the page to open in Elementor with the library module open.
-			jQuery( settings.selectors.addButton ).attr( 'href', elementorAdminConfig.urls.addNewLinkUrl );
+			jQuery( settings.selectors.addButton ).attr( 'href', elementorAdminConfig.urls.addNewLinkUrlContact );
 		}
 	}
 }

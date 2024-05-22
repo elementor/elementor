@@ -1,4 +1,4 @@
-import LinksPagesHandler from './links-pages';
+import ConversionCenterHandler from './conversion-center';
 
 export default class extends elementorModules.Module {
 	constructor() {
@@ -22,6 +22,6 @@ export default class extends elementorModules.Module {
 
 		// This class modifies elements in the WordPress admin that are rendered "wrong" by the WordPress core
 		// and could not be modified in the backend.
-		new LinksPagesHandler( args );
+		new ConversionCenterHandler( args );
 	}
 }

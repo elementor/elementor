@@ -701,15 +701,15 @@ JS;
 
 		$this->add_style_background_controls();
 
+		$this->add_style_layout_controls();
 	}
 
-	protected function add_advanced_tab(): void {
-
+	protected function add_style_layout_controls() {
 		$this->start_controls_section(
 			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -811,6 +811,9 @@ JS;
 		);
 
 		$this->end_controls_section();
+	}
+
+	protected function add_advanced_tab(): void {
 
 		$this->start_controls_section(
 			'advanced_custom_controls_section',
