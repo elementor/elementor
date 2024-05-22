@@ -250,6 +250,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.21.7 - 2024-05-22 =
+
+* Fix: Unnecessary commas cause Cron Jobs to fail in various scenarios ([#25803](https://github.com/elementor/elementor/issues/25803))
+* Fix: AI Consent modal requires multiple clicks to check the box
+
 = 3.21.6 - 2024-05-20 =
 
 * Security Fix: Improved code security enforcement in Icon Box and Image Box widgets
