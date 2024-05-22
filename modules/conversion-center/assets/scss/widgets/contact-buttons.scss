@@ -9,7 +9,6 @@
 	--e-contact-buttons-dot: #{$contact-buttons-dots-color};
 	--e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
 	--e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
-	--e-contact-buttons-box-shadow: #{$contact-buttons-box-shadow};
 	--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
 	--e-contact-button-chat-button-animation-duration-slow: #{$contact-buttons-animation-duration-slow};
 	--e-contact-button-chat-button-animation-duration-normal: #{$contact-buttons-animation-duration-normal};
@@ -206,7 +205,6 @@
 
 	&__content {
 		border-radius: var(--e-contact-buttons-border-radius);
-		box-shadow: var(--e-contact-buttons-box-shadow);
 		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
 		margin-block-end: 20px;
 		overflow: hidden;
@@ -315,7 +313,6 @@
 		background-color: var(--e-contact-buttons-button-bg);
 		border-radius: 50%;
 		border: 0;
-		box-shadow: var(--e-contact-buttons-box-shadow);
 		display: flex;
 		justify-content: center;
 		position: relative;
