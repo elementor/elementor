@@ -740,6 +740,7 @@ JS;
 					'medium' => esc_html__( 'Medium', 'elementor' ),
 					'large' => esc_html__( 'Large', 'elementor' ),
 				],
+				'separator' => 'after',
 			]
 		);
 
@@ -887,6 +888,7 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-bg: {{VALUE}}',
 					],
+					'separator' => 'after',
 				]
 			);
 
@@ -894,13 +896,6 @@ JS;
 		}
 
 		$this->end_controls_tabs();
-
-		$this->add_control(
-			'style_chat_button_box_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
@@ -910,19 +905,13 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_chat_button_animation_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
 		$this->add_responsive_control(
 			'style_chat_button_animation',
 			[
 				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -1000,13 +989,6 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_top_bar_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
 		if ( $config['style']['has_platform_colors'] ) {
 			$this->add_control(
 				'style_top_bar_colors',
@@ -1018,6 +1000,7 @@ JS;
 						'default' => esc_html__( 'Default', 'elementor' ),
 						'custom' => esc_html__( 'Custom', 'elementor' ),
 					],
+					'separator' => 'before',
 				]
 			);
 		}
@@ -1027,7 +1010,7 @@ JS;
 			[
 				'label' => esc_html__( 'Name', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'separator' => false,
+				'separator' => ! $config['style']['has_platform_colors'] ? 'before' : false,
 			]
 		);
 
@@ -1468,13 +1451,6 @@ JS;
 
 		if ( $config['style']['contact_section']['has_buttons_spacing'] ) {
 
-			$this->add_control(
-				'style_contact_buttons_spacing_divider',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
-
 			$this->add_responsive_control(
 				'style_contact_buttons_spacing',
 				[
@@ -1498,6 +1474,7 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-gap: {{SIZE}}{{UNIT}}',
 					],
+					'separator' => 'before',
 				]
 			);
 		}
@@ -1554,13 +1531,6 @@ JS;
 		}
 
 		if ( $config['style']['contact_section']['has_chat_box_animation'] ) {
-			$this->add_control(
-				'style_contact_animation_divider',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
-
 			$this->chat_box_animation_controls();
 		}
 
@@ -1599,13 +1569,6 @@ JS;
 				]
 			);
 
-			$this->add_control(
-				'style_contact_button_bar_hr',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
-
 			$this->add_responsive_control(
 				'style_contact_button_bar_padding',
 				[
@@ -1619,6 +1582,7 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-button-bar-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
+					'separator' => 'before',
 				]
 			);
 		}
@@ -1760,6 +1724,7 @@ JS;
 				'label' => esc_html__( 'Open Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
