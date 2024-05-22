@@ -179,7 +179,7 @@ abstract class Contact_Buttons_Render_Base {
 		$powered_by_url = 'https://elementor.com/pro';
 		?>
 			<div class="e-contact-buttons__powered-container">
-				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text">
+				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text" target="_blank">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
 				</a>
 			</div>
@@ -316,6 +316,7 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
+			'target' => '_blank',
 		] );
 
 		?>

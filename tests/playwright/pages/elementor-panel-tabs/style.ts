@@ -20,6 +20,6 @@ export default class Style {
 		await this.page.getByRole( 'button', { name: 'toggle color picker dialog' } ).click();
 		await this.page.getByRole( 'textbox', { name: 'color input field' } ).click();
 		await this.page.locator( '.pcr-app.visible input.pcr-result' ).fill( color );
-		await this.page.locator( EditorSelectors.widgetsPanelIcon ).click();
+		await this.editorPage.openElementsPanel();
 	}
 }
