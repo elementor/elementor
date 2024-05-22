@@ -73,9 +73,7 @@ module.exports = Marionette.CompositeView.extend( {
 		let title = '';
 
 		if ( titleField ) {
-			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )(
-				this.model.parseDynamicSettings(),
-			);
+			title = Marionette.TemplateCache.prototype.compileTemplate( titleField )( this.model.parseDynamicSettings() );
 		}
 
 		if ( ! title ) {
