@@ -901,7 +901,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.media-toolbar-primary .media-button-insert' ).click();
 		// Modify widget settings.
 		await page.locator( '.elementor-control-slides_to_show select' ).selectOption( '2' );
-		await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
+		await editor.openSection( 'section_additional_options' );
 		await page.locator( '.elementor-control-infinite .elementor-switch-label' ).click();
 		await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
 
