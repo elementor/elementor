@@ -509,7 +509,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'max_items' => $config['content']['cta_section']['cta_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
 				'title_field' => '{{{ cta_link_text }}}',
-				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add CTA Link', 'elementor' ),
 				'default' => $config['content']['cta_section']['cta_repeater_defaults'],
 			]
