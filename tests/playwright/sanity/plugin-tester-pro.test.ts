@@ -21,7 +21,7 @@ const pluginList1 = [
 	'elementskit-lite',
 	'envato-elements',
 	'exclusive-addons-for-elementor',
-	'header-footer-elementor',
+	// 'header-footer-elementor',
 	'jeg-elementor-kit',
 	'make-column-clickable-elementor',
 	'metform',

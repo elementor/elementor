@@ -74,6 +74,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		parent::__construct();
+
 		$this->register_links_pages_cpt();
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
@@ -94,6 +96,10 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
+		} );
+
+		add_action( 'elementor/editor/localize_settings', function ( $data ) {
+			return $this->editor_localize_settings( $data );
 		} );
 
 		add_action( 'admin_menu', function () {
@@ -329,6 +335,13 @@ class Module extends BaseModule {
 			'menu_slug' => $menu_slug,
 			'function' => $function,
 		];
+	}
+
+	private function editor_localize_settings( $data ) {
+		$menu_args = $this->get_menu_args();
+		$data['admin_conversion_center_url'] = admin_url( $menu_args['menu_slug'] );
+
+		return $data;
 	}
 
 }

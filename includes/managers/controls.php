@@ -939,11 +939,17 @@ class Controls_Manager {
 	 * @return array|\WP_Error The control, or an error.
 	 */
 	public function get_control_from_stack( $stack_id, $control_id ) {
-		if ( empty( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			return new \WP_Error( 'Cannot get a not-exists control.' );
+		$stack_data = $this->get_stacks( $stack_id );
+
+		if ( ! empty( $stack_data['controls'][ $control_id ] ) ) {
+			return $stack_data['controls'][ $control_id ];
 		}
 
-		return $this->stacks[ $stack_id ]['controls'][ $control_id ];
+		if ( ! empty( $stack_data['style_controls'][ $control_id ] ) ) {
+			return $stack_data['style_controls'][ $control_id ];
+		}
+
+		return new \WP_Error( 'Cannot get a not-exists control.' );
 	}
 
 	/**
@@ -1353,6 +1359,10 @@ class Controls_Manager {
 	private function is_style_control( $control_data ): bool {
 		$frontend_available = $control_data['frontend_available'] ?? false;
 		if ( $frontend_available ) {
+			return false;
+		}
+
+		if ( ! empty( $control_data['control_type'] ) && 'content' === $control_data['control_type'] ) {
 			return false;
 		}
 

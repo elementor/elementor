@@ -6,8 +6,6 @@ import ImageForm from '../../components/image-form';
 import ImageRatioSelect from '../../components/image-ratio-select';
 import GenerateSubmit from '../../components/generate-submit';
 import GenerateAgainSubmit from '../../components/generate-again-submit';
-import NewPromptButton from '../../components/new-prompt-button';
-import PromptField from '../../components/prompt-field';
 import OutPaintingContent from './out-painting-content';
 import ImagesDisplay from '../../components/images-display';
 import { useEditImage } from '../../context/edit-image-context';
@@ -17,31 +15,23 @@ import useOutPainting from './hooks/use-out-painting';
 import { useRequestIds } from '../../../../context/requests-ids';
 
 const OutPainting = () => {
-	const [ prompt, setPrompt ] = useState( '' );
-	const { setGenerate } = useRequestIds();
-	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
-
+	const [ imageSize, setImageSize ] = useState( { width: 0, height: 0 } );
+	const [ position, setPosition ] = useState( { x: 0.5, y: 0.5 } );
 	const [ mask, setMask ] = useState( '' );
 
-	const { settings, updateSettings, resetSettings } = usePromptSettings( { aspectRatio: initialAspectRatio } );
-
+	const { setGenerate } = useRequestIds();
+	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
+	const { settings, updateSettings } = usePromptSettings( { aspectRatio: initialAspectRatio } );
 	const { use, edit, isLoading: isUploading } = useImageActions();
-
-	const { data, send, isLoading: isGenerating, error, reset } = useOutPainting();
-
+	const { data, send, isLoading: isGenerating, error } = useOutPainting();
 	const isLoading = isGenerating || isUploading;
-
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ data?.result ] );
-
 	const hasGeneratedResult = !! data?.result;
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
-		// The fallback instruction should be hidden for the user.
-		const finalPrompt = prompt || 'Fill based on the surroundings';
 		setGenerate();
-		send( { prompt: finalPrompt, settings, image: editImage, mask } );
+		send( { settings, image: editImage, mask, size: imageSize, position } );
 	};
 
 	return (
@@ -68,7 +58,7 @@ const OutPainting = () => {
 							marks
 							id="zoom"
 							name="zoom"
-							max={ 2 }
+							max={ 1 }
 							min={ 0.1 }
 							step={ 0.1 }
 							color="secondary"
@@ -85,23 +75,10 @@ const OutPainting = () => {
 						</Typography>
 					</FormControl>
 
-					<PromptField
-						value={ prompt }
-						disabled={ isLoading }
-						onChange={ setPrompt }
-						placeholder={ __( 'Describe what you want to generate in the expended area (English only)', 'elementor' ) }
-					/>
-
 					{
 						data?.result ? (
 							<Stack gap={ 2 } sx={ { my: 2.5 } }>
 								<GenerateAgainSubmit disabled={ isLoading } />
-
-								<NewPromptButton disabled={ isLoading } onClick={ () => {
-									resetSettings();
-									setPrompt( '' );
-									reset();
-								} } />
 							</Stack>
 						) : (
 							<GenerateSubmit disabled={ isLoading } />
@@ -125,6 +102,8 @@ const OutPainting = () => {
 							editImage={ editImage }
 							scale={ settings[ IMAGE_ZOOM ] }
 							aspectRatio={ settings[ IMAGE_RATIO ] }
+							setImageSize={ setImageSize }
+							setPosition={ setPosition }
 						/>
 					)
 				}
