@@ -125,6 +125,21 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$this->add_advanced_tab();
 	}
 
+	const BOX_SHADOW_FIELDS_OPTIONS = [
+		'box_shadow_type' => [
+			'default' => 'yes',
+		],
+		'box_shadow' => [
+			'default' => [
+				'horizontal' => 4,
+				'vertical' => 4,
+				'blur' => 10,
+				'spread' => 0,
+				'color' => 'rgba(0,0,0,0.15)',
+			],
+		],
+	];
+
 	private function social_media_controls(): void {
 
 		$this->add_control(
@@ -907,6 +922,7 @@ JS;
 			[
 				'name' => 'style_chat_button_box_shadow',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button-shadow',
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
@@ -1514,6 +1530,7 @@ JS;
 				[
 					'name' => 'style_contact_icons_box_shadow',
 					'selector' => '{{WRAPPER}} .e-contact-buttons__contact-box-shadow',
+					'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 				]
 			);
 		}
@@ -1889,6 +1906,7 @@ JS;
 			[
 				'name' => 'style_chat_box_box_shadow',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__content',
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
