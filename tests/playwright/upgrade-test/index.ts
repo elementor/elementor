@@ -45,7 +45,7 @@ export class UpgradeElementor {
 	setupTests() {
 		if ( ! process.env.CI ) {
 			this.cmd( 'npm run test:setup' );
-      this.cmd( 'npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
+			this.cmd( 'npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
 			this.cmd( 'cd ../../../ && npx playwright install chromium' );
 		}
 	}
