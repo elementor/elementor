@@ -11,18 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Contact_Menu_Item implements Admin_Menu_Item {
 
-	private $parent_slug;
-
-	public function __construct( $parent_slug ) {
-		$this->parent_slug = $parent_slug;
-	}
-
 	public function is_visible() {
 		return true;
 	}
 
 	public function get_parent_slug() {
-		return $this->parent_slug;
+		return Source_Local::ADMIN_MENU_SLUG;
 	}
 
 	public function get_label() {
