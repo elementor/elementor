@@ -355,8 +355,6 @@ class Module extends BaseModule {
 
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		error_log("Content: " . $data['payload']['content']);
-
 		$result = $app->get_excerpt( $data['payload']['content'], $context, $request_ids );
 		$this->throw_on_error( $result );
 
