@@ -7,11 +7,13 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Hints;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -75,6 +77,31 @@ class Admin extends App {
 		exit;
 	}
 
+	private function register_packages() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		Collection::make( [ 'ui', 'icons', 'query' ] )
+			->each( function( $package ) use ( $assets_config_provider ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$config = $assets_config_provider->load( $package )->get( $package );
+
+				if ( ! $config ) {
+					return;
+				}
+
+				wp_register_script(
+					$config['handle'],
+					ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$suffix}.js",
+					$config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -94,6 +121,21 @@ class Admin extends App {
 			true
 		);
 
+		$this->register_packages();
+
+		// Temporary solution for the admin.
+		wp_register_script(
+			'elementor-ai-admin',
+			$this->get_js_assets_url( 'ai-admin' ),
+			[
+				'elementor-common',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
 		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
@@ -106,6 +148,10 @@ class Admin extends App {
 		);
 
 		wp_enqueue_script( 'elementor-admin' );
+
+		wp_set_script_translations( 'elementor-admin', 'elementor' );
+
+		$this->maybe_enqueue_hints();
 
 		$this->print_config();
 	}
@@ -214,7 +260,7 @@ class Admin extends App {
 	 * @param int $post_id Post ID.
 	 */
 	public function save_post( $post_id ) {
-		if ( ! isset( $_POST['_elementor_edit_mode_nonce'] ) || ! wp_verify_nonce( $_POST['_elementor_edit_mode_nonce'], basename( __FILE__ ) ) ) {
+		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_POST, '_elementor_edit_mode_nonce' ), basename( __FILE__ ) ) ) {
 			return;
 		}
 
@@ -299,7 +345,12 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Go Pro', 'elementor' ) );
+		$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
+		if ( Utils::is_sale_time() ) {
+			$go_pro_text = esc_html__( 'Discounted Upgrades Now!', 'elementor' );
+		}
+
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', $go_pro_text );
 
 		return $links;
 	}
@@ -389,8 +440,6 @@ class Admin extends App {
 	}
 
 	/**
-	 * Elementor dashboard widget.
-	 *
 	 * Displays the Elementor dashboard widget.
 	 *
 	 * Fired by `wp_add_dashboard_widget` function.
@@ -399,9 +448,29 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function elementor_dashboard_overview_widget() {
-		$elementor_feed = Api::get_feed_data();
-		$recently_edited_query = Utils::get_recently_edited_posts_query();
+		?>
+		<div class="e-dashboard-overview e-dashboard-widget">
+			<?php
+			self::elementor_dashboard_overview_header();
+			self::elementor_dashboard_overview_recently_edited();
+			self::elementor_dashboard_overview_news_updates();
+			self::elementor_dashboard_overview_footer();
+			?>
+		</div>
+		<?php
+	}
 
+	/**
+	 * Displays the Elementor dashboard widget - header section.
+	 * Fired by `elementor_dashboard_overview_widget` function.
+	 *
+	 * @param bool $show_versions
+	 * @param bool $is_create_post_enabled
+	 *
+	 * @return void
+	 * @since 3.12.0
+	 */
+	public static function elementor_dashboard_overview_header( bool $show_versions = true, bool $is_create_post_enabled = true ) {
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = esc_html__( 'Create New Page', 'elementor' );
 			$create_new_post_type = 'page';
@@ -410,15 +479,16 @@ class Admin extends App {
 			$create_new_post_type = 'post';
 		}
 		?>
-		<div class="e-dashboard-widget">
-			<div class="e-overview__header">
-				<div class="e-overview__logo"><div class="e-logo-wrapper"><i class="eicon-elementor"></i></div></div>
+		<div class="e-overview__header">
+			<?php if ( $show_versions ) { ?>
+				<div class="e-overview__logo">
+					<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
+				</div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php echo esc_html__( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					<?php
 					/**
 					 * Elementor dashboard widget after the version.
-					 *
 					 * Fires after Elementor version display in the dashboard widget.
 					 *
 					 * @since 1.9.0
@@ -426,55 +496,110 @@ class Admin extends App {
 					do_action( 'elementor/admin/dashboard_overview_widget/after_version' );
 					?>
 				</div>
-				<?php if ( ! empty( $create_new_post_type ) ) : ?>
-					<div class="e-overview__create">
-						<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
-					</div>
-				<?php endif; ?>
-			</div>
-			<?php if ( $recently_edited_query->have_posts() ) : ?>
-				<div class="e-overview__recently-edited">
-					<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'Recently Edited', 'elementor' ); ?></h3>
-					<ul class="e-overview__posts">
-						<?php
-						while ( $recently_edited_query->have_posts() ) :
-							$recently_edited_query->the_post();
-							$document = Plugin::$instance->documents->get( get_the_ID() );
+			<?php } ?>
+			<?php if ( ! empty( $create_new_post_type ) && $is_create_post_enabled ) { ?>
+				<div class="e-overview__create">
+					<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+				</div>
+			<?php } ?>
+		</div>
+		<?php
+	}
 
-							$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
-							?>
-							<li class="e-overview__post">
-								<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>, <?php the_time(); ?></span>
-							</li>
-						<?php endwhile; ?>
-					</ul>
-				</div>
-			<?php endif; ?>
-			<?php if ( ! empty( $elementor_feed ) ) : ?>
-				<div class="e-overview__feed">
-					<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'News & Updates', 'elementor' ); ?></h3>
-					<ul class="e-overview__posts">
-						<?php foreach ( $elementor_feed as $feed_item ) : ?>
-							<li class="e-overview__post">
-								<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
-									<?php if ( ! empty( $feed_item['badge'] ) ) : ?>
-										<span class="e-overview__badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
-									<?php endif; ?>
-									<?php echo esc_html( $feed_item['title'] ); ?>
-								</a>
-								<p class="e-overview__post-description"><?php echo esc_html( $feed_item['excerpt'] ); ?></p>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-			<?php endif; ?>
-			<div class="e-overview__footer e-divider_top">
-				<ul>
-					<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
-						<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-					<?php endforeach; ?>
+	/**
+	 * Displays the Elementor dashboard widget - recently edited section.
+	 * Fired by `elementor_dashboard_overview_widget` function.
+	 *
+	 * @param array $args
+	 * @param bool $show_heading
+	 *
+	 * @return void
+	 * @since 3.12.0
+	 */
+	public static function elementor_dashboard_overview_recently_edited( array $args = [], bool $show_heading = true ) {
+		$recently_edited_query = Utils::get_recently_edited_posts_query( $args );
+
+		if ( $recently_edited_query->have_posts() ) { ?>
+			<div class="e-overview__recently-edited">
+				<?php if ( $show_heading ) { ?>
+					<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'Recently Edited', 'elementor' ); ?></h3>
+				<?php } ?>
+				<ul class="e-overview__posts">
+					<?php
+					while ( $recently_edited_query->have_posts() ) {
+						$recently_edited_query->the_post();
+						$document = Plugin::$instance->documents->get( get_the_ID() );
+
+						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
+						?>
+						<li class="e-overview__post">
+							<a href="<?php echo esc_url( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?>
+								<span class="dashicons dashicons-edit"></span></a>
+							<span><?php echo $date; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>, <?php the_modified_time(); ?></span>
+						</li>
+					<?php } ?>
 				</ul>
 			</div>
+		<?php }
+	}
+
+	/**
+	 * Displays the Elementor dashboard widget - news and updates section.
+	 * Fired by `elementor_dashboard_overview_widget` function.
+	 *
+	 * @param int $limit_feed
+	 * @param bool $show_heading
+	 *
+	 * @return void
+	 * @since 3.12.0
+	 * @access public
+	 */
+	public static function elementor_dashboard_overview_news_updates( int $limit_feed = 0, bool $show_heading = true ) {
+		$elementor_feed = Api::get_feed_data();
+		if ( $limit_feed > 0 ) {
+			$elementor_feed = array_slice( $elementor_feed, 0, $limit_feed );
+		}
+
+		if ( ! empty( $elementor_feed ) ) { ?>
+			<div class="e-overview__feed">
+				<?php if ( $show_heading ) { ?>
+					<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'News & Updates', 'elementor' ); ?></h3>
+				<?php } ?>
+				<ul class="e-overview__posts">
+					<?php foreach ( $elementor_feed as $feed_item ) { ?>
+						<li class="e-overview__post">
+							<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
+								<?php if ( ! empty( $feed_item['badge'] ) ) { ?>
+									<span class="e-overview__badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
+								<?php } ?>
+								<?php echo esc_html( $feed_item['title'] ); ?>
+							</a>
+							<p class="e-overview__post-description"><?php echo esc_html( $feed_item['excerpt'] ); ?></p>
+						</li>
+					<?php } ?>
+				</ul>
+			</div>
+		<?php }
+	}
+
+	/**
+	 * Displays the Elementor dashboard widget - footer section.
+	 * Fired by `elementor_dashboard_overview_widget` function.
+	 *
+	 * @since 3.12.0
+	 */
+	public static function elementor_dashboard_overview_footer() {
+		?>
+		<div class="e-overview__footer e-divider_top">
+			<ul>
+				<?php foreach ( self::static_get_dashboard_overview_widget_footer_actions() as $action_id => $action ) { ?>
+					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>">
+						<a href="<?php echo esc_url( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?>
+							<span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span>
+							<span aria-hidden="true" class="dashicons dashicons-external"></span></a>
+					</li>
+				<?php } ?>
+			</ul>
 		</div>
 		<?php
 	}
@@ -484,10 +609,10 @@ class Admin extends App {
 	 *
 	 * Retrieves the footer action links displayed in elementor dashboard widget.
 	 *
-	 * @since 1.9.0
-	 * @access private
+	 * @since 3.12.0
+	 * @access public
 	 */
-	private function get_dashboard_overview_widget_footer_actions() {
+	public static function static_get_dashboard_overview_widget_footer_actions() {
 		$base_actions = [
 			'blog' => [
 				'title' => esc_html__( 'Blog', 'elementor' ),
@@ -499,17 +624,23 @@ class Admin extends App {
 			],
 		];
 
-		$additions_actions = [
-			'go-pro' => [
-				'title' => esc_html__( 'Upgrade', 'elementor' ),
-				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
-			],
-		];
+		$additions_actions = [];
 
-		// Visible to all core users when Elementor Pro is not installed.
-		$additions_actions['find_an_expert'] = [
-			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
+		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
+			$additions_actions['ai-library'] = [
+				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
+			];
+		} else {
+			$additions_actions['ai'] = [
+				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-widget-ai/',
+			];
+		}
+
+		$additions_actions['go-pro'] = [
+			'title' => esc_html__( 'Upgrade', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 		];
 
 		/**
@@ -532,6 +663,18 @@ class Admin extends App {
 	}
 
 	/**
+	 * Get elementor dashboard overview widget footer actions.
+	 *
+	 * Retrieves the footer action links displayed in elementor dashboard widget.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 */
+	private function get_dashboard_overview_widget_footer_actions() {
+		return self::static_get_dashboard_overview_widget_footer_actions();
+	}
+
+	/**
 	 * Admin action new post.
 	 *
 	 * When a new post action is fired the title is set to 'Elementor' and the post ID.
@@ -544,11 +687,7 @@ class Admin extends App {
 	public function admin_action_new_post() {
 		check_admin_referer( 'elementor_action_new_post' );
 
-		if ( empty( $_GET['post_type'] ) ) {
-			$post_type = 'post';
-		} else {
-			$post_type = $_GET['post_type'];
-		}
+		$post_type = Utils::get_super_global_value( $_GET, 'post_type' ) ?? 'post';
 
 		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
 			return;
@@ -557,10 +696,10 @@ class Admin extends App {
 		if ( empty( $_GET['template_type'] ) ) {
 			$type = 'post';
 		} else {
-			$type = sanitize_text_field( $_GET['template_type'] );
+			$type = sanitize_text_field( wp_unslash( $_GET['template_type'] ) );
 		}
 
-		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
+		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
 		/**
 		 * Create new post meta data.
@@ -574,7 +713,7 @@ class Admin extends App {
 		$meta = [];
 
 		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
-			$meta = array_map( 'sanitize_text_field', $_GET['meta'] );
+			$meta = array_map( 'sanitize_text_field', wp_unslash( $_GET['meta'] ) );
 		}
 
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
@@ -613,6 +752,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-new-template', 'elementor' );
 	}
 
 	/**
@@ -636,6 +777,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
 	}
 
 	/**
@@ -670,12 +813,12 @@ class Admin extends App {
 				</div>
 				<div class="e-major-update-warning__message">
 					<?php
-						printf(
-							/* translators: %1$s Link open tag, %2$s: Link close tag. */
-							esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
-							'<a href="https://go.elementor.com/wp-dash-update-backup/">',
-							'</a>'
-						);
+					printf(
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
+						'<a href="https://go.elementor.com/wp-dash-update-backup/">',
+						'</a>'
+					);
 					?>
 				</div>
 			</div>
@@ -706,10 +849,6 @@ class Admin extends App {
 
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			$this->register_menu();
-		}
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
@@ -756,6 +895,8 @@ class Admin extends App {
 			'settings_url' => Settings::get_url(),
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
+				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
+				'is_administrator' => current_user_can( 'manage_options' ),
 			],
 			'beta_tester' => [
 				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
@@ -801,11 +942,57 @@ class Admin extends App {
 					'state' => $experiment_data['state'],
 					'default' => $experiment_data['default'],
 					'dependencies' => $dependencies,
+					'messages' => $experiment_data['messages'] ?? [],
 				];
 			} )->all();
 	}
 
-	private function register_menu() {
-		$this->menus['main'] = new MainMenu();
+	private function maybe_enqueue_hints() {
+		if ( ! Hints::should_display_hint( 'image-optimization-once-media-modal' ) && ! Hints::should_display_hint( 'image-optimization-media-modal' ) ) {
+			return;
+		}
+
+		wp_register_script(
+			'media-hints',
+			$this->get_js_assets_url( 'media-hints' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		$once_dismissed = Hints::is_dismissed( 'image-optimization-once-media-modal' );
+		$content = $once_dismissed ?
+			sprintf("%1\$s <a href='%2\$s' class='e-btn-1' target='_blank'>%3\$s</a> %4\$s",
+				__( 'This image is large and may slow things down.', 'elementor' ),
+				Hints::get_plugin_action_url( 'image-optimization' ),
+				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' ),
+				__( 'to reduce size without losing quality.', 'elementor' )
+			) :
+			sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+				__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
+				Hints::get_plugin_action_url( 'image-optimization' ),
+				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
+			);
+
+		$dismissible = $once_dismissed ? 'image-optimization-media-modal' : 'image-optimization-once-media-modal';
+
+		wp_localize_script( 'media-hints', 'elementorAdminHints', [
+			'mediaHint' => [
+				'display' => ! $once_dismissed,
+				'type' => $once_dismissed ? 'warning' : 'info',
+				'content' => $content,
+				'icon' => true,
+				'dismissible' => $dismissible,
+				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
+				'button_event' => $dismissible,
+				'button_data' => base64_encode(
+					json_encode( [
+						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+					] ),
+				),
+			],
+		] );
+
+		wp_enqueue_script( 'media-hints' );
 	}
 }

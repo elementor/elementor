@@ -11,6 +11,7 @@ export { Duplicate } from './duplicate';
 export { Empty } from './empty';
 export { Import } from './import';
 export { Paste } from './paste';
+export { PasteArea } from './paste-area';
 export { Move } from './move';
 export { PasteStyle } from './paste-style';
 export { ResetSettings } from './reset-settings';

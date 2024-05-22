@@ -2,7 +2,7 @@
  * @typedef {import('./states/ui-state-base')} UiStateBase
  */
 
- export default class UiStates {
+export default class UiStates {
 	/**
 	 * Initialize the State Manager.
 	 *

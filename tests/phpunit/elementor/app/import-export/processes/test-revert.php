@@ -86,7 +86,7 @@ class Test_Revert extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Please specify revert runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the revert process because no revert runners have been specified. Try again by specifying revert runners.' );
 
 		// Arrange
 		$import = new Revert();
@@ -150,26 +150,33 @@ class Test_Revert extends Elementor_Test_Base {
 	public function test_get_last_session_data() {
 		// Arrange
 		$import_sessions = [
-			1 => [ 1 ],
+			'last' => [
+				'session_id' => 'test',
+				'start_timestamp' => 200,
+			],
+			'penultimate' => [
+				'session_id' => 'test2',
+				'start_timestamp' => 100,
+			],
 		];
 
-		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_last_import_session();
+		$last_import_session = ( new Revert() )->get_last_import_session();
 
 		// Assert
-		$this->assertEquals( $import_sessions[ 1 ], $last_import_session );
+		$this->assertEquals( $import_sessions['last'], $last_import_session );
 	}
 
 	public function test_get_last_session_data__data_not_exist() {
 		// Arrange
 		$import_sessions = [];
 
-		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_last_import_session();
+		$last_import_session = ( new Revert() )->get_last_import_session();
 
 		// Assert
 		$this->assertEquals( [], $last_import_session );
@@ -178,30 +185,42 @@ class Test_Revert extends Elementor_Test_Base {
 	public function test_get_penultimate_session_data() {
 		// Arrange
 		$import_sessions = [
-			1 => [ 1 ],
-			3 => [ 3 ],
-			2 => [ 2 ],
+			'last' => [
+				'session_id' => 'test',
+				'start_timestamp' => 200,
+			],
+			'one_more' => [
+				'session_id' => 'test2',
+				'start_timestamp' => 100,
+			],
+			'penultimate' => [
+				'session_id' => 'test3',
+				'start_timestamp' => 150,
+			],
 		];
 
-		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_penultimate_import_session();
+		$last_import_session = ( new Revert() )->get_penultimate_import_session();
 
 		// Assert
-		$this->assertEquals( $import_sessions[2], $last_import_session );
+		$this->assertEquals( $import_sessions['penultimate'], $last_import_session );
 	}
 
 	public function test_get_penultimate_session_data__only_one_session_exits() {
 		// Arrange
 		$import_sessions = [
-			2 => [ 2 ],
+			'last' => [
+				'session_id' => 'test',
+				'start_timestamp' => 200,
+			],
 		];
 
-		update_option(Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
+		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
 
 		// Act
-		$last_import_session = (new Revert())->get_penultimate_import_session();
+		$last_import_session = ( new Revert() )->get_penultimate_import_session();
 
 		// Assert
 		$this->assertEquals( [], $last_import_session );

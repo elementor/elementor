@@ -194,32 +194,50 @@ class Documents_Manager {
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-
-			if ( wp_is_post_autosave( $post_id ) ) {
-				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
-			} else {
-				$post_type = get_post_type( $post_id );
-			}
-
-			$doc_type = 'post';
-
-			if ( isset( $this->cpt[ $post_type ] ) ) {
-				$doc_type = $this->cpt[ $post_type ];
-			}
-
-			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
-
-			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
-				$doc_type = $meta_type;
-			}
-
+			$doc_type = $this->get_doc_type_by_id( $post_id );
 			$doc_type_class = $this->get_document_type( $doc_type );
+
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
 			] );
 		}
 
 		return $this->documents[ $post_id ];
+	}
+
+	/**
+	 * Retrieve a document after checking it exist and allowed to edit.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param int $post_id The post ID of the document.
+	 *
+	 * @return Document
+	 * @throws \Exception
+	 */
+	public function get_with_permissions( $id ): Document {
+		$document = $this->get( $id );
+
+		if ( ! $document ) {
+			throw new \Exception( 'Not found.' );
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		return $document;
+	}
+
+	/**
+	 * A `void` version for `get_with_permissions`.
+	 *
+	 * @param $id
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function check_permissions( $id ) {
+		$this->get_with_permissions( $id );
 	}
 
 	/**
@@ -257,7 +275,11 @@ class Documents_Manager {
 	 * @return false|Document The document if it exist, False otherwise.
 	 */
 	public function get_doc_for_frontend( $post_id ) {
-		if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
+		$preview_id = (int) Utils::get_super_global_value( $_GET, 'preview_id' );
+		$is_preview = is_preview() && $post_id === $preview_id;
+		$is_nonce_verify = wp_verify_nonce( Utils::get_super_global_value( $_GET, 'preview_nonce' ), 'post_preview_' . $preview_id );
+
+		if ( ( $is_preview && $is_nonce_verify ) || Plugin::$instance->preview->is_preview_mode() ) {
 			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
 		} else {
 			$document = $this->get( $post_id );
@@ -526,11 +548,14 @@ class Documents_Manager {
 
 		$document->save( $data );
 
+		$post = $document->get_post();
+		$main_post = $document->get_main_post();
+
 		// Refresh after save.
-		$document = $this->get( $document->get_post()->ID, false );
+		$document = $this->get( $post->ID, false );
 
 		$return_data = [
-			'status' => $document->get_post()->post_status,
+			'status' => $post->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
@@ -540,6 +565,15 @@ class Documents_Manager {
 				],
 			],
 		];
+
+		$post_status_object = get_post_status_object( $main_post->post_status );
+
+		if ( $post_status_object ) {
+			$return_data['config']['document']['status'] = [
+				'value' => $post_status_object->name,
+				'label' => $post_status_object->label,
+			];
+		}
 
 		/**
 		 * Returned documents ajax saved data.
@@ -561,15 +595,17 @@ class Documents_Manager {
 	 *
 	 * Load the document data from an autosave, deleting unsaved changes.
 	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
 	 * @param $request
 	 *
 	 * @return bool True if changes discarded, False otherwise.
+	 * @throws \Exception
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
 	 */
 	public function ajax_discard_changes( $request ) {
-		$document = $this->get( $request['editor_post_id'] );
+		$document = $this->get_with_permissions( $request['editor_post_id'] );
 
 		$autosave = $document->get_autosave();
 
@@ -590,7 +626,7 @@ class Documents_Manager {
 		$document = $this->get_doc_or_auto_save( $post_id );
 
 		if ( ! $document ) {
-			throw new \Exception( 'Not Found.' );
+			throw new \Exception( 'Not found.' );
 		}
 
 		if ( ! $document->is_editable_by_current_user() ) {
@@ -718,5 +754,24 @@ class Documents_Manager {
 		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 
 		return $new_post_url;
+	}
+
+	private function get_doc_type_by_id( $post_id ) {
+		// Auto-save inherits from the original post.
+		if ( wp_is_post_autosave( $post_id ) ) {
+			$post_id = wp_get_post_parent_id( $post_id );
+		}
+
+		// Content built with Elementor.
+		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
+			return $template_type;
+		}
+
+		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
+		$post_type = get_post_type( $post_id );
+
+		return $this->cpt[ $post_type ] ?? 'post';
 	}
 }

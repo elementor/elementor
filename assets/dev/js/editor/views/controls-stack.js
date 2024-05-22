@@ -62,6 +62,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
+	onDestroy() {
+		this.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
 	initCollection() {
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
@@ -159,7 +163,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			} );
 
 		if ( activeSectionView[ 0 ] ) {
-			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
+			activeSectionView[ 0 ].$el.addClass( 'e-open' );
 
 			const eventNamespace = this.getNamespaceArray();
 
@@ -190,7 +194,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 	},
 
 	onChildviewControlSectionClicked( childView ) {
-		var isSectionOpen = childView.$el.hasClass( 'elementor-open' );
+		var isSectionOpen = childView.$el.hasClass( 'e-open' );
 
 		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
 
@@ -206,9 +210,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 	handlePopovers( view ) {
 		let popover;
 
-		view.popovers = [];
-
 		this.removePopovers( view );
+
+		view.popovers = [];
 
 		view.children.each( ( control ) => {
 			if ( popover ) {
@@ -233,7 +237,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 		} );
 	},
 	removePopovers( view ) {
-		view.popovers.forEach( ( popover ) => popover.destroy() );
+		view.popovers?.forEach( ( popover ) => popover.destroy() );
 	},
 } );
 

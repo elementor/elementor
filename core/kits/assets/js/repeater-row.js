@@ -1,4 +1,4 @@
-import RepeaterRow from '../../../../assets/dev/js/editor/controls/repeater-row';
+import { default as RepeaterRow } from 'elementor-controls/repeater-row';
 
 export default class extends RepeaterRow {
 	ui() {
@@ -16,6 +16,7 @@ export default class extends RepeaterRow {
 	events() {
 		return {
 			'click @ui.removeButton': 'onRemoveButtonClick',
+			'keyup @ui.removeButton': 'onRemoveButtonPress',
 		};
 	}
 
@@ -119,5 +120,15 @@ export default class extends RepeaterRow {
 		} );
 
 		this.confirmDeleteModal.show();
+	}
+
+	onRemoveButtonPress( event ) {
+		const ENTER_KEY = 13,
+			SPACE_KEY = 32;
+
+		if ( ENTER_KEY === event.keyCode || SPACE_KEY === event.keyCode ) {
+			event.currentTarget.click();
+			event.stopPropagation();
+		}
 	}
 }

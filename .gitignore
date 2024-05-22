@@ -11,8 +11,10 @@ tmp/
 build/
 assets/css/
 assets/js/
+assets/lib/swiper/css/swiper*.css
 *.log
 *.map
+/templates/
 
 # build tools lock
 yarn.lock
@@ -26,8 +28,14 @@ yarn.lock
 Thumbs.db
 *.DS_Store
 coverage/
+.zimud.json
 
 # playwright
 test-results/
-tests/playwright/config/storageState.json
+**/storageState.json
 tests/playwright/config/local.config.js
+playwright-report
+tests/playwright/blob-report
+**/allure-results
+playwright-test-results
+**/.env

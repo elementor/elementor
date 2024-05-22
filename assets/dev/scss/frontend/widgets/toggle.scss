@@ -3,7 +3,7 @@
 //
 
 .elementor-toggle {
-	text-align: $start;
+	text-align: start;
 
 	.elementor-tab-title {
 		font-weight: bold;
@@ -84,6 +84,7 @@
 
 	> .elementor-widget-toggle {
 		// Fix - Toggle widget disappears because the 'flex column' setting causes an undefined width inside the flex container (ED-7524).
-		width: var( --container-widget-width, 100% );
+		width: var( --container-widget-width );
+		--flex-grow: var( --container-widget-flex-grow );
 	}
 }

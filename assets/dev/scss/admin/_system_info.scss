@@ -5,13 +5,14 @@
 #elementor-system-info {
 	padding: 15px;
 
-	.elementor-system-info-section {
-		margin-bottom: 10px;
+	.elementor-system-info-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
 
-		& > .elementor-system-info-report-name {
-			padding-left: 10px;
-			border-bottom: 1px solid #e1e1e1;
-		}
+	.elementor-system-info-section {
+		margin-block-end: 10px;
 
 		.widefat {
 			white-space: pre;
@@ -26,33 +27,16 @@
 			tbody td:first-child {
 				width: 300px;
 			}
+
+			td {
+				white-space: break-spaces;
+			}
 		}
 	}
 
-	.elementor-system-info-report-name {
-		text-transform: uppercase;
-		font-size: 14px;
-		margin: 0;
-		line-height: 2;
-	}
-
-	.elementor-system-info-report-row {
-		overflow: hidden;
-		padding: 5px 0;
-
-		> * {
-			float: left;
-		}
-	}
-
-	.elementor-system-info-report-field,
 	.elementor-system-info-field-recommendation {
-		padding-left: 10px;
+		padding-inline-start: 10px;
 		color: #7F7F7F;
-	}
-
-	.elementor-system-info-report-fields {
-		padding-left: 20px;
 	}
 
 	.elementor-system-info-plugin-name {
@@ -76,13 +60,13 @@
 	.elementor-warning {
 
 		td:first-child {
-			@include border-start(3px solid $editor-orange);
+			border-inline-start: 3px solid $editor-orange;
 		}
 	}
 
 	a.box-title-tool {
 		font-size: 80%;
-		@include margin-start(15px);
+		margin-inline-start: 15px;
 		color: $gray;
 
 		&:hover {

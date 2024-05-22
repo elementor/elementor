@@ -53,7 +53,7 @@ class Library extends Common_App {
 
 		if ( is_wp_error( $template_content ) && 401 === $template_content->get_error_code() ) {
 			// Normalize 401 message
-			return new \WP_Error( 401, __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+			return new \WP_Error( 401, esc_html__( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
 		}
 
 		return $template_content;
@@ -69,8 +69,11 @@ class Library extends Common_App {
 			'library_connect' => [
 				'is_connected' => $is_connected,
 				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
+				// TODO: Remove `base_access_level`.
 				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
+				'base_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
+				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 			],
 		] );
 	}
@@ -119,6 +122,7 @@ class Library extends Common_App {
 	protected function get_popup_success_event_data() {
 		return [
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
+			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
 		];
 	}
 

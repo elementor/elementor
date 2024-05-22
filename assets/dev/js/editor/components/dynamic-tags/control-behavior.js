@@ -13,10 +13,21 @@ module.exports = Marionette.Behavior.extend( {
 		}
 	},
 
+	shouldRenderTools() {
+		const hasDefault = this.getOption( 'dynamicSettings' ).default;
+
+		if ( hasDefault ) {
+			return false;
+		}
+
+		const isFeatureAvalibleToUser = elementor.helpers.hasPro() && ! elementor.helpers.hasProAndNotConnected(),
+			hasTags = this.getOption( 'tags' ).length > 0;
+
+		return ! isFeatureAvalibleToUser || hasTags;
+	},
+
 	renderTools() {
-		// If the user has Elementor Pro and the current control has no dynamic tags available, don't generate the dynamic switcher.
-		// If the user has the core version only, we do display the dynamic switcher for the promotion.
-		if ( this.getOption( 'dynamicSettings' ).default || ( elementor.helpers.hasPro() && ! this.getOption( 'tags' ).length ) ) {
+		if ( ! this.shouldRenderTools() ) {
 			return;
 		}
 
@@ -144,12 +155,12 @@ module.exports = Marionette.Behavior.extend( {
 		}
 
 		const tagView = this.tagView = new TagPanelView( {
-			id,
-			name,
-			settings,
-			controlName: this.view.model.get( 'name' ),
-			dynamicSettings: this.getOption( 'dynamicSettings' ),
-		} ),
+				id,
+				name,
+				settings,
+				controlName: this.view.model.get( 'name' ),
+				dynamicSettings: this.getOption( 'dynamicSettings' ),
+			} ),
 			elementContainer = this.view.options.container,
 			tagViewLabel = elementContainer.controls[ tagView.options.controlName ].label;
 
@@ -197,26 +208,26 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion() {
-			const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
-				dialogOptions = {
-					title: __( 'Dynamic Content', 'elementor' ),
-					content: __(
-						'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.',
-						'elementor',
-					),
-					targetElement: this.ui.dynamicSwitcher,
-					position: {
-						blockStart: '-10',
-					},
-					actionButton: {
-						url: hasProAndNotConnected
-							? elementorProEditorConfig.urls.connect
-							: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
-						text: hasProAndNotConnected
-							? __( 'Connect & Activate', 'elementor' )
-							: __( 'Upgrade', 'elementor' ),
-					},
-				};
+		const hasProAndNotConnected = elementor.helpers.hasProAndNotConnected(),
+			dialogOptions = {
+				title: __( 'Dynamic Content', 'elementor' ),
+				content: __(
+					'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.',
+					'elementor',
+				),
+				targetElement: this.ui.dynamicSwitcher,
+				position: {
+					blockStart: '-10',
+				},
+				actionButton: {
+					url: hasProAndNotConnected
+						? elementorProEditorConfig.urls.connect
+						: elementor.config.dynamicPromotionURL.replace( '%s', this.view.model.get( 'name' ) ),
+					text: hasProAndNotConnected
+						? __( 'Connect & Activate', 'elementor' )
+						: __( 'Upgrade', 'elementor' ),
+				},
+			};
 
 		elementor.promotion.showDialog( dialogOptions );
 	},

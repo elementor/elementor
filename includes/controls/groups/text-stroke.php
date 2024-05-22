@@ -59,7 +59,7 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 		$controls['text_stroke'] = [
 			'label' => esc_html__( 'Text Stroke', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem' ],
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
 					'min' => 0,
@@ -68,12 +68,10 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 				'em' => [
 					'min' => 0,
 					'max' => 1,
-					'step' => 0.01,
 				],
 				'rem' => [
 					'min' => 0,
 					'max' => 1,
-					'step' => 0.01,
 				],
 			],
 			'responsive' => true,
@@ -110,7 +108,7 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 	protected function get_default_options() {
 		return [
 			'popover' => [
-				'starter_title' => _x( 'Text Stroke', 'Text Stroke Control', 'elementor' ),
+				'starter_title' => esc_html__( 'Text Stroke', 'elementor' ),
 				'starter_name' => 'text_stroke_type',
 				'starter_value' => 'yes',
 				'settings' => [

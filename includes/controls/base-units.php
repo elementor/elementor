@@ -72,6 +72,21 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 					'max' => 360,
 					'step' => 1,
 				],
+				'grad' => [
+					'min' => 0,
+					'max' => 400,
+					'step' => 1,
+				],
+				'rad' => [
+					'min' => 0,
+					'max' => 6.2832,
+					'step' => 0.0001,
+				],
+				'turn' => [
+					'min' => 0,
+					'max' => 1,
+					'step' => 0.01,
+				],
 				'vh' => [
 					'min' => 0,
 					'max' => 100,
@@ -81,6 +96,16 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 					'min' => 0,
 					'max' => 100,
 					'step' => 1,
+				],
+				's' => [
+					'min' => 0,
+					'max' => 3,
+					'step' => 0.1,
+				],
+				'ms' => [
+					'min' => 0,
+					'max' => 3000,
+					'step' => 100,
 				],
 			],
 		];
@@ -97,13 +122,38 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	protected function print_units_template() {
 		?>
 		<# if ( data.size_units && data.size_units.length > 1 ) { #>
-		<div class="elementor-units-choices">
-			<# _.each( data.size_units, function( unit ) { #>
-			<input id="elementor-choose-{{ data._cid + data.name + unit }}" type="radio" name="elementor-choose-{{ data.name + data._cid }}" data-setting="unit" value="{{ unit }}">
-			<label class="elementor-units-choices-label" for="elementor-choose-{{ data._cid + data.name + unit }}">{{{ unit }}}</label>
-			<# } ); #>
+		<div class="e-units-wrapper">
+			<div class="e-units-switcher">
+				<span></span>
+				<i class="eicon-edit" aria-hidden="true"></i>
+				<i class="eicon-angle-right" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Switch units', 'elementor' ); ?></span>
+			</div>
+			<div class="e-units-choices">
+				<# _.each( data.size_units, function( unit ) { #>
+				<input id="elementor-choose-{{ data._cid + data.name + unit }}" type="radio" name="elementor-choose-{{ data.name + data._cid }}" data-setting="unit" value="{{ unit }}">
+				<label class="elementor-units-choices-label" for="elementor-choose-{{ data._cid + data.name + unit }}" data-choose="{{{ unit }}}">
+					<# if ( 'custom' === unit ) { #>
+						<i class="eicon-edit" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Custom unit', 'elementor' ); ?></span>
+					<# } else { #>
+						<span>{{{ unit }}}</span>
+					<# } #>
+				</label>
+				<# } ); #>
+			</div>
 		</div>
 		<# } #>
 		<?php
+	}
+
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		$return_value = parent::get_style_value( $css_property, $control_value, $control_data );
+
+		if ( 'UNIT' === $css_property && 'custom' === $return_value ) {
+			$return_value = '__EMPTY__';
+		}
+
+		return $return_value;
 	}
 }

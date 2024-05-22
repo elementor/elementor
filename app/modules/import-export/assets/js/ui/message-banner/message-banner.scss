@@ -9,16 +9,16 @@ $root: e-app-import-export-message-banner;
 	--e-app-import-export-message-banner-heading-color: #{$e-app-import-export-message-banner-heading-color};
 	--e-app-import-export-message-banner-description-color: #{$e-app-import-export-message-banner-description-color};
 
-	margin-bottom: spacing(30);
+	margin-block-end: spacing(30);
 
 	&__heading {
 		color: var(--e-app-import-export-message-banner-heading-color);
-		margin-bottom: spacing(10);
+		margin-block-end: spacing(10);
 	}
 
 	&__description {
 		color: var(--e-app-import-export-message-banner-description-color);
-		margin-bottom :0;
+		margin-block-end :0;
 	}
 }
 

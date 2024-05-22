@@ -293,6 +293,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		}
 
 		this.trigger( 'run:before', component, command, args );
+
+		window.dispatchEvent( new CustomEvent( 'elementor/commands/run/before', {
+			detail: {
+				command,
+				args,
+			},
+		} ) );
 	}
 
 	/**
@@ -509,6 +516,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		}
 
 		this.trigger( 'run:after', component, command, args, results );
+
+		window.dispatchEvent( new CustomEvent( 'elementor/commands/run/after', {
+			detail: {
+				command,
+				args,
+			},
+		} ) );
 
 		if ( removeTrace ) {
 			this.removeCurrentTrace( component );

@@ -90,6 +90,10 @@ class Widget_Text_Editor extends Widget_Base {
 		return [ 'text', 'editor' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register text editor widget controls.
 	 *
@@ -126,17 +130,25 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
-		$text_columns = range( 1, 10 );
-		$text_columns = array_combine( $text_columns, $text_columns );
-		$text_columns[''] = esc_html__( 'Default', 'elementor' );
-
 		$this->add_responsive_control(
 			'text_columns',
 			[
 				'label' => esc_html__( 'Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'separator' => 'before',
-				'options' => $text_columns,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'1' => esc_html__( '1', 'elementor' ),
+					'2' => esc_html__( '2', 'elementor' ),
+					'3' => esc_html__( '3', 'elementor' ),
+					'4' => esc_html__( '4', 'elementor' ),
+					'5' => esc_html__( '5', 'elementor' ),
+					'6' => esc_html__( '6', 'elementor' ),
+					'7' => esc_html__( '7', 'elementor' ),
+					'8' => esc_html__( '8', 'elementor' ),
+					'9' => esc_html__( '9', 'elementor' ),
+					'10' => esc_html__( '10', 'elementor' ),
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'columns: {{VALUE}};',
 				],
@@ -148,7 +160,7 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => esc_html__( 'Columns Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
@@ -163,11 +175,28 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 					'em' => [
 						'max' => 10,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
+				],
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'text_columns',
+							'operator' => '>',
+							'value' => 1,
+						],
+						[
+							'name' => 'text_columns',
+							'operator' => '===',
+							'value' => '',
+						],
+					],
 				],
 			]
 		);
@@ -315,12 +344,19 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 5,
 				],
 				'range' => [
 					'px' => [
 						'max' => 30,
+					],
+					'em' => [
+						'max' => 3,
+					],
+					'rem' => [
+						'max' => 3,
 					],
 				],
 				'selectors' => [
@@ -337,12 +373,19 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 10,
 				],
 				'range' => [
 					'px' => [
 						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -357,7 +400,7 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -369,6 +412,9 @@ class Widget_Text_Editor extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-drop-cap' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
+				'condition' => [
+					'drop_cap_view!' => 'default',
+				],
 			]
 		);
 
@@ -376,6 +422,7 @@ class Widget_Text_Editor extends Widget_Base {
 			'drop_cap_border_width', [
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-drop-cap' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -408,12 +455,14 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$is_dom_optimized = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$should_render_inline_editing = ( ! $is_dom_optimized || $is_edit_mode );
+		$should_render_inline_editing = Plugin::$instance->editor->is_edit_mode();
 
 		$editor_content = $this->get_settings_for_display( 'editor' );
 		$editor_content = $this->parse_text_editor( $editor_content );
+
+		if ( empty( $editor_content ) ) {
+			return;
+		}
 
 		if ( $should_render_inline_editing ) {
 			$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
@@ -456,9 +505,11 @@ class Widget_Text_Editor extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		const isDomOptimized = ! ! elementorFrontend.config.experimentalFeatures.e_dom_optimization,
-			isEditMode = elementorFrontend.isEditMode(),
-			shouldRenderInlineEditing = ( ! isDomOptimized || isEditMode );
+		if ( '' === settings.editor ) {
+			return;
+		}
+
+		const shouldRenderInlineEditing = elementorFrontend.isEditMode();
 
 		if ( shouldRenderInlineEditing ) {
 			view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );

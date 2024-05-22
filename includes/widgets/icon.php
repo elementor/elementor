@@ -88,6 +88,10 @@ class Widget_Icon extends Widget_Base {
 		return [ 'icon' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register icon widget controls.
 	 *
@@ -157,7 +161,16 @@ class Widget_Icon extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -184,16 +197,6 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-wrapper' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_style_icon',
-			[
-				'label' => esc_html__( 'Icon', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -297,7 +300,7 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 6,
@@ -306,8 +309,26 @@ class Widget_Icon extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon svg' => 'height: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'fit_to_size',
+			[
+				'label' => esc_html__( 'Fit to Size', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => 'Avoid gaps around icons when width and height aren\'t equal',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'condition' => [
+					'selected_icon[library]' => 'svg',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-wrapper svg' => 'width: 100%;',
+				],
 			]
 		);
 
@@ -316,11 +337,19 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'range' => [
+					'px' => [
+						'max' => 50,
+					],
 					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+					'rem' => [
 						'min' => 0,
 						'max' => 5,
 					],
@@ -336,9 +365,8 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg' ],
+				'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
 				'default' => [
-					'size' => 0,
 					'unit' => 'deg',
 				],
 				'tablet_default' => [
@@ -358,6 +386,7 @@ class Widget_Icon extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -367,12 +396,12 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -395,6 +424,10 @@ class Widget_Icon extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['selected_icon']['value'] ) ) {
+			return;
+		}
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
@@ -448,7 +481,12 @@ class Widget_Icon extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+		<#
+		if ( '' === settings.selected_icon.value ) {
+			return;
+		}
+
+		const link = settings.link.url ? 'href="' + _.escape( settings.link.url ) + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 				iconTag = link ? 'a' : 'div';

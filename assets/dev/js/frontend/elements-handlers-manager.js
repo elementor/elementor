@@ -8,6 +8,8 @@ import HandlesPosition from './handlers/section/handles-position';
 import StretchedSection from './handlers/section/stretched-section';
 import Shapes from './handlers/section/shapes';
 
+/* global elementorFrontendConfig */
+
 module.exports = function( $ ) {
 	const handlersInstances = {};
 
@@ -23,6 +25,18 @@ module.exports = function( $ ) {
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
+
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
+		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+	}
+
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
+		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
+	}
+
+	if ( elementorFrontendConfig.experimentalFeatures[ 'conversion-center' ] ) {
+		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/conversion-center/assets/js/frontend/handlers/contact-buttons' );
+	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
@@ -56,12 +70,14 @@ module.exports = function( $ ) {
 
 	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
 
-	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
+	const addHandlerWithHook = ( elementBaseName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
 
-		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
+		const elementName = elementBaseName + skin;
+
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( $element ) => {
 			if ( isClassHandler( Handler ) ) {
-				this.addHandler( Handler, { $element }, true );
+				this.addHandler( Handler, { $element, elementName }, true );
 			} else {
 				const handlerValue = Handler();
 
@@ -71,10 +87,10 @@ module.exports = function( $ ) {
 
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
-						this.addHandler( dynamicHandler, { $element }, true );
+						this.addHandler( dynamicHandler, { $element, elementName }, true );
 					} );
 				} else {
-					this.addHandler( handlerValue, { $element }, true );
+					this.addHandler( handlerValue, { $element, elementName }, true );
 				}
 			}
 		} );
@@ -101,6 +117,8 @@ module.exports = function( $ ) {
 		}
 
 		const newHandler = new HandlerClass( options );
+
+		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.$element, $ );
 
 		if ( elementID ) {
 			handlersInstances[ elementID ][ handlerID ] = newHandler;
@@ -129,6 +147,10 @@ module.exports = function( $ ) {
 		} );
 	};
 
+	/**
+	 * @param {string} handlerName
+	 * @deprecated since 3.1.0, use `elementorFrontend.elementsHandler.getHandler` instead.
+	 */
 	this.getHandlers = function( handlerName ) {
 		elementorDevTools.deprecation.deprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
 

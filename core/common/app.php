@@ -7,8 +7,10 @@ use Elementor\Core\Common\Modules\Finder\Module as Finder;
 use Elementor\Core\Common\Modules\Connect\Module as Connect;
 use Elementor\Core\Common\Modules\EventTracker\Module as Event_Tracker;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -178,6 +180,13 @@ class App extends BaseApp {
 			[
 				'elementor-icons',
 			],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'e-theme-ui-light',
+			$this->get_css_assets_url( 'theme-light' ),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}

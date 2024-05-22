@@ -1,4 +1,5 @@
 import { escapeHTML } from 'elementor-frontend/utils/utils';
+import DOMPurify from 'dompurify';
 
 export default class TextPathHandler extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
@@ -58,7 +59,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		return fetch( url )
 			.then( ( res ) => res.text() )
 			.then( ( svg ) => {
-				this.elements.pathContainer.innerHTML = svg;
+				this.elements.pathContainer.innerHTML = DOMPurify.sanitize( svg );
 
 				// Re-initialize the elements, so the SVG tag will be added.
 				this.elements = this.getDefaultElements();
@@ -163,10 +164,11 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 */
 	setText( newText ) {
 		const {
-			url,
 			is_external: isExternal,
 			nofollow,
 		} = this.getElementSettings().link;
+
+		const { linkUrl: url } = this.elements.pathContainer.dataset;
 
 		const target = isExternal ? '_blank' : '',
 			rel = nofollow ? 'nofollow' : '';
@@ -174,6 +176,9 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		// Add link attributes.
 		if ( url ) {
 			newText = `<a href="${ escapeHTML( url ) }" rel="${ rel }" target="${ target }">${ escapeHTML( newText ) }</a>`;
+			newText = DOMPurify.sanitize( newText, {
+				ADD_ATTR: [ 'target' ],
+			} );
 		}
 
 		// Set the text.
@@ -221,7 +226,36 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 * @return {boolean} should RTL
 	 */
 	shouldReverseText() {
-		return ( this.isRTL() && -1 === navigator.userAgent.indexOf( 'Firefox' ) );
+		if ( ! this.isRTL() ) {
+			return false;
+		}
+
+		const isFirefox = elementorFrontend.utils.environment.firefox;
+
+		if ( isFirefox ) {
+			return false;
+		}
+
+		const isChromium = elementorFrontend.utils.environment.blink;
+
+		if ( isChromium ) {
+			return ! this.isFixedChromiumVersion();
+		}
+
+		return true;
+	}
+
+	/**
+	 * Chromium >= 96 fixed the issue with RTL text in SVG.
+	 *
+	 * @see https://chromium-review.googlesource.com/c/chromium/src/+/3159942
+	 * @see https://chromium.googlesource.com/chromium/src/+/4f1bc7d6ff8bfbf6348613bdb970fcdc2a706b5a/chrome/VERSION
+	 */
+	isFixedChromiumVersion() {
+		const FIXED_CHROMIUM_VERSION = 96;
+		const currentChromiumVersion = parseInt( navigator.userAgent.match( /(?:Chrom(?:e|ium)|Edg)\/([0-9]+)\./ )[ 1 ] );
+
+		return currentChromiumVersion >= FIXED_CHROMIUM_VERSION;
 	}
 
 	/**

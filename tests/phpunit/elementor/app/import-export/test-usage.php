@@ -7,7 +7,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Usage extends Elementor_Test_Base {
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		remove_all_filters( 'elementor/tracker/send_tracking_data_params' );

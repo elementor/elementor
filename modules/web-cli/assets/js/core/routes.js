@@ -39,6 +39,8 @@ export default class Routes extends Commands {
 		this.detachCurrent( container );
 
 		this.getComponent( route ).onCloseRoute( route );
+
+		this.dispatchOnClose( route );
 	}
 
 	clear() {
@@ -99,21 +101,29 @@ export default class Routes extends Commands {
 		super.beforeRun( route, args, false );
 
 		this.attachCurrent( container, route, args );
+
+		// In the previous condition, `$e.routes.is()` resolves the old route as active (because the actual route
+		// switching happens inside `this.attachCurrent()`), so we can't use it there.
+		if ( oldRoute ) {
+			this.dispatchOnClose( oldRoute );
+		}
 	}
 
-	to( route, args ) {
+	to( route, args, options = { history: true } ) {
 		this.run( route, args );
 
 		const namespaceRoot = this.getComponent( route ).getServiceName();
 
-		if ( ! this.historyPerComponent[ namespaceRoot ] ) {
-			this.historyPerComponent[ namespaceRoot ] = [];
-		}
+		if ( options.history ) {
+			if ( ! this.historyPerComponent[ namespaceRoot ] ) {
+				this.historyPerComponent[ namespaceRoot ] = [];
+			}
 
-		this.historyPerComponent[ namespaceRoot ].push( {
-			route,
-			args,
-		} );
+			this.historyPerComponent[ namespaceRoot ].push( {
+				route,
+				args,
+			} );
+		}
 	}
 
 	back( namespaceRoot ) {
@@ -141,6 +151,8 @@ export default class Routes extends Commands {
 		const component = this.getComponent( route );
 
 		component.onRoute( route, args );
+
+		this.dispatchOnOpen( route );
 
 		super.afterRun( route, args, results, false );
 
@@ -182,5 +194,21 @@ export default class Routes extends Commands {
 
 	error( message ) {
 		throw Error( 'Routes: ' + message );
+	}
+
+	dispatchOnOpen( route ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
+			detail: {
+				route,
+			},
+		} ) );
+	}
+
+	dispatchOnClose( route ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
+			detail: {
+				route,
+			},
+		} ) );
 	}
 }

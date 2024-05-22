@@ -5,7 +5,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Editor extends Elementor_Test_Base {
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );

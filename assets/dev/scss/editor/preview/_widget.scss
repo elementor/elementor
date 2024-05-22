@@ -1,0 +1,97 @@
+//
+// Widget - Preview Settings
+//
+
+// Widget - Overlay Settings
+.elementor-editor-widget-settings {
+	z-index: $second-layer;
+	top: -1px;
+	@include end(-1px);
+	flex-direction: row-reverse;
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+	border-end-start-radius: 3px;
+	border-end-end-radius: 0;
+	overflow: hidden;
+
+	.elementor-editor-element-setting {
+		background-color: var(--e-p-border-widget);
+
+		&:hover {
+			background-color: var(--e-p-border-widget-hover);
+		}
+	}
+}
+
+// Widget Pro Promotion
+.e-widget-pro-promotion {
+
+	.elementor-widget-container {
+		border: 2px dashed var(--e-a-border-color-bold);
+		background-color: var(--e-a-color-white);
+		padding: 20px;
+	}
+
+	.e-container {
+		max-width: 600px;
+		margin: auto;
+	}
+
+	.e-badge {
+		border: 1px solid var(--e-a-color-accent);
+		color: var(--e-a-color-accent);
+		background: var(--e-a-color-white);
+		border-radius: 100px;
+		padding: 4px 12px;
+		font-size: 0.8em;
+	}
+
+	p {
+		margin-block-start: 1em;
+		margin-block-end: 1em;
+		text-align: center;
+
+		img {
+			display: block;
+			margin: 0 auto 20px;
+		}
+	}
+
+	.e-actions {
+		display: flex;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	.e-btn {
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.2;
+		padding: 8px 16px;
+		border-radius: var(--e-a-border-radius);
+		background-color: var(--e-a-btn-bg-accent);
+		color: var(--e-a-btn-color-invert);
+		transition: var(--e-a-transition-hover);
+
+		&:hover,
+		&:focus {
+			background-color: var(--e-a-btn-bg-accent-hover);
+			color: var(--e-a-btn-color-invert);
+		}
+
+		&:active {
+			background-color: var(--e-a-btn-bg-accent-active);
+		}
+
+		&.e-btn-txt {
+			background: transparent;
+			color: var(--e-a-color-txt);
+
+			&:hover,
+			&:focus {
+				background: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt-hover);
+			}
+		}
+	}
+}

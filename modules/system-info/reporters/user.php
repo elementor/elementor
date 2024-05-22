@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\System_Info\Reporters;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -94,7 +96,7 @@ class User extends Base {
 	 */
 	public function get_locale() {
 		return [
-			'value' => get_locale(),
+			'value' => get_bloginfo( 'language' ),
 		];
 	}
 
@@ -114,7 +116,7 @@ class User extends Base {
 	 */
 	public function get_agent() {
 		return [
-			'value' => esc_html( $_SERVER['HTTP_USER_AGENT'] ),
+			'value' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
 		];
 	}
 }

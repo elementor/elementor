@@ -100,7 +100,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 		// On static mode don't use WP responsive images.
 		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_static_render_mode ) {
-			$image_class .= " attachment-$size size-$size";
+			$image_class .= " attachment-$size size-$size wp-image-{$image['id']}";
 			$image_attr = [
 				'class' => trim( $image_class ),
 			];
@@ -114,9 +114,15 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			}
 
 			if ( ! empty( $image_src ) ) {
-				$image_class_html = ! empty( $image_class ) ? ' class="' . $image_class . '"' : '';
+				$image_class_html = ! empty( $image_class ) ? ' class="' . esc_attr( $image_class ) . '"' : '';
 
-				$html .= sprintf( '<img src="%s" title="%s" alt="%s"%s />', esc_attr( $image_src ), Control_Media::get_image_title( $image ), Control_Media::get_image_alt( $image ), $image_class_html );
+				$html .= sprintf(
+					'<img src="%1$s" title="%2$s" alt="%3$s"%4$s loading="lazy" />',
+					esc_url( $image_src ),
+					esc_attr( Control_Media::get_image_title( $image ) ),
+					esc_attr( Control_Media::get_image_alt( $image ) ),
+					$image_class_html
+				);
 			}
 		}
 
@@ -287,18 +293,17 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$fields = [];
 
 		$fields['size'] = [
-			'label' => _x( 'Image Size', 'Image Size Control', 'elementor' ),
+			'label' => esc_html__( 'Image Resolution', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 		];
 
 		$fields['custom_dimension'] = [
-			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
+			'label' => esc_html__( 'Image Dimension', 'elementor' ),
 			'type' => Controls_Manager::IMAGE_DIMENSIONS,
 			'description' => esc_html__( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
 			'condition' => [
 				'size' => 'custom',
 			],
-			'separator' => 'none',
 		];
 
 		return $fields;
@@ -372,10 +377,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image_sizes[ $size_key ] = $control_title;
 		}
 
-		$image_sizes['full'] = _x( 'Full', 'Image Size Control', 'elementor' );
+		$image_sizes['full'] = esc_html__( 'Full', 'elementor' );
 
 		if ( ! empty( $args['include']['custom'] ) || ! in_array( 'custom', $args['exclude'] ) ) {
-			$image_sizes['custom'] = _x( 'Custom', 'Image Size Control', 'elementor' );
+			$image_sizes['custom'] = esc_html__( 'Custom', 'elementor' );
 		}
 
 		return $image_sizes;

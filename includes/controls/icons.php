@@ -73,16 +73,18 @@ class Control_Icons extends Control_Base_Multiple {
 		?>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper elementor-aspect-ratio-219">
-				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-					<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button elementor-fit-aspect-ratio">
+			<div class="elementor-control-input-wrapper">
+				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area">
+					<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button">
 						<i class="eicon-plus-circle" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Add', 'elementor' ); ?></span>
 					</div>
-					<div class="elementor-control-media-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
-							<i class="eicon-trash-o"></i>
+					<div class="elementor-control-media-area">
+						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash-o" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 						</div>
-						<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
+						<div class="elementor-control-media__preview"></div>
 					</div>
 					<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 						<div class="elementor-control-icon-picker elementor-control-media__tool"><?php echo esc_html__( 'Icon Library', 'elementor' ); ?></div>
@@ -130,12 +132,14 @@ class Control_Icons extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-choices">
-					<input id="<?php $this->print_control_uid(); ?>-none" type="radio" value="none">
-					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{ get( 'none', 'label' ) }}" title="{{ get( 'none', 'label' ) }}">
-						<i class="{{ get( 'none', 'icon' ) }}" aria-hidden="true"></i>
-						<span class="elementor-screen-only">{{ get( 'none', 'label' ) }}</span>
-					</label>
-					<# if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
+					<# if ( ! data.exclude_inline_options.includes( 'none' ) ) { #>
+						<input id="<?php $this->print_control_uid(); ?>-none" type="radio" value="none">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{ get( 'none', 'label' ) }}" title="{{ get( 'none', 'label' ) }}">
+							<i class="{{ get( 'none', 'icon' ) }}" aria-hidden="true"></i>
+							<span class="elementor-screen-only">{{ get( 'none', 'label' ) }}</span>
+						</label>
+					<# }
+					if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-svg" type="radio" value="svg">
 						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{ get( 'svg', 'label' ) }}" title="{{ get( 'svg', 'label' ) }}">
 							<i class="{{ get( 'svg', 'icon' ) }}" aria-hidden="true"></i>

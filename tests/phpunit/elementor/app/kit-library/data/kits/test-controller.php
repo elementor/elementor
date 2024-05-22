@@ -20,7 +20,7 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	private $app_mock;
 
-	public function setUp(  ) {
+	public function setUp(): void {
 		$this->traitSetUP();
 
 		$this->app_mock = $this->getMockBuilder( Kit_Library::class )
@@ -59,8 +59,9 @@ class Test_Controller extends Elementor_Test_Base {
 				'title' => 'kit_1',
 				'thumbnail_url' => 'https://localhost/image.png',
 				'access_level' => 0,
+				'access_tier' => Module::ACCESS_TIER_FREE,
 				'keywords' => [ 'word', 'word2' ],
-				'taxonomies' => ['a', 'b', 'c', 'd', 'e', Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
+				'taxonomies' => ['a', 'b', 'c', 'd', 'e',  'f', 'g', 'h',Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
 				'is_favorite' => false,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -73,8 +74,9 @@ class Test_Controller extends Elementor_Test_Base {
 				'title' => 'kit_2',
 				'thumbnail_url' => 'https://localhost/image2.png',
 				'access_level' => 1,
+				'access_tier' => Module::ACCESS_TIER_ESSENTIAL,
 				'keywords' => [],
-				'taxonomies' => ['1', '2', '3', '4', '5', $subscription_plans[Module::ACCESS_LEVEL_PRO]['label']], // Subscription plan also added as taxonomy
+				'taxonomies' => ['1', '2', '3', '4', '5', '6', '7', '8', $subscription_plans[Module::ACCESS_TIER_ESSENTIAL]['label']], // Subscription plan also added as taxonomy
 				'is_favorite' => true,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -103,8 +105,9 @@ class Test_Controller extends Elementor_Test_Base {
 			'title' => 'kit_1',
 			'thumbnail_url' => 'https://localhost/image.png',
 			'access_level' => 0,
+			'access_tier' => Module::ACCESS_TIER_FREE,
 			'keywords' => [ 'word', 'word2' ],
-			'taxonomies' => ['a', 'b', 'c', 'd', 'e', Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
+			'taxonomies' => ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
 			'is_favorite' => false,
 			'trend_index' => 20,
 			'featured_index' => 30,
@@ -169,12 +172,23 @@ class Test_Controller extends Elementor_Test_Base {
 				'types' => [
 					(object) [ 'name' => 'e' ],
 				],
+				'taxonomies' => [
+					(object) [ 'name' => 'a', 'type' => 'tags' ],
+					(object) [ 'name' => 'b', 'type' => 'tags' ],
+					(object) [ 'name' => 'c' , 'type' => 'categories' ],
+					(object) [ 'name' => 'd' , 'type' => 'features' ],
+					(object) [ 'name' => 'e' , 'type' => 'types' ],
+					(object) [ 'name' => 'f' , 'type' => 'main_category' ],
+					(object) [ 'name' => 'g' , 'type' => 'third_category' ],
+					(object) [ 'name' => 'h' , 'type' => 'main_category' ],
+				],
 				'keywords' => [ 'word', 'word2' ],
 				'_id' => 'id_1',
 				'title' => 'kit_1',
 				'slug' => 'kit_1',
 				'thumbnail' => 'https://localhost/image.png',
 				'access_level' => 0,
+				'access_tier' => Module::ACCESS_TIER_FREE,
 				'trend_index' => 20,
 				'featured_index' => 30,
 				'popularity_index' => 40,
@@ -195,12 +209,23 @@ class Test_Controller extends Elementor_Test_Base {
 				'types' => [
 					(object) [ 'name' => '5' ],
 				],
+				'taxonomies' => [
+					(object) [ 'name' => '1', 'type' => 'tags' ],
+					(object) [ 'name' => '2', 'type' => 'tags' ],
+					(object) [ 'name' => '3' , 'type' => 'categories' ],
+					(object) [ 'name' => '4' , 'type' => 'features' ],
+					(object) [ 'name' => '5' , 'type' => 'types' ],
+					(object) [ 'name' => '6' , 'type' => 'main_category' ],
+					(object) [ 'name' => '7' , 'type' => 'third_category' ],
+					(object) [ 'name' => '8' , 'type' => 'main_category' ],
+				],
 				'keywords' => [],
 				'_id' => 'id_2',
 				'title' => 'kit_2',
 				'slug' => 'kit_2',
 				'thumbnail' => 'https://localhost/image2.png',
 				'access_level' => 1,
+				'access_tier' => Module::ACCESS_TIER_ESSENTIAL,
 				'trend_index' => 20,
 				'featured_index' => 30,
 				'popularity_index' => 40,

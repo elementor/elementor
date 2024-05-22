@@ -26,7 +26,7 @@ class Controller extends Base_Controller {
 		$data = $this->get_repository()->find( $request->get_param( 'id' ) );
 
 		if ( ! $data ) {
-			return new Error_404( __( 'Kit not exists.', 'elementor' ), 'kit_not_exists' );
+			return new Error_404( esc_html__( 'Kit not exists.', 'elementor' ), 'kit_not_exists' );
 		}
 
 		return [

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,14 +81,54 @@ class Control_Gallery extends Base_Data_Control {
 				<div class="elementor-control-media__content elementor-control-tag-area">
 					<div class="elementor-control-gallery-status elementor-control-dynamic-switcher-wrapper">
 						<span class="elementor-control-gallery-status-title"></span>
-						<span class="elementor-control-gallery-clear elementor-control-unit-1"><i class="eicon-trash-o" aria-hidden="true"></i></span>
+						<button class="elementor-control-gallery-clear elementor-control-unit-1 tooltip-target" data-tooltip="<?php echo esc_attr__( 'Clear gallery', 'elementor' ); ?>">
+							<i class="eicon-trash-o" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Clear gallery', 'elementor' ); ?></span>
+						</button>
 					</div>
 					<div class="elementor-control-gallery-content">
-						<div class="elementor-control-gallery-thumbnails"></div>
-						<div class="elementor-control-gallery-edit"><span><i class="eicon-pencil" aria-hidden="true"></i></span></div>
-						<button class="elementor-button elementor-control-gallery-add" aria-label="<?php echo esc_html__( 'Add Images', 'elementor' ); ?>"><i class="eicon-plus-circle" aria-hidden="true"></i></button>
+						<div class="elementor-control-gallery-thumbnails" tabindex="0"></div>
+						<div class="elementor-control-gallery-edit">
+							<span><i class="eicon-pencil" aria-hidden="true"></i></span>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Edit gallery', 'elementor' ); ?></span>
+						</div>
+						<button class="elementor-button elementor-control-gallery-add tooltip-target" data-tooltip="<?php echo esc_attr__( 'Add Images', 'elementor' ); ?>">
+							<i class="eicon-plus-circle" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Add Images', 'elementor' ); ?></span>
+						</button>
 					</div>
 				</div>
+
+				<?php /* ?>
+				<div class="elementor-control-media__warnings" role="alert" style="display: none;">
+					<?php
+					Hints::get_notice_template( [
+						'type' => 'warning',
+						'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+						'icon' => true,
+					] );
+					?>
+				</div>
+				<?php */ ?>
+
+				<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
+				<div class="elementor-control-media__promotions" role="alert" style="display: none;">
+					<?php
+					Hints::get_notice_template( [
+						'display' => ! Hints::is_dismissed( 'image-optimization' ),
+						'type' => 'info',
+						'content' => __( 'Don’t let unoptimized images be the downfall of your site’s performance. Use Image Optimizer!', 'elementor' ),
+						'icon' => true,
+						'dismissible' => 'image_optimizer_hint',
+						'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
+						'button_event' => 'image_optimizer_hint',
+						'button_data' => [
+							'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+						],
+					] ); ?>
+				</div>
+				<?php endif; ?>
+
 			</div>
 		</div>
 		<?php
@@ -107,7 +148,6 @@ class Control_Gallery extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'separator' => 'none',
 			'dynamic' => [
 				'categories' => [ TagsModule::GALLERY_CATEGORY ],
 				'returnType' => 'object',

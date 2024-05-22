@@ -47,9 +47,9 @@
 				&:before, &:after {
 					display: block;
 					content: '';
-					border-bottom: 0;
+					border-block-end: 0;
 					flex-grow: 1;
-					border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-color);
+					border-block-start: var(--divider-border-width) var(--divider-border-style) var(--divider-color);
 				}
 			}
 		}
@@ -57,6 +57,7 @@
 
 	&--element-align {
 
+		// TODO: Delete when we fully migrate to logical properties.
 		&-left {
 
 			.elementor-divider {
@@ -76,6 +77,7 @@
 			}
 		}
 
+		// TODO: Delete when we fully migrate to logical properties.
 		&-right {
 
 			.elementor-divider {
@@ -94,11 +96,49 @@
 				}
 			}
 		}
+
+		&-start {
+
+			.elementor-divider {
+
+				.elementor-divider-separator > .elementor-divider__svg:first-of-type {
+					flex-grow: 0;
+					flex-shrink: 100;
+				}
+
+				&-separator:before {
+					content: none;
+				}
+
+				&__element {
+					margin-inline-start: 0;
+				}
+			}
+		}
+
+		&-end {
+
+			.elementor-divider {
+
+				.elementor-divider-separator > .elementor-divider__svg:last-of-type {
+					flex-grow: 0;
+					flex-shrink: 100;
+				}
+
+				&-separator:after {
+					content: none;
+				}
+
+				&__element {
+					margin-inline-end: 0;
+				}
+			}
+		}		
 	}
 
 	&:not(.elementor-widget-divider--view-line_text):not(.elementor-widget-divider--view-line_icon) {
 		.elementor-divider-separator {
-			border-top: var(--divider-border-width) var(--divider-border-style) var(--divider-color);
+			border-block-start: var(--divider-border-width) var(--divider-border-style) var(--divider-color);
 		}
 	}
 
@@ -142,6 +182,7 @@
 
 	& > .elementor-widget-divider {
 		// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722).
-		width: var( --container-widget-width, 100% );
+		width: var( --container-widget-width , 100%);
+	  	--flex-grow: var( --container-widget-flex-grow );
 	}
 }

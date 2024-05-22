@@ -31,7 +31,7 @@ export class Close extends $e.modules.CommandBase {
 				break;
 		}
 
-		$e.internal( 'editor/documents/unload', { document } );
+		await $e.internal( 'editor/documents/unload', { document } );
 
 		if ( onClose ) {
 			await onClose( document );

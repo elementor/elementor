@@ -12,6 +12,7 @@ export class ContainerHelper {
 	static DIRECTION_ROW_REVERSED = 'row-reverse';
 	static DIRECTION_COLUMN_REVERSED = 'column-reverse';
 	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
+	static CONTAINER_TYPE_GRID = 'grid';
 
 	/**
 	 * Create multiple container elements.
@@ -36,18 +37,20 @@ export class ContainerHelper {
 	/**
 	 * Create a Container element.
 	 *
-	 * @param {Object}    settings - Settings to set to each Container.
-	 * @param {Container} target   - The Container object to create the new Container elements inside.
-	 * @param {Object}    options  - Additional command options.
+	 * @param {Object}    settings        - Settings to set to each Container.
+	 * @param {Container} target          - The Container object to create the new Container elements inside.
+	 * @param {Object}    options         - Additional command options.
+	 * @param {Object}    modelAttributes - Additional model attributes.
 	 *
 	 * @return {Container} - The newly created Container.
 	 */
-	static createContainer( settings = {}, target, options = {} ) {
+	static createContainer( settings = {}, target, options = {}, modelAttributes = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: target,
 			model: {
 				elType: 'container',
 				settings,
+				...modelAttributes,
 			},
 			options,
 		} );
@@ -98,6 +101,8 @@ export class ContainerHelper {
 				flex_gap: {
 					unit: 'px',
 					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					column: '0',
+					row: '0',
 				},
 			};
 
@@ -174,10 +179,11 @@ export class ContainerHelper {
 				case 'c100-c50-50': {
 					settings = {
 						flex_direction: ContainerHelper.DIRECTION_ROW,
-						flex_wrap: 'wrap',
 						flex_gap: {
 							unit: 'px',
 							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+							column: '0',
+							row: '0',
 						},
 					};
 
@@ -201,10 +207,19 @@ export class ContainerHelper {
 
 					const rightContainer = ContainerHelper.createContainer( {
 						...settings,
-						padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+						padding: {
+							unit: 'px',
+							top: 0,
+							right: 0,
+							bottom: 0,
+							left: 0,
+							isLinked: true,
+						}, // Create the right Container with 0 padding (default is 10px).
 						flex_gap: {
 							unit: 'px',
 							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+							column: '0',
+							row: '0',
 						},
 					}, newContainer, { edit: false } );
 

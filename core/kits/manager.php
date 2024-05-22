@@ -171,7 +171,7 @@ class Manager {
 		}
 
 		$id = wp_insert_post( [
-			'post_title' => __( 'Default Kit', 'elementor' ),
+			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
 			'post_type' => Source_Local::CPT,
 			'post_status' => 'publish',
 			'meta_input' => [
@@ -424,11 +424,18 @@ class Manager {
 		}
 
 		if ( $document ) {
+			$document_edit_url = add_query_arg(
+				[
+					'active-document' => $this->get_active_id(),
+				],
+				$document->get_edit_url()
+			);
+
 			$admin_bar_config['elementor_edit_page']['children'][] = [
 				'id' => 'elementor_site_settings',
 				'title' => esc_html__( 'Site Settings', 'elementor' ),
 				'sub_title' => esc_html__( 'Site', 'elementor' ),
-				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+				'href' => $document_edit_url,
 				'class' => 'elementor-site-settings',
 				'parent_class' => 'elementor-second-section',
 			];

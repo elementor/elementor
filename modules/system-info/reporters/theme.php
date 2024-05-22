@@ -77,13 +77,13 @@ class Theme extends Base {
 	 * Retrieve the theme.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 3.1.0 Use `get_theme()` method instead.
 	 * @access protected
-	 * @deprecated 3.1.0
 	 *
 	 * @return \WP_Theme WordPress theme object.
 	 */
 	protected function _get_theme() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::get_theme()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'get_theme()' );
 
 		return $this->get_theme();
 	}
@@ -204,7 +204,7 @@ class Theme extends Base {
 		if ( ! $is_child_theme ) {
 			$result['recommendation'] = sprintf(
 				/* translators: %s: WordPress child themes documentation. */
-				_x( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'System Info', 'elementor' ),
+				__( 'If you want to modify the source code of your theme, we recommend using a <a href="%s">child theme</a>.', 'elementor' ),
 				'https://go.elementor.com/wordpress-child-themes/'
 			);
 		}

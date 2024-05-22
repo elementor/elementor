@@ -38,7 +38,9 @@ class Safe_Mode {
 	}
 
 	public function is_valid_token() {
-		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] ) ? $_COOKIE[ self::OPTION_TOKEN ] : null;
+		$token = isset( $_COOKIE[ self::OPTION_TOKEN ] )
+			? wp_kses_post( wp_unslash( $_COOKIE[ self::OPTION_TOKEN ] ) )
+			: null;
 
 		if ( $token && get_option( self::OPTION_TOKEN ) === $token ) {
 			return true;
@@ -101,7 +103,7 @@ class Safe_Mode {
 	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
 		if ( basename( __FILE__ ) === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/safe-mode/" aria-label="' . esc_attr( esc_html__( 'Learn More', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/safe-mode/" target="_blank">' . esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );

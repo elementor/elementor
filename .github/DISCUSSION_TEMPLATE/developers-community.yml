@@ -1,0 +1,27 @@
+body:
+    - type: markdown
+      attributes:
+          value: |
+              **👋 Hello, welcome to the Elementor Developers Community!**
+              # ⚠️ BEFORE POSTING READ THIS CAREFULLY
+              ## 🌐 Please only use this form to discuss with other developers about extending Elementor core or creating your Addons.
+              **⛔ Keep in mind that we're unable to offer any support, manage bug reports and feature requests, or handle direct company contacts through this [Discussion Category](https://elemn.to/dev-community).**
+              For those, we kindly ask you to use the appropriate channels.
+
+              **ℹ️ For more information, please read our [Contribution Guidelines](https://elemn.to/gh-contributing).**
+
+              ### Useful Resources
+              - 📚 **Developers Center** <br>Get technical information and read Elementor's Developers Documentation. <br>**[Visit our Developers Center](https://elemn.to/gh-to-dev-center)**
+              - 📰 **Developers News** <br>Want to know about the latest Elementor developments? <br>**[View the latest Elementor Developers News](https://elemn.to/devnews**)**
+              - 💻 **Developers Documentation** <br>Learn how to extend Elementor core to create your own Addons. <br>**[Read the Documentation](https://elemn.to/gh-to-dev-docs)**
+              - 🤝 **Become a Partner** <br>Join our Developer Partnership Program. <br>**[Stay in the Loop](https://elemn.to/devloop**)**
+
+              ### 🙏 Thank you for joining this community! 
+              We're excited to learn from your contributions and discussions in this lively and engaging community space!
+    - type: textarea
+      id: description
+      validations:
+          required: true
+      attributes:
+          label: "Start a discussion"
+          description: "Ask a question, start a conversation, or share your knowledge"

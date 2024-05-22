@@ -14,33 +14,15 @@
 	.elementor-panel {
 
 		#elementor-panel-header {
-			background-color: $editor-kit-accent;
 
 			#elementor-panel-header-kit-close,
 			#elementor-panel-header-kit-back {
-				display: table-cell;
+				display: flex;
 			}
 
 			@at-root body:not(.e-routes-has-history) #elementor-panel-header-kit-back {
 				pointer-events: none;
-				opacity: 0.4;
-
-				&:hover {
-					.elementor-icon {
-						cursor: inherit;
-						color: inherit;
-					}
-				}
-			}
-		}
-
-		.elementor-panel-navigation {
-
-			.elementor-panel-navigation-tab{
-
-				&.elementor-active{
-					border-bottom-color: $editor-kit-accent;
-				}
+				visibility: hidden;
 			}
 		}
 
@@ -48,14 +30,6 @@
 
 			.elementor-panel-navigation {
 				display: none;
-			}
-		}
-
-		#elementor-panel-saver-button-publish,
-		#elementor-panel-saver-button-save-options {
-
-			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
-				background-color: $editor-kit-accent;
 			}
 		}
 
@@ -79,11 +53,11 @@
 		.elementor-repeater {
 
 			&-fields {
-				margin-bottom: 15px;
+				margin-block-end: 15px;
 				position: relative;
 
 				&.ui-sortable-helper {
-					background-color: $white;
+					background-color: var(--e-a-bg-default);
 				}
 			}
 
@@ -94,8 +68,15 @@
 
 			&-row-tool {
 				cursor: pointer;
-				color: $editor-lightest;
+				color: var(--e-a-color-txt);
+				background-color: transparent;
+				border: none;
 				padding: 5px;
+
+				&:focus,
+				&:hover {
+					color: var(--e-a-color-txt-hover);
+				}
 			}
 		}
 
@@ -143,19 +124,26 @@
 		}
 
 		// Hard selector to override default margin
-		.elementor-control-content {
+		.elementor-repeater-row-controls {
 
-			> .elementor-control-field {
+			> .elementor-control {
 
-				> .elementor-control-input-wrapper {
-					margin-top: 0;
+				> .elementor-control-content {
+
+					> .elementor-control-field {
+
+						> .elementor-control-input-wrapper {
+							margin-block-start: 0;
+						}
+					}
 				}
 			}
 		}
 
+
 		.elementor-controls-popover {
 			align-self: end;
-			margin-top: 35px;
+			margin-block-start: 35px;
 			top: 0;
 			width: 100%;
 
@@ -174,18 +162,17 @@
 
 		.elementor-button-wrapper {
 			text-align: center;
-			border-top: 1px solid $editor-background;
-			max-width: 260px;
-			padding-top: 15px;
+			border-block-start: var(--e-a-border);
+			padding-block-start: 15px;
 		}
 
 		.pickr,
 		.elementor-control-popover-toggle-toggle-label {
-			@include margin-start(5px);
+			margin-inline-start: 5px;
 		}
 
 		.e-sortable-placeholder {
-			background-color: $editor-info;
+			background-color: var(--e-a-color-info);
 			opacity: .9;
 			width: 100%;
 			margin: 8px 0;
@@ -195,14 +182,13 @@
 
 	&-system_colors,
 	&-system_typography {
-		padding-bottom: 0;
+		padding-block-end: 0;
 	}
 }
 
 .e-global-colors__color-value {
-	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
-	text-align: $end;
+	text-align: end;
 	@include ellipsis;
 }

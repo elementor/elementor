@@ -4,7 +4,7 @@ import {
 	Fragment,
 	createRef,
 } from 'react';
-import { render } from 'react-dom';
+import ReactUtils from 'elementor-utils/react';
 import Tab from './tab';
 import IconsGoPro from './icons-go-pro';
 
@@ -214,7 +214,7 @@ class IconsManager extends Component {
 		return (
 			<div id="elementor-icons-manager__upload">
 				<div id="elementor-icons-manager__upload__title">{ __( 'My Libraries', 'elementor' ) }</div>
-				<button id="elementor-icons-manager__upload__button" className="elementor-button elementor-button-default" onClick={ onClick }>{ __( 'Upload', 'elementor' ) }</button>
+				<button id="elementor-icons-manager__upload__button" className="elementor-button" onClick={ onClick }>{ __( 'Upload', 'elementor' ) }</button>
 			</div>
 		);
 	}
@@ -289,11 +289,12 @@ export default IconsManager;
 const renderIconManager = function( props ) {
 	const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-	return render( <IconsManager
-		{ ... props }
-		containerElement={ containerElement } />,
-		containerElement,
-	);
+	return ReactUtils.render( (
+		<IconsManager
+			{ ... props }
+			containerElement={ containerElement }
+		/>
+	), containerElement );
 };
 export { renderIconManager };
 

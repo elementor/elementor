@@ -35,7 +35,7 @@ getNamespace() {
 
 defaultStates() {
 	return {
-		// A correspnding `Slice` instance will be available under `$e.store.get( 'example' )`.
+		// A corresponding `Slice` instance will be available under `$e.store.get( 'example' )`.
 		'': {
 			initialState: {
 				name: 'Elementor',
@@ -49,7 +49,7 @@ defaultStates() {
 				},
 			},
 		},
-		// A correspnding `Slice` instance will be available under `$e.store.get( 'example/counter' )`.
+		// A corresponding `Slice` instance will be available under `$e.store.get( 'example/counter' )`.
 		counter: {
 			initialState: {
 				count: 0,

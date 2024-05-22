@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -113,6 +114,20 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array|null Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return null;
+	}
+
+	/**
 	 * Widget base constructor.
 	 *
 	 * Initializing the widget base class.
@@ -132,7 +147,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_type_instance = $this->is_type_instance();
 
 		if ( ! $is_type_instance && null === $args ) {
-			throw new \Exception( '`$args` argument is required when initializing a full widget instance.' );
+			throw new \Exception( 'An `$args` argument is required when initializing a full widget instance.' );
 		}
 
 		if ( $is_type_instance ) {
@@ -317,10 +332,10 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @since 1.7.12
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `register_skins()` method instead.
 	 */
 	protected function _register_skins() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_skins()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_skins()' );
 
 		$this->register_skins();
 	}
@@ -364,7 +379,18 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
+			'upsale_data' => $this->get_upsale_data(),
+			'is_dynamic_content' => $this->is_dynamic_content(),
 		];
+
+		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
+			$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
+			$config['upsale_data'] = Filtered_Promotions_Manager::get_filtered_promotion_data( $config['upsale_data'], $filter_name, 'upgrade_url' );
+		}
+
+		if ( isset( $config['upsale_data']['image'] ) ) {
+			$config['upsale_data']['image'] = esc_url( $config['upsale_data']['image'] );
+		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -569,7 +595,7 @@ abstract class Widget_Base extends Element_Base {
 			}
 		}
 
-		$attributes['e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
+		$attributes['data-e-action-hash'] = Plugin::instance()->frontend->create_action_hash( 'lightbox', $action_hash_params );
 
 		$this->add_render_attribute( $element, $attributes, null, $overwrite );
 
@@ -1023,7 +1049,20 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * Init controls.
+	 *
+	 * Reset the `is_first_section` flag to true, so when the Stacks are cleared
+	 * all the controls will be registered again with their skins and settings.
+	 *
+	 * @since 3.14.0
+	 * @access protected
+	 */
+	protected function init_controls() {
+		$this->is_first_section = true;
+		parent::init_controls();
 	}
 
 	public function register_runtime_widget( $widget_name ) {
@@ -1073,6 +1112,34 @@ abstract class Widget_Base extends Element_Base {
 		$config = $this->get_responsive_widgets_config();
 
 		return $responsive_widgets_data_manager->get_asset_data_from_config( $config );
+	}
+
+	/**
+	 * Mark widget as deprecated.
+	 *
+	 * Use `get_deprecation_message()` method to print the message control at specific location in register_controls().
+	 *
+	 * @param $version string           The version of Elementor that deprecated the widget.
+	 * @param $message string         A message regarding the deprecation.
+	 * @param $replacement string   The widget that should be used instead.
+	 */
+	protected function add_deprecation_message( $version, $message, $replacement ) {
+		// Expose the config for handling in JS.
+		$this->set_config( 'deprecation', [
+			'version' => $version,
+			'message' => $message,
+			'replacement' => $replacement,
+		] );
+
+		$this->add_control(
+			'deprecation_message',
+			[
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => $message,
+				'separator' => 'after',
+			]
+		);
 	}
 
 	/**

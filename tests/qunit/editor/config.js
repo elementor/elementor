@@ -11,7 +11,6 @@ import heading from '../mock/elments/heading';
 import section from '../mock/elments/section';
 import tabs from '../mock/elments/tabs';
 import video from '../mock/elments/video';
-import SchemeItems from '../mock/schemes/items';
 
 // Document.
 config.initial_document = document;
@@ -58,12 +57,6 @@ config.controls = new Proxy( {}, {
 		};
 	},
 } );
-
-// Schemes.
-config.schemes = {
-	items: SchemeItems,
-	enabled_schemes: [ 'color', 'typography', 'color-picker' ],
-};
 
 // Dynamic Tags.
 config.dynamicTags.tags = {

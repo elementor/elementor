@@ -57,15 +57,16 @@ class Group_Control_Border extends Group_Control_Base {
 		$fields = [];
 
 		$fields['border'] = [
-			'label' => _x( 'Border Type', 'Border Control', 'elementor' ),
+			'label' => esc_html__( 'Border Type', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'' => esc_html__( 'None', 'elementor' ),
-				'solid' => _x( 'Solid', 'Border Control', 'elementor' ),
-				'double' => _x( 'Double', 'Border Control', 'elementor' ),
-				'dotted' => _x( 'Dotted', 'Border Control', 'elementor' ),
-				'dashed' => _x( 'Dashed', 'Border Control', 'elementor' ),
-				'groove' => _x( 'Groove', 'Border Control', 'elementor' ),
+				'' => esc_html__( 'Default', 'elementor' ),
+				'none' => esc_html__( 'None', 'elementor' ),
+				'solid' => esc_html__( 'Solid', 'elementor' ),
+				'double' => esc_html__( 'Double', 'elementor' ),
+				'dotted' => esc_html__( 'Dotted', 'elementor' ),
+				'dashed' => esc_html__( 'Dashed', 'elementor' ),
+				'groove' => esc_html__( 'Groove', 'elementor' ),
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-style: {{VALUE}};',
@@ -73,26 +74,27 @@ class Group_Control_Border extends Group_Control_Base {
 		];
 
 		$fields['width'] = [
-			'label' => _x( 'Width', 'Border Control', 'elementor' ),
+			'label' => esc_html__( 'Border Width', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
+			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 			],
 			'condition' => [
-				'border!' => '',
+				'border!' => [ '', 'none' ],
 			],
 			'responsive' => true,
 		];
 
 		$fields['color'] = [
-			'label' => _x( 'Color', 'Border Control', 'elementor' ),
+			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-color: {{VALUE}};',
 			],
 			'condition' => [
-				'border!' => '',
+				'border!' => [ '', 'none' ],
 			],
 		];
 

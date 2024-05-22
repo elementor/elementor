@@ -3,7 +3,8 @@
 //
 .elementor-widget-image-carousel {
 
-	.swiper-container {
+	.swiper-container,
+	.swiper {
 		position: static; // Allow navigation arrows to stay outside
 
 		.swiper-slide {
@@ -20,7 +21,7 @@
 }
 
 // Before the image-carousel layout is calculated by JS. //
-.elementor-image-carousel-wrapper:not(.swiper-container-initialized) {
+.elementor-image-carousel-wrapper:not(.swiper-container-initialized):not(.swiper-initialized) {
 
 	.swiper-slide {
 		max-width: calc(100% / var(--e-image-carousel-slides-to-show, 3));

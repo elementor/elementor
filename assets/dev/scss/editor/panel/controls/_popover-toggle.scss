@@ -9,7 +9,9 @@
 	}
 
 	.elementor-control-input-wrapper {
-		direction: getInverseDirection();
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
 	}
 
 	.elementor-control-popover-toggle-toggle {
@@ -17,7 +19,8 @@
 		&:checked {
 
 			+ .elementor-control-popover-toggle-toggle-label {
-				color: $editor-info;
+				color: var(--e-a-color-txt-active);
+				background-color: var(--e-a-bg-active-bold);
 			}
 		}
 
@@ -29,32 +32,44 @@
 		}
 	}
 
-	.elementor-control-popover-toggle-reset-label {
-		color: $editor-lighter;
-		@include margin-end(5px);
-	}
-
 	.elementor-control-popover-toggle-toggle-label {
 		height: $control-unit;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 3px;
-		border: 1px solid $editor-lightest;
+		border-radius: var(--e-a-border-radius);
+		border: var(--e-a-border-bold);
+		transition: var(--e-a-transition-hover);
+
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+	}
+
+	.elementor-control-popover-toggle-reset-label {
+		color: var(--e-a-color-txt-muted);
+		margin-inline-end: 5px;
+
+		&:hover {
+			color: var(--e-a-color-txt);
+		}
 	}
 }
 
 .elementor-controls-popover {
 
 	&.e-controls-popover--typography {
-		padding-top: 0;
+		padding-block-start: 0;
 	}
 }
 
 .e-control-global {
 
 	.elementor-control-popover-toggle-toggle-label {
-		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		border-start-start-radius: 0;
+		border-start-end-radius: var(--e-a-border-radius);
+		border-end-start-radius: 0;
+		border-end-end-radius: var(--e-a-border-radius);
 		flex-shrink: 0;
 	}
 }

@@ -1,0 +1,247 @@
+{
+    "content": [
+        {
+            "id": "77884201",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "7dc90720",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "First tab #1",
+                                "tab_content": "<p><strong>This is a bold line.<\/strong><\/p><p><em>This is an Italic.<\/em><\/p><p><span style=\"text-decoration: underline;\">This is underline.<\/span><\/p><ul><li>list 1<\/li><li>list 2<\/li><\/ul><ol><li>first<\/li><li style=\"text-align: left;\">second<\/li><\/ol><p style=\"text-align: right;\">Some text left alignment<\/p><p style=\"text-align: center;\">Some text center alignment<\/p><p style=\"text-align: left;\">Some text right alignment<\/p><p style=\"padding-left: 40px;\">Text with indent<\/p><p>border-width - 10, border color- primary, background color - #DDEAF0,\u00a0<\/p><p>title color - primary, active color accent,\u00a0<\/p>",
+                                "_id": "e50c702"
+                            },
+                            {
+                                "tab_title": "Second tab #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "835a9a1"
+                            },
+                            {
+                                "_id": "617a1e0",
+                                "tab_title": "Third tab",
+                                "tab_content": "<p>some text<\/p>"
+                            }
+                        ],
+                        "border_width": {
+                            "unit": "px",
+                            "size": 10,
+                            "sizes": []
+                        },
+                        "border_color": "#6EC1E4",
+                        "background_color": "#DDEAF0",
+                        "__globals__": {
+                            "border_color": "globals\/colors?id=primary",
+                            "background_color": ""
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "tabs",
+                    "elType": "widget"
+                },
+                {
+                    "id": "52f3a036",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Tab #1",
+                                "tab_content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.<\/p><p>border-color - custom #EDA027, background color- custom #E79595<\/p><p>content color - custom #F6F6F6, typography- primary<\/p>",
+                                "_id": "e50c702"
+                            },
+                            {
+                                "tab_title": "Tab #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "835a9a1"
+                            }
+                        ],
+                        "tabs_align_horizontal": "center",
+                        "border_width": {
+                            "unit": "px",
+                            "size": 4,
+                            "sizes": []
+                        },
+                        "border_color": "#EDA027",
+                        "background_color": "#E79595",
+                        "tab_typography_typography": "custom",
+                        "tab_typography_font_family": "Roboto",
+                        "tab_typography_font_weight": "600",
+                        "content_color": "#F6F6F6",
+                        "content_typography_typography": "custom",
+                        "content_typography_font_family": "Roboto",
+                        "content_typography_font_weight": "600",
+                        "__globals__": {
+                            "content_color": "",
+                            "content_typography_typography": ""
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "tabs",
+                    "elType": "widget"
+                },
+                {
+                    "id": "4dcf9094",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Tab #1",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "e50c702"
+                            },
+                            {
+                                "tab_title": "Tab #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "835a9a1"
+                            }
+                        ],
+                        "tabs_align_horizontal": "end",
+                        "tab_typography_typography": "custom",
+                        "tab_typography_font_family": "Times New Roman",
+                        "tab_typography_font_size": {
+                            "unit": "px",
+                            "size": 50,
+                            "sizes": []
+                        },
+                        "tab_typography_font_weight": "700",
+                        "tab_typography_text_transform": "uppercase",
+                        "tab_typography_font_style": "italic",
+                        "tab_typography_text_decoration": "underline",
+                        "tab_typography_line_height": {
+                            "unit": "px",
+                            "size": 50,
+                            "sizes": []
+                        },
+                        "tab_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 4,
+                            "sizes": []
+                        },
+                        "tab_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 25,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "tabs",
+                    "elType": "widget"
+                },
+                {
+                    "id": "2f5aadf3",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Tab #1",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "e50c702"
+                            },
+                            {
+                                "tab_title": "Tab #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "835a9a1"
+                            }
+                        ],
+                        "tabs_align_horizontal": "stretch",
+                        "tab_typography_typography": "custom",
+                        "tab_typography_font_family": "Roboto",
+                        "tab_typography_font_size": {
+                            "unit": "px",
+                            "size": 48,
+                            "sizes": []
+                        },
+                        "tab_typography_font_weight": "600",
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 2,
+                            "sizes": []
+                        },
+                        "text_stroke_stroke_color": "#2C2121",
+                        "content_typography_typography": "custom",
+                        "content_typography_font_family": "Arial",
+                        "content_typography_font_size": {
+                            "unit": "px",
+                            "size": 34,
+                            "sizes": []
+                        },
+                        "content_typography_font_weight": "400",
+                        "content_typography_text_transform": "capitalize",
+                        "content_typography_font_style": "normal",
+                        "content_typography_text_decoration": "overline"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "tabs",
+                    "elType": "widget"
+                },
+                {
+                    "id": "7c1e23a4",
+                    "settings": {
+                        "tabs": [
+                            {
+                                "tab_title": "Tab #1",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "e50c702"
+                            },
+                            {
+                                "tab_title": "Tab #2",
+                                "tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+                                "_id": "835a9a1"
+                            }
+                        ],
+                        "type": "vertical",
+                        "navigation_width": {
+                            "unit": "%",
+                            "size": 19,
+                            "sizes": []
+                        },
+                        "tab_typography_typography": "custom",
+                        "tab_typography_font_family": "Roboto",
+                        "tab_typography_font_size": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "tab_typography_font_weight": "600",
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "title_shadow_text_shadow_type": "yes",
+                        "title_shadow_text_shadow": {
+                            "horizontal": 9,
+                            "vertical": 11,
+                            "blur": 7,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "content_typography_typography": "custom",
+                        "content_typography_font_family": "Roboto",
+                        "content_typography_font_weight": "400",
+                        "content_shadow_text_shadow_type": "yes",
+                        "content_shadow_text_shadow": {
+                            "horizontal": -5,
+                            "vertical": -7,
+                            "blur": 10,
+                            "color": "rgba(4.2234375, 1.5883797554347827, 1.5883797554347827, 0.94)"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "tabs",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "tabs",
+    "type": "page"
+}

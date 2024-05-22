@@ -70,8 +70,11 @@ module.exports = BaseSettings.extend( {
 		return 'document';
 	},
 
+	/**
+	 * @deprecated since 3.7.0, use `getContainerType()` instead.
+	 */
 	getContainerId() {
-		elementorDevTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+		elementorDevTools.deprecation.deprecated( 'getContainerId()', '3.7.0', 'getContainerType()' );
 
 		return this.getContainerType();
 	},

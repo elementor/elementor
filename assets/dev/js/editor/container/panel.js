@@ -1,7 +1,7 @@
 /**
  * @typedef {import('./container')} Container
  */
- export default class Panel {
+export default class Panel {
 	/**
 	 * Function constructor().
 	 *

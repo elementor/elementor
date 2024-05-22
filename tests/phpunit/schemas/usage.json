@@ -904,15 +904,6 @@
 							"$id": "#/usages/settings/advanced",
 							"title": "The advanced settings schema",
 							"properties": {
-								"css_print_method": {
-									"$id": "#/usages/settings/advanced/css_print_method",
-									"title": "CSS print method.",
-									"default": "internal",
-									"enum": [
-										"internal",
-										"external"
-									]
-								},
 								"editor_break_lines": {
 									"$id": "#/usages/settings/advanced/editor_break_lines",
 									"title": "Editor loader editor method switch",
@@ -928,8 +919,17 @@
 										"",
 										"1"
 									],
-									"title": "Is enable unfilterd file uploads?",
+									"title": "Is enable unfiltered file uploads?",
 									"default": ""
+								},
+								"google_font": {
+									"$id": "#/usages/settings/advanced/google_font",
+									"title": "Google Fonts",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
 								},
 								"font_display": {
 									"$id": "#/usages/settings/advanced/font_display",
@@ -951,6 +951,49 @@
 									],
 									"title": "Does Font awesome 4 enabled?",
 									"default": "yes"
+								},
+								"meta_generator_tag": {
+									"$id": "#/usages/settings/advanced/meta_generator_tag",
+									"enum": [
+										"",
+										"1"
+									],
+									"title": "Generator Tag",
+									"default": ""
+								}
+							},
+							"additionalProperties": false
+						},
+						"performance": {
+							"$id": "#/usages/settings/performance",
+							"title": "The performance settings schema",
+							"properties": {
+								"css_print_method": {
+									"$id": "#/usages/settings/performance/css_print_method",
+									"title": "CSS print method.",
+									"default": "internal",
+									"enum": [
+										"internal",
+										"external"
+									]
+								},
+								"optimized_image_loading": {
+									"$id": "#/usages/settings/performance/optimized_image_loading",
+									"title": "Optimized Image Loading",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
+								},
+								"optimized_gutenberg_loading": {
+									"$id": "#/usages/settings/performance/optimized_gutenberg_loading",
+									"title": "Optimized Gutenberg Loading",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
 								}
 							},
 							"additionalProperties": false
@@ -982,6 +1025,29 @@
 													]
 												}
 											]
+										},
+										"tags": {
+											"$id": "#/usages/settings/experiments/$experiment/tags",
+											"title": "Tags of the experiment",
+											"type": "array",
+											"items": {
+												"$id": "#/usages/settings/experiments/$experiment/tags/tag",
+												"title": "The tag schema",
+												"type": "object",
+												"properties": {
+													"type": {
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/type",
+														"type": "string",
+														"title": "The tag type"
+													},
+													"label": {
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/label",
+														"type": "string",
+														"title": "The tag label"
+													}
+												},
+												"additionalProperties": false
+											}
 										}
 									},
 									"additionalProperties": false
@@ -1002,42 +1068,26 @@
 								"allow_tracking": "yes"
 							},
 							"advanced": {
-								"css_print_method": "internal",
 								"editor_break_lines": "1",
 								"unfiltered_files_upload": "",
-								"font_display": "auto"
+								"font_display": "swap"
+							},
+							"performance": {
+								"css_print_method": "internal"
 							},
 							"experiments": {
-								"e_dom_optimization": {
-									"default": "active",
-									"state": "default"
-								},
-								"e_optimized_assets_loading": {
-									"default": "inactive",
-									"state": "default"
-								},
 								"e_optimized_css_loading": {
 									"default": "inactive",
-									"state": "default"
-								},
-								"a11y_improvements": {
-									"default": "active",
-									"state": "default"
-								},
-								"e_import_export": {
-									"default": "active",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"landing-pages": {
 									"default": "active",
-									"state": "default"
-								},
-								"elements-color-picker": {
-									"default": "active",
-									"state": "default"
-								},
-								"admin-top-bar": {
-									"default": "inactive",
 									"state": "default"
 								},
 								"form-submissions": {
@@ -1213,6 +1263,35 @@
 						}
 					],
 					"additionalProperties": false
+				},
+				"kit": {
+				  "$id": "#/usages/kit",
+				  "title": "Elementor kit usage",
+				  "properties": {
+					"defaults": {
+					  "$id": "#/usages/kit/defaults",
+					  "type": "object",
+					  "properties": {
+						"count": {
+						  "type": "integer"
+						},
+						"elements": {
+						  "$id": "#/usages/kit/defaults/elements",
+						  "type": "array",
+						  "items": {
+							"type": "string"
+						  },
+						  "additionalProperties": false
+						}
+					  },
+					  "required": [
+						"count",
+						"elements"
+					  ],
+					  "additionalProperties": false
+					}
+				  },
+				  "additionalProperties": false
 				}
 			},
 			"additionalProperties": false

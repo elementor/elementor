@@ -2,7 +2,7 @@ var TagControlsStack = require( 'elementor-dynamic-tags/tag-controls-stack' );
 
 module.exports = Marionette.ItemView.extend( {
 
-	className: 'elementor-dynamic-cover elementor-input-style',
+	className: 'elementor-dynamic-cover e-input-style',
 
 	tagControlsStack: null,
 

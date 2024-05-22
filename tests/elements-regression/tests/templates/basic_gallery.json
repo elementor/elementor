@@ -1,0 +1,140 @@
+{
+    "content": [
+        {
+            "id": "69967b36",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "403b85bd",
+                    "settings": {
+                        "wp_gallery": [
+                            {
+                                "id": 8,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/Video.png"
+                            },
+                            {
+                                "id": 6,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/About-Pic-3-1.png"
+                            },
+                            {
+                                "id": 5,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/Quote-About-Copy-1.png"
+                            }
+                        ],
+                        "open_lightbox": "no",
+                        "image_spacing": "custom",
+                        "image_spacing_custom": {
+                            "unit": "px",
+                            "size": 75,
+                            "sizes": []
+                        },
+                        "image_border_border": "solid",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "8",
+                            "right": "8",
+                            "bottom": "8",
+                            "left": "8",
+                            "isLinked": true
+                        },
+                        "image_border_radius": {
+                            "unit": "px",
+                            "top": "9",
+                            "right": "9",
+                            "bottom": "9",
+                            "left": "9",
+                            "isLinked": true
+                        },
+                        "gallery_display_caption": "none",
+                        "caption_shadow_text_shadow_type": "yes",
+                        "caption_shadow_text_shadow": {
+                            "horizontal": 0,
+                            "vertical": 0,
+                            "blur": 14,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "__globals__": {
+                            "image_border_color": "globals\/colors?id=primary"
+                        },
+                        "gallery_columns": "6"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-gallery",
+                    "elType": "widget"
+                },
+                {
+                    "id": "6c0e82e6",
+                    "settings": {
+                        "wp_gallery": [
+                            {
+                                "id": 8,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/Video.png"
+                            },
+                            {
+                                "id": 5,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/Quote-About-Copy-1.png"
+                            },
+                            {
+                                "id": 6,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/About-Pic-3-1.png"
+                            },
+                            {
+                                "id": 7,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/About-CTA-1.png"
+                            }
+                        ],
+                        "thumbnail_size": "medium_large",
+                        "gallery_columns": "2",
+                        "open_lightbox": "yes",
+                        "image_spacing": "custom",
+                        "image_spacing_custom": {
+                            "unit": "px",
+                            "size": 66,
+                            "sizes": []
+                        },
+                        "image_border_border": "dashed",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "11",
+                            "right": "11",
+                            "bottom": "11",
+                            "left": "11",
+                            "isLinked": true
+                        },
+                        "image_border_color": "#BFE46E",
+                        "image_border_radius": {
+                            "unit": "px",
+                            "top": "8",
+                            "right": "8",
+                            "bottom": "8",
+                            "left": "8",
+                            "isLinked": true
+                        },
+                        "gallery_display_caption": "none",
+                        "caption_shadow_text_shadow_type": "yes",
+                        "caption_shadow_text_shadow": {
+                            "horizontal": 0,
+                            "vertical": 0,
+                            "blur": 14,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "__globals__": {
+                            "image_border_color": ""
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-gallery",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "basic_gallery",
+    "type": "page"
+}

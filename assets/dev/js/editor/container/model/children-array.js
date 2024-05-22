@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../container')} Container
  */
- export default class ChildrenArray extends Array {
+export default class ChildrenArray extends Array {
 	clear() {
 		this.length = 0;
 	}
@@ -58,7 +58,6 @@
 	 * Will run over children recursively, breaks if the callback return true.
 	 *
 	 * @param {function(Container) : *} callback
-	 *
 	 */
 	someRecursive( callback ) {
 		for ( const container of this ) {

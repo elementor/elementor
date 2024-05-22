@@ -85,7 +85,33 @@ class Widget_Video extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion' ];
+		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion', 'videopress' ];
+	}
+
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Register video widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 3.19.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => esc_html__( "Grab your visitors' attention", 'elementor' ),
+			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
 	}
 
 	/**
@@ -114,6 +140,7 @@ class Widget_Video extends Widget_Base {
 					'youtube' => esc_html__( 'YouTube', 'elementor' ),
 					'vimeo' => esc_html__( 'Vimeo', 'elementor' ),
 					'dailymotion' => esc_html__( 'Dailymotion', 'elementor' ),
+					'videopress' => esc_html__( 'VideoPress', 'elementor' ),
 					'hosted' => esc_html__( 'Self Hosted', 'elementor' ),
 				],
 				'frontend_available' => true,
@@ -138,6 +165,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'frontend_available' => true,
 			]
 		);
@@ -160,6 +190,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -181,6 +214,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'dailymotion',
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -190,7 +226,7 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'External URL', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
-					'video_type' => 'hosted',
+					'video_type' => [ 'hosted', 'videopress' ],
 				],
 			]
 		);
@@ -198,7 +234,7 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'hosted_url',
 			[
-				'label' => esc_html__( 'Choose File', 'elementor' ),
+				'label' => esc_html__( 'Choose Video File', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'dynamic' => [
 					'active' => true,
@@ -206,9 +242,11 @@ class Widget_Video extends Widget_Base {
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
-				'media_type' => 'video',
+				'media_types' => [
+					'video',
+				],
 				'condition' => [
-					'video_type' => 'hosted',
+					'video_type' => [ 'hosted', 'videopress' ],
 					'insert_url' => '',
 				],
 			]
@@ -230,12 +268,38 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
-				'media_type' => 'video',
 				'placeholder' => esc_html__( 'Enter your URL', 'elementor' ),
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => 'yes',
 				],
+			]
+		);
+
+		$this->add_control(
+			'videopress_url',
+			[
+				'label' => esc_html__( 'URL', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'label_block' => true,
+				'show_label' => false,
+				'default' => 'https://videopress.com/v/ZCAOzTNk',
+				'dynamic' => [
+					'active' => true,
+					'categories' => [
+						TagsModule::POST_META_CATEGORY,
+						TagsModule::URL_CATEGORY,
+					],
+				],
+				'placeholder' => esc_html__( 'VideoPress URL', 'elementor' ),
+				'ai' => [
+					'active' => false,
+				],
+				'condition' => [
+					'video_type' => 'videopress',
+					'insert_url' => 'yes',
+				],
+
 			]
 		);
 
@@ -246,6 +310,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => esc_html__( 'Specify a start time (in seconds)', 'elementor' ),
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -388,9 +453,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
+				'description' => esc_html__( 'When you turn on privacy mode, YouTube/Vimeo won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
 				'condition' => [
-					'video_type' => 'youtube',
+					'video_type' => [ 'youtube', 'vimeo' ],
 				],
 				'frontend_available' => true,
 			]
@@ -514,6 +579,29 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'preload',
+			[
+				'label' => esc_html__( 'Preload', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'metadata' => esc_html__( 'Metadata', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
+					'none' => esc_html__( 'None', 'elementor' ),
+				],
+				'description' => sprintf(
+					'%1$s <a target="_blank" href="https://go.elementor.com/preload-video/">%2$s</a>',
+					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' ),
+				),
+				'default' => 'metadata',
+				'condition' => [
+					'video_type' => 'hosted',
+					'autoplay' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'poster',
 			[
 				'label' => esc_html__( 'Poster', 'elementor' ),
@@ -524,15 +612,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'youtube',
 			]
 		);
 
@@ -579,7 +658,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'name' => 'image_overlay', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_overlay_size` and `image_overlay_custom_dimension`.
 				'default' => 'full',
-				'separator' => 'none',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
@@ -592,6 +670,9 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'Play Icon', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'separator' => 'before',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
@@ -673,9 +754,18 @@ class Widget_Video extends Widget_Base {
 					'11' => '1:1',
 					'916' => '9:16',
 				],
+				'selectors_dictionary' => [
+					'169' => '1.77777', // 16 / 9
+					'219' => '2.33333', // 21 / 9
+					'43' => '1.33333', // 4 / 3
+					'32' => '1.5', // 3 / 2
+					'11' => '1', // 1 / 1
+					'916' => '0.5625', // 9 / 16
+				],
 				'default' => '169',
-				'prefix_class' => 'elementor-aspect-ratio-',
-				'frontend_available' => true,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
+				],
 			]
 		);
 
@@ -684,6 +774,20 @@ class Widget_Video extends Widget_Base {
 			[
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} .elementor-wrapper',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_image_overlay_style',
+			[
+				'label' => esc_html__( 'Image Overlay', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
+				],
 			]
 		);
 
@@ -696,7 +800,6 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -721,6 +824,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 10,
@@ -746,7 +850,7 @@ class Widget_Video extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => _x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 				'condition' => [
@@ -804,29 +908,54 @@ class Widget_Video extends Widget_Base {
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover' => 'color: {{VALUE}}',
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover svg' => 'fill: {{VALUE}}',
 				],
-				'separator' => 'after',
 			]
 		);
 
+		$this->add_responsive_control(
+			'lightbox_content_animation',
+			[
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'deprecation_warning',
+			[
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'danger',
+				'content' => esc_html__( 'Note: These controls have been deprecated and are only visible if they were previously in use. The video’s width and position are now set based on its aspect ratio.', 'elementor' ),
+				'separator' => 'before',
+				'condition' => [
+					'lightbox_video_width!' => '',
+					'lightbox_content_position!' => '',
+				],
+			]
+		);
+
+		// Deprecated control. Visible only if it was previously in use.
 		$this->add_control(
 			'lightbox_video_width',
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
-				'range' => [
-					'%' => [
-						'min' => 30,
-					],
-				],
-				'selectors' => [
-					'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+				// 'selectors' => [
+				// 	'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+				// ],
+				'condition' => [
+					'lightbox_video_width!' => '',
+					'lightbox_content_position!' => '',
 				],
 			]
 		);
 
+		// Deprecated control. Visible only if it was previously in use.
 		$this->add_control(
 			'lightbox_content_position',
 			[
@@ -837,21 +966,16 @@ class Widget_Video extends Widget_Base {
 					'' => esc_html__( 'Center', 'elementor' ),
 					'top' => esc_html__( 'Top', 'elementor' ),
 				],
-				'selectors' => [
-					'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
-				],
+				// 'selectors' => [
+				// 	'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
+				// ],
 				'selectors_dictionary' => [
 					'top' => 'top: 60px',
 				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'lightbox_content_animation',
-			[
-				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
-				'frontend_available' => true,
+				'condition' => [
+					'lightbox_video_width!' => '',
+					'lightbox_content_position!' => '',
+				],
 			]
 		);
 
@@ -882,6 +1006,10 @@ class Widget_Video extends Widget_Base {
 		if ( 'hosted' === $settings['video_type'] ) {
 			$video_url = $this->get_hosted_video_url();
 		} else {
+			if ( 'videopress' === $settings['video_type'] ) {
+				$video_url = $this->get_videopress_video_url();
+			}
+
 			$embed_params = $this->get_embed_params();
 			$embed_options = $this->get_embed_options();
 		}
@@ -922,10 +1050,6 @@ class Widget_Video extends Widget_Base {
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
 
-		if ( ! $settings['lightbox'] ) {
-			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-fit-aspect-ratio' );
-		}
-
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
 		?>
 		<div <?php $this->print_render_attribute_string( 'video-wrapper' ); ?>>
@@ -964,7 +1088,7 @@ class Widget_Video extends Widget_Base {
 					$this->add_render_attribute( 'image-overlay', [
 						'data-elementor-open-lightbox' => 'yes',
 						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
-						'e-action-hash' => Plugin::instance()->frontend->create_action_hash( 'lightbox', $lightbox_options ),
+						'data-e-action-hash' => Plugin::instance()->frontend->create_action_hash( 'lightbox', $lightbox_options ),
 					] );
 
 					if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -1084,6 +1208,10 @@ class Widget_Video extends Widget_Base {
 			$params['color'] = str_replace( '#', '', $settings['color'] );
 
 			$params['autopause'] = '0';
+
+			if ( ! empty( $settings['yt_privacy'] ) ) {
+				$params['dnt'] = 'true';
+			}
 		} elseif ( 'dailymotion' === $settings['video_type'] ) {
 			$params_dictionary = [
 				'controls',
@@ -1097,6 +1225,10 @@ class Widget_Video extends Widget_Base {
 			$params['start'] = $settings['start'];
 
 			$params['endscreen-enable'] = '0';
+		} elseif ( 'videopress' === $settings['video_type'] ) {
+			$params_dictionary = $this->get_params_dictionary_for_videopress();
+
+			$params['at'] = $settings['start'];
 		}
 
 		foreach ( $params_dictionary as $key => $param_name ) {
@@ -1165,6 +1297,10 @@ class Widget_Video extends Widget_Base {
 			}
 		}
 
+		if ( $settings['preload'] ) {
+			$video_params['preload'] = $settings['preload'];
+		}
+
 		if ( $settings['mute'] ) {
 			$video_params['muted'] = 'muted';
 		}
@@ -1217,6 +1353,36 @@ class Widget_Video extends Widget_Base {
 		}
 
 		return $video_url;
+	}
+
+	/**
+	 * Get the VideoPress video URL from the current selected settings.
+	 *
+	 * @return string
+	 */
+	private function get_videopress_video_url() {
+		$settings = $this->get_settings_for_display();
+
+		if ( ! empty( $settings['insert_url'] ) ) {
+			return $settings['videopress_url'];
+		}
+
+		return $settings['hosted_url']['url'];
+	}
+
+	/**
+	 * Get the params dictionary for VideoPress videos.
+	 *
+	 * @return array
+	 */
+	private function get_params_dictionary_for_videopress() {
+		return [
+			'controls',
+			'autoplay' => 'autoPlay',
+			'mute' => 'muted',
+			'loop',
+			'play_on_mobile' => 'playsinline',
+		];
 	}
 
 	/**

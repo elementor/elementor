@@ -22,6 +22,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 			radio: 'input[data-setting][type="radio"]',
 			select: 'select[data-setting]',
 			textarea: 'textarea[data-setting]',
+			responsiveSwitchersSibling: `${ ui.controlTitle }[data-e-responsive-switcher-sibling!="false"]`,
 			responsiveSwitchers: '.elementor-responsive-switcher',
 			contentEditable: '[contenteditable="true"]',
 		} );
@@ -196,7 +197,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	/**
 	 * Get the responsive parent view if exists.
 	 *
-	 * @return {ControlBaseDataView|null} responsive parent view if exists
+	 * @return {ControlBaseDataView|undefined} responsive parent view if exists
 	 */
 	getResponsiveParentView() {
 		const parent = this.model.get( 'parent' );
@@ -446,7 +447,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	renderResponsiveSwitchers() {
 		var templateHtml = Marionette.Renderer.render( '#tmpl-elementor-control-responsive-switchers', this.model.attributes );
 
-		this.ui.controlTitle.after( templateHtml );
+		this.ui.responsiveSwitchersSibling.after( templateHtml );
 
 		this.ui.responsiveSwitchersWrapper = this.$el.find( '.elementor-control-responsive-switchers' );
 	},

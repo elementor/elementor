@@ -140,6 +140,18 @@ class Frontend extends App {
 		'elementor-default',
 	];
 
+	private $google_fonts_index = 0;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_asset_path;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_version;
+
 	/**
 	 * Front End constructor.
 	 *
@@ -161,6 +173,7 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
+		$this->init_swiper_settings();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -228,8 +241,17 @@ class Frontend extends App {
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
+		add_action( 'wp_head', [ $this, 'print_google_fonts_preconnect_tag' ], 8 );
 		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
+	}
+
+	public function print_google_fonts_preconnect_tag() {
+		if ( 0 >= $this->google_fonts_index ) {
+			return;
+		}
+
+		echo '<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>';
 	}
 
 	/**
@@ -257,7 +279,7 @@ class Frontend extends App {
 
 		if ( ! empty( $mobile_theme_color ) ) {
 			?>
-			<meta name="theme-color" content="<?php echo esc_html( $mobile_theme_color ); ?>">
+			<meta name="theme-color" content="<?php echo esc_attr( $mobile_theme_color ); ?>">
 			<?php
 		}
 	}
@@ -311,6 +333,12 @@ class Frontend extends App {
 	 */
 	public function add_content_filter() {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	public function init_swiper_settings() {
+		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
+		$this->e_swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
 	}
 
 	/**
@@ -438,7 +466,11 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			$this->get_elementor_frontend_dependencies(),
+			[
+				'elementor-frontend-modules',
+				'elementor-waypoints',
+				'jquery-ui-position',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -509,27 +541,20 @@ class Frontend extends App {
 
 		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
-		$frontend_dependencies = [];
-
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			// If The Dom Optimization feature is disabled, register the legacy CSS
-			wp_register_style(
-				'elementor-frontend-legacy',
-				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
-				[],
-				ELEMENTOR_VERSION
-			);
-
-			$frontend_dependencies[] = 'elementor-frontend-legacy';
-		}
 
 		wp_register_style(
 			'elementor-frontend',
 			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			$frontend_dependencies,
+			[],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'swiper',
+			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
+			[],
+			$this->e_swiper_version
 		);
 
 		/**
@@ -561,18 +586,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
-
-		if ( ! $this->is_improved_assets_loading() ) {
-			wp_enqueue_script(
-				'preloaded-modules',
-				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
-				[
-					'elementor-frontend',
-				],
-				ELEMENTOR_VERSION,
-				true
-			);
-		}
 
 		$this->print_config();
 
@@ -619,6 +632,8 @@ class Frontend extends App {
 			}
 
 			wp_enqueue_style( 'elementor-frontend' );
+
+			wp_enqueue_style( 'swiper' );
 
 			/**
 			 * After frontend styles enqueued.
@@ -938,9 +953,7 @@ class Frontend extends App {
 	 *                            Default is an empty array.
 	 */
 	private function enqueue_google_fonts( $google_fonts = [] ) {
-		static $google_fonts_index = 0;
-
-		$print_google_fonts = true;
+		$print_google_fonts = Fonts::is_google_fonts_enabled();
 
 		/**
 		 * Print frontend google fonts.
@@ -959,22 +972,22 @@ class Frontend extends App {
 
 		// Print used fonts
 		if ( ! empty( $google_fonts['google'] ) ) {
-			$google_fonts_index++;
+			$this->google_fonts_index++;
 
 			$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
 
-			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
 			$early_access_font_urls = $this->get_early_access_google_font_urls( $google_fonts['early'] );
 
 			foreach ( $early_access_font_urls as $ea_font_url ) {
-				$google_fonts_index++;
+				$this->google_fonts_index++;
 
 				//printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 
-				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+				wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 
@@ -1358,6 +1371,12 @@ class Frontend extends App {
 				'previous' => esc_html__( 'Previous', 'elementor' ),
 				'next' => esc_html__( 'Next', 'elementor' ),
 				'close' => esc_html__( 'Close', 'elementor' ),
+				'a11yCarouselWrapperAriaLabel' => __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ),
+				'a11yCarouselPrevSlideMessage' => __( 'Previous slide', 'elementor' ),
+				'a11yCarouselNextSlideMessage' => __( 'Next slide', 'elementor' ),
+				'a11yCarouselFirstSlideMessage' => __( 'This is the first slide', 'elementor' ),
+				'a11yCarouselLastSlideMessage' => __( 'This is the last slide', 'elementor' ),
+				'a11yCarouselPaginationBulletMessage' => __( 'Go to slide', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			// 'breakpoints' object is kept for BC.
@@ -1372,6 +1391,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
+			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
@@ -1505,34 +1525,6 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
-	}
-
-	private function is_improved_assets_loading() {
-		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-	}
-
-	private function get_elementor_frontend_dependencies() {
-		$dependencies = [
-			'elementor-frontend-modules',
-			'elementor-waypoints',
-			'jquery-ui-position',
-		];
-
-		if ( ! $this->is_improved_assets_loading() ) {
-			wp_register_script(
-				'swiper',
-				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
-				[],
-				'5.3.6',
-				true
-			);
-
-			$dependencies[] = 'swiper';
-			$dependencies[] = 'share-link';
-			$dependencies[] = 'elementor-dialog';
-		}
-
-		return $dependencies;
 	}
 
 	private function is_optimized_css_mode() {

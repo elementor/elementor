@@ -18,25 +18,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 class User {
 
 	/**
-	 * The admin notices key.
+	 * Holds the admin notices key.
+	 *
+	 * @var string Admin notices key.
 	 */
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
+	/**
+	 * Holds the editor introduction screen key.
+	 *
+	 * @var string Introduction key.
+	 */
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
+	/**
+	 * Holds the beta tester key.
+	 *
+	 * @var string Beta tester key.
+	 */
 	const BETA_TESTER_META_KEY = 'elementor_beta_tester';
 
 	/**
-	 * API URL.
-	 *
 	 * Holds the URL of the Beta Tester Opt-in API.
 	 *
 	 * @since 1.0.0
-	 * @access private
 	 *
 	 * @var string API URL.
 	 */
 	const BETA_TESTER_API_URL = 'https://my.elementor.com/api/v1/beta_tester/';
+
+	/**
+	 * Holds the dismissed editor notices key.
+	 *
+	 * @since 3.19.0
+	 *
+	 * @var string Editor notices key.
+	 */
+	const DISMISSED_EDITOR_NOTICES_KEY = 'elementor_dismissed_editor_notices';
 
 	/**
 	 * Init.
@@ -62,6 +80,7 @@ class User {
 	public static function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
 		$ajax->register_ajax_action( 'beta_tester_signup', [ __CLASS__, 'register_as_beta_tester' ] );
+		$ajax->register_ajax_action( 'dismissed_editor_notices', [ __CLASS__, 'set_dismissed_editor_notices' ] );
 	}
 
 	/**
@@ -170,19 +189,20 @@ class User {
 	 * Retrieve the list of notices for the current user.
 	 *
 	 * @since 2.0.0
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @return array A list of user notices.
 	 */
-	private static function get_user_notices() {
-		return get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
+	public static function get_user_notices() {
+		$notices = get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
+		return is_array( $notices ) ? $notices : [];
 	}
 
 	/**
-	 * Is user notice viewed.
+	 * Is admin notice viewed.
 	 *
-	 * Whether the notice was viewed by the user.
+	 * Whether the admin notice was viewed by the current user.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -190,22 +210,43 @@ class User {
 	 *
 	 * @param int $notice_id The notice ID.
 	 *
-	 * @return bool Whether the notice was viewed by the user.
+	 * @return bool Whether the admin notice was viewed by the user.
 	 */
 	public static function is_user_notice_viewed( $notice_id ) {
 		$notices = self::get_user_notices();
 
-		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) ) {
+		if ( empty( $notices[ $notice_id ] ) ) {
 			return false;
 		}
 
-		return true;
+		// BC: Handles old structure ( `[ 'notice_id' => 'true' ]` ).
+		if ( 'true' === $notices[ $notice_id ] ) {
+			return true;
+		}
+
+		return $notices[ $notice_id ]['is_viewed'] ?? false;
+	}
+
+	/**
+	 * Checks whether the current user is allowed to upload JSON files.
+	 *
+	 * Note: The 'json-upload' capability is managed by the Role Manager as a part of its blacklist restrictions.
+	 * In this context, we are negating the user's permission check to use it as a whitelist, allowing uploads.
+	 *
+	 * @return bool Whether the current user can upload JSON files.
+	 */
+	public static function is_current_user_can_upload_json() {
+		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'json-upload' );
+	}
+
+	public static function is_current_user_can_use_custom_html() {
+		return current_user_can( 'manage_options' ) || ! Plugin::instance()->role_manager->user_can( 'custom-html' );
 	}
 
 	/**
 	 * Set admin notice as viewed.
 	 *
-	 * Flag the user admin notice as viewed using an authenticated ajax request.
+	 * Flag the admin notice as viewed by the current user, using an authenticated ajax request.
 	 *
 	 * Fired by `wp_ajax_elementor_set_admin_notice_viewed` action.
 	 *
@@ -214,17 +255,14 @@ class User {
 	 * @static
 	 */
 	public static function ajax_set_admin_notice_viewed() {
-		if ( empty( $_REQUEST['notice_id'] ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$notice_id = Utils::get_super_global_value( $_REQUEST, 'notice_id' );
+
+		if ( ! $notice_id ) {
 			wp_die();
 		}
 
-		$notices = self::get_user_notices();
-		if ( empty( $notices ) ) {
-			$notices = [];
-		}
-
-		$notices[ $_REQUEST['notice_id'] ] = 'true';
-		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
+		self::set_user_notice( $notice_id );
 
 		if ( ! wp_doing_ajax() ) {
 			wp_safe_redirect( admin_url() );
@@ -232,6 +270,28 @@ class User {
 		}
 
 		wp_die();
+	}
+
+	/**
+	 * @param $notice_id
+	 * @param $is_viewed
+	 * @param $meta
+	 *
+	 * @return void
+	 */
+	public static function set_user_notice( $notice_id, $is_viewed = true, $meta = null ) {
+		$notices = self::get_user_notices();
+
+		if ( ! is_array( $meta ) ) {
+			$meta = $notices[ $notice_id ]['meta'] ?? [];
+		}
+
+		$notices[ $notice_id ] = [
+			'is_viewed' => $is_viewed,
+			'meta' => $meta,
+		];
+
+		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 	}
 
 	/**
@@ -247,7 +307,14 @@ class User {
 		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public static function register_as_beta_tester( array $data ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			throw new \Exception( __( 'You do not have permission to install plugins.', 'elementor' ) );
+		}
+
 		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
 		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
@@ -305,5 +372,43 @@ class User {
 		$value = get_user_option( $option, $user_id );
 
 		return ( false === $value ) ? $default : $value;
+	}
+
+	/**
+	 * Get dismissed editor notices.
+	 *
+	 * Retrieve the list of dismissed editor notices for the current user.
+	 *
+	 * @since 3.19.0
+	 * @access public
+	 * @static
+	 *
+	 * @return array A list of dismissed editor notices.
+	 */
+	public static function get_dismissed_editor_notices() {
+		$notices = get_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, true );
+
+		return is_array( $notices ) ? $notices : [];
+	}
+
+	/**
+	 * Set dismissed editor notices for the current user.
+	 *
+	 * @since 3.19.0
+	 * @access public
+	 * @static
+	 *
+	 * @param array $data Editor notices.
+	 *
+	 * @return void
+	 */
+	public static function set_dismissed_editor_notices( array $data ) {
+		$editor_notices = self::get_dismissed_editor_notices();
+
+		if ( ! in_array( $data['dismissId'], $editor_notices, true ) ) {
+			$editor_notices[] = $data['dismissId'];
+
+			update_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, $editor_notices );
+		}
 	}
 }

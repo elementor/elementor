@@ -154,9 +154,9 @@ class Module extends BaseModule {
 		}
 
 		$page_templates = [
-			self::TEMPLATE_CANVAS => _x( 'Elementor Canvas', 'Page Template', 'elementor' ),
-			self::TEMPLATE_HEADER_FOOTER => _x( 'Elementor Full Width', 'Page Template', 'elementor' ),
-			self::TEMPLATE_THEME => _x( 'Theme', 'Page Template', 'elementor' ),
+			self::TEMPLATE_CANVAS => esc_html__( 'Elementor Canvas', 'elementor' ),
+			self::TEMPLATE_HEADER_FOOTER => esc_html__( 'Elementor Full Width', 'elementor' ),
+			self::TEMPLATE_THEME => esc_html__( 'Theme', 'elementor' ),
 		] + $page_templates;
 
 		return $page_templates;
@@ -246,7 +246,10 @@ class Module extends BaseModule {
 	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof PageBase || $document instanceof LibraryPageDocument ) {
+		if (
+			( $document instanceof PageBase || $document instanceof LibraryPageDocument ) &&
+			$document::get_property( 'support_page_layout' )
+		) {
 			$this->register_template_control( $document );
 		}
 	}
@@ -409,11 +412,7 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public static function body_open() {
-		if ( function_exists( 'wp_body_open' ) ) {
-			wp_body_open();
-		} else {
-			do_action( 'wp_body_open' );
-		}
+		wp_body_open();
 	}
 
 	/**

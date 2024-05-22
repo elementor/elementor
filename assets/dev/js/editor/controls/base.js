@@ -108,8 +108,14 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		this.listenTo( settings, 'change', this.onAfterChange );
 
 		if ( this.model.attributes.responsive ) {
-			elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+			this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+
+			elementor.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 		}
+	},
+
+	onDestroy() {
+		elementor.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	onDeviceModeChange() {
@@ -145,6 +151,35 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		this.$el.addClass( elClasses );
 
 		this.toggleControlVisibility();
+	},
+
+	reRoute( controlActive ) {
+		$e.route(
+			$e.routes.getCurrent( 'panel' ),
+			this.getControlInRouteArgs( controlActive ? this.getControlPath() : '' ),
+			{ history: false },
+		);
+	},
+
+	getControlInRouteArgs( path ) {
+		return {
+			...$e.routes.getCurrentArgs( 'panel' ),
+			activeControl: path,
+		};
+	},
+
+	getControlPath() {
+		let controlPath = this.model.get( 'name' ),
+			parent = this._parent;
+
+		while ( ! parent.$el.hasClass( 'elementor-controls-stack' ) ) {
+			const parentName = parent.model.get( 'name' ) || parent.model.get( '_id' );
+			controlPath = parentName + '/' + controlPath;
+
+			parent = parent._parent;
+		}
+
+		return controlPath;
 	},
 } );
 

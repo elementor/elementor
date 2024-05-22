@@ -372,7 +372,7 @@ export default class Container extends ArgsObject {
 		if ( [ 'widget', 'document' ].includes( this.type ) ) {
 			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
-			if ( 1 === repeaters.length ) {
+			if ( ! this.model.get( 'supportRepeaterChildren' ) && 1 === repeaters.length ) {
 				Object.defineProperty( this, 'children', {
 					get() {
 						elementorDevTools.deprecation.deprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
@@ -468,6 +468,10 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * @param {Function} callback - A callback function.
+	 * @deprecated since 3.5.0, use `container.children.findRecursive( callback )` instead.
+	 */
 	findChildrenRecursive( callback ) {
 		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
@@ -478,6 +482,10 @@ export default class Container extends ArgsObject {
 		return this.children.findRecursive( callback );
 	}
 
+	/**
+	 * @param {Function} callback - A callback function.
+	 * @deprecated since 3.5.0, use `container.children.forEachRecursive( callback )` instead.
+	 */
 	forEachChildrenRecursive( callback ) {
 		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',
@@ -519,6 +527,17 @@ export default class Container extends ArgsObject {
 
 	isDesignable() {
 		return elementor.userCan( 'design' ) && this.isEditable();
+	}
+
+	isGridContainer() {
+		return 'grid' === this.parent.settings.get( 'container_type' );
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	isLocked() {
+		return this.model.get( 'isLocked' );
 	}
 
 	isRepeater() {

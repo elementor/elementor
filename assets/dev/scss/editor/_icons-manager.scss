@@ -10,10 +10,6 @@
 		.dialog-content {
 			display: flex;
 		}
-
-		.dialog-buttons-wrapper {
-			display: flex;
-		}
 	}
 
 	&__wrapper {
@@ -28,25 +24,19 @@
 	}
 
 	&__tab-links {
-		margin-top: 30px;
+		margin-block-start: 30px;
 	}
 
 	&__upload {
 		margin: 20px 45px;
-		padding-top: 35px;
-		border-top: 1px solid $editor-background;
+		padding-block-start: 35px;
+		border-block-start: var(--e-a-border);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 
 		@media (max-width: $editor-screen-lg-max) {
 			margin: 20px 25px;
-		}
-
-		&__title {
-			color: $editor-light;
-			font-size: 11px;
-			text-transform: uppercase;
 		}
 	}
 
@@ -69,12 +59,7 @@
 
 		input {
 			padding: 8px 15px;
-			background-color: #fff;
-			border: none;
-
-			&::placeholder {
-				font-style: italic;
-			}
+			background-color: transparent;
 		}
 
 		i {
@@ -94,10 +79,10 @@
 		}
 
 		&__title {
-			color: $editor-darker;
+			color: var(--e-a-color-txt);
 			font-size: 16px;
 			font-weight: 500;
-			text-align: $start;
+			text-align: start;
 
 			@media (max-width: $editor-screen-xs-max) {
 				display: none;
@@ -133,21 +118,20 @@
 		display: flex;
 		align-items: center;
 		flex-direction: column;
-		padding-top: 70px;
+		padding-block-start: 70px;
 
 		&__icon {
 			font-size: 60px;
-			color: $editor-lighter;
 		}
 
 		&__text {
 			width: 300px;
 			font-size: 16px;
-			padding-top: 25px;
+			padding-block-start: 25px;
 		}
 
 		&__link {
-			margin-top: 20px;
+			margin-block-start: 20px;
 		}
 	}
 }
@@ -155,26 +139,16 @@
 .elementor-icons-manager {
 
 	&__tab-link {
-		@include padding(15px, 0, 15px, 45px);
-		font-size: 14px;
-		color: $editor-dark;
-		text-align: $start;
+		padding-block: 15px;
+		padding-inline: 45px 0;
+		font-size: 12px;
+		text-align: start;
 		cursor: pointer;
 		position: relative;
 
 		i {
 			font-size: 20px;
-			@include padding-end(15px);
-			color: $editor-light;
-		}
-
-		@media (max-width: $editor-screen-lg-max) {
-			@include padding(15px, 15px, 15px, 25px);
-			font-size: 11px;
-
-			i {
-				font-size: 15px;
-			}
+			padding-inline-end: 15px;
 		}
 
 		@media (max-width: $editor-screen-md-max) {
@@ -184,22 +158,22 @@
 			}
 		}
 
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+
 		&.elementor-active {
-			background-color: #fff;
-			box-shadow: 0 6px 20px 0 rgba(0,0,0,0.1);
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-accent);
 
 			&:after {
 				content: '';
 				position: absolute;
 				height: 100%;
-				width: 5px;
+				width: 3px;
 				top: 0;
 				@include start(0);
-				background-color: $editor-info;
-			}
-
-			i {
-				color: $editor-info;
+				background-color: var(--e-a-border-color-accent);
 			}
 		}
 	}
@@ -207,20 +181,21 @@
 	&__tab__item {
 		position: relative;
 		height: 0;
-		padding-bottom: 100%;
-		background-color: #fff;
-		box-shadow: 0 1px 12px rgba(0,0,0,.05);
+		padding-block-end: 100%;
+		border: var(--e-a-border);
 		border-radius: 3px;
 		cursor: pointer;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 		overflow: hidden;
 
 		&:hover {
-			box-shadow: 0 1px 14px rgba(0, 0, 0, 0.16)
+			background-color: var(--e-a-bg-hover);
 		}
 
 		&.elementor-selected {
-			box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05), 0 0 0 3px #71d7f7;
+			background-color: var(--e-a-bg-active);
+			border-color: var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
 		}
 
 		&__content {
@@ -234,25 +209,13 @@
 
 		&__icon {
 			font-size: 25px;
-			color: $editor-dark;
 		}
 
 		&__name {
-			color: $editor-lighter;
 			font-size: 11px;
 			padding: 13px 20px 0;
 			max-width: 100%;
 			@include ellipsis;
 		}
-	}
-}
-
-#elementor-enable-fa5-dialog {
-	a {
-		font-style: italic;
-		text-decoration: underline;
-	}
-	.dialog-confirm-ok {
-		color: $editor-success;
 	}
 }

@@ -1,8 +1,35 @@
 name: Playwright
 
 on:
-  push:
   pull_request:
+  schedule:
+    - cron: '30 08 * * 0,1,2,3,4,5'
+  workflow_dispatch:
+      inputs:
+        reporter:
+          required: false
+          description: 'Select a reporter'
+          type: choice
+          options:
+            - allure-playwright
+            - html
+            - blob
+            - list
+          default: allure-playwright
+        path-to-results:
+          required: false
+          description: 'Provide path to reporter files'
+          default: allure-results
+          type: choice
+          options:
+            - test-results/
+            - tests/playwright/blob-report
+            - allure-results
+        fail_fast:
+            type: boolean
+            required: true
+            description: 'Cancel tests when one of them fails'
+            default: false
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -12,87 +39,118 @@ concurrency:
 jobs:
   build-plugin:
     name: Build plugin
-    runs-on: ubuntu-latest
-    if: startsWith( github.repository, 'elementor/' )
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npx grunt build
-      - name: Save build to cache
-        uses: actions/cache@v2
-        id: restore-build
-        with:
-          path: ./build/*
-          key: ${{ github.sha }}
-
+    uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
+    name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin]
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
+      fail-fast: ${{inputs.fail_fast || true}}
       matrix:
-        include:
-          - phpVersion: '7.4'
-            wpCoreVersion: 'latest'
+        testSuite: [
+          'ai',
+          'onBoarding',
+          'video',
+          'elements-regression',
+          'default',
+          'nested-tabs',
+          'reverse-columns',
+          'container',
+          'nested-accordion',
+          'styleguide_image_link',
+          'rating',
+          'pluginTester1_containers',
+          'pluginTester2_containers',
+          'pluginTester1_sections',
+          'pluginTester2_sections',
+          'promotions',
+          'nested-atomic-repeaters',
+        ]
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
-      - name: Restore build from cache
-        uses: actions/cache@v2
-        id: restore-build
+          node-version: 20.x
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          path: ./build/*
-          key: ${{ github.sha }}
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
       - name: Update wp-env.json file
         env:
-          PHP_VERSION: ${{ matrix.phpVersion }}
-          WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
+          PHP_VERSION: '8.0'
+          WP_CORE_VERSION: 'latest'
         run: node ./.github/scripts/build-wp-env.js
-      - name: Install wp-env
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0
       - name: Install WordPress environment
         run: |
-          npx wp-env start
-          # change wp-env folder owner to www-data
-          sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
-          npx wp-env run cli "wp theme activate twentytwentytwo"
+          npm run start-local-server
+      - name: Update wordpress to nightly build
+        if: ${{ github.event_name == 'schedule' }}
+        run: npx wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
+      - name: Setup test data
+        run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-env run tests-cli "wp core version"
-          npx wp-env run tests-cli "wp --info"
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
+      - name: Activate performance experiments
+        run: |
+          npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints
       - name: Install playwright/test
         run: |
-          npm ci
           npx playwright install chromium
       - name: Run Playwright tests
-        run: |
-          npm run test:playwright
-      - uses: actions/upload-artifact@v2
+        if: ${{matrix.testSuite !='elements-regression'}}
+        env:
+          TEST_SUITE: "@${{matrix.testSuite}}"
+        run: npm run test:playwright -- --reporter=${{inputs.reporter || 'list,github'}}
+      - name: Run element regression tests
+        if: ${{matrix.testSuite =='elements-regression'}}
+        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results
-          path: test-results/
-          retention-days: 14
+          name: playwright-test-results-${{ matrix.testSuite }}
+          path: ${{inputs.path-to-results || 'test-results/'}}
+          if-no-files-found: ignore
+          retention-days: 2
+
+  test-result:
+    needs: Playwright
+    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+    runs-on: ubuntu-22.04
+    name: Playwright - Test Results
+    steps:
+      - name: Test status
+        run: echo "Test status is - ${{ needs.Playwright.result }}"
+      - name: Checkout source code
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        uses: actions/checkout@v4
+      - name: Send slack message
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+          PAYLOAD: |
+            {
+              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+      - name: Check Playwright matrix status
+        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+        run: exit 1

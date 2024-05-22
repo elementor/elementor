@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,8 +29,12 @@ class Images_Manager {
 	 * @access public
 	 */
 	public function get_images_details() {
+		if ( ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		// PHPCS - Already validated by wp_ajax.
-		$items = $_POST['items']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$items = Utils::get_super_global_value( $_POST, 'items' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$urls  = [];
 
 		foreach ( $items as $item ) {

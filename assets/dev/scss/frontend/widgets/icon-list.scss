@@ -56,18 +56,20 @@
 
 		&, a {
 			display: flex;
-			align-items: center;
 			font-size: inherit;
+			align-items: var(--icon-vertical-align, center);
 		}
 	}
 
 	.elementor-icon-list-icon + .elementor-icon-list-text {
 		align-self: center;
-		@include padding-start(5px);
+		padding-inline-start: 5px;
 	}
 
 	.elementor-icon-list-icon {
 		display: flex;
+		position: relative;
+		top: var(--icon-vertical-offset, initial);
 
 		svg {
 			width: $e-icon-list-svg-icon-size;

@@ -1,0 +1,102 @@
+{
+    "content": [
+        {
+            "id": "688e376",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "59832fe7",
+                    "settings": {
+                        "space": {
+                            "unit": "px",
+                            "size": 10,
+                            "sizes": []
+                        },
+                        "_background_background": "classic",
+                        "_background_color": "#63AD6A"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "spacer",
+                    "elType": "widget"
+                },
+                {
+                    "id": "67b1c8fc",
+                    "settings": {
+                        "title": "Spacer 250 in the middle"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "5d883b12",
+                    "settings": {
+                        "space": {
+                            "unit": "px",
+                            "size": 250,
+                            "sizes": []
+                        },
+                        "_background_background": "classic",
+                        "__globals__": {
+                            "_background_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "spacer",
+                    "elType": "widget"
+                },
+                {
+                    "id": "300bc064",
+                    "settings": {
+                        "title": "Add Your Heading Text Here"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "7d2b3a43",
+                    "settings": {
+                        "space": {
+                            "unit": "px",
+                            "size": 600,
+                            "sizes": []
+                        },
+                        "_background_background": "classic",
+                        "_background_color": "#E1B214",
+                        "_border_radius": {
+                            "unit": "px",
+                            "top": "102",
+                            "right": "102",
+                            "bottom": "102",
+                            "left": "102",
+                            "isLinked": true
+                        },
+                        "_box_shadow_box_shadow_type": "yes",
+                        "_box_shadow_box_shadow": {
+                            "horizontal": 0,
+                            "vertical": 0,
+                            "blur": 29,
+                            "spread": 0,
+                            "color": "rgba(0,0,0,0.5)"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "spacer",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "spacer",
+    "type": "page"
+}

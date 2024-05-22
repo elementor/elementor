@@ -1,43 +1,56 @@
 name: Build
 
 on:
+  workflow_dispatch:
+  pull_request:
+  workflow_call:
+    outputs:
+      artifact_name: 
+        value: ${{ jobs.build-plugin.outputs.artifact_name }}
+      changelog_diff: 
+        value: ${{ jobs.build-plugin.outputs.changelog_diff }}
   push:
     branches:
-      - 'develop'
-      - 'release/*'
+      - 'main'
+      - '3.*'
+
 jobs:
-  run:
-    runs-on: ubuntu-20.04
+  build-plugin:
+    name: Build plugin
+    runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
+      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@master
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x    
-      - name: Cache node modules
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-node-modules
+          node-version: 20.x
+          cache: 'npm'
+      - name: Check if this is only a changelog PR
+        id: changelog_diff_files
+        uses: technote-space/get-diff-action@v6
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          # PATTERNS are:
+          # Everything: **/*
+          # Everything in directories starting with a period: .*/**/*
+          # Not readme.txt: !readme.txt
+          # Not changelog.txt: !changelog.txt
+          PATTERNS: |
+            **/*
+            .*/**/*
+            !readme.txt
+            !changelog.txt
       - name: Install Dependencies
-        run: npm install
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        run: npm ci
       - name: Build and Deploy
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: |
           npm config set git-tag-version false
-          if [ "${GITHUB_REF:11}" == "develop" ];
-            then npm version patch
-          fi
-          if [[ "${GITHUB_REF:11:7}" == "release" ]];
-            then npm version minor
-          fi
           export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
           export PACKAGE_VERSION=$(cat package.json \
             | grep version \
@@ -45,15 +58,16 @@ jobs:
             | awk -F: '{ print $2 }' \
             | sed 's/[",]//g' \
             | tr -d '[[:space:]]')
-          export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}.zip"
-          grunt build
+          export PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}"
+          export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
+          npx grunt build
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
-          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT}}&type=core"
-          echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@master
+          echo "PLUGIN_FOLDER_FILENAME=${PLUGIN_FOLDER_FILENAME}" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v4
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         with:
-          name: ${{ env.PLUGIN_ZIP_FILENAME }}
-          path: elementor-*.zip
+          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+          path: elementor

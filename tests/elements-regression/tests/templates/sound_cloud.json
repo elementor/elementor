@@ -1,0 +1,61 @@
+{
+    "content": [
+        {
+            "id": "6bf09d51",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "11866e03",
+                    "settings": {
+                        "__globals__": {
+                            "sc_color": "globals\/colors?id=accent"
+                        },
+                        "sc_show_comments": "",
+                        "sc_show_playcount": ""
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "audio",
+                    "elType": "widget"
+                },
+                {
+                    "id": "30d7cafb",
+                    "settings": {
+                        "sc_buying": "",
+                        "sc_liking": "",
+                        "sc_download": "",
+                        "sc_show_artwork": "",
+                        "sc_sharing": "",
+                        "sc_show_comments": "",
+                        "sc_show_playcount": "",
+                        "sc_show_user": "",
+                        "__globals__": {
+                            "sc_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "audio",
+                    "elType": "widget"
+                },
+                {
+                    "id": "55194391",
+                    "settings": {
+                        "visual": "yes",
+                        "sc_show_comments": ""
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "audio",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "sound_cloud",
+    "type": "page"
+}

@@ -29,6 +29,14 @@ module.exports = elementorModules.ViewModule.extend( {
 		return true;
 	},
 
+	isElementInTheCurrentDocument() {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return false;
+		}
+
+		return elementor.documents.currentDocument.id.toString() === this.$element[ 0 ].closest( '.elementor' ).dataset.elementorId;
+	},
+
 	findElement( selector ) {
 		var $mainElement = this.$element;
 
@@ -189,7 +197,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				settingsKeys = elementorFrontend.config.elements.keys[ type ] = [];
 
 				jQuery.each( settings.controls, ( name, control ) => {
-					if ( control.frontend_available ) {
+					if ( control.frontend_available || control.editor_available ) {
 						settingsKeys.push( name );
 					}
 				} );

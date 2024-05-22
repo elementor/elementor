@@ -18,18 +18,18 @@ class TemplateTypesContext extends React.Component {
 
 	componentDidMount() {
 		this.getTemplateTypes()
-		.then( ( response ) => {
-			this.setState( {
-				templateTypes: response,
-				loading: false,
+			.then( ( response ) => {
+				this.setState( {
+					templateTypes: response,
+					loading: false,
+				} );
+			} )
+			.fail( ( error ) => {
+				this.setState( {
+					error: error.statusText ? error.statusText : error,
+					loading: false,
+				} );
 			} );
-		} )
-		.fail( ( error ) => {
-			this.setState( {
-				error: error.statusText ? error.statusText : error,
-				loading: false,
-			} );
-		} );
 	}
 
 	getTemplateTypes() {

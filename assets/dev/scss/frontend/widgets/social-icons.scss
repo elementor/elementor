@@ -77,19 +77,23 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 		&dribbble		{ background-color: $dribbble; }
 		&elementor		{ background-color: $elementor; }
 		&envelope		{ background-color: $envelope; }
-		&facebook, &facebook-f		{ background-color: $facebook; }
+		&facebook,
+		&facebook-f		{ background-color: $facebook; }
 		&flickr			{ background-color: $flickr; }
 		&foursquare		{ background-color: $foursquare; }
-		&freecodecamp, &free-code-camp	{ background-color: $freecodecamp; }
+		&freecodecamp,
+		&free-code-camp	{ background-color: $freecodecamp; }
 		&github			{ background-color: $github; }
 		&gitlab			{ background-color: $gitlab; }
 		&globe			{ background-color: $gray; }
-		&google-plus, &google-plus-g	{ background-color: $google-plus; }
+		&google-plus,
+		&google-plus-g	{ background-color: $google-plus; }
 		&houzz			{ background-color: $houzz; }
 		&instagram		{ background-color: $instagram; }
 		&jsfiddle		{ background-color: $jsfiddle; }
-		&link			{ background-color: $gray; }
-		&linkedin, &linkedin-in		{ background-color: $linkedin; }
+		&link			{ background-color: $link; }
+		&linkedin,
+		&linkedin-in	{ background-color: $linkedin; }
 		&medium			{ background-color: $medium; }
 		&meetup			{ background-color: $meetup; }
 		&mixcloud		{ background-color: $mixcloud }
@@ -108,6 +112,7 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 		&steam 			{ background-color: $steam; }
 		&stumbleupon 	{ background-color: $stumbleupon; }
 		&telegram		{ background-color: $telegram; }
+		&threads		{ background-color: $threads; }
 		&thumb-tack		{ background-color: $thumbtack; }
 		&tripadvisor	{ background-color: $tripadvisor; }
 		&tumblr			{ background-color: $tumblr; }
@@ -120,6 +125,7 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 		&weixin			{ background-color: $weixin; }
 		&whatsapp		{ background-color: $whatsapp; }
 		&wordpress		{ background-color: $wordpress; }
+		&x-twitter		{ background-color: $x-twitter; }
 		&xing			{ background-color: $xing; }
 		&yelp			{ background-color: $yelp; }
 		&youtube		{ background-color: $youtube; }

@@ -96,11 +96,12 @@ class Export {
 	 * Execute the export process.
 	 *
 	 * @return array The export data output.
-	 * @throws \Exception
+	 *
+	 * @throws \Exception If no export runners have been specified.
 	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Please specify export runners.' );
+			throw new \Exception( 'Couldn’t execute the export process because no export runners have been specified. Try again by specifying export runners.' );
 		}
 
 		$this->set_default_settings();

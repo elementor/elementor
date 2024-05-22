@@ -49,10 +49,10 @@ export default function GoProPopover( props ) {
 		} );
 	}, [] );
 
-	// The buttonsConfig prop is an array of objects. To find the 'Go Pro' button, we need to iterate over the object.
+	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
 	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
 		getElProButton = {
-			text: __( 'Upgrade Now', 'elementor' ),
+			text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
 			className: 'e-onboarding__go-pro-cta',
 			target: '_blank',
 			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
@@ -75,7 +75,7 @@ export default function GoProPopover( props ) {
 			wrapperClass="e-onboarding__go-pro"
 		>
 			<div className="e-onboarding__go-pro-content">
-				<h2 className="e-onboarding__go-pro-title">{ __( 'Ready to Go Pro?', 'elementor' ) }</h2>
+				<h2 className="e-onboarding__go-pro-title">{ __( 'Ready to Get Elementor Pro?', 'elementor' ) }</h2>
 				<Checklist>
 					<ChecklistItem>{ __( '90+ Basic & Pro widgets', 'elementor' ) }</ChecklistItem>
 					<ChecklistItem>{ __( '300+ Basic & Pro templates', 'elementor' ) }</ChecklistItem>

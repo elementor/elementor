@@ -1,4 +1,4 @@
-import ComponentBase from 'elementor-api/modules/component-base';
+import ComponentBase from 'elementor-editor/component-base';
 import * as commands from './commands/';
 import { SetDirectionMode } from 'elementor-document/hooks';
 
@@ -8,6 +8,7 @@ export default class Component extends ComponentBase {
 
 		// Remember last used tab.
 		this.activeTabs = {};
+		this.activeModelId = null;
 	}
 
 	getNamespace() {
@@ -32,22 +33,42 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { model, view } = args,
-			/* Translators: %s: Element name. */
-			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
+		const { model, view, activeControl } = args;
 
-		elementor.getPanelView().setPage( 'editor', title, {
-			tab,
-			model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
+		let elementTitle = model?.attributes?.custom?.isPreset || model?.changed?.title
+			? model.attributes.title
+			: elementor.getElementData( model ).title;
+
+		if ( model.attributes.settings.attributes.presetTitle ) {
+			elementTitle = model.attributes.settings.attributes.presetTitle;
+		}
+
+		/* Translators: %s: Element name. */
+		const title = sprintf( __( 'Edit %s', 'elementor' ), elementTitle );
+
+		if ( this.shouldRenderPage( tab, args.model.id ) ) {
+			this.activeModelId = args.model.id;
+			this.activeTabs[ args.model.id ] = tab;
+
+			elementor.getPanelView().setPage( 'editor', title, {
+				tab,
+				model,
+				controls: elementor.getElementControls( model ),
+				editedElementView: view,
+			} );
+		}
+
+		this.activateControl( activeControl );
 	}
 
-	activateTab( tab, args ) {
-		this.activeTabs[ args.model.id ] = tab;
+	shouldRenderPage( tab, modelId ) {
+		const currentPanelView = elementor.getPanelView();
 
-		super.activateTab( tab, args );
+		const isSamePage = 'editor' === currentPanelView.getCurrentPageName();
+		const isSameTab = tab === currentPanelView.getCurrentPageView().activeTab;
+		const isEditingSameModel = modelId === this.activeModelId;
+
+		return ! isSamePage || ! isSameTab || ! isEditingSameModel;
 	}
 
 	setDefaultTab( args ) {
@@ -81,20 +102,21 @@ export default class Component extends ComponentBase {
 	/**
 	 * Callback on route open under the current namespace.
 	 *
-	 * @param {string} route - Route ID.
+	 * @param {string} route
+	 * @param {Object} routeArgs
 	 *
 	 * @return {void}
 	 */
-	onRoute( route ) {
+	onRoute( route, routeArgs = {} ) {
 		super.onRoute( route );
 
-		const currentElement = elementor.getCurrentElement();
+		const { view } = routeArgs;
 
-		if ( ! currentElement ) {
+		if ( ! view?.getContainer() ) {
 			return;
 		}
 
-		SetDirectionMode.set( currentElement.getContainer() );
+		SetDirectionMode.set( view.getContainer() );
 	}
 
 	/**

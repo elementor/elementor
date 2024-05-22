@@ -1,0 +1,24 @@
+{
+    "testControlSingle": 1,
+    "testControlSingle_tablet_extra": "string",
+    "testControlSingle_mobile_extra": null,
+    "testControlSingle_mobile": 2,
+    "testControlParent": {
+      "testSubControl": 10
+    },
+    "testControlParent_widescreen": {
+      "testSubControl": "widescreenValue"
+    },
+    "testControlParent_tablet_extra": {
+      "testSubControl": 30
+    },
+    "testControlParent_tablet": {
+      "testSubControl": 0
+    },
+    "testControlParent_mobile_extra": {
+      "testSubControl": ""
+    },
+    "testControlParent_mobile": {
+      "testSubControl": 20
+    }
+}

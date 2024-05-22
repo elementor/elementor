@@ -92,6 +92,10 @@ class Element_Section extends Element_Base {
 		return 'eicon-columns';
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get presets.
 	 *
@@ -270,7 +274,6 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -299,23 +302,10 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 500,
 					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
-				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-column-gap-custom .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
 				],
@@ -351,19 +341,10 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
-				'size_units' => [ 'px', 'vh', 'vw' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -400,7 +381,6 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 1440,
 					],
 				],
@@ -410,7 +390,7 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'height_inner' => [ 'min-height' ],
 				],
-				'size_units' => [ 'px', 'vh', 'vw' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'hide_in_top' => true,
 			]
 		);
@@ -434,10 +414,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$content_position_selector = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ?
-				'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' :
-				'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap';
-
 		$this->add_control(
 			'content_position',
 			[
@@ -459,7 +435,7 @@ class Element_Section extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					$content_position_selector => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 				// TODO: The following line is for BC since 2.7.0
 				'prefix_class' => 'elementor-section-content-',
@@ -491,7 +467,11 @@ class Element_Section extends Element_Base {
 				'return_value' => 'section-stretched',
 				'prefix_class' => 'elementor-',
 				'hide_in_inner' => true,
-				'description' => esc_html__( 'Stretch the section to the full width of the page using JS.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/stretch-section/', esc_html__( 'Learn more.', 'elementor' ) ),
+				'description' => sprintf(
+					'%1$s <a href="https://go.elementor.com/stretch-section/" target="_blank">%2$s</a>',
+					esc_html__( 'Stretch the section to the full width of the page using JS.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' )
+				),
 				'render_type' => 'none',
 				'frontend_available' => true,
 			]
@@ -597,13 +577,14 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -645,7 +626,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -749,7 +730,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -783,13 +764,14 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -835,7 +817,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}, {{WRAPPER}} > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -871,7 +853,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover, {{WRAPPER}}:hover > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -889,7 +871,7 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -897,6 +879,7 @@ class Element_Section extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -991,6 +974,7 @@ class Element_Section extends Element_Base {
 				[
 					'label' => esc_html__( 'Width', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%', 'vw', 'custom' ],
 					'default' => [
 						'unit' => '%',
 					],
@@ -1002,6 +986,10 @@ class Element_Section extends Element_Base {
 					],
 					'range' => [
 						'%' => [
+							'min' => 100,
+							'max' => 300,
+						],
+						'vw' => [
 							'min' => 100,
 							'max' => 300,
 						],
@@ -1020,9 +1008,16 @@ class Element_Section extends Element_Base {
 				[
 					'label' => esc_html__( 'Height', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 					'range' => [
 						'px' => [
 							'max' => 500,
+						],
+						'em' => [
+							'max' => 50,
+						],
+						'rem' => [
+							'max' => 50,
 						],
 					],
 					'condition' => [
@@ -1100,7 +1095,6 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -1159,7 +1153,7 @@ class Element_Section extends Element_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
+						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
@@ -1185,7 +1179,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'allowed_dimensions' => 'vertical',
 				'placeholder' => [
 					'top' => '',
@@ -1204,7 +1198,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1229,6 +1223,9 @@ class Element_Section extends Element_Base {
 				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1244,6 +1241,9 @@ class Element_Section extends Element_Base {
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1252,6 +1252,8 @@ class Element_Section extends Element_Base {
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
 		$this->end_controls_section();
 
@@ -1262,6 +1264,8 @@ class Element_Section extends Element_Base {
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(
 			'animation',
@@ -1345,7 +1349,12 @@ class Element_Section extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -1392,11 +1401,7 @@ class Element_Section extends Element_Base {
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
-		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				<div class="elementor-row"></div>
-			<?php } ?>
-		</div>
+		<div class="elementor-container elementor-column-gap-{{ settings.gap }}"></div>
 		<?php
 	}
 
@@ -1446,8 +1451,11 @@ class Element_Section extends Element_Base {
 				endif;
 			endif;
 
-			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+			$overlay_background = $settings['background_overlay_background'] ?? '';
+			$overlay_hover_background = $settings['background_overlay_hover_background'] ?? '';
+
+			$has_background_overlay = in_array( $overlay_background, [ 'classic', 'gradient' ], true ) ||
+									in_array( $overlay_hover_background, [ 'classic', 'gradient' ], true );
 
 			if ( $has_background_overlay ) :
 				?>
@@ -1464,9 +1472,7 @@ class Element_Section extends Element_Base {
 			}
 			?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				<div class="elementor-row">
-			<?php }
+			<?php
 	}
 
 	/**
@@ -1479,9 +1485,6 @@ class Element_Section extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				</div>
-		<?php } ?>
 			</div>
 		</<?php
 			// PHPCS - the method get_html_tag is safe.

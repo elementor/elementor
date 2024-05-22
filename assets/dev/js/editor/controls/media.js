@@ -1,4 +1,5 @@
 import FilesUploadHandler from '../utils/files-upload-handler';
+import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
@@ -12,7 +13,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.mediaVideo = '.elementor-control-media-video';
 		ui.frameOpeners = '.elementor-control-preview-area';
 		ui.removeButton = '.elementor-control-media__remove';
+		// eslint-disable-next-line capitalized-comments
+		// ui.warnings = '.elementor-control-media__warnings';
+		ui.promotions = '.elementor-control-media__promotions';
+		ui.promotions_dismiss = '.elementor-control-media__promotions .elementor-control-notice-dismiss';
+		ui.promotions_action = '.elementor-control-media__promotions .elementor-control-notice-main-actions button';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
+		ui.mediaInputImageSize = '.e-image-size-select';
 
 		return ui;
 	},
@@ -21,6 +28,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
+			'change @ui.mediaInputImageSize': 'onMediaInputImageSizeChange',
+			'click @ui.promotions_dismiss': 'onPromotionDismiss',
+			'click @ui.promotions_action': 'onPromotionAction',
 		} );
 	},
 
@@ -46,12 +56,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
+			attachmentId = this.getControlValue( 'id' ),
+			isPlaceholder = ( ! value && url ),
 			mediaType = this.getMediaType();
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 
-			if ( ! value && url ) {
+			if ( isPlaceholder ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
 			}
 		} else if ( 'video' === mediaType ) {
@@ -61,10 +73,48 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.fileName.text( fileName );
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
+		if ( this.ui.mediaInputImageSize ) {
+			let imageSize = this.getControlValue( 'size' );
+
+			if ( isPlaceholder ) {
+				imageSize = this.getControlPlaceholder()?.size;
+			}
+
+			this.ui.mediaInputImageSize
+				.val( imageSize )
+				.toggleClass( 'e-select-placeholder', isPlaceholder );
+		}
+
+		this.ui.controlMedia
+			.toggleClass( 'e-media-empty', ! value )
+			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
+
+		if ( 'image' === mediaType ) {
+			if ( attachmentId ) {
+				const dismissPromotionEventName = this.getDismissPromotionEventName();
+				const handleHints = ( attachment ) => {
+					// eslint-disable-next-line capitalized-comments
+					// this.ui.warnings.toggle( ! this.imageHasAlt( attachment ) );
+					if ( this.ui.promotions.length && ! elementor.config.user.dismissed_editor_notices.includes( dismissPromotionEventName ) ) {
+						const alwaysOn = this.ui.promotions.find( '.elementor-control-notice' ).data( 'display' ) || false;
+						const showHint = alwaysOn || this.imageNotOptimized( attachment );
+						this.ui.promotions.toggle( showHint );
+					}
+				};
+				wp.media.attachment( attachmentId ).fetch().then( handleHints );
+			} else {
+				// eslint-disable-next-line capitalized-comments
+				// this.ui.warnings.hide();
+
+				// eslint-disable-next-line no-lonely-if
+				if ( this.ui.promotions.length ) {
+					this.ui.promotions.hide();
+				}
+			}
+		}
 	},
 
-	openFrame( e ) {
+	async openFrame( e, source = null ) {
 		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
 		this.mediaType = mediaType;
 
@@ -73,9 +123,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		if ( ! FilesUploadHandler.isUploadEnabled( mediaType ) ) {
-			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e ) ).show();
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e, 'filter-popup' ) ).show();
 
 			return false;
+		}
+
+		if ( source !== 'filter-popup' && [ 'application/json', 'json' ].includes( mediaType ) ) {
+			await showJsonUploadWarningMessageIfNeeded( {
+				introductionMap: window.elementor.config.user.introduction,
+				IntroductionClass: window.elementorModules.editor.utils.Introduction,
+			} );
 		}
 
 		// If there is no frame, or the current initialized frame contains a different library than
@@ -107,6 +164,124 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
+	},
+
+	imageHasAlt( attachment ) {
+		const attachmentAlt = attachment?.alt?.trim() || '';
+		return !! attachmentAlt;
+	},
+
+	imageNotOptimized( attachment ) {
+		const checks = {
+			height: 1080,
+			width: 1920,
+			filesizeInBytes: 100000,
+		};
+
+		return Object.keys( checks ).some( ( key ) => {
+			const value = attachment[ key ] || false;
+			return value && value > checks[ key ];
+		} );
+	},
+
+	getDismissPromotionEventName() {
+		const $promotions = this.ui.promotions;
+		const $dismissButton = $promotions.find( '.elementor-control-notice-dismiss' );
+		// Remove listener
+		$dismissButton.off( 'click' );
+		return $dismissButton[ 0 ]?.dataset?.event || false;
+	},
+
+	onPromotionDismiss() {
+		this.dismissPromotion( this.getDismissPromotionEventName() );
+	},
+
+	onPromotionAction( event ) {
+		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		if ( actionURL ) {
+			window.open( actionURL, '_blank' );
+		}
+		this.hidePromotion();
+	},
+
+	dismissPromotion( eventName ) {
+		this.hidePromotion( eventName );
+		if ( eventName ) {
+			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
+				data: {
+					dismissId: eventName,
+				},
+			} );
+		}
+	},
+
+	hidePromotion( eventName = null ) {
+		const $promotions = this.ui.promotions;
+		$promotions.hide();
+		if ( ! eventName ) {
+			eventName = this.getDismissPromotionEventName();
+		}
+		// Prevent opening the same promotion again in current editor session.
+		elementor.config.user.dismissed_editor_notices.push( eventName );
+	},
+
+	onMediaInputImageSizeChange() {
+		if ( ! this.model.get( 'has_sizes' ) ) {
+			return;
+		}
+
+		const currentControlValue = this.getControlValue(),
+			placeholder = this.getControlPlaceholder();
+
+		const hasImage = ( '' !== currentControlValue?.id ),
+			hasPlaceholder = placeholder?.id,
+			hasValue = hasImage || hasPlaceholder;
+
+		if ( ! hasValue ) {
+			return;
+		}
+
+		const shouldUpdateFromPlaceholder = ( hasPlaceholder && ! hasImage );
+
+		if ( shouldUpdateFromPlaceholder ) {
+			this.setValue( {
+				...placeholder,
+				size: currentControlValue.size,
+			} );
+
+			if ( this.model.get( 'responsive' ) ) {
+				// Render is already calls `applySavedValue`, therefore there's no need for it in this case.
+				this.renderWithChildren();
+			} else {
+				this.applySavedValue();
+			}
+
+			this.onMediaInputImageSizeChange();
+
+			return;
+		}
+
+		let imageURL;
+
+		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+			imageURL = data[ currentControlValue.id ]?.[ currentControlValue.size ];
+
+			if ( imageURL ) {
+				currentControlValue.url = imageURL;
+				this.setValue( currentControlValue );
+			}
+		} );
+
+		imageURL = elementor.imagesManager.getImageUrl( {
+			id: currentControlValue.id,
+			url: currentControlValue.url,
+			size: currentControlValue.size,
+		} );
+
+		if ( imageURL ) {
+			currentControlValue.url = imageURL;
+			this.setValue( currentControlValue );
+		}
 	},
 
 	/**
@@ -227,6 +402,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				id: attachment.id,
 				alt: attachment.alt,
 				source: attachment.source,
+				size: this.model.get( 'default' ).size,
 			} );
 
 			if ( this.model.get( 'responsive' ) ) {
@@ -236,6 +412,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 		}
+
+		this.onMediaInputImageSizeChange();
 
 		this.trigger( 'after:select' );
 	},

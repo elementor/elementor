@@ -13,7 +13,7 @@ export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args,
+		const { containers = [ args.container ], options = {} } = args,
 			result = [];
 		let at = containers[ containers.length - 1 ].view._index;
 
@@ -38,6 +38,7 @@ export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 				container: parent,
 				model: container.model.toJSON(),
 				options: {
+					...options,
 					at: ++at,
 					clone: true,
 				},

@@ -17,7 +17,6 @@ use Elementor\Core\Modules_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
-use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -101,6 +100,7 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @var Schemes_Manager
 	 */
@@ -581,8 +581,11 @@ class Plugin {
 	 * @since 1.0.0
 	 */
 	public function __clone() {
-		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+		_doing_it_wrong(
+			__FUNCTION__,
+			sprintf( 'Cloning instances of the singleton "%s" class is forbidden.', get_class( $this ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			'1.0.0'
+		);
 	}
 
 	/**
@@ -594,8 +597,11 @@ class Plugin {
 	 * @since 1.0.0
 	 */
 	public function __wakeup() {
-		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+		_doing_it_wrong(
+			__FUNCTION__,
+			sprintf( 'Unserializing instances of the singleton "%s" class is forbidden.', get_class( $this ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			'1.0.0'
+		);
 	}
 
 	/**
@@ -748,7 +754,6 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
-			new Elementor_3_Re_Migrate_Globals();
 		}
 	}
 
@@ -760,36 +765,6 @@ class Plugin {
 		$this->common = new CommonApp();
 
 		$this->common->init_components();
-	}
-
-	/**
-	 * Get Legacy Mode
-	 *
-	 * @since 3.0.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead
-	 *
-	 * @param string $mode_name Optional. Default is null
-	 *
-	 * @return bool|bool[]
-	 */
-	public function get_legacy_mode( $mode_name = null ) {
-		self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation
-			->deprecated_function( __METHOD__, '3.1.0', 'Plugin::$instance->experiments->is_feature_active()' );
-
-		$legacy_mode = [
-			'elementWrappers' => ! self::$instance->experiments->is_feature_active( 'e_dom_optimization' ),
-		];
-
-		if ( ! $mode_name ) {
-			return $legacy_mode;
-		}
-
-		if ( isset( $legacy_mode[ $mode_name ] ) ) {
-			return $legacy_mode[ $mode_name ];
-		}
-
-		// If there is no legacy mode with the given mode name;
-		return false;
 	}
 
 	/**
@@ -849,7 +824,7 @@ class Plugin {
 		}
 
 		if ( property_exists( $this, $property ) ) {
-			throw new \Exception( 'Cannot access private property' );
+			throw new \Exception( 'Cannot access private property.' );
 		}
 
 		return null;

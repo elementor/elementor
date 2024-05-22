@@ -5,25 +5,25 @@ on:
 
 jobs:
   bump-version:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo' || github.actor == 'TzviRabinovitch' || github.actor == 'udidol') && startsWith(github.repository, 'elementor/')
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo' || github.actor == 'TzviRabinovitch' || github.actor == 'udidol' || github.actor == 'nivnoimanelementor') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20.x
       - name: Get release branch
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
       - name: Checkout next release branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}
@@ -54,21 +54,21 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20.x
       - name: Get release branch
         env:
           INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
       - name: Checkout next release branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: ${{ env.RELEASE_BRANCH }}
@@ -92,7 +92,7 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Upload zip file to GitHub actions artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: elementor-${{ env.PACKAGE_VERSION }}
           path: ${{ github.workspace }}/elementor/**/*

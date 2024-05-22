@@ -9,6 +9,7 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -261,231 +262,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_v_3_0_0_move_saved_colors_to_kit() {
-		$updater = $this->create_updater();
-
-		// Prepare.
-		$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color-picker' );
-
-		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
-		wp_set_current_user( $user_id );
-
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id );
-
-		// Create revisions.
-		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
-		$upgrade_iterations = 1;
-
-		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
-			$kit->save( [
-				'elements' => [],
-			] );
-		}
-
-		$updater->set_limit( $this->query_limit );
-
-		// Run upgrade.
-		while ( Upgrades::_v_3_0_0_move_saved_colors_to_kit( $updater ) ) {
-			$upgrade_iterations++;
-
-			$updater->set_current_item( [
-				'iterate_num' => $upgrade_iterations,
-			] );
-
-			// Avoid infinity loop.
-			if ( $upgrade_iterations > $this->revisions_count ) {
-				break;
-			}
-		}
-
-		// Assert iterations.
-		$this->assertEquals( $expected_iterations, $upgrade_iterations );
-
-		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit_id, false );
-
-		// Assert kit upgraded.
-		$saved_colors = $scheme_obj->get_scheme();
-		$kit_custom_colors = $kit->get_settings( 'custom_colors' );
-
-		// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
-		$this->assertEquals( strtoupper( $saved_colors[5]['value'] ), $kit_custom_colors[0]['color'] );
-		$this->assertEquals( strtoupper( $saved_colors[6]['value'] ), $kit_custom_colors[1]['color'] );
-		$this->assertEquals( strtoupper( $saved_colors[7]['value'] ), $kit_custom_colors[2]['color'] );
-		$this->assertEquals( strtoupper( $saved_colors[8]['value'] ), $kit_custom_colors[3]['color'] );
-
-		// Assert revisions upgraded.
-		$revisions_ids = wp_get_post_revisions( $kit_id, [
-			'fields' => 'ids',
-		] );
-
-		foreach ( $revisions_ids as $revision_id ) {
-			$revision = Plugin::$instance->documents->get( $revision_id, false );
-			$revision_system_colors = $revision->get_settings( 'custom_colors' );
-
-			// First 4 saved colors are actually the 4 system colors that shouldn't be saved as custom colors.
-			$this->assertEquals( strtoupper( $saved_colors[5]['value'] ), $revision_system_colors[0]['color'] );
-			$this->assertEquals( strtoupper( $saved_colors[6]['value'] ), $revision_system_colors[1]['color'] );
-			$this->assertEquals( strtoupper( $saved_colors[7]['value'] ), $revision_system_colors[2]['color'] );
-			$this->assertEquals( strtoupper( $saved_colors[8]['value'] ), $revision_system_colors[3]['color'] );
-		}
-	}
-
-	public function test_v_3_0_0_move_default_colors_to_kit() {
-		$updater = $this->create_updater();
-
-		// Prepare.
-		$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color' );
-
-		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
-		wp_set_current_user( $user_id );
-
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id );
-
-		// Create revisions.
-		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
-		$upgrade_iterations = 1;
-
-		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
-			$kit->save( [
-				'elements' => [],
-			] );
-		}
-
-		$updater->set_limit( $this->query_limit );
-
-		// Run upgrade.
-		while ( Upgrades::_v_3_0_0_move_default_colors_to_kit( $updater ) ) {
-			$upgrade_iterations++;
-
-			$updater->set_current_item( [
-				'iterate_num' => $upgrade_iterations,
-			] );
-
-			// Avoid infinity loop.
-			if ( $upgrade_iterations > $this->revisions_count ) {
-				break;
-			}
-		}
-
-		// Assert iterations.
-		$this->assertEquals( $expected_iterations, $upgrade_iterations );
-
-		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit_id, false );
-
-		// Assert kit upgraded.
-		$default_colors = $scheme_obj->get_scheme();
-		$kit_system_colors = $kit->get_settings( 'system_colors' );
-
-		$this->assertEquals( 'primary', $kit_system_colors[0]['_id'] );
-		$this->assertEquals( strtoupper( $default_colors[1]['value'] ), $kit_system_colors[0]['color'] );
-		$this->assertEquals( strtoupper( $default_colors[2]['value'] ), $kit_system_colors[1]['color'] );
-		$this->assertEquals( strtoupper( $default_colors[3]['value'] ), $kit_system_colors[2]['color'] );
-		$this->assertEquals( strtoupper( $default_colors[4]['value'] ), $kit_system_colors[3]['color'] );
-
-		// Assert revisions upgraded.
-		$revisions_ids = wp_get_post_revisions( $kit_id, [
-			'fields' => 'ids',
-		] );
-
-		foreach ( $revisions_ids as $revision_id ) {
-			$revision = Plugin::$instance->documents->get( $revision_id, false );
-			$revision_system_colors = $revision->get_settings( 'system_colors' );
-
-			$this->assertEquals( strtoupper( $default_colors[1]['value'] ), $revision_system_colors[0]['color'] );
-			$this->assertEquals( strtoupper( $default_colors[2]['value'] ), $revision_system_colors[1]['color'] );
-			$this->assertEquals( strtoupper( $default_colors[3]['value'] ), $revision_system_colors[2]['color'] );
-			$this->assertEquals( strtoupper( $default_colors[4]['value'] ), $revision_system_colors[3]['color'] );
-		}
-	}
-
-	public function test_v_3_0_0_move_default_typography_to_kit() {
-		$updater = $this->create_updater();
-
-		// Prepare.
-		$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
-
-		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
-		wp_set_current_user( $user_id );
-
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id );
-
-		// Create revisions.
-		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
-		$upgrade_iterations = 1;
-
-		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
-			$kit->save( [
-				'elements' => [],
-			] );
-		}
-
-		$updater->set_limit( $this->query_limit );
-
-		// Run upgrade.
-		while ( Upgrades::_v_3_0_0_move_default_typography_to_kit( $updater ) ) {
-			$upgrade_iterations++;
-
-			$updater->set_current_item( [
-				'iterate_num' => $upgrade_iterations,
-			] );
-
-			// Avoid infinity loop.
-			if ( $upgrade_iterations > $this->revisions_count ) {
-				break;
-			}
-		}
-
-		// Assert iterations.
-		$this->assertEquals( $expected_iterations, $upgrade_iterations );
-
-		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit_id, false );
-
-		// Assert kit upgraded.
-		$saved_typography = $scheme_obj->get_scheme();
-		$kit_system_typography = $kit->get_settings( 'system_typography' );
-
-		$this->assertEquals( 'primary', $kit_system_typography[0]['_id'] );
-		$this->assertEquals( $saved_typography[1]['value']['font_family'], $kit_system_typography[0]['typography_font_family'] );
-		$this->assertEquals( $saved_typography[2]['value']['font_family'], $kit_system_typography[1]['typography_font_family'] );
-		$this->assertEquals( $saved_typography[3]['value']['font_family'], $kit_system_typography[2]['typography_font_family'] );
-		$this->assertEquals( $saved_typography[4]['value']['font_family'], $kit_system_typography[3]['typography_font_family'] );
-
-		// Assert revisions upgraded.
-		$revisions_ids = wp_get_post_revisions( $kit_id, [
-			'fields' => 'ids',
-		] );
-
-		foreach ( $revisions_ids as $revision_id ) {
-			$revision = Plugin::$instance->documents->get( $revision_id, false );
-			$revision_saved_typography = $revision->get_settings( 'system_typography' );
-
-			$this->assertEquals( $saved_typography[1]['value']['font_family'], $revision_saved_typography[0]['typography_font_family'] );
-			$this->assertEquals( $saved_typography[2]['value']['font_family'], $revision_saved_typography[1]['typography_font_family'] );
-			$this->assertEquals( $saved_typography[3]['value']['font_family'], $revision_saved_typography[2]['typography_font_family'] );
-			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['typography_font_family'] );
-		}
-	}
-
-	public function test_v_3_1_0_move_optimized_dom_output_to_experiments() {
-		add_option( 'elementor_optimized_dom_output', 'disabled' );
-
-		$is_old_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-
-		Upgrades::v_3_1_0_move_optimized_dom_output_to_experiments();
-
-		$experiments = new Experiments_Manager();
-
-		$this->assertTrue( $is_old_feature_active );
-
-		$this->assertFalse( $experiments->is_feature_active( 'e_dom_optimization' ) );
-	}
-
 	public function test_v_3_2_0_migrate_breakpoints_to_new_system() {
 		$updater = $this->create_updater();
 
@@ -641,6 +417,77 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->delete_image( $attachment_id );
 	}
 
+	public function test_v_3_16_0_container_updates() {
+
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
+		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
+
+		$documents = [];
+		$updater = $this->create_updater();
+
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default_with_container );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
+
+		Upgrades::_v_3_16_0_container_updates( $updater );
+
+		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
+		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
+		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
+		$this->assert_flex_gap_control_has_changed( $documents[3]->get_json_meta('_elementor_data') );
+	}
+
+	public function test_v_3_17_0_site_settings_updates() {
+		// Arrange
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+
+		$original_kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		$new_kit_id = $this->create_kit_with_settings( [
+			'space_between_widgets' => [
+				'unit' => 'px',
+				'size' => 10,
+				'sizes' => [],
+			],
+		] );
+
+		// Act
+		Upgrades::_v_3_17_0_site_settings_updates();
+
+		$kit_data_array = get_post_meta( (int) $new_kit_id, '_elementor_page_settings', true );
+
+		// Assert
+		$this->assertArrayHasKey( 'row', $kit_data_array['space_between_widgets'] );
+		$this->assertArrayHasKey( 'column', $kit_data_array['space_between_widgets'] );
+		$this->assertArrayHasKey( 'isLinked', $kit_data_array['space_between_widgets'] );
+		$this->assertEquals( '10', $kit_data_array['space_between_widgets']['row'] );
+		$this->assertEquals( '10', $kit_data_array['space_between_widgets']['column'] );
+		$this->assertTrue( $kit_data_array['space_between_widgets']['isLinked'] );
+
+		// Tear down
+		if ( $original_kit_id ) {
+			update_option( 'elementor_active_kit', $original_kit_id );
+		}
+	}
+
+	private function create_kit_with_settings( $settings = [] ) {
+		$id = wp_insert_post( [
+			'post_title' => esc_html__( 'Test Kit', 'elementor-pro' ),
+			'post_type' => 'elementor_library',
+			'post_status' => 'publish',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_template_type' => 'kit',
+				'_elementor_page_settings' => $settings,
+			],
+		] );
+
+		update_option( 'elementor_active_kit', $id );
+
+		return $id;
+	}
+
 	private function create_image() {
 		$attachment_id = $this->_make_attachment( [
 			'file' => __DIR__ . '/../../../resources/mock-image.png',
@@ -663,5 +510,116 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 	private function delete_image( $attachment_id ) {
 		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	public function assert_sections_not_changed( $elementor_data ) {
+		$top_level_element = $elementor_data[0];
+		self::assertFalse( $top_level_element['isInner']);
+		self::assertFalse( $top_level_element['elements'][0]['isInner'] );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	public function assert_containers_changed( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		// isInner Changes
+		self::assertFalse( $top_level_container['isInner'] );
+		$inner_container = $top_level_container['elements'][0];
+		self::assertTrue( $inner_container['isInner'] );
+		self::assertTrue( $inner_container['elements'][0]['isInner'] );
+		self::assertTrue( $inner_container['elements'][1]['isInner'] );
+
+		// Grid container Changes
+		self::assertEquals( 'Grid', $top_level_container['settings']['presetTitle'] );
+		self::assertEquals( 'eicon-container-grid', $top_level_container['settings']['presetIcon'] );
+
+		self::assertEquals( 'Container', $inner_container['settings']['presetTitle'] );
+		self::assertEquals( 'eicon-container', $inner_container['settings']['presetIcon'] );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	private function assert_nested_elements_not_affected( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertFalse( $top_level_container['isInner']);
+		$widget = $top_level_container['elements'][0];
+		self::assertFalse( $widget['elements'][0]['isInner'] );
+		self::assertFalse( $widget['elements'][1]['isInner'] );
+		self::assertFalse( $widget['elements'][2]['isInner']);
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	private function assert_flex_gap_control_has_changed( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertEquals( [
+			'unit' => 'px',
+			'size' => 99,
+			'sizes' => [],
+			'column' => '99',
+			'row' => '99',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gap'] );
+
+		self::assertEquals( [
+			'unit' => 'px',
+			'size' => 88,
+			'sizes' => [],
+			'column' => '88',
+			'row' => '88',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gap_tablet'] );
+
+		self::assertEquals( [
+			'unit' => 'px',
+			'size' => 77,
+			'sizes' => [],
+			'column' => '77',
+			'row' => '77',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gap_mobile'] );
+
+		$inner_container = $top_level_container['elements'][0];
+
+		self::assertEquals( [
+			'unit' => 'px',
+			'size' => 66,
+			'sizes' => [],
+			'column' => '66',
+			'row' => '66',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gap'] );
+
+		self::assertEquals( [
+			'unit' => 'px',
+			'size' => 55,
+			'sizes' => [],
+			'column' => '55',
+			'row' => '55',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gap_tablet'] );
+
+		self::assertEquals( [
+			'unit' => 'px',
+			'size' => 44,
+			'sizes' => [],
+			'column' => '44',
+			'row' => '44',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gap_mobile'] );
 	}
 }

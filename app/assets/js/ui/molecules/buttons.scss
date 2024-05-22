@@ -9,6 +9,7 @@
 	font-size: var(--button-font-size, inherit);
 	font-weight: $button-font-weight;
 	line-height: var(--button-line-height);
+	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
 	&:active {
@@ -88,6 +89,13 @@
 	}
 
 	&--cta {
+		--button-color: var(--button-brand-color);
+		--button-background-color: var(--button-cta-background-color);
+		--button-hover-background-color: var(--button-cta-hover-background-color);
+		--button-active-background-color: var(--button-cta-active-background-color);
+	}
+
+	&--brand {
 		--button-color: var(--button-cta-color);
 		--button-background-color: var(--button-cta-background-color);
 		--button-hover-background-color: var(--button-cta-hover-background-color);

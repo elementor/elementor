@@ -115,6 +115,15 @@ class Utils {
 	}
 
 	/**
+	 * Whether elementor test mode is enabled or not.
+	 *
+	 * @return bool
+	 */
+	public static function is_elementor_tests() {
+		return defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+	}
+
+	/**
 	 * Get pro link.
 	 *
 	 * Retrieve the link to Elementor Pro.
@@ -165,26 +174,42 @@ class Utils {
 		$from = trim( $from );
 		$to = trim( $to );
 
+		if ( empty( $from ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL.' );
+		}
+
+		if ( empty( $to ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL.' );
+		}
+
 		if ( $from === $to ) {
-			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+			throw new \Exception( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
 
 		global $wpdb;
+		$escaped_from = str_replace( '/', '\\/', $from );
+		$escaped_to = str_replace( '/', '\\/', $to );
+		$meta_value_like = '[%'; // meta_value LIKE '[%' are json formatted
 
-		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
 		$rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
-			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
-		// @codingStandardsIgnoreEnd
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} " .
+				'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ' .
+				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s;",
+				$escaped_from,
+				$escaped_to,
+				$meta_value_like
+			)
+		);
 
 		if ( false === $rows_affected ) {
-			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
+			throw new \Exception( 'An error occurred while replacing URL\'s.' );
 		}
 
 		// Allow externals to replace-urls, when they have to.
@@ -194,7 +219,7 @@ class Utils {
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
-			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			_n( '%d database row affected.', '%d database rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
 	}
@@ -223,7 +248,7 @@ class Utils {
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
-		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` Instead
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` hook Instead.
 		 *
 		 * @param bool $is_supported Whether the post type supports editing with Elementor.
 		 * @param int $post_id Post ID.
@@ -342,8 +367,8 @@ class Utils {
 			define( 'DONOTCDN', true );
 		}
 
-		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
-			define( 'DONOTCACHCEOBJECT', true );
+		if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
+			define( 'DONOTCACHEOBJECT', true );
 		}
 
 		// Set the headers to prevent caching for the different browsers.
@@ -384,7 +409,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
-	 * @deprecated 3.3.0
+	 * @deprecated 3.3.0 Use `Plugin::$instance->documents->get_create_new_post_url()` instead.
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
@@ -699,7 +724,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+		return $tag && in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
 
 	/**
@@ -789,5 +814,72 @@ class Utils {
 		}
 
 		return file_get_contents( $file, ...$args );
+	}
+
+	public static function get_super_global_value( $super_global, $key ) {
+		if ( ! isset( $super_global[ $key ] ) ) {
+			return null;
+		}
+
+		if ( $_FILES === $super_global ) {
+			return isset( $super_global[ $key ]['name'] ) ?
+				self::sanitize_file_name( $super_global[ $key ] ) :
+				self::sanitize_multi_upload( $super_global[ $key ] );
+		}
+
+		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
+	private static function sanitize_multi_upload( $fields ) {
+		return array_map( function( $field ) {
+			return array_map( 'self::sanitize_file_name', $field );
+		}, $fields );
+	}
+
+	private static function sanitize_file_name( $file ) {
+		$file['name'] = sanitize_file_name( $file['name'] );
+
+		return $file;
+	}
+
+	/**
+	 * Return specific object property value if exist from array of keys.
+	 *
+	 * @param $array
+	 * @param $keys
+	 * @return key|false
+	 */
+	public static function get_array_value_by_keys( $array, $keys ) {
+		$keys = (array) $keys;
+		foreach ( $keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				return null;
+			}
+			$array = $array[ $key ];
+		}
+		return $array;
+	}
+
+	public static function get_cached_callback( $callback, $cache_key, $cache_time = 24 * HOUR_IN_SECONDS ) {
+		$cache = get_site_transient( $cache_key );
+
+		if ( ! $cache ) {
+			$cache = call_user_func( $callback );
+
+			if ( ! is_wp_error( $cache ) ) {
+				set_site_transient( $cache_key, $cache, $cache_time );
+			}
+		}
+
+		return $cache;
+	}
+
+	public static function is_sale_time(): bool {
+		$sale_start_time = gmmktime( 12, 0, 0, 5, 28, 2024 );
+		$sale_end_time = gmmktime( 4, 59, 0, 6, 4, 2024 );
+
+		$now_time = gmdate( 'U' );
+
+		return $now_time >= $sale_start_time && $now_time <= $sale_end_time;
 	}
 }

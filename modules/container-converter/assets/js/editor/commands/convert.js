@@ -3,7 +3,7 @@ import Migrator from '../migrator';
 /**
  * @typedef {import('../../../../../../assets/dev/js/editor/container/container')} Container
  */
- export class Convert extends $e.modules.document.CommandHistory {
+export class Convert extends $e.modules.editor.document.CommandHistoryBase {
 	getHistory() {
 		return {
 			type: __( 'Converted to Container', 'elementor' ),

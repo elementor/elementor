@@ -1,6 +1,8 @@
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlSliderItemView;
 
+import { convertSizeToFrString } from 'elementor-editor-utils/helpers';
+
 ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	ui() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
@@ -30,6 +32,10 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
+		if ( this.isCustomUnit() ) {
+			return;
+		}
+
 		this.destroySlider();
 
 		const isMultiple = this.isMultiple(),
@@ -42,6 +48,9 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			sizes = Object.values( sizes );
 		} else {
 			sizes = [ sizes ];
+
+			// Make sure the value is a number, because the slider can't handle strings.
+			sizes[ 0 ] = parseFloat( sizes[ 0 ] ) || 0;
 
 			this.ui.input.attr( unitRange );
 		}
@@ -78,9 +87,13 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	applySavedValue() {
 		ControlBaseUnitsItemView.prototype.applySavedValue.apply( this, arguments );
 		// Slider does not exist in tests.
-		if ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider ) {
+		if ( this.isSliderInitialized() ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		}
+	},
+
+	isSliderInitialized() {
+		return ( this.ui.slider[ 0 ] && this.ui.slider[ 0 ].noUiSlider );
 	},
 
 	getSize() {
@@ -135,17 +148,91 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	onInputChange( event ) {
 		var dataChanged = event.currentTarget.dataset.setting;
 
-		if ( 'size' === dataChanged ) {
+		if ( 'size' === dataChanged && this.isSliderInitialized() ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		} else if ( 'unit' === dataChanged ) {
+			this.handleUnitChange();
+		}
+	},
+
+	handleUnitChange() {
+		if ( ! this.isCustomUnit() ) {
 			this.resetSize();
 		}
+
+		this.maybeDoFractionToCustomConversions();
+	},
+
+	updateUnitChoices() {
+		ControlBaseUnitsItemView.prototype.updateUnitChoices.apply( this, arguments );
+
+		let inputType = 'number';
+
+		if ( this.isCustomUnit() ) {
+			inputType = 'text';
+			this.destroySlider();
+		} else {
+			this.initSlider();
+		}
+
+		if ( ! this.isMultiple() ) {
+			this.ui.input.attr( 'type', inputType );
+		}
+	},
+
+	maybeDoFractionToCustomConversions() {
+		if ( this.isMultiple() ) {
+			return;
+		}
+
+		/*
+		We want our code to run only when the user switched from 'fr' to 'custom'.
+		But currently we do not have the previous state, so we won't know the user was previously on 'fr'.
+		So we make the assumption that if the control only has two units ('fr' and 'custom'), and we
+		are switching to custom now, then we can run our conversion logic.
+		In future, we might want to investigate a way to build some kind of 'previous state cache' to know
+		where we switched from.
+		*/
+		const sizeUnits = this.model.get( 'size_units' ),
+			isFrToCustom = 2 === sizeUnits?.length && sizeUnits.includes( 'fr' ) && sizeUnits.includes( 'custom' );
+
+		if ( ! isFrToCustom ) {
+			return;
+		}
+
+		const currentSize = this.getSize(),
+			alreadyConverted = 'string' === typeof currentSize && currentSize.includes( 'fr' );
+
+		if ( alreadyConverted ) {
+			return;
+		}
+
+		const sizeValue = this.isCustomUnit()
+			? convertSizeToFrString( currentSize )
+			: this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size;
+
+		this.setValue( 'size', sizeValue );
+		this.render();
 	},
 
 	onBeforeDestroy() {
 		this.destroySlider();
 
 		this.$el.remove();
+	},
+
+	onDeviceModeChange() {
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			isMobile = 'mobile' === currentDeviceMode,
+			isMobileValue = this.model.get( 'name' ).includes( '_mobile' ),
+			hasDefault = this.model.get( 'default' ),
+			shouldRunConversion = isMobile && isMobileValue && hasDefault && this.isCustomUnit();
+
+		if ( shouldRunConversion ) {
+			setTimeout( () => {
+				this.maybeDoFractionToCustomConversions();
+			} );
+		}
 	},
 } );
 

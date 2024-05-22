@@ -72,10 +72,10 @@ export default class extends elementorModules.ViewModule {
 		}
 
 		// Only if an element with this action hash exists on the page do we allow running the action.
-		const elementWithHash = document.querySelector( `[e-action-hash="${ location.hash }"], a[href*="${ location.hash }"]` );
+		const elementWithHash = document.querySelector( `[data-e-action-hash="${ location.hash }"], a[href*="${ location.hash }"]` );
 
 		if ( elementWithHash ) {
-			this.runAction( elementWithHash.getAttribute( 'e-action-hash' ) );
+			this.runAction( elementWithHash.getAttribute( 'data-e-action-hash' ) );
 		}
 	}
 

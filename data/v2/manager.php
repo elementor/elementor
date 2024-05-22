@@ -278,7 +278,7 @@ class Manager extends BaseModule {
 						$data[1] = $result;
 					}
 				} else {
-					trigger_error( "Invalid processor filter: '${ $filter_by_class }'" ); // phpcs:ignore
+					trigger_error( "Invalid processor filter: '\${ $filter_by_class }'" ); // phpcs:ignore
 					break;
 				}
 			}

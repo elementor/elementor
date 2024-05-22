@@ -1,14 +1,16 @@
 body {
 	--e-editor-navigator-width: 240px;
+	--e-editor-navigator-promotion-height: 30px;
 }
 
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: var( --e-editor-navigator-width );
+	width: var(--e-editor-navigator-width);
 	height: 50vh;
 	@include end(30px);
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
+	border: var(--e-a-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
@@ -27,26 +29,42 @@ body {
 
 	&__inner {
 		height: 100%;
-		background-color: $editor-background;
+		display: flex;
+		flex-direction: column;
 	}
 
 	&__header {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 12px 10px;
-		background-color: #fff;
-		border-bottom: 1px solid $editor-background;
-		cursor: move;
+		align-items: stretch;
+		border-block-end: var(--e-a-border);
+		color: var(--e-a-color-txt-accent);
+
+		&__title {
+			flex: 1;
+			text-align: center;
+			font-size: 13px;
+			font-weight: 400;
+			padding: 10px 0;
+			cursor: move;
+		}
 	}
 
 	&__close,
 	&__toggle-all {
-		transition: color .5s;
+		color: var(--e-a-color-txt);
+		background-color: transparent;
+		border: none;
+		outline: 0;
+		padding: 10px;
 		cursor: pointer;
+		transition: color .5s;
 
-		&:not(:hover) {
-			color: $editor-light;
+		&:hover {
+			color: var(--e-a-color-txt-hover);
+		}
+
+		&:focus {
+			color: var(--e-a-color-txt-active);
 		}
 	}
 
@@ -59,7 +77,7 @@ body {
 	}
 
 	&__elements {
-		height: calc(100% - 49px);
+		flex-grow: 1;
 		overflow: auto;
 		position: relative;
 
@@ -70,20 +88,38 @@ body {
 		.elementor-nerd-box {
 			padding: 25px;
 		}
+
+		> .elementor-navigator__element-section {
+			border-block-end: var(--e-a-border);
+		}
 	}
 
 	&__footer {
-		position: absolute;
 		width: 100%;
-		left: 0;
-		bottom: 0;
 		text-align: center;
-		background-color: #fff;
-		border-top: 1px solid $editor-background;
-		color: $editor-light;
 
-		.elementor-navigator-docked & {
-			display: none;
+		&__resize-bar {
+			border-block-start: var(--e-a-border);
+
+			.elementor-navigator-docked & {
+				display: none;
+			}
+		}
+
+		&__promotion {
+			font-size: 12px;
+			padding: 4px 17px;
+			font-family: 'Roboto', sans-serif;
+			color: var(--e-a-bg-logo);
+			min-height: var(--e-editor-navigator-promotion-height);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			a {
+				color: var(--e-a-color-accent-promotion);
+				margin-inline-start: 1px;
+			}
 		}
 	}
 }
@@ -94,11 +130,23 @@ body {
 		position: relative;
 		display: flex;
 		height: 30px;
-		font-size: 11px;
-		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
+
+		&:hover,
+		&:focus {
+			background-color: var(--e-a-bg-hover);
+		}
+
+		&:active {
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-accent);
+		}
+
+		&[data-locked="true"] {
+			cursor: not-allowed;
+		}
 
 		&:not(.elementor-active) {
 
@@ -122,28 +170,31 @@ body {
 
 	&__elements {
 
+		> .elementor-navigator__element-section,
+		> .elementor-navigator__element-container:not(:last-child) {
+			border-block-end: var(--e-a-border);
+		}
+
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: 1px solid $editor-background;
 
 			&__title {
-				@include margin-start(23px);
-				color: $editor-lighter;
+				margin-inline-start: 23px;
 				font-size: 10px;
 				font-style: italic;
 			}
 		}
 
 		.ui-sortable-helper {
-			background-color: #fff;
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
-			border: 1px solid $editor-background;
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-accent);
 			pointer-events: none;
 		}
 
 		.ui-sortable-placeholder {
-			background-color: $editor-background-light;
+			background-color: var(--e-a-bg-hover);
 		}
 	}
 
@@ -154,7 +205,7 @@ body {
 			> .elementor-navigator__elements {
 
 				> .elementor-empty-view {
-					border-top: 2px solid $editor-info;
+					border-block-start: var(--e-a-border);
 
 					.elementor-empty-view__title {
 						display: none;
@@ -179,7 +230,11 @@ body {
 			> .elementor-navigator__item {
 
 				.elementor-navigator__element__toggle {
-					color: $editor-info;
+					color: var(--e-a-color-txt-default);
+
+					&:hover {
+						color: var(--e-a-color-txt-hover);
+					}
 				}
 
 				&:not(:hover) {
@@ -193,23 +248,19 @@ body {
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-color: $editor-info;
-
-					> * {
-						color: #fff;
-					}
+					background-color: var(--e-a-bg-active);
 				}
 			}
 		}
 
 		&__list-toggle {
-			@include margin-end(7px);
+			margin-inline-end: 7px;
 			transition: transform .3s;
-			color: $editor-light;
 		}
 
 		&__element-type {
-			@include margin-end(8px);
+			margin-inline-end: 8px;
+			font-size: 14px;
 		}
 
 		&__title {
@@ -218,17 +269,17 @@ body {
 
 			&__text {
 				white-space: nowrap;
-				-webkit-user-select: text;
+				user-select: text;
 
 				&[contenteditable="true"] {
 					outline: none;
-					color: $editor-dark;
-					background-color: #fff;
-					padding: 2px 3px;
-					box-shadow: 0 0 4px rgba(0,0,0,0.2);
+					background-color: var(--e-a-bg-hover);
+					padding: var(--e-admin-border-radius);
+					border: var(--e-a-border);
 				}
 
 				&:not([contenteditable="true"]) {
+					padding: 3px 0;
 					@include ellipsis;
 				}
 			}
@@ -245,7 +296,7 @@ body {
 		&__indicators {
 			position: relative;
 			transition: transform .5s;
-			@include padding-start(5px);
+			padding-inline-start: 5px;
 			z-index: 91;
 
 			&:not(:hover) {
@@ -261,20 +312,20 @@ body {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: $editor-dark;
-			background-color: #fff;
-			@include border-start(1px solid $editor-background);
+			color: var(--e-a-color-txt);
+			background-color: var(--e-a-bg-default);
+			border-inline-start: var(--e-a-border);
 
 			&:first-child {
-				@include border-start(3px solid $editor-info);
+				border-inline-start: 3px solid var(--e-a-border-color-accent);
 
 				.elementor-editing & {
-					border-color: darken($editor-info, 10%);
+					border-color: lighten($e-gray-900, 10%);
 				}
 			}
 
 			&:hover {
-				color: $editor-darkest;
+				color: var(--e-a-color-txt-hover);
 			}
 		}
 
@@ -285,21 +336,9 @@ body {
 				opacity: .5;
 			}
 		}
+	}
 
-		&-column {
-			background-color: lighten($editor-background-light, 3%);
-
-			> .elementor-navigator__item {
-
-				.elementor-navigator__element__element-type {
-					color: $editor-light;
-				}
-			}
-		}
-
-		&-section,
-		&-container, {
-			background-color: $white;
-		}
+	&__promotion-text {
+		line-height: 18px;
 	}
 }

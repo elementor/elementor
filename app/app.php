@@ -3,13 +3,14 @@ namespace Elementor\App;
 
 use Elementor\App\AdminMenuItems\Theme_Builder_Menu_Item;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Icons_Manager;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -71,6 +72,13 @@ class App extends BaseApp {
 	public function admin_init() {
 		do_action( 'elementor/app/init', $this );
 
+		// Add the introduction and user settings only when it is needed (when loading the app and not in the editor or admin pages)
+		$this->set_settings( 'user', [
+			'introduction' => (object) User::get_introduction_meta(),
+			'is_administrator' => current_user_can( 'manage_options' ),
+			'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
+		] );
+
 		$this->enqueue_assets();
 
 		// Setup default heartbeat options
@@ -90,11 +98,17 @@ class App extends BaseApp {
 		return [
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
+			'pages_url' => admin_url( 'edit.php?post_type=page' ),
 			'return_url' => $referer ? $referer : admin_url(),
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
+			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
+				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
+				'elementor/site-editor/promotion',
+				'upgrade_url'
+			),
 		];
 	}
 
@@ -103,14 +117,14 @@ class App extends BaseApp {
 	}
 
 	/**
-	 * Get Elementor UI theme preference.
+	 * Get Elementor editor theme color preference.
 	 *
-	 * Retrieve the user UI theme preference as defined by editor preferences manager.
+	 * Retrieve the user theme color preference as defined by editor preferences manager.
 	 *
 	 * @since 3.0.0
 	 * @access private
 	 *
-	 * @return string Preferred UI theme.
+	 * @return string Preferred editor theme.
 	 */
 	private function get_elementor_ui_theme_preference() {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
@@ -150,19 +164,7 @@ class App extends BaseApp {
 			'4.0.6-rc.1'
 		);
 
-		wp_register_style(
-			'elementor-icons',
-			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-			[],
-			Icons_Manager::ELEMENTOR_ICONS_VERSION
-		);
-
-		wp_register_style(
-			'elementor-common',
-			$this->get_css_assets_url( 'common', null, 'default', true ),
-			[],
-			ELEMENTOR_VERSION
-		);
+		Plugin::$instance->common->register_styles();
 
 		wp_register_style(
 			'select2',
@@ -218,9 +220,7 @@ class App extends BaseApp {
 			true
 		);
 
-		if ( ! $this->get_settings( 'disable_dark_theme' ) ) {
-			$this->enqueue_dark_theme_detection_script();
-		}
+		$this->enqueue_dark_theme_detection_script();
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
@@ -245,7 +245,7 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 
-		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) || Utils::is_wp_cli() ) {
+		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
 
 			// Kit library is depended on import-export

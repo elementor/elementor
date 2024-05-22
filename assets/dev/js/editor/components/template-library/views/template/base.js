@@ -1,5 +1,6 @@
 var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
 	TemplateLibraryTemplateView;
+const { isTierAtLeast, TIERS } = require( 'elementor-utils/tiers' );
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className() {
@@ -12,7 +13,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 			classes += ' elementor-template-library-template-' + this.model.get( 'type' );
 		}
 
-		if ( elementor.config.library_connect.base_access_level !== this.model.get( 'accessLevel' ) ) {
+		if ( elementor.config.library_connect.base_access_tier !== this.model.get( 'accessTier' ) ) {
 			classes += ' elementor-template-library-pro-template';
 		}
 
@@ -20,7 +21,22 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	},
 
 	attributes() {
-		const subscriptionPlan = elementor.config.library_connect.subscription_plans[ this.model.get( 'accessLevel' ) ];
+		const userAccessTier = elementor.config.library_connect.current_access_tier;
+		const templateAccessTier = this.model.get( 'accessTier' );
+		const canDownloadTemplate = isTierAtLeast( userAccessTier, templateAccessTier );
+
+		// User with access to the template shouldn't see the badge.
+		if ( canDownloadTemplate ) {
+			return {};
+		}
+
+		const subscriptionPlans = elementor.config.library_connect.subscription_plans;
+		let subscriptionPlan = subscriptionPlans[ templateAccessTier ];
+
+		// Free user should see a generic "Pro" badge.
+		if ( userAccessTier === TIERS.free ) {
+			subscriptionPlan = subscriptionPlans.essential;
+		}
 
 		if ( ! subscriptionPlan ) {
 			return {};
@@ -43,10 +59,14 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 		};
 	},
 
-	behaviors: {
-		insertTemplate: {
-			behaviorClass: TemplateLibraryInsertTemplateBehavior,
-		},
+	behaviors() {
+		const behaviors = {
+			insertTemplate: {
+				behaviorClass: TemplateLibraryInsertTemplateBehavior,
+			},
+		};
+
+		return elementor.hooks.applyFilters( 'elementor/editor/template-library/template/behaviors', behaviors, this );
 	},
 } );
 
