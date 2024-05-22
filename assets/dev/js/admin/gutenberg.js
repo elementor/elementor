@@ -1,48 +1,10 @@
 /* global ElementorGutenbergSettings */
 import GenerateExcerptWithAI from './excerpt-ai';
+import { createRoot } from '@wordpress/element';
+import { RequestIdsProvider } from '../../../../modules/ai/assets/js/editor/context/requests-ids';
 
 ( function( $ ) {
 	'use strict';
-	//
-	// 	const { registerPlugin } = wp.plugins;
-	// 	const { PluginDocumentSettingPanel } = wp.editPost;
-	// 	const { PanelBody, Button } = wp.components;
-	// 	const { Fragment } = wp.element;
-	// 	const { useSelect } = wp.data;
-	// 	const { __ } = wp.i18n;
-	// 	const { addFilter } = wp.hooks;
-	//
-	// // Custom button component to be added to the Excerpt panel
-	// 	const CustomButton = () => {
-	// 		const handleClick = () => {
-	// 			alert('Custom Excerpt Button clicked!');
-	// 		};
-	//
-	// 		return (
-	// 			<Button isPrimary onClick={handleClick}>
-	// 				{__('Custom Button', 'custom-excerpt-button')}
-	// 			</Button>
-	// 		);
-	// 	};
-	//
-	// // Higher-order component to add the custom button to the Excerpt panel
-	// 	const withCustomExcerptButton = (OriginalComponent) => (props) => {
-	// 		return (
-	// 			<Fragment>
-	// 				<OriginalComponent {...props} />
-	// 				<div>
-	// 					<CustomButton />
-	// 				</div>
-	// 			</Fragment>
-	// 		);
-	// 	};
-	//
-	// // Apply the filter to extend the Excerpt panel
-	// 	addFilter(
-	// 		'editor.PostFeaturedImage',
-	// 		'custom-excerpt-button/with-custom-excerpt-button',
-	// 		withCustomExcerptButton,
-	// 	);
 
 	// Wait for the Gutenberg editor to initialize
 	wp.domReady( () => {
@@ -70,15 +32,14 @@ import GenerateExcerptWithAI from './excerpt-ai';
 					elementorCommon.ajax.addRequestConstant( 'editor_post_id', urlSearchParams.get( 'post' ) );
 
 					function onClose() {
-						ReactDOM.unmountComponentAtNode( rootElement ); // eslint-disable-line react/no-deprecated
+						root.unmount();
 						rootElement.parentNode.removeChild( rootElement );
 					}
 
-					// eslint-disable-next-line react/no-deprecated
-					ReactDOM.render(
-						<GenerateExcerptWithAI onClose={ onClose } />,
-						rootElement,
-					);
+					const root = createRoot( rootElement );
+					root.render( <RequestIdsProvider>
+						<GenerateExcerptWithAI onClose={ onClose } />
+					</RequestIdsProvider> );
 				} );
 
 				// Find the existing link with class "components-external-link"

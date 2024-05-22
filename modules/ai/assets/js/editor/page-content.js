@@ -14,7 +14,8 @@ import { PromptHistoryActionProvider } from './components/prompt-history/context
 import { PromptHistoryProvider } from './components/prompt-history/context/prompt-history-context';
 import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
-import LoaderAI from './loader';
+import { Box, Typography } from '@elementor/ui';
+import Loader from './components/loader';
 
 const PageContent = (
 	{
@@ -28,7 +29,7 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const {
-		isLoading: isLoadingUserInfo,
+		isLoading,
 		isConnected,
 		isGetStarted,
 		connectUrl,
@@ -36,8 +37,7 @@ const PageContent = (
 		hasSubscription,
 		credits,
 		usagePercentage,
-	} = useUserInfo();
-	const isLoading = isLoadingUserInfo || additionalOptions.isLoadingExtraData;
+	} = ( () => additionalOptions?.useCustomInit ?? useUserInfo )()();
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
@@ -78,7 +78,22 @@ const PageContent = (
 
 	if ( isLoading ) {
 		return (
-			<LoaderAI type={ type } onClose={ onClose } style={ promptDialogStyleProps } title={ additionalOptions.loadingTitle } />
+
+			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
+				<PromptDialog.Header onClose={ onClose } />
+				<PromptDialog.Content dividers>
+					{ additionalOptions?.loadingTitle && ( <Box
+						style={ {
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							width: '100%', // Ensure the box takes the full width
+						} }>
+						<Typography variant="body1" color="secondary">{ additionalOptions?.loadingTitle }</Typography>
+					</Box> ) }
+					<Loader />
+				</PromptDialog.Content>
+			</PromptDialog>
 		);
 	}
 

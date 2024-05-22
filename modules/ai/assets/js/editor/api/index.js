@@ -20,7 +20,7 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	} );
 };
 
-export const getUserInformation = () => request( 'ai_get_user_information' );
+export const getUserInformation = ( immediately ) => request( 'ai_get_user_information', undefined, immediately );
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 

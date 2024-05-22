@@ -125,7 +125,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 };
 
 PromptErrorMessage.propTypes = {
-	error: PropTypes.string,
+	error: PropTypes.object,
 	onRetry: PropTypes.func,
 	actionPosition: PropTypes.oneOf( [ 'default', 'bottom' ] ),
 };
