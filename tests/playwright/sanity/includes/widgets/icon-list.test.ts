@@ -11,7 +11,7 @@ test.describe( 'Icon List', () => {
 		await editor.addWidget( 'icon-list' );
 		await editor.activatePanelTab( 'style' );
 		await editor.openSection( 'section_icon_style' );
-		await editor.setChooseControlValue( 'icon_self_vertical_align', 'flex-start' );
+		await page.locator( '.elementor-control-icon_self_vertical_align .eicon-v-align-top' ).click();
 		await editor.setSliderControlValue( 'icon_vertical_offset', '10' );
 
 		// Assert.
