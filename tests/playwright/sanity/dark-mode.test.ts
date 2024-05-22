@@ -12,7 +12,7 @@ test( 'navigator empty placeholder should be in dark mode', async ( { page }, te
 
 	// Act.
 	await editor.addElement( { elType: 'container' }, 'document' );
-	await editor.changeUiTheme( 'dark' );
+	await editor.setDisplayMode( 'dark' );
 	const navigator = editor.page.locator( '#elementor-navigator' );
 	await navigator.locator( '.elementor-navigator__element__list-toggle' ).click();
 
