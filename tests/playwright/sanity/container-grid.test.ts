@@ -90,22 +90,22 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
-			await editor.setChooseControlValue( 'grid_justify_content', 'start' );
-			await editor.setChooseControlValue( 'grid_align_content', 'start' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
 			await expect( container ).toHaveCSS( 'justify-content', 'start' );
 			await expect( container ).toHaveCSS( 'align-content', 'start' );
 		} );
 
 		await test.step( 'Assert justify align and content middle', async () => {
-			await editor.setChooseControlValue( 'grid_justify_content', 'center' );
-			await editor.setChooseControlValue( 'grid_align_content', 'center' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
 			await expect( container ).toHaveCSS( 'justify-content', 'center' );
 			await expect( container ).toHaveCSS( 'align-content', 'center' );
 		} );
 
 		await test.step( 'Assert justify align and content end', async () => {
-			await editor.setChooseControlValue( 'grid_justify_content', 'end' );
-			await editor.setChooseControlValue( 'grid_align_content', 'end' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
 		} );
@@ -119,24 +119,24 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert justify align and content start on full width', async () => {
 			await editor.setSelectControlValue( 'content_width', 'full' );
-			await editor.setChooseControlValue( 'grid_justify_content', 'start' );
-			await editor.setChooseControlValue( 'grid_align_content', 'start' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
 			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'start' );
 			await expect( container ).toHaveCSS( 'align-content', 'start' );
 		} );
 
 		await test.step( 'Assert justify align and content middle on full width', async () => {
-			await editor.setChooseControlValue( 'grid_justify_content', 'center' );
-			await editor.setChooseControlValue( 'grid_align_content', 'center' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
 			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'center' );
 			await expect( container ).toHaveCSS( 'align-content', 'center' );
 		} );
 
 		await test.step( 'Assert justify align and content end on full width', async () => {
-			await editor.setChooseControlValue( 'grid_justify_content', 'end' );
-			await editor.setChooseControlValue( 'grid_align_content', 'end' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
 			container = frame.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
