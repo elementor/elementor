@@ -74,6 +74,10 @@ class Widget_Tabs extends Widget_Base {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	public function show_in_panel(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}

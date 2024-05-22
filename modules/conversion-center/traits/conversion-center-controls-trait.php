@@ -62,7 +62,6 @@ trait Conversion_Center_Controls_Trait {
 	protected function add_icons_per_row_control(
 		string $name = 'icons_per_row',
 		$options = [
-			'1' => '1',
 			'2' => '2',
 			'3' => '3',
 		],
@@ -148,6 +147,10 @@ trait Conversion_Center_Controls_Trait {
 				'px' => $this->border_width_range,
 			],
 			'condition' => $condition,
+			'default' => [
+				'unit' => 'px',
+				'size' => 1,
+			],
 		];
 
 		$this->add_control(
@@ -168,6 +171,7 @@ trait Conversion_Center_Controls_Trait {
 			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'condition' => $condition,
+			'default' => '#000000',
 		];
 
 		$this->add_control(

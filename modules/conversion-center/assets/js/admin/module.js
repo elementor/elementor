@@ -10,11 +10,15 @@ export default class extends elementorModules.Module {
 	}
 
 	runHandler() {
-		const pageName = 'e-link-pages',
+		const pageNameLinks = 'e-link-pages',
+			pageNameContact = 'e-contact-pages',
 			paths = {
-				linksPagesTablePage: 'edit.php?post_type=' + pageName,
-				linksPagesAddNewPage: 'edit.php?post_type=elementor_library&page=' + pageName,
-				linksPagesTrashPage: 'edit.php?post_status=trash&post_type=' + pageName,
+				linksPagesTablePage: 'edit.php?post_type=' + pageNameLinks,
+				linksPagesAddNewPage: 'edit.php?post_type=elementor_library&page=' + pageNameLinks,
+				linksPagesTrashPage: 'edit.php?post_status=trash&post_type=' + pageNameLinks,
+				contactPagesTablePage: 'edit.php?post_type=' + pageNameContact,
+				contactPagesAddNewPage: 'edit.php?post_type=elementor_library&page=' + pageNameContact,
+				contactPagesTrashPage: 'edit.php?post_status=trash&post_type=' + pageNameContact,
 			},
 			args = {
 				path: elementorAdmin.config.linksPages?.hasPages ? paths.linksPagesTablePage : paths.linksPagesAddNewPage,

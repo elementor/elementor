@@ -453,12 +453,14 @@ class Ai extends Library {
 			'POST',
 			'image/image-to-image/outpainting',
 			[
-				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => '',
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'size' => wp_json_encode( $image_data['size'] ),
+				'position' => wp_json_encode( $image_data['position'] ),
+				'image_url' => $image_data['image_url'],
+				$image_data['image'],
 			],
 			[
 				[
@@ -496,12 +498,11 @@ class Ai extends Library {
 			'image/image-to-image/inpainting',
 			[
 				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => $image_data['promptSettings'][ self::IMAGE_TYPE ] . '/' . $image_data['promptSettings'][ self::STYLE_PRESET ],
-				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'image_url' => $image_data['image_url'],
 			],
 			[
 				[
@@ -572,11 +573,11 @@ class Ai extends Library {
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
-			$context['features']['supportedFeatures'][] = 'NestedElements';
+			$context['features']['supportedFeatures'][] = 'Nested';
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
-			$context['features']['supportedFeatures'][] = 'TaxonomyFilter';
+			$context['features']['supportedFeatures'][] = 'Taxonomy';
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {

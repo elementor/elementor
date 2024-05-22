@@ -47,7 +47,7 @@
 	--e-link-in-bio-ctas-border-color: transparent;
 	--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-rounded};
 	--e-link-in-bio-ctas-border-style: none;
-	--e-link-in-bio-ctas-border-width: 2px;
+	--e-link-in-bio-ctas-border-width: 0;
 	--e-link-in-bio-ctas-gap: 22px;
 	--e-link-in-bio-ctas-padding-block-end: 17px;
 	--e-link-in-bio-ctas-padding-block-start: 17px;
@@ -119,6 +119,9 @@
 	}
 
 	&__bg {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
 		display: grid;
 		inset: 0;
 		position: absolute;
@@ -126,6 +129,9 @@
 	}
 
 	&__bg-overlay {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
 		opacity: var(--background-overlay-opacity);
 	}
 
@@ -270,18 +276,19 @@
 		gap: var(--e-link-in-bio-icon-gap);
 		justify-content: center;
 		margin-block-start: 20px;
-	}
-
-	&__icon {
-		display: flex;
 
 		&.has-size-medium {
 			--e-link-in-bio-icon-size: #{$link-in-bio-icon-size-medium};
 		}
 
 		&.has-size-large {
+			--e-link-in-bio-icon-gap: 20px 24px;
 			--e-link-in-bio-icon-size: #{$link-in-bio-icon-size-large};
 		}
+	}
+
+	&__icon {
+		display: flex;
 
 		.e-link-in-bio__icon-link {
 			align-items: center;

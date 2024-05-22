@@ -83,7 +83,7 @@ export default class EditorPage extends BasePage {
 		);
 
 		if ( ! isOpen ) {
-			await this.page.click( '#elementor-panel-footer-navigator' );
+			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
 		}
 	}
 
@@ -91,7 +91,7 @@ export default class EditorPage extends BasePage {
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
-			await this.page.click( '#elementor-navigator__close' );
+			await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
 		}
 	}
 
@@ -207,7 +207,7 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.openPageSettingsPanel();
 		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
 	}
@@ -222,7 +222,7 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		await this.page.click( '#elementor-panel-footer-settings' );
+		await this.openPageSettingsPanel();
 		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
 		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
 	}
@@ -459,7 +459,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async changeEditorLayout( layout: string ) {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		await this.openPageSettingsPanel();
 		await this.page.selectOption( '[data-setting=template]', layout );
 		await this.ensurePreviewReload();
 	}
@@ -481,15 +481,84 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
 	}
 
-	async changeUiTheme( uiMode: string ) {
+	/**
+	 * Whether the Top Bar is active or not.
+	 *
+	 * @return {boolean}
+	 */
+	async hasTopBar() {
+		return await this.page.locator( EditorSelectors.topBar.wrapper ).isVisible();
+	}
+
+	/**
+	 * Open the menu panel.
+	 */
+	async openMenuPanel() {
+		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
+		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
+	}
+
+	/**
+	 * Open the elements/widgets panel.
+	 */
+	async openElementsPanel() {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elements' ).click();
+		} else {
+			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
+		}
+
+		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
+	}
+
+	/**
+	 * Open the page settings panel.
+	 */
+	async openPageSettingsPanel() {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Page Settings' ).click();
+		} else {
+			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
+		}
+
+		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
+	}
+
+	/**
+	 * Open the user preferences panel.
+	 */
+	async openUserPreferencesPanel() {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elementor logo' ).click();
+			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
+		} else {
+			await this.openMenuPanel();
+			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
+		}
+
+		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
+	}
+
+	/**
+	 * Change the display mode of the editor.
+	 *
+	 * @param {string} uiMode - Either 'light', 'dark', or 'auto';
+	 */
+	async setDisplayMode( uiMode: string ) {
 		const uiThemeOptions = {
-			light: '.eicon-light-mode',
-			dark: '.eicon-dark-mode',
-			auto: '.eicon-header',
+			light: 'eicon-light-mode',
+			dark: 'eicon-dark-mode',
+			auto: 'eicon-header',
 		};
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
-		await this.page.locator( `.elementor-control-ui_theme ${ uiThemeOptions[ uiMode ] }` ).click();
+
+		await this.openUserPreferencesPanel();
+		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
 	/**

@@ -63,16 +63,13 @@ abstract class Render_Base {
 		<div <?php echo $this->widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
-				// Bail if no text
-				if ( empty( $cta['cta_link_text'] ) ) {
-					break;
-				}
-
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
 				$cta_image = $cta['cta_link_image'] ?? [];
 				$cta_has_image = ! empty( $cta_image ) &&
 					( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) ) &&
 					'button' === $ctas_props_type;
+
+				// Manage Link class variations
 
 				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
@@ -88,17 +85,34 @@ abstract class Render_Base {
 					$ctas_classnames .= ' has-corners-' . $ctas_props_corners;
 				}
 
-				$this->widget->add_render_attribute( 'cta-' . $key, [
+				// Manage Link attributes : Start
+
+				$url_attrs = [
 					'class' => $ctas_classnames,
 					'href' => esc_url( $formatted_link ),
-				] );
+				];
 
 				if (
 					Social_Network_Provider::FILE_DOWNLOAD === $cta['cta_link_type'] ||
 					Social_Network_Provider::VCF === $cta['cta_link_type']
 				) {
+					$url_attrs['download'] = 'download';
+				}
+
+				if ( ! empty( $cta['cta_link_url']['is_external'] ) ) {
+					$url_attrs['target'] = '_blank';
+					$url_attrs['rel'] = 'noopener ';
+				}
+
+				if ( ! empty( $cta['cta_link_url']['nofollow'] ) ) {
+					$url_attrs['rel'] .= 'nofollow ';
+				}
+
+				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $cta['cta_link_url']['custom_attributes'] ?? '' ) );
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [
-						'download' => 'download',
+						$attr_key => $attr_value,
 					] );
 				}
 				?>
@@ -139,14 +153,17 @@ abstract class Render_Base {
 			return;
 		}
 
+		$this->widget->add_render_attribute( 'icons', [
+			'class' => 'e-link-in-bio__icons has-size-' . $icons_props_size,
+		] );
 		?>
-		<div class="e-link-in-bio__icons">
+		<div <?php echo $this->widget->get_render_attribute_string( 'icons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $icons_value as $key => $icon ) {
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
 
-				$icon_class_names = 'e-link-in-bio__icon has-size-' . $icons_props_size;
+				$icon_class_names = 'e-link-in-bio__icon is-size-' . $icons_props_size;
 
 				if ( $icons_props_show_border ) {
 					$icon_class_names .= ' has-border';
@@ -463,7 +480,7 @@ abstract class Render_Base {
 			$output_images['primary_image']['props']['shape'] = $this->settings['identity_image_shape'] ?? 'circle';
 			$output_images['primary_image']['props']['style'] = $this->settings['identity_image_style'] ?? 'profile';
 			$output_images['primary_image']['props']['show_border'] = $this->settings['identity_image_show_border'] ?? false;
-			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_bottom_show_border'] ?? false;
 		}
 
 		return $output_images;
@@ -472,7 +489,7 @@ abstract class Render_Base {
 	private function set_secondary_image_properties( array $output_images ): array {
 		if ( $output_images['secondary_image']['should_render'] ) {
 			$output_images['secondary_image']['props']['style'] = 'cover';
-			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_bottom_show_border'] ?? false;
 
 			if ( ! empty( $this->settings['identity_section_style_cover_divider_bottom'] ) ) {
 				$output_images['secondary_image']['props']['has_shape_divider'] = true;
