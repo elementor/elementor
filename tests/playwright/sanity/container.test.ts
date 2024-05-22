@@ -196,8 +196,6 @@ test.describe( 'Container tests @container', () => {
 		await editor.setNumberControlValue( 'z_index', '50' );
 		await editor.setSliderControlValue( '_offset_x', '50' );
 		await editor.setSliderControlValue( '_offset_y', '50' );
-
-
 		await editor.togglePreviewMode();
 
 		// Assert
