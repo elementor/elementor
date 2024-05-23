@@ -1093,11 +1093,32 @@ class NestedTabs extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
-		$render_attributes = $this->get_render_attribute_string( $setting_key );
-		$text_class = $this->get_render_attribute_string( 'tab-title-text' );
-		$icon_class = $this->get_render_attribute_string( 'tab-icon' );
+		$rendered_icons = $this->render_tab_icons_html( $item_settings );
 
-		$icon_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon'], [ 'aria-hidden' => 'true' ] );
+		ob_start();
+		?>
+			<button <?php echo $this->print_render_attribute_string( $setting_key ); ?>>
+				<?php
+				if ( ! empty( $rendered_icons ) ) {
+					echo esc_html( $rendered_icons );
+				}
+				?>
+				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
+					<?php echo wp_kses_post( $title ); ?>
+				</span>
+			</button>
+		<?php
+		return ob_get_clean();
+	}
+
+	protected function render_tab_icons_html( $item_settings ): string {
+		$icon_settings = $item_settings['item']['tab_icon'];
+
+		if ( empty( $icon_settings['value'] ) ) {
+			return '';
+		}
+
+		$icon_html = Icons_Manager::try_get_icon_html( $icon_settings, [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $icon_html;
 
 		if ( $this->is_active_icon_exist( $item_settings['item'] ) ) {
@@ -1106,15 +1127,10 @@ class NestedTabs extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-			<button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<span <?php echo $icon_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</span>
-				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo wp_kses_post( $title ); ?>
-				</span>
-			</button>
+		<span <?php $this->print_render_attribute_string( 'tab-icon' ); ?>>
+			<?php echo esc_html( $icon_html ); ?>
+			<?php echo esc_html( $icon_active_html ); ?>
+		</span>
 		<?php
 		return ob_get_clean();
 	}
