@@ -48,7 +48,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 			await nestedAccordionItem.first().click();
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
-			await editor.activatePanelTab( 'style' );
+			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_accordion_style' );
 
 			await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
@@ -94,20 +94,20 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			}
 		} );
 
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_content_style' );
 
 		await test.step( 'Set background', async () => {
 			// Act
 			await editor.page.locator( '.elementor-control-content_background_background .eicon-paint-brush' ).click();
-			await editor.setColorControlValue( colors.red.hex, 'content_background_color' );
+			await editor.setColorControlValue( 'content_background_color', colors.red.hex );
 		} );
 
 		await test.step( 'Set Border controls', async () => {
 			// Act
-			await editor.page.selectOption( '.elementor-control-content_border_border >> select', { value: borderStyle.solid } );
+			await editor.setSelectControlValue( 'content_border_border', borderStyle.solid );
 			await editor.setDimensionsValue( 'content_border_width', '5' );
-			await editor.setColorControlValue( colors.blue.hex, 'content_border_color' );
+			await editor.setColorControlValue( 'content_border_color', colors.blue.hex );
 			await editor.setDimensionsValue( 'content_border_radius', '25' );
 		} );
 
@@ -130,20 +130,20 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			await test.step( 'Override background and border', async () => {
 				// Act
-				await editor.activatePanelTab( 'style' );
+				await editor.openPanelTab( 'style' );
 				await editor.openSection( 'section_background' );
 				await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
-				await editor.setColorControlValue( colors.black.hex, 'background_color' );
+				await editor.setColorControlValue( 'background_color', colors.black.hex );
 				await editor.openSection( 'section_border' );
-				await editor.page.selectOption( '.elementor-control-border_border >> select', { value: borderStyle.dotted } );
+				await editor.setSelectControlValue( 'border_border', borderStyle.dotted );
 				await editor.setDimensionsValue( 'border_width', '12' );
-				await editor.setColorControlValue( colors.purple.hex, 'border_color' );
+				await editor.setColorControlValue( 'border_color', colors.purple.hex );
 				await editor.setDimensionsValue( 'border_radius', '30' );
 			} );
 
 			await test.step( 'Override padding', async () => {
 				// Act
-				await editor.activatePanelTab( 'advanced' );
+				await editor.openPanelTab( 'advanced' );
 				await editor.setDimensionsValue( 'padding', '22' );
 			} );
 
@@ -192,7 +192,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 				nestedAccordion = await editor.selectElement( nestedAccordionID );
 
-				await editor.activatePanelTab( 'style' );
+				await editor.openPanelTab( 'style' );
 				await editor.openSection( 'section_header_style' );
 			} );
 
@@ -248,21 +248,21 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.closeNavigatorIfOpen();
 			await editor.addWidget( 'nested-accordion', container );
 
-			await editor.activatePanelTab( 'style' );
+			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );
 
 			await editor.setShadowControl( 'title_normal_text_shadow', 'text' );
-			await editor.setTextStokeControl( 'title_normal_stroke', 'text', 2, colors.red.hex );
+			await editor.setTextStrokeControl( 'title_normal_stroke', 'text', 2, colors.red.hex );
 
 			await editor.selectStateTab( 'header_title_color_style', 'hover' );
 
 			await editor.setShadowControl( 'title_hover_text_shadow', 'text' );
-			await editor.setTextStokeControl( 'title_hover_stroke', 'text', 5, colors.blue.hex );
+			await editor.setTextStrokeControl( 'title_hover_stroke', 'text', 5, colors.blue.hex );
 
 			await editor.selectStateTab( 'header_title_color_style', 'active' );
 
 			await editor.setShadowControl( 'title_active_text_shadow', 'text' );
-			await editor.setTextStokeControl( 'title_active_stroke', 'text', 1, colors.orange.hex );
+			await editor.setTextStrokeControl( 'title_active_stroke', 'text', 1, colors.orange.hex );
 
 			// Assert
 			const nestedAccordion = frame.locator( '.elementor-widget-n-accordion' );

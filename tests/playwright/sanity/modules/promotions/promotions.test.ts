@@ -35,8 +35,8 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await editor.addWidget( 'heading', container );
 
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-section_effects' ).click();
+		await editor.openPanelTab( 'advanced' );
+		await editor.openSection( 'section_effects' );
 
 		await test.step( 'Motion Effects - promotion controls screenshots', async () => {
 			const promotionControls = [ 'elementor-control-scrolling_effects_pro', 'elementor-control-mouse_effects_pro', 'elementor-control-sticky_pro' ];
@@ -108,7 +108,8 @@ test.describe( 'Promotion tests @promotions', () => {
 		const wpAdminPage = new WpAdminPage( page, testInfo ),
 			editor = await wpAdminPage.openNewPage(),
 			promotionContainer = '#elementor-navigator__footer';
-		await editor.changeUiTheme( 'dark' );
+
+		await editor.setDisplayMode( 'dark' );
 
 		// Act.
 		const promoContainer = page.locator( promotionContainer );

@@ -7,7 +7,7 @@ class LinksPageLibraryModule extends elementorModules.editor.utils.Module {
 
 	onElementorInit() {
 		elementor.hooks.addFilter( 'elements/base/behaviors', ( behaviors ) => {
-			if ( this.isLinksDocument() ) {
+			if ( this.isLinksDocument() || this.isContactDocument() ) {
 				const { contextMenu: { groups } } = behaviors;
 				behaviors.contextMenu.groups = groups
 					.map( this.filterOutUnsupportedActions() )
@@ -30,6 +30,10 @@ class LinksPageLibraryModule extends elementorModules.editor.utils.Module {
 
 	isLinksDocument() {
 		return 'links-page' === elementor.config.document.type;
+	}
+
+	isContactDocument() {
+		return 'contact-buttons' === elementor.config.document.type;
 	}
 }
 
