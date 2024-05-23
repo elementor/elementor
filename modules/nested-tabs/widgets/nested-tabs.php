@@ -1128,8 +1128,8 @@ class NestedTabs extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span <?php $this->print_render_attribute_string( 'tab-icon' ); ?>>
-			<?php echo $icon_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<?php echo $icon_active_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</span>
 		<?php
 		return ob_get_clean();
