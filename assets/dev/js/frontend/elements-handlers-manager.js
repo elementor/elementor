@@ -162,7 +162,7 @@ module.exports = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( scope ) {
-		const isDelayChildHandlers = !! scope.closest( '[data-delay-child-handlers="true"]' ); // Dummy.
+		const isDelayChildHandlers = !! scope.closest( '[data-delay-child-handlers="true"]' );
 
 		if ( elementorFrontend.config.is_static || isDelayChildHandlers ) {
 			return;
