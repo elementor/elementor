@@ -307,7 +307,7 @@ export default class EditorPage extends BasePage {
 	async setWidgetCustomWidth( width = '100' ) {
 		await this.activatePanelTab( 'advanced' );
 		await this.setSelectControlValue( '_element_width', 'initial' );
-		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
+		await this.setSliderControlValue( '_element_custom_width', width );
 	}
 
 	/**
