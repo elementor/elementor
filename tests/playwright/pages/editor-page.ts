@@ -378,7 +378,7 @@ export default class EditorPage extends BasePage {
 		await this.activatePanelTab( panelTab );
 
 		if ( isWidget ) {
-			await this.page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
+			await this.openSection( '_section_background' );
 		}
 
 		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
@@ -398,8 +398,7 @@ export default class EditorPage extends BasePage {
 		await this.selectElement( containerId );
 		await this.activatePanelTab( 'style' );
 		await this.openSection( 'section_border' );
-		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+		await this.setColorControlValue( 'border_color', color );
 	}
 
 	/**
@@ -468,7 +467,7 @@ export default class EditorPage extends BasePage {
 
 	async changeEditorLayout( layout: string ) {
 		await this.openPageSettingsPanel();
-		await this.page.selectOption( '[data-setting=template]', layout );
+		await this.setSelectControlValue( 'template', layout );
 		await this.ensurePreviewReload();
 	}
 

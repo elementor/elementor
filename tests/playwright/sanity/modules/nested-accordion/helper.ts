@@ -13,7 +13,7 @@ import EditorPage from '../../../pages/editor-page';
 export async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor, page ) {
 	const frame = editor.getPreviewFrame();
 	await editor.selectElement( nestedAccordionWidgetId );
-	await page.selectOption( '.elementor-control-title_tag .elementor-control-input-wrapper > select', optionToSelect );
+	await editor.setSelectControlValue( 'title_tag', optionToSelect );
 	await frame.waitForLoadState( 'load' );
 }
 
