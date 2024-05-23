@@ -42,7 +42,6 @@ export default class ConversionCenterHandler extends AdminMenuHandler {
 		}
 
 		if ( isContactPagesTablePage || isContactPagesTrashPage || isLContactPagesCreateYourFirstPage ) {
-
 			this.highlightTopLevelMenuItem( this.elements.$templatesMenuItem, this.elements.$pagesMenuItemAndLink );
 
 			this.highlightSubMenuItem( this.elements.$contactPagesMenuItem );
