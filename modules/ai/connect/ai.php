@@ -198,11 +198,14 @@ class Ai extends Library {
 	}
 
 	public function get_excerpt( $prompt, $context, $request_ids ) {
+		$excerpt_length = apply_filters('excerpt_length', 55);
+		error_log('Current excerpt length is: ' . $excerpt_length);
 		return $this->ai_request(
 			'POST',
 			'text/get-excerpt',
 			[
 				'content' => $prompt,
+				'maxLength' => $excerpt_length,
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,

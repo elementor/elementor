@@ -339,8 +339,6 @@ class Module extends BaseModule {
 
 
 	public function ajax_ai_ai_get_excerpt( $data ): array {
-		$this->verify_permissions( $data['editor_post_id'] );
-
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['content'] ) ) {
