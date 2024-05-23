@@ -55,6 +55,14 @@
 	--e-link-in-bio-ctas-padding-inline-start: 20px;
 	--e-link-in-bio-ctas-text-color: #{$white};
 
+	// Image links config
+	--e-link-in-bio-image-links-border-color: transparent;
+	--e-link-in-bio-image-links-border-style: solid;
+	--e-link-in-bio-image-links-border-width: 0;
+	--e-link-in-bio-image-links-columns: 2;
+	--e-link-in-bio-image-links-gap: 10px;
+	--e-link-in-bio-image-links-height: auto;
+
 	// Background config
 	--background-overlay-opacity: 0.5;
 
@@ -321,6 +329,40 @@
 			font-weight: 500;
 			line-height: 20px;
 			text-align: center;
+		}
+	}
+
+	&__image-links {
+		display: grid;
+		grid-template-columns: repeat(var(--e-link-in-bio-image-links-columns, 2), minmax(0, 1fr));
+		grid-template-rows: auto;
+		gap: var(--e-link-in-bio-image-links-gap);
+		margin-block-start: 24px;
+
+		&.has-1-columns {
+			--e-link-in-bio-image-links-columns: 1;
+			--e-link-in-bio-image-links-gap: 14px;
+		}
+
+		&.has-3-columns {
+			--e-link-in-bio-image-links-columns: 3;
+			--e-link-in-bio-image-links-gap: 5px;
+		}
+
+		.e-link-in-bio__image-links-link {
+			display: grid;
+		}
+
+		// Specificity required to override .elementor img defaults
+		img.e-link-in-bio__image-links-img {
+			aspect-ratio: 1;
+			border-color: var(--e-link-in-bio-image-links-border-color);
+			border-style: var(--e-link-in-bio-image-links-border-style);
+			border-width: var(--e-link-in-bio-image-links-border-width);
+			display: block;
+			height: var(--e-link-in-bio-image-links-height, auto);
+			object-fit: cover;
+			width: 100%;
 		}
 	}
 
