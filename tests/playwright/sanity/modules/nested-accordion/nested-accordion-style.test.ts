@@ -252,17 +252,17 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.openSection( 'section_header_style' );
 
 			await editor.setShadowControl( 'title_normal_text_shadow', 'text' );
-			await editor.setTextStokeControl( 'title_normal_stroke', 'text', 2, colors.red.hex );
+			await editor.setTextStrokeControl( 'title_normal_stroke', 'text', 2, colors.red.hex );
 
 			await editor.selectStateTab( 'header_title_color_style', 'hover' );
 
 			await editor.setShadowControl( 'title_hover_text_shadow', 'text' );
-			await editor.setTextStokeControl( 'title_hover_stroke', 'text', 5, colors.blue.hex );
+			await editor.setTextStrokeControl( 'title_hover_stroke', 'text', 5, colors.blue.hex );
 
 			await editor.selectStateTab( 'header_title_color_style', 'active' );
 
 			await editor.setShadowControl( 'title_active_text_shadow', 'text' );
-			await editor.setTextStokeControl( 'title_active_stroke', 'text', 1, colors.orange.hex );
+			await editor.setTextStrokeControl( 'title_active_stroke', 'text', 1, colors.orange.hex );
 
 			// Assert
 			const nestedAccordion = frame.locator( '.elementor-widget-n-accordion' );

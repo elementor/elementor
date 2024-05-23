@@ -294,7 +294,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
-		await editor.setWidgetToFlexGrow();
+		await page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
 		// Set widget mask.
 		await editor.setWidgetMask();
 
@@ -321,7 +321,7 @@ test.describe( 'Container tests @container', () => {
 		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
 		// Add flex grow effect.
 		await editor.activatePanelTab( 'advanced' );
-		await editor.setWidgetToFlexGrow();
+		await page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
 
 		// Hide editor and map controls.
 		await editor.hideMapControls();

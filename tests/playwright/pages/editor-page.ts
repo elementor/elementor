@@ -311,7 +311,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set a custom width value to a widget.
+	 * Set slider control value.
 	 *
 	 * @param {string}        controlId - The control to set the value to;
 	 * @param {string|number} value     - The value to set;
@@ -319,32 +319,55 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
 	}
 
+	/**
+	 * Set text control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
 	async setTextControlValue( controlId: string, value: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } input` ).fill( value.toString() );
 	}
 
+	/**
+	 * Set textarea control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async setTextareaControlValue( controlId: string, value: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } textarea` ).fill( value.toString() );
 	}
 
+	/**
+	 * Set number control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async setNumberControlValue( controlId: string, value: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
-	async setChooseControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
-	}
-
 	/**
-	 * Set a widget to `flew grow`.
+	 * Set choose control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setWidgetToFlexGrow() {
-		await this.page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
+	async setChooseControlValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
 	}
 
 	/**
@@ -541,6 +564,8 @@ export default class EditorPage extends BasePage {
 	 * Change the display mode of the editor.
 	 *
 	 * @param {string} uiMode - Either 'light', 'dark', or 'auto';
+	 *
+	 * @return {Promise<void>}
 	 */
 	async setDisplayMode( uiMode: string ) {
 		const uiThemeOptions = {
@@ -688,7 +713,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSection( sectionId: string ) {
-		const sectionSelector = '.elementor-control-' + sectionId,
+		const sectionSelector = `.elementor-control-${ sectionId }`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionElement = document.querySelector( selector );
 
@@ -704,7 +729,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a control of the active widget.
+	 * Update select control value.
 	 *
 	 * @param {string} controlId
 	 * @param {string} value
@@ -712,11 +737,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ) {
-		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
 	}
 
 	/**
-	 * Change switcher control value.
+	 * Update switcher control value.
 	 *
 	 * @param {string}  controlId
 	 * @param {boolean} setState  [true|false]
@@ -724,7 +749,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSwitcherControlValue( controlId: string, setState = true ) {
-		const controlSelector = '.elementor-control-' + controlId,
+		const controlSelector = `.elementor-control-${ controlId }`,
 			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
 			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
 
@@ -812,7 +837,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set color control value
+	 * Set color control value.
 	 *
 	 * @param {string} controlId
 	 * @param {string} value
@@ -820,7 +845,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setColorControlValue( controlId: string, value: string ) {
-		const controlSelector = '.elementor-control-' + controlId;
+		const controlSelector = `.elementor-control-${ controlId }`;
 
 		await this.page.locator( controlSelector + ' .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
@@ -828,15 +853,15 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set Dimensions controls value
+	 * Set dimensions control value.
 	 *
-	 * @param {string} selector
+	 * @param {string} controlId
 	 * @param {string} value
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setDimensionsValue( selector: string, value: string ) {
-		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
+	async setDimensionsValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-dimensions li:first-child input` ).fill( value );
 	}
 
 	async verifyClassInElement( args: { selector: string, className: string, isPublished: boolean } ) {
@@ -856,10 +881,20 @@ export default class EditorPage extends BasePage {
 		expect( imageSize.height ).toEqual( args.height );
 	}
 
-	async setTypography( selector: string, fontsize: string ) {
-		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
-		await this.setSliderControlValue( selector + '_font_size', fontsize );
-		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+	/**
+	 * Set typography control value.
+	 *
+	 * @param {string} controlId
+	 * @param {string} fontsize
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTypography( controlId: string, fontsize: string ) {
+		const controlSelector = `.elementor-control-${ controlId }_typography .eicon-edit`;
+
+		await this.page.locator( controlSelector ).click();
+		await this.setSliderControlValue( controlId + '_font_size', fontsize );
+		await this.page.locator( controlSelector ).click();
 	}
 
 	/*
@@ -892,46 +927,46 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set Slider control value.
+	 * Set shadow control value.
 	 *
-	 * @param {string} controlID
+	 * @param {string} controlId
 	 * @param {string} type      [text|box]
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setShadowControl( controlID, type ) {
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type  label` ).first().click();
+	async setShadowControl( controlId: string, type: string ) {
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
 	}
 
 	/**
-	 * Set Slider control value.
+	 * Set text stroke control value.
 	 *
-	 * @param {string} controlID
+	 * @param {string} controlId
 	 * @param {string} type      [text]
 	 * @param {number} value     [number]
 	 * @param {string} color     [hex color]
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setTextStokeControl( controlID, type, value, color ) {
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
-		await this.page.locator( `.elementor-control-${ controlID }_stroke_color .pcr-button` ).first().click();
+	async setTextStrokeControl( controlId: string, type: string, value: number, color: string ) {
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
 		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type  label` ).first().click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type  label` ).first().click();
 	}
 
 	/**
 	 * Set Slider control value.
 	 *
-	 * @param {string} controlID
+	 * @param {string} controlId
 	 * @param {string} tab       [normal|hover|active]
 	 *
 	 * @return {Promise<void>}
 	 */
-	async selectStateTab( controlID, tab ) {
-		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
+	async selectStateTab( controlId, tab ) {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-header_${ tab }_title` ).first().click();
 	}
 
 	/**
