@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Element_Base;
 use Elementor\Plugin;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,8 +22,17 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_experiments();
-		$this->add_advanced_tab_actions();
 		$this->register_shortcode();
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			return;
+		}
+
+		$this->add_advanced_tab_actions();
+
+		if ( is_admin() ) {
+			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_fields' ], 100 );
+		}
 	}
 
 	private function register_experiments() {
@@ -37,11 +47,31 @@ class Module extends BaseModule {
 		] );
 	}
 
-	private function add_advanced_tab_actions() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
-			return;
-		}
+	private function register_shortcode() {
+		add_shortcode( 'elementor-element', function ( $atts ) {
+			if ( empty( $atts['data'] ) ) {
+				return '';
+			}
 
+			$widget_data = json_decode( base64_decode( $atts['data'] ), true );
+
+			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
+				return '';
+			}
+
+			ob_start();
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $widget_data );
+
+			if ( $element ) {
+				$element->print_element();
+			}
+
+			return ob_get_clean();
+		} );
+	}
+
+	private function add_advanced_tab_actions() {
 		$hooks = array(
 			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets
 		);
@@ -81,27 +111,31 @@ class Module extends BaseModule {
 		$element->end_injection();
 	}
 
-	private function register_shortcode() {
-		add_shortcode( 'elementor-element', function ( $atts ) {
-			if ( empty( $atts['data'] ) ) {
-				return '';
-			}
-
-			$widget_data = json_decode( base64_decode( $atts['data'] ), true );
-
-			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
-				return '';
-			}
-
-			ob_start();
-
-			$element = Plugin::$instance->elements_manager->create_element_instance( $widget_data );
-
-			if ( $element ) {
-				$element->print_element();
-			}
-
-			return ob_get_clean();
-		} );
+	public function register_admin_fields( Settings $settings ) {
+		$settings->add_field(
+			Settings::TAB_PERFORMANCE,
+			Settings::TAB_PERFORMANCE,
+			'element_cache_ttl',
+			[
+				'label' => esc_html__( 'Element Cache Expiration', 'elementor' ),
+				'field_args' => [
+					'class' => 'elementor-element-cache-ttl',
+					'type' => 'select',
+					'std' => '24',
+					'options' => [
+						'1' => esc_html__( '1 Hour', 'elementor' ),
+						'6' => esc_html__( '6 Hours', 'elementor' ),
+						'12' => esc_html__( '12 Hours', 'elementor' ),
+						'24' => esc_html__( '1 Day', 'elementor' ),
+						'72' => esc_html__( '3 Days', 'elementor' ),
+						'168' => esc_html__( '1 Week', 'elementor' ),
+						'336' => esc_html__( '2 Weeks', 'elementor' ),
+						'720' => esc_html__( '1 Month', 'elementor' ),
+						'8760' => esc_html__( '1 Year', 'elementor' ),
+					],
+					'desc' => esc_html__( 'Specify the duration for which data is stored in the cache. Elements caching speeds up loading by serving pre-rendered copies of elements, rather than rendering them fresh each time. This control ensures efficient performance and up-to-date content.', 'elementor' ),
+				],
+			]
+		);
 	}
 }

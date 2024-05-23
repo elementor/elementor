@@ -30,6 +30,80 @@ abstract class Render_Base {
 		$this->settings = $widget->get_settings_for_display();
 	}
 
+	protected function render_image_links(): void {
+		$image_links_value_initial = $this->settings['image_links'] ?? [];
+		$image_links_columns_value = $this->settings['image_links_per_row'] ?? 2;
+
+		/**
+		 * if empty returns a sub-array with all empty values
+		 * Check for this here to avoid rendering container when empty
+		 */
+		$image_links_value = $this->clean_array( $image_links_value_initial );
+		$has_image_links = ! empty( $image_links_value );
+
+		if ( ! $has_image_links ) {
+			return;
+		}
+
+		$image_links_classnames = 'e-link-in-bio__image-links';
+
+		if ( ! empty( $image_links_columns_value ) ) {
+			$image_links_classnames .= ' has-' . $image_links_columns_value . '-columns';
+		}
+
+		$this->widget->add_render_attribute( 'image-links', [
+			'class' => $image_links_classnames,
+		] );
+		?>
+
+		<div <?php echo $this->widget->get_render_attribute_string( 'image-links' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php
+			foreach ( $image_links_value as $key => $image_link ) {
+				$formatted_link = $image_link['image_links_url']['url'] ?? '';
+				$image_link_image = $image_link['image_links_image'] ?? [];
+
+				// Manage Link class variations
+
+				$image_link_classnames = 'e-link-in-bio__image-links-link';
+
+				// Manage Link attributes
+
+				$url_attrs = [
+					'class' => $image_link_classnames,
+					'href' => esc_url( $formatted_link ),
+				];
+
+				$url_combined_attrs = $this->get_link_attributes(
+					$image_link['image_links_url'],
+					$url_attrs
+				);
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
+					$this->widget->add_render_attribute( 'image-links-link' . $key, [
+						$attr_key => $attr_value,
+					] );
+				}
+				?>
+				<a <?php echo $this->widget->get_render_attribute_string( 'image-links-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<?php if ( ! empty( $image_link_image['id'] ) ) {
+						echo wp_get_attachment_image( $image_link_image['id'], 'thumbnail', false, [
+							'class' => 'e-link-in-bio__image-links-img',
+						] );
+					} else {
+						$this->widget->add_render_attribute( 'image-links-img-' . $key, [
+							'alt' => '',
+							'class' => 'e-link-in-bio__image-links-img',
+							'src' => esc_url( $image_link_image['url'] ),
+						] );
+						?>
+						<img <?php echo $this->widget->get_render_attribute_string( 'image-links-img-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+					<?php }; ?>
+				</a>
+			<?php } ?>
+		</div>
+		<?php
+	}
+
 	protected function render_ctas(): void {
 		$ctas_props_corners = $this->settings['cta_links_corners'] ?? 'rounded';
 		$ctas_props_show_border = $this->settings['cta_links_show_border'] ?? false;
@@ -40,17 +114,9 @@ abstract class Render_Base {
 		 * $this->settings['cta_link'] if empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
-		$ctas_value = array_filter( $ctas_value_initial, function( $sub_array ) {
-			// Use array_filter on the sub array
-			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
-				// Filter out empty or null values
-				return ! is_null( $val ) && '' !== $val;
-			} );
-			// A non-empty result means the sub array contains some non-empty value(s)
-			return ! empty( $filtered_sub_array );
-		} );
-
+		$ctas_value = $this->clean_array( $ctas_value_initial );
 		$has_ctas = ! empty( $ctas_value );
+
 		if ( ! $has_ctas ) {
 			return;
 		}
@@ -85,7 +151,7 @@ abstract class Render_Base {
 					$ctas_classnames .= ' has-corners-' . $ctas_props_corners;
 				}
 
-				// Manage Link attributes : Start
+				// Manage Link attributes
 
 				$url_attrs = [
 					'class' => $ctas_classnames,
@@ -99,16 +165,10 @@ abstract class Render_Base {
 					$url_attrs['download'] = 'download';
 				}
 
-				if ( ! empty( $cta['cta_link_url']['is_external'] ) ) {
-					$url_attrs['target'] = '_blank';
-					$url_attrs['rel'] = 'noopener ';
-				}
-
-				if ( ! empty( $cta['cta_link_url']['nofollow'] ) ) {
-					$url_attrs['rel'] .= 'nofollow ';
-				}
-
-				$url_combined_attrs = array_merge( $url_attrs, Utils::parse_custom_attributes( $cta['cta_link_url']['custom_attributes'] ?? '' ) );
+				$url_combined_attrs = $this->get_link_attributes(
+					$cta['cta_link_url'],
+					$url_attrs
+				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [
