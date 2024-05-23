@@ -279,22 +279,45 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Activate a tab inside the panel editor.
+	 * Open a tab inside an Editor panel.
 	 *
-	 * @param {string} panelName - The name of the panel;
+	 * @param {string} panelId - The panel tab to open;
 	 *
 	 * @return {Promise<void>}
 	 */
-	async activatePanelTab( panelName: string ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
+	async openPanelTab( panelId: string ) {
+		await this.page.waitForSelector( `.elementor-tab-control-${ panelId } span` );
 
 		// Check if panel has been activated already.
-		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
+		if ( await this.page.$( `.elementor-tab-control-${ panelId }.elementor-active` ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
+		await this.page.locator( `.elementor-tab-control-${ panelId } span` ).click();
+		await this.page.waitForSelector( `.elementor-tab-control-${ panelId }.elementor-active` );
+	}
+
+	/**
+	 * Open a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to open;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSection( sectionId: string ) {
+		const sectionSelector = `.elementor-control-${ sectionId }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
+
+		if ( ! section || isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
 	}
 
 	/**
@@ -305,7 +328,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setWidgetCustomWidth( width = '100' ) {
-		await this.activatePanelTab( 'advanced' );
+		await this.openPanelTab( 'advanced' );
 		await this.setSelectControlValue( '_element_width', 'initial' );
 		await this.setSliderControlValue( '_element_custom_width', width );
 	}
@@ -503,7 +526,7 @@ export default class EditorPage extends BasePage {
 			backgroundColorSelector = isWidget ? '.elementor-control-_background_color ' : '.elementor-control-background_color ';
 
 		await this.selectElement( elementId );
-		await this.activatePanelTab( panelTab );
+		await this.openPanelTab( panelTab );
 
 		if ( isWidget ) {
 			await this.openSection( '_section_background' );
@@ -612,6 +635,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the menu panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openMenuPanel() {
 		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
@@ -620,6 +645,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the elements/widgets panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openElementsPanel() {
 		const hasTopBar = await this.hasTopBar();
@@ -635,6 +662,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the page settings panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel() {
 		const hasTopBar = await this.hasTopBar();
@@ -650,6 +679,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the user preferences panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel() {
 		const hasTopBar = await this.hasTopBar();
@@ -787,6 +818,8 @@ export default class EditorPage extends BasePage {
 	 * Check if an item is in the viewport.
 	 *
 	 * @param {string} itemSelector
+	 *
+	 * @return {boolean}
 	 */
 	async isItemInViewport( itemSelector: string ) {
 		return this.page.evaluate( ( item: string ) => {
@@ -808,29 +841,6 @@ export default class EditorPage extends BasePage {
 			}
 			return isVisible;
 		}, itemSelector );
-	}
-
-	/**
-	 * Open a section of the active widget.
-	 *
-	 * @param {string} sectionId
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openSection( sectionId: string ) {
-		const sectionSelector = `.elementor-control-${ sectionId }`,
-			isOpenSection = await this.page.evaluate( ( selector ) => {
-				const sectionElement = document.querySelector( selector );
-
-				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
-			}, sectionSelector ),
-			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
-
-		if ( ! section || isOpenSection ) {
-			return;
-		}
-
-		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
 	}
 
 	async getWidgetCount() {

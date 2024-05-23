@@ -141,7 +141,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.addWidget( widgets.heading, container );
 		await editor.selectElement( container );
 		// Set position absolute.
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.setSelectControlValue( 'position', 'absolute' );
 		await editor.setNumberControlValue( 'z_index', '50' );
 		await editor.setSliderControlValue( '_offset_x', '50' );
@@ -162,7 +162,7 @@ test.describe( 'Container tests @container', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set full content width
-		await editor.activatePanelTab( 'layout' );
+		await editor.openPanelTab( 'layout' );
 		await editor.setSelectControlValue( 'content_width', 'full' );
 
 		await editor.togglePreviewMode();
@@ -195,7 +195,7 @@ test.describe( 'Container tests @container', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position fixed.
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.setSelectControlValue( 'position', 'fixed' );
 		await editor.setNumberControlValue( 'z_index', '50' );
 		await editor.setSliderControlValue( '_offset_x', '50' );
@@ -228,7 +228,7 @@ test.describe( 'Container tests @container', () => {
 		// Act
 		// Set container content full content width.
 		await editor.selectElement( container );
-		await editor.activatePanelTab( 'layout' );
+		await editor.openPanelTab( 'layout' );
 		await editor.setSelectControlValue( 'content_width', 'full' );
 
 		// Act.
@@ -237,7 +237,7 @@ test.describe( 'Container tests @container', () => {
 		// Select container.
 		await editor.selectElement( container );
 		// Set position fixed.
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.setSelectControlValue( 'position', 'fixed' );
 		await editor.setNumberControlValue( 'z_index', '50' );
 		await editor.setSliderControlValue( '_offset_x', '50' );
@@ -320,7 +320,7 @@ test.describe( 'Container tests @container', () => {
 		await expect.soft( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
 		// Add flex grow effect.
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
 
 		// Hide editor and map controls.
@@ -364,7 +364,7 @@ test.describe( 'Container tests @container', () => {
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.selectElement( containerId );
 		await editor.setSliderControlValue( 'min_height', '200' );
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await page.locator( '[data-tooltip="Video"]' ).click();
 		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
 		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
@@ -388,7 +388,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		await editor.selectElement( containerId );
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_border' );
 		await editor.setSelectControlValue( 'border_border', 'solid' );
 		await editor.setDimensionsValue( 'border_width', '30' );
@@ -423,7 +423,7 @@ test.describe( 'Container tests @container', () => {
 		// Add widgets.
 		const spacer = await editor.addWidget( 'spacer', containerId );
 
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.setBackgroundColor( '#A81830', spacer );
 		// Set container `align-items: center`.
@@ -489,7 +489,7 @@ test.describe( 'Container tests @container', () => {
 		// Act.
 		await editor.addWidget( 'heading', containerId );
 		await editor.selectElement( containerId );
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( '_section_transform' );
 		// Set rotation.
 		await page.locator( '.elementor-control-_transform_rotate_popover .elementor-control-popover-toggle-toggle-label' ).click();

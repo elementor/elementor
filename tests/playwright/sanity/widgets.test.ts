@@ -15,7 +15,7 @@ test.describe( 'Widget tests', () => {
 			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
 
 		// Act.
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( '_section_transform' );
 		// Set rotation.
 		await page.locator( '.elementor-control-_transform_rotate_popover .elementor-control-popover-toggle-toggle-label' ).click();

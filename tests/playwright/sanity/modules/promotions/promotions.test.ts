@@ -35,7 +35,7 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await editor.addWidget( 'heading', container );
 
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( 'section_effects' );
 
 		await test.step( 'Motion Effects - promotion controls screenshots', async () => {

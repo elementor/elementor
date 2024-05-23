@@ -33,7 +33,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 		sectionElement = editor.getPreviewFrame().locator( `.elementor-element-${ sectionID }` );
 
 	await editor.setBackgroundColor( '#ef9595', sectionID, false );
-	await editor.activatePanelTab( 'layout' );
+	await editor.openPanelTab( 'layout' );
 	await editor.setSelectControlValue( 'layout', 'boxed' );
 
 	const spacerID = await editor.addWidget( 'spacer', sectionID, true );

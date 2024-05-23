@@ -9,7 +9,7 @@ test.describe( 'Icon List', () => {
 
 		// Act.
 		await editor.addWidget( 'icon-list' );
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_icon_style' );
 		await page.locator( '.elementor-control-icon_self_vertical_align .eicon-v-align-top' ).click();
 		await editor.setSliderControlValue( 'icon_vertical_offset', '10' );

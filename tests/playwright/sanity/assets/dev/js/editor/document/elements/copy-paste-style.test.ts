@@ -13,7 +13,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 
 	await editor.selectElement( heading1 );
 
-	await editor.activatePanelTab( 'style' );
+	await editor.openPanelTab( 'style' );
 
 	await page.locator( '.elementor-control-title_color .pcr-button' ).click();
 	await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#77A5BD' );

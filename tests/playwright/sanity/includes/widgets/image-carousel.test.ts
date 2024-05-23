@@ -38,7 +38,7 @@ test.describe( 'Image carousel tests', () => {
 			await imageCarousel.selectNavigation( 'both' );
 			await editor.setSelectControlValue( 'image_stretch', 'yes' );
 
-			await editor.activatePanelTab( 'style' );
+			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_style_image' );
 			await editor.setSelectControlValue( 'image_border_border', 'solid' );
 
@@ -54,7 +54,7 @@ test.describe( 'Image carousel tests', () => {
 
 		await test.step( 'Verify custom select control width', async () => {
 			await editor.selectElement( widgetId );
-			await editor.activatePanelTab( 'content' );
+			await editor.openPanelTab( 'content' );
 			await expect( page.locator( '.elementor-control-slides_to_show .elementor-control-input-wrapper' ) ).toHaveCSS( 'max-width', '80px' );
 		} );
 
@@ -77,7 +77,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.addWidget( 'image-carousel' );
 		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_style_image' );
 		await editor.setSelectControlValue( 'image_spacing', 'custom' );
 		// Test Desktop

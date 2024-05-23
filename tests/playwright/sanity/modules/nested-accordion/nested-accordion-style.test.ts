@@ -48,7 +48,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 			await nestedAccordionItem.first().click();
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
-			await editor.activatePanelTab( 'style' );
+			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_accordion_style' );
 
 			await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
@@ -94,7 +94,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			}
 		} );
 
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_content_style' );
 
 		await test.step( 'Set background', async () => {
@@ -130,7 +130,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			await test.step( 'Override background and border', async () => {
 				// Act
-				await editor.activatePanelTab( 'style' );
+				await editor.openPanelTab( 'style' );
 				await editor.openSection( 'section_background' );
 				await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
 				await editor.setColorControlValue( 'background_color', colors.black.hex );
@@ -143,7 +143,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			await test.step( 'Override padding', async () => {
 				// Act
-				await editor.activatePanelTab( 'advanced' );
+				await editor.openPanelTab( 'advanced' );
 				await editor.setDimensionsValue( 'padding', '22' );
 			} );
 
@@ -192,7 +192,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 				nestedAccordion = await editor.selectElement( nestedAccordionID );
 
-				await editor.activatePanelTab( 'style' );
+				await editor.openPanelTab( 'style' );
 				await editor.openSection( 'section_header_style' );
 			} );
 
@@ -248,7 +248,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.closeNavigatorIfOpen();
 			await editor.addWidget( 'nested-accordion', container );
 
-			await editor.activatePanelTab( 'style' );
+			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );
 
 			await editor.setShadowControl( 'title_normal_text_shadow', 'text' );

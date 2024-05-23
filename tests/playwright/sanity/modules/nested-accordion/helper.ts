@@ -102,7 +102,7 @@ export async function setIconColor( editor, state, color, context ) {
 }
 
 export async function addIcon( editor: EditorPage, page: Page, iconName: string ) {
-	await editor.activatePanelTab( 'content' );
+	await editor.openPanelTab( 'content' );
 	await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
 	await page.locator( '#elementor-icons-manager__search input' ).fill( iconName );
 	await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
@@ -110,7 +110,7 @@ export async function addIcon( editor: EditorPage, page: Page, iconName: string 
 }
 
 export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' ) {
-	await editor.activatePanelTab( 'style' );
+	await editor.openPanelTab( 'style' );
 	await editor.openSection( 'section_header_style' );
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
 }

@@ -64,7 +64,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		// Act.
 		await editor.selectElement( containerId );
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
 
 		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
@@ -192,7 +192,7 @@ test.describe( 'Video tests inside a section', () => {
 
 		// Act.
 		await editor.selectElement( columnId );
-		await editor.activatePanelTab( 'advanced' );
+		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
 
 		const columnHeight = await column.boundingBox(),
