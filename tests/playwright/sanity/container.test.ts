@@ -36,8 +36,8 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.setChooseControlValue( 'flex_direction', 'row' );
-		await page.waitForTimeout( 300 );
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Add widgets.
 		const button = await editor.addWidget( widgets.button, container ),
@@ -80,8 +80,8 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.setBackgroundColor( '#A81830', spacer );
 		await editor.selectElement( containerId );
-		await editor.setChooseControlValue( 'flex_direction', 'row' );
-		await page.waitForTimeout( 300 );
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
@@ -103,8 +103,8 @@ test.describe( 'Container tests @container', () => {
 		// Act
 		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
-		await editor.setChooseControlValue( 'flex_direction', 'column' );
-		await page.waitForTimeout( 300 );
+		// Flex-direction: column
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
 		await editor.setChooseControlValue( 'flex_align_items', 'flex-start' );
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await editor.setSliderControlValue( 'min_height', '1500' );
@@ -278,8 +278,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Set row direction.
 		await editor.selectElement( container );
-		await editor.setChooseControlValue( 'flex_direction', 'row' );
-		await page.waitForTimeout( 300 );
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 		await editor.setChooseControlValue( 'flex_wrap', 'wrap' );
 
 		await editor.closeNavigatorIfOpen();
@@ -534,8 +533,8 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.setChooseControlValue( 'flex_direction', 'row' );
-		await page.waitForTimeout( 300 );
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Add widgets.
 		await editor.addWidget( widgets.button, container );
@@ -696,8 +695,8 @@ test.describe( 'Container tests @container', () => {
 			frame = editor.getPreviewFrame();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.setChooseControlValue( 'flex_direction', 'row' );
-		await page.waitForTimeout( 300 );
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Evaluate scroll widths in the browser context.
 		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
@@ -749,8 +748,8 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Row container, spacer default size', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
-			await editor.setChooseControlValue( 'flex_direction', 'row' );
-			await page.waitForTimeout( 300 );
+			// Set row direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 			await editor.addWidget( widgets.image, container );
 
@@ -778,8 +777,9 @@ test.describe( 'Container tests @container', () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			await editor.selectElement( container );
-			await editor.setChooseControlValue( 'flex_direction', 'row' );
-			await page.waitForTimeout( 300 );
+
+			// Set column direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
 
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 
@@ -802,8 +802,9 @@ test.describe( 'Container tests @container', () => {
 			await editor.setSliderControlValue( 'space', spacerSize );
 
 			await editor.selectElement( container );
-			await editor.setChooseControlValue( 'flex_direction', 'row' );
-			await page.waitForTimeout( 300 );
+
+			// Set row direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
@@ -815,8 +816,9 @@ test.describe( 'Container tests @container', () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			await editor.selectElement( container );
-			await editor.setChooseControlValue( 'flex_direction', 'row' );
-			await page.waitForTimeout( 300 );
+
+			// Set row direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 
