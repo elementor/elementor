@@ -322,6 +322,14 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
 	}
 
+	async setTextControlValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } input` ).fill( value.toString() );
+	}
+
+	async setTextareaControlValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } textarea` ).fill( value.toString() );
+	}
+
 	async setNumberControlValue( controlId: string, value: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
