@@ -948,7 +948,7 @@ JS;
 				],
 				'render_type' => 'none',
 				'frontend_available' => true,
-				'separator' => 'after'
+				'separator' => 'after',
 			]
 		);
 
