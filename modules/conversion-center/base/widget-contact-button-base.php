@@ -513,7 +513,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$repeater->add_control(
 			'contact_icon_mail',
 			[
-				'label' => esc_html__( 'Mail', 'elementor' ),
+				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 				'dynamic' => [
