@@ -15,7 +15,7 @@ export class OpenLibraryAfterDelete extends After {
 			type = args?.containers[ 0 ]?.document?.config?.type;
 		}
 
-		return 'links-page' === type;
+		return 'links-page' === type || 'contact-buttons' === type;
 	}
 
 	apply() {

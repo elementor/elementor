@@ -128,6 +128,7 @@ class Autoloader {
 			'Frontend' => 'includes/frontend.php',
 			'Group_Control_Base' => 'includes/controls/groups/base.php',
 			'Group_Control_Interface' => 'includes/interfaces/group-control.php',
+			'Has_Validation' => 'includes/interfaces/has-validation.php',
 			'Heartbeat' => 'includes/heartbeat.php',
 			'Images_Manager' => 'includes/managers/image.php',
 			'Maintenance' => 'includes/maintenance.php',
