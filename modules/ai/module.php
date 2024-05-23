@@ -144,12 +144,12 @@ class Module extends BaseModule {
 			true
 		);
 
-		$session_id = 'editor-session-' . Utils::generate_random_string();
+		$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
 
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
-			'editor_session_id' => $session_id,
+			'client_session_id' => $session_id,
 		];
 
 		if ( $this->get_ai_app()->is_connected() ) {
