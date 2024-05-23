@@ -1100,7 +1100,7 @@ class NestedTabs extends Widget_Nested_Base {
 			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
 				<?php
 				if ( ! empty( $rendered_icons ) ) {
-					echo esc_html( $rendered_icons );
+					echo $rendered_icons; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				?>
 				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
@@ -1128,8 +1128,8 @@ class NestedTabs extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span <?php $this->print_render_attribute_string( 'tab-icon' ); ?>>
-			<?php echo esc_html( $icon_html ); ?>
-			<?php echo esc_html( $icon_active_html ); ?>
+			<?php echo $icon_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo $icon_active_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</span>
 		<?php
 		return ob_get_clean();
