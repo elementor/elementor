@@ -199,7 +199,6 @@ class Ai extends Library {
 
 	public function get_excerpt( $prompt, $context, $request_ids ) {
 		$excerpt_length = apply_filters('excerpt_length', 55);
-		error_log('Current excerpt length is: ' . $excerpt_length);
 		return $this->ai_request(
 			'POST',
 			'text/get-excerpt',
