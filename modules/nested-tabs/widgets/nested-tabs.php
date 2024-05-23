@@ -1097,7 +1097,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-			<button <?php echo $this->print_render_attribute_string( $setting_key ); ?>>
+			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
 				<?php
 				if ( ! empty( $rendered_icons ) ) {
 					echo esc_html( $rendered_icons );
