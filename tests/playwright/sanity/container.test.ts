@@ -105,7 +105,8 @@ test.describe( 'Container tests @container', () => {
 		await editor.selectElement( containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
-		await editor.setChooseControlValue( 'flex_align_items', 'flex-start' );
+		// Align items: flex-start
+		await page.click( '.elementor-control-flex_align_items i.eicon-align-start-v' );
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await editor.setSliderControlValue( 'min_height', '1500' );
 		await editor.hideVideoControls();
@@ -276,10 +277,11 @@ test.describe( 'Container tests @container', () => {
 		await editor.useCanvasTemplate();
 		await page.waitForLoadState( 'domcontentloaded' );
 
-		// Set row direction.
 		await editor.selectElement( container );
+		// Set row direction.
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
-		await editor.setChooseControlValue( 'flex_wrap', 'wrap' );
+		// Set flex-wrap: wrap.
+		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
 
 		await editor.closeNavigatorIfOpen();
 
