@@ -424,8 +424,9 @@ test.describe( 'Container tests @container', () => {
 		await editor.activatePanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.setBackgroundColor( '#A81830', spacer );
+		// Set container `align-items: center`.
 		await editor.selectElement( containerId );
-		await editor.setChooseControlValue( 'flex_align_items', 'center' );
+		await page.click( '.elementor-control-flex_align_items .eicon-align-center-v' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
