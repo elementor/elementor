@@ -7,13 +7,13 @@ import EditorPage from '../../../pages/editor-page';
  * @param {string} optionToSelect          - value of select option i.e. h1,h2,h3,h4,h5,h6,div,span,p
  * @param {string} nestedAccordionWidgetId - id of the nested accordion widget
  * @param {Object} editor
- * @param {Object} page
+ *
  * @return {Promise<void>}
  */
-export async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor, page ) {
+export async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor ) {
 	const frame = editor.getPreviewFrame();
 	await editor.selectElement( nestedAccordionWidgetId );
-	await page.selectOption( '.elementor-control-title_tag .elementor-control-input-wrapper > select', optionToSelect );
+	await editor.setSelectControlValue( 'title_tag', optionToSelect );
 	await frame.waitForLoadState( 'load' );
 }
 
@@ -68,11 +68,11 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 
 	async function setBackgroundColor() {
 		await editor.page.locator( '.elementor-control-accordion_background_' + state + '_background .eicon-paint-brush' ).click();
-		await editor.setColorControlValue( color, 'accordion_background_' + state + '_color' );
+		await editor.setColorControlValue( `accordion_background_${ state }_color`, color );
 	}
 
 	async function setBorderType() {
-		await editor.page.selectOption( '.elementor-control-accordion_border_' + state + '_border >> select', { value: borderType } );
+		await editor.setSelectControlValue( 'accordion_border_' + state + '_border', borderType );
 	}
 
 	async function setBorderWidth() {
@@ -80,7 +80,7 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 	}
 
 	async function setBorderColor() {
-		await editor.setColorControlValue( borderColor, 'accordion_border_' + state + '_color' );
+		await editor.setColorControlValue( `accordion_border_${ state }_color`, borderColor );
 	}
 
 	async function setState() {
@@ -93,7 +93,7 @@ export async function setIconColor( editor, state, color, context ) {
 	await setColor();
 
 	async function setColor() {
-		await editor.setColorControlValue( color, state + '_' + context + '_color' );
+		await editor.setColorControlValue( `${ state }_${ context }_color`, color );
 	}
 
 	async function setState() {
@@ -102,7 +102,7 @@ export async function setIconColor( editor, state, color, context ) {
 }
 
 export async function addIcon( editor: EditorPage, page: Page, iconName: string ) {
-	await editor.activatePanelTab( 'content' );
+	await editor.openPanelTab( 'content' );
 	await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
 	await page.locator( '#elementor-icons-manager__search input' ).fill( iconName );
 	await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
@@ -110,7 +110,7 @@ export async function addIcon( editor: EditorPage, page: Page, iconName: string 
 }
 
 export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' ) {
-	await editor.activatePanelTab( 'style' );
+	await editor.openPanelTab( 'style' );
 	await editor.openSection( 'section_header_style' );
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
 }
