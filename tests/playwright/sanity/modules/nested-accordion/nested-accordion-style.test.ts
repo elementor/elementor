@@ -100,14 +100,14 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await test.step( 'Set background', async () => {
 			// Act
 			await editor.page.locator( '.elementor-control-content_background_background .eicon-paint-brush' ).click();
-			await editor.setColorControlValue( colors.red.hex, 'content_background_color' );
+			await editor.setColorControlValue( 'content_background_color', colors.red.hex );
 		} );
 
 		await test.step( 'Set Border controls', async () => {
 			// Act
 			await editor.setSelectControlValue( 'content_border_border', borderStyle.solid );
 			await editor.setDimensionsValue( 'content_border_width', '5' );
-			await editor.setColorControlValue( colors.blue.hex, 'content_border_color' );
+			await editor.setColorControlValue( 'content_border_color', colors.blue.hex );
 			await editor.setDimensionsValue( 'content_border_radius', '25' );
 		} );
 
@@ -133,11 +133,11 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				await editor.activatePanelTab( 'style' );
 				await editor.openSection( 'section_background' );
 				await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
-				await editor.setColorControlValue( colors.black.hex, 'background_color' );
+				await editor.setColorControlValue( 'background_color', colors.black.hex );
 				await editor.openSection( 'section_border' );
 				await editor.setSelectControlValue( 'border_border', borderStyle.dotted );
 				await editor.setDimensionsValue( 'border_width', '12' );
-				await editor.setColorControlValue( colors.purple.hex, 'border_color' );
+				await editor.setColorControlValue( 'border_color', colors.purple.hex );
 				await editor.setDimensionsValue( 'border_radius', '30' );
 			} );
 

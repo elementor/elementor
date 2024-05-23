@@ -68,7 +68,7 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 
 	async function setBackgroundColor() {
 		await editor.page.locator( '.elementor-control-accordion_background_' + state + '_background .eicon-paint-brush' ).click();
-		await editor.setColorControlValue( color, 'accordion_background_' + state + '_color' );
+		await editor.setColorControlValue( `accordion_background_${ state }_color`, color );
 	}
 
 	async function setBorderType() {
@@ -80,7 +80,7 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 	}
 
 	async function setBorderColor() {
-		await editor.setColorControlValue( borderColor, 'accordion_border_' + state + '_color' );
+		await editor.setColorControlValue( `accordion_border_${ state }_color`, borderColor );
 	}
 
 	async function setState() {
@@ -93,7 +93,7 @@ export async function setIconColor( editor, state, color, context ) {
 	await setColor();
 
 	async function setColor() {
-		await editor.setColorControlValue( color, state + '_' + context + '_color' );
+		await editor.setColorControlValue( `${ state }_${ context }_color`, color );
 	}
 
 	async function setState() {

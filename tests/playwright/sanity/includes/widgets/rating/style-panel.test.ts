@@ -31,8 +31,8 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				await editor.activatePanelTab( 'style' );
 				await editor.setSliderControlValue( 'icon_size', '50' );
 				await editor.setSliderControlValue( 'icon_gap', '30' );
-				await editor.setColorControlValue( '#FA0000', 'icon_color' );
-				await editor.setColorControlValue( '#2200FF', 'icon_unmarked_color' );
+				await editor.setColorControlValue( 'icon_color', '#FA0000' );
+				await editor.setColorControlValue( 'icon_unmarked_color', '#2200FF' );
 			} );
 
 			await test.step( 'Assert styling', async () => {

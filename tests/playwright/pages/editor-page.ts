@@ -811,16 +811,24 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async setColorControlValue( color: string, colorControlId: string ) {
-		const controlSelector = '.elementor-control-' + colorControlId;
+	/**
+	 * Set color control value
+	 *
+	 * @param {string} controlId
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setColorControlValue( controlId: string, value: string ) {
+		const controlSelector = '.elementor-control-' + controlId;
 
 		await this.page.locator( controlSelector + ' .pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
 		await this.page.locator( controlSelector ).click();
 	}
 
 	/**
-	 * Set Dimentions controls value
+	 * Set Dimensions controls value
 	 *
 	 * @param {string} selector
 	 * @param {string} value
