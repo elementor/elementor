@@ -513,7 +513,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		$repeater->add_control(
 			'contact_icon_mail',
 			[
-				'label' => esc_html__( 'Mail', 'elementor' ),
+				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 				'dynamic' => [
@@ -755,7 +755,6 @@ JS;
 					'medium' => esc_html__( 'Medium', 'elementor' ),
 					'large' => esc_html__( 'Large', 'elementor' ),
 				],
-				'separator' => 'after',
 			]
 		);
 
@@ -903,7 +902,6 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-bg: {{VALUE}}',
 					],
-					'separator' => 'after',
 				]
 			);
 
@@ -911,15 +909,6 @@ JS;
 		}
 
 		$this->end_controls_tabs();
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'style_chat_button_box_shadow',
-				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button-shadow',
-				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
-			]
-		);
 
 		$this->add_responsive_control(
 			'style_chat_button_animation',
@@ -935,23 +924,14 @@ JS;
 			'style_chat_button_animation_duration',
 			[
 				'label' => esc_html__( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 800,
+				'type' => Controls_Manager::SELECT,
+				'default' => 'normal',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'normal' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-button-chat-button-animation-duration: {{SIZE}}ms;',
-				],
-				'condition' => [
-					'style_chat_button_animation!' => '',
-				],
+				'prefix_class' => 'animated-',
 			]
 		);
 
@@ -966,11 +946,18 @@ JS;
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-button-chat-button-animation-delay: {{SIZE}}ms;',
 				],
-				'condition' => [
-					'style_chat_button_animation!' => '',
-				],
 				'render_type' => 'none',
 				'frontend_available' => true,
+				'separator' => 'after',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'style_chat_button_box_shadow',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button-shadow',
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
@@ -1764,20 +1751,14 @@ JS;
 			'style_chat_box_animation_duration',
 			[
 				'label' => esc_html__( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 800,
+				'type' => Controls_Manager::SELECT,
+				'default' => 'normal',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'normal' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-animation-duration: {{SIZE}}ms;',
-				],
+				'prefix_class' => 'animated-',
 			]
 		);
 	}
