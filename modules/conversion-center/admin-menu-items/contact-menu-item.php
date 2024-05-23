@@ -20,11 +20,11 @@ class Contact_Menu_Item implements Admin_Menu_Item {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Contact Buttons', 'elementor' );
+		return esc_html__( 'Floating Buttons', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Contact Buttons', 'elementor' );
+		return esc_html__( 'Floating Buttons', 'elementor' );
 	}
 
 	public function get_capability() {
