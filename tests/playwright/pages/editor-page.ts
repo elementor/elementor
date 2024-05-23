@@ -311,18 +311,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set slider control value.
-	 *
-	 * @param {string}        controlId - The control to set the value to;
-	 * @param {string|number} value     - The value to set;
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
-	}
-
-	/**
 	 * Set text control value.
 	 *
 	 * @param {string} controlId - The control to set the value to;
@@ -337,8 +325,8 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Set textarea control value.
 	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} value     - The value to set.
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -349,8 +337,8 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Set number control value.
 	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} value     - The value to set.
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -359,15 +347,132 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set slider control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSliderControlValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
+	}
+
+	/**
+	 * Update select control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelectControlValue( controlId: string, value: string ) {
+		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+	}
+
+	/**
+	 * Set dimensions control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-dimensions li:first-child input` ).fill( value );
+	}
+
+	/**
 	 * Set choose control value.
 	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} value     - The value to set.
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
 	 *
 	 * @return {Promise<void>}
 	 */
 	async setChooseControlValue( controlId: string, value: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
+	}
+
+	/**
+	 * Set color control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setColorControlValue( controlId: string, value: string ) {
+		const controlSelector = `.elementor-control-${ controlId }`;
+
+		await this.page.locator( controlSelector + ' .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Update switcher control value.
+	 *
+	 * @param {string}  controlId - The control to set the value to;
+	 * @param {boolean} value     - The value to set (true|false);
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId: string, value = true ) {
+		const controlSelector = `.elementor-control-${ controlId }`,
+			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( value ) ) {
+			await controlLabel.click();
+		}
+	}
+
+	/**
+	 * Set typography control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} fontsize  - Font size value;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTypography( controlId: string, fontsize: string ) {
+		const controlSelector = `.elementor-control-${ controlId }_typography .eicon-edit`;
+
+		await this.page.locator( controlSelector ).click();
+		await this.setSliderControlValue( controlId + '_font_size', fontsize );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set shadow control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} type      [text|box]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setShadowControl( controlId: string, type: string ) {
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
+	}
+
+	/**
+	 * Set text stroke control value.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string} type      [text]
+	 * @param {number} value     [number]
+	 * @param {string} color     [hex color]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextStrokeControl( controlId: string, type: string, value: number, color: string ) {
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
+		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
 	}
 
 	/**
@@ -728,36 +833,6 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
 	}
 
-	/**
-	 * Update select control value.
-	 *
-	 * @param {string} controlId
-	 * @param {string} value
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setSelectControlValue( controlId: string, value: string ) {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
-	}
-
-	/**
-	 * Update switcher control value.
-	 *
-	 * @param {string}  controlId
-	 * @param {boolean} setState  [true|false]
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setSwitcherControlValue( controlId: string, setState = true ) {
-		const controlSelector = `.elementor-control-${ controlId }`,
-			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
-			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
-
-		if ( currentState !== Boolean( setState ) ) {
-			await controlLabel.click();
-		}
-	}
-
 	async getWidgetCount() {
 		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
 	}
@@ -836,34 +911,6 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	/**
-	 * Set color control value.
-	 *
-	 * @param {string} controlId
-	 * @param {string} value
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setColorControlValue( controlId: string, value: string ) {
-		const controlSelector = `.elementor-control-${ controlId }`;
-
-		await this.page.locator( controlSelector + ' .pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
-		await this.page.locator( controlSelector ).click();
-	}
-
-	/**
-	 * Set dimensions control value.
-	 *
-	 * @param {string} controlId
-	 * @param {string} value
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setDimensionsValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-dimensions li:first-child input` ).fill( value );
-	}
-
 	async verifyClassInElement( args: { selector: string, className: string, isPublished: boolean } ) {
 		const regex = new RegExp( args.className );
 		if ( args.isPublished ) {
@@ -879,22 +926,6 @@ export default class EditorPage extends BasePage {
 			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
 		expect( imageSize.width ).toEqual( args.width );
 		expect( imageSize.height ).toEqual( args.height );
-	}
-
-	/**
-	 * Set typography control value.
-	 *
-	 * @param {string} controlId
-	 * @param {string} fontsize
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setTypography( controlId: string, fontsize: string ) {
-		const controlSelector = `.elementor-control-${ controlId }_typography .eicon-edit`;
-
-		await this.page.locator( controlSelector ).click();
-		await this.setSliderControlValue( controlId + '_font_size', fontsize );
-		await this.page.locator( controlSelector ).click();
 	}
 
 	/*
@@ -924,37 +955,6 @@ export default class EditorPage extends BasePage {
 			} );
 			retry = retry++;
 		} while ( null !== comparator( beforeImage, afterImage ) );
-	}
-
-	/**
-	 * Set shadow control value.
-	 *
-	 * @param {string} controlId
-	 * @param {string} type      [text|box]
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setShadowControl( controlId: string, type: string ) {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
-	}
-
-	/**
-	 * Set text stroke control value.
-	 *
-	 * @param {string} controlId
-	 * @param {string} type      [text]
-	 * @param {number} value     [number]
-	 * @param {string} color     [hex color]
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setTextStrokeControl( controlId: string, type: string, value: number, color: string ) {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
-		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
-		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type  label` ).first().click();
 	}
 
 	/**
