@@ -76,8 +76,14 @@ class Module extends BaseModule {
 		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js',
 			[
 				'jquery',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
+			],
+		ELEMENTOR_VERSION, true );
+
+		wp_enqueue_script( 'elementor-ai-gutenberg', ELEMENTOR_ASSETS_URL . 'js/ai-gutenberg' . $suffix . '.js',
+			[
+					'jquery',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
 			],
 		ELEMENTOR_VERSION, true );
 

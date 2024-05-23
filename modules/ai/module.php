@@ -48,7 +48,7 @@ class Module extends BaseModule {
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
-				'ai_get_excerpt' => [ $this, 'ajax_ai_ai_get_excerpt' ],
+				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
 				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
 				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
 				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
@@ -338,15 +338,15 @@ class Module extends BaseModule {
 	}
 
 
-	public function ajax_ai_ai_get_excerpt( $data ): array {
+	public function ajax_ai_get_excerpt( $data ): array {
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['content'] ) ) {
-			throw new \Exception( 'Missing prompt' );
+			throw new \Exception( 'Missing content' );
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
+			throw new \Exception( 'Not connected' );
 		}
 
 		$context = $this->get_request_context( $data );

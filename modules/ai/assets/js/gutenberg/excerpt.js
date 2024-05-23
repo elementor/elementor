@@ -3,7 +3,10 @@ import App from '../editor/app';
 import PropTypes from 'prop-types';
 import useUserInfo from '../editor/hooks/use-user-info';
 import useExcerptPrompt from '../editor/hooks/use-excerpt-prompt';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
+import { RequestIdsProvider } from '../editor/context/requests-ids';
+import styled from 'styled-components';
+import { __ } from '@wordpress/i18n';
 
 const { useSelect, useDispatch } = wp.data;
 
@@ -17,11 +20,13 @@ const useGutenbergPostText = ( ) => {
 		( select ) => select( 'core/editor' )?.getEditedPostAttribute( 'title' ),
 		[],
 	);
+	const [ postTextualContent, setPostTextualContent ] = useState( '' );
 
-	function extractTextFromGutenberg( content, extractedText ) {
+	useEffect( () => {
 		// Create a temporary DOM element to parse the content
 		const tempDiv = document.createElement( 'div' );
-		tempDiv.innerHTML = content;
+		tempDiv.innerHTML = postContent;
+		const extractedText = [ title ];
 
 		// Function to recursively extract text from all text nodes
 		function extractTextRecursively( element, extractedTextRec ) {
@@ -32,27 +37,24 @@ const useGutenbergPostText = ( ) => {
 						extractedTextRec.push( text );
 					}
 				} else if ( node.nodeType === Node.ELEMENT_NODE ) {
-					extractTextRecursively( node, extractedTextRec, true );
+					extractTextRecursively( node, extractedTextRec );
 				}
 			} );
 		}
-		// Start the recursive extraction from the root element
 		extractTextRecursively( tempDiv, extractedText );
 
-		// Return the extracted text as an array
-		return extractedText;
-	}
-	const textContent = extractTextFromGutenberg( postContent, [ title ] );
-	return textContent.join( '\n' ).trim();
+		setPostTextualContent( extractedText.join( '\n' ).trim() );
+	}, [ postContent, title ] );
+
+	return postTextualContent;
 };
 
-const GenerateExcerptWithAI = ( { onClose } ) => {
+const AIExcerpt = ( { onClose } ) => {
 	const { editPost } = useDispatch( 'core/editor' );
 	const currExcerpt = useSelect(
 		( select ) => select( 'core/editor' )?.getEditedPostAttribute( 'excerpt' ),
 		[],
 	);
-
 	const postTextualContent = useGutenbergPostText();
 	const {
 		isLoading: isLoadingUserInfo,
@@ -81,14 +83,16 @@ const GenerateExcerptWithAI = ( { onClose } ) => {
 	} );
 	const generateExcerptOnce = useRef( false );
 	const fetchAiExcerpt = useCallback( async () => {
-		send( { content: postTextualContent } );
+		if ( send && postTextualContent ) {
+			generateExcerptOnce.current = true;
+			send( { content: postTextualContent } );
+		}
 	}, [ postTextualContent, send ] );
 	useEffect( () => {
-		if ( ! generateExcerptOnce.current && send ) {
-			generateExcerptOnce.current = true;
+		if ( ! generateExcerptOnce.current ) {
 			fetchAiExcerpt();
 		}
-	}, [ send, fetchAiExcerpt ] );
+	}, [ fetchAiExcerpt ] );
 	const isRTL = elementorCommon.config.isRTL;
 
 	return (
@@ -112,8 +116,47 @@ const GenerateExcerptWithAI = ( { onClose } ) => {
 	);
 };
 
-GenerateExcerptWithAI.propTypes = {
+AIExcerpt.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
+const Icon = styled.i`
+  padding-right: 0.5em;
+  cursor: pointer;
+  color: #C00BB9;
+`;
+
+const ExcerptLink = styled.a`
+  color: #C00BB9;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  &:hover {
+    text-decoration: underline;
+    color: #C00BB9;
+  }
+`;
+
+const GenerateExcerptWithAI = () => {
+	const [ isOpen, setIsOpen ] = useState( false );
+
+	const handleButtonClick = () => {
+		setIsOpen( true );
+	};
+
+	const handleClose = () => {
+		setIsOpen( false );
+	};
+
+	return (
+		<div style={ { paddingBottom: '0.6em' } }>
+			<RequestIdsProvider>
+				<Icon className={ 'eicon-ai' } />
+				<ExcerptLink onClick={ handleButtonClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</ExcerptLink>
+				{ isOpen && <AIExcerpt onClose={ handleClose } /> }
+			</RequestIdsProvider>
+		</div> );
+};
+
 export default GenerateExcerptWithAI;
+
