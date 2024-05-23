@@ -1098,11 +1098,7 @@ class NestedTabs extends Widget_Nested_Base {
 		ob_start();
 		?>
 			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
-				<?php
-				if ( ! empty( $rendered_icons ) ) {
-					echo $rendered_icons; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				}
-				?>
+				<?php echo $rendered_icons; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
 					<?php echo wp_kses_post( $title ); ?>
 				</span>
