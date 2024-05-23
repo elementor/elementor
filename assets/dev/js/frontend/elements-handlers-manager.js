@@ -162,7 +162,9 @@ module.exports = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( scope ) {
-		if ( elementorFrontend.config.is_static ) {
+		const isDelayReadyTrigger = !! scope.closest( '[data-delay-ready="true"]' );
+
+		if ( elementorFrontend.config.is_static || isDelayReadyTrigger ) {
 			return;
 		}
 
