@@ -335,7 +335,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async setChooseControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } input[value="${ value }"]` ).click();
+		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
 	}
 
 	/**
@@ -559,8 +559,14 @@ export default class EditorPage extends BasePage {
 	 * @param {string} uiMode - Either 'light', 'dark', or 'auto';
 	 */
 	async setDisplayMode( uiMode: string ) {
+		const uiThemeOptions = {
+			light: 'eicon-light-mode',
+			dark: 'eicon-dark-mode',
+			auto: 'eicon-header',
+		};
+
 		await this.openUserPreferencesPanel();
-		await this.setChooseControlValue( 'ui_theme', uiMode );
+		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
 	/**
