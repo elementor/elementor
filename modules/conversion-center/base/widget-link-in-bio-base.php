@@ -82,7 +82,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						],
 					],
 				],
-
+				'image_links_section' => false,
 			],
 			'style' => [
 				'identity_section' => [
@@ -135,6 +135,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'border_section' => [
 					'field_options' => false,
 				],
+				'image_links_section' => false,
 			],
 
 		];
@@ -177,6 +178,90 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$render_strategy = new Core_Render( $this );
 
 		$render_strategy->render();
+	}
+
+	protected function add_image_links_controls() {
+		$config = static::get_configuration();
+
+		if ( empty( $config['content']['image_links_section'] ) ) {
+			return;
+		}
+
+		$this->start_controls_section(
+			'image_links_section',
+			[
+				'label' => esc_html__( 'Image Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		if ( ! empty( $config['content']['image_links_section']['images_max'] ) ) {
+			$this->add_control(
+				'image_links_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => sprintf(
+						__( 'Add up to <b>%d</b> Images', 'elementor' ),
+						$config['content']['image_links_section']['images_max']
+					),
+				]
+			);
+		}
+
+		$this->add_icons_per_row_control(
+			'image_links_per_row',
+			[
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+			],
+			'2',
+			esc_html__( 'Images Per Row', 'elementor' ),
+			'--e-link-in-bio-image-links-columns',
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'image_links_image',
+			[
+				'label' => esc_html__( 'Choose Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'label_block' => true,
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'image_links_url',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'autocomplete' => true,
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+			],
+		);
+
+		$this->add_control(
+			'image_links',
+			[
+				'type' => Controls_Manager::REPEATER,
+				'max_items' => $config['content']['image_links_section']['images_max'] ?? 0,
+				'fields' => $repeater->get_controls(),
+				'prevent_empty' => true,
+				'button_text' => esc_html__( 'Add item', 'elementor' ),
+				'default' => $config['content']['image_links_section']['images_repeater_defaults'] ?? [],
+			]
+		);
+
+		$this->end_controls_section();
 	}
 
 	protected function add_cta_controls() {
@@ -424,7 +509,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'max_items' => $config['content']['cta_section']['cta_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
 				'title_field' => '{{{ cta_link_text }}}',
-				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add CTA Link', 'elementor' ),
 				'default' => $config['content']['cta_section']['cta_repeater_defaults'],
 			]
@@ -704,6 +788,8 @@ JS;
 		$this->add_style_icons_controls();
 
 		$this->add_style_cta_section();
+
+		$this->add_style_image_links_controls();
 
 		$this->add_style_background_controls();
 
@@ -1014,6 +1100,55 @@ JS;
 		$this->end_controls_section();
 	}
 
+	protected function add_style_image_links_controls(): void {
+		$config = static::get_configuration();
+
+		if ( empty( $config['style']['image_links_section'] ) ) {
+			return;
+		}
+
+		$this->start_controls_section(
+			'image_links_section_style',
+			[
+				'label' => esc_html__( 'Image Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_links_height',
+			[
+				'label' => esc_html__( 'Image Height', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 300,
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-image-links-height: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		if ( $config['style']['image_links_section']['has_border_control'] ) {
+			$this->add_borders_control(
+				$config['style']['image_links_section']['has_border_control']['prefix'],
+				$config['style']['image_links_section']['has_border_control']['show_border_args'],
+				$config['style']['image_links_section']['has_border_control']['border_width_args'],
+				$config['style']['image_links_section']['has_border_control']['border_color_args'],
+			);
+		}
+
+		$this->end_controls_section();
+	}
+
 	protected function add_style_cta_section(): void {
 		$config = static::get_configuration();
 
@@ -1228,6 +1363,8 @@ JS;
 		$this->add_icons_controls();
 
 		$this->add_cta_controls();
+
+		$this->add_image_links_controls();
 	}
 
 	protected function add_style_bio_controls(): void {
