@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import App from '../../../../modules/ai/assets/js/editor/app';
+import App from '../editor/app';
 import PropTypes from 'prop-types';
-import useUserInfo from '../../../../modules/ai/assets/js/editor/hooks/use-user-info';
-import useExcerptPrompt from '../../../../modules/ai/assets/js/editor/hooks/use-excerpt-prompt';
+import useUserInfo from '../editor/hooks/use-user-info';
+import useExcerptPrompt from '../editor/hooks/use-excerpt-prompt';
 import { useCallback, useEffect } from '@wordpress/element';
 
 const { useSelect, useDispatch } = wp.data;

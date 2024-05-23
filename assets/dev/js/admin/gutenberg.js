@@ -1,5 +1,5 @@
 /* global ElementorGutenbergSettings */
-import GenerateExcerptWithAI from './excerpt-ai';
+import GenerateExcerptWithAI from '../../../../modules/ai/assets/js/gutenberg/excerpt';
 import { createRoot } from '@wordpress/element';
 import { RequestIdsProvider } from '../../../../modules/ai/assets/js/editor/context/requests-ids';
 

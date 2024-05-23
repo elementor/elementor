@@ -78,7 +78,7 @@ class Module extends BaseModule {
 				'jquery',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
-			], ELEMENTOR_VERSION, true );
+		], ELEMENTOR_VERSION, true );
 
 		$elementor_settings = [
 			'isElementorMode' => $document->is_built_with_elementor(),
