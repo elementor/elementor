@@ -118,7 +118,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert justify align and content start on full width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+			await editor.setSelectControlValue( 'content_width', 'full' );
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
 			container = frame.locator( `.elementor-element-${ containerId }` );
@@ -143,7 +143,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame()
 				.locator( '.elementor-empty-view' )
 				.evaluate( ( element: HTMLElement ) => {
@@ -153,8 +153,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert boxed width content alignment', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-			await page.locator( '.elementor-control-grid_columns_grid .elementor-slider-input input' ).fill( '' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
+			await editor.setSliderControlValue( 'grid_columns_grid', '' );
 
 			// Add flex container.
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' );

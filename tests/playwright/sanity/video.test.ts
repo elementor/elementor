@@ -63,10 +63,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		const videoId = await editor.addWidget( widgets.video, containerId );
 
 		// Act.
-		// Set container padding to 0.
 		await editor.selectElement( containerId );
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
+		await editor.openPanelTab( 'advanced' );
+		await editor.setDimensionsValue( 'padding', '0' );
 
 		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
 		const containerHeight = await container.boundingBox();
@@ -192,10 +191,9 @@ test.describe( 'Video tests inside a section', () => {
 			videoId = await editor.addWidget( widgets.video, columnId );
 
 		// Act.
-		// Set section padding to 0.
 		await editor.selectElement( columnId );
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
+		await editor.openPanelTab( 'advanced' );
+		await editor.setDimensionsValue( 'padding', '0' );
 
 		const columnHeight = await column.boundingBox(),
 			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();

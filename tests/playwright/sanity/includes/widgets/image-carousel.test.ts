@@ -34,16 +34,16 @@ test.describe( 'Image carousel tests', () => {
 		 */
 		await test.step( 'Verify arrows position', async () => {
 		// Act
-			await page.locator( '.elementor-control-section_image_carousel' ).click();
+			await editor.openSection( 'section_image_carousel' );
 			await imageCarousel.selectNavigation( 'both' );
-			await page.selectOption( '.elementor-control-image_stretch >> select', 'yes' );
+			await editor.setSelectControlValue( 'image_stretch', 'yes' );
 
-			await editor.activatePanelTab( 'style' );
-			await page.locator( '.elementor-control-section_style_image' ).click();
-			await page.selectOption( '.elementor-control-image_border_border >> select', 'solid' );
+			await editor.openPanelTab( 'style' );
+			await editor.openSection( 'section_style_image' );
+			await editor.setSelectControlValue( 'image_border_border', 'solid' );
 
-			await page.locator( '.elementor-control-section_style_navigation' ).click();
-			await page.selectOption( '.elementor-control-arrows_position >> select', 'outside' );
+			await editor.openSection( 'section_style_navigation' );
+			await editor.setSelectControlValue( 'arrows_position', 'outside' );
 
 			// Assert
 			expect( await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel div.elementor-widget-container' ).screenshot( {
@@ -54,7 +54,7 @@ test.describe( 'Image carousel tests', () => {
 
 		await test.step( 'Verify custom select control width', async () => {
 			await editor.selectElement( widgetId );
-			await editor.activatePanelTab( 'content' );
+			await editor.openPanelTab( 'content' );
 			await expect( page.locator( '.elementor-control-slides_to_show .elementor-control-input-wrapper' ) ).toHaveCSS( 'max-width', '80px' );
 		} );
 
@@ -77,25 +77,25 @@ test.describe( 'Image carousel tests', () => {
 		await editor.addWidget( 'image-carousel' );
 		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_style_image' ).click();
-		await page.selectOption( '.elementor-control-image_spacing >> select', { value: 'custom' } );
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'section_style_image' );
+		await editor.setSelectControlValue( 'image_spacing', 'custom' );
 		// Test Desktop
-		await page.fill( '.elementor-control-image_spacing_custom input[type="number"]', '100' );
+		await editor.setNumberControlValue( 'image_spacing_custom', '100' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
 		// Test Tablet Extra
 		await editor.togglePreviewMode();
 		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers__holder' ).click();
 		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers [data-device="tablet_extra"]' ).click();
-		await page.fill( '.elementor-control-image_spacing_custom_tablet_extra input[type="number"]', '50' );
+		await editor.setNumberControlValue( 'image_spacing_custom_tablet_extra', '50' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
 		// Test Tablet
 		await editor.togglePreviewMode();
 		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers__holder' ).click();
 		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers [data-device="tablet"]' ).click();
-		await page.fill( '.elementor-control-image_spacing_custom_tablet input[type="number"]', '10' );
+		await editor.setNumberControlValue( 'image_spacing_custom_tablet', '10' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 		await wpAdmin.setExperiments( {
