@@ -77,7 +77,7 @@ export async function setTabItemColor(
 	colorPickerClass: string,
 	color: string,
 ) {
-	await editor.activatePanelTab( 'style' );
+	await editor.openPanelTab( 'style' );
 	if ( 'tabs' !== panelClass ) {
 		await page.locator( `.elementor-control-${ panelClass }` ).click();
 	}
@@ -95,10 +95,10 @@ export async function setTabBorderColor(
 	borderWidth: string,
 	borderStyle: string = 'solid',
 ) {
-	await editor.activatePanelTab( 'style' );
-	await page.locator( `.elementor-control-section_tabs_style` ).click();
+	await editor.openPanelTab( 'style' );
+	await editor.openSection( 'section_tabs_style' );
 	await page.locator( `.elementor-control-tabs_title_${ state }` ).click();
-	await page.selectOption( `.elementor-control-tabs_title_border${ stateExtended }_border >> select`, borderStyle );
+	await editor.setSelectControlValue( `tabs_title_border${ stateExtended }_border`, borderStyle );
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` )
 		.first()
 		.fill( borderWidth );
@@ -127,7 +127,7 @@ export async function selectDropdownContainer( editor: EditorPage, widgetId = ''
 
 export async function setBackgroundVideoUrl( page: Page, editor:EditorPage, elementId: string, videoUrl: string ) {
 	await editor.selectElement( elementId );
-	await editor.activatePanelTab( 'style' );
+	await editor.openPanelTab( 'style' );
 	await page.locator( '.eicon-video-camera' ).first().click();
 	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
 }

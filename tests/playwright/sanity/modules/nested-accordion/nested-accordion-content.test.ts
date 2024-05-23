@@ -10,6 +10,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
+			e_nested_atomic_repeaters: 'active',
 		} );
 
 		await page.close();
@@ -22,6 +23,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
+			e_nested_atomic_repeaters: 'inactive',
 		} );
 
 		await page.close();
@@ -42,7 +44,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h1> text and icon alignment', async () => {
 			const tag = 'h1';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -50,7 +52,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h2> text and icon alignment', async () => {
 			const tag = 'h2';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -58,7 +60,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h3> text and icon alignment', async () => {
 			const tag = 'h3';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -66,7 +68,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h4> text and icon alignment', async () => {
 			const tag = 'h4';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -74,7 +76,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h5> text and icon alignment', async () => {
 			const tag = 'h5';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -82,7 +84,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h6> text and icon alignment', async () => {
 			const tag = 'h6';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -90,7 +92,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <p> text and icon alignment', async () => {
 			const tag = 'p';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -98,7 +100,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <span> text and icon alignment', async () => {
 			const tag = 'span';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -106,7 +108,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <div> text and icon alignment', async () => {
 			const tag = 'div';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -365,18 +367,12 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
 
 			expect.soft( itemVisibilityBeforeAnimation ).toEqual( true );
-
 			await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
 			// Wait for the closing animation to complete
-			await page.waitForTimeout( animationDuration );
-
-			// Check the computed height
-			const maxHeightAfterClose = await frame.locator( '.e-n-accordion-item:first-child > .e-con' ).evaluate( ( element ) =>
-				window.getComputedStyle( element ).getPropertyValue( 'height' ),
-			);
-
-			expect.soft( maxHeightAfterClose ).toEqual( '0px' );
+			await expect.poll( async () => {
+				return await editor.getPreviewFrame().locator( '.e-n-accordion-item:first-child .elementor-add-section' ).isVisible();
+			} ).toBe( false );
 		} );
 
 		await test.step( 'Check open animation', async () => {

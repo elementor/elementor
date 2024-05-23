@@ -21,7 +21,7 @@ export default class ImageCarousel extends Content {
 	async addImageGallery( args?: {images?: string[], metaData?: boolean} ) {
 		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
 
-		await this.editorPage.activatePanelTab( 'content' );
+		await this.editorPage.openPanelTab( 'content' );
 		await this.page.locator( EditorSelectors.imageCarousel.addGalleryBtn ).click();
 		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
 
