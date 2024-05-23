@@ -10,10 +10,11 @@
 	--e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
 	--e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
 	--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
-	--e-contact-button-chat-button-animation-duration: #{$contact-buttons-animation-duration};
+	--e-contact-button-chat-button-animation-duration-slow: #{$contact-buttons-animation-duration-slow};
+	--e-contact-button-chat-button-animation-duration-normal: #{$contact-buttons-animation-duration-normal};
+	--e-contact-button-chat-button-animation-duration-fast: #{$contact-buttons-animation-duration-fast};
 	--e-contact-button-chat-button-animation-delay: #{$contact-buttons-animation-delay};
 	--e-contact-buttons-chat-box-bg: #{$contact-buttons-chat-box-bg};
-	--e-contact-buttons-chat-box-animation-duration: #{$contact-buttons-animation-duration};
 	--e-contact-buttons-icon-size-small: #{$contact-buttons-icon-size-small};
 	--e-contact-buttons-icon-size-medium: #{$contact-buttons-icon-size-medium};
 	--e-contact-buttons-icon-size-large: #{$contact-buttons-icon-size-large};
@@ -162,6 +163,18 @@
 		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
 	}
 
+	.has-animation-duration-slow {
+		animation-duration: var(--e-contact-button-chat-button-animation-duration-slow);
+	}
+
+	.has-animation-duration-normal {
+		animation-duration: var(--e-contact-button-chat-button-animation-duration-normal);
+	}
+
+	.has-animation-duration-fast {
+		animation-duration: var(--e-contact-button-chat-button-animation-duration-fast);
+	}
+
 	&:not(.has-animations) {
 
 		.e-contact-buttons__content-wrapper {
@@ -178,14 +191,14 @@
 			&.hidden {
 				display: block;
 				visibility: hidden;
-				transition: var(--e-contact-buttons-chat-box-animation-duration);
+				transition: #{$contact-buttons-animation-duration-normal};
 			}
 
 			&.animated-wrapper {
 				visibility: hidden;
 				opacity: 0;
 				transform: initial;
-				animation: e-contact-buttons-close var(--e-contact-buttons-chat-box-animation-duration);
+				animation: e-contact-buttons-close #{$contact-buttons-animation-duration-normal};
 			}
 		}
 	}
@@ -195,10 +208,6 @@
 		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
 		margin-block-end: 20px;
 		overflow: hidden;
-
-		&.animated {
-			animation-duration: var(--e-contact-buttons-chat-box-animation-duration);
-		}
 	}
 
 	&__top-bar {
@@ -311,7 +320,6 @@
 
 		&.animated {
 			animation-delay: var(--e-contact-button-chat-button-animation-delay);
-			animation-duration: var(--e-contact-button-chat-button-animation-duration);
 		}
 
 		svg {
