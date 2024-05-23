@@ -393,7 +393,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setSelectControlValue( 'border_border', 'solid' );
 		await editor.setDimensionsValue( 'border_width', '30' );
 		await editor.setDimensionsValue( 'border_radius', '60' );
-		await editor.setContainerBorderColor( '#333333', containerId );
+		await editor.setColorControlValue( 'border_color', '#333333' );
 		await page.locator( 'body' ).click();
 
 		await editor.togglePreviewMode();

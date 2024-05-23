@@ -387,21 +387,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set a border color to a container.
-	 *
-	 * @param {string} color       - The background color code;
-	 * @param {string} containerId - The ID of targeted container;
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setContainerBorderColor( color: string, containerId: string ) {
-		await this.selectElement( containerId );
-		await this.activatePanelTab( 'style' );
-		await this.openSection( 'section_border' );
-		await this.setColorControlValue( 'border_color', color );
-	}
-
-	/**
 	 * Remove the focus from the test elements by creating two new elements.
 	 *
 	 * @return {Promise<void>}
