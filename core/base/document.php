@@ -1869,7 +1869,15 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function set_document_cache( $value ) {
-		$expiration = '+12 hours';
+		$expiration_hours = get_option( 'elementor_element_cache_ttl', '' );
+
+		if ( empty( $expiration_hours ) || ! is_numeric( $expiration_hours ) ) {
+			$expiration_hours = '24';
+		}
+
+		$expiration_hours = absint( $expiration_hours );
+
+		$expiration = '+' . $expiration_hours . ' hours';
 
 		$data = [
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
