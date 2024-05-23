@@ -336,7 +336,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setWidgetToFlexGrow() {
-		await this.setChooseControlValue( '_flex_size', 'grow' );
+		await this.page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
 	}
 
 	/**
