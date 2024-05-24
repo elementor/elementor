@@ -1278,7 +1278,7 @@ class NestedTabs extends Widget_Nested_Base {
 		<?php
 	}
 
-	private function content_template_single_item( $tab_index, $item, $element_uid ) {
+	private function content_template_single_item( $tab_index, $item, $element_uid, $hover_animation_class ) {
 		?>
 		<#
 		const tabCount = tabIndex + 1,
@@ -1303,7 +1303,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'tabindex': 1 === tabCount ? '0' : '-1',
 			'aria-controls': 'e-n-tab-content-' + tabUid,
 			'style': '--n-tabs-title-order: ' + tabCount + ';',
-		} );
+		}, null, true );
 
 		view.addRenderAttribute( tabTitleKey, {
 			'class': [ 'e-n-tab-title-text' ],
@@ -1311,7 +1311,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'tabs',
 			'data-binding-setting': [ 'tab_title' ],
 			'data-binding-index': tabCount,
-		} );
+		}, null, true );
 
 		view.addRenderAttribute( tabIconKey, {
 			'class': [ 'e-n-tab-icon' ],
@@ -1319,11 +1319,12 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'tabs',
 			'data-binding-setting': [ 'tab_icon', 'tab_icon_active' ],
 			'data-binding-index': tabCount,
-		} );
+		}, null, true );
 		#>
+
 		<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
 			<# if ( !! item.tab_icon.value ) { #>
-				<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
+			<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
 			<# } #>
 
 			<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
