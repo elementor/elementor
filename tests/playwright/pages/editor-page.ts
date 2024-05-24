@@ -150,13 +150,13 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string}  widgetType
+	 * @param {string}  widgetType          - Widget type.
 	 * @param {string}  container           - Optional. Container to create the element in.
 	 * @param {boolean} isContainerASection - Optional. Whether the container is a section.
 	 *
-	 * @return {Promise<string>}            - The widget ID.
+	 * @return {Promise<string>} The widget ID.
 	 */
-	async addWidget( widgetType: string, container = null, isContainerASection = false ) {
+	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
@@ -699,9 +699,9 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Whether the Top Bar is active or not.
 	 *
-	 * @return {boolean}
+	 * @return {Promise<boolean>}
 	 */
-	async hasTopBar() {
+	async hasTopBar(): Promise<boolean> {
 		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
 	}
 
@@ -747,6 +747,24 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
+	}
+
+	/**
+	 * Open the site settings panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSiteSettings() {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Site Settings' ).click();
+		} else {
+			await this.openMenuPanel();
+			await this.page.locator( EditorSelectors.panels.siteSettings.menuPanelItem ).click();
+		}
+
+		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 	}
 
 	/**
@@ -901,7 +919,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>}
 	 */
-	async getPageId() {
+	async getPageId(): Promise<string> {
 		return await this.page.evaluate( () => elementor.config.initial_document.id );
 	}
 
@@ -953,7 +971,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<boolean>}
 	 */
-	async isItemInViewport( itemSelector: string ) {
+	async isItemInViewport( itemSelector: string ): Promise<boolean> {
 		return this.page.evaluate( ( item: string ) => {
 			let isVisible = false;
 
@@ -980,7 +998,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<number>}
 	 */
-	async getWidgetCount() {
+	async getWidgetCount(): Promise<number> {
 		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
 	}
 
@@ -1231,7 +1249,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<number>}
 	 */
-	async isolatedIdNumber( idPrefix: string, itemID: string ) {
+	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
 	}
 }

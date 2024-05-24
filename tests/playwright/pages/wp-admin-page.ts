@@ -198,11 +198,6 @@ export default class WpAdminPage extends BasePage {
 		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
 	}
 
-	async openSiteSettings() {
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( 'text=Site Settings' );
-	}
-
 	/*
 	 * Enable uploading SVG files
 	 */
