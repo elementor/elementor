@@ -4,8 +4,9 @@ namespace Elementor\Modules\EditorEvents;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
-use Elementor\Tracker;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,6 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const ELEMENTOR_EDITOR_EVENTS_DATA_SYSTEM_URL = 'https://my.elementor.com/api/v1/editor-events';
+
+	const EXPERIMENT_NAME = 'editor_events';
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->register_experiment();
+	}
 
 	public function get_name() {
 		return 'editor-events';
@@ -38,5 +47,15 @@ class Module extends BaseModule {
 		}
 
 		return $settings;
+	}
+
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => static::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Elementor Editor Events', 'elementor' ),
+			'description' => esc_html__( 'Editor events processing', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 	}
 }
