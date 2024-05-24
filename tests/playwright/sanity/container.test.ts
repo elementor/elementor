@@ -37,7 +37,7 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Add widgets.
 		const button = await editor.addWidget( widgets.button, container ),
@@ -81,7 +81,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setBackgroundColor( '#A81830', spacer );
 		await editor.selectElement( containerId );
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
@@ -104,7 +104,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Flex-direction: column
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 		// Align items: flex-start
 		await page.click( '.elementor-control-flex_align_items i.eicon-align-start-v' );
 		// Set `min-height` to test if there are `flex-grow` issues.
@@ -279,7 +279,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.selectElement( container );
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		// Set flex-wrap: wrap.
 		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
 
@@ -537,7 +537,7 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Add widgets.
 		await editor.addWidget( widgets.button, container );
@@ -699,7 +699,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Evaluate scroll widths in the browser context.
 		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
@@ -752,7 +752,7 @@ test.describe( 'Container tests @container', () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Set row direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 			await editor.addWidget( widgets.image, container );
 
@@ -782,7 +782,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.selectElement( container );
 
 			// Set column direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 
@@ -807,7 +807,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.selectElement( container );
 
 			// Set row direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
@@ -821,7 +821,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.selectElement( container );
 
 			// Set row direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 

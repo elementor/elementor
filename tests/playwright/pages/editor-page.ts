@@ -630,7 +630,7 @@ export default class EditorPage extends BasePage {
 	 * @return {boolean}
 	 */
 	async hasTopBar() {
-		return await this.page.locator( EditorSelectors.topBar.wrapper ).isVisible();
+		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
 	}
 
 	/**
@@ -652,7 +652,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elements' ).click();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Elements' ).click();
 		} else {
 			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
@@ -669,7 +669,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Page Settings' ).click();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Page Settings' ).click();
 		} else {
 			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
 		}
@@ -686,7 +686,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elementor logo' ).click();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Elementor logo' ).click();
 			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
 		} else {
 			await this.openMenuPanel();
@@ -855,13 +855,12 @@ export default class EditorPage extends BasePage {
 		if ( null === id ) {
 			throw new Error( 'Id is null' );
 		}
+
+		const loadingElement = `.elementor-element-${ id }.elementor-loading`;
 		let isLoading: boolean;
 
 		try {
-			await this.getPreviewFrame().waitForSelector(
-				EditorSelectors.loadingElement( id ),
-				{ timeout: 500 },
-			);
+			await this.getPreviewFrame().waitForSelector( loadingElement, { timeout: 500 } );
 
 			isLoading = true;
 		} catch ( e ) {
@@ -869,18 +868,15 @@ export default class EditorPage extends BasePage {
 		}
 
 		if ( isLoading ) {
-			await this.getPreviewFrame().waitForSelector(
-				EditorSelectors.loadingElement( id ),
-				{ state: 'detached' },
-			);
+			await this.getPreviewFrame().waitForSelector( loadingElement, { state: 'detached' } );
 		}
 	}
 
 	async waitForIframeToLoaded( widgetType: string, isPublished = false ) {
 		const frames = {
-			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
-			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
-			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
+			video: [ EditorSelectors.video.iframe, EditorSelectors.video.playIcon ],
+			google_maps: [ EditorSelectors.googleMaps.iframe, EditorSelectors.googleMaps.showSatelliteViewBtn ],
+			sound_cloud: [ EditorSelectors.soundCloud.iframe, EditorSelectors.soundCloud.waveForm ],
 		};
 
 		if ( ! ( widgetType in frames ) ) {

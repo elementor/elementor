@@ -995,7 +995,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Set container direction to `row`.
 		await editor.selectElement( container );
-		await page.locator( '.elementor-control-flex_direction .eicon-arrow-left' ).click();
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-left' );
 
 		// Assert
 		// Get content container widths.
