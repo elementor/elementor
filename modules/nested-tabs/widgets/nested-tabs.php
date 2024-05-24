@@ -1093,7 +1093,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
-		$rendered_icons = $this->render_tab_icons_html( $item_settings );
+		$rendered_icons = $this->maybe_render_tab_icons_html( $item_settings );
 
 		ob_start();
 		?>
@@ -1107,7 +1107,7 @@ class NestedTabs extends Widget_Nested_Base {
 		return ob_get_clean();
 	}
 
-	protected function render_tab_icons_html( $item_settings ): string {
+	protected function maybe_render_tab_icons_html( $item_settings ): string {
 		$icon_settings = $item_settings['item']['tab_icon'];
 
 		if ( empty( $icon_settings['value'] ) ) {
@@ -1250,7 +1250,9 @@ class NestedTabs extends Widget_Nested_Base {
 		const tabIndex = view.collection.length,
 			elementUid = view.getIDInt().toString().substr( 0, 3 ),
 			item = data,
-			hoverAnimationClass = '';
+			hoverAnimationClass = view?.container?.settings?.attributes?.hover_animation
+				? `elementor-animation-${ view.container.settings.attributes.hover_animation }`
+				: '';
 		#>
 		<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' );
 	}
