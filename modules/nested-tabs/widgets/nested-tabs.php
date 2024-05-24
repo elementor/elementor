@@ -1249,9 +1249,10 @@ class NestedTabs extends Widget_Nested_Base {
 		<#
 		const tabIndex = view.collection.length,
 			elementUid = view.getIDInt().toString().substr( 0, 3 ),
-			item = data;
+			item = data,
+			hoverAnimationClass = '';
 		#>
-		<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}' );
+		<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' );
 	}
 
 	protected function content_template() {
@@ -1261,9 +1262,12 @@ class NestedTabs extends Widget_Nested_Base {
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
-					const tabIndex = index;
+					const tabIndex = index,
+					hoverAnimationClass = settings['hover_animation']
+						? `elementor-animation-${ settings['hover_animation'] }`
+						: '';
 				#>
-				<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}' ); ?>
+				<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' ); ?>
 				<# } ); #>
 			</div>
 			<div class="e-n-tabs-content"></div>
@@ -1279,9 +1283,6 @@ class NestedTabs extends Widget_Nested_Base {
 			tabId = item.element_id
 				? item.element_id
 				: 'e-n-tab-title-' + elementUid + ( tabIndex + 1 ),
-			hoverAnimationClass = settings['hover_animation']
-				? `elementor-animation-${ settings['hover_animation'] }`
-				: '',
 			tabUid = elementUid + tabCount,
 			tabWrapperKey = tabUid,
 			tabTitleKey = 'tab-title-' + tabUid,
