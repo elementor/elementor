@@ -14,6 +14,7 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Documents\Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
+use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
@@ -109,24 +110,46 @@ class Module extends BaseModule {
 
 		add_action( 'admin_init', function () {
 			$action = filter_input( INPUT_GET, 'action' );
+			$menu_args = $this->get_contact_menu_args();
 
-			if ( 'set_as_homepage' === $action ) {
-				$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-				check_admin_referer( 'set_as_homepage_' . $post );
-				update_option( 'page_on_front', $post );
-				update_option( 'show_on_front', 'page' );
-				$menu_args = $this->get_links_menu_args();
+			switch ( $action ) {
+				case 'remove_from_entire_site':
+					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+					check_admin_referer( 'remove_from_entire_site_' . $post );
+					delete_post_meta( $post, '_elementor_conditions' );
+					wp_redirect( $menu_args['menu_slug'] );
+					exit;
+				case 'set_as_entire_site':
+					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+					check_admin_referer( 'set_as_entire_site_' . $post );
+					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
 
-				wp_redirect( $menu_args['menu_slug'] );
-				exit;
+					$posts = get_posts( [
+						'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
+						'posts_per_page' => -1,
+						'post_status' => 'publish',
+						'fields' => 'ids',
+						'exclude' => $post,
+					] );
+
+					foreach ( $posts as $post_id ) {
+						delete_post_meta( $post_id, '_elementor_conditions' );
+					}
+
+					wp_redirect( $menu_args['menu_slug'] );
+					exit;
+				default:
+					break;
 			}
+
 		} );
 
 		add_action( 'manage_' . self::CPT_CONTACT_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
-			unset( $posts_columns['cb'] );
+			$posts_columns['click_tracking'] = esc_html__( 'Click Tracking', 'elementor' );
+			$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
@@ -148,6 +171,21 @@ class Module extends BaseModule {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		$document->admin_columns_content( $column_name );
+		switch ( $column_name ) {
+			case 'click_tracking':
+				$click_tracking = get_post_meta( $post_id, '_elementor_click_tracking', true );
+				echo esc_html( $click_tracking );
+				break;
+			case 'instances':
+				$instances = get_post_meta( $post_id, '_elementor_conditions', true );
+				if ( $instances ) {
+					echo esc_html( 'Entire Site' );
+				}
+
+				break;
+			default:
+				break;
+		}
 	}
 
 	private function get_trashed_contact_posts(): array {

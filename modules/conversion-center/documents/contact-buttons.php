@@ -24,7 +24,7 @@ class Contact_Buttons extends PageBase {
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
-		$properties['publish_button_title'] = esc_html__( 'When published, this widget will be visible across the entire site', 'elementor' );
+		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
 
 		return $properties;
 	}
@@ -52,12 +52,36 @@ class Contact_Buttons extends PageBase {
 			$actions['trash'] = $delete;
 		}
 
+		if ( 'publish' === $this->get_post()->post_status ) {
+			$actions = $this->set_as_entire_site( $actions );
+		}
+
 		return $built_with_elementor + $actions;
+	}
+
+	public function set_as_entire_site( $actions ) {
+		if ( get_post_meta( $this->get_post()->ID, '_elementor_conditions', true )  ) {
+			$actions['set_as_entire_site'] = sprintf(
+				'<a style="color:red;" href="?post=%s&action=remove_from_entire_site&_wpnonce=%s">%s</a>',
+				$this->get_post()->ID,
+				wp_create_nonce( 'remove_from_entire_site_' . $this->get_post()->ID ),
+				__( 'Remove From Entire Site', 'elementor' )
+			);
+		} else {
+			$actions['set_as_entire_site'] = sprintf(
+				'<a href="?post=%s&action=set_as_entire_site&_wpnonce=%s">%s</a>',
+				$this->get_post()->ID,
+				wp_create_nonce( 'set_as_entire_site_' . $this->get_post()->ID ),
+				__( 'Set as Entire Site', 'elementor' )
+			);
+		}
+		return $actions;
 	}
 
 	public static function get_title() {
 		return esc_html__( 'Floating Button', 'elementor' );
 	}
+
 	public static function get_plural_title() {
 		return esc_html__( 'Floating Buttons', 'elementor' );
 	}
