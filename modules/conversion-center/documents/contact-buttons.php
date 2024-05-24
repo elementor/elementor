@@ -56,10 +56,10 @@ class Contact_Buttons extends PageBase {
 	}
 
 	public static function get_title() {
-		return esc_html__( 'Contact Button', 'elementor' );
+		return esc_html__( 'Floating Button', 'elementor' );
 	}
 	public static function get_plural_title() {
-		return esc_html__( 'Contact Buttons', 'elementor' );
+		return esc_html__( 'Floating Buttons', 'elementor' );
 	}
 
 	public static function get_create_url() {
