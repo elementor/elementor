@@ -1272,7 +1272,7 @@ class NestedTabs extends Widget_Nested_Base {
 		<?php
 	}
 
-	private function content_template_single_item( $tabIndex, $item, $elementUid ) {
+	private function content_template_single_item( $tab_index, $item, $element_uid ) {
 		?>
 		<#
 		const tabCount = tabIndex + 1,
