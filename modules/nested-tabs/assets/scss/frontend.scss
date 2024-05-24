@@ -170,7 +170,8 @@
 	.e-n-tab {
 
 		&-title {
-			all: unset;
+			background-color: initial;
+			border-style: none;
 			user-select: none;
 			display: flex;
 			align-items: var(--n-tabs-title-align-items-toggle, var(--n-tabs-title-align-items));
@@ -179,8 +180,6 @@
 			gap: var(--n-tabs-icon-gap);
 			border-width: var(--n-tabs-border-width);
 			position: relative;
-			cursor: pointer;
-			outline: none;
 			flex-grow: var(--n-tabs-title-flex-grow);
 			flex-basis: var(--n-tabs-title-flex-basis);
 			flex-shrink: var(--n-tabs-title-flex-shrink);
@@ -203,7 +202,9 @@
 				-webkit-text-stroke-color var(--n-tabs-title-transition ),
 				transform var(--n-tabs-title-transition);
 
-			@include button-focus-outline;
+			&:focus:not(:focus-visible) {
+				outline: none;
+			}
 
 			& span svg,
 			& span i {
