@@ -1252,7 +1252,7 @@ class NestedTabs extends Widget_Nested_Base {
 			tabIcon = elementor.helpers.renderIcon( view, data.tab_icon, { 'aria-hidden': true }, 'i' , 'object' );
 
 		let tabActiveIcon = tabIcon,
-		tabId = 'e-n-tab-title-' + elementUid;
+			tabId = 'e-n-tab-title-' + elementUid;
 
 		if ( '' !== data.tab_icon_active.value ) {
 			tabActiveIcon = elementor.helpers.renderIcon( view, data.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
@@ -1318,7 +1318,7 @@ class NestedTabs extends Widget_Nested_Base {
 					hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
 
 				let tabActiveIcon = tabIcon,
-				tabId = 'e-n-tab-title-' + tabUid;
+					tabId = 'e-n-tab-title-' + tabUid;
 
 				if ( '' !== item.tab_icon_active.value ) {
 					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
