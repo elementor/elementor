@@ -577,7 +577,8 @@ export default class EditorPage extends BasePage {
 	async setTextStrokeControlValue( controlId: string, type: string, value: number, color: string ) {
 		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
 		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
-		await this.setColorControlValue( `${ controlId }_stroke_color`, color );
+		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
+		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
 		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
 	}
 
