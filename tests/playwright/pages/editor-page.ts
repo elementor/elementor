@@ -404,6 +404,18 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set tab control value.
+	 *
+	 * @param {string} controlId - The control to select.
+	 * @param {string} tabId     - The tab to select.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTabControlValues( controlId: string, tabId: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } elementor-control-type-tab .elementor-control-${ controlId }_${ tabId }` ).click();
+	}
+
+	/**
 	 * Set text control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
@@ -1190,18 +1202,6 @@ export default class EditorPage extends BasePage {
 			} );
 			retry = retry++;
 		} while ( null !== comparator( beforeImage, afterImage ) );
-	}
-
-	/**
-	 * Select a tab in the editor. For example normal, hover or active.
-	 *
-	 * @param {string} controlId - The control to select.
-	 * @param {string} tabId     - The tab to select.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async selectStateTab( controlId: string, tabId: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-header_${ tabId }_title` ).first().click();
 	}
 
 	/**
