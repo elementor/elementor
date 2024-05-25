@@ -44,6 +44,7 @@ export default class NestedTabs extends Base {
 			selectors: {
 				widgetContainer: '.e-n-tabs',
 				tabTitle: '.e-n-tab-title',
+				tabTitleIcon: '.e-n-tab-icon',
 				tabTitleText: '.e-n-tab-title-text',
 				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
@@ -430,8 +431,12 @@ export default class NestedTabs extends Base {
 			element.setAttribute( 'id', updatedTabID );
 			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 			element.setAttribute( 'data-tab-index', newIndex );
-			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
 			element.setAttribute( 'aria-controls', updatedContainerID );
+
+			element.querySelector( settings.selectors.tabTitleIcon )?.setAttribute( 'data-binding-index', newIndex );
+
+			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
+
 			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
 			$tabContents[ index ].setAttribute( 'data-tab-index', newIndex );
 			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
