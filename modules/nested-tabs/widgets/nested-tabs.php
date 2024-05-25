@@ -1291,7 +1291,7 @@ class NestedTabs extends Widget_Nested_Base {
 				? elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' )
 				: tabIcon;
 
-		view.addRenderAttribute( 'e-n-tab-title', {
+		view.addRenderAttribute( 'tab-title', {
 			'id': tabId,
 			'class': [ 'e-n-tab-title',hoverAnimationClass ],
 			'data-tab-index': tabCount,
@@ -1302,7 +1302,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'style': '--n-tabs-title-order: ' + tabCount + ';',
 		}, null, true );
 
-		view.addRenderAttribute( 'e-n-tab-title-text', {
+		view.addRenderAttribute( 'tab-title-text', {
 			'class': [ 'e-n-tab-title-text' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
@@ -1310,7 +1310,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-index': tabCount,
 		}, null, true );
 
-		view.addRenderAttribute( 'e-n-tab-icon', {
+		view.addRenderAttribute( 'tab-icon', {
 			'class': [ 'e-n-tab-icon' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
@@ -1319,12 +1319,12 @@ class NestedTabs extends Widget_Nested_Base {
 		}, null, true );
 		#>
 
-		<button {{{ view.getRenderAttributeString( 'e-n-tab-title' ) }}}>
+		<button {{{ view.getRenderAttributeString( 'tab-title' ) }}}>
 			<# if ( !! item.tab_icon.value ) { #>
-			<span {{{ view.getRenderAttributeString( 'e-n-tab-icon' ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
+			<span {{{ view.getRenderAttributeString( 'tab-icon' ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
 			<# } #>
 
-			<span {{{ view.getRenderAttributeString( 'e-n-tab-title-text' ) }}}>{{{ item.tab_title }}}</span>
+			<span {{{ view.getRenderAttributeString( 'tab-title-text' ) }}}>{{{ item.tab_title }}}</span>
 		</button>
 		<?php
 	}
