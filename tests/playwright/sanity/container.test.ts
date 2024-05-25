@@ -374,8 +374,7 @@ test.describe( 'Container tests @container', () => {
 		await page.click( '.button.media-button' );
 		await editor.openSection( 'section_background_overlay' );
 		await page.locator( '.elementor-control-background_overlay_background [data-tooltip="Classic"]' ).click();
-		await page.locator( '.elementor-control-background_overlay_color .pcr-button' ).click();
-		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
+		await editor.setColorControlValue( 'background_overlay_color', '#61CE70' );
 
 		await editor.closeNavigatorIfOpen();
 		await editor.togglePreviewMode();

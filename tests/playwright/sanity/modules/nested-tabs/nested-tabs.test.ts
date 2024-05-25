@@ -327,8 +327,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_title_style' );
 		await page.locator( '.elementor-control-title_hover' ).click();
-		await page.locator( '.elementor-control-title_text_color_hover .pcr-button' ).click();
-		await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', '#ff0000' );
+		await editor.setColorControlValue( 'title_text_color_hover', '#ff0000' );
 
 		const rgbColor = 'rgb(255, 0, 0)';
 		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ).first(),
@@ -400,8 +399,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		await editor.openPanelTab( 'style' );
 		await page.locator( '.elementor-control-tabs_title_background_color_background .eicon-paint-brush' ).click();
-		await page.locator( '.elementor-control-tabs_title_background_color_color .pcr-button' ).click();
-		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#ff0000' );
+		await editor.setColorControlValue( 'tabs_title_background_color_color', '#ff0000' );
 
 		// Assert.
 		// Check if title's are aligned on the left for the parent widget.
