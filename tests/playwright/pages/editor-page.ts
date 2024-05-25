@@ -478,13 +478,15 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Set choose control value.
 	 *
+	 * TODO: For consistency, we need to rewrite to logic, from icon based to value based.
+	 *
 	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} value     - The value to set.
+	 * @param {string} icon      - The icon to choose.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setChooseControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
+	async setChooseControlValue( controlId: string, icon: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .${ icon }` ).click();
 	}
 
 	/**

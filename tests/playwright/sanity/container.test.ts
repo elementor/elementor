@@ -106,7 +106,7 @@ test.describe( 'Container tests @container', () => {
 		// Flex-direction: column
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 		// Align items: flex-start
-		await page.click( '.elementor-control-flex_align_items i.eicon-align-start-v' );
+		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-start-v' );
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await editor.setSliderControlValue( 'min_height', '1500' );
 		await editor.hideVideoControls();
@@ -281,7 +281,7 @@ test.describe( 'Container tests @container', () => {
 		// Set row direction.
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		// Set flex-wrap: wrap.
-		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
+		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -426,9 +426,9 @@ test.describe( 'Container tests @container', () => {
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.setBackgroundColor( '#A81830', spacer );
-		// Set container `align-items: center`.
 		await editor.selectElement( containerId );
-		await page.click( '.elementor-control-flex_align_items .eicon-align-center-v' );
+		// Set container `align-items: center`.
+		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
