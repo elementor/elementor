@@ -32,14 +32,14 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	const sectionID = await editor.addElement( { elType: 'section' }, 'document' ),
 		sectionElement = editor.getPreviewFrame().locator( `.elementor-element-${ sectionID }` );
 
-	await editor.setBackgroundColor( '#ef9595', sectionID, false );
+	await editor.setBackgroundColor( sectionID, '#ef9595', false );
 	await editor.openPanelTab( 'layout' );
 	await editor.setSelectControlValue( 'layout', 'boxed' );
 
-	const spacerID = await editor.addWidget( 'spacer', sectionID, true );
+	const spacerID = await editor.addWidget( sectionID, 'spacer', true );
 	await editor.selectElement( spacerID );
 	await editor.setSliderControlValue( 'space', '200' );
-	await editor.setBackgroundColor( '#cae0bc', spacerID );
+	await editor.setBackgroundColor( spacerID, '#cae0bc' );
 
 	const directionSuffix = 'ltr' === direction ? '' : '-rtl';
 
