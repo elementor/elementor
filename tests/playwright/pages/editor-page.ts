@@ -31,7 +31,7 @@ export default class EditorPage extends BasePage {
 	async gotoPostId( id = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
 		await this.page.waitForLoadState( 'load' );
-		await this.ensurePanelLoaded();
+		await this.waitForPanelToLoad();
 	}
 
 	/**
@@ -110,11 +110,11 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Ensure editor panel is loaded.
+	 * Wait for the editor panels to finish loading.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async ensurePanelLoaded() {
+	async waitForPanelToLoad() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
@@ -671,15 +671,15 @@ export default class EditorPage extends BasePage {
 	async changeEditorLayout( layout: string ) {
 		await this.openPageSettingsPanel();
 		await this.setSelectControlValue( 'template', layout );
-		await this.ensurePreviewReload();
+		await this.waitForPreviewToLoad();
 	}
 
 	/**
-	 * Ensure Elementor preview is loaded.
+	 * Wait for the Elementor preview to finish loading.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async ensurePreviewReload() {
+	async waitForPreviewToLoad() {
 		await this.page.waitForSelector( '#elementor-preview-loading' );
 		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
 	}

@@ -722,7 +722,7 @@ test.describe( 'Container tests @container', () => {
 		await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
 
 		await page.reload();
-		await editor.ensurePanelLoaded();
+		await editor.waitForPanelToLoad();
 
 		await editor.openPageSettingsPanel();
 
