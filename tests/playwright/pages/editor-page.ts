@@ -411,7 +411,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setTabControlValues( controlId: string, tabId: string ) {
+	async setTabControlValue( controlId: string, tabId: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-header_${ tabId }_title` ).first().click();
 	}
 
