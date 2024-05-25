@@ -1286,15 +1286,12 @@ class NestedTabs extends Widget_Nested_Base {
 				? item.element_id
 				: 'e-n-tab-title-' + elementUid + ( tabIndex + 1 ),
 			tabUid = elementUid + tabCount,
-			tabWrapperKey = tabUid,
-			tabTitleKey = 'tab-title-' + tabUid,
-			tabIconKey = 'tab-icon-' + tabUid,
 			tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			activeTabIcon = item.tab_icon_active.value
 				? elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' )
 				: tabIcon;
 
-		view.addRenderAttribute( tabWrapperKey, {
+		view.addRenderAttribute( 'e-n-tab-title', {
 			'id': tabId,
 			'class': [ 'e-n-tab-title',hoverAnimationClass ],
 			'data-tab-index': tabCount,
@@ -1305,7 +1302,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'style': '--n-tabs-title-order: ' + tabCount + ';',
 		}, null, true );
 
-		view.addRenderAttribute( tabTitleKey, {
+		view.addRenderAttribute( 'e-n-tab-title-text', {
 			'class': [ 'e-n-tab-title-text' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
@@ -1313,7 +1310,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-index': tabCount,
 		}, null, true );
 
-		view.addRenderAttribute( tabIconKey, {
+		view.addRenderAttribute( 'e-n-tab-icon', {
 			'class': [ 'e-n-tab-icon' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
@@ -1322,12 +1319,12 @@ class NestedTabs extends Widget_Nested_Base {
 		}, null, true );
 		#>
 
-		<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
+		<button {{{ view.getRenderAttributeString( 'e-n-tab-title' ) }}}>
 			<# if ( !! item.tab_icon.value ) { #>
-			<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
+			<span {{{ view.getRenderAttributeString( 'e-n-tab-icon' ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
 			<# } #>
 
-			<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
+			<span {{{ view.getRenderAttributeString( 'e-n-tab-title-text' ) }}}>{{{ item.tab_title }}}</span>
 		</button>
 		<?php
 	}
