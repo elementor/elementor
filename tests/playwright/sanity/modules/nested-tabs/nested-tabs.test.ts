@@ -1366,7 +1366,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		await wpAdmin.setLanguage( 'he_IL' );
+		await wpAdmin.setSiteLanguage( 'he_IL' );
 
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -1429,7 +1429,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		await test.step( 'Reset language to English', async () => {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		} );
 	} );
 

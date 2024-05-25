@@ -10,11 +10,11 @@ test( 'Stretch section', async ( { page }, testInfo ) => {
 		let editor = await wpAdmin.openNewPage();
 		await testStretchedSection( page, editor, 'ltr' );
 
-		await wpAdmin.setLanguage( 'he_IL' );
+		await wpAdmin.setSiteLanguage( 'he_IL' );
 		editor = await wpAdmin.openNewPage();
 		await testStretchedSection( page, editor, 'rtl' );
 	} finally {
-		await wpAdmin.setLanguage( '' );
+		await wpAdmin.setSiteLanguage( '' );
 	}
 } );
 

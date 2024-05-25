@@ -459,7 +459,7 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setSiteLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
@@ -468,7 +468,7 @@ test.describe( 'Container tests @container', () => {
 				quality: 100,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		}
 
 		const editor = await createCanvasPage( wpAdmin );
@@ -521,12 +521,12 @@ test.describe( 'Container tests @container', () => {
 		const directions = [ 'right', 'down', 'left', 'up' ];
 
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setSiteLanguage( 'he_IL' );
 			const editor = await wpAdmin.openNewPage();
 			await editor.addElement( { elType: 'container' }, 'document' );
 			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		}
 	} );
 
@@ -875,7 +875,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setSiteLanguage( 'he_IL' );
 
 			let editor = await wpAdmin.openNewPage();
 			let frame = editor.getPreviewFrame();
@@ -900,7 +900,7 @@ test.describe( 'Container tests @container', () => {
 			} );
 
 			await test.step( 'Set user language to English', async () => {
-				await wpAdmin.setLanguage( 'he_IL', '' );
+				await wpAdmin.setSiteLanguage( 'he_IL', '' );
 			} );
 
 			editor = await wpAdmin.openNewPage();
@@ -924,7 +924,7 @@ test.describe( 'Container tests @container', () => {
 					.toHaveScreenshot( 'container-dimensions-rtl-with-ltr-ui.png' );
 			} );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		}
 
 		const editor = await wpAdmin.openNewPage(),

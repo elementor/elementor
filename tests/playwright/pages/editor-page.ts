@@ -15,6 +15,16 @@ let elementorFrontendConfig: ElementorFrontendConfig;
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
 	postId: number | null;
+
+	/**
+	 * Create an Elementor editor page.
+	 *
+	 * @param {Page}     page        - Playwright page instance.
+	 * @param {TestInfo} testInfo    - Test information.
+	 * @param {number}   cleanPostId - Optional. Post ID.
+	 *
+	 * @return {void}
+	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();
@@ -1196,8 +1206,8 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Run accessibility test using @Axe-Core.
 	 *
-	 * @param {Page}   page
-	 * @param {string} selector
+	 * @param {Page}   page     - Playwright page instance.
+	 * @param {string} selector - The selector to test.
 	 *
 	 * @return {Promise<void>}
 	 */
