@@ -576,7 +576,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async setTextStrokeControlValue( controlId: string, type: string, value: number, color: string ) {
 		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.setSliderControlValue( `${ controlId }_stroke`, value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
 		await this.setColorControlValue( `${ controlId }_stroke_color`, color );
 		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
 	}
