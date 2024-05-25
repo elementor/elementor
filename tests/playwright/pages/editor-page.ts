@@ -596,32 +596,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set a background color to an element.
-	 *
-	 * @param {string}  elementId - The ID of targeted element.
-	 * @param {string}  color     - The background color code.
-	 * @param {boolean} isWidget  - Optional. Whether the element is a widget or not; Default value `true`, a widget.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setBackgroundColor( elementId: string, color: string, isWidget: boolean = true ) {
-		const panelTab = isWidget ? 'advanced' : 'style',
-			backgroundSelector = isWidget ? '.elementor-control-_background_background ' : '.elementor-control-background_background ',
-			backgroundColorSelector = isWidget ? '.elementor-control-_background_color ' : '.elementor-control-background_color ';
-
-		await this.selectElement( elementId );
-		await this.openPanelTab( panelTab );
-
-		if ( isWidget ) {
-			await this.openSection( '_section_background' );
-		}
-
-		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
-		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
-	}
-
-	/**
 	 * Remove the focus from the test elements by creating two new elements.
 	 *
 	 * @return {Promise<void>}

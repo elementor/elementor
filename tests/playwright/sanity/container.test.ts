@@ -78,7 +78,12 @@ test.describe( 'Container tests @container', () => {
 		await editor.addWidget( widgets.toggle, containerId );
 		await editor.addWidget( widgets.video, containerId );
 
-		await editor.setBackgroundColor( spacer, '#A81830' );
+		await editor.selectElement( spacer );
+		await editor.openPanelTab( 'advanced' );
+		await editor.openSection( '_section_background' );
+		await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
+		await editor.setColorControlValue( '_background_color', '#A81830' );
+
 		await editor.selectElement( containerId );
 		// Set row direction.
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
@@ -420,11 +425,13 @@ test.describe( 'Container tests @container', () => {
 
 		// Act.
 		// Add widgets.
-		const spacer = await editor.addWidget( 'spacer', containerId );
-
+		await editor.addWidget( 'spacer', containerId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
-		await editor.setBackgroundColor( spacer, '#A81830' );
+		await editor.openSection( '_section_background' );
+		await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
+		await editor.setColorControlValue( '_background_color', '#A81830' );
+
 		await editor.selectElement( containerId );
 		// Set container `align-items: center`.
 		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
