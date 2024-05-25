@@ -706,6 +706,17 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Click on a top bar item.
+	 *
+	 * @param {string} text - The text of the top bar button.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async clickTopBarItem( text: string ) {
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( text ).click();
+	}
+
+	/**
 	 * Open the menu panel.
 	 *
 	 * @return {Promise<void>}
@@ -724,7 +735,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Elements' ).click();
+			await this.clickTopBarItem( 'Elements' );
 		} else {
 			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
@@ -741,7 +752,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Page Settings' ).click();
+			await this.clickTopBarItem( 'Page Settings' );
 		} else {
 			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
 		}
@@ -758,7 +769,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Site Settings' ).click();
+			await this.clickTopBarItem( 'Site Settings' );
 		} else {
 			await this.openMenuPanel();
 			await this.page.locator( EditorSelectors.panels.siteSettings.menuPanelItem ).click();
@@ -776,7 +787,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( 'Elementor logo' ).click();
+			await this.clickTopBarItem( 'Elementor logo' );
 			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
 		} else {
 			await this.openMenuPanel();
@@ -794,9 +805,19 @@ export default class EditorPage extends BasePage {
 	async openNavigator( ) {
 		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
 
-		if ( ! isOpen ) {
+		if ( isOpen ) {
+			return;
+		}
+
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Structure' );
+		} else {
 			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
 		}
+
+		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 	}
 
 	/**
@@ -807,9 +828,11 @@ export default class EditorPage extends BasePage {
 	async closeNavigatorIfOpen() {
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
-		if ( isOpen ) {
-			await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
+		if ( ! isOpen ) {
+			return;
 		}
+
+		await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
 	}
 
 	/**
