@@ -5,7 +5,7 @@ import { resolve } from 'path';
 
 export default class ImageCarousel extends Content {
 	async addWidget() {
-		const widgetId = await this.editorPage.addWidget( 'image-carousel' );
+		const widgetId = await this.editor.addWidget( 'image-carousel' );
 		return widgetId;
 	}
 
@@ -21,7 +21,7 @@ export default class ImageCarousel extends Content {
 	async addImageGallery( args?: {images?: string[], metaData?: boolean} ) {
 		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
 
-		await this.editorPage.openPanelTab( 'content' );
+		await this.editor.openPanelTab( 'content' );
 		await this.page.locator( EditorSelectors.imageCarousel.addGalleryBtn ).click();
 		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
 
@@ -50,7 +50,7 @@ export default class ImageCarousel extends Content {
 
 	async verifyCaption( expectedData: string[], captionCount = 3 ) {
 		for ( let i = 0; i < captionCount; i++ ) {
-			await expect( this.editorPage.getPreviewFrame()
+			await expect( this.editor.getPreviewFrame()
 				.locator( EditorSelectors.imageCarousel.imgCaption ).nth( i ) ).toHaveText( expectedData[ i ] );
 		}
 	}
