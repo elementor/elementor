@@ -111,7 +111,7 @@ class Module extends BaseModule {
 					'elementor-v2-ui',
 					'elementor-v2-icons',
 				],
-				ELEMENTOR_VERSION, true );
+			ELEMENTOR_VERSION, true );
 
 			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
 
@@ -124,7 +124,7 @@ class Module extends BaseModule {
 			if ( $this->get_ai_app()->is_connected() ) {
 				$usage = $this->get_ai_app()->get_usage( 'gutenberg-loader', $session_id );
 
-				if ( ! is_wp_error( $usage )  ) {
+				if ( ! is_wp_error( $usage ) ) {
 					$config['usage'] = $usage;
 				}
 			}
