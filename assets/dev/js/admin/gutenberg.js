@@ -1,5 +1,4 @@
 /* global ElementorGutenbergSettings */
-
 ( function( $ ) {
 	'use strict';
 
