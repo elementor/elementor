@@ -48,6 +48,7 @@ class Module extends BaseModule {
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
+				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
 				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
 				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
 				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
@@ -101,6 +102,41 @@ class Module extends BaseModule {
 				);
 			}
 		} );
+
+		add_action( 'enqueue_block_editor_assets', function() {
+			wp_enqueue_script( 'elementor-ai-gutenberg',
+				$this->get_js_assets_url( 'ai-gutenberg' ),
+				[
+					'jquery',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
+				],
+			ELEMENTOR_VERSION, true );
+
+			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+
+			$config = [
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+				'client_session_id' => $session_id,
+			];
+
+			if ( $this->get_ai_app()->is_connected() ) {
+				$usage = $this->get_ai_app()->get_usage( 'gutenberg-loader', $session_id );
+
+				if ( ! is_wp_error( $usage ) ) {
+					$config['usage'] = $usage;
+				}
+			}
+
+			wp_localize_script(
+				'elementor-ai-gutenberg',
+				'ElementorAiConfig',
+				$config
+			);
+
+			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
+		});
 
 		add_filter( 'elementor/document/save/data', function ( $data ) {
 			if ( $this->is_layout_active() ) {
@@ -286,7 +322,7 @@ class Module extends BaseModule {
 			throw new \Exception( 'Document not found' );
 		}
 
-		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+		if ( ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied' );
 		}
 	}
@@ -333,6 +369,32 @@ class Module extends BaseModule {
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
+		$this->throw_on_error( $result );
+
+		return [
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+
+	public function ajax_ai_get_excerpt( $data ): array {
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['content'] ) ) {
+			throw new \Exception( 'Missing content' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'Not connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_excerpt( $data['payload']['content'], $context, $request_ids );
 		$this->throw_on_error( $result );
 
 		return [
