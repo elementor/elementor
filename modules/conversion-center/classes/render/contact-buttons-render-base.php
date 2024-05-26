@@ -47,6 +47,7 @@ abstract class Contact_Buttons_Render_Base {
 		$display_dot = $this->settings['chat_button_show_dot'] ?? '';
 		$button_size = $this->settings['style_chat_button_size'];
 		$hover_animation = $this->settings['style_button_color_hover_animation'];
+		$animation_duration = $this->settings['style_chat_button_animation_duration'];
 
 		$button_classnames = 'e-contact-buttons__chat-button e-contact-buttons__chat-button-shadow';
 
@@ -56,6 +57,10 @@ abstract class Contact_Buttons_Render_Base {
 
 		if ( ! empty( $hover_animation ) ) {
 			$button_classnames .= ' elementor-animation-' . $hover_animation;
+		}
+
+		if ( ! empty( $animation_duration ) ) {
+			$button_classnames .= ' has-animation-duration-' . $animation_duration;
 		}
 
 		if ( 'yes' === $display_dot ) {
@@ -179,7 +184,7 @@ abstract class Contact_Buttons_Render_Base {
 		$powered_by_url = 'https://elementor.com/pro';
 		?>
 			<div class="e-contact-buttons__powered-container">
-				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text">
+				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text" target="_blank">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
 				</a>
 			</div>
@@ -316,6 +321,7 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
+			'target' => '_blank',
 		] );
 
 		?>

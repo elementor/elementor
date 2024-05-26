@@ -1,20 +1,20 @@
-export class LinksPageAddLibraryTab extends $e.modules.hookUI.After {
+export class ContactPageAddLibraryTab extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'editor/documents/open';
 	}
 
 	getId() {
-		return 'elementor-links-pages-add-library-tab';
+		return 'elementor-contact-buttons-add-library-tab';
 	}
 
 	getConditions( args ) {
 		const document = elementor.documents.get( args.id );
-		return 'links-page' === document.config.type;
+		return 'contact-buttons' === document.config.type;
 	}
 
 	apply() {
-		$e.components.get( 'library' ).addTab( 'templates/links-pages', {
-			title: __( 'Links Pages', 'elementor' ),
+		$e.components.get( 'library' ).addTab( 'templates/contact-buttons', {
+			title: __( 'Floating Buttons', 'elementor' ),
 			filter: {
 				source: 'remote',
 				type: 'block',
@@ -27,4 +27,4 @@ export class LinksPageAddLibraryTab extends $e.modules.hookUI.After {
 	}
 }
 
-export default LinksPageAddLibraryTab;
+export default ContactPageAddLibraryTab;

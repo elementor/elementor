@@ -28,7 +28,7 @@ test.describe( 'Favorite widgets', () => {
 		await page.waitForTimeout( 1000 );
 
 		await page.reload();
-		await editor.ensurePanelLoaded();
+		await editor.waitForPanelToLoad();
 
 		await expectFavoriteVisible();
 
