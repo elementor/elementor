@@ -13,6 +13,7 @@ import useImageActions from '../../hooks/use-image-actions';
 import usePromptSettings, { IMAGE_RATIO, IMAGE_ZOOM } from '../../hooks/use-prompt-settings';
 import useOutPainting from './hooks/use-out-painting';
 import { useRequestIds } from '../../../../context/requests-ids';
+import { fetchImageAsBase64 } from '../../utils';
 
 const OutPainting = () => {
 	const [ imageSize, setImageSize ] = useState( { width: 0, height: 0 } );
@@ -28,10 +29,11 @@ const OutPainting = () => {
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ data?.result ] );
 	const hasGeneratedResult = !! data?.result;
 
-	const handleSubmit = ( event ) => {
+	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		send( { settings, image: editImage, mask, size: imageSize, position } );
+		const imageBase64 = await fetchImageAsBase64( editImage.url );
+		send( { settings, image: editImage, mask, size: imageSize, position, image_base64: imageBase64 } );
 	};
 
 	return (
