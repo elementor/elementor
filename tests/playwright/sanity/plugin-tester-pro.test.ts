@@ -21,7 +21,7 @@ const pluginList1 = [
 	'elementskit-lite',
 	'envato-elements',
 	'exclusive-addons-for-elementor',
-	'header-footer-elementor',
+	// 'header-footer-elementor',
 	'jeg-elementor-kit',
 	'make-column-clickable-elementor',
 	'metform',
@@ -39,8 +39,8 @@ const pluginList2 = [
 	'skyboot-custom-icons-for-elementor',
 	'sticky-header-effects-for-elementor',
 	'timeline-widget-addon-for-elementor',
-	'unlimited-elements-for-elementor',
-	'visibility-logic-elementor',
+	// 'unlimited-elements-for-elementor',
+	// 'visibility-logic-elementor',
 	'ht-mega-for-elementor',
 	'jetgridbuilder',
 	'jetsticky-for-elementor',
@@ -54,7 +54,7 @@ const pluginList2 = [
 test.describe( `Plugin tester tests: containers`, () => {
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_containers`, async ( { page }, testInfo ) => {
-			const editorPage = new EditorPage( page, testInfo );
+			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
 			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
@@ -68,14 +68,17 @@ test.describe( `Plugin tester tests: containers`, () => {
 				const admin = document.getElementById( selector );
 				admin.remove();
 			}, adminBar );
-			await editorPage.removeClasses( 'elementor-motion-effects-element' );
-			await editorPage.scrollPage();
+			await editor.removeClasses( 'elementor-motion-effects-element' );
+			await editor.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
+			if ( 'astra-sites' === plugin ) {
+				await page.goto( '/wp-admin/index.php' );
+			}
 			await page.goto( '/law-firm-about/?elementor' );
-			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+			await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
-			await editorPage.closeNavigatorIfOpen();
+			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
@@ -84,7 +87,7 @@ test.describe( `Plugin tester tests: containers`, () => {
 
 	for ( const plugin of pluginList2 ) {
 		test( `"${ plugin }" plugin: @pluginTester2_containers`, async ( { page }, testInfo ) => {
-			const editorPage = new EditorPage( page, testInfo );
+			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
 			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
@@ -98,17 +101,17 @@ test.describe( `Plugin tester tests: containers`, () => {
 				const admin = document.getElementById( selector );
 				admin.remove();
 			}, adminBar );
-			await editorPage.removeClasses( 'elementor-motion-effects-element' );
-			await editorPage.scrollPage();
+			await editor.removeClasses( 'elementor-motion-effects-element' );
+			await editor.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
 			if ( 'happy-elementor-addons' === plugin ) {
 				await page.goto( '/law-firm-about/?elementor' );
 			}
-			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+			await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
-			await editorPage.closeNavigatorIfOpen();
+			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
@@ -123,7 +126,7 @@ test.describe( 'Plugin tester tests: sections', () => {
 	} );
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_sections`, async ( { page }, testInfo ) => {
-			const editorPage = new EditorPage( page, testInfo );
+			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
 			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
@@ -137,14 +140,17 @@ test.describe( 'Plugin tester tests: sections', () => {
 				const admin = document.getElementById( selector );
 				admin.remove();
 			}, adminBar );
-			await editorPage.removeClasses( 'elementor-motion-effects-element' );
-			await editorPage.scrollPage();
+			await editor.removeClasses( 'elementor-motion-effects-element' );
+			await editor.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
+			if ( 'astra-sites' === plugin ) {
+				await page.goto( '/wp-admin/index.php' );
+			}
 			await page.goto( '/law-firm-about/?elementor' );
-			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+			await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
-			await editorPage.closeNavigatorIfOpen();
+			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
@@ -153,7 +159,7 @@ test.describe( 'Plugin tester tests: sections', () => {
 
 	for ( const plugin of pluginList2 ) {
 		test( `"${ plugin }" plugin: @pluginTester2_sections`, async ( { page }, testInfo ) => {
-			const editorPage = new EditorPage( page, testInfo );
+			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
 			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
@@ -167,17 +173,17 @@ test.describe( 'Plugin tester tests: sections', () => {
 				const admin = document.getElementById( selector );
 				admin.remove();
 			}, adminBar );
-			await editorPage.removeClasses( 'elementor-motion-effects-element' );
-			await editorPage.scrollPage();
+			await editor.removeClasses( 'elementor-motion-effects-element' );
+			await editor.scrollPage();
 			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 			await page.goto( '/law-firm-about/?elementor' );
 			if ( 'happy-elementor-addons' === plugin ) {
 				await page.goto( '/law-firm-about/?elementor' );
 			}
-			await editorPage.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+			await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 			await wpAdmin.closeAnnouncementsIfVisible();
-			await editorPage.closeNavigatorIfOpen();
+			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );

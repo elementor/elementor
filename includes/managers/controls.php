@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Frontend\Performance;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -758,6 +760,7 @@ class Controls_Manager {
 		$this->stacks[ $stack_id ] = [
 			'tabs' => [],
 			'controls' => [],
+			'style_controls' => [],
 			'responsive_control_duplication_mode' => Plugin::$instance->breakpoints->get_responsive_control_duplication_mode(),
 		];
 	}
@@ -798,6 +801,15 @@ class Controls_Manager {
 			'index' => null,
 		];
 
+		$control_type = 'controls';
+		if (
+			Performance::is_optimized_control_loading_feature_enabled()
+			&& Performance::should_optimize_controls()
+			&& $this->is_style_control( $control_data )
+		) {
+			$control_type = 'style_controls';
+		}
+
 		$options = array_merge( $default_options, $options );
 
 		$default_args = [
@@ -816,6 +828,15 @@ class Controls_Manager {
 			return false;
 		}
 
+		if ( $control_type_instance instanceof Has_Validation ) {
+			try {
+				$control_type_instance->validate( $control_data );
+			} catch ( \Exception $e ) {
+				_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), esc_html( $e->getMessage() ), '3.23.0' );
+				return false;
+			}
+		}
+
 		if ( $control_type_instance instanceof Base_Data_Control ) {
 			$control_default_value = $control_type_instance->get_default_value();
 
@@ -828,7 +849,7 @@ class Controls_Manager {
 
 		$stack_id = $element->get_unique_name();
 
-		if ( ! $options['overwrite'] && isset( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
+		if ( ! $options['overwrite'] && isset( $this->stacks[ $stack_id ][ $control_type ][ $control_id ] ) ) {
 			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Cannot redeclare control with same name "%s".', esc_html( $control_id ) ), '1.0.0' );
 
 			return false;
@@ -842,16 +863,16 @@ class Controls_Manager {
 
 		$this->stacks[ $stack_id ]['tabs'][ $control_data['tab'] ] = $tabs[ $control_data['tab'] ];
 
-		$this->stacks[ $stack_id ]['controls'][ $control_id ] = $control_data;
+		$this->stacks[ $stack_id ][ $control_type ][ $control_id ] = $control_data;
 
 		if ( null !== $options['index'] ) {
-			$controls = $this->stacks[ $stack_id ]['controls'];
+			$controls = $this->stacks[ $stack_id ][ $control_type ];
 
 			$controls_keys = array_keys( $controls );
 
 			array_splice( $controls_keys, $options['index'], 0, $control_id );
 
-			$this->stacks[ $stack_id ]['controls'] = array_merge( array_flip( $controls_keys ), $controls );
+			$this->stacks[ $stack_id ][ $control_type ] = array_merge( array_flip( $controls_keys ), $controls );
 		}
 
 		return true;
@@ -927,11 +948,17 @@ class Controls_Manager {
 	 * @return array|\WP_Error The control, or an error.
 	 */
 	public function get_control_from_stack( $stack_id, $control_id ) {
-		if ( empty( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			return new \WP_Error( 'Cannot get a not-exists control.' );
+		$stack_data = $this->get_stacks( $stack_id );
+
+		if ( ! empty( $stack_data['controls'][ $control_id ] ) ) {
+			return $stack_data['controls'][ $control_id ];
 		}
 
-		return $this->stacks[ $stack_id ]['controls'][ $control_id ];
+		if ( ! empty( $stack_data['style_controls'][ $control_id ] ) ) {
+			return $stack_data['style_controls'][ $control_id ];
+		}
+
+		return new \WP_Error( 'Cannot get a not-exists control.' );
 	}
 
 	/**
@@ -1167,12 +1194,12 @@ class Controls_Manager {
 	 *
 	 * @param Controls_Stack $controls_stack.
 	 */
-	public function add_custom_attributes_controls( Controls_Stack $controls_stack ) {
+	public function add_custom_attributes_controls( Controls_Stack $controls_stack, string $tab = self::TAB_ADVANCED ) {
 		$controls_stack->start_controls_section(
 			'section_custom_attributes_pro',
 			[
 				'label' => esc_html__( 'Attributes', 'elementor' ),
-				'tab' => self::TAB_ADVANCED,
+				'tab' => $tab,
 			]
 		);
 
@@ -1336,5 +1363,35 @@ class Controls_Manager {
 				</div>
 			</div>
 		</div>';
+	}
+
+	private function is_style_control( $control_data ): bool {
+		$frontend_available = $control_data['frontend_available'] ?? false;
+		if ( $frontend_available ) {
+			return false;
+		}
+
+		if ( ! empty( $control_data['control_type'] ) && 'content' === $control_data['control_type'] ) {
+			return false;
+		}
+
+		if ( ! empty( $control_data['prefix_class'] ) ) {
+			return false;
+		}
+
+		$render_type = $control_data['render_type'] ?? '';
+		if ( 'template' === $render_type ) {
+			return false;
+		}
+
+		if ( 'ui' === $render_type ) {
+			return true;
+		}
+
+		if ( ! empty( $control_data['selectors'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }

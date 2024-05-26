@@ -20,7 +20,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				ratingId = await editor.addWidget( 'rating', container ),
-				ratingElement = await editor.getPreviewFrame().locator( `.elementor-element-${ ratingId } .e-rating` );
+				ratingElement = editor.getPreviewFrame().locator( `.elementor-element-${ ratingId } .e-rating` );
 
 			await test.step( 'Set widget', async () => {
 				await editor.setSliderControlValue( 'rating_scale', '5' );
@@ -28,24 +28,24 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Set styling controls', async () => {
-				await editor.activatePanelTab( 'style' );
+				await editor.openPanelTab( 'style' );
 				await editor.setSliderControlValue( 'icon_size', '50' );
 				await editor.setSliderControlValue( 'icon_gap', '30' );
-				await editor.setColorControlValue( '#FA0000', 'icon_color' );
-				await editor.setColorControlValue( '#2200FF', 'icon_unmarked_color' );
+				await editor.setColorControlValue( 'icon_color', '#FA0000' );
+				await editor.setColorControlValue( 'icon_unmarked_color', '#2200FF' );
 			} );
 
 			await test.step( 'Assert styling', async () => {
-				await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ) ).toHaveCSS( 'margin-inline-end', '30px' );
+				await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ) ).toHaveCSS( 'margin-inline-end', '30px' );
 
 				if ( 'active' === iconExperimentState ) {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'width', '50px' );
-					await expect.soft( await ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(250, 0, 0)' );
-					await expect.soft( await ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(34, 0, 255)' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'width', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(250, 0, 0)' );
+					await expect.soft( ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(34, 0, 255)' );
 				} else {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
-					await expect.soft( await ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(250, 0, 0)' );
-					await expect.soft( await ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(34, 0, 255)' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(250, 0, 0)' );
+					await expect.soft( ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(34, 0, 255)' );
 				}
 			} );
 
@@ -73,15 +73,15 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Assert styling of asymmetric Font Awesome icon has same size with font experiment on and off', async () => {
-				await editor.activatePanelTab( 'content' );
+				await editor.openPanelTab( 'content' );
 				await page.locator( '.elementor-control-icons--inline__icon >> nth=0' ).click();
 				await page.locator( `.elementor-icons-manager__tab__item__content .fa-address-card` ).first().click();
 
 				if ( 'active' === iconExperimentState ) {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'height', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'height', '50px' );
 				} else {
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
-					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
+					await expect.soft( ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
 				}
 			} );
 		} );
@@ -109,7 +109,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 
 			await test.step( 'Assert flex-wrap with center alignment screenshot inside the editor', async () => {
 				await editor.getPreviewFrame().locator( '.e-rating' ).click();
-				await page.locator( '.elementor-control-icon_alignment .eicon-align-end-h' ).click();
+				await editor.setChooseControlValue( 'icon_alignment', 'eicon-align-end-h' );
 
 				await editor.togglePreviewMode();
 
@@ -120,7 +120,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				await editor.togglePreviewMode();
 
 				await editor.getPreviewFrame().locator( '.e-rating' ).click();
-				await page.locator( '.elementor-control-icon_alignment .eicon-align-start-h' ).click();
+				await editor.setChooseControlValue( 'icon_alignment', 'eicon-align-start-h' );
 			} );
 
 			await test.step( 'Assert flex-wrap screenshot on the front end', async () => {

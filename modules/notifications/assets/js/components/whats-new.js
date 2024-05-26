@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Box, Drawer, ThemeProvider } from '@elementor/ui';
+import { Box, DirectionProvider, Drawer, ThemeProvider } from '@elementor/ui';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { WhatsNewTopBar } from './whats-new-top-bar';
 import { WhatsNewDrawerContent } from './whats-new-drawer-content';
@@ -28,36 +28,38 @@ export const WhatsNew = ( props ) => {
 	return (
 		<>
 			<QueryClientProvider client={ queryClient }>
-				<ThemeProvider colorScheme="auto">
-					<Drawer
-						anchor={ anchorPosition }
-						open={ isOpen }
-						onClose={ () => setIsOpen( false ) }
-						ModalProps={ {
-							style: {
-								// Above the WordPress Admin Top Bar.
-								zIndex: 999999,
-							},
-						} }
-					>
-						<Box
-							sx={ {
-								width: 320,
-								backgroundColor: 'background.default',
+				<DirectionProvider rtl={ elementorCommon.config.isRTL }>
+					<ThemeProvider colorScheme={ window.elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }>
+						<Drawer
+							anchor={ anchorPosition }
+							open={ isOpen }
+							onClose={ () => setIsOpen( false ) }
+							ModalProps={ {
+								style: {
+									// Above the WordPress Admin Top Bar.
+									zIndex: 999999,
+								},
 							} }
-							role="presentation"
 						>
-							<WhatsNewTopBar setIsOpen={ setIsOpen } />
 							<Box
 								sx={ {
-									padding: '16px',
+									width: 320,
+									backgroundColor: 'background.default',
 								} }
+								role="presentation"
 							>
-								<WhatsNewDrawerContent />
+								<WhatsNewTopBar setIsOpen={ setIsOpen } />
+								<Box
+									sx={ {
+										padding: '16px',
+									} }
+								>
+									<WhatsNewDrawerContent />
+								</Box>
 							</Box>
-						</Box>
-					</Drawer>
-				</ThemeProvider>
+						</Drawer>
+					</ThemeProvider>
+				</DirectionProvider>
 			</QueryClientProvider>
 		</>
 	);

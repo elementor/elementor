@@ -21,7 +21,9 @@ export const Menu = ( props ) => {
 				disabled={ props.disabled }
 				onClick={ () => {
 					setIsOpen( true );
-					markAsViewed();
+					if ( ! isViewed ) {
+						markAsViewed();
+					}
 				} }
 				color="secondary"
 			>

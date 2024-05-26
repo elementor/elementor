@@ -54,6 +54,14 @@ abstract class Widget_Nested_Base extends Widget_Base {
 		return '';
 	}
 
+	protected function get_default_children_container_placeholder_selector() {
+		return '';
+	}
+
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * @inheritDoc
 	 *
@@ -74,6 +82,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 				'elements' => $this->get_default_children_elements(),
 				'elements_title' => $this->get_default_children_title(),
 				'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
+				'child_container_placeholder_selector' => $this->get_default_children_container_placeholder_selector(),
 				'repeater_title_setting' => $this->get_default_repeater_title_setting_key(),
 			],
 			'support_nesting' => true,
@@ -116,6 +125,19 @@ abstract class Widget_Nested_Base extends Widget_Base {
 
 		if ( ! empty( $children[ $index ] ) ) {
 			$children[ $index ]->print_element();
+		}
+	}
+
+	protected function content_template_single_repeater_item() {}
+
+	public function print_template() {
+		parent::print_template();
+		if ( $this->get_initial_config()['support_improved_repeaters'] ?? false ) {
+			?>
+			<script type="text/html" id="tmpl-elementor-<?php echo esc_attr( $this->get_name() ); ?>-content-single">
+				<?php $this->content_template_single_repeater_item(); ?>
+			</script>
+			<?php
 		}
 	}
 }

@@ -340,6 +340,7 @@ class Module extends BaseModule {
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
+		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
@@ -625,7 +626,7 @@ class Module extends BaseModule {
 		$conflicts = $uploaded_kit['conflicts'];
 
 		if ( ! empty( $file_url ) ) {
-			Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $file_name ) );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
@@ -711,7 +712,7 @@ class Module extends BaseModule {
 			throw new \Error( 'Could not read the exported file.' );
 		}
 
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $file_name ) );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
 		$result = [
 			'manifest' => $export['manifest'],

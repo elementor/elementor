@@ -4,6 +4,7 @@ namespace Elementor\Modules\Ai\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Modules\Ai\Module;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -28,28 +29,18 @@ class Ai extends Library {
 		return static::API_URL . '/';
 	}
 
-	public function get_usage() {
+	public function get_usage( $client_name, $client_session_id ) {
 		return $this->ai_request(
 			'POST',
 			'status/check',
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'client_name' => esc_attr( $client_name ),
+				'client_version' => ELEMENTOR_VERSION,
+				'client_session_id' => esc_attr( $client_session_id ),
 			]
 		);
-	}
-
-	public function get_cached_usage() {
-		$cache_key = 'elementor_ai_usage';
-		$cache_time = 24 * HOUR_IN_SECONDS;
-		$usage = get_site_transient( $cache_key );
-
-		if ( ! $usage ) {
-			$usage = $this->get_usage();
-			set_site_transient( $cache_key, $usage, $cache_time );
-		}
-
-		return $usage;
 	}
 
 	public function get_remote_config() {
@@ -144,6 +135,7 @@ class Ai extends Library {
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+				'with_error_data' => true,
 			]
 		);
 	}
@@ -187,6 +179,22 @@ class Ai extends Library {
 			'text/completion',
 			[
 				'prompt' => $prompt,
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function get_excerpt( $prompt, $context, $request_ids ) {
+		$excerpt_length = apply_filters( 'excerpt_length', 55 );
+		return $this->ai_request(
+			'POST',
+			'text/get-excerpt',
+			[
+				'content' => $prompt,
+				'maxLength' => $excerpt_length,
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
@@ -274,8 +282,8 @@ class Ai extends Library {
 			'image/text-to-image',
 			[
 				self::PROMPT => $data['payload']['prompt'],
-				self::IMAGE_TYPE => $data['payload']['promptSettings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['promptSettings'][ self::STYLE_PRESET ],
-				self::ASPECT_RATIO => $data['payload']['promptSettings'][ self::ASPECT_RATIO ],
+				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
+				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
@@ -451,12 +459,14 @@ class Ai extends Library {
 			'POST',
 			'image/image-to-image/outpainting',
 			[
-				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => '',
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'size' => wp_json_encode( $image_data['size'] ),
+				'position' => wp_json_encode( $image_data['position'] ),
+				'image_base64' => $image_data['image_base64'],
+				$image_data['image'],
 			],
 			[
 				[
@@ -494,12 +504,11 @@ class Ai extends Library {
 			'image/image-to-image/inpainting',
 			[
 				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => $image_data['promptSettings'][ self::IMAGE_TYPE ] . '/' . $image_data['promptSettings'][ self::STYLE_PRESET ],
-				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'image_base64' => $image_data['image_base64'],
 			],
 			[
 				[
@@ -557,11 +566,28 @@ class Ai extends Library {
 		}
 
 		$context['currentContext'] = $data['currentContext'];
+		$context['features'] = [
+			'supportedFeatures' => [],
+		];
 
 		if ( ElementorUtils::has_pro() ) {
-			$context['features'] = [
-				'subscriptions' => [ 'Pro' ],
-			];
+			$context['features']['subscriptions'] = [ 'Pro' ];
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
+			$context['features']['supportedFeatures'][] = 'Grid';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
+			$context['features']['supportedFeatures'][] = 'Nested';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
+			$context['features']['supportedFeatures'][] = 'Taxonomy';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
+			$context['features']['supportedFeatures'][] = 'MegaMenu';
 		}
 
 		$metadata = [

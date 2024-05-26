@@ -303,6 +303,7 @@ class Import {
 
 		$this->init_import_session();
 
+		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
 		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
@@ -326,7 +327,7 @@ class Import {
 
 		$this->save_elements_of_imported_posts();
 
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $this->extracted_directory_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->extracted_directory_path );
 		return $this->imported_data;
 	}
 

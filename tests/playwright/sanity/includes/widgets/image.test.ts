@@ -35,7 +35,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 			const imageSize = [ 'thumbnail', 'large', 'full' ];
 			for ( const id in imageSize ) {
-				await wpAdmin.waitForPanel();
+				await editor.waitForPanelToLoad();
 				await contentTab.selectImageSize(
 					{
 						widget: data[ i ].widget,
@@ -56,7 +56,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						isPublished: false,
 					} );
 				await editor.publishAndViewPage();
-				await wpAdmin.waitForPanel();
+				await editor.waitForPanelToLoad();
 				await contentTab.verifyImageSrc(
 					{
 						selector: data[ i ].image,

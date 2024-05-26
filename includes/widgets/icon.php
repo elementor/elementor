@@ -88,6 +88,10 @@ class Widget_Icon extends Widget_Base {
 		return [ 'icon' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register icon widget controls.
 	 *
@@ -421,6 +425,10 @@ class Widget_Icon extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		if ( empty( $settings['selected_icon']['value'] ) ) {
+			return;
+		}
+
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
 
 		$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
@@ -473,7 +481,12 @@ class Widget_Icon extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# const link = settings.link.url ? 'href="' + _.escape( settings.link.url ) + '"' : '',
+		<#
+		if ( '' === settings.selected_icon.value ) {
+			return;
+		}
+
+		const link = settings.link.url ? 'href="' + _.escape( settings.link.url ) + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 				iconTag = link ? 'a' : 'div';

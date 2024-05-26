@@ -9,14 +9,14 @@ test.describe( 'Widget tests', () => {
 		} );
 
 		// Arrange.
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			widgetId = await editor.addWidget( 'heading', containerId ),
 			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
 
 		// Act.
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-_section_transform .elementor-panel-heading-title' ).click();
+		await editor.openPanelTab( 'advanced' );
+		await editor.openSection( '_section_transform' );
 		// Set rotation.
 		await page.locator( '.elementor-control-_transform_rotate_popover .elementor-control-popover-toggle-toggle-label' ).click();
 		await page.locator( '.elementor-control-_transform_rotateZ_effect .elementor-control-input-wrapper input' ).fill( '2' );

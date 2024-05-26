@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Block non-permitted users
         uses: StyleShit/action-whitelist-users@b8abcef5472afd0c7bcfaadf08c70a082437e459
         with:

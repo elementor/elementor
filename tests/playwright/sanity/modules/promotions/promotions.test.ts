@@ -4,27 +4,26 @@ import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Promotion tests @promotions', () => {
-
 	test( 'Menu Items Promotions - screenshots', async ( { page }, testInfo ) => {
-		const wpAdminPage = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo ),
 			promotionContainer = '.e-feature-promotion';
 
-		await wpAdminPage.login();
+		await wpAdmin.login();
 
 		await test.step( 'Free to Pro - Submissions', async () => {
-			await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
+			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
 		} );
 
 		await test.step( 'Free to Pro - Custom Icons', async () => {
-			await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
+			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
 		} );
 
 		await test.step( 'Free to Pro - Custom Fonts', async () => {
-			await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
+			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
 		} );
 
 		await test.step( 'Free to Pro - Custom Code', async () => {
-			await wpAdminPage.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_code', 'custom-code-menu-item-desktop' );
+			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_code', 'custom-code-menu-item-desktop' );
 		} );
 	} );
 
@@ -36,8 +35,8 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await editor.addWidget( 'heading', container );
 
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-section_effects' ).click();
+		await editor.openPanelTab( 'advanced' );
+		await editor.openSection( 'section_effects' );
 
 		await test.step( 'Motion Effects - promotion controls screenshots', async () => {
 			const promotionControls = [ 'elementor-control-scrolling_effects_pro', 'elementor-control-mouse_effects_pro', 'elementor-control-sticky_pro' ];
@@ -64,12 +63,12 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		// Act.
 		await editor.getPreviewFrame().locator( `.elementor-element-${ heading }` ).click( { button: 'right' } );
-		await page.waitForSelector( EditorSelectors.ContextMenu.menu );
-		const saveAsGlobal = page.locator( EditorSelectors.ContextMenu.saveAsGlobal ),
+		await page.waitForSelector( EditorSelectors.contextMenu.menu );
+		const saveAsGlobal = page.locator( EditorSelectors.contextMenu.saveAsGlobal ),
 			saveAsGlobalPromotionLinkContainer = saveAsGlobal.locator( 'a' ),
 			saveAsGlobalHref = 'https://go.elementor.com/go-pro-global-widget-context-menu/',
 
-			notes = page.locator( EditorSelectors.ContextMenu.notes ),
+			notes = page.locator( EditorSelectors.contextMenu.notes ),
 			notesPromotionLinkContainer = notes.locator( 'a' ),
 			notesHref = 'https://go.elementor.com/go-pro-notes-context-menu/';
 
@@ -79,5 +78,100 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await expect.soft( notesPromotionLinkContainer ).toHaveAttribute( 'href', notesHref );
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
+	} );
+
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			promotionContainer = '.e-admin-top-bar__secondary-area';
+
+		// Act.
+		await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
+	} );
+
+	test( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			promotionContainer = EditorSelectors.panels.navigator.footer;
+
+		// Act.
+		await wpAdmin.openNewPage();
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
+	} );
+
+	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			promotionContainer = EditorSelectors.panels.navigator.footer;
+
+		await editor.setDisplayMode( 'dark' );
+
+		// Act.
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
+	} );
+
+	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			editor_v2: false,
+		} );
+		const wrapperContainer = '#elementor-panel-inner',
+			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
+
+		// Act.
+		await wpAdmin.openNewPage();
+		const parentContainer = page.locator( wrapperContainer );
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
+	} );
+
+	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			editor_v2: true,
+		} );
+		const wrapperContainer = '#elementor-panel-inner',
+			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
+
+		// Act.
+		await wpAdmin.openNewPage();
+		const parentContainer = page.locator( wrapperContainer );
+		const promoContainer = page.locator( promotionContainer );
+		await promoContainer.waitFor();
+
+		// Assert.
+		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
+	} );
+
+	test( 'Promotion text behavior on resizing the structure panel', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			navigatorPanel = page.locator( EditorSelectors.panels.navigator.wrapper );
+
+		// Act.
+		for ( let i = 0; i < 20; i++ ) {
+			await editor.addElement( { elType: 'container' }, 'document' );
+		}
+
+		await navigatorPanel.locator( '.elementor-navigator__element-container' ).nth( 0 ).click();
+		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
+
+		// Assert.
+		await expect( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
 } );

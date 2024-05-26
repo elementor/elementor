@@ -3,12 +3,28 @@ import { Alert, AlertTitle, Button } from '@elementor/ui';
 const KEY_SUBSCRIPTION = 'subscription';
 const KEY_NO_SUBSCRIPTION = 'noSubscription';
 
+const getUsageTitle = ( percentage ) => {
+	// Translators: %s refers to the credits percentage usage
+	return sprintf( __( 'You’ve used %s of credits for this AI feature.', 'elementor' ), percentage );
+};
+
+const CREDITS_95_USAGE_TITLE = getUsageTitle( '95%' );
+const CREDITS_80_USAGE_TITLE = getUsageTitle( '80%' );
+const CREDITS_75_USAGE_TITLE = getUsageTitle( '75%' );
+
+const DESCRIPTION_SUBSCRIPTION = __( 'Get maximum access.', 'elementor' );
+const DESCRIPTION_NO_SUBSCRIPTION = __( 'Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor' );
+
 const alertConfigs = [
 	{
 		threshold: 95,
 		title: {
-			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 95% of your Elementor AI plan.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 95% of the free trial.', 'elementor' ),
+			[ KEY_SUBSCRIPTION ]: CREDITS_95_USAGE_TITLE,
+			[ KEY_NO_SUBSCRIPTION ]: CREDITS_95_USAGE_TITLE,
+		},
+		description: {
+			[ KEY_SUBSCRIPTION ]: DESCRIPTION_SUBSCRIPTION,
+			[ KEY_NO_SUBSCRIPTION ]: DESCRIPTION_NO_SUBSCRIPTION,
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-95-limit-reach/',
@@ -19,8 +35,28 @@ const alertConfigs = [
 	{
 		threshold: 80,
 		title: {
-			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 80% of your Elementor AI plan.', 'elementor' ),
-			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 80% of the free trial.', 'elementor' ),
+			[ KEY_SUBSCRIPTION ]: CREDITS_80_USAGE_TITLE,
+			[ KEY_NO_SUBSCRIPTION ]: CREDITS_80_USAGE_TITLE,
+		},
+		description: {
+			[ KEY_SUBSCRIPTION ]: DESCRIPTION_SUBSCRIPTION,
+			[ KEY_NO_SUBSCRIPTION ]: DESCRIPTION_NO_SUBSCRIPTION,
+		},
+		url: {
+			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
+			[ KEY_NO_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-free-80-limit-reach/',
+		},
+		color: 'warning',
+	},
+	{
+		threshold: 75,
+		title: {
+			[ KEY_SUBSCRIPTION ]: CREDITS_75_USAGE_TITLE,
+			[ KEY_NO_SUBSCRIPTION ]: CREDITS_75_USAGE_TITLE,
+		},
+		description: {
+			[ KEY_SUBSCRIPTION ]: DESCRIPTION_SUBSCRIPTION,
+			[ KEY_NO_SUBSCRIPTION ]: DESCRIPTION_NO_SUBSCRIPTION,
 		},
 		url: {
 			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
@@ -30,7 +66,9 @@ const alertConfigs = [
 	},
 ];
 
-const UpgradeButton = ( props ) => <Button color="inherit" { ...props }>{ __( 'Upgrade', 'elementor' ) }</Button>;
+const UpgradeButton = ( props ) => <Button color="inherit" variant="outlined" sx={ { border: '2px solid' } } { ...props }>
+	{ __( 'Upgrade now', 'elementor' ) }
+</Button>;
 
 const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props } ) => {
 	const config = alertConfigs.find( ( { threshold } ) => usagePercentage >= threshold );
@@ -40,7 +78,7 @@ const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props 
 	}
 
 	const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
-	const { title, url, color } = config;
+	const { title, description, url, color } = config;
 	const handleUpgradeClick = () => window.open( url[ subscriptionType ], '_blank' );
 
 	return (
@@ -51,7 +89,7 @@ const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props 
 			{ ...props }
 		>
 			<AlertTitle>{ title[ subscriptionType ] }</AlertTitle>
-			{ __( 'Get maximum access.', 'elementor' ) }
+			{ description[ subscriptionType ] }
 		</Alert>
 	);
 };

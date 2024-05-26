@@ -13,6 +13,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Hints;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -149,6 +150,8 @@ class Admin extends App {
 		wp_enqueue_script( 'elementor-admin' );
 
 		wp_set_script_translations( 'elementor-admin', 'elementor' );
+
+		$this->maybe_enqueue_hints();
 
 		$this->print_config();
 	}
@@ -342,7 +345,12 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Get Elementor Pro', 'elementor' ) );
+		$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
+		if ( Utils::is_sale_time() ) {
+			$go_pro_text = esc_html__( 'Discounted Upgrades Now!', 'elementor' );
+		}
+
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', $go_pro_text );
 
 		return $links;
 	}
@@ -842,10 +850,6 @@ class Admin extends App {
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			$this->register_menu();
-		}
-
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
@@ -943,7 +947,52 @@ class Admin extends App {
 			} )->all();
 	}
 
-	private function register_menu() {
-		$this->menus['main'] = new MainMenu();
+	private function maybe_enqueue_hints() {
+		if ( ! Hints::should_display_hint( 'image-optimization-once-media-modal' ) && ! Hints::should_display_hint( 'image-optimization-media-modal' ) ) {
+			return;
+		}
+
+		wp_register_script(
+			'media-hints',
+			$this->get_js_assets_url( 'media-hints' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		$once_dismissed = Hints::is_dismissed( 'image-optimization-once-media-modal' );
+		$content = $once_dismissed ?
+			sprintf("%1\$s <a href='%2\$s' class='e-btn-1' target='_blank'>%3\$s</a> %4\$s",
+				__( 'This image is large and may slow things down.', 'elementor' ),
+				Hints::get_plugin_action_url( 'image-optimization' ),
+				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' ),
+				__( 'to reduce size without losing quality.', 'elementor' )
+			) :
+			sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+				__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
+				Hints::get_plugin_action_url( 'image-optimization' ),
+				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
+			);
+
+		$dismissible = $once_dismissed ? 'image-optimization-media-modal' : 'image-optimization-once-media-modal';
+
+		wp_localize_script( 'media-hints', 'elementorAdminHints', [
+			'mediaHint' => [
+				'display' => ! $once_dismissed,
+				'type' => $once_dismissed ? 'warning' : 'info',
+				'content' => $content,
+				'icon' => true,
+				'dismissible' => $dismissible,
+				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
+				'button_event' => $dismissible,
+				'button_data' => base64_encode(
+					json_encode( [
+						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+					] ),
+				),
+			],
+		] );
+
+		wp_enqueue_script( 'media-hints' );
 	}
 }

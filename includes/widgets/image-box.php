@@ -73,6 +73,10 @@ class Widget_Image_Box extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'box' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register image box widget controls.
 	 *
@@ -605,7 +609,12 @@ class Widget_Image_Box extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$has_image = ! empty( $settings['image']['url'] );
 		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
+
+		if ( ! $has_image && ! $has_content ) {
+			return;
+		}
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
@@ -613,7 +622,7 @@ class Widget_Image_Box extends Widget_Base {
 			$this->add_link_attributes( 'link', $settings['link'] );
 		}
 
-		if ( ! empty( $settings['image']['url'] ) ) {
+		if ( $has_image ) {
 
 			$image_html = wp_kses_post( Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' ) );
 
@@ -668,9 +677,16 @@ class Widget_Image_Box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		var hasImage = !! settings.image.url;
+		var hasContent = !! ( settings.title_text || settings.description_text );
+
+		if ( ! hasImage && ! hasContent ) {
+			return;
+		}
+
 		var html = '<div class="elementor-image-box-wrapper">';
 
-		if ( settings.image.url ) {
+		if ( hasImage ) {
 			var image = {
 				id: settings.image.id,
 				url: settings.image.url,
@@ -681,7 +697,7 @@ class Widget_Image_Box extends Widget_Base {
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
 
-			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + settings.hover_animation + '" />';
+			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + _.escape( settings.hover_animation ) + '" />';
 
 			if ( settings.link.url ) {
 				imageHtml = '<a href="' + _.escape( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
@@ -690,13 +706,11 @@ class Widget_Image_Box extends Widget_Base {
 			html += '<figure class="elementor-image-box-img">' + imageHtml + '</figure>';
 		}
 
-		var hasContent = !! ( settings.title_text || settings.description_text );
-
 		if ( hasContent ) {
 			html += '<div class="elementor-image-box-content">';
 
 			if ( settings.title_text ) {
-				var title_html = settings.title_text,
+				var title_html = elementor.helpers.sanitize( settings.title_text ),
 					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link.url ) {

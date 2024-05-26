@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';
 import EditorPage from '../pages/editor-page';
-import _path from 'path';
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
+import videos from '../testData/video.json';
 
 test.describe( 'Video tests inside a container @video', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -38,11 +38,11 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = await page.locator( '.elementor-nerd-box--upsale' );
+		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		await editor.selectElement( videoId );
-		await promoArea.scrollIntoViewIfNeeded;
+		await promoArea.scrollIntoViewIfNeeded();
 
 		// Assert
 		expect.soft( await promoArea.screenshot( {
@@ -63,10 +63,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		const videoId = await editor.addWidget( widgets.video, containerId );
 
 		// Act.
-		// Set container padding to 0.
 		await editor.selectElement( containerId );
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
+		await editor.openPanelTab( 'advanced' );
+		await editor.setDimensionsValue( 'padding', '0' );
 
 		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
 		const containerHeight = await container.boundingBox();
@@ -76,8 +75,6 @@ test.describe( 'Video tests inside a container @video', () => {
 		// Verify that the container has an equal height to the video iFrame.
 		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
-
-	const videos = require( _path.resolve( __dirname, `../testData/video.json` ) );
 
 	for ( const video in videos ) {
 		test( `${ video } controls and link test`, async ( { page }, testInfo ) => {
@@ -124,7 +121,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.openSection( 'section_image_overlay' );
 		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
 		await videoWidget.chooseImage( `${ imageTitle }.png` );
-		await wpAdmin.waitForPanel();
+		await editor.waitForPanelToLoad();
 		await videoWidget.selectImageSize(
 			{
 				widget: EditorSelectors.video.widget,
@@ -137,7 +134,7 @@ test.describe( 'Video tests inside a container @video', () => {
 			isPublished: false,
 			isVideo: true } );
 		await editor.publishAndViewPage();
-		await wpAdmin.waitForPanel();
+		await editor.waitForPanelToLoad();
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
@@ -187,17 +184,16 @@ test.describe( 'Video tests inside a section', () => {
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-			column = await editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
+			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),
 			videoId = await editor.addWidget( widgets.video, columnId );
 
 		// Act.
-		// Set section padding to 0.
 		await editor.selectElement( columnId );
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
+		await editor.openPanelTab( 'advanced' );
+		await editor.setDimensionsValue( 'padding', '0' );
 
 		const columnHeight = await column.boundingBox(),
 			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();

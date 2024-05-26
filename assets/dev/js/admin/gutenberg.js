@@ -33,13 +33,17 @@
 			}
 
 			if ( this.hasIframe() ) {
-				this.hideIframeContent();
+				this.handleIframe();
 			}
 
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
+				let editorButtonParent = self.cache.$gutenberg.find( '.block-editor-writing-flow' );
+				if ( ! editorButtonParent.length ) {
+					editorButtonParent = self.cache.$gutenberg.find( '.is-desktop-preview' );
+				}
 
-				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.is-desktop-preview' );
+				self.cache.$gurenbergBlockList = editorButtonParent;
 				self.cache.$gurenbergBlockList.append( self.cache.$editorPanel );
 
 				self.cache.$editorPanelButton = self.cache.$editorPanel.find( '#elementor-go-to-edit-page-link' );
@@ -47,24 +51,14 @@
 				self.cache.$editorPanelButton.on( 'click', function( event ) {
 					event.preventDefault();
 
-					self.animateLoader();
-
-					// A new post is initialized as an 'auto-draft'.
-					// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
-					const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
-
-					if ( isNewPost ) {
-						var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
-						if ( ! documentTitle ) {
-							wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
-						}
-
-						wp.data.dispatch( 'core/editor' ).savePost();
-					}
-
-					self.redirectWhenSave();
+					self.handleEditButtonClick();
 				} );
 			}
+		},
+
+		handleIframe() {
+			this.hideIframeContent();
+			this.buildPanelTopBar();
 		},
 
 		// Sometimes Gutenberg uses iframe instead of div.
@@ -89,6 +83,44 @@
 			</style>`;
 
 			this.cache.$gutenberg.find( 'iframe[name="editor-canvas"]' ).contents().find( 'body' ).append( style );
+		},
+
+		buildPanelTopBar() {
+			var self = this;
+
+			if ( ! $( '#elementor-edit-mode-button' ).length && this.isElementorMode ) {
+				self.cache.$editorBtnTop = $( $( '#elementor-gutenberg-button-tmpl' ).html() );
+				self.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( self.cache.$editorBtnTop );
+
+				$( '#elementor-edit-mode-button' ).on( 'click', function( event ) {
+					event.preventDefault();
+
+					self.handleEditButtonClick( false );
+				} );
+			}
+		},
+
+		handleEditButtonClick( withAnimation = true ) {
+			var self = this;
+
+			if ( withAnimation ) {
+				self.animateLoader();
+			}
+
+			// A new post is initialized as an 'auto-draft'.
+			// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
+			const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
+
+			if ( isNewPost ) {
+				var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+				if ( ! documentTitle ) {
+					wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+				}
+
+				wp.data.dispatch( 'core/editor' ).savePost();
+			}
+
+			self.redirectWhenSave();
 		},
 
 		bindEvents() {

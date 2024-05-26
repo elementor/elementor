@@ -1,5 +1,8 @@
 import Base from '../../../base';
-import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	findChildContainerOrFail,
+	shouldUseAtomicRepeaters,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 /**
  * Hook responsible for removing container element for the removed repeater item.
@@ -25,6 +28,20 @@ export class NestedRepeaterRemoveContainer extends Base {
 			container: findChildContainerOrFail( container, index ),
 			force: true,
 		} );
+
+		const widgetType = container.settings.get( 'widgetType' );
+
+		if ( shouldUseAtomicRepeaters( widgetType ) ) {
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/atomic-repeater', {
+					detail: {
+						container,
+						action: {
+							type: 'remove',
+						},
+					} },
+				) );
+		}
 	}
 }
 

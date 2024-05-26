@@ -70,6 +70,10 @@ class Widget_Social_Icons extends Widget_Base {
 		return [ 'social', 'icon', 'link' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register social icons widget controls.
 	 *
@@ -139,6 +143,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'steam',
 						'telegram',
 						'thumb-tack',
+						'threads',
 						'tripadvisor',
 						'tumblr',
 						'twitch',
@@ -151,6 +156,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'whatsapp',
 						'wordpress',
 						'xing',
+						'x-twitter',
 						'yelp',
 						'youtube',
 						'500px',

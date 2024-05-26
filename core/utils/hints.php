@@ -46,8 +46,18 @@ class Hints {
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
+			'image-optimization-once-media-modal' => [
+				self::DISMISSED => 'image-optimization-once-media-modal',
+				self::CAPABILITY => 'install_plugins',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
 			'image-optimization' => [
 				self::DISMISSED => 'image_optimizer_hint',
+				self::CAPABILITY => 'install_plugins',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
+			'image-optimization-media-modal' => [
+				self::DISMISSED => 'image-optimization-media-modal',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
@@ -130,9 +140,9 @@ class Hints {
 		}
 
 		if ( $notice_settings['dismissible'] ) {
-			$dismissible = '<button class="elementor-control-notice-dismiss" data-event="' . $notice_settings['dismissible'] . '">
+			$dismissible = '<button class="elementor-control-notice-dismiss tooltip-target" data-event="' . $notice_settings['dismissible'] . '" data-tooltip="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only">' . __( 'Dismiss this notice.', 'elementor' ) . '</span>
+				<span class="elementor-screen-only">' . esc_html__( 'Don’t show again.', 'elementor' ) . '</span>
 			</button>';
 		}
 
@@ -327,6 +337,7 @@ class Hints {
 				'class' => [],
 				'data-event' => [],
 				'data-settings' => [],
+				'data-tooltip' => [],
 			],
 			'i' => [
 				'class' => [],
@@ -338,6 +349,7 @@ class Hints {
 			'a' => [
 				'href' => [],
 				'style' => [],
+				'target' => [],
 			],
 		];
 	}
