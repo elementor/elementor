@@ -191,7 +191,7 @@ class Module extends BaseModule {
 		if ( $this->get_ai_app()->is_connected() ) {
 			$usage = $this->get_ai_app()->get_usage( 'elementor-loader', $session_id );
 
-			if ( ! is_wp_error( $usage )  ) {
+			if ( ! is_wp_error( $usage ) ) {
 				$config['usage'] = $usage;
 			}
 		}
