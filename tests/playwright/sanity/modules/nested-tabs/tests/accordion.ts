@@ -6,11 +6,11 @@ import EditorPage from '../../../../pages/editor-page';
 export async function testTabIsVisibleInAccordionView( page: Page, editor: EditorPage ) {
 	// Act.
 	await selectDropdownContainer( editor, '', 0 );
-	await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
+	await editor.setSliderControlValue( 'min_height', '1000' );
 	await selectDropdownContainer( editor, '', 1 );
-	await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
+	await editor.setSliderControlValue( 'min_height', '1000' );
 	await selectDropdownContainer( editor, '', 2 );
-	await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
+	await editor.setSliderControlValue( 'min_height', '1000' );
 
 	await editor.publishAndViewPage();
 	await page.setViewportSize( viewportSize.mobile );
