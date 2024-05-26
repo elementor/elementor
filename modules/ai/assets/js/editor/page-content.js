@@ -3,7 +3,6 @@ import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';
 import GetStarted from './pages/get-started';
-import Loader from './components/loader';
 import useUserInfo from './hooks/use-user-info';
 import WizardDialog from './components/wizard-dialog';
 import PromptDialog from './components/prompt-dialog';
@@ -15,6 +14,8 @@ import { PromptHistoryActionProvider } from './components/prompt-history/context
 import { PromptHistoryProvider } from './components/prompt-history/context/prompt-history-context';
 import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
+import { Box, Typography } from '@elementor/ui';
+import Loader from './components/loader';
 
 const PageContent = (
 	{
@@ -36,7 +37,7 @@ const PageContent = (
 		hasSubscription,
 		credits,
 		usagePercentage,
-	} = useUserInfo();
+	} = ( () => additionalOptions?.useCustomInit ?? useUserInfo )()();
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
@@ -48,6 +49,9 @@ const PageContent = (
 				willChange: 'height',
 				transition: 'height 300ms ease-in-out',
 				position: 'relative',
+			},
+			'& .MuiBox-root': {
+				boxSizing: 'border-box',
 			},
 		},
 		PaperProps: {
@@ -74,10 +78,19 @@ const PageContent = (
 
 	if ( isLoading ) {
 		return (
+
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
 				<PromptDialog.Header onClose={ onClose } />
-
 				<PromptDialog.Content dividers>
+					{ additionalOptions?.loadingTitle && ( <Box
+						style={ {
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							width: '100%', // Ensure the box takes the full width
+						} }>
+						<Typography variant="body1" color="secondary">{ additionalOptions?.loadingTitle }</Typography>
+					</Box> ) }
 					<Loader />
 				</PromptDialog.Content>
 			</PromptDialog>
@@ -205,7 +218,7 @@ PageContent.propTypes = {
 	type: PropTypes.string,
 	controlType: PropTypes.string,
 	onClose: PropTypes.func.isRequired,
-	onConnect: PropTypes.func.isRequired,
+	onConnect: PropTypes.func,
 	getControlValue: PropTypes.func.isRequired,
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,

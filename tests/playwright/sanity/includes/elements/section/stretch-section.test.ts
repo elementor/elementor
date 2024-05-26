@@ -10,11 +10,11 @@ test( 'Stretch section', async ( { page }, testInfo ) => {
 		let editor = await wpAdmin.openNewPage();
 		await testStretchedSection( page, editor, 'ltr' );
 
-		await wpAdmin.setLanguage( 'he_IL' );
+		await wpAdmin.setSiteLanguage( 'he_IL' );
 		editor = await wpAdmin.openNewPage();
 		await testStretchedSection( page, editor, 'rtl' );
 	} finally {
-		await wpAdmin.setLanguage( '' );
+		await wpAdmin.setSiteLanguage( '' );
 	}
 } );
 
@@ -32,14 +32,21 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	const sectionID = await editor.addElement( { elType: 'section' }, 'document' ),
 		sectionElement = editor.getPreviewFrame().locator( `.elementor-element-${ sectionID }` );
 
-	await editor.setBackgroundColor( '#ef9595', sectionID, false );
+	await editor.selectElement( sectionID );
+	await editor.openPanelTab( 'style' );
+	await editor.openSection( 'section_background' );
+	await editor.setChooseControlValue( 'background_background', 'eicon-paint-brush' );
+	await editor.setColorControlValue( 'background_color', '#ef9595' );
 	await editor.openPanelTab( 'layout' );
 	await editor.setSelectControlValue( 'layout', 'boxed' );
 
 	const spacerID = await editor.addWidget( 'spacer', sectionID, true );
 	await editor.selectElement( spacerID );
 	await editor.setSliderControlValue( 'space', '200' );
-	await editor.setBackgroundColor( '#cae0bc', spacerID );
+	await editor.openPanelTab( 'advanced' );
+	await editor.openSection( '_section_background' );
+	await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
+	await editor.setColorControlValue( '_background_color', '#cae0bc' );
 
 	const directionSuffix = 'ltr' === direction ? '' : '-rtl';
 
