@@ -73,11 +73,7 @@ class Module extends BaseModule {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js',
-			[
-				'jquery',
-			],
-		ELEMENTOR_VERSION, true );
+		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
 
 		$elementor_settings = [
 			'isElementorMode' => $document->is_built_with_elementor(),
