@@ -198,7 +198,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			await test.step( 'Set header style', async () => {
 				// Act
-				await editor.setTypography( 'title_typography', '70' );
+				await editor.setTypographyControlValue( 'title_typography', '70' );
 				await editor.setSliderControlValue( 'icon_size', '70' );
 				await editor.setSliderControlValue( 'icon_spacing', '70' );
 				await setIconColor( editor, displayState.normal, colors.green.hex, 'title' );
@@ -251,18 +251,16 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );
 
-			await editor.setShadowControl( 'title_normal_text_shadow', 'text' );
-			await editor.setTextStrokeControl( 'title_normal_stroke', 'text', 2, colors.red.hex );
+			await editor.setShadowControlValue( 'title_normal_text_shadow', 'text' );
+			await editor.setTextStrokeControlValue( 'title_normal_stroke', 'text', 2, colors.red.hex );
 
-			await editor.selectStateTab( 'header_title_color_style', 'hover' );
+			await editor.setTabControlValue( 'header_title_color_style', 'hover' );
+			await editor.setShadowControlValue( 'title_hover_text_shadow', 'text' );
+			await editor.setTextStrokeControlValue( 'title_hover_stroke', 'text', 5, colors.blue.hex );
 
-			await editor.setShadowControl( 'title_hover_text_shadow', 'text' );
-			await editor.setTextStrokeControl( 'title_hover_stroke', 'text', 5, colors.blue.hex );
-
-			await editor.selectStateTab( 'header_title_color_style', 'active' );
-
-			await editor.setShadowControl( 'title_active_text_shadow', 'text' );
-			await editor.setTextStrokeControl( 'title_active_stroke', 'text', 1, colors.orange.hex );
+			await editor.setTabControlValue( 'header_title_color_style', 'active' );
+			await editor.setShadowControlValue( 'title_active_text_shadow', 'text' );
+			await editor.setTextStrokeControlValue( 'title_active_stroke', 'text', 1, colors.orange.hex );
 
 			// Assert
 			const nestedAccordion = frame.locator( '.elementor-widget-n-accordion' );

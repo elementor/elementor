@@ -63,12 +63,12 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		// Act.
 		await editor.getPreviewFrame().locator( `.elementor-element-${ heading }` ).click( { button: 'right' } );
-		await page.waitForSelector( EditorSelectors.ContextMenu.menu );
-		const saveAsGlobal = page.locator( EditorSelectors.ContextMenu.saveAsGlobal ),
+		await page.waitForSelector( EditorSelectors.contextMenu.menu );
+		const saveAsGlobal = page.locator( EditorSelectors.contextMenu.saveAsGlobal ),
 			saveAsGlobalPromotionLinkContainer = saveAsGlobal.locator( 'a' ),
 			saveAsGlobalHref = 'https://go.elementor.com/go-pro-global-widget-context-menu/',
 
-			notes = page.locator( EditorSelectors.ContextMenu.notes ),
+			notes = page.locator( EditorSelectors.contextMenu.notes ),
 			notesPromotionLinkContainer = notes.locator( 'a' ),
 			notesHref = 'https://go.elementor.com/go-pro-notes-context-menu/';
 
@@ -92,7 +92,7 @@ test.describe( 'Promotion tests @promotions', () => {
 	test( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdminPage = new WpAdminPage( page, testInfo ),
-			promotionContainer = '#elementor-navigator__footer';
+			promotionContainer = EditorSelectors.panels.navigator.footer;
 
 		// Act.
 		await wpAdminPage.openNewPage();
@@ -107,7 +107,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		// Arrange.
 		const wpAdminPage = new WpAdminPage( page, testInfo ),
 			editor = await wpAdminPage.openNewPage(),
-			promotionContainer = '#elementor-navigator__footer';
+			promotionContainer = EditorSelectors.panels.navigator.footer;
 
 		await editor.setDisplayMode( 'dark' );
 
@@ -161,7 +161,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
-			navigatorPanel = page.locator( '#elementor-navigator' );
+			navigatorPanel = page.locator( EditorSelectors.panels.navigator.wrapper );
 
 		// Act.
 		for ( let i = 0; i < 20; i++ ) {
