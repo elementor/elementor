@@ -121,7 +121,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.openSection( 'section_image_overlay' );
 		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
 		await videoWidget.chooseImage( `${ imageTitle }.png` );
-		await wpAdmin.waitForPanel();
+		await editor.waitForPanelToLoad();
 		await videoWidget.selectImageSize(
 			{
 				widget: EditorSelectors.video.widget,
@@ -134,7 +134,7 @@ test.describe( 'Video tests inside a container @video', () => {
 			isPublished: false,
 			isVideo: true } );
 		await editor.publishAndViewPage();
-		await wpAdmin.waitForPanel();
+		await editor.waitForPanelToLoad();
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
