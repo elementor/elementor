@@ -5,7 +5,10 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 import useIntroduction from '../hooks/use-introduction';
 import { FocusOutListener, useFocusOutListener } from '../helpers/focus-out-listener';
 
-const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, unmountAction, colorScheme, isRTL } ) => {
+const AiPromotionInfotipWrapper = ( {
+	anchor, header, contentText, controlType, unmountAction, colorScheme,
+	isRTL, clickAction, placement, offset, mainActionText,
+} ) => {
 	const focusOutListener = useFocusOutListener();
 	const { isViewed, markAsViewed } = useIntroduction( `ai_promotion_introduction_${ controlType }` );
 	if ( isViewed ) {
@@ -21,10 +24,13 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 				>
 					<AiPromotionInfotip anchor={ anchor }
 						focusOutListener={ focusOutListener }
+						placement={ placement }
+						offset={ offset }
 						content={ ( <AiPromotionInfotipContent
 							focusOutListener={ focusOutListener }
 							header={ header }
 							contentText={ contentText }
+							mainActionText={ mainActionText }
 							onClose={ () => {
 								markAsViewed();
 								focusOutListener.remove();
@@ -34,7 +40,11 @@ const AiPromotionInfotipWrapper = ( { anchor, header, contentText, controlType, 
 								markAsViewed();
 								focusOutListener.remove();
 								unmountAction();
-								anchor.click();
+								if ( clickAction ) {
+									clickAction();
+								} else {
+									anchor.click();
+								}
 							} }
 						/> ) }
 					/>
@@ -52,6 +62,10 @@ AiPromotionInfotipWrapper.propTypes = {
 	unmountAction: PropTypes.func,
 	colorScheme: PropTypes.string,
 	isRTL: PropTypes.bool,
+	clickAction: PropTypes.func,
+	placement: PropTypes.string,
+	offset: PropTypes.object,
+	mainActionText: PropTypes.string,
 };
 
 export default AiPromotionInfotipWrapper;

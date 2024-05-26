@@ -2,6 +2,7 @@ import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
+import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -145,10 +146,7 @@ export default class AiBehavior extends Marionette.Behavior {
 			return;
 		}
 
-		const editorSessionValue = sessionStorage.getItem( 'ai_promotion_introduction_editor_session_key' );
-		if ( ! editorSessionValue || editorSessionValue !== EDITOR_SESSION_ID ) {
-			sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', EDITOR_SESSION_ID );
-		} else {
+		if ( ! shouldShowPromotionIntroduction( sessionStorage ) ) {
 			return;
 		}
 		setTimeout( () => {
@@ -160,11 +158,13 @@ export default class AiBehavior extends Marionette.Behavior {
 			const rootElement = document.createElement( 'div' );
 			document.body.append( rootElement );
 
+			const mainActionText = isPromotion ? __( 'Try it for free', 'elementor' ) : __( 'Try it now', 'elementor' );
 			const { unmount } = ReactUtils.render( (
 				<AiPromotionInfotipWrapper
 					anchor={ $button[ 0 ] }
 					header={ promotionTexts.header }
 					contentText={ promotionTexts.contentText }
+					mainActionText={ mainActionText }
 					controlType={ controlType }
 					unmountAction={ () => {
 						unmount();

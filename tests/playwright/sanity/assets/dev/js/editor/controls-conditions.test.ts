@@ -7,7 +7,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'heading' );
 
@@ -68,7 +68,7 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 
 	await expect( backgroundPositionControl ).toBeVisible();
 
-	await page.selectOption( '.elementor-control-background_size_mobile >> select', 'initial' );
+	await editor.setSelectControlValue( 'background_size_mobile', 'initial' );
 
 	const customBackgroundSizeControl = page.locator( '.elementor-control-background_bg_width_mobile' );
 

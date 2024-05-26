@@ -202,6 +202,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
+			'control_type' => 'content',
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_horizontal', [
@@ -1149,7 +1150,9 @@ class NestedTabs extends Widget_Nested_Base {
 		};
 
 		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
-		$children[ $index ]->print_element();
+		if ( isset( $children[ $index ] ) ) {
+			$children[ $index ]->print_element();
+		}
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 

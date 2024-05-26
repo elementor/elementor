@@ -4,7 +4,7 @@ import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector`, async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'tabs' );
 	await editor.getPreviewFrame().waitForSelector( '.elementor-tab-title.elementor-active' );
