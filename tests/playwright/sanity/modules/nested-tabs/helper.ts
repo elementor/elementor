@@ -82,8 +82,7 @@ export async function setTabItemColor(
 		await page.locator( `.elementor-control-${ panelClass }` ).click();
 	}
 	await page.locator( `.elementor-control-${ tabState }` ).click();
-	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
-	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+	await editor.setColorControlValue( colorPickerClass, color );
 }
 
 export async function setTabBorderColor(
@@ -102,8 +101,7 @@ export async function setTabBorderColor(
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` )
 		.first()
 		.fill( borderWidth );
-	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_color .pcr-button` ).click();
-	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+	await editor.setColorControlValue( `tabs_title_border${ stateExtended }_color`, color );
 }
 
 export async function selectDropdownContainer( editor: EditorPage, widgetId = '', itemNumber = 0 ) {

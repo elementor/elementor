@@ -1,28 +1,16 @@
 const EditorSelectors = {
-	previewIframe: '#elementor-preview-iframe',
-	container: '[data-element_type="container"]',
-	elementsPanelItem: ( title: string ) => `.elementor-panel-category-items :text-is('${ title }')`,
-	searchWidgetLabel: 'Search Widget...',
-	addNewPresetLbl: 'Add New Container',
 	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
-	viewPageBtn: 'View Page',
-	updateBtn: 'Update',
-	widget: '[data-element_type="widget"]',
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
-	loadingElement: ( id: string ) => `.elementor-element-${ id }.elementor-loading`,
-	videoIframe: 'iframe.elementor-video',
-	playIcon: '[aria-label="Play"]',
-	mapIframe: 'iframe[src*="https://maps.google.com/maps"]',
-	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
-	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
-	soundWaveForm: 'div.waveform.loaded',
+	widget: '[data-element_type="widget"]',
+	container: '[data-element_type="container"]',
 	item: '.elementor-repeater-row-item-title',
-	addNewItem: 'button.elementor-button elementor-repeater-add',
 	plusIcon: '.eicon-plus-circle',
-	topBar: {
-		wrapper: '#elementor-editor-wrapper-v2',
-	},
+	siteTitle: 'h1.site-title',
+	pageTitle: 'h1.entry-title',
 	panels: {
+		topBar: {
+			wrapper: '#elementor-editor-wrapper-v2',
+		},
 		menu: {
 			wrapper: '#elementor-panel-page-menu',
 			footerButton: '#elementor-panel-header-menu-button i',
@@ -35,12 +23,17 @@ const EditorSelectors = {
 			wrapper: '#elementor-panel-page-settings',
 			footerButton: '#elementor-panel-footer-settings i',
 		},
+		siteSettings: {
+			wrapper: '#elementor-panel-page-menu',
+			menuPanelItem: '.elementor-panel-menu-item-global-settings',
+		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
 			menuPanelItem: '.elementor-panel-menu-item-editor-preferences',
 		},
 		navigator: {
 			wrapper: '#elementor-navigator',
+			footer: '#elementor-navigator__footer',
 			closeButton: '#elementor-navigator__close',
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
@@ -55,8 +48,6 @@ const EditorSelectors = {
 		imgCaption: '#attachment-details-caption',
 		imgDescription: '#attachment-details-description',
 	},
-	siteTitle: 'h1.site-title',
-	pageTitle: 'h1.entry-title',
 	button: {
 		getByName: ( name: string ) => `.elementor-button:has-text("${ name }")`,
 		id: '[data-setting="button_css_id"]',
@@ -154,6 +145,7 @@ const EditorSelectors = {
 		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
+		playIcon: '[aria-label="Play"]',
 	},
 	socialIcons: {
 		widget: '[data-widget_type="social-icons.default"]',
@@ -169,14 +161,19 @@ const EditorSelectors = {
 		body: '#tinymce',
 	},
 	googleMaps: {
+		iframe: 'iframe[src*="https://maps.google.com/maps"]',
+		showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 		location: '[data-setting="address"]',
+	},
+	soundCloud: {
+		iframe: 'iframe[src*="https://w.soundcloud.com/"]',
+		waveForm: 'div.waveform.loaded',
 	},
 	ai: {
 		aiButton: '.e-ai-button',
 		aiDialogCloseButton: '.MuiDialog-container button[aria-label="close"]',
 		promptInput: 'input[name="prompt"]',
 		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
-
 		image: {
 			promptTextarea: '[data-testid="e-image-prompt"] textarea',
 			typeInput: '#image-type + input',
@@ -184,7 +181,6 @@ const EditorSelectors = {
 			aspectRationInput: '#aspect-ratio + input',
 			generatedImage: '[data-testid="e-gallery-image"] img',
 		},
-
 		promptHistory: {
 			button: 'button[aria-label="Show prompt history"]',
 			modal: '#prompt-history-modal',
@@ -201,7 +197,7 @@ const EditorSelectors = {
 			editButton: 'button[aria-label="Edit result"]',
 		},
 	},
-	ContextMenu: {
+	contextMenu: {
 		menu: '.elementor-context-menu',
 		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
 		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',

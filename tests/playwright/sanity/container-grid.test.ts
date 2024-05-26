@@ -564,7 +564,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'On initial page load when container is not empty', async () => {
 			await editor.saveAndReloadPage();
-			await wpAdmin.waitForPanel();
+			await editor.waitForPanelToLoad();
 			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );

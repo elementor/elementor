@@ -219,7 +219,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		const frame = editor.getPreviewFrame(),
 			nestedAccordionId = await editor.addWidget( 'nested-accordion', containerId ),
