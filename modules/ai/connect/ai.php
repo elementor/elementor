@@ -475,7 +475,7 @@ class Ai extends Library {
 				'site_lang' => get_bloginfo( 'language' ),
 				'size' => wp_json_encode( $image_data['size'] ),
 				'position' => wp_json_encode( $image_data['position'] ),
-				'image_url' => $image_data['image_url'],
+				'image_base64' => $image_data['image_base64'],
 				$image_data['image'],
 			],
 			[
@@ -518,7 +518,7 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-				'image_url' => $image_data['image_url'],
+				'image_base64' => $image_data['image_base64'],
 			],
 			[
 				[
