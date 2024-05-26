@@ -37,7 +37,7 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Add widgets.
 		const button = await editor.addWidget( widgets.button, container ),
@@ -78,10 +78,15 @@ test.describe( 'Container tests @container', () => {
 		await editor.addWidget( widgets.toggle, containerId );
 		await editor.addWidget( widgets.video, containerId );
 
-		await editor.setBackgroundColor( '#A81830', spacer );
+		await editor.selectElement( spacer );
+		await editor.openPanelTab( 'advanced' );
+		await editor.openSection( '_section_background' );
+		await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
+		await editor.setColorControlValue( '_background_color', '#A81830' );
+
 		await editor.selectElement( containerId );
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
@@ -104,9 +109,9 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Flex-direction: column
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 		// Align items: flex-start
-		await page.click( '.elementor-control-flex_align_items i.eicon-align-start-v' );
+		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-start-v' );
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await editor.setSliderControlValue( 'min_height', '1500' );
 		await editor.hideVideoControls();
@@ -279,9 +284,9 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.selectElement( container );
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		// Set flex-wrap: wrap.
-		await page.click( '.elementor-control-flex_wrap .elementor-control-input-wrapper .eicon-wrap' );
+		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -374,8 +379,7 @@ test.describe( 'Container tests @container', () => {
 		await page.click( '.button.media-button' );
 		await editor.openSection( 'section_background_overlay' );
 		await page.locator( '.elementor-control-background_overlay_background [data-tooltip="Classic"]' ).click();
-		await page.locator( '.elementor-control-background_overlay_color .pcr-button' ).click();
-		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#61CE70' );
+		await editor.setColorControlValue( 'background_overlay_color', '#61CE70' );
 
 		await editor.closeNavigatorIfOpen();
 		await editor.togglePreviewMode();
@@ -421,14 +425,16 @@ test.describe( 'Container tests @container', () => {
 
 		// Act.
 		// Add widgets.
-		const spacer = await editor.addWidget( 'spacer', containerId );
-
+		await editor.addWidget( 'spacer', containerId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
-		await editor.setBackgroundColor( '#A81830', spacer );
-		// Set container `align-items: center`.
+		await editor.openSection( '_section_background' );
+		await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
+		await editor.setColorControlValue( '_background_color', '#A81830' );
+
 		await editor.selectElement( containerId );
-		await page.click( '.elementor-control-flex_align_items .eicon-align-center-v' );
+		// Set container `align-items: center`.
+		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
 
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
@@ -459,7 +465,7 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setSiteLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
@@ -468,7 +474,7 @@ test.describe( 'Container tests @container', () => {
 				quality: 100,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		}
 
 		const editor = await createCanvasPage( wpAdmin );
@@ -521,12 +527,12 @@ test.describe( 'Container tests @container', () => {
 		const directions = [ 'right', 'down', 'left', 'up' ];
 
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setSiteLanguage( 'he_IL' );
 			const editor = await wpAdmin.openNewPage();
 			await editor.addElement( { elType: 'container' }, 'document' );
 			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		}
 	} );
 
@@ -537,7 +543,7 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Add widgets.
 		await editor.addWidget( widgets.button, container );
@@ -699,7 +705,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Evaluate scroll widths in the browser context.
 		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
@@ -722,7 +728,7 @@ test.describe( 'Container tests @container', () => {
 		await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
 
 		await page.reload();
-		await editor.ensurePanelLoaded();
+		await editor.waitForPanelToLoad();
 
 		await editor.openPageSettingsPanel();
 
@@ -752,7 +758,7 @@ test.describe( 'Container tests @container', () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Set row direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 			await editor.addWidget( widgets.image, container );
 
@@ -782,7 +788,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.selectElement( container );
 
 			// Set column direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 
@@ -807,7 +813,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.selectElement( container );
 
 			// Set row direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
@@ -821,7 +827,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.selectElement( container );
 
 			// Set row direction.
-			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 
@@ -875,7 +881,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		try {
-			await wpAdmin.setLanguage( 'he_IL' );
+			await wpAdmin.setSiteLanguage( 'he_IL' );
 
 			let editor = await wpAdmin.openNewPage();
 			let frame = editor.getPreviewFrame();
@@ -900,7 +906,7 @@ test.describe( 'Container tests @container', () => {
 			} );
 
 			await test.step( 'Set user language to English', async () => {
-				await wpAdmin.setLanguage( 'he_IL', '' );
+				await wpAdmin.setSiteLanguage( 'he_IL', '' );
 			} );
 
 			editor = await wpAdmin.openNewPage();
@@ -924,7 +930,7 @@ test.describe( 'Container tests @container', () => {
 					.toHaveScreenshot( 'container-dimensions-rtl-with-ltr-ui.png' );
 			} );
 		} finally {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		}
 
 		const editor = await wpAdmin.openNewPage(),
