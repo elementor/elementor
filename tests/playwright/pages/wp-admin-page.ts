@@ -7,10 +7,20 @@ import { ElementorType, WindowType } from '../types/types';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
+	/**
+	 * Go to the WordPress dashboard.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
+	/**
+	 * If not logged in, log in to WordPress. Otherwise, go to the WordPress dashboard.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async login() {
 		await this.gotoDashboard();
 
@@ -27,7 +37,15 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage( setWithApi: boolean = true, setPageName: boolean = true ) {
+	/**
+	 * Open a new Elementor page.
+	 *
+	 * @param {boolean} setWithApi  - Optional. Whether to create the page with the API. Default is true.
+	 * @param {boolean} setPageName - Optional. Whether to set the page name. Default is true.
+	 *
+	 * @return {Promise<EditorPage>}
+	 */
+	async openNewPage( setWithApi: boolean = true, setPageName: boolean = true ): Promise<EditorPage> {
 		if ( setWithApi ) {
 			await this.createNewPostWithAPI();
 		} else {
@@ -41,6 +59,11 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
+	/**
+	 * Create a new page with the API and open it in Elementor.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async createNewPostWithAPI() {
 		const request: APIRequestContext = this.page.context().request,
 			postDataInitial = {
@@ -56,6 +79,13 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 	}
 
+	/**
+	 * Create a new page from the WordPress dashboard.
+	 *
+	 * @param {boolean} setPageName
+	 *
+	 * @return {Promise<void>}
+	 */
 	async createNewPostFromDashboard( setPageName: boolean ) {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
@@ -70,6 +100,11 @@ export default class WpAdminPage extends BasePage {
 		await this.setPageName();
 	}
 
+	/**
+	 * Set the page name.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async setPageName() {
 		await this.page.locator( '#elementor-panel-footer-settings' ).click();
 
@@ -81,7 +116,12 @@ export default class WpAdminPage extends BasePage {
 		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
-	async convertFromGutenberg() {
+	/**
+	 * Convert the current page from Gutenberg to Elementor.
+	 *
+	 * @return {Promise<EditorPage>}
+	 */
+	async convertFromGutenberg(): Promise<EditorPage> {
 		await Promise.all( [
 			this.page.waitForResponse( async ( response ) => await this.blockUrlResponse( response ) ),
 			this.page.click( '#elementor-switch-mode' ),
@@ -96,12 +136,24 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
-	async blockUrlResponse( response ) {
+	/**
+	 * Get the response status for the API request.
+	 *
+	 * @param {Object} response - The response object.
+	 *
+	 * @return {Promise<boolean>}
+	 */
+	async blockUrlResponse( response ): Promise<boolean> {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
 		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
 		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
 	}
 
+	/**
+	 * Skip the tutorial.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async skipTutorial() {
 		await this.page.waitForTimeout( 1000 );
 		const next = await this.page.$( "text='Next'" );
@@ -111,17 +163,24 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
+	/**
+	 * Wait for the Elementor editor panel to finish loading.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async waitForPanel() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
-	 * Determine which experiments are active / inactive.
+	 * Activate and deactivate Elementor experiments.
 	 *
 	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 *
+	 * @return {Promise<void>}
 	 */
 	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
@@ -150,7 +209,15 @@ export default class WpAdminPage extends BasePage {
 		await this.page.click( '#submit' );
 	}
 
-	async setLanguage( language: string, userLanguage = null ) {
+	/**
+	 * Set site language.
+	 *
+	 * @param {string} language     - The site language to set.
+	 * @param {string} userLanguage - Optional. The user language to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSiteLanguage( language: string, userLanguage = null ) {
 		let languageCheck = language;
 
 		if ( 'he_IL' === language ) {
@@ -172,12 +239,24 @@ export default class WpAdminPage extends BasePage {
 		await this.setUserLanguage( userProfileLanguage );
 	}
 
+	/**
+	 * Set user language.
+	 *
+	 * @param {string} language - The language to set.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async setUserLanguage( language: string ) {
 		await this.page.goto( 'wp-admin/profile.php' );
 		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
 	}
 
+	/**
+	 * Confirm the Elementor experiment modal if it's open.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async confirmExperimentModalIfOpen() {
 		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
 
@@ -198,13 +277,10 @@ export default class WpAdminPage extends BasePage {
 		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
 	}
 
-	async openSiteSettings() {
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( 'text=Site Settings' );
-	}
-
-	/*
-	 * Enable uploading SVG files
+	/**
+	 * Enable uploading SVG files.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async enableAdvancedUploads() {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
@@ -212,15 +288,22 @@ export default class WpAdminPage extends BasePage {
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
-	/*
-     *  Disable uploading SVG files
-     */
+	/**
+	 * Disable uploading SVG files.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async disableAdvancedUploads() {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
+	/**
+	 * Close the Elementor announcements if they are visible.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async closeAnnouncementsIfVisible() {
 		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
@@ -234,10 +317,20 @@ export default class WpAdminPage extends BasePage {
 		} );
 	}
 
+	/**
+	 * Edit the page with Elementor.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async editWithElementor() {
 		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
 	}
 
+	/**
+	 * Close the block editor popup if it's visible.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async closeBlockEditorPopupIfVisible() {
 		await this.page.locator( '#elementor-switch-mode-button' ).waitFor();
 		if ( await this.page.getByRole( 'button', { name: 'Close' } ).isVisible() ) {
@@ -245,11 +338,25 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
+	/**
+	 * Open a new WordPress page.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
 	}
 
+	/**
+	 * Screenshot test for the promotion page.
+	 *
+	 * @param {string} promotionContainer - The promotion container selector.
+	 * @param {string} pageUri            - The page URI.
+	 * @param {string} screenshotName     - The screenshot name.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
 		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
 		const promoContainer = this.page.locator( promotionContainer );
@@ -257,12 +364,22 @@ export default class WpAdminPage extends BasePage {
 		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
 
+	/**
+	 * Hide the WordPress admin bar.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async hideAdminBar() {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).uncheck();
 		await this.page.locator( '#submit' ).click();
 	}
 
+	/**
+	 * Show the WordPress admin bar.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async showAdminBar() {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).check();
