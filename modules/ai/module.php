@@ -103,6 +103,41 @@ class Module extends BaseModule {
 			}
 		} );
 
+		add_action( 'enqueue_block_editor_assets', function() {
+			wp_enqueue_script( 'elementor-ai-gutenberg',
+				$this->get_js_assets_url( 'ai-gutenberg' ),
+				[
+					'jquery',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
+				],
+				ELEMENTOR_VERSION, true );
+
+			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+
+			$config = [
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+				'client_session_id' => $session_id,
+			];
+
+			if ( $this->get_ai_app()->is_connected() ) {
+				$usage = $this->get_ai_app()->get_usage( 'gutenberg-loader', $session_id );
+
+				if ( ! is_wp_error( $usage )  ) {
+					$config['usage'] = $usage;
+				}
+			}
+
+			wp_localize_script(
+				'elementor-ai-gutenberg',
+				'ElementorAiConfig',
+				$config
+			);
+
+			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
+		});
+
 		add_filter( 'elementor/document/save/data', function ( $data ) {
 			if ( $this->is_layout_active() ) {
 				return $this->remove_temporary_containers( $data );

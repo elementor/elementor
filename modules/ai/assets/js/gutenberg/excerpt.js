@@ -89,10 +89,10 @@ const AIExcerpt = ( { onClose } ) => {
 		}
 	}, [ postTextualContent, send ] );
 	useEffect( () => {
-		if ( ! generateExcerptOnce.current ) {
+		if ( ! generateExcerptOnce.current && isConnected ) {
 			fetchAiExcerpt();
 		}
-	}, [ fetchAiExcerpt ] );
+	}, [ fetchAiExcerpt, isConnected ] );
 	const isRTL = elementorCommon.config.isRTL;
 
 	return (

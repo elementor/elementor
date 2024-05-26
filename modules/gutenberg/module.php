@@ -79,14 +79,6 @@ class Module extends BaseModule {
 			],
 		ELEMENTOR_VERSION, true );
 
-		wp_enqueue_script( 'elementor-ai-gutenberg', ELEMENTOR_ASSETS_URL . 'js/ai-gutenberg' . $suffix . '.js',
-			[
-				'jquery',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
-			],
-		ELEMENTOR_VERSION, true );
-
 		$elementor_settings = [
 			'isElementorMode' => $document->is_built_with_elementor(),
 			'editLink' => $document->get_edit_url(),
