@@ -7,13 +7,13 @@ import Content from '../../../../../pages/elementor-panel-tabs/content';
 export default class ReverseColumns {
 	readonly page: Page;
 	readonly testInfo: TestInfo;
-	readonly wpAdminPage: WpAdminPage;
+	readonly wpAdmin: WpAdminPage;
 	readonly editor: EditorPage;
 
 	constructor( page: Page, testInfo: TestInfo ) {
 		this.page = page;
 		this.testInfo = testInfo;
-		this.wpAdminPage = new WpAdminPage( this.page, this.testInfo );
+		this.wpAdmin = new WpAdminPage( this.page, this.testInfo );
 		this.editor = new EditorPage( this.page, this.testInfo );
 	}
 
@@ -36,11 +36,11 @@ export default class ReverseColumns {
 	}
 
 	async init( isExperimentBreakpoints: boolean ) {
-		await this.wpAdminPage.setExperiments( {
+		await this.wpAdmin.setExperiments( {
 			additional_custom_breakpoints: isExperimentBreakpoints,
 			container: false,
 		} );
-		await this.wpAdminPage.openNewPage();
+		await this.wpAdmin.openNewPage();
 		await this.editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
 		if ( isExperimentBreakpoints ) {
 			const pageUrl = new URL( this.page.url() );
