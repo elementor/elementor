@@ -28,9 +28,9 @@ test.describe( 'AI @ai', () => {
 		await test.step( 'Media control', async () => {
 			await editor.addWidget( 'image' );
 
-			await editor.activatePanelTab( 'advanced' );
+			await editor.openPanelTab( 'advanced' );
 			await editor.openSection( '_section_background' );
-			await page.locator( '.elementor-control-_background_background .eicon-paint-brush' ).click();
+			await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
 
 			await expect( page.locator( '.elementor-control-_background_image.elementor-control-type-media .e-ai-button' ) ).toHaveCount( 1 );
 		} );

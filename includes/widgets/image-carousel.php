@@ -73,6 +73,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *
@@ -1043,6 +1047,10 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		if ( 'title' === $caption_type ) {
 			return $attachment_post->post_title;
+		}
+
+		if ( empty( $attachment_post->post_content ) ) {
+			return '';
 		}
 
 		return $attachment_post->post_content;

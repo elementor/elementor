@@ -70,6 +70,10 @@ class Widget_Social_Icons extends Widget_Base {
 		return [ 'social', 'icon', 'link' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register social icons widget controls.
 	 *

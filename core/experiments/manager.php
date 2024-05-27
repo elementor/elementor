@@ -469,6 +469,11 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.22.0',
+			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -476,6 +481,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
+			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
 		] );
@@ -486,10 +492,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'New plugin onboarding.', 'elementor' ),
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => false,
-			],
+			'default' => self::STATE_ACTIVE,
 		] );
 	}
 
