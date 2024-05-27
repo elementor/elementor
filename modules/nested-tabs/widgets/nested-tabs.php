@@ -1250,9 +1250,8 @@ class NestedTabs extends Widget_Nested_Base {
 		const tabIndex = view.collection.length,
 			elementUid = view.getIDInt().toString().substr( 0, 3 ),
 			item = data,
-			hoverAnimationClass = view?.container?.settings?.attributes?.hover_animation
-				? `elementor-animation-${ view.container.settings.attributes.hover_animation }`
-				: '';
+hoverAnimation = view?.container?.settings?.attributes?.hover_animation;
+hoverAnimationClass = hoverAnimation ? `elementor-animation-${hoverAnimation}` : '';
 		#>
 		<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' );
 	}
