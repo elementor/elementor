@@ -44,7 +44,6 @@ export default class NestedTabs extends Base {
 			selectors: {
 				widgetContainer: '.e-n-tabs',
 				tabTitle: '.e-n-tab-title',
-				tabTitleIcon: '.e-n-tab-icon',
 				tabTitleText: '.e-n-tab-title-text',
 				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
@@ -401,21 +400,18 @@ export default class NestedTabs extends Base {
 	linkContainer( event ) {
 		const { container } = event.detail,
 			id = container.model.get( 'id' ),
-			currentId = this.$element.data( 'id' ),
-			view = container.view.$el;
+			currentId = this.$element.data( 'id' );
 
 		if ( id === currentId ) {
 			this.updateIndexValues();
-			this.updateListeners( view );
+			this.updateListeners();
+
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 	}
 
-	updateListeners( view ) {
-		this.elements.$tabContents = view.find( this.getSettings( 'selectors.tabContent' ) );
-		this.elements.$tabTitles = view.find( this.getSettings( 'selectors.tabTitle' ) );
-
-		this.elements.$tabTitles.on( this.getTabEvents() );
+	updateListeners() {
+		elementorFrontend.elementsHandler.runReadyTrigger( this.$element[ 0 ] );
 	}
 
 	updateIndexValues() {
@@ -432,12 +428,8 @@ export default class NestedTabs extends Base {
 			element.setAttribute( 'id', updatedTabID );
 			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 			element.setAttribute( 'data-tab-index', newIndex );
-
-			element.querySelector( settings.selectors.tabTitleIcon )?.setAttribute( 'data-binding-index', newIndex );
-
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'aria-controls', updatedTabID );
-
 			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
 			$tabContents[ index ].setAttribute( 'data-tab-index', updatedTabID );
 			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
