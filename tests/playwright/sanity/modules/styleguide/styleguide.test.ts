@@ -46,7 +46,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			wpAdmin.openSiteSettings(),
+			editor.openSiteSettings(),
 		] );
 
 		// Assert.
@@ -74,7 +74,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		// Act 2.
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
-		await page.waitForSelector( '.elementor-control-section_text_style' );
+		await editor.openSection( 'section_text_style' );
 
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
@@ -112,7 +112,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			wpAdmin.openSiteSettings( ),
+			editor.openSiteSettings( ),
 		] );
 
 		// Assert.
@@ -496,7 +496,7 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 
 	await Promise.all( [
 		page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-		wpAdmin.openSiteSettings( ),
+		editor.openSiteSettings( ),
 	] );
 
 	await page.waitForTimeout( 1000 );

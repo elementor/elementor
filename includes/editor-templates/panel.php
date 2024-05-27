@@ -114,7 +114,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		</span>
 	</button>
 	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button e-primary elementor-disabled">
+		<# const publishTitle = $e.components.get( 'document/elements' ).utils.getTitleForPublishButton(); #>
+		<button id="elementor-panel-saver-button-publish" class="elementor-button e-primary elementor-disabled" title="{{{ publishTitle }}}">
 			<span class="elementor-state-icon">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</span>
