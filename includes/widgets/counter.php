@@ -87,6 +87,10 @@ class Widget_Counter extends Widget_Base {
 		return [ 'counter' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register counter widget controls.
 	 *

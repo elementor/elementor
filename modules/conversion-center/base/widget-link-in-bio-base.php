@@ -18,8 +18,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	use Conversion_Center_Controls_Trait;
 
-	const TAB_ADVANCED = 'advanced-tab-links-in-bio';
-
 	public static function get_configuration() {
 		return [
 			'content' => [
@@ -82,11 +80,13 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						],
 					],
 				],
-
+				'image_links_section' => false,
 			],
 			'style' => [
 				'identity_section' => [
 					'has_profile_image_shape' => true,
+					'profile_image_max' => 115,
+					'cover_image_max' => 1000,
 				],
 				'cta_section' => [
 					'has_dividers' => false,
@@ -133,6 +133,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'border_section' => [
 					'field_options' => false,
 				],
+				'image_links_section' => false,
 			],
 
 		];
@@ -158,10 +159,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		return Plugin::$instance->experiments->is_feature_active( ConversionCenterModule::EXPERIMENT_NAME );
 	}
 
-	public function get_stack( $with_common_controls = true ): array {
-		return parent::get_stack( false );
-	}
-
 	protected function register_controls(): void {
 
 		$this->add_content_tab();
@@ -175,6 +172,90 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$render_strategy = new Core_Render( $this );
 
 		$render_strategy->render();
+	}
+
+	protected function add_image_links_controls() {
+		$config = static::get_configuration();
+
+		if ( empty( $config['content']['image_links_section'] ) ) {
+			return;
+		}
+
+		$this->start_controls_section(
+			'image_links_section',
+			[
+				'label' => esc_html__( 'Image Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		if ( ! empty( $config['content']['image_links_section']['images_max'] ) ) {
+			$this->add_control(
+				'image_links_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => sprintf(
+						__( 'Add up to <b>%d</b> Images', 'elementor' ),
+						$config['content']['image_links_section']['images_max']
+					),
+				]
+			);
+		}
+
+		$this->add_icons_per_row_control(
+			'image_links_per_row',
+			[
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+			],
+			'2',
+			esc_html__( 'Images Per Row', 'elementor' ),
+			'--e-link-in-bio-image-links-columns',
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'image_links_image',
+			[
+				'label' => esc_html__( 'Choose Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'label_block' => true,
+				'default' => [
+					'url' => Utils::get_placeholder_image_src(),
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'image_links_url',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'autocomplete' => true,
+				'label_block' => true,
+				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+			],
+		);
+
+		$this->add_control(
+			'image_links',
+			[
+				'type' => Controls_Manager::REPEATER,
+				'max_items' => $config['content']['image_links_section']['images_max'] ?? 0,
+				'fields' => $repeater->get_controls(),
+				'prevent_empty' => true,
+				'button_text' => esc_html__( 'Add item', 'elementor' ),
+				'default' => $config['content']['image_links_section']['images_repeater_defaults'] ?? [],
+			]
+		);
+
+		$this->end_controls_section();
 	}
 
 	protected function add_cta_controls() {
@@ -280,6 +361,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'cta_link_type' => [
 						Social_Network_Provider::FILE_DOWNLOAD,
 					],
+				],
+				'ai' => [
+					'active' => false,
 				],
 			],
 		);
@@ -419,7 +503,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'max_items' => $config['content']['cta_section']['cta_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
 				'title_field' => '{{{ cta_link_text }}}',
-				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add CTA Link', 'elementor' ),
 				'default' => $config['content']['cta_section']['cta_repeater_defaults'],
 			]
@@ -700,21 +783,19 @@ JS;
 
 		$this->add_style_cta_section();
 
+		$this->add_style_image_links_controls();
+
 		$this->add_style_background_controls();
 
+		$this->add_style_layout_controls();
 	}
 
-	protected function add_advanced_tab(): void {
-		Controls_Manager::add_tab(
-			static::TAB_ADVANCED,
-			esc_html__( 'Advanced', 'elementor' )
-		);
-
+	protected function add_style_layout_controls() {
 		$this->start_controls_section(
 			'advanced_layout_section',
 			[
 				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab' => static::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -816,12 +897,15 @@ JS;
 		);
 
 		$this->end_controls_section();
+	}
+
+	protected function add_advanced_tab(): void {
 
 		$this->start_controls_section(
 			'advanced_custom_controls_section',
 			[
 				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab' => static::TAB_ADVANCED,
+				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
@@ -859,10 +943,6 @@ JS;
 		);
 
 		$this->end_controls_section();
-
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
-
-		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
 	}
 
 	protected function add_bio_section(): void {
@@ -888,7 +968,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_heading_tag', 'h1' );
+		$this->add_html_tag_control( 'bio_heading_tag', 'h2' );
 
 		$this->add_control(
 			'bio_title',
@@ -903,7 +983,7 @@ JS;
 			]
 		);
 
-		$this->add_html_tag_control( 'bio_title_tag', 'h2' );
+		$this->add_html_tag_control( 'bio_title_tag', 'h3' );
 
 		if ( $config['content']['bio_section']['has_about_field'] ) {
 			$this->add_control(
@@ -1005,6 +1085,55 @@ JS;
 				],
 			]
 		);
+
+		$this->end_controls_section();
+	}
+
+	protected function add_style_image_links_controls(): void {
+		$config = static::get_configuration();
+
+		if ( empty( $config['style']['image_links_section'] ) ) {
+			return;
+		}
+
+		$this->start_controls_section(
+			'image_links_section_style',
+			[
+				'label' => esc_html__( 'Image Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_links_height',
+			[
+				'label' => esc_html__( 'Image Height', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 300,
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-image-links-height: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		if ( $config['style']['image_links_section']['has_border_control'] ) {
+			$this->add_borders_control(
+				$config['style']['image_links_section']['has_border_control']['prefix'],
+				$config['style']['image_links_section']['has_border_control']['show_border_args'],
+				$config['style']['image_links_section']['has_border_control']['border_width_args'],
+				$config['style']['image_links_section']['has_border_control']['border_color_args'],
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -1148,7 +1277,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'cta_links_divider_color',
 				[
 					'label' => esc_html__( 'Color', 'elementor' ),
@@ -1223,6 +1352,8 @@ JS;
 		$this->add_icons_controls();
 
 		$this->add_cta_controls();
+
+		$this->add_image_links_controls();
 	}
 
 	protected function add_style_bio_controls(): void {
@@ -1495,7 +1626,7 @@ JS;
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 150,
+						'max' => $config['style']['identity_section']['profile_image_max'] ?? 150,
 					],
 				],
 				'default' => [
@@ -1554,7 +1685,7 @@ JS;
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 1000,
+						'max' => $config['style']['identity_section']['cover_image_max'] ?? 1000,
 						'step' => 1,
 					],
 					'%' => [
