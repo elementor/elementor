@@ -8,15 +8,19 @@
 
 	--e-contact-buttons-button-bg: #324A6D;
 	--e-contact-buttons-button-bg-hover: #1C2448;
-	--e-contact-buttons-close-button-color: #F3F5F8;
+	--e-contact-buttons-close-button-bg: #F3F5F8;
+	--e-contact-buttons-close-button-color: #324A6D;
+	--e-contact-buttons-top-bar-bg: #324A6D;
 
 	.has-size-small.e-contact-buttons__close-button {
+		align-items: center;
+		display: flex;
 		height: var(--e-contact-buttons-size-small);
+		justify-content: center;
 		width: var(--e-contact-buttons-size-small);
 
-		svg {
-			height: var(--e-contact-buttons-svg-size-small);
-			width: var(--e-contact-buttons-svg-size-small);
+		.eicon-close {
+			font-size: 24px;
 		}
 	}
 
@@ -24,9 +28,8 @@
 		height: var(--e-contact-buttons-size-medium);
 		width: var(--e-contact-buttons-size-medium);
 
-		svg {
-			height: var(--e-contact-buttons-svg-size-medium);
-			width: var(--e-contact-buttons-svg-size-medium);
+		.eicon-close {
+			font-size: 28px;
 		}
 	}
 
@@ -34,9 +37,8 @@
 		height: var(--e-contact-buttons-size-large);
 		width: var(--e-contact-buttons-size-large);
 
-		svg {
-			height: var(--e-contact-buttons-svg-size-large);
-			width: var(--e-contact-buttons-svg-size-large);
+		.eicon-close {
+			font-size: 32px;
 		}
 	}
 
@@ -59,5 +61,17 @@
 		&[aria-hidden="true"] {
 			display: none;
 		}
+	}
+
+	.e-contact-buttons__top-bar-title {
+		font-size: 16px;
+		line-height: 24px;
+		font-weight: 600;
+	}
+
+	.e-contact-buttons__top-bar-subtitle {
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 500px;
 	}
 }

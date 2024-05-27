@@ -106,11 +106,11 @@ abstract class Contact_Buttons_Render_Base {
 			$profile_image_classnames .= ' has-dot';
 		}
 
-		$top_bar_name = $this->settings['top_bar_name'] ?? '';
 		$top_bar_title = $this->settings['top_bar_title'] ?? '';
+		$top_bar_subtitle = $this->settings['top_bar_subtitle'] ?? '';
 
-		$has_top_bar_name = ! empty( $top_bar_name );
 		$has_top_bar_title = ! empty( $top_bar_title );
+		$has_top_bar_subtitle = ! empty( $top_bar_subtitle );
 
 		$this->widget->add_render_attribute( 'profile-image', [
 			'class' => $profile_image_classnames,
@@ -135,11 +135,11 @@ abstract class Contact_Buttons_Render_Base {
 			</div>
 
 			<div class="e-contact-buttons__top-bar-details">
-				<?php if ( $has_top_bar_name ) { ?>
-					<p class="e-contact-buttons__top-bar-name"><?php echo esc_html( $top_bar_name ); ?></p>
-				<?php } ?>
 				<?php if ( $has_top_bar_title ) { ?>
 					<p class="e-contact-buttons__top-bar-title"><?php echo esc_html( $top_bar_title ); ?></p>
+				<?php } ?>
+				<?php if ( $has_top_bar_subtitle ) { ?>
+					<p class="e-contact-buttons__top-bar-subtitle"><?php echo esc_html( $top_bar_subtitle ); ?></p>
 				<?php } ?>
 			</div>
 		</div>

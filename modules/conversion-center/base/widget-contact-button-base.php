@@ -50,6 +50,26 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 					],
 				],
+				'top_bar_section' => [
+					'has_image' => true,
+					'has_active_dot' => true,
+					'title' => [
+						'label' => esc_html__( 'Name', 'elementor' ),
+						'default' => esc_html__( 'Rob Jones', 'elementor' ),
+						'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
+						'dynamic' => false,
+						'ai' => false,
+						'label_block' => false,
+					],
+					'subtitle' => [
+						'label' => esc_html__( 'Title', 'elementor' ),
+						'default' => esc_html__( 'Store Manager', 'elementor' ),
+						'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
+						'dynamic' => false,
+						'ai' => false,
+						'label_block' => false
+					]
+				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
 				],
@@ -89,6 +109,11 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			],
 			'style' => [
 				'has_platform_colors' => true,
+				'top_bar_section' => [
+					'title_heading_label' => esc_html__( 'Name', 'elementor' ),
+					'subtitle_heading_label' => esc_html__( 'Title', 'elementor' ),
+					'has_style_close_button' => true,
+				],
 				'message_bubble_section' => [
 					'has_chat_background' => true,
 				],
@@ -326,6 +351,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	protected function add_top_bar_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'top_bar_section',
 			[
@@ -335,47 +362,63 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'top_bar_name',
-			[
-				'label' => esc_html__( 'Name', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Rob Jones', 'elementor' ),
-				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
 			'top_bar_title',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => $config['content']['top_bar_section']['title']['label'],
 				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Store Manager', 'elementor' ),
-				'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'top_bar_image',
-			[
-				'label' => esc_html__( 'Profile Image', 'elementor' ),
-				'type' => Controls_Manager::MEDIA,
-				'default' => [
-					'url' => Utils::get_placeholder_image_src(),
+				'default' => $config['content']['top_bar_section']['title']['default'],
+				'placeholder' =>  $config['content']['top_bar_section']['title']['placeholder'],
+				'dynamic' => [
+					'active' => $config['content']['top_bar_section']['title']['dynamic'],
 				],
+				'ai' => [
+					'active' => $config['content']['top_bar_section']['title']['ai'],
+				],
+				'label_block' => $config['content']['top_bar_section']['title']['label_block'],
 			]
 		);
 
 		$this->add_control(
-			'top_bar_show_dot',
+			'top_bar_subtitle',
 			[
-				'label' => esc_html__( 'Display Active Dot', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => 'yes',
+				'label' => $config['content']['top_bar_section']['subtitle']['label'],
+				'type' => Controls_Manager::TEXT,
+				'default' => $config['content']['top_bar_section']['subtitle']['default'],
+				'placeholder' =>  $config['content']['top_bar_section']['subtitle']['placeholder'],
+				$config['content']['top_bar_section']['subtitle']['dynamic'],
+				'ai' => [
+					'active' => $config['content']['top_bar_section']['subtitle']['ai'],
+				],
+				'label_block' => $config['content']['top_bar_section']['title']['label_block'],
 			]
 		);
+
+		if ( $config['content']['top_bar_section']['has_image'] ) {
+			$this->add_control(
+				'top_bar_image',
+				[
+					'label' => esc_html__( 'Profile Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'default' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				]
+			);
+		}
+
+		if ( $config['content']['top_bar_section']['has_active_dot'] ) {
+			$this->add_control(
+				'top_bar_show_dot',
+				[
+					'label' => esc_html__( 'Display Active Dot', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'Yes', 'elementor' ),
+					'label_off' => esc_html__( 'No', 'elementor' ),
+					'return_value' => 'yes',
+					'default' => 'yes',
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -976,28 +1019,30 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_top_bar_profile_heading',
-			[
-				'label' => esc_html__( 'Profile Image', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'style_top_bar_image_size',
-			[
-				'label' => esc_html__( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'medium',
-				'options' => [
-					'small' => esc_html__( 'Small', 'elementor' ),
-					'medium' => esc_html__( 'Medium', 'elementor' ),
-					'large' => esc_html__( 'Large', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['content']['top_bar_section']['has_image'] ) {
+			$this->add_control(
+				'style_top_bar_profile_heading',
+				[
+					'label' => esc_html__( 'Profile Image', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
+				]
+			);
+	
+			$this->add_control(
+				'style_top_bar_image_size',
+				[
+					'label' => esc_html__( 'Size', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'medium',
+					'options' => [
+						'small' => esc_html__( 'Small', 'elementor' ),
+						'medium' => esc_html__( 'Medium', 'elementor' ),
+						'large' => esc_html__( 'Large', 'elementor' ),
+					],
+				]
+			);
+		}
 
 		if ( $config['style']['has_platform_colors'] ) {
 			$this->add_control(
@@ -1016,42 +1061,11 @@ JS;
 		}
 
 		$this->add_control(
-			'style_top_bar_name_heading',
-			[
-				'label' => esc_html__( 'Name', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => ! $config['style']['has_platform_colors'] ? 'before' : false,
-			]
-		);
-
-		$this->add_control(
-			'style_top_bar_name_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-name: {{VALUE}}',
-				],
-				'condition' => $this->get_platform_color_condition( [
-					'style_top_bar_colors' => 'custom',
-				] ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'style_top_bar_name_typography',
-				'selector' => '{{WRAPPER}} .e-contact-buttons__top-bar-name',
-			]
-		);
-
-		$this->add_control(
 			'style_top_bar_title_heading',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => $config['style']['top_bar_section']['title_heading_label'],
 				'type' => Controls_Manager::HEADING,
-				'separator' => false,
+				'separator' => ! $config['style']['has_platform_colors'] ? 'before' : false,
 			]
 		);
 
@@ -1078,21 +1092,21 @@ JS;
 		);
 
 		$this->add_control(
-			'style_top_bar_close_button_heading',
+			'style_top_bar_subtitle_heading',
 			[
-				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'label' => $config['style']['top_bar_section']['subtitle_heading_label'],
 				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 			]
 		);
 
 		$this->add_control(
-			'style_top_bar_close_button_color',
+			'style_top_bar_subtitle_color',
 			[
-				'label' => esc_html__( 'Close Button Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-color: {{VALUE}}',
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-subtitle: {{VALUE}}',
 				],
 				'condition' => $this->get_platform_color_condition( [
 					'style_top_bar_colors' => 'custom',
@@ -1100,12 +1114,51 @@ JS;
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'style_top_bar_subtitle_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__top-bar-subtitle',
+			]
+		);
+
+		if ( $config['style']['top_bar_section']['has_style_close_button'] ) {
+			$this->add_control(
+				'style_top_bar_close_button_heading',
+				[
+					'label' => esc_html__( 'Close Button', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => false,
+					'condition' => $this->get_platform_color_condition( [
+						'style_top_bar_colors' => 'custom',
+					] ),
+				]
+			);
+
+			$this->add_control(
+				'style_top_bar_close_button_color',
+				[
+					'label' => esc_html__( 'Close Button Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-color: {{VALUE}}',
+					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_top_bar_colors' => 'custom',
+					] ),
+				]
+			);
+		}
+
 		$this->add_control(
 			'style_top_bar_background_heading',
 			[
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => false,
+				'condition' => $this->get_platform_color_condition( [
+					'style_top_bar_colors' => 'custom',
+				] ),
 			]
 		);
 

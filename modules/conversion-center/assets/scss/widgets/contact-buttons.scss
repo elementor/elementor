@@ -30,8 +30,8 @@
 	--e-contact-buttons-button-icon: #ffffff;
 	--e-contact-buttons-button-icon-hover: #ffffff;
 	--e-contact-buttons-top-bar-bg: #1C2448;
-	--e-contact-buttons-top-bar-name: #ffffff;
 	--e-contact-buttons-top-bar-title: #ffffff;
+	--e-contact-buttons-top-bar-subtitle: #ffffff;
 	--e-contact-buttons-close-button-color: #ffffff;
 	--e-contact-buttons-close-button-bg: #ffffff;
 	--e-contact-buttons-message-bubble-name: #000000;
@@ -76,8 +76,8 @@
 		--e-contact-buttons-button-icon: #ffffff;
 		--e-contact-buttons-button-icon-hover: #ffffff;
 		--e-contact-buttons-top-bar-bg: #075E54;
-		--e-contact-buttons-top-bar-name: #ffffff;
 		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
 		--e-contact-buttons-close-button-color: #ffffff;
 		--e-contact-buttons-message-bubble-body: #000000;
 		--e-contact-buttons-message-bubble-time: #000000;
@@ -97,8 +97,8 @@
 		--e-contact-buttons-button-icon: #ffffff;
 		--e-contact-buttons-button-icon-hover: #ffffff;
 		--e-contact-buttons-top-bar-bg: #0D72CF;
-		--e-contact-buttons-top-bar-name: #ffffff;
 		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
 		--e-contact-buttons-close-button-color: #ffffff;
 		--e-contact-buttons-message-bubble-body: #000000;
 		--e-contact-buttons-message-bubble-time: #000000;
@@ -118,8 +118,8 @@
 		--e-contact-buttons-button-icon: #ffffff;
 		--e-contact-buttons-button-icon-hover: #ffffff;
 		--e-contact-buttons-top-bar-bg: #168AFF;
-		--e-contact-buttons-top-bar-name: #ffffff;
 		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
 		--e-contact-buttons-close-button-color: #ffffff;
 		--e-contact-buttons-message-bubble-body: #000000;
 		--e-contact-buttons-message-bubble-time: #000000;
@@ -139,8 +139,8 @@
 		--e-contact-buttons-button-icon: #ffffff;
 		--e-contact-buttons-button-icon-hover: #ffffff;
 		--e-contact-buttons-top-bar-bg: #4E4879;
-		--e-contact-buttons-top-bar-name: #ffffff;
 		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
 		--e-contact-buttons-close-button-color: #ffffff;
 		--e-contact-buttons-message-bubble-body: #000000;
 		--e-contact-buttons-message-bubble-time: #000000;
@@ -221,15 +221,15 @@
 		padding: 20px;
 	}
 
-	&__top-bar-name {
-		color: var(--e-contact-buttons-top-bar-name);
+	&__top-bar-title {
+		color: var(--e-contact-buttons-top-bar-title);
 		font-size: 24px;
 		font-weight: bold;
 		margin-block-end: 0;
 	}
 
-	&__top-bar-title {
-		color: var(--e-contact-buttons-top-bar-title);
+	&__top-bar-subtitle {
+		color: var(--e-contact-buttons-top-bar-subtitle);
 		font-size: 20px;
 		margin-block-end: 0;
 	}
