@@ -67,8 +67,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
 						'dynamic' => false,
 						'ai' => false,
-						'label_block' => false
-					]
+						'label_block' => false,
+					],
 				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
@@ -367,7 +367,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'label' => $config['content']['top_bar_section']['title']['label'],
 				'type' => Controls_Manager::TEXT,
 				'default' => $config['content']['top_bar_section']['title']['default'],
-				'placeholder' =>  $config['content']['top_bar_section']['title']['placeholder'],
+				'placeholder' => $config['content']['top_bar_section']['title']['placeholder'],
 				'dynamic' => [
 					'active' => $config['content']['top_bar_section']['title']['dynamic'],
 				],
@@ -384,7 +384,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'label' => $config['content']['top_bar_section']['subtitle']['label'],
 				'type' => Controls_Manager::TEXT,
 				'default' => $config['content']['top_bar_section']['subtitle']['default'],
-				'placeholder' =>  $config['content']['top_bar_section']['subtitle']['placeholder'],
+				'placeholder' => $config['content']['top_bar_section']['subtitle']['placeholder'],
 				$config['content']['top_bar_section']['subtitle']['dynamic'],
 				'ai' => [
 					'active' => $config['content']['top_bar_section']['subtitle']['ai'],
@@ -1028,7 +1028,7 @@ JS;
 					'separator' => 'before',
 				]
 			);
-	
+
 			$this->add_control(
 				'style_top_bar_image_size',
 				[
