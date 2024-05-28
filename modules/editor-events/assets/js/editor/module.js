@@ -1,5 +1,6 @@
 import eventsConfig from './events-config';
 import mixpanel from 'mixpanel-browser';
+import Event from './event';
 
 export default class extends elementorModules.Module {
 	onInit() {
@@ -10,7 +11,7 @@ export default class extends elementorModules.Module {
 		}
 	}
 
-	dispatchEvent( data ) {
+	dispatchEvent( name, data ) {
 		if ( ! elementor.config.editor_events?.can_send_events ) {
 			return;
 		}
@@ -18,7 +19,7 @@ export default class extends elementorModules.Module {
 		const eventData = new Event( data );
 
 		mixpanel.track(
-			elementor.editorEvents.config.actions.click,
+			name,
 			eventData,
 		);
 	}
