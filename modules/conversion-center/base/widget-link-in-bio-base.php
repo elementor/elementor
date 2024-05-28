@@ -299,7 +299,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'active' => true,
 				],
 				'label_block' => true,
-				'default' => '',
+				'default' => esc_html__( 'CTA link', 'elementor' ),
 				'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
 			],
 		);
