@@ -7,7 +7,7 @@ export default class extends elementorModules.Module {
 		this.config = eventsConfig;
 
 		if ( elementor.config.editor_events?.can_send_events ) {
-			mixpanel.init( '150605b3b9f979922f2ac5a52e2dcfe9', { debug: true, persistence: 'localStorage' } );
+			mixpanel.init( '150605b3b9f979922f2ac5a52e2dcfe9', { persistence: 'localStorage' } );
 		}
 	}
 
