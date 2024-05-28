@@ -1,5 +1,5 @@
 const eventsConfig = {
-	actions: {
+	triggers: {
 		click: 'Click',
 		accordionClick: 'Accordion Click',
 	},
@@ -17,6 +17,8 @@ const eventsConfig = {
 		'theme-elements-single': 'Single Section',
 		'woocommerce-elements': 'WooCommerce Section',
 		wordpress: 'WordPress Section',
+		categories: 'Widgets Tab',
+		global: 'Globals Tab',
 	},
 
 	elements: {
@@ -55,6 +57,14 @@ const eventsConfig = {
 		wordpress: {
 			v1: 'v1_widgets_tab_wordpress_section',
 			topBar: 'top_bar_widgets_tab_wordpress_section',
+		},
+		categories: {
+			v1: 'v1_widgets_tab',
+			topBar: 'top_bar_widgets_tab',
+		},
+		global: {
+			v1: 'v1_globals_tab',
+			topBar: 'top_bar_globals_tab',
 		},
 	},
 };
