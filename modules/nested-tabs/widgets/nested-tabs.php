@@ -1266,10 +1266,10 @@ class NestedTabs extends Widget_Nested_Base {
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
 					const tabIndex = index,
-					hoverAnimationSetting = settings['hover_animation'],
-					hoverAnimationClass = hoverAnimationSetting
-						? `elementor-animation-${ hoverAnimationSetting }`
-						: '';
+						hoverAnimationSetting = settings['hover_animation'],
+						hoverAnimationClass = hoverAnimationSetting
+							? `elementor-animation-${ hoverAnimationSetting }`
+							: '';
 				#>
 				<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' ); ?>
 				<# } ); #>
