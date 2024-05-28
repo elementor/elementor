@@ -29,7 +29,7 @@ class Module extends BaseModule {
 
 	public static function get_editor_events_config() {
 		$can_send_events = Tracker::is_allow_track() &&
-			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) && defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' );
 
 		$settings = [
 			'can_send_events' => $can_send_events,
@@ -40,6 +40,7 @@ class Module extends BaseModule {
 			'site_language' => get_locale(),
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'subscription_id' => null,
+			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
 		];
 
 		return $settings;
