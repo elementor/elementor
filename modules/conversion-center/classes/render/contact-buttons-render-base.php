@@ -61,7 +61,7 @@ abstract class Contact_Buttons_Render_Base {
 			$button_classnames .= ' elementor-animation-' . $hover_animation;
 		}
 
-		if ( 'none' != $entrance_animation ) {
+		if ( ! empty( $entrance_animation ) && 'none' != $entrance_animation ) {
 			$button_classnames .= ' has-entrance-animation';
 		}
 
