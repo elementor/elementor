@@ -5,6 +5,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
+use Elementor\ElementsV2\Provider;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
@@ -340,6 +341,12 @@ class Widgets_Manager {
 	 * @return Widget_Base|Widget_Base[]|null Registered widget types.
 	*/
 	public function get_widget_types( $widget_name = null ) {
+		$new_element = Provider::get( $widget_name );
+
+		if ( $new_element ) {
+			return $new_element;
+		}
+
 		if ( is_null( $this->_widget_types ) ) {
 			$this->init_widgets();
 		}

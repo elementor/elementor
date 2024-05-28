@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Experiments\Manager;
+use Elementor\ElementsV2\Provider;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,7 +69,7 @@ class Elements_Manager {
 	 * @return Element_Base|null Element instance if element created, or null
 	 *                           otherwise.
 	 */
-	public function create_element_instance( array $element_data, array $element_args = [], Element_Base $element_type = null ) {
+	public function create_element_instance( array $element_data, array $element_args = [], $element_type = null ) {
 		if ( null === $element_type ) {
 			if ( 'widget' === $element_data['elType'] ) {
 				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -188,6 +189,12 @@ class Elements_Manager {
 	 *                             types, or null if element does not exist.
 	 */
 	public function get_element_types( $element_name = null ) {
+		$new_element = Provider::get( $element_name );
+
+		if ( $new_element ) {
+			return $new_element;
+		}
+
 		if ( is_null( $this->_element_types ) ) {
 			$this->init_elements();
 		}
