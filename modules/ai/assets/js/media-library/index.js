@@ -12,10 +12,10 @@ import GenerateImageWithAI from './ai-images';
 	if ( isMediaLibrary() ) {
 		const mediaLibrary = document.querySelector( '.page-title-action' );
 		if ( mediaLibrary ) {
-			const container = document.createElement( 'div' );
+			const container = document.createElement( 'button' );
 			container.id = 'e-image-ai-media-library';
 			mediaLibrary.insertAdjacentElement( 'afterend', container );
-			ReactDOM.render( <GenerateImageWithAI />, container );
+			ReactDOM.render( <GenerateImageWithAI pt="0.5em" pb="0.5em" />, container );
 		}
 	}
 
@@ -29,13 +29,14 @@ import GenerateImageWithAI from './ai-images';
 				}
 
 				const content = document.createElement( 'div' );
-				container.id = 'e-image-ai-attachment-details';
+				content.id = 'e-image-ai-attachment-details';
 				content.innerHTML = html;
 
-				const details = content.querySelector( '.details' );
+				const details = content.querySelector( '.dimensions' );
 
 				const container = document.createElement( 'div' );
-				details.appendChild( container );
+				details.insertAdjacentElement( 'afterend', container );
+
 				ReactDOM.render( <GenerateImageWithAI />, container );
 
 				return content.innerHTML;
@@ -60,9 +61,10 @@ import GenerateImageWithAI from './ai-images';
 				container.id = 'e-image-ai';
 				details.appendChild( container );
 
-				// SetTimeout( () => {
-				// 	ReactDOM.render( <GenerateImageWithAI />, document.querySelector( '#e-image-ai' ) );
-				// }, 1 );
+				// Const event = new CustomEvent( 'injectReactComponent', { detail: container } );
+				// console.log( 'Dispatching event:', event );
+				// document.dispatchEvent( event );
+
 				ReactDOM.render( <GenerateImageWithAI />, container );
 				return content.innerHTML;
 				// Const root = createRoot( rootElement );
@@ -72,3 +74,20 @@ import GenerateImageWithAI from './ai-images';
 	}
 } )();
 
+// Document.addEventListener( 'injectReactComponent', function( event ) {
+// 	console.log( 'Event received:', event );
+// 	const container = event.detail;
+//
+// 	if ( container instanceof HTMLElement ) {
+// 		// Ensure React and ReactDOM are available
+// 		if ( typeof React !== 'undefined' && typeof ReactDOM !== 'undefined' ) {
+// 			console.log( 'render' );
+//
+// 			ReactDOM.render( <GenerateImageWithAI />, container );
+// 		} else {
+// 			console.error( 'React or ReactDOM is not available.' );
+// 		}
+// 	} else {
+// 		console.error( 'The container is not a valid DOM element:', container );
+// 	}
+// } );
