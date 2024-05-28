@@ -103,6 +103,8 @@ class Module extends BaseModule {
 			}
 		} );
 
+		add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+
 		add_action( 'enqueue_block_editor_assets', function() {
 			wp_enqueue_script( 'elementor-ai-gutenberg',
 				$this->get_js_assets_url( 'ai-gutenberg' ),
@@ -158,6 +160,34 @@ class Module extends BaseModule {
 				'container',
 			],
 		] );
+	}
+
+	public function enqueue_ai_media_library() {
+		wp_enqueue_script( 'elementor-ai-media-library',
+			$this->get_js_assets_url( 'ai-media-library' ),
+			[
+				'jquery',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+				'media-grid'
+			],
+			ELEMENTOR_VERSION, true );
+
+		$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+
+		$config = [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+			'client_session_id' => $session_id,
+		];
+
+		wp_localize_script(
+			'elementor-ai-media-library',
+			'ElementorAiConfig',
+			$config
+		);
+
+		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
 	}
 
 	private function enqueue_main_script() {
