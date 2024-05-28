@@ -253,30 +253,13 @@ trait Conversion_Center_Controls_Trait {
 	}
 
 	protected function get_configured_breakpoints( $add_desktop = 'true' ) {
-		/**
-		 * Modified Dup from modules/motion-fx/controls-group.php ~ ln: 126
-		 * TODO: Once Core 3.4.0 is out, get the active devices using Breakpoints/Manager::get_active_devices_list().
-		 */
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 		$active_breakpoint_instances = Plugin::$instance->breakpoints->get_active_breakpoints();
-		// Devices need to be ordered from largest to smallest.
-		$active_devices = array_reverse( array_keys( $active_breakpoint_instances ) );
-
-		// Optionally add Desktop where it isn't an existing option
-		if ( $add_desktop && ! in_array( 'desktop', $active_devices, true ) ) {
-
-			// Add desktop in the correct position.
-			if ( in_array( 'widescreen', $active_devices, true ) ) {
-				$active_devices = array_merge( array_slice( $active_devices, 0, 1 ), [ 'desktop' ], array_slice( $active_devices, 1 ) );
-			} else {
-				$active_devices = array_merge( [ 'desktop' ], $active_devices );
-			}
-		}
 
 		$devices_options = [];
 
 		foreach ( $active_devices as $device_key ) {
 			$device_label = 'desktop' === $device_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoint_instances[ $device_key ]->get_label();
-
 			$devices_options[ $device_key ] = $device_label;
 		}
 
