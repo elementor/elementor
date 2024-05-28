@@ -28,8 +28,9 @@ class Module extends BaseModule {
 	}
 
 	public static function get_editor_events_config() {
-		$can_send_events = Tracker::is_allow_track() &&
-			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) && defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' );
+		$can_send_events = defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) &&
+			Tracker::is_allow_track() &&
+			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
 		$settings = [
 			'can_send_events' => $can_send_events,
