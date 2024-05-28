@@ -1095,12 +1095,12 @@ class NestedTabs extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 		?>
-			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
-				<?php $this->maybe_render_tab_icons_html( $item_settings ); ?>
-				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
-					<?php echo wp_kses_post( $title ); ?>
-				</span>
-			</button>
+		<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
+			<?php $this->maybe_render_tab_icons_html( $item_settings ); ?>
+			<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
+				<?php echo wp_kses_post( $title ); ?>
+			</span>
+		</button>
 		<?php
 	}
 
@@ -1191,7 +1191,7 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
-				<?php
+			<?php
 				foreach ( $settings['tabs'] as $index => $item ) {
 					$tab_count = $index + 1;
 
