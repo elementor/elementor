@@ -1,5 +1,20 @@
 == Changelog ==
 
+= 3.21.8 - 2024-05-26 =
+
+* Fix: Can't click on the AI consent modal checkbox
+
+= 3.21.7 - 2024-05-22 =
+
+* Fix: Unnecessary commas cause Cron Jobs to fail in various scenarios ([#25803](https://github.com/elementor/elementor/issues/25803))
+* Fix: AI Consent modal requires multiple clicks to check the box
+
+= 3.21.6 - 2024-05-20 =
+
+* Security Fix: Improved code security enforcement in Icon Box and Image Box widgets
+* Fix: Console error related to the AI tooltip
+* Fix: Redirecting issue in AI Connect flow
+
 = 3.21.5 - 2024-05-08 =
 
 * Tweak: Improved AI Image variations to use an updated and simplified model
