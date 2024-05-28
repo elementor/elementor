@@ -27,6 +27,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'value' => 'far fa-comment-dots',
 						'library' => 'fa-regular',
 					],
+					'icons_recommended' => [
+						'fa-regular' => [
+							'comment',
+							'comment-dots',
+							'comment-alt',
+						],
+						'fa-solid' => [
+							'ellipsis-v',
+						],
+					],
 					'has_notification_dot' => true,
 					'has_active_tab' => false,
 					'platform' => [
@@ -293,16 +303,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'label' => esc_html__( 'Icon', 'elementor' ),
 					'type' => Controls_Manager::ICONS,
 					'default' => $config['content']['chat_button_section']['icon_default'],
-					'recommended' => [
-						'fa-regular' => [
-							'comment',
-							'comment-dots',
-							'comment-alt',
-						],
-						'fa-solid' => [
-							'ellipsis-v',
-						],
-					],
+					'recommended' => $config['content']['chat_button_section']['icons_recommended'],
 				]
 			);
 		}
