@@ -454,10 +454,10 @@ export default class NestedTabs extends Base {
 
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
 
-			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
-			$tabContents[ index ].setAttribute( 'data-tab-index', newIndex );
-			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
-			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
+			$tabContents[ index ]?.setAttribute( 'aria-labelledby', updatedTabID );
+			$tabContents[ index ]?.setAttribute( 'data-tab-index', newIndex );
+			$tabContents[ index ]?.setAttribute( 'id', updatedContainerID );
+			$tabContents[ index ]?.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 		} );
 	}
 }
