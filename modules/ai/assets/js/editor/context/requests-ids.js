@@ -17,7 +17,7 @@ export const getUniqueId = ( prefix ) => {
 	return prefix + '-' + Math.random().toString( 16 ).substr( 2, 7 );
 };
 
-window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'editor-session' );
+window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || window.ElementorAiConfig?.client_session_id || getUniqueId( 'editor-session' );
 
 export function generateIds( template ) {
 	template.id = getUniqueId().toString();

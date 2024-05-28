@@ -11,11 +11,11 @@ test.describe( 'Lighthouse tests', () => {
 
 		await wpAdmin.hideAdminBar();
 
-		const editorPage = await wpAdmin.openNewPage();
+		const editor = await wpAdmin.openNewPage();
 
-		await editorPage.closeNavigatorIfOpen();
-		await editorPage.loadTemplate( filePath, true );
-		await editorPage.publishAndViewPage();
+		await editor.closeNavigatorIfOpen();
+		await editor.loadTemplate( filePath, true );
+		await editor.publishAndViewPage();
 
 		await playAudit( {
 			page,

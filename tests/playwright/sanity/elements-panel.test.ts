@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
-import EditorSelectors from '../selectors/editor-selectors';
 import EditorPage from '../pages/editor-page';
 
 test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
@@ -51,9 +50,10 @@ test( 'block adding from panel an inner section inside an inner section', async 
 
 async function addWidgetByClick( editor: EditorPage, widgetType: string ) {
 	const title = widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 );
+	const elementsPanelItem = `.elementor-panel-category-items :text-is('${ title }')`;
 
 	await editor.openElementsPanel();
-	await editor.page.locator( EditorSelectors.elementsPanelItem( title ) ).click();
+	await editor.page.locator( elementsPanelItem ).click();
 
 	return editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` ).getAttribute( 'data-id' );
 }

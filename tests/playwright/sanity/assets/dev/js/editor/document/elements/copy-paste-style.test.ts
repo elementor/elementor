@@ -12,11 +12,8 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	const heading2 = await editor.addWidget( 'heading' );
 
 	await editor.selectElement( heading1 );
-
 	await editor.openPanelTab( 'style' );
-
-	await page.locator( '.elementor-control-title_color .pcr-button' ).click();
-	await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#77A5BD' );
+	await editor.setColorControlValue( 'title_color', '#77A5BD' );
 
 	// Act.
 	await editor.copyElement( heading1 );
