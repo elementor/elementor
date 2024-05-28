@@ -3,7 +3,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Editor v2', () => {
 	let editor;
-	let wpAdminPage;
+	let wpAdmin;
 	let context;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -11,15 +11,15 @@ test.describe( 'Editor v2', () => {
 
 		const page = await context.newPage();
 
-		wpAdminPage = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdminPage.setExperiments( { editor_v2: true } );
+		await wpAdmin.setExperiments( { editor_v2: true } );
 
-		editor = await wpAdminPage.openNewPage();
+		editor = await wpAdmin.openNewPage();
 	} );
 
 	test.afterAll( async () => {
-		await wpAdminPage.setExperiments( { editor_v2: false } );
+		await wpAdmin.setExperiments( { editor_v2: false } );
 	} );
 
 	test( 'check that app-bar exists', async () => {

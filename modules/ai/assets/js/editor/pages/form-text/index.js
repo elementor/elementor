@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Box, Button, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { AIIcon, MessageIcon, ShrinkIcon, ExpandIcon } from '@elementor/icons';
+import { AIIcon, ExpandIcon, MessageIcon, ShrinkIcon } from '@elementor/icons';
 import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
 import Textarea from '../../components/textarea';
@@ -13,7 +13,7 @@ import GenerateButton from '../../components/generate-button';
 import PromptAction from '../../components/prompt-action';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
-import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
+import { textareaAutocomplete, textAutocomplete, translateLanguages, vocalTones } from '../../actions-data';
 import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
@@ -64,10 +64,12 @@ const FormText = (
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
 
-	const { data, isLoading, error, setResult, reset, send, sendUsageData } = useTextPrompt( {
-		result: initialValue,
-		credits,
+	const { data, isLoading, error: txtGenErr, setResult, reset, send, sendUsageData } = useTextPrompt( {
+		result: initialValue?.result ?? initialValue,
+		credits: initialValue?.credits ?? credits,
+		responseId: initialValue?.responseId,
 	} );
+	const error = txtGenErr || additionalOptions?.initError;
 
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
@@ -92,8 +94,7 @@ const FormText = (
 
 	const resultField = useRef( null );
 
-	const lastRun = useRef( () => {
-	} );
+	const lastRun = useRef( additionalOptions.initRetry ?? ( () => {} ) );
 
 	const autocompleteItems = 'textarea' === type ? textareaAutocomplete : textAutocomplete;
 
