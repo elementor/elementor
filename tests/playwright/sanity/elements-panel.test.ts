@@ -52,7 +52,7 @@ test( 'block adding from panel an inner section inside an inner section', async 
 async function addWidgetByClick( editor: EditorPage, widgetType: string ) {
 	const title = widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 );
 
-	await editor.page.locator( EditorSelectors.widgetsPanelIcon ).click();
+	await editor.openElementsPanel();
 	await editor.page.locator( EditorSelectors.elementsPanelItem( title ) ).click();
 
 	return editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` ).getAttribute( 'data-id' );
