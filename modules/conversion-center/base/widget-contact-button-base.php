@@ -639,6 +639,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::WAZE,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 			],
 		);
 
@@ -1587,6 +1590,10 @@ JS;
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%', 'em', 'rem' ],
 					'default' => [
+						'top' => '20',
+						'bottom' => '20',
+						'left' => '20',
+						'right' => '20',
 						'unit' => 'px',
 						'isLinked' => false,
 					],
