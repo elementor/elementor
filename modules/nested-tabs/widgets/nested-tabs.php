@@ -1192,27 +1192,27 @@ class NestedTabs extends Widget_Nested_Base {
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
 			<?php
-				foreach ( $settings['tabs'] as $index => $item ) {
-					$tab_count = $index + 1;
+			foreach ( $settings['tabs'] as $index => $item ) {
+				$tab_count = $index + 1;
 
-					$tab_id = empty( $item['element_id'] )
-						? 'e-n-tabs-title-' . $widget_number . $tab_count
-						: $item['element_id'];
+				$tab_id = empty( $item['element_id'] )
+					? 'e-n-tabs-title-' . $widget_number . $tab_count
+					: $item['element_id'];
 
-					$item_settings = [
-						'index' => $index,
-						'tab_count' => $tab_count,
-						'tab_id' => $tab_id,
-						'container_id' => 'e-n-tab-content-' . $widget_number . $tab_count,
-						'widget_number' => $widget_number,
-						'item' => $item,
-						'settings' => $settings,
-					];
+				$item_settings = [
+					'index' => $index,
+					'tab_count' => $tab_count,
+					'tab_id' => $tab_id,
+					'container_id' => 'e-n-tab-content-' . $widget_number . $tab_count,
+					'widget_number' => $widget_number,
+					'item' => $item,
+					'settings' => $settings,
+				];
 
-					$this->tab_item_settings[] = $item_settings;
+				$this->tab_item_settings[] = $item_settings;
 
-					$this->render_tab_titles_html( $item_settings );
-				}
+				$this->render_tab_titles_html( $item_settings );
+			}
 			?>
 			</div>
 			<div class="e-n-tabs-content">
