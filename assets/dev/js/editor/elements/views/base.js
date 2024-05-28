@@ -341,7 +341,23 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	attachElContent( html ) {
-		this.$el.empty().append( this.getHandlesOverlay(), html );
+		if ( elementor.previewView.isBuffering || ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters || 'nested-accordion' !== this?.model?.config?.name ) {
+			this.$el.empty().append( this.getHandlesOverlay(), html );
+			return;
+		}
+
+		console.log({html});
+		const detailsRegex = /<details[\s\S]*?>[\s\S]*?<\/details>/gi;
+		const titleElementRegex = /<div class="e-n-accordion-item-title-text"[\s\S]*?>([\s\S]*?)<\/div>/gi;
+		const activeIndex = +this?.model?.changed?.editSettings?.changed - 1 || 0;
+		const activeDetailsElement = html.matchAll( detailsRegex ).toArray()[ activeIndex ];
+		const newTitle = titleElementRegex.exec( activeDetailsElement ).toArray()[ 1 ].replace( /<\/?[^>]+(>|$)/g , '' ).trim();
+
+		this.$el.find( 'details' )[ activeIndex ].find( '.e-n-accordion-item-title-text' ).text( newTitle );
+
+		// this.$el.html().matchAll(/<details[\s\S]*?>[\s\S]*?<\/details>/gi).toArray()
+		// _this$model.changed.editSettings.attributes.activeItemIndex
+		// this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
 	isStyleTransferControl( control ) {
