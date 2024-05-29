@@ -156,7 +156,6 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	onInit( ...args ) {
-		console.log( args );
 		super.onInit( ...args );
 
 		this.initMessageBubbleTime();
