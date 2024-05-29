@@ -15,7 +15,7 @@ import GenerateImageWithAI from './ai-images';
 			const container = document.createElement( 'button' );
 			container.id = 'e-image-ai-media-library';
 			mediaLibrary.insertAdjacentElement( 'afterend', container );
-			ReactDOM.render( <GenerateImageWithAI pt="0.5em" pb="0.5em" />, container );
+			ReactDOM.render( <GenerateImageWithAI />, container );
 		}
 	}
 
@@ -33,7 +33,7 @@ import GenerateImageWithAI from './ai-images';
 				content.innerHTML = html;
 
 				const details = content.querySelector( '.dimensions' );
-
+				console.log( details );
 				const container = document.createElement( 'div' );
 				details.insertAdjacentElement( 'afterend', container );
 
@@ -57,6 +57,8 @@ import GenerateImageWithAI from './ai-images';
 				content.innerHTML = html;
 
 				const details = content.querySelector( '.details' );
+				console.log( details );
+
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai';
 				details.appendChild( container );

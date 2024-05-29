@@ -15,25 +15,24 @@ const ImageLink = styled.a`
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
+  //display: inline-block;
   &:hover {
     color: #C00BB9;
   }
 `;
 
-const GenerateImageWithAI = ( { pt = '0.5em', pb = '0.5em' } ) => {
-	const handleButtonClick = ( event ) => {
-		event.preventDefault();
+const GenerateImageWithAI = () => {
+	const handleClick = () => {
 		console.log( 'click' );
 	};
 
 	return (
-		// <div style={ { paddingTop: pt, paddingBottom: pb } }>
-		< >
+		<div style={ { paddingTop: '0.5em' } }>
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
-				<ImageLink style={ { paddingTop: pt, paddingBottom: pb } } onClick={ handleButtonClick }>{ __( 'Edit with Elementor AI', 'elementor' ) }</ImageLink>
+				<ImageLink onClick={ handleClick }>{ __( 'Edit with Elementor AI', 'elementor' ) }</ImageLink>
 			</RequestIdsProvider>
-		</> );
+		</div> );
 };
 
 export default GenerateImageWithAI;
