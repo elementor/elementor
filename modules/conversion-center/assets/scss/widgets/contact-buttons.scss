@@ -50,6 +50,8 @@
 	--e-contact-buttons-contact-button-bg-hover: #1C2448;
 	--e-contact-buttons-tooltip-text: #1C2448;
 	--e-contact-buttons-tooltip-bg: #ffffff;
+	--e-contact-buttons-contact-title-text-color: #1C2448;
+	--e-contact-buttons-contact-description-text-color: #1C2448;
 
 	position: fixed;
 	bottom: 20px;
@@ -292,6 +294,7 @@
 	&__chat-button-container {
 		display: flex;
 		justify-content: flex-end;
+		padding-inline-end: 20px;
 
 		@media (max-width: $screen-mobile-max) {
 			inset-inline-end: $contact-buttons-offset-preset;
@@ -303,6 +306,8 @@
 
 		.e-contact-buttons__chat-button-container {
 			justify-content: flex-start;
+			padding-inline-start: 20px;
+			padding-inline-end: 0;
 
 			@media (max-width: $screen-mobile-max) {
 				inset-inline-end: unset;
