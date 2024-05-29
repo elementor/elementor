@@ -60,7 +60,7 @@ class Contact_Buttons extends PageBase {
 	}
 
 	public function set_as_entire_site( $actions ) {
-		if ( get_post_meta( $this->get_post()->ID, '_elementor_conditions', true )  ) {
+		if ( get_post_meta( $this->get_post()->ID, '_elementor_conditions', true ) ) {
 			$actions['set_as_entire_site'] = sprintf(
 				'<a style="color:red;" href="?post=%s&action=remove_from_entire_site&_wpnonce=%s">%s</a>',
 				$this->get_post()->ID,
@@ -75,6 +75,7 @@ class Contact_Buttons extends PageBase {
 				__( 'Set as Entire Site', 'elementor' )
 			);
 		}
+
 		return $actions;
 	}
 

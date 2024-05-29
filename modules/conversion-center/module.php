@@ -215,12 +215,12 @@ class Module extends BaseModule {
 				if ( $instances ) {
 					echo esc_html( 'Entire Site' );
 				}
-
 				break;
 			default:
 				break;
 		}
 	}
+
 
 	private function get_trashed_contact_posts(): array {
 		if ( $this->trashed_contact_pages ) {

@@ -44,7 +44,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h1> text and icon alignment', async () => {
 			const tag = 'h1';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -52,7 +52,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h2> text and icon alignment', async () => {
 			const tag = 'h2';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -60,7 +60,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h3> text and icon alignment', async () => {
 			const tag = 'h3';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -68,7 +68,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h4> text and icon alignment', async () => {
 			const tag = 'h4';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -76,7 +76,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h5> text and icon alignment', async () => {
 			const tag = 'h5';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -84,7 +84,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <h6> text and icon alignment', async () => {
 			const tag = 'h6';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -92,7 +92,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <p> text and icon alignment', async () => {
 			const tag = 'p';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -100,7 +100,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <span> text and icon alignment', async () => {
 			const tag = 'span';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );
@@ -108,7 +108,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Check title <div> text and icon alignment', async () => {
 			const tag = 'div';
 			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+			await setTitleTextTag( tag, nestedAccordionWidgetId, editor );
 			// Assert
 			await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 		} );

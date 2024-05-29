@@ -45,8 +45,8 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await page.hover( '.elementor-control-image .elementor-control-media__content' );
 		await page.hover( '.elementor-control-media-area' );
 		await page.click( '.elementor-control-media__remove' );
-		await page.locator( '.elementor-control-title_text input' ).fill( '' );
-		await page.locator( '.elementor-control-description_text textarea' ).fill( '' );
+		await editor.setTextControlValue( 'title_text', '' );
+		await editor.setTextareaControlValue( 'description_text', '' );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
@@ -79,7 +79,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'video' );
-		await page.selectOption( '.elementor-control-video_type >> select', 'hosted' );
+		await editor.setSelectControlValue( 'video_type', 'hosted' );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
@@ -96,7 +96,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'google_maps' );
-		await page.locator( '.elementor-control-address input' ).fill( '' );
+		await editor.setTextControlValue( 'address', '' );
 		await editor.page.waitForLoadState( 'domcontentloaded' );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );

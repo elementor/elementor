@@ -1093,11 +1093,28 @@ class NestedTabs extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
-		$render_attributes = $this->get_render_attribute_string( $setting_key );
-		$text_class = $this->get_render_attribute_string( 'tab-title-text' );
-		$icon_class = $this->get_render_attribute_string( 'tab-icon' );
+		$rendered_icons = $this->maybe_render_tab_icons_html( $item_settings );
 
-		$icon_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon'], [ 'aria-hidden' => 'true' ] );
+		ob_start();
+		?>
+			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
+				<?php echo $rendered_icons; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
+					<?php echo wp_kses_post( $title ); ?>
+				</span>
+			</button>
+		<?php
+		return ob_get_clean();
+	}
+
+	protected function maybe_render_tab_icons_html( $item_settings ): string {
+		$icon_settings = $item_settings['item']['tab_icon'];
+
+		if ( empty( $icon_settings['value'] ) ) {
+			return '';
+		}
+
+		$icon_html = Icons_Manager::try_get_icon_html( $icon_settings, [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $icon_html;
 
 		if ( $this->is_active_icon_exist( $item_settings['item'] ) ) {
@@ -1106,15 +1123,10 @@ class NestedTabs extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-			<button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<span <?php echo $icon_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</span>
-				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo wp_kses_post( $title ); ?>
-				</span>
-			</button>
+		<span <?php $this->print_render_attribute_string( 'tab-icon' ); ?>>
+			<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</span>
 		<?php
 		return ob_get_clean();
 	}
@@ -1279,9 +1291,12 @@ class NestedTabs extends Widget_Nested_Base {
 		#>
 
 		<button {{{ view.getRenderAttributeString( 'button-container' ) }}}>
-			<span {{{ view.getRenderAttributeString( 'tab-icon-key-container' ) }}}>
-				{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}
-			</span>
+			<# if ( data.tab_icon.value ) { #>
+				<span {{{ view.getRenderAttributeString( 'tab-icon-key-container' ) }}}>
+					{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}
+				</span>
+			<# } #>
+
 			<span {{{ view.getRenderAttributeString( 'tab-title-container' ) }}}>{{{ data.tab_title }}}</span>
 		</button>
 		<?php
@@ -1341,7 +1356,10 @@ class NestedTabs extends Widget_Nested_Base {
 				} );
 				#>
 				<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
-					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
+					<# if ( item.tab_icon.value ) { #>
+						<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
+					<# } #>
+
 					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
 				</button>
 				<# } ); #>
