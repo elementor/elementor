@@ -187,7 +187,8 @@ class Module extends BaseModule {
 
 		foreach ( $data['clicks'] as $post_id ) {
 			if ( ! isset( $posts_to_update[ $post_id ] ) ) {
-				$posts_to_update[ $post_id ] = (int) get_post_meta( $post_id, '_elementor_click_tracking', true ) ?: 0;
+				$starting_clicks = (int) get_post_meta( $post_id, '_elementor_click_tracking', true );
+				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
 			$posts_to_update[ $post_id ] ++;
 		}
