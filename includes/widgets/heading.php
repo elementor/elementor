@@ -90,6 +90,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		return [ 'heading', 'title', 'text' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Remove data attributes from the html.
 	 *
@@ -107,7 +111,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			}
 
 			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
-				return ! str_starts_with( $attribute, 'data-' );
+				return ! substr( $attribute, 0, 5 ) === 'data-';
 			}, ARRAY_FILTER_USE_KEY );
 
 			$allowed_tags_for_heading[ $tag ] = $filtered_attributes;

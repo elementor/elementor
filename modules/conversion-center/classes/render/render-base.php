@@ -30,6 +30,80 @@ abstract class Render_Base {
 		$this->settings = $widget->get_settings_for_display();
 	}
 
+	protected function render_image_links(): void {
+		$image_links_value_initial = $this->settings['image_links'] ?? [];
+		$image_links_columns_value = $this->settings['image_links_per_row'] ?? 2;
+
+		/**
+		 * if empty returns a sub-array with all empty values
+		 * Check for this here to avoid rendering container when empty
+		 */
+		$image_links_value = $this->clean_array( $image_links_value_initial );
+		$has_image_links = ! empty( $image_links_value );
+
+		if ( ! $has_image_links ) {
+			return;
+		}
+
+		$image_links_classnames = 'e-link-in-bio__image-links';
+
+		if ( ! empty( $image_links_columns_value ) ) {
+			$image_links_classnames .= ' has-' . $image_links_columns_value . '-columns';
+		}
+
+		$this->widget->add_render_attribute( 'image-links', [
+			'class' => $image_links_classnames,
+		] );
+		?>
+
+		<div <?php echo $this->widget->get_render_attribute_string( 'image-links' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php
+			foreach ( $image_links_value as $key => $image_link ) {
+				$formatted_link = $image_link['image_links_url']['url'] ?? '';
+				$image_link_image = $image_link['image_links_image'] ?? [];
+
+				// Manage Link class variations
+
+				$image_link_classnames = 'e-link-in-bio__image-links-link';
+
+				// Manage Link attributes
+
+				$url_attrs = [
+					'class' => $image_link_classnames,
+					'href' => esc_url( $formatted_link ),
+				];
+
+				$url_combined_attrs = $this->get_link_attributes(
+					$image_link['image_links_url'],
+					$url_attrs
+				);
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
+					$this->widget->add_render_attribute( 'image-links-link' . $key, [
+						$attr_key => $attr_value,
+					] );
+				}
+				?>
+				<a <?php echo $this->widget->get_render_attribute_string( 'image-links-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<?php if ( ! empty( $image_link_image['id'] ) ) {
+						echo wp_get_attachment_image( $image_link_image['id'], 'thumbnail', false, [
+							'class' => 'e-link-in-bio__image-links-img',
+						] );
+					} else {
+						$this->widget->add_render_attribute( 'image-links-img-' . $key, [
+							'alt' => '',
+							'class' => 'e-link-in-bio__image-links-img',
+							'src' => esc_url( $image_link_image['url'] ),
+						] );
+						?>
+						<img <?php echo $this->widget->get_render_attribute_string( 'image-links-img-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+					<?php }; ?>
+				</a>
+			<?php } ?>
+		</div>
+		<?php
+	}
+
 	protected function render_ctas(): void {
 		$ctas_props_corners = $this->settings['cta_links_corners'] ?? 'rounded';
 		$ctas_props_show_border = $this->settings['cta_links_show_border'] ?? false;
@@ -40,17 +114,9 @@ abstract class Render_Base {
 		 * $this->settings['cta_link'] if empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
-		$ctas_value = array_filter( $ctas_value_initial, function( $sub_array ) {
-			// Use array_filter on the sub array
-			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
-				// Filter out empty or null values
-				return ! is_null( $val ) && '' !== $val;
-			} );
-			// A non-empty result means the sub array contains some non-empty value(s)
-			return ! empty( $filtered_sub_array );
-		} );
-
+		$ctas_value = $this->clean_array( $ctas_value_initial );
 		$has_ctas = ! empty( $ctas_value );
+
 		if ( ! $has_ctas ) {
 			return;
 		}
@@ -63,16 +129,13 @@ abstract class Render_Base {
 		<div <?php echo $this->widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
-				// Bail if no text
-				if ( empty( $cta['cta_link_text'] ) ) {
-					break;
-				}
-
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
 				$cta_image = $cta['cta_link_image'] ?? [];
 				$cta_has_image = ! empty( $cta_image ) &&
 					( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) ) &&
 					'button' === $ctas_props_type;
+
+				// Manage Link class variations
 
 				$ctas_classnames = 'e-link-in-bio__cta is-type-' . $ctas_props_type;
 
@@ -88,17 +151,28 @@ abstract class Render_Base {
 					$ctas_classnames .= ' has-corners-' . $ctas_props_corners;
 				}
 
-				$this->widget->add_render_attribute( 'cta-' . $key, [
+				// Manage Link attributes
+
+				$url_attrs = [
 					'class' => $ctas_classnames,
 					'href' => esc_url( $formatted_link ),
-				] );
+				];
 
 				if (
 					Social_Network_Provider::FILE_DOWNLOAD === $cta['cta_link_type'] ||
 					Social_Network_Provider::VCF === $cta['cta_link_type']
 				) {
+					$url_attrs['download'] = 'download';
+				}
+
+				$url_combined_attrs = $this->get_link_attributes(
+					$cta['cta_link_url'],
+					$url_attrs
+				);
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
 					$this->widget->add_render_attribute( 'cta-' . $key, [
-						'download' => 'download',
+						$attr_key => $attr_value,
 					] );
 				}
 				?>
@@ -139,14 +213,17 @@ abstract class Render_Base {
 			return;
 		}
 
+		$this->widget->add_render_attribute( 'icons', [
+			'class' => 'e-link-in-bio__icons has-size-' . $icons_props_size,
+		] );
 		?>
-		<div class="e-link-in-bio__icons">
+		<div <?php echo $this->widget->get_render_attribute_string( 'icons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $icons_value as $key => $icon ) {
 
 				$formatted_link = $this->get_formatted_link_for_icon( $icon );
 
-				$icon_class_names = 'e-link-in-bio__icon has-size-' . $icons_props_size;
+				$icon_class_names = 'e-link-in-bio__icon is-size-' . $icons_props_size;
 
 				if ( $icons_props_show_border ) {
 					$icon_class_names .= ' has-border';
@@ -463,7 +540,7 @@ abstract class Render_Base {
 			$output_images['primary_image']['props']['shape'] = $this->settings['identity_image_shape'] ?? 'circle';
 			$output_images['primary_image']['props']['style'] = $this->settings['identity_image_style'] ?? 'profile';
 			$output_images['primary_image']['props']['show_border'] = $this->settings['identity_image_show_border'] ?? false;
-			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+			$output_images['primary_image']['props']['show_bottom_border'] = $this->settings['identity_image_bottom_show_border'] ?? false;
 		}
 
 		return $output_images;
@@ -472,7 +549,7 @@ abstract class Render_Base {
 	private function set_secondary_image_properties( array $output_images ): array {
 		if ( $output_images['secondary_image']['should_render'] ) {
 			$output_images['secondary_image']['props']['style'] = 'cover';
-			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_show_bottom_border'] ?? false;
+			$output_images['secondary_image']['props']['show_bottom_border'] = $this->settings['identity_image_bottom_show_border'] ?? false;
 
 			if ( ! empty( $this->settings['identity_section_style_cover_divider_bottom'] ) ) {
 				$output_images['secondary_image']['props']['has_shape_divider'] = true;
