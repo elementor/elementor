@@ -9,8 +9,8 @@ class Arr {
 
 	public static function insert_element_after_key( array $orig_array, string $key, string $new_key, $new_value ) {
 		$new_array = [];
-
 		$found = false;
+
 		foreach ( $orig_array as $orig_key => $orig_value ) {
 			$new_array[ $orig_key ] = $orig_value;
 
