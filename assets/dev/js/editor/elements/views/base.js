@@ -340,31 +340,53 @@ BaseElementView = BaseContainer.extend( {
 		return $handlesOverlay;
 	},
 
-	attachElContent( html, data ) {
-		if ( elementor.previewView.isBuffering || ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters || 'nested-accordion' !== this?.model?.config?.name ) {
+	attachElContent( html ) {
+		if ( elementor.previewView.isBuffering ||
+			! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ||
+			'nested-accordion' !== this?.model?.config?.name
+		) {
 			this.$el.empty().append( this.getHandlesOverlay(), html );
 			return;
 		}
 
-		console.log( { html, data } );
-		const activeIndex = +this?.model?.changed?.editSettings?.changed?.activeItemIndex - 1 || +this?.model?.changed?.editSettings?.attributes?.activeItemIndex - 1;
-		if ( activeIndex ) {
-			const newTitle = this.takeDataFromRepeater( activeIndex ),
-				element = data.view.$el[ 0 ].querySelectorAll( '.e-n-accordion-item-title-text' )[ activeIndex ];
-			element.innerText = newTitle;
+		const activeIndex = ( +this?.model?.attributes?.editSettings?.attributes?.activeItemIndex || 0 ) - 1;
+
+		if ( activeIndex >= 0 ) {
+			this.handleAccordionChange( html, activeIndex );
+		} else {
+			this.$el.empty().append( this.getHandlesOverlay(), html );
 		}
-		// Const detailsRegex = /<details[\s\S]*?>[\s\S]*?<\/details>/gi;
-		// const titleElementRegex = /<div class="e-n-accordion-item-title-text"[\s\S]*?>([\s\S]*?)<\/div>/gi;
-		// const activeIndex = +this?.model?.changed?.editSettings?.changed?.activeItemIndex - 1;
-		//
-		// const activeDetailsElement = html.matchAll( detailsRegex ).toArray()[ activeIndex ];
-		// const newTitle = titleElementRegex.exec( activeDetailsElement['input'] ).toArray()[ 1 ].replace( /<\/?[^>]+(>|$)/g , '' ).trim();
+	},
 
-		// this.$el.find( 'details' )[ activeIndex ].find( '.e-n-accordion-item-title-text' ).text( newTitle );
+	extractAccordionTargets( html, activeIndex ) {
+		const summaryRegex = /<summary[\s\S]*?>[\s\S]*?<\/summary>/gi,
+			summaryElements = html.matchAll( summaryRegex ).toArray();
 
-		// This.$el.html().matchAll(/<details[\s\S]*?>[\s\S]*?<\/details>/gi).toArray()
-		// _this$model.changed.editSettings.attributes.activeItemIndex
-		// this.$el.empty().append( this.getHandlesOverlay(), html );
+		if ( activeIndex < 0 || ! summaryElements[ activeIndex ] ) {
+			return null;
+		}
+
+		return summaryElements[ activeIndex ][ 0 ];
+	},
+
+	handleAccordionChange( htmlAfter, activeIndex ) {
+		const htmlBefore = this.$el.find( '> .elementor-widget-container > .e-n-accordion > details > summary' )?.[ activeIndex ],
+			summaryBefore = htmlBefore?.innerHTML || null,
+			summaryAfter = this.extractAccordionTargets( htmlAfter, activeIndex );
+
+		if ( ! summaryBefore || ! summaryAfter || summaryBefore === summaryAfter ) {
+			return;
+		}
+
+		this.updateTitle( htmlBefore, summaryAfter, activeIndex );
+	},
+
+	updateTitle( htmlBefore, summaryAfter, activeIndex ) {
+		const titleElementRegex = /<div class="e-n-accordion-item-title-text"[\s\S]*?>([\s\S]*?)<\/div>/gi;
+		const newTitle = summaryAfter.match( titleElementRegex )[ 0 ].replace( /<\/?[^>]+(>|$)/g, '' ).trim();
+		const titleContainer = htmlBefore.querySelector('.e-n-accordion-item-title-text');
+
+		titleContainer.innerText = newTitle;
 	},
 
 	takeDataFromRepeater( replacedIndex ) {
@@ -850,7 +872,7 @@ BaseElementView = BaseContainer.extend( {
 
 	render() {
 		this.getContainer();
-
+		console.log('BaseElementView render');
 		BaseContainer.prototype.render.apply( this, arguments );
 	},
 
