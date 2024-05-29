@@ -16,8 +16,9 @@ import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
+import PropTypes from 'prop-types';
 
-const MediaOutlet = () => {
+const MediaOutlet = ( { isInternalCall = true } ) => {
 	const { editImage } = useEditImage();
 
 	const { current, navigate } = useLocation( { current: LOCATIONS.GENERATE } );
@@ -51,7 +52,7 @@ const MediaOutlet = () => {
 
 	return (
 		<>
-			{ current === LOCATIONS.GENERATE && <Generate /> }
+			{ current === LOCATIONS.GENERATE && <Generate isInternalCall={ isInternalCall } /> }
 			{ current === LOCATIONS.IMAGE_TOOLS && <ImageTools /> }
 			{ current === LOCATIONS.VARIATIONS && <Variations /> }
 			{ current === LOCATIONS.IN_PAINTING && <InPainting /> }
@@ -64,3 +65,8 @@ const MediaOutlet = () => {
 };
 
 export default MediaOutlet;
+
+MediaOutlet.propTypes = {
+	isInternalCall: PropTypes.bool,
+};
+

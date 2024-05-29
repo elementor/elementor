@@ -27,6 +27,7 @@ const PageContent = (
 		setControlValue,
 		controlView,
 		additionalOptions,
+		isInternalCall = true,
 	} ) => {
 	const {
 		isLoading,
@@ -141,6 +142,7 @@ const PageContent = (
 						DialogProps={ promptDialogStyleProps }
 						hasSubscription={ hasSubscription }
 						usagePercentage={ usagePercentage }
+						isInternalCall={ isInternalCall }
 					/>
 				</PromptHistoryActionProvider>
 			</PromptHistoryProvider>
@@ -223,6 +225,7 @@ PageContent.propTypes = {
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
 	controlView: PropTypes.object,
+	isInternalCall: PropTypes.bool,
 };
 
 export default PageContent;

@@ -46,6 +46,7 @@ const FormMedia = ( {
 	maybeRenderUpgradeChip,
 	hasSubscription,
 	usagePercentage,
+	isInternalCall = true,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -72,17 +73,26 @@ const FormMedia = ( {
 		usagePercentage,
 	};
 
-	const globalActions = {
-		state,
-		getControlValue,
-		saveAndClose,
-		close: onCloseIntent,
-		setHasUnsavedChanges,
-		setControlImage: ( image ) => {
-			controlView.setSettingsModel( image );
-			controlView.applySavedValue();
-		},
+	const createGlobalActions = () => {
+		const globalActions = {
+			state,
+			getControlValue,
+			saveAndClose,
+			close: onCloseIntent,
+			setHasUnsavedChanges,
+		};
+
+		if ( isInternalCall ) {
+			globalActions.SetControlImage = ( image ) => {
+				controlView.setSettingsModel( image );
+				controlView.applySavedValue();
+			};
+		}
+
+		return globalActions;
 	};
+
+	const globalActions = createGlobalActions( isInternalCall );
 
 	useEffect( () => {
 		if ( state.isAllSaved ) {
@@ -106,7 +116,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet />
+								<MediaOutlet isInternalCall={ isInternalCall } />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>
@@ -132,6 +142,7 @@ FormMedia.propTypes = {
 	maybeRenderUpgradeChip: PropTypes.func,
 	hasSubscription: PropTypes.bool,
 	usagePercentage: PropTypes.number,
+	isInternalCall: PropTypes.bool,
 };
 
 export default FormMedia;

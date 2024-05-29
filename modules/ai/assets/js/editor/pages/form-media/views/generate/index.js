@@ -24,6 +24,7 @@ import {
 } from '../../../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../../../components/prompt-library-link';
 import { useRequestIds } from '../../../../context/requests-ids';
+import PropTypes from 'prop-types';
 
 const getPromptPlaceholder = ( images ) => {
 	if ( ! images?.length ) {
@@ -35,7 +36,7 @@ const getPromptPlaceholder = ( images ) => {
 	return randomImage.prompt;
 };
 
-const Generate = () => {
+const Generate = ( 	{ isInternalCall = true } ) => {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
 	const { initialImageType } = useGlobalSettings();
@@ -51,7 +52,7 @@ const Generate = () => {
 
 	const { data: generatedImages, setResult, send, isLoading: isGenerating, error, reset } = useTextToImage( {} );
 
-	const { use, edit, isLoading: isUploading } = useImageActions();
+	const { use, edit, isLoading: isUploading } = useImageActions( isInternalCall );
 
 	const isLoading = isPreloading || isGenerating || isUploading;
 
@@ -191,3 +192,7 @@ const Generate = () => {
 };
 
 export default Generate;
+
+Generate.propTypes = {
+	isInternalCall: PropTypes.bool,
+};
