@@ -65,7 +65,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 				buttonBelow = frame.locator( '.elementor-button >> nth=3' );
 
 			// Assert.
-			await tabTitleOne.focus();
+			await frame.locator( '.page-header' ).click();
+
+			await page.keyboard.press( 'Tab' );
 			await expect( tabTitleOne ).toBeFocused();
 			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
 			await page.keyboard.press( 'Tab' );
