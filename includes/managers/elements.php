@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Experiments\Manager;
+use Elementor\Core\Utils\Arr;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -122,14 +123,20 @@ class Elements_Manager {
 	 *
 	 * @param string $category_name       Category name.
 	 * @param array  $category_properties Category properties.
+	 * @param string $add_after           Optional. Add the category after a specific category.
 	 */
-	public function add_category( $category_name, $category_properties ) {
+	public function add_category( $category_name, $category_properties, $add_after = '' ) {
 		if ( null === $this->categories ) {
 			$this->get_categories();
 		}
 
 		if ( ! isset( $this->categories[ $category_name ] ) ) {
-			$this->categories[ $category_name ] = $category_properties;
+			if ( ! $add_after ) {
+				$this->categories[ $category_name ] = $category_properties;
+			} else {
+				$categories = Arr::insert_element_after_key( $this->categories, $add_after, $category_name, $category_properties );
+				$this->categories = $categories;
+			}
 		}
 	}
 

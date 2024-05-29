@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Elements_Manager;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
@@ -121,6 +122,16 @@ class Module extends BaseModule {
 				exit;
 			}
 		} );
+
+		add_action( 'elementor/elements/categories_registered', function ( Elements_Manager $elements_manager ) {
+			$elements_manager->add_category(
+				'link-in-bio',
+				[
+					'title' => esc_html__( 'Link In bio', 'elementor' ),
+				],
+				'general'
+			);
+		}, 10000 );
 
 		add_action( 'manage_' . self::CPT_CONTACT_PAGES . '_posts_columns', function( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );

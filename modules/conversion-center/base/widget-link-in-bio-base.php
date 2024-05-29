@@ -148,7 +148,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public function get_categories(): array {
-		return [ 'general' ];
+		return [ 'link-in-bio' ];
 	}
 
 	public function get_keywords(): array {
