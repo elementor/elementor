@@ -9,7 +9,7 @@ export default class ContactButtonsHandler extends Base {
 				contentWrapper: '.e-contact-buttons__content-wrapper',
 				chatButton: '.e-contact-buttons__chat-button',
 				closeButton: '.e-contact-buttons__close-button',
-				messageBubbleTime: '.e-contact-buttons__message-bubble-time',
+				messageBubbleTime: '.e-contact-buttons__message-bubble-time'
 			},
 			constants: {
 				entranceAnimation: 'style_chat_box_entrance_animation',
@@ -35,6 +35,7 @@ export default class ContactButtonsHandler extends Base {
 			chatButton: this.$element[ 0 ].querySelector( selectors.chatButton ),
 			closeButton: this.$element[ 0 ].querySelector( selectors.closeButton ),
 			messageBubbleTime: this.$element[ 0 ].querySelector( selectors.messageBubbleTime ),
+			contactButtonsVar4: this.$element[ 0 ].querySelector( selectors.contactButtonsVar4 ),
 		};
 	}
 
@@ -47,6 +48,7 @@ export default class ContactButtonsHandler extends Base {
 		this.elements.closeButton.addEventListener( 'click', this.closeChatBox.bind( this ) );
 		this.elements.chatButton.addEventListener( 'click', this.onChatButtonClick.bind( this ) );
 		this.elements.content.addEventListener( 'animationend', this.removeAnimationClasses.bind( this ) );
+
 	}
 
 	removeAnimationClasses() {
@@ -132,13 +134,12 @@ export default class ContactButtonsHandler extends Base {
 	initMessageBubbleTime() {
 		const messageBubbleTimeFormat = this.elements.messageBubbleTime.dataset.timeFormat;
 		const is12hFormat = '12h' === messageBubbleTimeFormat;
-		const time = new Intl.DateTimeFormat( 'default',
+		this.elements.messageBubbleTime.innerHTML = new Intl.DateTimeFormat( 'default',
 			{
 				hour12: is12hFormat,
 				hour: 'numeric',
 				minute: 'numeric',
 			} ).format( new Date() );
-		this.elements.messageBubbleTime.innerHTML = time;
 	}
 
 	initChatButtonEntranceAnimation() {
@@ -155,6 +156,7 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	onInit( ...args ) {
+		console.log( args );
 		super.onInit( ...args );
 
 		this.initMessageBubbleTime();

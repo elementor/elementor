@@ -116,7 +116,7 @@ class Contact_Buttons extends PageBase {
 
 	protected function get_remote_library_config() {
 		$config = [
-			'type' => 'link_page',
+			'type' => 'contact_button',
 			'default_route' => 'templates/contact-buttons',
 			'autoImportSettings' => true,
 		];

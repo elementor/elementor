@@ -81,6 +81,9 @@ class Module extends BaseModule {
 			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
 		} );
 
+		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
 
 			if ( strpos( $current_screen->id ?? '', self::CPT_CONTACT_PAGES ) !== false ) {
@@ -165,6 +168,37 @@ class Module extends BaseModule {
 
 			$this->override_admin_bar_add_contact( $admin_bar );
 		}, 100 );
+	}
+
+	public function handle_click_tracking() {
+		$data = filter_input_array( INPUT_POST, [
+			'clicks' => [
+				'filter' => FILTER_VALIDATE_INT,
+				'flags' => FILTER_REQUIRE_ARRAY,
+			],
+			'_nonce' => FILTER_UNSAFE_RAW,
+		] );
+
+		if ( ! wp_verify_nonce( $data['_nonce'], 'elementor-pro-frontend' ) ) {
+			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
+		}
+
+		$posts_to_update = [];
+
+		foreach ( $data['clicks'] as $post_id ) {
+			if ( ! isset( $posts_to_update[ $post_id ] ) ) {
+				$posts_to_update[ $post_id ] = (int) get_post_meta( $post_id, '_elementor_click_tracking', true ) ?: 0;
+			}
+			$posts_to_update[ $post_id ] ++;
+		}
+
+		foreach ( $posts_to_update as $post_id => $clicks ) {
+			update_post_meta( $post_id, '_elementor_click_tracking', $clicks );
+		}
+
+		wp_send_json_success( [ 'nonce' => wp_create_nonce( 'elementor-pro-frontend' ) ] );
+
+		wp_die();
 	}
 
 	public function set_admin_columns_content( $column_name, $post_id ) {

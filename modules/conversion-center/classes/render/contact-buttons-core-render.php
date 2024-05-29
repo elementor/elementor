@@ -12,6 +12,7 @@ namespace Elementor\Modules\ConversionCenter\Classes\Render;
 class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 
 	public function render(): void {
+
 		$this->build_layout_render_attribute();
 
 		$content_classnames = 'e-contact-buttons__content';
@@ -40,6 +41,14 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 			?>
 		</div>
 		<?php
+	}
+
+	protected function add_layout_render_attribute( $layout_classnames ) {
+		$this->widget->add_render_attribute( 'layout', [
+			'class' => $layout_classnames,
+			'id' => $this->settings['advanced_custom_css_id'],
+			'data-document-id' => get_the_ID(),
+		] );
 	}
 
 }
