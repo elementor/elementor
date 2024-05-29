@@ -332,22 +332,6 @@ class Manager extends Base_Object {
 
 	private function add_default_features() {
 		$this->add_feature( [
-			'name' => 'e_optimized_assets_loading',
-			'title' => esc_html__( 'Improved Asset Loading', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => sprintf(
-				'%1$s <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">%2$s</a>',
-				esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
-				esc_html__( 'Learn more', 'elementor' )
-			),
-			static::TYPE_HIDDEN => true,
-			'mutable' => false,
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
