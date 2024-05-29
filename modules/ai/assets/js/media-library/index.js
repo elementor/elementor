@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import GenerateImageWithAI from './ai-images';
+import GenerateImageWithAI from './generate';
+import { createRoot } from 'react-dom/client';
+import EditImageWithAI from './edit';
 // Import { createRoot } from '@wordpress/element';
 
 ( function() {
@@ -12,7 +14,7 @@ import GenerateImageWithAI from './ai-images';
 	if ( isMediaLibrary() ) {
 		const mediaLibrary = document.querySelector( '.page-title-action' );
 		if ( mediaLibrary ) {
-			const container = document.createElement( 'button' );
+			const container = document.createElement( 'div' );
 			container.id = 'e-image-ai-media-library';
 			mediaLibrary.insertAdjacentElement( 'afterend', container );
 			ReactDOM.render( <GenerateImageWithAI />, container );
@@ -37,7 +39,7 @@ import GenerateImageWithAI from './ai-images';
 				const container = document.createElement( 'div' );
 				details.insertAdjacentElement( 'afterend', container );
 
-				ReactDOM.render( <GenerateImageWithAI />, container );
+				ReactDOM.render( <EditImageWithAI />, container );
 
 				return content.innerHTML;
 			},
@@ -57,39 +59,35 @@ import GenerateImageWithAI from './ai-images';
 				content.innerHTML = html;
 
 				const details = content.querySelector( '.details' );
-				console.log( details );
-
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai';
 				details.appendChild( container );
 
-				// Const event = new CustomEvent( 'injectReactComponent', { detail: container } );
-				// console.log( 'Dispatching event:', event );
-				// document.dispatchEvent( event );
-
-				ReactDOM.render( <GenerateImageWithAI />, container );
+				window.dispatchEvent( new CustomEvent( 'renderAttachmentsTwoColumnEvent' ) );
 				return content.innerHTML;
-				// Const root = createRoot( rootElement );
-				// root.render( <GenerateExcerptWithAI /> );
 			},
 		} );
 	}
 } )();
 
-// Document.addEventListener( 'injectReactComponent', function( event ) {
-// 	console.log( 'Event received:', event );
-// 	const container = event.detail;
-//
-// 	if ( container instanceof HTMLElement ) {
-// 		// Ensure React and ReactDOM are available
-// 		if ( typeof React !== 'undefined' && typeof ReactDOM !== 'undefined' ) {
-// 			console.log( 'render' );
-//
-// 			ReactDOM.render( <GenerateImageWithAI />, container );
-// 		} else {
-// 			console.error( 'React or ReactDOM is not available.' );
-// 		}
-// 	} else {
-// 		console.error( 'The container is not a valid DOM element:', container );
-// 	}
-// } );
+window.addEventListener( 'renderAttachmentsTwoColumnEvent', function() {
+	setTimeout( () => {
+		const content = document.getElementById( 'e-image-ai' );
+		const root = createRoot( content );
+		root.render( <EditImageWithAI /> );
+	}, 1 );
+} );
+
+function insertStyleTag() {
+	const style = document.createElement( 'style' );
+	const css = `
+    #e-form-media {
+      z-index: 999999;
+    }
+  `;
+
+	style.appendChild( document.createTextNode( css ) );
+	document.head.appendChild( style );
+}
+
+insertStyleTag();

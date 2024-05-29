@@ -3,6 +3,26 @@ import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useState } from '@wordpress/element';
+import App from '../editor/app';
+
+const AIMedia = ( { onClose } ) => {
+	return (
+		<>
+			<App
+				type={ 'media' }
+				getControlValue={ () => {} }
+				setControlValue={ () => {} }
+				onClose={ onClose }
+				isRTL={ elementorCommon.config.isRTL }
+			/>
+		</>
+	);
+};
+
+AIMedia.propTypes = {
+	onClose: PropTypes.func.isRequired,
+};
 
 const Icon = styled.i`
   color: #C00BB9;
@@ -21,9 +41,15 @@ const ImageLink = styled.a`
   }
 `;
 
-const GenerateImageWithAI = () => {
+const EditImageWithAI = () => {
+	const [ isOpen, setIsOpen ] = useState( false );
+
 	const handleClick = () => {
-		console.log( 'click' );
+		setIsOpen( true );
+	};
+
+	const handleClose = () => {
+		setIsOpen( false );
 	};
 
 	return (
@@ -31,13 +57,9 @@ const GenerateImageWithAI = () => {
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
 				<ImageLink onClick={ handleClick }>{ __( 'Edit with Elementor AI', 'elementor' ) }</ImageLink>
+				{ isOpen && <AIMedia onClose={ handleClose } /> }
 			</RequestIdsProvider>
 		</div> );
 };
 
-export default GenerateImageWithAI;
-
-GenerateImageWithAI.propTypes = {
-	pb: PropTypes.string,
-	pt: PropTypes.string,
-};
+export default EditImageWithAI;

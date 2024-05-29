@@ -346,6 +346,13 @@ class Module extends BaseModule {
 	}
 
 	private function verify_permissions( $editor_post_id ) {
+		$referer = wp_get_referer();
+
+		if (str_contains( $referer, 'wp-admin/upload.php')) {
+//			add_cap?
+			return true;
+		}
+
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
 		if ( ! $document ) {
