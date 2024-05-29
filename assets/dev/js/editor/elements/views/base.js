@@ -340,24 +340,38 @@ BaseElementView = BaseContainer.extend( {
 		return $handlesOverlay;
 	},
 
-	attachElContent( html ) {
+	attachElContent( html, data ) {
 		if ( elementor.previewView.isBuffering || ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters || 'nested-accordion' !== this?.model?.config?.name ) {
 			this.$el.empty().append( this.getHandlesOverlay(), html );
 			return;
 		}
 
-		console.log({html});
-		const detailsRegex = /<details[\s\S]*?>[\s\S]*?<\/details>/gi;
-		const titleElementRegex = /<div class="e-n-accordion-item-title-text"[\s\S]*?>([\s\S]*?)<\/div>/gi;
-		const activeIndex = +this?.model?.changed?.editSettings?.changed - 1 || 0;
-		const activeDetailsElement = html.matchAll( detailsRegex ).toArray()[ activeIndex ];
-		const newTitle = titleElementRegex.exec( activeDetailsElement ).toArray()[ 1 ].replace( /<\/?[^>]+(>|$)/g , '' ).trim();
+		console.log( { html, data } );
+		const activeIndex = +this?.model?.changed?.editSettings?.changed?.activeItemIndex - 1 || +this?.model?.changed?.editSettings?.attributes?.activeItemIndex - 1;
+		if ( activeIndex ) {
+			const newTitle = this.takeDataFromRepeater( activeIndex ),
+				element = data.view.$el[ 0 ].querySelectorAll( '.e-n-accordion-item-title-text' )[ activeIndex ];
+			element.innerText = newTitle;
+		}
+		// Const detailsRegex = /<details[\s\S]*?>[\s\S]*?<\/details>/gi;
+		// const titleElementRegex = /<div class="e-n-accordion-item-title-text"[\s\S]*?>([\s\S]*?)<\/div>/gi;
+		// const activeIndex = +this?.model?.changed?.editSettings?.changed?.activeItemIndex - 1;
+		//
+		// const activeDetailsElement = html.matchAll( detailsRegex ).toArray()[ activeIndex ];
+		// const newTitle = titleElementRegex.exec( activeDetailsElement['input'] ).toArray()[ 1 ].replace( /<\/?[^>]+(>|$)/g , '' ).trim();
 
-		this.$el.find( 'details' )[ activeIndex ].find( '.e-n-accordion-item-title-text' ).text( newTitle );
+		// this.$el.find( 'details' )[ activeIndex ].find( '.e-n-accordion-item-title-text' ).text( newTitle );
 
-		// this.$el.html().matchAll(/<details[\s\S]*?>[\s\S]*?<\/details>/gi).toArray()
+		// This.$el.html().matchAll(/<details[\s\S]*?>[\s\S]*?<\/details>/gi).toArray()
 		// _this$model.changed.editSettings.attributes.activeItemIndex
 		// this.$el.empty().append( this.getHandlesOverlay(), html );
+	},
+
+	takeDataFromRepeater( replacedIndex ) {
+		const repeater = 'elementor-control-type-repeater',
+			repeaterItemClass = 'elementor-repeater-row-item-title';
+
+		return document.querySelectorAll( `.${ repeater } .${ repeaterItemClass }` )[ replacedIndex ].innerText;
 	},
 
 	isStyleTransferControl( control ) {
