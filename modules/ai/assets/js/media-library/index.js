@@ -16,6 +16,7 @@ import EditImageWithAI from './edit';
 		if ( mediaLibrary ) {
 			const container = document.createElement( 'div' );
 			container.id = 'e-image-ai-media-library';
+			container.style.display	= 'inline-block';
 			mediaLibrary.insertAdjacentElement( 'afterend', container );
 			ReactDOM.render( <GenerateImageWithAI />, container );
 		}
@@ -80,6 +81,7 @@ window.addEventListener( 'renderAttachmentsTwoColumnEvent', function() {
 
 function insertStyleTag() {
 	const style = document.createElement( 'style' );
+
 	const css = `
     #e-form-media {
       z-index: 999999;

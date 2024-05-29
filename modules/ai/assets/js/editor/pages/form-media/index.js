@@ -47,6 +47,7 @@ const FormMedia = ( {
 	hasSubscription,
 	usagePercentage,
 	isInternalCall = true,
+	location = null,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -116,7 +117,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet isInternalCall={ isInternalCall } />
+								<MediaOutlet isInternalCall={ isInternalCall } location={ location } />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>
@@ -143,6 +144,7 @@ FormMedia.propTypes = {
 	hasSubscription: PropTypes.bool,
 	usagePercentage: PropTypes.number,
 	isInternalCall: PropTypes.bool,
+	location: PropTypes.string,
 };
 
 export default FormMedia;

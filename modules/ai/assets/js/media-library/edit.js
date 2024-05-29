@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useState } from '@wordpress/element';
 import App from '../editor/app';
+import { LOCATIONS } from '../editor/pages/form-media/constants';
 
 const AIMedia = ( { onClose } ) => {
 	return (
@@ -15,6 +16,7 @@ const AIMedia = ( { onClose } ) => {
 				setControlValue={ () => {} }
 				onClose={ onClose }
 				isRTL={ elementorCommon.config.isRTL }
+				location={ LOCATIONS.IMAGE_TOOLS }
 			/>
 		</>
 	);
@@ -31,11 +33,11 @@ const Icon = styled.i`
 `;
 
 const ImageLink = styled.a`
-  color: #C00BB9;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  //display: inline-block;
+	color: #C00BB9;
+	cursor: pointer;
+	font-size: inherit;
+	display: inline-block;
+
   &:hover {
     color: #C00BB9;
   }

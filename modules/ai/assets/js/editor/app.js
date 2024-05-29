@@ -19,6 +19,7 @@ const App = ( props ) => {
 						controlView={ props.controlView }
 						additionalOptions={ props.additionalOptions }
 						isInternalCall={ props.isInternalCall }
+						location={ props.location }
 					/>
 				</RequestIdsProvider>
 			</ThemeProvider>
@@ -37,6 +38,7 @@ App.propTypes = {
 	controlView: PropTypes.object,
 	isRTL: PropTypes.bool,
 	isInternalCall: PropTypes.bool,
+	location: PropTypes.string,
 };
 
 export default App;

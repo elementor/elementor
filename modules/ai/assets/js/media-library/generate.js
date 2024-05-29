@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { useState } from '@wordpress/element';
 import App from '../editor/app';
 
 const AIMedia = ( { onClose } ) => {
@@ -26,20 +25,31 @@ AIMedia.propTypes = {
 };
 
 const Icon = styled.i`
-  color: #C00BB9;
-  padding-right: 0.5em;
-  cursor: pointer;
+	padding-right: 0.5em;
+	cursor: pointer;
 `;
 
-const ImageLink = styled.a`
-  color: #C00BB9;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  //display: inline-block;
-  &:hover {
-    color: #C00BB9;
-  }
+const StyledButton = styled.a`
+	color: #C00BB9;
+	cursor: pointer;
+	font-size: inherit;
+	display: inline-block;
+	position: relative;
+	box-sizing: border-box;
+	top: -3px;
+	margin-left: 4px;
+	border: 1px solid #C00BB9;
+	border-radius: 5px;
+	line-height: 2.15384615;
+	padding: 0 10px;
+	font-weight: 650;
+	background: #f6f7f7;
+
+
+	&:hover {
+		color: #C00BB9;
+		background: #eeefef;
+	}
 `;
 
 const GenerateImageWithAI = () => {
@@ -50,18 +60,21 @@ const GenerateImageWithAI = () => {
 	};
 
 	const handleClose = () => {
-		location.reload();
+		location.reload(); // Update media library with the new image
 		setIsOpen( false );
 	};
 
 	return (
-		<div style={ { paddingTop: '0.5em' } }>
-			<RequestIdsProvider>
-				<Icon className={ 'eicon-ai' } />
-				<ImageLink onClick={ handleClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</ImageLink>
-				{ isOpen && <AIMedia onClose={ handleClose } /> }
-			</RequestIdsProvider>
-		</div> );
+		<div style={ { padding: '0.5em' } }>
+			<StyledButton onClick={ handleClick }>
+				<RequestIdsProvider>
+					<Icon className={ 'eicon-ai' } />
+					{ __( 'Generate with Elementor AI', 'elementor' ) }
+					{ isOpen && <AIMedia onClose={ handleClose } /> }
+				</RequestIdsProvider>
+			</StyledButton>
+		</div>
+	);
 };
 
 export default GenerateImageWithAI;

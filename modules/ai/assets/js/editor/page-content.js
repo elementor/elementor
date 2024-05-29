@@ -28,6 +28,7 @@ const PageContent = (
 		controlView,
 		additionalOptions,
 		isInternalCall = true,
+		location = null,
 	} ) => {
 	const {
 		isLoading,
@@ -143,6 +144,7 @@ const PageContent = (
 						hasSubscription={ hasSubscription }
 						usagePercentage={ usagePercentage }
 						isInternalCall={ isInternalCall }
+						location={ location }
 					/>
 				</PromptHistoryActionProvider>
 			</PromptHistoryProvider>
@@ -226,6 +228,7 @@ PageContent.propTypes = {
 	additionalOptions: PropTypes.object,
 	controlView: PropTypes.object,
 	isInternalCall: PropTypes.bool,
+	location: PropTypes.string,
 };
 
 export default PageContent;
