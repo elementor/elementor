@@ -91,7 +91,7 @@ jobs:
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
       - name: Get Changelog From Changelog Text File
-        if: github.event.inputs.channel == 'ga'
+#        if: github.event.inputs.channel == 'ga'
         uses: ./.github/workflows/get-changelog-from-changelog-txt
         with:
           VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
