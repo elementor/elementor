@@ -181,6 +181,10 @@ class Module extends BaseModule {
 			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
 		}
 
+		if ( ! check_ajax_referer( 'elementor-pro-frontend', '_nonce', false ) ) {
+			wp_send_json_error( [ 'message' => 'Invalid referrer' ] );
+		}
+
 		$posts_to_update = [];
 
 		foreach ( $data['clicks'] as $post_id ) {
