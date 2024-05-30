@@ -172,7 +172,10 @@ export default class NestedTabs extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute );
+		const isActiveTabTitle = 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute ),
+			isActiveTabContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ).hasClass( this.getActiveClass() );
+
+		return isActiveTabTitle && isActiveTabContent;
 	}
 
 	onTabClick( event ) {
