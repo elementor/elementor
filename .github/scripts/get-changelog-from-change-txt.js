@@ -23,7 +23,9 @@ for (let fileName of ['changelog', 'readme'] ) {
 			}
 			const versionLog = data[headerIndex + 1].raw;
 			fs.writeFileSync(`temp-${fileName}.txt`, versionLog);
+			console.log('success: ', fileName);
 		} catch (err) {
+			console.error('this is my error', fileName, err)
 			process.exit(1);
 		}
 	})();
