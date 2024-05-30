@@ -417,15 +417,6 @@ export default class NestedTabs extends Base {
 			this.updateListeners( view );
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
-
-		this.resetActiveTab();
-	}
-
-	resetActiveTab() {
-		const activeTabIndex = this.getActiveTabIndex() || 0;
-
-		this.deactivateActiveTab( activeTabIndex );
-		this.activateTab( activeTabIndex );
 	}
 
 	updateListeners( view ) {
@@ -453,6 +444,12 @@ export default class NestedTabs extends Base {
 			element.querySelector( settings.selectors.tabTitleIcon )?.setAttribute( 'data-binding-index', newIndex );
 
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
+
+			if ( !! $tabContents[ index ] ) {
+				console.log( 'valid' );
+			} else {
+				console.log( 'invalid' );
+			}
 
 			$tabContents[ index ]?.setAttribute( 'aria-labelledby', updatedTabID );
 			$tabContents[ index ]?.setAttribute( 'data-tab-index', newIndex );

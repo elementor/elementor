@@ -18,8 +18,8 @@ export default class View extends $e.components.get( 'nested-elements' ).exports
 			style: '--n-tabs-title-order: ' + index + ';',
 		} );
 
-		if ( 1 === index ) {
-			childView.$el.addClass( 'e-active' );
-		}
+		// if ( 1 === index ) {
+		// 	childView.$el.addClass( 'e-active' );
+		// }
 	}
 }
