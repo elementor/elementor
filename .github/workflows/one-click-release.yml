@@ -77,19 +77,19 @@ jobs:
       #   with:
       #     PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       #     BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-      - name: Get Release Name
-        uses : ./.github/workflows/get-release-name
-        with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
-          PLUGIN_NAME: ${{ github.event.repository.name }}
-      - name: Generate changelog
-        uses: ./.github/workflows/generate-changelog
-        with:
-          TOKEN:  ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: ${{ github.ref }}
-          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
-          GENERATE_EMPTY_CHANGELOG: true
+      # - name: Get Release Name
+      #   uses : ./.github/workflows/get-release-name
+      #   with:
+      #     BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
+      #     PLUGIN_NAME: ${{ github.event.repository.name }}
+      # - name: Generate changelog
+      #   uses: ./.github/workflows/generate-changelog
+      #   with:
+      #     TOKEN:  ${{ secrets.MAINTAIN_TOKEN }}
+      #     REPOSITORY: ${{ github.repository }}
+      #     HEAD_BRANCH_NAME: ${{ github.ref }}
+      #     BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
+      #     GENERATE_EMPTY_CHANGELOG: true
       - name: Get Changelog From Changelog Text File
 #        if: github.event.inputs.channel == 'ga'
         uses: ./.github/workflows/get-changelog-from-changelog-txt
