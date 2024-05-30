@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import GenerateImageWithAI from './generate';
 import EditImageWithAI from './edit';
 import { createRoot } from '@wordpress/element';
@@ -28,15 +27,14 @@ import { createRoot } from '@wordpress/element';
 				const html = wp.media.template( 'attachment-details' )( view );
 
 				const content = document.createElement( 'div' );
-				content.id = 'e-image-ai-attachment-details';
 				content.innerHTML = html;
-				// ?
-				const details = content.querySelector( '.dimensions' );
+
+				const details = content.querySelector( '.compat-meta' );
 				const container = document.createElement( 'div' );
-				details.insertAdjacentElement( 'afterend', container );
+				container.id = 'e-image-ai-insert-media';
+				details.insertAdjacentElement( 'beforeend', container );
 
-				ReactDOM.render( <EditImageWithAI />, container );
-
+				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
 				return content.innerHTML;
 			},
 		} );
@@ -52,19 +50,27 @@ import { createRoot } from '@wordpress/element';
 
 				const details = content.querySelector( '.details' );
 				const container = document.createElement( 'div' );
-				container.id = 'e-image-ai';
+				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
 
-				window.dispatchEvent( new CustomEvent( 'renderAttachmentsTwoColumnEvent' ) );
+				window.dispatchEvent( new CustomEvent( 'renderAttachmentsDetailsEvent' ) );
 				return content.innerHTML;
 			},
 		} );
 	}
 } )();
 
-window.addEventListener( 'renderAttachmentsTwoColumnEvent', function() {
+window.addEventListener( 'renderInsertMediaEvent', function() {
 	setTimeout( () => {
-		const content = document.getElementById( 'e-image-ai' );
+		const content = document.getElementById( 'e-image-ai-insert-media' );
+		const root = createRoot( content );
+		root.render( <EditImageWithAI /> );
+	}, 1 );
+} );
+
+window.addEventListener( 'renderAttachmentsDetailsEvent', function() {
+	setTimeout( () => {
+		const content = document.getElementById( 'e-image-ai-attachment-details' );
 		const root = createRoot( content );
 		root.render( <EditImageWithAI /> );
 	}, 1 );

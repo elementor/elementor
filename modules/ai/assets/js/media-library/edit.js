@@ -34,16 +34,17 @@ const Icon = styled.i`
 `;
 
 const ImageLink = styled.a`
-	color: #C00BB9;
-	cursor: pointer;
-	font-size: inherit;
-	display: inline-block;
-
-	&:hover {
+	&& {
 		color: #C00BB9;
+		cursor: pointer;
+		font-size: inherit;
+		display: inline-block;
+
+		&:hover {
+			color: #C00BB9;
+		}
 	}
 `;
-
 const EditImageWithAI = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -65,7 +66,7 @@ const EditImageWithAI = () => {
 	};
 
 	return (
-		<div style={ { paddingTop: '0.5em' } }>
+		<div style={ { paddingTop: '0.8em' } }>
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
 				<ImageLink onClick={ handleClick }>{ __( 'Edit with Elementor AI', 'elementor' ) }</ImageLink>
