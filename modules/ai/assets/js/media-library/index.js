@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import GenerateImageWithAI from './generate';
-import { createRoot } from 'react-dom/client';
 import EditImageWithAI from './edit';
-// Import { createRoot } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 ( function() {
 	const isMediaLibrary = () => {
 		const { location } = window;
-		return location.href.endsWith( '/upload.php' ) && ! location.search;
+		return location.href.includes( '/upload.php' );
 	};
 
 	if ( isMediaLibrary() ) {
@@ -16,9 +15,10 @@ import EditImageWithAI from './edit';
 		if ( mediaLibrary ) {
 			const container = document.createElement( 'div' );
 			container.id = 'e-image-ai-media-library';
-			container.style.display	= 'inline-block';
+
 			mediaLibrary.insertAdjacentElement( 'afterend', container );
-			ReactDOM.render( <GenerateImageWithAI />, container );
+			const root = createRoot( container );
+			root.render( <GenerateImageWithAI /> );
 		}
 	}
 
@@ -27,16 +27,11 @@ import EditImageWithAI from './edit';
 			template( view ) {
 				const html = wp.media.template( 'attachment-details' )( view );
 
-				if ( this.model.attributes.type !== 'image' ) {
-					return html;
-				}
-
 				const content = document.createElement( 'div' );
 				content.id = 'e-image-ai-attachment-details';
 				content.innerHTML = html;
-
+				// ?
 				const details = content.querySelector( '.dimensions' );
-				console.log( details );
 				const container = document.createElement( 'div' );
 				details.insertAdjacentElement( 'afterend', container );
 
@@ -51,10 +46,6 @@ import EditImageWithAI from './edit';
 		wp.media.view.Attachment.Details.TwoColumn = wp.media.view.Attachment.Details.TwoColumn.extend( {
 			template( view ) {
 				const html = wp.media.template( 'attachment-details-two-column' )( view );
-
-				if ( this.model.attributes.type !== 'image' ) {
-					return html;
-				}
 
 				const content = document.createElement( 'div' );
 				content.innerHTML = html;
@@ -83,6 +74,10 @@ function insertStyleTag() {
 	const style = document.createElement( 'style' );
 
 	const css = `
+	#e-image-ai-media-library {
+		display: inline-block;
+	}
+
     #e-form-media {
       z-index: 999999;
     }

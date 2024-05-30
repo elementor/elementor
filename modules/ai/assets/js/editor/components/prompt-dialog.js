@@ -48,7 +48,7 @@ const DraggablePaper = ( props ) => {
 };
 
 const PromptDialog = ( props ) => {
-	// Zindex fix
+	// Zindex
 	return (
 		<Dialog
 			scroll="paper"

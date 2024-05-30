@@ -27,8 +27,6 @@ const PageContent = (
 		setControlValue,
 		controlView,
 		additionalOptions,
-		isInternalCall = true,
-		location = null,
 	} ) => {
 	const {
 		isLoading,
@@ -136,6 +134,7 @@ const PageContent = (
 					<FormMedia
 						onClose={ onClose }
 						getControlValue={ getControlValue }
+						setControlValue={ setControlValue }
 						controlView={ controlView }
 						additionalOptions={ additionalOptions }
 						credits={ credits }
@@ -143,8 +142,6 @@ const PageContent = (
 						DialogProps={ promptDialogStyleProps }
 						hasSubscription={ hasSubscription }
 						usagePercentage={ usagePercentage }
-						isInternalCall={ isInternalCall }
-						location={ location }
 					/>
 				</PromptHistoryActionProvider>
 			</PromptHistoryProvider>
@@ -227,8 +224,6 @@ PageContent.propTypes = {
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
 	controlView: PropTypes.object,
-	isInternalCall: PropTypes.bool,
-	location: PropTypes.string,
 };
 
 export default PageContent;

@@ -18,8 +18,6 @@ const App = ( props ) => {
 						setControlValue={ props.setControlValue }
 						controlView={ props.controlView }
 						additionalOptions={ props.additionalOptions }
-						isInternalCall={ props.isInternalCall }
-						location={ props.location }
 					/>
 				</RequestIdsProvider>
 			</ThemeProvider>
@@ -37,7 +35,6 @@ App.propTypes = {
 	additionalOptions: PropTypes.object,
 	controlView: PropTypes.object,
 	isRTL: PropTypes.bool,
-	isInternalCall: PropTypes.bool,
 	location: PropTypes.string,
 };
 

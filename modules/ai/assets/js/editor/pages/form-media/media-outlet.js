@@ -18,10 +18,10 @@ import {
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PropTypes from 'prop-types';
 
-const MediaOutlet = ( { isInternalCall = true, location = null } ) => {
+const MediaOutlet = () => {
 	const { editImage } = useEditImage();
 
-	const { current, navigate } = useLocation( { current: location || LOCATIONS.GENERATE } );
+	const { current, navigate } = useLocation( { current: LOCATIONS.GENERATE } );
 
 	useEffect( () => {
 		const isNotPlaceholderImage = editImage.id;
@@ -52,7 +52,7 @@ const MediaOutlet = ( { isInternalCall = true, location = null } ) => {
 
 	return (
 		<>
-			{ current === LOCATIONS.GENERATE && <Generate isInternalCall={ isInternalCall } /> }
+			{ current === LOCATIONS.GENERATE && <Generate /> }
 			{ current === LOCATIONS.IMAGE_TOOLS && <ImageTools /> }
 			{ current === LOCATIONS.VARIATIONS && <Variations /> }
 			{ current === LOCATIONS.IN_PAINTING && <InPainting /> }
@@ -65,9 +65,3 @@ const MediaOutlet = ( { isInternalCall = true, location = null } ) => {
 };
 
 export default MediaOutlet;
-
-MediaOutlet.propTypes = {
-	isInternalCall: PropTypes.bool,
-	location: PropTypes.string,
-};
-

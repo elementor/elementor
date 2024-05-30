@@ -13,7 +13,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
 		this.context = {};
-
 		this.config = window.ElementorAiConfig;
 	}
 

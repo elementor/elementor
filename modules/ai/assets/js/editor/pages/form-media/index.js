@@ -41,13 +41,12 @@ const FormMedia = ( {
 	onClose,
 	DialogProps,
 	getControlValue,
+	setControlValue,
 	controlView,
 	additionalOptions,
 	maybeRenderUpgradeChip,
 	hasSubscription,
 	usagePercentage,
-	isInternalCall = true,
-	location = null,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -74,26 +73,14 @@ const FormMedia = ( {
 		usagePercentage,
 	};
 
-	const createGlobalActions = () => {
-		const globalActions = {
-			state,
-			getControlValue,
-			saveAndClose,
-			close: onCloseIntent,
-			setHasUnsavedChanges,
-		};
-
-		if ( isInternalCall ) {
-			globalActions.SetControlImage = ( image ) => {
-				controlView.setSettingsModel( image );
-				controlView.applySavedValue();
-			};
-		}
-
-		return globalActions;
+	const globalActions = {
+		state,
+		getControlValue,
+		setControlValue,
+		saveAndClose,
+		close: onCloseIntent,
+		setHasUnsavedChanges,
 	};
-
-	const globalActions = createGlobalActions( isInternalCall );
 
 	useEffect( () => {
 		if ( state.isAllSaved ) {
@@ -117,7 +104,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet isInternalCall={ isInternalCall } location={ location } />
+								<MediaOutlet />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>
@@ -137,14 +124,13 @@ FormMedia.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	DialogProps: PropTypes.object,
 	getControlValue: PropTypes.func.isRequired,
+	setControlValue: PropTypes.func.isRequired,
 	controlView: PropTypes.object,
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	maybeRenderUpgradeChip: PropTypes.func,
 	hasSubscription: PropTypes.bool,
 	usagePercentage: PropTypes.number,
-	isInternalCall: PropTypes.bool,
-	location: PropTypes.string,
 };
 
 export default FormMedia;

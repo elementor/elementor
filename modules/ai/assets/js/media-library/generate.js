@@ -14,7 +14,6 @@ const AIMedia = ( { onClose } ) => {
 				setControlValue={ () => {} }
 				onClose={ onClose }
 				isRTL={ elementorCommon.config.isRTL }
-				isInternalCall={ false }
 			/>
 		</>
 	);

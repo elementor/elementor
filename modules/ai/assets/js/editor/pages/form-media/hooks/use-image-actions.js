@@ -14,9 +14,9 @@ const normalizeImageData = ( imageToUpload ) => {
 	};
 };
 
-const useImageActions = ( isInternalCall = true ) => {
+const useImageActions = () => {
 	const { editImage, setEditImage } = useEditImage();
-	const { setControlImage, saveAndClose } = useGlobalActions();
+	const { setControlValue, saveAndClose } = useGlobalActions();
 	const { attachmentData, isUploading, uploadError, upload: uploadImage, resetUpload } = useImageUpload();
 
 	const upload = ( imageToUpload, prompt ) => {
@@ -50,10 +50,7 @@ const useImageActions = ( isInternalCall = true ) => {
 	const use = async ( imageToUpload, prompt ) => {
 		const result = await getFinalImage( imageToUpload, prompt );
 
-		if ( isInternalCall ) {
-			setControlImage( result );
-		}
-
+		setControlValue( result );
 		saveAndClose();
 	};
 
