@@ -131,7 +131,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await innerTabsSecondTab.click();
 
 			// Assert
-			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-tab2.png' );
+			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-tab2.png' );
 		} );
 
 		await test.step( 'Clone Last Tab of Inner Nested Tabs', async () => {
@@ -141,7 +141,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tabs .e-n-tab-title' ).nth( 3 ).waitFor();
 
 			// Assert
-			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-cloned.png' );
+			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-cloned.png' );
 		} );
 
 		await test.step( 'Clone Last Tab of Outer Nested Tabs', async () => {
@@ -153,7 +153,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await editor.getPreviewFrame().locator( '.e-n-tabs' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 3 ).waitFor();
 
 			// Assert
-			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned.png' );
+			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned.png' );
 
 			// Act
 			const outerTabsFirstTab = frame.locator( '.e-n-tabs-heading' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 0 );
@@ -162,7 +162,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await innerTabsFirstTab.click();
 
 			// Assert
-			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned-inner-tabs-check.png' );
+			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned-inner-tabs-check.png' );
 		} );
 	} );
 } );
