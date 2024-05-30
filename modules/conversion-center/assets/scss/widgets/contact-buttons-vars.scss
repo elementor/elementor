@@ -10,6 +10,10 @@ $contact-buttons-size-small: 55px;
 $contact-buttons-size-medium: 65px;
 $contact-buttons-size-large: 75px;
 
+$contact-buttons-svg-size-small: 32px;
+$contact-buttons-svg-size-medium: 38px;
+$contact-buttons-svg-size-large: 42px;
+
 $contact-buttons-profile-image-size-small: 65px;
 $contact-buttons-profile-image-size-medium: 75px;
 $contact-buttons-profile-image-size-large: 85px;
@@ -22,7 +26,9 @@ $contact-buttons-dots-color: #FF0000;
 $contact-buttons-dots-size: 20px;
 $contact-buttons-profile-dot-bg: #39AA59;
 
-$contact-buttons-animation-duration: 800ms;
+$contact-buttons-animation-duration-slow: 2s;
+$contact-buttons-animation-duration-normal: 1s;
+$contact-buttons-animation-duration-fast: 800ms;
 $contact-buttons-animation-delay: 0;
 
 $contact-buttons-chat-box-bg: #FFFFFF;

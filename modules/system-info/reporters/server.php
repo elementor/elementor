@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Server extends Base {
 
-	const KEY_PATH_WP_ROOT_DIR = 'wp_root';
 	const KEY_PATH_WP_CONTENT_DIR = 'wp_content';
 	const KEY_PATH_UPLOADS_DIR = 'uploads';
 	const KEY_PATH_ELEMENTOR_UPLOADS_DIR = 'elementor_uploads';
@@ -318,7 +317,6 @@ class Server extends Base {
 	 */
 	public function get_write_permissions() : array {
 		$paths_to_check = [
-			static::KEY_PATH_WP_ROOT_DIR => $this->get_system_path( static::KEY_PATH_WP_ROOT_DIR ),
 			static::KEY_PATH_HTACCESS_FILE => $this->get_system_path( static::KEY_PATH_HTACCESS_FILE ),
 			static::KEY_PATH_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_UPLOADS_DIR ),
 			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
@@ -327,10 +325,6 @@ class Server extends Base {
 		$paths_permissions = $this->get_paths_permissions( $paths_to_check );
 
 		$write_problems = [];
-
-		if ( ! $paths_permissions[ static::KEY_PATH_WP_ROOT_DIR ]['write'] ) {
-			$write_problems[] = 'WordPress root directory';
-		}
 
 		if ( ! $paths_permissions[ static::KEY_PATH_UPLOADS_DIR ]['write'] ) {
 			$write_problems[] = 'WordPress uploads directory';
@@ -441,9 +435,6 @@ class Server extends Base {
 	 */
 	public function get_system_path( $path_key ) : string {
 		switch ( $path_key ) {
-			case static::KEY_PATH_WP_ROOT_DIR:
-				return ABSPATH;
-
 			case static::KEY_PATH_WP_CONTENT_DIR:
 				return WP_CONTENT_DIR;
 

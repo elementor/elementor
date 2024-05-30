@@ -2,35 +2,52 @@
 	--e-contact-buttons-size-small: 45px;
 	--e-contact-buttons-size-medium: 50px;
 	--e-contact-buttons-size-large: 55px;
+	--e-contact-buttons-icon-small: 20px;
+	--e-contact-buttons-icon-medium: 24px;
+	--e-contact-buttons-icon-large: 26px;
 	--e-contact-buttons-button-bg-hover: #324A6D;
 	--e-contact-buttons-close-button-color: #1C2448;
 	--e-contact-buttons-contact-button-icon-hover: #467FF7;
 	--e-contact-buttons-contact-button-bg-hover: #FFFFFF;
 
-	.e-contact-buttons__chat-button,
-	.e-contact-buttons__contact-icon-link {
-
-		&.has-size-small {
-
+	.has-size-small {
+		&.e-contact-buttons__chat-button,
+		&.e-contact-buttons__close-button,
+		& .e-contact-buttons__contact-icon-container {
+			height: var(--e-contact-buttons-size-small);
+			width: var(--e-contact-buttons-size-small);
+	
 			svg {
-				height: 26px;
-				width: 26px;
+				height: var(--e-contact-buttons-icon-small);
+				width: var(--e-contact-buttons-icon-small);
 			}
 		}
+	}
 
-		&.has-size-medium {
-
+	.has-size-medium {
+		&.e-contact-buttons__chat-button,
+		&.e-contact-buttons__close-button,
+		& .e-contact-buttons__contact-icon-container {
+			height: var(--e-contact-buttons-size-medium);
+			width: var(--e-contact-buttons-size-medium);
+	
 			svg {
-				height: 30px;
-				width: 30px;
+				height: var(--e-contact-buttons-icon-medium);
+				width: var(--e-contact-buttons-icon-medium);
 			}
 		}
+	}
 
-		&.has-size-large {
-
+	.has-size-large {
+		&.e-contact-buttons__chat-button,
+		&.e-contact-buttons__close-button,
+		& .e-contact-buttons__contact-icon-container {
+			height: var(--e-contact-buttons-size-large);
+			width: var(--e-contact-buttons-size-large);
+	
 			svg {
-				height: 32px;
-				width: 32px;
+				height: var(--e-contact-buttons-icon-large);
+				width: var(--e-contact-buttons-icon-large);
 			}
 		}
 	}
@@ -46,21 +63,6 @@
 		inset-inline-start: unset;
 		position: relative;
 		top: unset;
-
-		&.has-size-small {
-			height: var(--e-contact-buttons-size-small);
-			width: var(--e-contact-buttons-size-small);
-		}
-
-		&.has-size-medium {
-			height: var(--e-contact-buttons-size-medium);
-			width: var(--e-contact-buttons-size-medium);
-		}
-
-		&.has-size-large {
-			height: var(--e-contact-buttons-size-large);
-			width: var(--e-contact-buttons-size-large);
-		}
 	}
 
 	.e-contact-buttons__close-button,
@@ -116,21 +118,6 @@
 			svg {
 				fill: var(--e-contact-buttons-contact-button-icon-hover);
 			}
-		}
-
-		&.has-size-small .e-contact-buttons__contact-icon-container {
-			height: var(--e-contact-buttons-icon-size-small);
-			width: var(--e-contact-buttons-icon-size-small);
-		}
-
-		&.has-size-medium .e-contact-buttons__contact-icon-container {
-			height: var(--e-contact-buttons-icon-size-medium);
-			width: var(--e-contact-buttons-icon-size-medium);
-		}
-
-		&.has-size-large .e-contact-buttons__contact-icon-container {
-			height: var(--e-contact-buttons-icon-size-large);
-			width: var(--e-contact-buttons-icon-size-large);
 		}
 	}
 
