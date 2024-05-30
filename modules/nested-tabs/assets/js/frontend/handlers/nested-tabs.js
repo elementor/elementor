@@ -39,14 +39,6 @@ export default class NestedTabs extends Base {
 		return tabTitleElement.getAttribute( 'data-tab-index' );
 	}
 
-	getActiveTabIndex() {
-		const settings = this.getSettings(),
-			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
-			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
-
-		return $activeTitle.attr( 'data-tab-index' ) || null;
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {
