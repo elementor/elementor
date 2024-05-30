@@ -144,7 +144,6 @@ class Module extends BaseModule {
 				default:
 					break;
 			}
-
 		} );
 
 		add_action( 'manage_' . self::CPT_CONTACT_PAGES . '_posts_columns', function( $posts_columns ) {
