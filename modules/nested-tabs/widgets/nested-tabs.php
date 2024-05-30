@@ -1291,11 +1291,12 @@ class NestedTabs extends Widget_Nested_Base {
 			tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			activeTabIcon = item.tab_icon_active.value
 				? elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' )
-				: tabIcon;
+				: tabIcon,
+			escapedHoverAnimationClass = _.escape( hoverAnimationClass );
 
 		view.addRenderAttribute( 'tab-title', {
 			'id': tabId,
-			'class': [ 'e-n-tab-title',hoverAnimationClass ],
+			'class': [ 'e-n-tab-title',escapedHoverAnimationClass ],
 			'data-tab-index': tabCount,
 			'role': 'tab',
 			'aria-selected': 1 === tabCount ? 'true' : 'false',
