@@ -72,7 +72,7 @@ class Contact_Buttons extends PageBase {
 				'<a href="?post=%s&action=set_as_entire_site&_wpnonce=%s">%s</a>',
 				$this->get_post()->ID,
 				wp_create_nonce( 'set_as_entire_site_' . $this->get_post()->ID ),
-				__( 'Set as Entire Site', 'elementor' )
+				esc_html__( 'Set as Entire Site', 'elementor' )
 			);
 		}
 
