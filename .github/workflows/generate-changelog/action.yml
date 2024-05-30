@@ -21,7 +21,7 @@ runs:
     - name: Generate Changelog
       shell: bash
       env:
-        TOKEN: ${{ inputs.TOKEN }}
+        TOKEN: ${{ github.token }}
         REPOSITORY: ${{ inputs.REPOSITORY }}
         HEAD_BRANCH_NAME: ${{ inputs.HEAD_BRANCH_NAME }}
         BASE_TAG_NAME: ${{ inputs.BASE_TAG_NAME }}
