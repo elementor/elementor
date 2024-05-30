@@ -137,7 +137,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'chat_box_section' => [
 					'section_name' => esc_html__( 'Chat Box', 'elementor' ),
 					'width' => 360,
-				]
+				],
 			],
 			'advanced' => [
 				'has_horizontal_position' => true,

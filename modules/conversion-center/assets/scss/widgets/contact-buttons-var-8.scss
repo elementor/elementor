@@ -17,31 +17,34 @@
 	bottom: 16px;
 	inset-inline-end: 16px;
 
-	.has-colors-type-default.has-platform-email,
-	.has-colors-type-default.has-platform-sms,
-	.has-colors-type-default.has-platform-phone,
-	.has-colors-type-default.has-platform-url {
-		--e-contact-buttons-contact-button-icon: #467FF7;
-	}
+	.has-colors-type-default {
 
-	.has-colors-type-default.has-platform-whatsapp {
-		--e-contact-buttons-contact-button-icon: #25D366;
-	}
+		.has-platform-email,
+		.has-platform-sms,
+		.has-platform-phone,
+		.has-platform-url {
+			--e-contact-buttons-contact-button-icon: #467FF7;
+		}
 	
-	.has-colors-type-default.has-platform-skype {
-		--e-contact-buttons-contact-button-icon: #00AFF0;
-	}
-
-	.has-colors-type-default.has-platform-messenger {
-		--e-contact-buttons-contact-button-icon: #168AFF;
-	}
-
-	.has-colors-type-default.has-platform-viber {
-		--e-contact-buttons-contact-button-icon: #7360F2;
-	}
-
-	.has-colors-type-default.has-platform-waze {
-		--e-contact-buttons-contact-button-icon: #33CCFF;
+		.has-platform-whatsapp {
+			--e-contact-buttons-contact-button-icon: #25D366;
+		}
+		
+		.has-platform-skype {
+			--e-contact-buttons-contact-button-icon: #00AFF0;
+		}
+	
+		.has-platform-messenger {
+			--e-contact-buttons-contact-button-icon: #168AFF;
+		}
+	
+		.has-platform-viber {
+			--e-contact-buttons-contact-button-icon: #7360F2;
+		}
+	
+		.has-platform-waze {
+			--e-contact-buttons-contact-button-icon: #33CCFF;
+		}
 	}
 
 	.has-size-small.e-contact-buttons__close-button {
@@ -74,107 +77,110 @@
 		}
 	}
 
-	.e-contact-buttons__chat-buttons-container {
-		display: flex;
-	}
+	.e-contact-buttons {
 
-	.e-contact-buttons__close-button {
-		background-color: var(--e-contact-buttons-close-button-bg);
-		border-radius: 50%;
-		inset-inline-end: unset;
-		inset-inline-start: unset;
-		position: relative;
-		top: unset;
-	}
-
-	.e-contact-buttons__close-button,
-	.e-contact-buttons__chat-button {
-
-		&[aria-hidden="true"] {
-			display: none;
+		&__chat-buttons-container {
+			display: flex;
 		}
-	}
-
-	.e-contact-buttons__top-bar-title {
-		font-size: 16px;
-		line-height: 24px;
-		font-weight: 600;
-	}
-
-	.e-contact-buttons__top-bar-subtitle {
-		font-size: 12px;
-		line-height: 16px;
-		font-weight: 500px;
-	}
-
-	.e-contact-buttons__contact-links {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		padding: 12px;
-	}
-
-	.e-contact-buttons__contact-icon-link {
-		background-color: var(--e-contact-buttons-contact-button-bg);
-		border-start-end-radius: 15px;
-		border-end-end-radius: 15px;
-		border-end-start-radius: 15px;
-		display: grid;
-		grid-template-columns: auto 1fr;
-		grid-template-rows: repeat(2, 1fr);
-		grid-column-gap: 12px;
-		grid-row-gap: 0;
-		padding: 10px 20px;
-
-		svg {
-			fill: var(--e-contact-buttons-contact-button-icon);
+	
+		&__close-button {
+			background-color: var(--e-contact-buttons-close-button-bg);
+			border-radius: 50%;
+			inset-inline-end: unset;
+			inset-inline-start: unset;
+			position: relative;
+			top: unset;
 		}
-	}
-
-	.e-contact-buttons__contact-icon-link.has-size-small {
-		svg {
-			height: 22px;
-			width: 22px;
+	
+		&__close-button,
+		&__chat-button {
+	
+			&[aria-hidden="true"] {
+				display: none;
+			}
 		}
-	}
-
-	.e-contact-buttons__contact-icon-link.has-size-medium {
-		svg {
-			height: 28px;
-			width: 28px;
+	
+		&__top-bar-title {
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 600;
 		}
-	}
-
-	.e-contact-buttons__contact-icon-link.has-size-large {
-		svg {
-			height: 36px;
-			width: 36px;
+	
+		&__top-bar-subtitle {
+			font-size: 12px;
+			line-height: 16px;
+			font-weight: 500px;
 		}
-	}
-
-	.e-contact-buttons__contact-icon-container {
-		align-items: center;
-		display: flex;
-		grid-area: 1 / 1 / 3 / 2;
-	}
-
-	.e-contact-buttons__contact-title {
-		color: var(--e-contact-buttons-contact-title-text-color);
-		grid-area: 1 / 2 / 2 / 3;
-		font-size: 16px;
-		font-weight: 600;
-		line-height: 24px;
-	}
-
-	.e-contact-buttons__contact-description {
-		color: var(--e-contact-buttons-contact-description-text-color);
-		grid-area: 2 / 2 / 3 / 3;
-		font-size: 12px;
-		font-weight: 300;
-		line-height: 16px;
-	}
-
-	.e-contact-buttons__links-container {
-		background-color: var(--e-contact-buttons-chat-box-bg);
+	
+		&__contact-links {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			padding: 12px;
+		}
+	
+		&__contact-icon-link {
+			background-color: var(--e-contact-buttons-contact-button-bg);
+			border-start-end-radius: 15px;
+			border-end-end-radius: 15px;
+			border-end-start-radius: 15px;
+			display: grid;
+			grid-template-columns: auto 1fr;
+			grid-template-rows: repeat(2, 1fr);
+			grid-column-gap: 12px;
+			grid-row-gap: 0;
+			padding: 10px 20px;
+	
+			svg {
+				fill: var(--e-contact-buttons-contact-button-icon);
+			}
+		}
+	
+		&__contact-icon-link.has-size-small {
+			svg {
+				height: 22px;
+				width: 22px;
+			}
+		}
+	
+		&__contact-icon-link.has-size-medium {
+			svg {
+				height: 28px;
+				width: 28px;
+			}
+		}
+	
+		&__contact-icon-link.has-size-large {
+			svg {
+				height: 36px;
+				width: 36px;
+			}
+		}
+	
+		&__contact-icon-container {
+			align-items: center;
+			display: flex;
+			grid-area: 1 / 1 / 3 / 2;
+		}
+	
+		&__contact-title {
+			color: var(--e-contact-buttons-contact-title-text-color);
+			grid-area: 1 / 2 / 2 / 3;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 24px;
+		}
+	
+		&__contact-description {
+			color: var(--e-contact-buttons-contact-description-text-color);
+			grid-area: 2 / 2 / 3 / 3;
+			font-size: 12px;
+			font-weight: 300;
+			line-height: 16px;
+		}
+	
+		&__links-container {
+			background-color: var(--e-contact-buttons-chat-box-bg);
+		}
 	}
 }
