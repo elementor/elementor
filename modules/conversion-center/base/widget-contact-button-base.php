@@ -39,6 +39,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					],
 					'has_notification_dot' => true,
 					'has_active_tab' => false,
+					'has_display_text' => false,
 					'platform' => [
 						'group' => [
 							Social_Network_Provider::EMAIL,
@@ -49,6 +50,15 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							Social_Network_Provider::VIBER,
 						],
 					],
+					'defaults' => [
+						'mail' => null,
+						'mail_subject' => null,
+						'mail_body' => null,
+						'number' => null,
+						'username' => null,
+						'location' => null,
+						'url' => null,
+					]
 				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
@@ -151,6 +161,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	];
 
 	private function social_media_controls(): void {
+		$config = static::get_configuration();
 
 		$this->add_control(
 			'chat_button_mail',
@@ -162,6 +173,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( '@', 'elementor' ),
+				'default' => $config['content']['chat_button_section']['defaults']['mail'],
 				'condition' => [
 					'chat_button_platform' => Social_Network_Provider::EMAIL,
 				],
@@ -177,6 +189,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'active' => true,
 				],
 				'label_block' => true,
+				'default' => $config['content']['chat_button_section']['defaults']['mail_subject'],
 				'condition' => [
 					'chat_button_platform' => Social_Network_Provider::EMAIL,
 				],
@@ -188,6 +201,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Message', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'default' => $config['content']['chat_button_section']['defaults']['mail_body'],
 				'condition' => [
 					'chat_button_platform' => Social_Network_Provider::EMAIL,
 				],
@@ -204,6 +218,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
+				'default' => $config['content']['chat_button_section']['defaults']['number'],
 				'condition' => [
 					'chat_button_platform' => [
 						Social_Network_Provider::SMS,
@@ -224,6 +239,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'active' => true,
 				],
 				'label_block' => true,
+				'default' => $config['content']['chat_button_section']['defaults']['username'],
 				'condition' => [
 					'chat_button_platform' => [
 						Social_Network_Provider::SKYPE,
@@ -259,6 +275,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
+				'default' => $config['content']['chat_button_section']['defaults']['location'],
 				'condition' => [
 					'chat_button_platform' => [
 						Social_Network_Provider::WAZE,
@@ -266,6 +283,25 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			],
 		);
+
+		// $this->add_control(
+		// 	'chat_button_url',
+		// 	[
+		// 		'label' => esc_html__( 'Link', 'elementor' ),
+		// 		'type' => Controls_Manager::URL,
+		// 		'dynamic' => [
+		// 			'active' => true,
+		// 		],
+		// 		'autocomplete' => true,
+		// 		'label_block' => true,
+		// 		'default' => $config['content']['chat_button_section']['defaults']['url'],
+		// 		'condition' => [
+		// 			'chat_button_platform' => [
+		// 				Social_Network_Provider::URL,
+		// 			],
+		// 		],
+		// 	],
+		// );
 	}
 
 	protected function add_chat_button_section(): void {
@@ -319,6 +355,38 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'return_value' => 'yes',
 					'default' => 'yes',
 				]
+			);
+		}
+
+		if ( $config['content']['chat_button_section']['has_display_text'] ) {
+			$this->add_control(
+				'chat_button_display_text_select',
+				[
+					'label' => esc_html__( 'Display Text', 'elementor' ),
+					'type'  => Controls_Manager::SELECT,
+					'default' => 'details',
+					'options' => [
+						'details' => esc_html__( 'Contact Details', 'elementor' ),
+						'cta' => esc_html__( 'Call to Action', 'elementor' ),
+					],
+				]
+			);
+
+			$this->add_control(
+				'chat_button_display_text',
+				[
+					'label' => esc_html__( 'Call to Action Text', 'elementor' ),
+					'type' => Controls_Manager::TEXT,
+					'dynamic' => [
+						'active' => true,
+					],
+					'label_block' => true,
+					'placeholder' => esc_html__( 'Enter the text', 'elementor' ),
+					'default' => esc_html__( 'Call now', 'elementor' ),
+					'condition' => [
+						'chat_button_display_text_select' => 'cta',
+					],
+				],
 			);
 		}
 

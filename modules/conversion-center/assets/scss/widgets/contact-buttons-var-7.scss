@@ -1,0 +1,24 @@
+.e-contact-buttons-var-7 {
+
+	.e-contact-buttons {
+
+		&__chat-button {
+			border-radius: 0;
+			color: #ffffff;
+			font-size: 18px;
+			font-weight: 500;
+			line-height: 28px;
+			padding: 16px 20px;
+
+			svg {
+				height: 28px;
+				width: 28px;
+			}
+
+			&:hover,
+			&:focus {
+				color: #000000;
+			}
+		}
+	}
+}
