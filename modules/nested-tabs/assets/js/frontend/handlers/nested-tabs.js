@@ -417,6 +417,10 @@ export default class NestedTabs extends Base {
 			this.updateListeners( view );
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
+
+		const targetIndex = event.detail.index + 1 || 1;
+
+		this.changeActiveTab( targetIndex );
 	}
 
 	updateListeners( view ) {

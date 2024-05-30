@@ -18,8 +18,10 @@ export default class View extends $e.components.get( 'nested-elements' ).exports
 			style: '--n-tabs-title-order: ' + index + ';',
 		} );
 
-		// if ( 1 === index ) {
-		// 	childView.$el.addClass( 'e-active' );
-		// }
+		const isInitialLoad = elementor.previewView.isBuffering;
+
+		if ( isInitialLoad && 1 === index ) {
+			childView.$el.addClass( 'e-active' );
+		}
 	}
 }
