@@ -197,8 +197,6 @@ class Module extends BaseModule {
 		}
 
 		wp_send_json_success( [ 'nonce' => wp_create_nonce( 'elementor-pro-frontend' ) ] );
-
-		wp_die();
 	}
 
 	public function set_admin_columns_content( $column_name, $post_id ) {
