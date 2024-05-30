@@ -17,6 +17,9 @@ const AIMedia = ( { onClose, imageId } ) => {
 				setControlValue={ () => {} }
 				onClose={ onClose }
 				isRTL={ elementorCommon.config.isRTL }
+				additionalOptions={ {
+					location: LOCATIONS.IMAGE_TOOLS,
+				} }
 			/>
 		</>
 	);
@@ -49,6 +52,7 @@ const EditImageWithAI = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const getImageId = () => {
+		// Const d = wp.media.frames.edit.model.id;
 		const url = new URL( window.location.href );
 		return url.searchParams.get( 'item' );
 	};
@@ -61,7 +65,7 @@ const EditImageWithAI = () => {
 	};
 
 	const handleClose = () => {
-		location.reload(); // Update media library with the new image
+		// Location.reload(); // Update media library with the new image
 		setIsOpen( false );
 	};
 

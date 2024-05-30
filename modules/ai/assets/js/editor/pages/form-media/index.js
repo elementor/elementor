@@ -104,7 +104,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet />
+								<MediaOutlet additionalOptions={ additionalOptions } />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>

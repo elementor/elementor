@@ -35,7 +35,6 @@ App.propTypes = {
 	additionalOptions: PropTypes.object,
 	controlView: PropTypes.object,
 	isRTL: PropTypes.bool,
-	location: PropTypes.string,
 };
 
 export default App;

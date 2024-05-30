@@ -31,17 +31,16 @@ const Icon = styled.i`
 const StyledButton = styled.a`
 	color: #C00BB9;
 	cursor: pointer;
-	font-size: inherit;
+	font: inherit;
 	display: inline-block;
 	position: relative;
 	box-sizing: border-box;
 	top: -3px;
 	margin-left: 4px;
 	border: 1px solid #C00BB9;
-	border-radius: 5px;
+	border-radius: 3px;
 	line-height: 2.15384615;
 	padding: 0 10px;
-	font-weight: 650;
 	background: #f6f7f7;
 
 
@@ -59,7 +58,7 @@ const GenerateImageWithAI = () => {
 	};
 
 	const handleClose = () => {
-		location.reload(); // Update media library with the new image
+		// Location.reload(); // Update media library with the new image
 		setIsOpen( false );
 	};
 

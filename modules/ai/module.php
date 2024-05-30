@@ -348,7 +348,7 @@ class Module extends BaseModule {
 	private function verify_permissions( $editor_post_id ) {
 		$referer = wp_get_referer();
 
-		if (str_contains( $referer, 'wp-admin/upload.php') && current_user_can( 'edit_posts' ) ) {
+		if (str_contains( $referer, 'wp-admin/upload.php') && current_user_can( 'upload_files' ) ) {
 			return true;
 		}
 
