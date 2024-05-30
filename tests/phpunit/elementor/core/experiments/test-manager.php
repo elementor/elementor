@@ -551,7 +551,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert.
 		$this->expectException( \WPDieException::class );
-		$this->expectExceptionMessage( '<p>The feature `module-a` has a dependency `module-b` that is not available.</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor#tab-experiments\'">Back</a></p>' );
+		$this->expectExceptionMessage( '<p>The feature `module-a` has a dependency `module-b` that is not available.</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor-settings#tab-experiments\'">Back</a></p>' );
 
 		// Act.
 		update_option(
@@ -581,7 +581,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert.
 		$this->expectException( \WPDieException::class );
-		$this->expectExceptionMessage( '<p>To turn on `module-a`, Experiment: `module-b` activity is required!</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor#tab-experiments\'">Back</a></p>' );
+		$this->expectExceptionMessage( '<p>To turn on `module-a`, Experiment: `module-b` activity is required!</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor-settings#tab-experiments\'">Back</a></p>' );
 
 		// Act.
 		update_option(
