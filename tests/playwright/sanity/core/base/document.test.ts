@@ -15,11 +15,11 @@ test.describe( 'Document tests', async () => {
 			const editor = await wpAdmin.convertFromGutenberg();
 			const previewFrame = editor.getPreviewFrame();
 			const sections = await previewFrame.locator( '[data-element_type="section"]' ).count();
-			await expect( sections ).toEqual( 1 );
+			expect( sections ).toEqual( 1 );
 			const columns = await previewFrame.locator( '[data-element_type="column"]' ).count();
-			await expect( columns ).toEqual( 1 );
+			expect( columns ).toEqual( 1 );
 			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor' ).count();
-			await expect( textEditors ).toEqual( 1 );
+			expect( textEditors ).toEqual( 1 );
 
 			await wpAdmin.setExperiments( {
 				container: true,
@@ -39,9 +39,9 @@ test.describe( 'Document tests', async () => {
 			const editor = await wpAdmin.convertFromGutenberg();
 			const previewFrame = editor.getPreviewFrame();
 			const containers = await previewFrame.locator( '[data-element_type="container"]' ).count();
-			await expect( containers ).toEqual( 1 );
+			expect( containers ).toEqual( 1 );
 			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor ' ).count();
-			await expect( textEditors ).toEqual( 1 );
+			expect( textEditors ).toEqual( 1 );
 
 			await wpAdmin.setExperiments( {
 				container: false,
@@ -51,7 +51,13 @@ test.describe( 'Document tests', async () => {
 
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
 	const frame = wpAdmin.page.frame( { name: 'editor-canvas' } );
-	await frame.click( '.block-editor-inserter__toggle' );
+	if ( ! await wpAdmin.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'p[role="document"]' ).isVisible() ) {
+		await frame.locator( '.block-editor-inserter__toggle' ).click();
+	} else {
+		await wpAdmin.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'p[role="document"]' ).click();
+		await wpAdmin.page.click( '.block-editor-inserter__toggle' );
+	}
+
 	await wpAdmin.page.click( '.editor-block-list-item-' + elementType );
 	await frame.click( '.editor-styles-wrapper' );
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Base\Document as Document_Base;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -112,6 +113,7 @@ class Manager {
 		}
 
 		delete_post_meta_by_key( Post_CSS::META_KEY );
+		delete_post_meta_by_key( Document_Base::CACHE_META_KEY );
 
 		delete_option( Global_CSS::META_KEY );
 		delete_option( Frontend::META_KEY );
@@ -126,6 +128,17 @@ class Manager {
 		 * @since 2.1.0
 		 */
 		do_action( 'elementor/core/files/clear_cache' );
+	}
+
+	public function clear_custom_image_sizes() {
+		$upload_info = wp_upload_dir();
+		$upload_dir = $upload_info['basedir'] . '/' . BFITHUMB_UPLOAD_DIR;
+
+		$path = $upload_dir . '/*';
+
+		foreach ( glob( $path ) as $file_path ) {
+			unlink( $file_path );
+		}
 	}
 
 	/**

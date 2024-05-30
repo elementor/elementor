@@ -1,3 +1,8 @@
+import {
+	shouldUseAtomicRepeaters,
+	widgetNodes,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
+
 export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const containers = historyItem.get( 'containers' ),
@@ -9,12 +14,14 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.model,
 				name: data.name,
 				options: { at: data.index },
+				isRestored: true,
 			} );
 		} else {
 			$e.run( 'document/repeater/remove', {
 				containers,
 				name: data.name,
 				index: data.index,
+				isRestored: true,
 			} );
 		}
 	}
@@ -52,7 +59,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
-		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true } = args,
+		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true, isRestored = false } = args,
 			result = [];
 
 		containers.forEach( ( container ) => {
@@ -69,8 +76,25 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 			result.push( collection.push( rowSettingsModel, options ) );
 
 			if ( renderAfterInsert ) {
-				// Trigger render on widget but with the settings of the control.
-				repeaterContainer.render();
+				const widgetType = container.settings.get( 'widgetType' );
+
+				if ( shouldUseAtomicRepeaters( widgetType ) && ! isRestored ) {
+					const domConfig = widgetNodes( widgetType ),
+						containerNode = container.view.$el[ 0 ],
+						targetContainer = containerNode.querySelector( domConfig.targetContainer ),
+						html = Marionette.Renderer.render( `#tmpl-elementor-${ widgetType }-content-single`, { data: model, view: repeaterContainer.view } ),
+						node = document.createElement( 'div' );
+
+					node.innerHTML = html;
+
+					const nodeToInsert = node.querySelector( domConfig.node ),
+						targetNode = targetContainer.children[ options.at ] || null;
+
+					targetContainer.insertBefore( nodeToInsert, targetNode );
+				} else {
+					// Trigger render on widget but with the settings of the control.
+					repeaterContainer.render();
+				}
 			}
 		} );
 

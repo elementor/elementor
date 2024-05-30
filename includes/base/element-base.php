@@ -286,6 +286,20 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Whether the element returns dynamic content.
+	 *
+	 * set to determine whether to cache the element output or not.
+	 *
+	 * @since 3.22.0
+	 * @access protected
+	 *
+	 * @return bool Whether to cache the element output.
+	 */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/**
 	 * Get child elements.
 	 *
 	 * Retrieve all the child elements of this element.
@@ -430,6 +444,11 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$element_type = $this->get_type();
 
+		if ( $this->should_render_shortcode() ) {
+			echo '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			return;
+		}
+
 		/**
 		 * Before frontend element render.
 		 *
@@ -521,6 +540,34 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( 'elementor/frontend/after_render', $this );
+	}
+
+	protected function should_render_shortcode() {
+		$should_render_shortcode = apply_filters( 'elementor/element/should_render_shortcode', false );
+
+		if ( ! $should_render_shortcode ) {
+			return false;
+		}
+
+		$raw_data = $this->get_raw_data();
+
+		if ( ! empty( $raw_data['settings']['_element_cache'] ) ) {
+			return 'yes' === $raw_data['settings']['_element_cache'];
+		}
+
+		if ( $this->is_dynamic_content() ) {
+			return true;
+		}
+
+		$is_dynamic_content = apply_filters( 'elementor/element/is_dynamic_content', false, $raw_data, $this );
+
+		$has_dynamic_tag = ! empty( $raw_data['settings']['__dynamic__'] );
+
+		if ( $is_dynamic_content || $has_dynamic_tag ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -822,7 +869,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateZ_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate', 'elementor' ),
+					'label' => esc_html__( 'Rotate', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -860,7 +907,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateX_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate X', 'elementor' ),
+					'label' => esc_html__( 'Rotate X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -883,7 +930,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_rotateY_effect{$tab}",
 				[
-					'label' => esc_html__( 'Rotate Y', 'elementor' ),
+					'label' => esc_html__( 'Rotate Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -906,11 +953,10 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_perspective_effect{$tab}",
 				[
-					'label' => esc_html__( 'Perspective', 'elementor' ),
+					'label' => esc_html__( 'Perspective', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 1000,
 						],
 					],
@@ -1023,7 +1069,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1046,7 +1091,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1069,7 +1113,6 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
-							'min' => 0,
 							'max' => 2,
 							'step' => 0.1,
 						],
@@ -1102,7 +1145,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_skewX_effect{$tab}",
 				[
-					'label' => esc_html__( 'Skew X', 'elementor' ),
+					'label' => esc_html__( 'Skew X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -1124,7 +1167,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_responsive_control(
 				"_transform_skewY_effect{$tab}",
 				[
-					'label' => esc_html__( 'Skew Y', 'elementor' ),
+					'label' => esc_html__( 'Skew Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
 					'range' => [
@@ -1192,8 +1235,9 @@ abstract class Element_Base extends Controls_Stack {
 						'device_args' => $default_unit_values_ms,
 						'range' => [
 							'px' => [
-								'min' => 100,
+								'min' => 0,
 								'max' => 10000,
+								'step' => 100,
 							],
 						],
 						'selectors' => [
@@ -1313,8 +1357,11 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_control(
 				'hide_' . $breakpoint_key,
 				[
-					/* translators: %s: Device name. */
-					'label' => sprintf( __( 'Hide On %s', 'elementor' ), $label ),
+					'label' => sprintf(
+						/* translators: %s: Device name. */
+						esc_html__( 'Hide On %s', 'elementor' ),
+						$label
+					),
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',
 					'prefix_class' => 'elementor-',

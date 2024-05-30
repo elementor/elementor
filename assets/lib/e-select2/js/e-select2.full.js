@@ -2,7 +2,9 @@
  * Select2 4.0.6-rc.1
  * https://select2.github.io
  *
- * With a fix by Elementor team at line 4329 and 5449
+ * With a fix by Elementor team at lines 4329, 5449.
+ * Also deprecated jQuery features fixed at lines: 1477, 1479, 1617, 2111, 2113, 3244, 3548, 3573, 3632, 3708, 3801,
+ * 4047, 4050, 4058, 4063, 4873, 4936, 5395, 5693, 5772, 5785, 5826, 5852, 5883, 5909, 5956, 6103, 6346, 6350.
  *
  * Released under the MIT license
  * https://github.com/select2/select2/blob/master/LICENSE.md
@@ -1472,9 +1474,9 @@ S2.define('select2/selection/base',[
       self.$selection.removeAttr('aria-activedescendant');
       self.$selection.removeAttr('aria-owns');
 
-      self.$selection.focus();
+      self.$selection.trigger('focus');
       window.setTimeout(function () {
-        self.$selection.focus();
+        self.$selection.trigger('focus');
       }, 0);
 
       self._detachCloseHandler(container);
@@ -1612,7 +1614,7 @@ S2.define('select2/selection/single',[
 
     container.on('focus', function (evt) {
       if (!container.isOpen()) {
-        self.$selection.focus();
+        self.$selection.trigger('focus');
       }
     });
   };
@@ -2106,9 +2108,9 @@ S2.define('select2/selection/search',[
       var isTagInput = this.$element.find('[data-select2-tag]').length;
       if (isTagInput) {
         // fix IE11 bug where tag input lost focus
-        this.$element.focus();
+        this.$element.trigger('focus');
       } else {
-        this.$search.focus();
+        this.$search.trigger('focus');
       }
     }
   };
@@ -3543,7 +3545,7 @@ S2.define('select2/data/ajax',[
 
     if (this._request != null) {
       // JSONP requests cannot always be aborted
-      if ($.isFunction(this._request.abort)) {
+      if (typeof this._request.abort === 'function') {
         this._request.abort();
       }
 
@@ -3568,7 +3570,7 @@ S2.define('select2/data/ajax',[
 
         if (self.options.get('debug') && window.console && console.error) {
           // Check to make sure that the response included a `results` key.
-          if (!results || !results.results || !$.isArray(results.results)) {
+          if (!results || !results.results || !Array.isArray(results.results)) {
             console.error(
               'Select2: The AJAX results did not return an array in the ' +
               '`results` key of the response.'
@@ -3627,7 +3629,7 @@ S2.define('select2/data/tags',[
 
     decorated.call(this, $element, options);
 
-    if ($.isArray(tags)) {
+    if (Array.isArray(tags)) {
       for (var t = 0; t < tags.length; t++) {
         var tag = tags[t];
         var item = this._normalizeItem(tag);
@@ -3703,7 +3705,7 @@ S2.define('select2/data/tags',[
   };
 
   Tags.prototype.createTag = function (decorated, params) {
-    var term = $.trim(params.term);
+    var term = (params?.term ?? '').trim();
 
     if (term === '') {
       return null;
@@ -3796,7 +3798,7 @@ S2.define('select2/data/tokenizer',[
       // Replace the search term if we have the search box
       if (this.$search.length) {
         this.$search.val(tokenData.term);
-        this.$search.focus();
+        this.$search.trigger('focus');
       }
 
       params.term = tokenData.term;
@@ -4042,10 +4044,10 @@ S2.define('select2/dropdown/search',[
     container.on('open', function () {
       self.$search.attr('tabindex', 0);
 
-      self.$search.focus();
+      self.$search.trigger('focus');
 
       window.setTimeout(function () {
-        self.$search.focus();
+        self.$search.trigger('focus');
       }, 0);
     });
 
@@ -4053,12 +4055,12 @@ S2.define('select2/dropdown/search',[
       self.$search.attr('tabindex', -1);
 
       self.$search.val('');
-      self.$search.blur();
+      self.$search.trigger('blur');
     });
 
     container.on('focus', function () {
       if (!container.isOpen()) {
-        self.$search.focus();
+        self.$search.trigger('focus');
       }
     });
 
@@ -4868,7 +4870,7 @@ S2.define('select2/defaults',[
       }
     }
 
-    if ($.isArray(options.language)) {
+    if (Array.isArray(options.language)) {
       var languages = new Translation();
       options.language.push('en');
 
@@ -4931,7 +4933,7 @@ S2.define('select2/defaults',[
 
     function matcher (params, data) {
       // Always return the object if there is nothing to compare
-      if ($.trim(params.term) === '') {
+      if ((params?.term ?? '').trim() === '') {
         return data;
       }
 
@@ -5688,7 +5690,7 @@ S2.define('select2/core',[
 
     var newVal = args[0];
 
-    if ($.isArray(newVal)) {
+    if (Array.isArray(newVal)) {
       newVal = $.map(newVal, function (obj) {
         return obj.toString();
       });
@@ -5767,7 +5769,7 @@ S2.define('select2/compat/utils',[
   function syncCssClasses ($dest, $src, adapter) {
     var classes, replacements = [], adapted;
 
-    classes = $.trim($dest.attr('class'));
+    classes = ($dest?.attr('class') ?? '').trim();
 
     if (classes) {
       classes = '' + classes; // for IE which returns object
@@ -5780,7 +5782,7 @@ S2.define('select2/compat/utils',[
       });
     }
 
-    classes = $.trim($src.attr('class'));
+    classes = ($src?.attr('class') ?? '').trim();
 
     if (classes) {
       classes = '' + classes; // for IE which returns object
@@ -5821,7 +5823,7 @@ S2.define('select2/compat/containerCss',[
 
     var containerCssClass = this.options.get('containerCssClass') || '';
 
-    if ($.isFunction(containerCssClass)) {
+    if (typeof containerCssClass === 'function') {
       containerCssClass = containerCssClass(this.$element);
     }
 
@@ -5847,7 +5849,7 @@ S2.define('select2/compat/containerCss',[
 
     var containerCss = this.options.get('containerCss') || {};
 
-    if ($.isFunction(containerCss)) {
+    if (typeof containerCss === 'function') {
       containerCss = containerCss(this.$element);
     }
 
@@ -5878,7 +5880,7 @@ S2.define('select2/compat/dropdownCss',[
 
     var dropdownCssClass = this.options.get('dropdownCssClass') || '';
 
-    if ($.isFunction(dropdownCssClass)) {
+    if (typeof dropdownCssClass === 'function') {
       dropdownCssClass = dropdownCssClass(this.$element);
     }
 
@@ -5904,7 +5906,7 @@ S2.define('select2/compat/dropdownCss',[
 
     var dropdownCss = this.options.get('dropdownCss') || {};
 
-    if ($.isFunction(dropdownCss)) {
+    if (typeof dropdownCss === 'function') {
       dropdownCss = dropdownCss(this.$element);
     }
 
@@ -5951,7 +5953,7 @@ S2.define('select2/compat/initSelection',[
     this.initSelection.call(null, this.$element, function (data) {
       self._isInitialized = true;
 
-      if (!$.isArray(data)) {
+      if (!Array.isArray(data)) {
         data = [data];
       }
 
@@ -6098,7 +6100,7 @@ S2.define('select2/compat/matcher',[
     function wrappedMatcher (params, data) {
       var match = $.extend(true, {}, data);
 
-      if (params.term == null || $.trim(params.term) === '') {
+      if (params.term == null || (params?.term ?? '').trim() === '') {
         return match;
       }
 
@@ -6341,11 +6343,11 @@ S2.define('select2/selection/stopPropagation',[
 
     $.fn.extend({
         mousewheel: function(fn) {
-            return fn ? this.bind('mousewheel', fn) : this.trigger('mousewheel');
+            return fn ? this.on('mousewheel', fn) : this.trigger('mousewheel');
         },
 
         unmousewheel: function(fn) {
-            return this.unbind('mousewheel', fn);
+            return this.off('mousewheel', fn);
         }
     });
 

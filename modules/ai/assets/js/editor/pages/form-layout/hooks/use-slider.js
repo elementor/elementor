@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 
-const useSlider = ( { slidesCount = 0, slidesPerPage = 3, gapPercentage = 2 } = {} ) => {
+export const SCREENSHOTS_PER_PAGE = 3;
+export const MAX_PAGES = 5;
+
+const useSlider = ( { slidesCount = 0, slidesPerPage = SCREENSHOTS_PER_PAGE, gapPercentage = 2 } = {} ) => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 
 	const gapsCount = slidesPerPage - 1;

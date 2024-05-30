@@ -3,35 +3,45 @@
 //
 
 .elementor-counter {
+	display: flex;
+	justify-content: center;
+	align-items: stretch;
+	flex-direction: column-reverse;
 
-	.elementor-counter- {
+	& & {
 
-		&number- {
+		&-number {
+			flex-grow: var(--counter-number-grow, 0);
 
-			&wrapper {
+			&-wrapper {
+				flex: 1;
 				display: flex;
 				font-size: 69px;
 				font-weight: 600;
 				line-height: 1;
+				text-align: center;
 			}
 
-			&prefix,
-			&suffix {
-				flex-grow: 1;
+			&-prefix {
+				text-align: end;
+				flex-grow: var(--counter-prefix-grow, 1);
 				white-space: pre-wrap;
 			}
 
-			&prefix {
-				text-align: $end;
-			}
-
-			&suffix {
-				text-align: $start;
+			&-suffix {
+				text-align: start;
+				flex-grow: var(--counter-suffix-grow, 1);
+				white-space: pre-wrap;
 			}
 		}
 
-		&title {
-			text-align: center;
+		&-title {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0;
+			padding: 0;
 			font-size: 19px;
 			font-weight: 400;
 			line-height: 2.5;

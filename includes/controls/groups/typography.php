@@ -118,6 +118,12 @@ class Group_Control_Typography extends Group_Control_Base {
 					'min' => 1,
 					'max' => 200,
 				],
+				'em' => [
+					'max' => 20,
+				],
+				'rem' => [
+					'max' => 20,
+				],
 				'vw' => [
 					'min' => 0.1,
 					'max' => 10,
@@ -143,8 +149,8 @@ class Group_Control_Typography extends Group_Control_Base {
 				'800' => '800 ' . esc_html_x( '(Extra Bold)', 'Typography Control', 'elementor' ),
 				'900' => '900 ' . esc_html_x( '(Black)', 'Typography Control', 'elementor' ),
 				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
-				'bold' => esc_html_x( 'Bold', 'Typography Control', 'elementor' ),
+				'normal' => esc_html__( 'Normal', 'elementor' ),
+				'bold' => esc_html__( 'Bold', 'elementor' ),
 			],
 		];
 
@@ -157,7 +163,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'uppercase' => esc_html_x( 'Uppercase', 'Typography Control', 'elementor' ),
 				'lowercase' => esc_html_x( 'Lowercase', 'Typography Control', 'elementor' ),
 				'capitalize' => esc_html_x( 'Capitalize', 'Typography Control', 'elementor' ),
-				'none' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'none' => esc_html__( 'Normal', 'elementor' ),
 			],
 		];
 
@@ -167,7 +173,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'normal' => esc_html__( 'Normal', 'elementor' ),
 				'italic' => esc_html_x( 'Italic', 'Typography Control', 'elementor' ),
 				'oblique' => esc_html_x( 'Oblique', 'Typography Control', 'elementor' ),
 			],
@@ -182,7 +188,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'underline' => esc_html_x( 'Underline', 'Typography Control', 'elementor' ),
 				'overline' => esc_html_x( 'Overline', 'Typography Control', 'elementor' ),
 				'line-through' => esc_html_x( 'Line Through', 'Typography Control', 'elementor' ),
-				'none' => esc_html_x( 'None', 'Typography Control', 'elementor' ),
+				'none' => esc_html__( 'None', 'elementor' ),
 			],
 		];
 
@@ -219,7 +225,14 @@ class Group_Control_Typography extends Group_Control_Base {
 					'step' => 0.1,
 				],
 				'em' => [
-					'step' => 0.1,
+					'min' => 0,
+					'max' => 1,
+					'step' => 0.01,
+				],
+				'rem' => [
+					'min' => 0,
+					'max' => 1,
+					'step' => 0.01,
 				],
 			],
 			'responsive' => true,
@@ -229,6 +242,20 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields['word_spacing'] = [
 			'label' => esc_html__( 'Word Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+			'range' => [
+				'px' => [
+					'max' => 50,
+				],
+				'em' => [
+					'min' => 0,
+					'max' => 5,
+				],
+				'rem' => [
+					'min' => 0,
+					'max' => 5,
+				],
+			],
 			'desktop_default' => [
 				'unit' => 'em',
 			],
@@ -237,15 +264,6 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 			'mobile_default' => [
 				'unit' => 'em',
-			],
-			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-			'range' => [
-				'px' => [
-					'step' => 1,
-				],
-				'em' => [
-					'step' => 0.1,
-				],
 			],
 			'responsive' => true,
 			'selector_value' => 'word-spacing: {{SIZE}}{{UNIT}}',

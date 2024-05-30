@@ -1,0 +1,17 @@
+name: Get Changelog From Changelog Text File
+description: Get Changelog From Changelog Text File - publish in wordpress.org.
+
+inputs:
+  VERSION:
+    description: 'Package Version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        VERSION: ${{ inputs.VERSION }}
+      run: |
+        npm install --no-package-lock --no-save marked@2.0.6
+        node ./.github/scripts/get-changelog-from-change-txt.js

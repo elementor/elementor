@@ -51,7 +51,11 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 */
 	parseConfig( config = {} ) {
 		for ( const reader of config.readers || {} ) {
-			this.registerFileReader( reader );
+			const isActive = reader.isActive?.() ?? true;
+
+			if ( isActive ) {
+				this.registerFileReader( reader );
+			}
 		}
 
 		for ( const parser of config.parsers || {} ) {
@@ -92,7 +96,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	registerFileParser( parser ) {
 		for ( const readerName of parser.getReaders() ) {
 			if ( ! this.readers[ readerName ] ) {
-				throw new Error( `Reader ${ readerName } is not registered.` );
+				continue;
 			} else if ( ! this.parsers[ readerName ] ) {
 				this.parsers[ readerName ] = {};
 			}

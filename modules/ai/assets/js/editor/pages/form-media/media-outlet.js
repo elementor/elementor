@@ -12,6 +12,10 @@ import ReplaceBackground from './views/replace-background';
 import RemoveBackground from './views/remove-background';
 import { useLocation } from './context/location-context';
 import { useEditImage } from './context/edit-image-context';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../components/prompt-history/context/prompt-history-action-context';
 
 const MediaOutlet = () => {
 	const { editImage } = useEditImage();
@@ -25,6 +29,17 @@ const MediaOutlet = () => {
 			navigate( LOCATIONS.IMAGE_TOOLS );
 		}
 	}, [ editImage.id ] );
+
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.RESTORE,
+			handler() {
+				if ( current !== LOCATIONS.GENERATE ) {
+					navigate( LOCATIONS.GENERATE );
+				}
+			},
+		},
+	] );
 
 	if ( ! current ) {
 		return (

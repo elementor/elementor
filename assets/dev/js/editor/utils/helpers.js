@@ -1,6 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import DOMPurify from 'dompurify';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -167,7 +168,7 @@ module.exports = {
 	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
 	 * @param {string} tag        - default i - html tag to render
 	 * @param {*}      returnType - default value - retrun type
-	 * @return {string|boolean|*} result
+	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
 		if ( ! icon || ! icon.library ) {
@@ -196,7 +197,7 @@ module.exports = {
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
 			}
-			const tagUniqueID = tag + this.getUniqueID();
+			const tagUniqueID = tag + elementorCommon.helpers.getUniqueId();
 			view.addRenderAttribute( tagUniqueID, attributes );
 			view.addRenderAttribute( tagUniqueID, 'class', iconValue );
 			const htmlTag = '<' + tag + ' ' + view.getRenderAttributeString( tagUniqueID ) + '></' + tag + '>';
@@ -698,5 +699,9 @@ module.exports = {
 
 		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
 		return frString;
+	},
+
+	sanitize( value, options ) {
+		return DOMPurify.sanitize( value, options );
 	},
 };

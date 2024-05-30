@@ -89,6 +89,10 @@ class Widget_Image extends Widget_Base {
 		return [ 'image', 'photo', 'visual' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register image widget controls.
 	 *
@@ -124,7 +128,110 @@ class Widget_Image extends Widget_Base {
 			[
 				'name' => 'image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_size` and `image_custom_dimension`.
 				'default' => 'large',
-				'separator' => 'none',
+				'condition' => [
+					'image[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'caption_source',
+			[
+				'label' => esc_html__( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'attachment' => esc_html__( 'Attachment Caption', 'elementor' ),
+					'custom' => esc_html__( 'Custom Caption', 'elementor' ),
+				],
+				'default' => 'none',
+				'condition' => [
+					'image[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'caption',
+			[
+				'label' => esc_html__( 'Custom Caption', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'placeholder' => esc_html__( 'Enter your image caption', 'elementor' ),
+				'condition' => [
+					'image[url]!' => '',
+					'caption_source' => 'custom',
+				],
+				'dynamic' => [
+					'active' => true,
+				],
+			]
+		);
+
+		$this->add_control(
+			'link_to',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'none',
+				'options' => [
+					'none' => esc_html__( 'None', 'elementor' ),
+					'file' => esc_html__( 'Media File', 'elementor' ),
+					'custom' => esc_html__( 'Custom URL', 'elementor' ),
+				],
+				'condition' => [
+					'image[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'link',
+			[
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'condition' => [
+					'image[url]!' => '',
+					'link_to' => 'custom',
+				],
+				'show_label' => false,
+			]
+		);
+
+		$this->add_control(
+			'open_lightbox',
+			[
+				'label' => esc_html__( 'Lightbox', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'description' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Manage your site’s lightbox settings in the %1$sLightbox panel%2$s.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/global/open\' ).then( () => $e.route( \'panel/global/settings-lightbox\' ) )">',
+					'</a>'
+				),
+				'default' => 'default',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'yes' => esc_html__( 'Yes', 'elementor' ),
+					'no' => esc_html__( 'No', 'elementor' ),
+				],
+				'condition' => [
+					'image[url]!' => '',
+					'link_to' => 'file',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_image',
+			[
+				'label' => esc_html__( 'Image', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -150,107 +257,6 @@ class Widget_Image extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'caption_source',
-			[
-				'label' => esc_html__( 'Caption', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'none' => esc_html__( 'None', 'elementor' ),
-					'attachment' => esc_html__( 'Attachment Caption', 'elementor' ),
-					'custom' => esc_html__( 'Custom Caption', 'elementor' ),
-				],
-				'default' => 'none',
-			]
-		);
-
-		$this->add_control(
-			'caption',
-			[
-				'label' => esc_html__( 'Custom Caption', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'placeholder' => esc_html__( 'Enter your image caption', 'elementor' ),
-				'condition' => [
-					'caption_source' => 'custom',
-				],
-				'dynamic' => [
-					'active' => true,
-				],
-			]
-		);
-
-		$this->add_control(
-			'link_to',
-			[
-				'label' => esc_html__( 'Link', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'none',
-				'options' => [
-					'none' => esc_html__( 'None', 'elementor' ),
-					'file' => esc_html__( 'Media File', 'elementor' ),
-					'custom' => esc_html__( 'Custom URL', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'link',
-			[
-				'label' => esc_html__( 'Link', 'elementor' ),
-				'type' => Controls_Manager::URL,
-				'dynamic' => [
-					'active' => true,
-				],
-				'condition' => [
-					'link_to' => 'custom',
-				],
-				'show_label' => false,
-			]
-		);
-
-		$this->add_control(
-			'open_lightbox',
-			[
-				'label' => esc_html__( 'Lightbox', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'description' => sprintf(
-					/* translators: 1: Link open tag, 2: Link close tag. */
-					esc_html__( 'Manage your site’s lightbox settings in the %1$sLightbox panel%2$s.', 'elementor' ),
-					'<a href="javascript: $e.run( \'panel/global/open\' ).then( () => $e.route( \'panel/global/settings-lightbox\' ) )">',
-					'</a>'
-				),
-				'default' => 'default',
-				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
-				'condition' => [
-					'link_to' => 'file',
-				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_style_image',
-			[
-				'label' => esc_html__( 'Image', 'elementor' ),
-				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -359,6 +365,7 @@ class Widget_Image extends Widget_Base {
 					'fill' => esc_html__( 'Fill', 'elementor' ),
 					'cover' => esc_html__( 'Cover', 'elementor' ),
 					'contain' => esc_html__( 'Contain', 'elementor' ),
+					'scale-down' => esc_html__( 'Scale Down', 'elementor' ),
 				],
 				'default' => '',
 				'selectors' => [
@@ -388,7 +395,8 @@ class Widget_Image extends Widget_Base {
 					'{{WRAPPER}} img' => 'object-position: {{VALUE}};',
 				],
 				'condition' => [
-					'object-fit' => 'cover',
+					'height[size]!' => '',
+					'object-fit' => [ 'cover', 'contain', 'scale-down' ],
 				],
 			]
 		);
@@ -472,10 +480,11 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -538,6 +547,7 @@ class Widget_Image extends Widget_Base {
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 				'condition' => [
+					'image[url]!' => '',
 					'caption_source!' => 'none',
 				],
 			]
@@ -623,10 +633,18 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -690,10 +708,6 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-image' );
-		}
-
 		$has_caption = $this->has_caption( $settings );
 
 		$link = $this->get_link_url( $settings );
@@ -711,9 +725,6 @@ class Widget_Image extends Widget_Base {
 				$this->add_lightbox_data_attributes( 'link', $settings['image']['id'], $settings['open_lightbox'] );
 			}
 		} ?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-		<?php } ?>
 			<?php if ( $has_caption ) : ?>
 				<figure class="wp-caption">
 			<?php endif; ?>
@@ -732,9 +743,6 @@ class Widget_Image extends Widget_Base {
 			<?php if ( $has_caption ) : ?>
 				</figure>
 			<?php endif; ?>
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			</div>
-		<?php } ?>
 		<?php
 	}
 
@@ -803,10 +811,6 @@ class Widget_Image extends Widget_Base {
 				link_url = settings.image.url;
 			}
 
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-			<?php } ?>
-
 			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
@@ -833,11 +837,6 @@ class Widget_Image extends Widget_Base {
 			if ( hasCaption() ) {
 				#></figure><#
 			}
-
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				#></div><#
-			<?php } ?>
-
 		} #>
 		<?php
 	}

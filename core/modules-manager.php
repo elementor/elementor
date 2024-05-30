@@ -87,6 +87,7 @@ class Modules_Manager {
 			'wp-cli',
 			'safe-mode',
 			'ai',
+			'notifications',
 			'usage',
 			'dev-tools',
 			'landing-pages',
@@ -96,6 +97,7 @@ class Modules_Manager {
 			'shapes',
 			'favorites',
 			'admin-top-bar',
+			'element-manager',
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
@@ -111,7 +113,12 @@ class Modules_Manager {
 			'announcements',
 			'site-navigation',
 			'styleguide',
+			'element-cache',
 			'apps',
+			'home',
+			'conversion-center',
+			'content-sanitizer',
+			'editor-events',
 		];
 	}
 

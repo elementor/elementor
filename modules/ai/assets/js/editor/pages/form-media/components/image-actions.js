@@ -1,4 +1,6 @@
 import { Box, Button, IconButton, Tooltip as TooltipBase, withDirection } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { default as CopySvgIcon } from '../../../icons/copy-icon';
 import { default as EditSvgIcon } from '../../../icons/edit-icon';
 import DownloadIcon from '../../../icons/download-icon';

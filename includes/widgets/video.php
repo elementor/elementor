@@ -88,6 +88,32 @@ class Widget_Video extends Widget_Base {
 		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion', 'videopress' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Register video widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 3.19.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => esc_html__( "Grab your visitors' attention", 'elementor' ),
+			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
 	/**
 	 * Register video widget controls.
 	 *
@@ -563,9 +589,9 @@ class Widget_Video extends Widget_Base {
 					'none' => esc_html__( 'None', 'elementor' ),
 				],
 				'description' => sprintf(
-					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads. %1$sLearn More%2$s', 'elementor' ),
-					'<a target="_blank" href="https://go.elementor.com/preload-video/">',
-					'</a>'
+					'%1$s <a target="_blank" href="https://go.elementor.com/preload-video/">%2$s</a>',
+					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' ),
 				),
 				'default' => 'metadata',
 				'condition' => [
@@ -586,15 +612,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'youtube',
 			]
 		);
 
@@ -641,7 +658,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'name' => 'image_overlay', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `image_overlay_size` and `image_overlay_custom_dimension`.
 				'default' => 'full',
-				'separator' => 'none',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
@@ -908,9 +924,9 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'deprecation_warning',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Note: These controls have been deprecated and are only visible if they were previously in use. The video’s width and position are now set based on its aspect ratio.', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'danger',
+				'content' => esc_html__( 'Note: These controls have been deprecated and are only visible if they were previously in use. The video’s width and position are now set based on its aspect ratio.', 'elementor' ),
 				'separator' => 'before',
 				'condition' => [
 					'lightbox_video_width!' => '',

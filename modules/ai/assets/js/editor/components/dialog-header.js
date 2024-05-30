@@ -1,4 +1,6 @@
 import { AppBar, Toolbar, Stack, SvgIcon, IconButton, Chip, Typography, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { XIcon } from '@elementor/icons';
 
 const ElementorLogo = ( props ) => {
@@ -10,8 +12,8 @@ const ElementorLogo = ( props ) => {
 };
 
 const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
-	width: theme.spacing( 4 ),
-	height: theme.spacing( 4 ),
+	width: theme.spacing( 3 ),
+	height: theme.spacing( 3 ),
 	'& path': {
 		fill: theme.palette.text.primary,
 	},

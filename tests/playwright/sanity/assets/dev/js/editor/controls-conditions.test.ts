@@ -7,7 +7,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'heading' );
 
@@ -51,10 +51,11 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	await page.waitForTimeout( 1000 );
 
 	// Check if previous image is already uploaded.
-	const previousImage = await page.$( '[aria-label="mountain-image"]' );
+	const mountainImageName = 'Picsum ID: 684',
+		previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
-	if ( previousImage ) {
-		await page.click( '[aria-label="mountain-image"]' );
+	if ( await previousImage.nth( 0 ).isVisible() ) {
+		await previousImage.nth( 0 ).click();
 	} else {
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 		await page.waitForSelector( 'text=ATTACHMENT DETAILS' );
@@ -63,13 +64,13 @@ test( 'Editor Responsive Control Conditions', async ( { page }, testInfo ) => {
 	// Select Image
 	await page.click( '.button.media-button' );
 
-	const backgroundPositionControl = await page.locator( '.elementor-control-background_position_mobile' );
+	const backgroundPositionControl = page.locator( '.elementor-control-background_position_mobile' );
 
 	await expect( backgroundPositionControl ).toBeVisible();
 
-	await page.selectOption( '.elementor-control-background_size_mobile >> select', 'initial' );
+	await editor.setSelectControlValue( 'background_size_mobile', 'initial' );
 
-	const customBackgroundSizeControl = await page.locator( '.elementor-control-background_bg_width_mobile' );
+	const customBackgroundSizeControl = page.locator( '.elementor-control-background_bg_width_mobile' );
 
 	await expect( customBackgroundSizeControl ).toBeVisible();
 } );

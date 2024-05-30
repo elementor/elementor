@@ -12,7 +12,9 @@ import {
 	ListItemIcon,
 	Paper,
 } from '@elementor/ui';
-import { UpgradeIcon, CheckedCircleIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
+import { CheckedCircleIcon, AIIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
@@ -60,9 +62,11 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
+	__( 'Get spot-on suggestions from AI Copilot and AI Context with appropriate designs, layouts, and content for your business.', 'elementor' ),
 	__( 'Generate professional texts about any topic, in any tone.', 'elementor' ),
-	__( 'Translate your content into twenty-five different languages.', 'elementor' ),
+	__( 'Effortlessly create or enhance stunning images and bring your ideas to life.', 'elementor' ),
 	__( 'Unleash infinite possibilities with the custom code generator.', 'elementor' ),
+	__( 'Access 30-days of AI History with the AI Starter plan and 90-days with the Power plan.', 'elementor' ),
 ];
 
 const Chip = styled( ChipBase )( () => ( {
@@ -103,7 +107,8 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } size="small" />
+			<Chip color="promotion" label={ __( 'Upgrade', 'elementor' ) }
+				icon={ <AIIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -141,14 +146,14 @@ const UpgradeChip = ( {
 
 					<Button
 						variant="contained"
-						color="accent"
+						color="promotion"
 						size="small"
 						href={ actionUrl }
 						target="_blank"
-						startIcon={ <UpgradeIcon /> }
+						startIcon={ <AIIcon /> }
 						sx={ {
 							'&:hover': {
-								color: 'accent.contrastText',
+								color: 'promotion.contrastText',
 							},
 						} }
 					>

@@ -64,7 +64,7 @@ test.describe( 'AI @ai', () => {
 
 			await newPromptButton.click();
 
-			await expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
+			expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
 			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
 			await generateTextButton.click();
 
@@ -83,7 +83,7 @@ test.describe( 'AI @ai', () => {
 
 		await test.step( 'Open the modal with non-default value from the control', async () => {
 			await editor.addWidget( 'heading' );
-			await page.locator( '.elementor-control-title.elementor-control-type-textarea textarea' ).fill( 'Hello World' );
+			await editor.setTextareaControlValue( 'title', 'Hello World' );
 
 			await page.click( '.e-ai-button' );
 

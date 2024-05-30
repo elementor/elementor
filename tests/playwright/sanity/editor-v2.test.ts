@@ -3,7 +3,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Editor v2', () => {
 	let editor;
-	let wpAdminPage;
+	let wpAdmin;
 	let context;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -11,29 +11,30 @@ test.describe( 'Editor v2', () => {
 
 		const page = await context.newPage();
 
-		wpAdminPage = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdminPage.setExperiments( { editor_v2: true } );
+		await wpAdmin.setExperiments( { editor_v2: true } );
 
-		editor = await wpAdminPage.openNewPage();
+		editor = await wpAdmin.openNewPage();
 	} );
 
 	test.afterAll( async () => {
-		await wpAdminPage.setExperiments( { editor_v2: false } );
+		await wpAdmin.setExperiments( { editor_v2: false } );
 	} );
 
 	test( 'check that app-bar exists', async () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 
-		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
+		await wrapper.getByRole( 'button', { name: 'Page Settings' } ).click();
 
-		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Test page' );
+		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
 
-		await wrapper.getByRole( 'button', { name: 'Test page' } ).waitFor();
+		await wrapper.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
+		await editor.isUiStable( wrapper, 5 );
 
 		// Assert
-		await expect( await wrapper.screenshot( {
+		expect( await wrapper.screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
@@ -44,7 +45,7 @@ test.describe( 'Editor v2', () => {
 		await editor.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
 
 		// Assert
-		await expect( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+		expect( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'panel.jpg', { maxDiffPixels: 100 } );

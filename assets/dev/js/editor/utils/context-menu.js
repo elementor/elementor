@@ -16,6 +16,7 @@ module.exports = elementorModules.Module.extend( {
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
 				divider: 'elementor-context-menu-list__divider',
 				hidden: 'elementor-hidden',
+				promotionLink: 'elementor-context-menu-list__item__shortcut--link-fullwidth',
 			},
 		};
 	},
@@ -23,7 +24,7 @@ module.exports = elementorModules.Module.extend( {
 	buildActionItem( action ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name } ),
+			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name, role: 'menuitem', tabindex: '0' } ),
 			$itemTitle = jQuery( '<div>', { class: classes.itemTitle } ).text( action.title ),
 			$itemIcon = jQuery( '<div>', { class: classes.iconShortcut } );
 
@@ -43,6 +44,14 @@ module.exports = elementorModules.Module.extend( {
 			$item.on( 'click', function() {
 				self.runAction( action );
 			} );
+			$item.on( 'keyup', function( event ) {
+				const ENTER_KEY = 13,
+					SPACE_KEY = 32;
+
+				if ( ENTER_KEY === event.keyCode || SPACE_KEY === event.keyCode ) {
+					self.runAction( action );
+				}
+			} );
 		}
 
 		action.$item = $item;
@@ -54,10 +63,10 @@ module.exports = elementorModules.Module.extend( {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
 			groups = self.getSettings( 'groups' ),
-			$list = jQuery( '<div>', { class: classes.list } );
+			$list = jQuery( '<div>', { class: classes.list, role: 'menu' } );
 
 		groups.forEach( function( group ) {
-			var $group = jQuery( '<div>', { class: classes.group + ' ' + classes.groupPrefix + group.name } );
+			var $group = jQuery( '<div>', { class: classes.group + ' ' + classes.groupPrefix + group.name, role: 'group' } );
 
 			group.actions.forEach( function( action ) {
 				$group.append( self.buildActionItem( action ) );
@@ -80,7 +89,22 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	toggleActionUsability( action, state ) {
+		this.maybeAddPromotionLink( action );
+
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
+	},
+
+	maybeAddPromotionLink( action ) {
+		if ( this.shouldAddPromotionLink( action ) ) {
+			const iconContainer = action.$item.find( 'div.elementor-context-menu-list__item__shortcut' )[ 0 ];
+			iconContainer.insertAdjacentHTML( 'beforeend', `<a href='${ action.promotionURL }' target="_blank" class="${ this.getSettings( 'classes.promotionLink' ) }"></a>` );
+		}
+	},
+
+	shouldAddPromotionLink( action ) {
+		return !! ( action.promotionURL &&
+			! action.$item.find( 'a.elementor-context-menu-list__item__shortcut--link-fullwidth' )[ 0 ] &&
+			action.$item.find( 'i.eicon-pro-icon' )[ 0 ] );
 	},
 
 	/**

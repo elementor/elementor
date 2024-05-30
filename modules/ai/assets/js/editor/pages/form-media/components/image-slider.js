@@ -1,4 +1,5 @@
 import { Stack, IconButton, Box, withDirection } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
 import ChevronRightIcon from '../../../icons/chevron-right-icon';
 

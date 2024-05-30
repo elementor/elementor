@@ -54,6 +54,10 @@ $remote-templates-items-space: 30px;
 	padding: 0 10px;
 }
 
+.elementor-template-library-template-insert + .elementor-template-library-template-generate-variation {
+	margin-inline-start: 4px;
+}
+
 #elementor-template-library-header-preview-back {
 	padding-block: 16.5px 15px;
 	padding-inline: 0 16.5px;
@@ -420,6 +424,10 @@ label.elementor-template-library-order-label {
 		flex-grow: 1;
 		@include ellipsis;
 		padding-inline-end: 5px;
+	}
+
+	.elementor-template-library-favorite {
+		margin-inline-start: auto;
 	}
 
 	.elementor-template-library-template-favorite-input {

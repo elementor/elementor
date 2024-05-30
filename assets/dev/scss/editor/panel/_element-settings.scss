@@ -27,15 +27,11 @@
 			border-color: var(--e-a-border-color-accent);
 			color: var(--e-a-color-txt-accent);
 
-			// TODO: Remove `a` in Elementor 3.14.0
-			a,
 			span {
 				color: var(--e-a-color-txt-accent);
 			}
 		}
 
-		// TODO: Remove `a` in Elementor 3.14.0
-		a,
 		span {
 			color: inherit;
 			display: block;
@@ -54,26 +50,22 @@
 }
 
 .elementor-tab-control-content {
-	// TODO: Remove `a` in Elementor 3.14.0
-	a:before,
 	span:before {
 		content: '\e92c';
 	}
 }
 
 .elementor-tab-control-style {
-	// TODO: Remove `a` in Elementor 3.14.0
-	a:before,
 	span:before {
 		content: '\e921';
 	}
 }
 
+.elementor-tab-control-advanced-tab-contact-buttons,
+.elementor-tab-control-advanced-tab-links-in-bio,
 .elementor-tab-control-advanced,
 .elementor-tab-control-settings,
 .elementor-tab-control-general_style {
-	// TODO: Remove `a` in Elementor 3.14.0
-	a:before,
 	span:before {
 		content: '\e916';
 	}
@@ -81,16 +73,12 @@
 
 //TODO: Remove
 .elementor-tab-control-responsive {
-	// TODO: Remove `a` in Elementor 3.14.0
-	a:before,
 	span:before {
 		content: '\e885';
 	}
 }
 
 .elementor-tab-control-lightbox {
-	// TODO: Remove `a` in Elementor 3.14.0
-	a:before,
 	span:before {
 		content: '\e922';
 	}
@@ -99,8 +87,6 @@
 
 .elementor-tab-control-layout,
 .elementor-tab-control-column {
-	// TODO: Remove `a` in Elementor 3.14.0
-	a:before,
 	span:before {
 		content: '\e899';
 	}
@@ -140,8 +126,8 @@
 				width: 13px;
 				top: 3px;
 				bottom: 0;
-				#{$start}: 8px;
-				#{$end}: 0;
+				@include start(8px);
+				@include end(0);
 				border-radius: 50%;
 				z-index: -1;
 			}

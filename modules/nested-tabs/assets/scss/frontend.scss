@@ -83,10 +83,10 @@
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
 	--n-tabs-title-order: initial;
-	--n-tabs-title-padding-block-start: var(--n-tabs-default-padding-block);
-	--n-tabs-title-padding-inline-end: var(--n-tabs-default-padding-inline);
-	--n-tabs-title-padding-block-end: var(--n-tabs-default-padding-block);
-	--n-tabs-title-padding-inline-start: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-top: var(--n-tabs-default-padding-block);
+	--n-tabs-title-padding-bottom: var(--n-tabs-default-padding-block);
+	--n-tabs-title-padding-left: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-right: var(--n-tabs-default-padding-inline);
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 	--n-tabs-icon-color: var(--e-global-color-secondary, var(--n-tabs-color-secondary-fallback));
@@ -95,6 +95,18 @@
 	--n-tabs-icon-gap: 5px;
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
+
+	& {
+		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-left);
+		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-right);
+		--n-tabs-title-padding-block-start: var(--n-tabs-title-padding-top);
+		--n-tabs-title-padding-block-end: var(--n-tabs-title-padding-bottom);
+	}
+
+	body.rtl & {
+		--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-right);
+		--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-left);
+	}
 
 	.e-n-tabs {
 		display: var(--n-tabs-display);
@@ -158,7 +170,8 @@
 	.e-n-tab {
 
 		&-title {
-			all: unset;
+			background-color: initial;
+			border-style: none;
 			user-select: none;
 			display: flex;
 			align-items: var(--n-tabs-title-align-items-toggle, var(--n-tabs-title-align-items));
@@ -167,8 +180,6 @@
 			gap: var(--n-tabs-icon-gap);
 			border-width: var(--n-tabs-border-width);
 			position: relative;
-			cursor: pointer;
-			outline: none;
 			flex-grow: var(--n-tabs-title-flex-grow);
 			flex-basis: var(--n-tabs-title-flex-basis);
 			flex-shrink: var(--n-tabs-title-flex-shrink);
@@ -191,7 +202,9 @@
 				-webkit-text-stroke-color var(--n-tabs-title-transition ),
 				transform var(--n-tabs-title-transition);
 
-			@include button-focus-outline;
+			&:focus:not(:focus-visible) {
+				outline: none;
+			}
 
 			& span svg,
 			& span i {

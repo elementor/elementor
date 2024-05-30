@@ -21,12 +21,12 @@ test.describe( 'Section tests', () => {
 	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			sectionId1 = await editor.addElement( { elType: 'section' }, 'document' ),
 			sectionId2 = await editor.addElement( { elType: 'section' }, 'document' ),
-			section1Column = await editor.getPreviewFrame().locator( '.elementor-element-' + sectionId1 + ' .elementor-column' ),
+			section1Column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId1 + ' .elementor-column' ),
 			section1ColumnId = await section1Column.getAttribute( 'data-id' ),
-			section2Column = await editor.getPreviewFrame().locator( '.elementor-element-' + sectionId2 + ' .elementor-column' ),
+			section2Column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId2 + ' .elementor-column' ),
 			section2ColumnId = await section2Column.getAttribute( 'data-id' );
 
 		// Add widgets.

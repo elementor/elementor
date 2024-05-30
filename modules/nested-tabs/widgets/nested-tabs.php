@@ -15,9 +15,6 @@ use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
-use Elementor\Modules\DynamicTags\Module as TagsModule;
-use Elementor\Utils;
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -80,8 +77,6 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
-		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
-		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 		$heading_selector_non_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
 		$heading_selector_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
 		$heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
@@ -207,6 +202,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
+			'control_type' => 'content',
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_horizontal', [
@@ -431,13 +427,18 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_responsive_control( 'tabs_title_space_between', [
 			'label' => esc_html__( 'Gap between tabs', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 400,
 				],
+				'em' => [
+					'max' => 40,
+				],
+				'rem' => [
+					'max' => 40,
+				],
 			],
-			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -446,13 +447,18 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_responsive_control( 'tabs_title_spacing', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 400,
 				],
+				'em' => [
+					'max' => 40,
+				],
+				'rem' => [
+					'max' => 40,
+				],
 			],
-			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -588,6 +594,7 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -677,7 +684,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: $logical_dimensions_inline_end; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: $logical_dimensions_inline_start;",
+					'{{WRAPPER}}' => '--n-tabs-title-padding-top: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -902,18 +909,13 @@ class NestedTabs extends Widget_Nested_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 100,
 				],
 				'em' => [
-					'min' => 0,
 					'max' => 10,
-					'step' => 0.1,
 				],
 				'rem' => [
-					'min' => 0,
 					'max' => 10,
-					'step' => 0.1,
 				],
 			],
 			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
@@ -927,11 +929,9 @@ class NestedTabs extends Widget_Nested_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
-					'min' => 0,
 					'max' => 400,
 				],
 				'vw' => [
-					'min' => 0,
 					'max' => 50,
 					'step' => 0.1,
 				],
@@ -1065,7 +1065,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$content_selector => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: $logical_dimensions_inline_end; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start;",
+					$content_selector => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1093,11 +1093,28 @@ class NestedTabs extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
-		$render_attributes = $this->get_render_attribute_string( $setting_key );
-		$text_class = $this->get_render_attribute_string( 'tab-title-text' );
-		$icon_class = $this->get_render_attribute_string( 'tab-icon' );
+		$rendered_icons = $this->maybe_render_tab_icons_html( $item_settings );
 
-		$icon_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon'], [ 'aria-hidden' => 'true' ] );
+		ob_start();
+		?>
+			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
+				<?php echo $rendered_icons; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
+					<?php echo wp_kses_post( $title ); ?>
+				</span>
+			</button>
+		<?php
+		return ob_get_clean();
+	}
+
+	protected function maybe_render_tab_icons_html( $item_settings ): string {
+		$icon_settings = $item_settings['item']['tab_icon'];
+
+		if ( empty( $icon_settings['value'] ) ) {
+			return '';
+		}
+
+		$icon_html = Icons_Manager::try_get_icon_html( $icon_settings, [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $icon_html;
 
 		if ( $this->is_active_icon_exist( $item_settings['item'] ) ) {
@@ -1106,15 +1123,10 @@ class NestedTabs extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-			<button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<span <?php echo $icon_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</span>
-				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo wp_kses_post( $title ); ?>
-				</span>
-			</button>
+		<span <?php $this->print_render_attribute_string( 'tab-icon' ); ?>>
+			<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</span>
 		<?php
 		return ob_get_clean();
 	}
@@ -1150,7 +1162,9 @@ class NestedTabs extends Widget_Nested_Base {
 		};
 
 		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
-		$children[ $index ]->print_element();
+		if ( isset( $children[ $index ] ) ) {
+			$children[ $index ]->print_element();
+		}
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 
@@ -1218,6 +1232,32 @@ class NestedTabs extends Widget_Nested_Base {
 		<?php
 	}
 
+	protected function get_initial_config(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_improved_repeaters' => true,
+				'target_container' => [ '.e-n-tabs-heading' ],
+				'node' => 'button',
+			] );
+		}
+
+		return parent::get_initial_config();
+	}
+
+	protected function content_template_single_repeater_item() {
+		?>
+		<#
+		const tabIndex = view.collection.length,
+			elementUid = view.getIDInt().toString().substr( 0, 3 ),
+			item = data,
+			hoverAnimationSetting = view?.container?.settings?.attributes?.hover_animation;
+			hoverAnimationClass = hoverAnimationSetting
+				? `elementor-animation-${ hoverAnimationSetting }`
+				: '';
+		#>
+		<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' );
+	}
+
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
@@ -1225,61 +1265,70 @@ class NestedTabs extends Widget_Nested_Base {
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
-				const tabCount = index + 1,
-					tabUid = elementUid + tabCount,
-					tabWrapperKey = tabUid,
-					tabTitleKey = 'tab-title-' + tabUid,
-					tabIconKey = 'tab-icon-' + tabUid,
-					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-					hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
-
-				let tabActiveIcon = tabIcon,
-					tabId = 'e-n-tab-title-' + tabUid;
-
-				if ( '' !== item.tab_icon_active.value ) {
-					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
-				}
-
-				if ( '' !== item.element_id ) {
-					tabId = item.element_id;
-				}
-
-				view.addRenderAttribute( tabWrapperKey, {
-					'id': tabId,
-					'class': [ 'e-n-tab-title',hoverAnimationClass ],
-					'data-tab-index': tabCount,
-					'role': 'tab',
-					'aria-selected': 1 === tabCount ? 'true' : 'false',
-					'tabindex': 1 === tabCount ? '0' : '-1',
-					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'style': '--n-tabs-title-order: ' + tabCount + ';',
-				} );
-
-				view.addRenderAttribute( tabTitleKey, {
-					'class': [ 'e-n-tab-title-text' ],
-					'data-binding-type': 'repeater-item',
-					'data-binding-repeater-name': 'tabs',
-					'data-binding-setting': [ 'tab_title' ],
-					'data-binding-index': tabCount,
-				} );
-
-				view.addRenderAttribute( tabIconKey, {
-					'class': [ 'e-n-tab-icon' ],
-					'data-binding-type': 'repeater-item',
-					'data-binding-repeater-name': 'tabs',
-					'data-binding-setting': [ 'tab_icon.value', 'tab_icon_active.value' ],
-					'data-binding-index': tabCount,
-				} );
+					const tabIndex = index,
+						hoverAnimationSetting = settings['hover_animation'],
+						hoverAnimationClass = hoverAnimationSetting
+							? `elementor-animation-${ hoverAnimationSetting }`
+							: '';
 				#>
-				<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
-					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
-					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
-				</button>
+				<?php $this->content_template_single_item( '{{ tabIndex }}', '{{ item }}', '{{ elementUid }}', '{{ hoverAnimationClass }}' ); ?>
 				<# } ); #>
 			</div>
 			<div class="e-n-tabs-content"></div>
 			<# } #>
 		</div>
+		<?php
+	}
+
+	private function content_template_single_item( $tab_index, $item, $element_uid, $hover_animation_class ) {
+		?>
+		<#
+		const tabCount = tabIndex + 1,
+			tabId = item.element_id
+				? item.element_id
+				: 'e-n-tab-title-' + elementUid + ( tabIndex + 1 ),
+			tabUid = elementUid + tabCount,
+			tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+			activeTabIcon = item.tab_icon_active.value
+				? elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' )
+				: tabIcon,
+			escapedHoverAnimationClass = _.escape( hoverAnimationClass );
+
+		view.addRenderAttribute( 'tab-title', {
+			'id': tabId,
+			'class': [ 'e-n-tab-title',escapedHoverAnimationClass ],
+			'data-tab-index': tabCount,
+			'role': 'tab',
+			'aria-selected': 1 === tabCount ? 'true' : 'false',
+			'tabindex': 1 === tabCount ? '0' : '-1',
+			'aria-controls': 'e-n-tab-content-' + tabUid,
+			'style': '--n-tabs-title-order: ' + tabCount + ';',
+		}, null, true );
+
+		view.addRenderAttribute( 'tab-title-text', {
+			'class': [ 'e-n-tab-title-text' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'tabs',
+			'data-binding-setting': [ 'tab_title' ],
+			'data-binding-index': tabCount,
+		}, null, true );
+
+		view.addRenderAttribute( 'tab-icon', {
+			'class': [ 'e-n-tab-icon' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'tabs',
+			'data-binding-setting': [ 'tab_icon', 'tab_icon_active' ],
+			'data-binding-index': tabCount,
+		}, null, true );
+		#>
+
+		<button {{{ view.getRenderAttributeString( 'tab-title' ) }}}>
+			<# if ( !! item.tab_icon.value ) { #>
+			<span {{{ view.getRenderAttributeString( 'tab-icon' ) }}}>{{{ tabIcon.value }}}{{{ activeTabIcon.value }}}</span>
+			<# } #>
+
+			<span {{{ view.getRenderAttributeString( 'tab-title-text' ) }}}>{{{ item.tab_title }}}</span>
+		</button>
 		<?php
 	}
 

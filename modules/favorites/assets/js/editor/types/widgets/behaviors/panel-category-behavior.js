@@ -1,5 +1,3 @@
-import CategoryEmptyView from '../views/category-empty-view';
-
 export default class PanelCategoryBehavior extends Marionette.Behavior {
 	onRender() {
 		if ( this.isFavoritesCategory() ) {

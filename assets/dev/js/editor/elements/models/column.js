@@ -1,4 +1,4 @@
-import Element from './element';
+import { default as Element } from './element';
 
 /**
  * @typedef {import('../../../editor/elements/models/base-element-model')} BaseModel

@@ -32,6 +32,16 @@ const ContainerView = BaseElementView.extend( {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
+	filterSettings( newItem ) {
+		const parentContainer = this;
+
+		if ( parentContainer.isBoxedWidth() ) {
+			newItem.settings.content_width = 'full';
+		} else if ( 0 !== parentContainer.getNestingLevel() ) {
+			newItem.settings.content_width = 'full';
+		}
+	},
+
 	childViewOptions() {
 		return {
 			emptyViewOwner: this,
@@ -278,7 +288,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Add a `Save as Template` button to the context menu.
 	 *
 	 * @return {Object} groups
-	 *
 	 */
 	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
@@ -342,20 +351,22 @@ const ContainerView = BaseElementView.extend( {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
-		editTools.add = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
-			icon: 'plus',
-		};
+		if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			editTools.add = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
+				icon: 'plus',
+			};
 
-		editTools.edit = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-			icon: 'handle',
-		};
+			editTools.edit = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
+				icon: 'handle',
+			};
+		}
 
 		if ( ! this.getContainer().isLocked() ) {
-			if ( elementor.getPreferences( 'edit_buttons' ) ) {
+			if ( elementor.getPreferences( 'edit_buttons' ) && $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
 				editTools.duplicate = {
 					/* Translators: %s: Element Name. */
 					title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
@@ -377,7 +388,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
 	 *
 	 * @return {void}
-	 *
 	 */
 	onAddButtonClick() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
@@ -422,12 +432,6 @@ const ContainerView = BaseElementView.extend( {
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
-			}
-
-			// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-			if ( ! this.model.get( 'isInner' ) ) {
-				this.$el[ 0 ].dataset.coreV316Plus = 'true';
 			}
 
 			this.droppableInitialize( this.container.settings );
@@ -480,6 +484,8 @@ const ContainerView = BaseElementView.extend( {
 
 		/* Translators: %s: Element name. */
 		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
+
+		this.updateNeedHelpLink();
 	},
 
 	getPanelTitle() {
@@ -626,6 +632,17 @@ const ContainerView = BaseElementView.extend( {
 			delete this._showingEmptyView; // Marionette property that needs to be falsy for showEmptyView() to fully execute.
 			this.showEmptyView(); // Marionette function.
 			this.handleGridEmptyView();
+		}
+	},
+
+	updateNeedHelpLink() {
+		const $linkElement = jQuery( '#elementor-panel__editor__help__link' );
+		const href = this.isGridContainer()
+			? 'https://go.elementor.com/widget-container-grid'
+			: 'https://go.elementor.com/widget-container';
+
+		if ( $linkElement ) {
+			$linkElement.attr( 'href', href );
 		}
 	},
 } );

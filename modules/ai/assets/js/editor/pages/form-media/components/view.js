@@ -1,10 +1,13 @@
 import Panel from '../../../components/ui/panel';
 import { Box, Stack, Typography } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Loader from '../../../components/loader';
 import GenerateLoader from './generate-loader';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import BackButton from './back-button';
 import { useLocation } from '../context/location-context';
+import { useGlobalSettings } from '../context/global-settings-context';
+import UsageMessages from '../../../components/usage-messages';
 
 const ViewBackButton = ( { sx = {}, ...props } ) => {
 	const { back } = useLocation();
@@ -51,7 +54,7 @@ ContentHeading.propTypes = {
 
 const View = ( { children, ...props } ) => {
 	return (
-		<Box display="flex" sx={ { overflowY: 'auto' } } height="100%" { ...props }>
+		<Box className="e-ai-dialog-content" display="flex" sx={ { overflowY: 'auto', position: 'relative' } } height="100%" { ...props }>
 			{ children }
 		</Box>
 	);
@@ -91,7 +94,27 @@ ErrorMessage.propTypes = {
 	sx: PropTypes.object,
 };
 
-View.Panel = Panel;
+const ViewPanel = ( props ) => {
+	const { hasSubscription, usagePercentage } = useGlobalSettings();
+
+	return (
+		<Panel>
+			<UsageMessages
+				hasSubscription={ hasSubscription }
+				usagePercentage={ usagePercentage }
+				sx={ { mb: 4 } }
+			/>
+
+			{ props.children }
+		</Panel>
+	);
+};
+
+ViewPanel.propTypes = {
+	children: PropTypes.node,
+};
+
+View.Panel = ViewPanel;
 View.Content = Content;
 View.BackButton = ViewBackButton;
 View.ErrorMessage = ErrorMessage;

@@ -1,4 +1,5 @@
 import { Box, Typography, LinearProgress, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import { AIIcon } from '@elementor/icons';
 
 const GenerateLoader = () => (

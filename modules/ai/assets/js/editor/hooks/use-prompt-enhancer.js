@@ -1,17 +1,18 @@
 import { getImagePromptEnhanced, getLayoutPromptEnhanced } from '../api';
 import usePrompt from './use-prompt';
+import { useConfig } from '../pages/form-layout/context/config';
 
 const enhancePromptMap = new Map( [
 	[ 'media', getImagePromptEnhanced ],
 	[ 'layout', getLayoutPromptEnhanced ],
 ] );
 
-const getResult = ( prompt, type ) => {
+const getResult = ( prompt, type, enhanceType ) => {
 	if ( ! enhancePromptMap.has( type ) ) {
 		throw new Error( `Invalid prompt type: ${ type }` );
 	}
 
-	return enhancePromptMap.get( type )( prompt );
+	return enhancePromptMap.get( type )( prompt, enhanceType );
 };
 
 /**
@@ -22,11 +23,13 @@ const getResult = ( prompt, type ) => {
  * @return {{enhancedPrompt: string | undefined, isEnhancing: boolean, enhance: (function(...[*]): Promise)}}
  */
 const usePromptEnhancer = ( prompt, type ) => {
+	const { mode } = useConfig();
+
 	const {
 		data: enhancedData,
 		isLoading: isEnhancing,
 		send: enhance,
-	} = usePrompt( () => getResult( prompt, type ), prompt );
+	} = usePrompt( () => getResult( prompt, type, mode ), prompt );
 
 	return {
 		enhance,

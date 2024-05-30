@@ -27,6 +27,7 @@ export default function IndexHeader( props ) {
 		const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'x';
 		eventTracking( 'kit-library/modal-close', element, null, 'info' );
 	};
+	const shouldShowImportButton = elementorAppConfig.user.is_administrator || ( elementorAppConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
 	const buttons = useMemo( () => [
 		{
 			id: 'info',
@@ -48,7 +49,7 @@ export default function IndexHeader( props ) {
 				props.refetch();
 			},
 		},
-		{
+		shouldShowImportButton && {
 			id: 'import',
 			text: __( 'Import', 'elementor' ),
 			hideText: true,
@@ -59,7 +60,7 @@ export default function IndexHeader( props ) {
 				navigate( '/import?referrer=kit-library' );
 			},
 		},
-	], [ props.isFetching, props.refetch ] );
+	], [ props.isFetching, props.refetch, shouldShowImportButton ] );
 
 	return (
 		<>

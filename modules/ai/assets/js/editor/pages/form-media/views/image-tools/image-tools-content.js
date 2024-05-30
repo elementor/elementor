@@ -1,4 +1,5 @@
 import SingleImagePreview from '../../components/single-image-preview';
+import { __ } from '@wordpress/i18n';
 import ImageActions from '../../components/image-actions';
 import { useEditImage } from '../../context/edit-image-context';
 import useImageActions from '../../hooks/use-image-actions';

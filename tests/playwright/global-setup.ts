@@ -1,25 +1,23 @@
 import { chromium, request, type FullConfig } from '@playwright/test';
-import { createApiContext, createDefaultMedia, deleteDefaultMedia } from './assets/api-requests';
+import { cleanUpTestPages, createApiContext, createDefaultMedia, deleteDefaultMedia, loginApi } from './assets/api-requests';
+import { WindowType } from './types/types';
 
-module.exports = async ( config: FullConfig ) => {
+async function globalSetup( config: FullConfig ) {
 	const { baseURL, headless } = config.projects[ 0 ].use;
-
 	const browser = await chromium.launch( { headless } );
-	const page = await browser.newPage();
-
+	const context = await browser.newContext();
+	const page = await context.newPage();
+	const cookies = await loginApi(
+		process.env.USERNAME || 'admin',
+		process.env.PASSWORD || 'password',
+		process.env.BASE_URL || 'http://localhost:8888',
+	);
+	await context.addCookies( cookies );
 	await page.goto( `${ baseURL }/wp-admin` );
-
-	await page.waitForSelector( 'text=Log In' );
-	await page.fill( 'input[name="log"]', process.env.USERNAME || 'admin' );
-	await page.fill( 'input[name="pwd"]', process.env.PASSWORD || 'password' );
-	await page.click( '#wp-submit' );
-	await page.waitForSelector( 'text=Dashboard' );
-
-	// Save signed-in state to 'storageState.json'.
 	const storageState = await page.context().storageState( { path: './storageState.json' } );
 
 	// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
-	// @ts-ignore
+	let window: WindowType;
 	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
 	process.env.STORAGE_STATE = JSON.stringify( storageState );
 	process.env.BASE_URL = baseURL;
@@ -48,5 +46,7 @@ module.exports = async ( config: FullConfig ) => {
 	// Teardown function.
 	return async () => {
 		await deleteDefaultMedia( apiContext, imageIds );
+		await cleanUpTestPages( apiContext );
 	};
-};
+}
+export default globalSetup;

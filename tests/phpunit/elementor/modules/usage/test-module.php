@@ -259,7 +259,7 @@ class Test_Module extends Elementor_Test_Base {
 	 */
 	private $isDynamicTags = false;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();

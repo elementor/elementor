@@ -14,9 +14,9 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { activeControl } = args;
+		const { activeControl, refresh = false } = args;
 
-		if ( this.shouldRenderPage( tab ) ) {
+		if ( this.shouldRenderPage( tab ) || refresh ) {
 			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 		}
 
@@ -27,7 +27,7 @@ export default class Component extends ComponentBase {
 		const currentPanelView = elementor.getPanelView();
 
 		const isSamePage = 'page_settings' === currentPanelView.getCurrentPageName();
-		const isSameTab = tab === currentPanelView.getCurrentPageView().activeTab;
+		const isSameTab = tab === currentPanelView.getCurrentPageView()?.activeTab;
 
 		return ! isSamePage || ! isSameTab;
 	}
