@@ -12,7 +12,6 @@ namespace Elementor\Modules\ConversionCenter\Classes\Render;
 class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 
 	public function render(): void {
-
 		$this->build_layout_render_attribute();
 
 		$content_classnames = 'e-contact-buttons__content';
