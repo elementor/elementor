@@ -1204,7 +1204,7 @@ class NestedTabs extends Widget_Nested_Base {
 			$tab_count = $index + 1;
 
 			$tab_id = empty( $item['element_id'] )
-				? 'e-n-tabs-title-' . $widget_number . $tab_count
+				? 'e-n-tab-title-' . $widget_number . $tab_count
 				: $item['element_id'];
 
 			$item_settings = [

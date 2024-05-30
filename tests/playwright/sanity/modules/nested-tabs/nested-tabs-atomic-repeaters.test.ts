@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
+import {addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup} from './helper';
+import _path from "path";
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -108,6 +109,60 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			for ( let i = 0; i < 2; i++ ) {
 				await deleteItemFromRepeater( editor, nestedTabsID );
 			}
+		} );
+	} );
+
+	test( 'Test Nested Tabs with Inner Nested Tabs', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame();
+
+		await editor.addWidget( 'button' );
+
+		// Load template.
+		const filePath = _path.resolve( __dirname, `./templates/nested-tabs-with-inner-nested-tabs.json` );
+		await editor.loadTemplate( filePath, false );
+		await frame.waitForSelector( '.e-n-tabs' );
+
+		await test.step( 'Select Tab2 of Inner Tabs', async () => {
+			const innerTabsSecondTab = frame.locator( '.e-n-tabs-content .e-n-tab-title' ).nth( 1 );
+			await innerTabsSecondTab.click();
+
+			// Assert
+			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-tab2' );
+		} );
+
+		await test.step( 'Clone Last Tab of Inner Nested Tabs', async () => {
+			// Act
+			const cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( 2 );
+			await cloneItemButton.click();
+			await editor.getPreviewFrame().locator( `.e-n-tabs .e-n-tabs` ).waitFor();
+
+			// Assert
+			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-cloned' );
+		} );
+
+		await test.step( 'Clone Last Tab of Outer Nested Tabs', async () => {
+			// Act
+			const outerTabsLastTab = frame.locator( '.e-n-tabs-heading' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 2 );
+			await outerTabsLastTab.click();
+			const cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( 2 );
+			await cloneItemButton.click();
+			await editor.getPreviewFrame().locator( `.e-n-tabs` ).waitFor();
+
+			// Assert
+			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned' );
+
+			// Act
+			const outerTabsFirstTab = frame.locator( '.e-n-tabs-heading ').nth( 0 ).locator( '.e-n-tab-title' ).nth( 2 );
+			await outerTabsFirstTab.click();
+			const innerTabsFirstTab = frame.locator( '.e-n-tabs-content .e-n-tab-title' ).nth( 1 );
+			await innerTabsFirstTab.click();
+
+			// Assert
+			await expect( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned-inner-tabs-check' );
 		} );
 	} );
 } );

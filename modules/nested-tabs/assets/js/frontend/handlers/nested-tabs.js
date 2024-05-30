@@ -39,16 +39,20 @@ export default class NestedTabs extends Base {
 		return tabTitleElement.getAttribute( 'data-tab-index' );
 	}
 
+	getWidgetNumber() {
+		return this.$element.find( '> .elementor-widget-container > .e-n-tabs' ).attr( 'data-widget-number' );
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
-				widgetContainer: '.e-n-tabs',
-				tabTitle: '.e-n-tab-title',
-				tabTitleIcon: '.e-n-tab-icon',
-				tabTitleText: '.e-n-tab-title-text',
-				tabContent: '.e-n-tabs-content > .e-con',
-				headingContainer: '.e-n-tabs-heading',
-				activeTabContentContainers: '.e-con.e-active',
+				widgetContainer: `[data-widget-number="${ this.getWidgetNumber() }"]`,
+				tabTitle: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"]`,
+				tabTitleIcon: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"] > .e-n-tab-icon`,
+				tabTitleText: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"] > .e-n-tab-title-text`,
+				tabContent: `[id*="e-n-tab-content-${ this.getWidgetNumber() }"]`,
+				headingContainer: `[data-widget-number="${ this.getWidgetNumber() }"] > .e-n-tabs-heading`,
+				activeTabContentContainers: `[id*="e-n-tab-content-${ this.getWidgetNumber() }"].e-active`,
 			},
 			classes: {
 				active: 'e-active',
@@ -69,7 +73,7 @@ export default class NestedTabs extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			$wdigetContainer: this.findElement( selectors.widgetContainer ),
+			$widgetContainer: this.findElement( selectors.widgetContainer ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -100,7 +104,7 @@ export default class NestedTabs extends Base {
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
 
-		this.elements.$wdigetContainer.addClass( 'e-activated' );
+		this.elements.$widgetContainer.addClass( 'e-activated' );
 	}
 
 	deactivateActiveTab( newTabIndex ) {
