@@ -218,7 +218,6 @@ class Module extends BaseModule {
 		}
 	}
 
-
 	private function get_trashed_contact_posts(): array {
 		if ( $this->trashed_contact_pages ) {
 			return $this->trashed_contact_pages;
