@@ -63,6 +63,11 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           POSTFIX: ''
           OVERRIDE_PACKAGE_VERSION: true
+      - name: Get Changelog From Changelog Text File
+#        if: github.event.inputs.channel == 'ga'
+        uses: ./.github/workflows/get-changelog-from-changelog-txt
+        with:
+          VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Update Readme.txt
         if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
@@ -90,11 +95,6 @@ jobs:
       #     HEAD_BRANCH_NAME: ${{ github.ref }}
       #     BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
       #     GENERATE_EMPTY_CHANGELOG: true
-      - name: Get Changelog From Changelog Text File
-#        if: github.event.inputs.channel == 'ga'
-        uses: ./.github/workflows/get-changelog-from-changelog-txt
-        with:
-          VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
