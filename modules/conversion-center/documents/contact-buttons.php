@@ -65,7 +65,7 @@ class Contact_Buttons extends PageBase {
 				'<a style="color:red;" href="?post=%s&action=remove_from_entire_site&_wpnonce=%s">%s</a>',
 				$this->get_post()->ID,
 				wp_create_nonce( 'remove_from_entire_site_' . $this->get_post()->ID ),
-				__( 'Remove From Entire Site', 'elementor' )
+				esc_html__( 'Remove From Entire Site', 'elementor' )
 			);
 		} else {
 			$actions['set_as_entire_site'] = sprintf(
