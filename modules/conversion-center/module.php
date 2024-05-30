@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
-use DOMDocument;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
@@ -15,8 +14,6 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Documents\Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
-use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -125,19 +122,21 @@ class Module extends BaseModule {
 				case 'set_as_entire_site':
 					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 					check_admin_referer( 'set_as_entire_site_' . $post );
-					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
 
 					$posts = get_posts( [
 						'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
 						'posts_per_page' => -1,
 						'post_status' => 'publish',
 						'fields' => 'ids',
-						'exclude' => $post,
+						'meta_key' => '_elementor_conditions',
+						'meta_compare' => 'EXISTS',
 					] );
 
 					foreach ( $posts as $post_id ) {
 						delete_post_meta( $post_id, '_elementor_conditions' );
 					}
+
+					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
 
 					wp_redirect( $menu_args['menu_slug'] );
 					exit;
