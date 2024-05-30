@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -67,6 +69,27 @@ abstract class Settings_Page {
 	 */
 	final public static function get_url() {
 		return admin_url( 'admin.php?page=' . static::PAGE_ID );
+	}
+
+	/**
+	 * Get settings tab URL.
+	 *
+	 * Retrieve the URL of a specific tab in the settings page.
+	 *
+	 * @since 3.23.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $tab_id The ID of the settings tab.
+	 *
+	 * @return string Settings tab URL.
+	 */
+	final public static function get_settings_tab_url( $tab_id ): string {
+		$settings_page_id = Plugin::$instance->experiments->is_feature_active( 'home_screen' )
+			? 'elementor-settings'
+			: 'elementor';
+
+		return admin_url( "admin.php?page=$settings_page_id#tab-$tab_id" );
 	}
 
 	/**
