@@ -1253,7 +1253,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 		let tabActiveIcon = tabIcon,
 			tabId = 'e-n-tab-title-' + elementUid;
-
+// dummy
 		if ( '' !== data.tab_icon_active.value ) {
 			tabActiveIcon = elementor.helpers.renderIcon( view, data.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
 		}
