@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Traits;
 use Elementor\Controls_Manager;
 use Elementor\Shapes;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 trait Conversion_Center_Controls_Trait {
 
@@ -249,5 +250,22 @@ trait Conversion_Center_Controls_Trait {
 			?>
 		</div>
 		<?php
+	}
+
+	protected function get_configured_breakpoints( $add_desktop = 'true' ) {
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$active_breakpoint_instances = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$devices_options = [];
+
+		foreach ( $active_devices as $device_key ) {
+			$device_label = 'desktop' === $device_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoint_instances[ $device_key ]->get_label();
+			$devices_options[ $device_key ] = $device_label;
+		}
+
+		return [
+			'active_devices' => $active_devices,
+			'devices_options' => $devices_options,
+		];
 	}
 }
