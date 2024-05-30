@@ -10,12 +10,12 @@ if (!VERSION) {
 	return;
 }
 
-for (let fileName of ['changelog', 'readme'] ) {
+for (let fileName of ['readme', 'changelog'] ) {
 	(async () => {
 		try {
 			const changelogText = fs.readFileSync(`${fileName}.txt`, 'utf-8');
 			const data = marked.lexer(changelogText);
-			const headerIndex = data.findIndex((section) => section.type === 'paragraph' && section.text.startsWith(VERSION));
+			const headerIndex = data.findIndex((section) => section.type === 'paragraph' && section.text.trim().startsWith(VERSION));
 			if (headerIndex === -1) {
 				console.error(`Failed to find version: ${VERSION} in ${fileName}.txt file`);
 				process.exit(1);
