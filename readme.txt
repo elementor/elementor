@@ -250,6 +250,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.23.2 - 2024-05-29 =
+
+* Fix: Can't click on the AI consent modal checkbox
+
 = 3.21.8 - 2024-05-26 =
 
 * Fix: Can't click on the AI consent modal checkbox
