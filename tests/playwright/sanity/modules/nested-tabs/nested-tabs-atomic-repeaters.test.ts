@@ -119,7 +119,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
-		await editor.addWidget( 'button' );
+		await editor.closeNavigatorIfOpen();
 
 		// Load template.
 		const filePath = _path.resolve( __dirname, `./templates/nested-tabs-with-inner-nested-tabs.json` );
@@ -131,7 +131,9 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await innerTabsSecondTab.click();
 
 			// Assert
+			await editor.togglePreviewMode();
 			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-tab2.png' );
+			await editor.togglePreviewMode();
 		} );
 
 		await test.step( 'Clone Last Tab of Inner Nested Tabs', async () => {
@@ -141,7 +143,9 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tabs .e-n-tab-title' ).nth( 3 ).waitFor();
 
 			// Assert
+			await editor.togglePreviewMode();
 			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'inner-tabs-cloned.png' );
+			await editor.togglePreviewMode();
 		} );
 
 		await test.step( 'Clone Last Tab of Outer Nested Tabs', async () => {
@@ -153,7 +157,9 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await editor.getPreviewFrame().locator( '.e-n-tabs' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 3 ).waitFor();
 
 			// Assert
+			await editor.togglePreviewMode();
 			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned.png' );
+			await editor.togglePreviewMode();
 
 			// Act
 			const outerTabsFirstTab = frame.locator( '.e-n-tabs-heading' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 0 );
@@ -162,6 +168,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await innerTabsFirstTab.click();
 
 			// Assert
+			await editor.togglePreviewMode();
 			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned-inner-tabs-check.png' );
 		} );
 	} );
