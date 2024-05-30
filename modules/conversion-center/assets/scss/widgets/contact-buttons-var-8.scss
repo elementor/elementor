@@ -19,30 +19,30 @@
 
 	.has-colors-type-default {
 
-		.has-platform-email,
-		.has-platform-sms,
-		.has-platform-phone,
-		.has-platform-url {
+		&.has-platform-email,
+		&.has-platform-sms,
+		&.has-platform-phone,
+		&.has-platform-url {
 			--e-contact-buttons-contact-button-icon: #467FF7;
 		}
 	
-		.has-platform-whatsapp {
+		&.has-platform-whatsapp {
 			--e-contact-buttons-contact-button-icon: #25D366;
 		}
 		
-		.has-platform-skype {
+		&.has-platform-skype {
 			--e-contact-buttons-contact-button-icon: #00AFF0;
 		}
 	
-		.has-platform-messenger {
+		&.has-platform-messenger {
 			--e-contact-buttons-contact-button-icon: #168AFF;
 		}
 	
-		.has-platform-viber {
+		&.has-platform-viber {
 			--e-contact-buttons-contact-button-icon: #7360F2;
 		}
 	
-		.has-platform-waze {
+		&.has-platform-waze {
 			--e-contact-buttons-contact-button-icon: #33CCFF;
 		}
 	}
