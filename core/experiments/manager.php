@@ -138,7 +138,7 @@ class Manager extends Base_Object {
 					$message = sprintf(
 						'<p>%s</p><p><a href="#" onclick="location.href=\'%s\'">%s</a></p>',
 						esc_html( $e->getMessage() ),
-						site_url( 'wp-admin/admin.php?page=elementor#tab-experiments' ),
+						Settings::get_settings_tab_url( 'experiments' ),
 						esc_html__( 'Back', 'elementor' )
 					);
 

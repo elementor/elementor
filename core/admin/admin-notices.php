@@ -6,6 +6,7 @@ use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
@@ -363,7 +364,7 @@ class Admin_Notices extends Module {
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Try it out', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=elementor#tab-experiments' ),
+				'url' => Settings::get_settings_tab_url( 'experiments' ),
 				'type' => 'cta',
 			],
 			'button_secondary' => [
