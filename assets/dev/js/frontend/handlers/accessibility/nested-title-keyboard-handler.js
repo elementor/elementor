@@ -10,7 +10,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	getWidgetNumber() {
-		return this.$element.find( '> .elementor-widget-container > .e-n-tabs' ).attr( 'data-widget-number' );
+		return this.$element.find( '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs' ).attr( 'data-widget-number' );
 	}
 
 	getDefaultSettings() {
