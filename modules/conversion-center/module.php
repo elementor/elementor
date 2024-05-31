@@ -25,6 +25,8 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'conversion-center';
 
+	const META_CLICK_TRACKING = '_elementor_click_tracking';
+
 	const CONTACT_PAGE_DOCUMENT_TYPE = 'contact-buttons';
 	const CPT_CONTACT_PAGES = 'e-contact-pages';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=' . self::CPT_CONTACT_PAGES;
@@ -189,14 +191,14 @@ class Module extends BaseModule {
 
 		foreach ( $data['clicks'] as $post_id ) {
 			if ( ! isset( $posts_to_update[ $post_id ] ) ) {
-				$starting_clicks = (int) get_post_meta( $post_id, '_elementor_click_tracking', true );
+				$starting_clicks = (int) get_post_meta( $post_id, self::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
 			$posts_to_update[ $post_id ] ++;
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
-			update_post_meta( $post_id, '_elementor_click_tracking', $clicks );
+			update_post_meta( $post_id, self::META_CLICK_TRACKING, $clicks );
 		}
 
 		wp_send_json_success( [ 'nonce' => wp_create_nonce( 'elementor-pro-frontend' ) ] );
@@ -208,13 +210,13 @@ class Module extends BaseModule {
 		$document->admin_columns_content( $column_name );
 		switch ( $column_name ) {
 			case 'click_tracking':
-				$click_tracking = get_post_meta( $post_id, '_elementor_click_tracking', true );
+				$click_tracking = get_post_meta( $post_id, self::META_CLICK_TRACKING, true );
 				echo esc_html( $click_tracking );
 				break;
 			case 'instances':
 				$instances = get_post_meta( $post_id, '_elementor_conditions', true );
 				if ( $instances ) {
-					echo esc_html( 'Entire Site' );
+					echo esc_html__( 'Entire Site', 'elementor' );
 				}
 				break;
 			default:
