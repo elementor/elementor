@@ -427,7 +427,7 @@ export default class NestedTabs extends Base {
 
 		if ( ! this.getActiveTabIndex() ) {
 			const targetIndex = event.detail.index + 1 || 1;
-			this.changeActiveTab(targetIndex);
+			this.changeActiveTab( targetIndex );
 		}
 	}
 
