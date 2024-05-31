@@ -121,7 +121,6 @@ class Elements_Manager {
 	 *
 	 * @param string $category_name       Category name.
 	 * @param array  $category_properties Category properties.
-	 * @param string $add_after           Optional. Add the category after a specific category.
 	 */
 	public function add_category( $category_name, $category_properties ) {
 		if ( null === $this->categories ) {
