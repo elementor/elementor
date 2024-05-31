@@ -39,6 +39,14 @@ export default class NestedTabs extends Base {
 		return tabTitleElement.getAttribute( 'data-tab-index' );
 	}
 
+	getActiveTabIndex() {
+		const settings = this.getSettings(),
+			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
+
+		return $activeTitle.attr( 'data-tab-index' ) || null;
+	}
+
 	getWidgetNumber() {
 		return this.$element.find( '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs' ).attr( 'data-widget-number' );
 	}
@@ -417,9 +425,10 @@ export default class NestedTabs extends Base {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 
-		const targetIndex = event.detail.index + 1 || 1;
-
-		this.changeActiveTab( targetIndex );
+		if ( ! this.getActiveTabIndex() ) {
+			const targetIndex = event.detail.index + 1 || 1;
+			this.changeActiveTab(targetIndex);
+		}
 	}
 
 	updateListeners( view ) {
