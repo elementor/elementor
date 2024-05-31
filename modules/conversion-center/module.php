@@ -201,7 +201,7 @@ class Module extends BaseModule {
 			update_post_meta( $post_id, self::META_CLICK_TRACKING, $clicks );
 		}
 
-		wp_send_json_success( [ 'nonce' => wp_create_nonce( 'elementor-pro-frontend' ) ] );
+		wp_send_json_success();
 	}
 
 	public function set_admin_columns_content( $column_name, $post_id ) {
