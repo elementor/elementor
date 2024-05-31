@@ -1178,7 +1178,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'class' => 0 === $item_settings['index'] ? 'e-active' : '',
 		] );
 	}
-
+// dummy push.
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$widget_number = substr( $this->get_id_int(), 0, 3 );
