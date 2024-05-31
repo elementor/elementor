@@ -669,11 +669,18 @@ BaseElementView = BaseContainer.extend( {
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
 			let isContentChanged = ! hasChanged,
-				isRenderRequired = ! hasChanged;
+				isRenderRequired = ! hasChanged,
+				dynamicValue = null,
+				isAtomicRepeater = false;
 
 			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
+					return;
+				}
+
+				if ( this.isAtomicDynamic( settingKey ) ) { // Before and after have different settingKey values
+					isAtomicRepeater = true;
 					return;
 				}
 
@@ -697,6 +704,13 @@ BaseElementView = BaseContainer.extend( {
 				}
 			} );
 
+
+			if ( isAtomicRepeater ) {
+				dynamicValue = this.getDynamicValue( settings );
+
+				this.renderDynamicValue( dynamicValue );
+			}
+
 			if ( ! isRenderRequired ) {
 				return;
 			}
@@ -709,6 +723,35 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		this.renderHTML();
+	},
+
+	isAtomicDynamic( settingKey ) {
+		const widgetConfig = elementor.widgetsCache[ this.model.config.name ]
+		return settingKey.includes( '__dynamic__' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
+			widgetConfig.supports_atomic_dynamic_titles; // May be redundant
+	},
+
+	getDynamicValue( settings ) {
+		const valueToParse = settings.attributes.__dynamic__.item_title,
+			dynamicSettings = { active: true };
+
+		if ( valueToParse ) {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		}
+
+		return settings.attributes.item_title; // Default title
+	},
+
+	renderDynamicValue( dynamicValue ) {
+		const activeItem = this?.model?.attributes?.editSettings?.attributes.activeItemIndex,
+			widgetConfig = elementor.widgetsCache[ this.model.config.name ],
+			titleContainers = this.$el.find( widgetConfig.title_container );
+
+		if ( activeItem && widgetConfig.supports_atomic_dynamic_titles ) {
+			titleContainers[ activeItem - 1 ].innerText = dynamicValue;
+			return;
+		}
 	},
 
 	/**
@@ -872,7 +915,6 @@ BaseElementView = BaseContainer.extend( {
 
 	render() {
 		this.getContainer();
-		console.log('BaseElementView render');
 		BaseContainer.prototype.render.apply( this, arguments );
 	},
 

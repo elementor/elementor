@@ -896,6 +896,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'target_container' => [ '.e-n-accordion' ],
 				'node' => 'details',
 				'is_interlaced' => true,
+				'title_container' => '.e-n-accordion-item-title-text',
+				'supports_atomic_dynamic_titles' => true,
 			] );
 		}
 
@@ -950,7 +952,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
-			<# if ( settings['items'] ) {
+			<#
+			console.log('re-rendered');
+			if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
 				defaultState = settings.default_state,
