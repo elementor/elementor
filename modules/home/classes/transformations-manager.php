@@ -19,6 +19,7 @@ class Transformations_Manager {
 		'Filter_Sidebar_Upgrade_By_License',
 		'Create_Site_Settings_Url',
 		'Filter_Condition_Introduction_Meta',
+		'Filter_Top_Section_By_License',
 	];
 
 	protected array $home_screen_data;

@@ -114,8 +114,8 @@ class Modules_Manager {
 			'site-navigation',
 			'styleguide',
 			'apps',
-			'editor-events',
 			'home',
+			'content-sanitizer',
 		];
 	}
 
