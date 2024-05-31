@@ -863,6 +863,7 @@ BaseElementView = BaseContainer.extend( {
 
 	render() {
 		this.getContainer();
+
 		BaseContainer.prototype.render.apply( this, arguments );
 	},
 
