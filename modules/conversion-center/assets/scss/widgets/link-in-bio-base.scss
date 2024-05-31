@@ -9,9 +9,14 @@
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
 	--e-link-in-bio-content-width: #{$link-in-bio-default-content-width};
+	--e-link-in-bio-full-height: 100vh;
 	--e-link-in-bio-gutter-block-end: 45px;
 	--e-link-in-bio-gutter-block-start: 38px;
 	--e-link-in-bio-gutter-inline: 40px;
+
+	@supports (height: 100dvh) {
+		--e-link-in-bio-full-height: 100dvh;
+	}
 
 	// Identity config - Cover
 	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
@@ -84,42 +89,55 @@
 		--e-link-in-bio-border-style: solid;
 	}
 
-	@mixin full-height($breakpoint) {
-		@media (max-width: $breakpoint) {
-			--e-link-in-bio-container-height: 100vh;
+	@mixin full-height($min: null, $max: null) {
+		$query: null;
 
-			@supports (height: 100dvh) {
-				--e-link-in-bio-container-height: 100dvh;
-			}
+		@if $min != null and $max != null {
+			$query: "(min-width: " + $min + ") and (max-width: " + $max + ")";
+		} @else if $max != null {
+			$query: "(max-width: " + $max + ")";
+		} @else if $min != null {
+			$query: "(min-width: " + $min + ")";
+		}
+
+		@if $query != null {
+			@media #{$query} {
+				--e-link-in-bio-container-height: var(--e-link-in-bio-full-height, 100vh);
+			};
 		}
 	}
 
-	&.-is-full-height-mobile {
-		@include full-height($screen-mobile-max);
+	&.is-full-height-mobile {
+		@include full-height(null, $screen-mobile-max);
 	}
 
-	&.-is-full-height-mobile_extra {
-		@include full-height($screen-mobile-extra-max);
+	&.is-full-height-mobile_extra {
+		@include full-height($screen-mobile-extra-min, $screen-mobile-extra-max);
 	}
 
-	&.-is-full-height-tablet {
-		@include full-height($screen-tablet-max);
+	&.is-full-height-tablet {
+		@include full-height($screen-tablet-min, $screen-tablet-max);
 	}
 
-	&.-is-full-height-tablet_extra {
-		@include full-height($screen-tablet-extra-max);
+	&.is-full-height-tablet_extra {
+		@include full-height($screen-tablet-extra-min, $screen-tablet-extra-max);
 	}
 
-	&.-is-full-height-laptop {
-		@include full-height($screen-laptop-max);
+	&.is-full-height-laptop {
+		@include full-height($screen-laptop-min, $screen-laptop-max);
 	}
 
-	&.-is-full-height-desktop {
-		@include full-height($screen-desktop-max);
+	&.is-full-height-desktop {
+
+		@include full-height($screen-desktop-min, null);
+
+		&.is-full-height-widescreen {
+			@include full-height($screen-desktop-min, $screen-desktop-max);
+		}
 	}
 
-	&.-is-full-height-widescreen {
-		@include full-height(99999px);
+	&.is-full-height-widescreen {
+		@include full-height($screen-widescreen-min, null);
 	}
 
 	&.is-full-width {
