@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
-use Elementor\Core\Utils\Arr;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -130,7 +128,9 @@ class Elements_Manager {
 			$this->get_categories();
 		}
 
-		$this->categories[ $category_name ] = $category_properties;
+		if ( ! isset( $this->categories[ $category_name ] ) ) {
+			$this->categories[ $category_name ] = $category_properties;
+		}
 	}
 
 	/**

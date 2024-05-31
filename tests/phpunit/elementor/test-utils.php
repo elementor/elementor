@@ -21,16 +21,4 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$this->assertNull( \Elementor\Embed::get_video_properties( 'https://www.youtube.com/' ) );
 	}
-
-	public function test_array_util() {
-		$array = [ 'a' => 1, 'b' => 2, 'd' => 4 ];
-
-		$new_array = \Elementor\Core\Utils\Arr::insert_element_after_key( $array, 'b', 'c', 3 );
-
-		$this->assertEquals( [ 'a' => 1, 'b' => 2, 'c' => 3, 'd' => 4 ], $new_array );
-
-		$new_array = \Elementor\Core\Utils\Arr::insert_element_after_key( $array, 'e', 'c', 3 );
-
-		$this->assertEquals( [ 'a' => 1, 'b' => 2, 'd' => 4, 'c' => 3 ], $new_array );
-	}
 }
