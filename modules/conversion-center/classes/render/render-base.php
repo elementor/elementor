@@ -511,12 +511,12 @@ abstract class Render_Base {
 			$layout_classnames .= ' has-border';
 		}
 
-		if ( 'yes' === $layout_props_full_height ) {
-			$layout_classnames .= ' is-full-height';
-		}
-
 		if ( 'yes' === $layout_props_full_width ) {
 			$layout_classnames .= ' is-full-width';
+		}
+
+		if ( 'yes' === $layout_props_full_height ) {
+			$layout_classnames .= ' is-full-height';
 		}
 
 		if ( ! empty( $layout_props_full_height_controls ) ) {
