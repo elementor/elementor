@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class NestedTabs extends Widget_Nested_Base {
 
+	private $tab_item_settings = [];
+
 	public function get_name() {
 		return 'nested-tabs';
 	}
@@ -1073,7 +1075,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	protected function render_tab_titles_html( $item_settings ): string {
+	protected function render_tab_titles_html( $item_settings ): void {
 		$setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $item_settings['index'] );
 		$title = $item_settings['item']['tab_title'];
 		$css_classes = [ 'e-n-tab-title' ];
@@ -1092,49 +1094,39 @@ class NestedTabs extends Widget_Nested_Base {
 			'aria-controls' => $item_settings['container_id'],
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
-
-		$rendered_icons = $this->maybe_render_tab_icons_html( $item_settings );
-
-		ob_start();
 		?>
-			<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
-				<?php echo $rendered_icons; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
-					<?php echo wp_kses_post( $title ); ?>
-				</span>
-			</button>
+		<button <?php $this->print_render_attribute_string( $setting_key ); ?>>
+			<?php $this->maybe_render_tab_icons_html( $item_settings ); ?>
+			<span <?php $this->print_render_attribute_string( 'tab-title-text' ); ?>>
+				<?php echo wp_kses_post( $title ); ?>
+			</span>
+		</button>
 		<?php
-		return ob_get_clean();
 	}
 
-	protected function maybe_render_tab_icons_html( $item_settings ): string {
+	protected function maybe_render_tab_icons_html( $item_settings ): void {
 		$icon_settings = $item_settings['item']['tab_icon'];
 
 		if ( empty( $icon_settings['value'] ) ) {
-			return '';
+			return;
 		}
 
-		$icon_html = Icons_Manager::try_get_icon_html( $icon_settings, [ 'aria-hidden' => 'true' ] );
-		$icon_active_html = $icon_html;
-
-		if ( $this->is_active_icon_exist( $item_settings['item'] ) ) {
-			$icon_active_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
-		}
-
-		ob_start();
+		$active_icon_settings = $this->is_active_icon_exist( $item_settings['item'] )
+			? $item_settings['item']['tab_icon_active']
+			: $icon_settings;
 		?>
 		<span <?php $this->print_render_attribute_string( 'tab-icon' ); ?>>
-			<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php Icons_Manager::render_icon( $icon_settings, [ 'aria-hidden' => 'true' ] ); ?>
+			<?php Icons_Manager::render_icon( $active_icon_settings, [ 'aria-hidden' => 'true' ] ); ?>
 		</span>
 		<?php
-		return ob_get_clean();
 	}
 
-	protected function render_tab_containers_html( $item_settings ): string {
-		ob_start();
-		$this->print_child( $item_settings['index'], $item_settings );
-		return ob_get_clean();
+	protected function render_tab_containers_html( $settings ): void {
+		foreach ( $settings['tabs'] as $index => $item ) {
+			$item_settings = $this->tab_item_settings[ $index ];
+			$this->print_child( $item_settings['index'], $item_settings );
+		}
 	}
 
 
@@ -1196,37 +1188,35 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
 		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon' ] );
-
-		$tab_titles_html = '';
-		$tab_containers_html = '';
-
-		foreach ( $settings['tabs'] as $index => $item ) {
-			$tab_count = $index + 1;
-
-			$tab_id = empty( $item['element_id'] )
-				? 'e-n-tabs-title-' . $widget_number . $tab_count
-				: $item['element_id'];
-
-			$item_settings = [
-				'index' => $index,
-				'tab_count' => $tab_count,
-				'tab_id' => $tab_id,
-				'container_id' => 'e-n-tab-content-' . $widget_number . $tab_count,
-				'widget_number' => $widget_number,
-				'item' => $item,
-				'settings' => $settings,
-			];
-
-			$tab_titles_html .= $this->render_tab_titles_html( $item_settings );
-			$tab_containers_html .= $this->render_tab_containers_html( $item_settings );
-		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
-				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php
+			foreach ( $settings['tabs'] as $index => $item ) {
+				$tab_count = $index + 1;
+
+				$tab_id = empty( $item['element_id'] )
+					? 'e-n-tabs-title-' . $widget_number . $tab_count
+					: $item['element_id'];
+
+				$item_settings = [
+					'index' => $index,
+					'tab_count' => $tab_count,
+					'tab_id' => $tab_id,
+					'container_id' => 'e-n-tab-content-' . $widget_number . $tab_count,
+					'widget_number' => $widget_number,
+					'item' => $item,
+					'settings' => $settings,
+				];
+
+				$this->tab_item_settings[] = $item_settings;
+
+				$this->render_tab_titles_html( $item_settings );
+			}
+			?>
 			</div>
 			<div class="e-n-tabs-content">
-				<?php echo $tab_containers_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php $this->render_tab_containers_html( $settings ); ?>
 			</div>
 		</div>
 		<?php
