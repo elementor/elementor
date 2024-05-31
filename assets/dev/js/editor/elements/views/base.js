@@ -341,59 +341,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	attachElContent( html ) {
-		if ( elementor.previewView.isBuffering ||
-			! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ||
-			'nested-accordion' !== this?.model?.config?.name
-		) {
-			this.$el.empty().append( this.getHandlesOverlay(), html );
-			return;
-		}
-
-		const activeIndex = ( +this?.model?.attributes?.editSettings?.attributes?.activeItemIndex || 0 ) - 1;
-
-		if ( activeIndex >= 0 ) {
-			this.handleAccordionChange( html, activeIndex );
-		} else {
-			this.$el.empty().append( this.getHandlesOverlay(), html );
-		}
-	},
-
-	extractAccordionTargets( html, activeIndex ) {
-		const summaryRegex = /<summary[\s\S]*?>[\s\S]*?<\/summary>/gi,
-			summaryElements = html.matchAll( summaryRegex ).toArray();
-
-		if ( activeIndex < 0 || ! summaryElements[ activeIndex ] ) {
-			return null;
-		}
-
-		return summaryElements[ activeIndex ][ 0 ];
-	},
-
-	handleAccordionChange( htmlAfter, activeIndex ) {
-		const htmlBefore = this.$el.find( '> .elementor-widget-container > .e-n-accordion > details > summary' )?.[ activeIndex ],
-			summaryBefore = htmlBefore?.innerHTML || null,
-			summaryAfter = this.extractAccordionTargets( htmlAfter, activeIndex );
-
-		if ( ! summaryBefore || ! summaryAfter || summaryBefore === summaryAfter ) {
-			return;
-		}
-
-		this.updateTitle( htmlBefore, summaryAfter, activeIndex );
-	},
-
-	updateTitle( htmlBefore, summaryAfter, activeIndex ) {
-		const titleElementRegex = /<div class="e-n-accordion-item-title-text"[\s\S]*?>([\s\S]*?)<\/div>/gi;
-		const newTitle = summaryAfter.match( titleElementRegex )[ 0 ].replace( /<\/?[^>]+(>|$)/g, '' ).trim();
-		const titleContainer = htmlBefore.querySelector('.e-n-accordion-item-title-text');
-
-		titleContainer.innerText = newTitle;
-	},
-
-	takeDataFromRepeater( replacedIndex ) {
-		const repeater = 'elementor-control-type-repeater',
-			repeaterItemClass = 'elementor-repeater-row-item-title';
-
-		return document.querySelectorAll( `.${ repeater } .${ repeaterItemClass }` )[ replacedIndex ].innerText;
+		this.$el.empty().append( this.getHandlesOverlay(), html );
 	},
 
 	isStyleTransferControl( control ) {
