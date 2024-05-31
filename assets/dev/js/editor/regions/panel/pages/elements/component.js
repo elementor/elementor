@@ -19,4 +19,18 @@ export default class Component extends ComponentBase {
 	renderTab( tab, args = {} ) {
 		this.manager.setPage( 'elements', null, args ).showView( tab );
 	}
+
+	activateTab( tab ) {
+		super.activateTab( tab );
+
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names[ tab ]?.v1,
+			{
+				location: elementor.editorEvents.config.locations.widgetPanel,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations[ tab ],
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements.accordionSection,
+			},
+		);
+	}
 }
