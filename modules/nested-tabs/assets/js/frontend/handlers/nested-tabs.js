@@ -6,6 +6,8 @@ import {
 } from 'elementor-frontend-utils/flex-horizontal-scroll';
 
 export default class NestedTabs extends Base {
+	widgetNumber = null;
+
 	constructor( ...args ) {
 		super( ...args );
 
@@ -52,15 +54,17 @@ export default class NestedTabs extends Base {
 	}
 
 	getDefaultSettings() {
+		this.widgetNumber = this.getWidgetNumber();
+
 		return {
 			selectors: {
-				widgetContainer: `[data-widget-number="${ this.getWidgetNumber() }"]`,
-				tabTitle: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"]`,
-				tabTitleIcon: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"] > .e-n-tab-icon`,
-				tabTitleText: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"] > .e-n-tab-title-text`,
-				tabContent: `[id*="e-n-tab-content-${ this.getWidgetNumber() }"]`,
-				headingContainer: `[data-widget-number="${ this.getWidgetNumber() }"] > .e-n-tabs-heading`,
-				activeTabContentContainers: `[id*="e-n-tab-content-${ this.getWidgetNumber() }"].e-active`,
+				widgetContainer: `[data-widget-number="${ this.widgetNumber }"]`,
+				tabTitle: `[id*="e-n-tab-title-${ this.widgetNumber }"]`,
+				tabTitleIcon: `[id*="e-n-tab-title-${ this.widgetNumber }"] > .e-n-tab-icon`,
+				tabTitleText: `[id*="e-n-tab-title-${ this.widgetNumber }"] > .e-n-tab-title-text`,
+				tabContent: `[data-widget-number="${ this.widgetNumber }"] > .e-n-tabs-content > .e-con`,
+				headingContainer: `[data-widget-number="${ this.widgetNumber }"] > .e-n-tabs-heading`,
+				activeTabContentContainers: `[id*="e-n-tab-content-${ this.widgetNumber }"].e-active`,
 			},
 			classes: {
 				active: 'e-active',
@@ -457,10 +461,10 @@ export default class NestedTabs extends Base {
 
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
 
-			$tabContents[ index ]?.setAttribute( 'aria-labelledby', updatedTabID );
-			$tabContents[ index ]?.setAttribute( 'data-tab-index', newIndex );
-			$tabContents[ index ]?.setAttribute( 'id', updatedContainerID );
-			$tabContents[ index ]?.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
+			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
+			$tabContents[ index ].setAttribute( 'data-tab-index', newIndex );
+			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
+			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 		} );
 	}
 }
