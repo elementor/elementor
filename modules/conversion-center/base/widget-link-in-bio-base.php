@@ -872,13 +872,7 @@ JS;
 			],
 		);
 
-		// Getting active breakpoints and setting dynamic options
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
-		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
-			$available_devices[ $breakpoint_key ] = $breakpoint->get_label();
-			$default_devices[] = $breakpoint_key;
-		}
+		$configured_breakpoints = $this->get_configured_breakpoints();
 
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
@@ -887,8 +881,8 @@ JS;
 				'type' => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'multiple' => true,
-				'options' => $available_devices,
-				'default' => $default_devices,
+				'options' => $configured_breakpoints['devices_options'],
+				'default' => $configured_breakpoints['active_devices'],
 				'condition' => [
 					'advanced_layout_full_width_custom' => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
@@ -1476,7 +1470,7 @@ JS;
 		$this->add_control(
 			'icons_size',
 			[
-				'label' => esc_html__( 'Icon Size', 'elementor' ),
+				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'small',
 				'options' => [
@@ -1512,21 +1506,12 @@ JS;
 			'background' => [
 				'default' => 'classic',
 			],
-			'size' => [
-				'default' => 'cover',
-			],
-			'position' => [
-				'default' => 'center center',
-			],
 		];
 
 		$config = static::get_configuration();
 
 		if ( $config['style']['border_section']['field_options'] ) {
-			$bg_image_field_options = array_merge(
-				$bg_image_field_options,
-				$config['style']['border_section']['field_options']
-			);
+			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
 		}
 
 		$this->add_group_control(
@@ -1594,17 +1579,44 @@ JS;
 			]
 		);
 
-		$this->add_borders_control(
-			'background',
+		$this->add_control(
+			'background_show_border',
 			[
-				'selectors' => [],
-			],
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => '',
+			]
+		);
+
+		$this->add_responsive_control(
+			'background_border_width',
 			[
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => $this->get_border_width_range(),
+				],
+				'condition' => [
+					'background_show_border' => 'yes',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
 				],
-			],
+			]
+		);
+
+		$this->add_control(
+			'background_border_color',
 			[
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => [
+					'background_show_border' => 'yes',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
 				],
@@ -1612,6 +1624,14 @@ JS;
 		);
 
 		$this->end_controls_section();
+	}
+
+	protected function get_border_width_range(): array {
+		return [
+			'min' => 0,
+			'max' => 10,
+			'step' => 1,
+		];
 	}
 
 	protected function add_identity_image_profile_controls( array $condition ): void {
@@ -1655,19 +1675,51 @@ JS;
 			);
 		}
 
-		$this->add_borders_control(
-			'identity_image',
+		$this->add_control(
+			'identity_image_show_border',
 			[
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => '',
 				'condition' => $condition,
-			],
+			]
+		);
+
+		$this->add_responsive_control(
+			'identity_image_border_width',
 			[
-				'condition' => $condition,
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => $this->get_border_width_range(),
+				],
+				'condition' => array_merge(
+					$condition,
+					[
+						'identity_image_show_border' => 'yes',
+					]
+				),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
 				],
-			],
+			]
+		);
+
+		$this->add_control(
+			'identity_image_border_color',
 			[
-				'condition' => $condition,
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => array_merge(
+					$condition,
+					[
+						'identity_image_show_border' => 'yes',
+					]
+				),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
 				],
@@ -1703,20 +1755,50 @@ JS;
 			]
 		);
 
-		$this->add_borders_control(
-			'identity_image_bottom',
+		$this->add_control(
+			'identity_image_show_bottom_border',
 			[
-				'condition' => $condition,
 				'label' => esc_html__( 'Bottom Border', 'elementor' ),
-			],
-			[
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => '',
 				'condition' => $condition,
+			]
+		);
+
+		$this->add_control(
+			'identity_image_border_bottom_width',
+			[
+				'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => $this->get_border_width_range(),
+				],
+				'condition' => array_merge(
+					$condition,
+					[
+						'identity_image_show_bottom_border' => 'yes',
+					]
+				),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-bottom-width: {{SIZE}}{{UNIT}};',
 				],
-			],
+			]
+		);
+
+		$this->add_control(
+			'identity_image_bottom_border_color',
 			[
-				'condition' => $condition,
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'condition' => array_merge(
+					$condition, [
+						'identity_image_show_bottom_border' => 'yes',
+					]
+				),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-color: {{VALUE}};',
 				],
