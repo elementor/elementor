@@ -6,8 +6,6 @@ import {
 } from 'elementor-frontend-utils/flex-horizontal-scroll';
 
 export default class NestedTabs extends Base {
-	widgetNumber = null;
-
 	constructor( ...args ) {
 		super( ...args );
 
@@ -54,17 +52,17 @@ export default class NestedTabs extends Base {
 	}
 
 	getDefaultSettings() {
-		this.widgetNumber = this.getWidgetNumber();
+		const widgetNumber = this.getWidgetNumber();
 
 		return {
 			selectors: {
-				widgetContainer: `[data-widget-number="${ this.widgetNumber }"]`,
-				tabTitle: `[id*="e-n-tab-title-${ this.widgetNumber }"]`,
-				tabTitleIcon: `[id*="e-n-tab-title-${ this.widgetNumber }"] > .e-n-tab-icon`,
-				tabTitleText: `[id*="e-n-tab-title-${ this.widgetNumber }"] > .e-n-tab-title-text`,
-				tabContent: `[data-widget-number="${ this.widgetNumber }"] > .e-n-tabs-content > .e-con`,
-				headingContainer: `[data-widget-number="${ this.widgetNumber }"] > .e-n-tabs-heading`,
-				activeTabContentContainers: `[id*="e-n-tab-content-${ this.widgetNumber }"].e-active`,
+				widgetContainer: `[data-widget-number="${ widgetNumber }"]`,
+				tabTitle: `[id*="e-n-tab-title-${ widgetNumber }"]`,
+				tabTitleIcon: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-icon`,
+				tabTitleText: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-title-text`,
+				tabContent: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-content > .e-con`,
+				headingContainer: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-heading`,
+				activeTabContentContainers: `[id*="e-n-tab-content-${ widgetNumber }"].e-active`,
 			},
 			classes: {
 				active: 'e-active',
