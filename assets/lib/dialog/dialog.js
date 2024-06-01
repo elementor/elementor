@@ -374,7 +374,10 @@
 				},
 			};
 
-			if (window.elementor) {
+			if (window.elementor &&
+				'elementor-template-library-modal' === userSettings?.id &&
+				'contact-buttons' === elementor?.config?.document?.type
+			) {
 				settings.hide.onOutsideClick = elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
 				settings.hide.onBackgroundClick = elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
 				settings.hide.onEscKeyPress = elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
