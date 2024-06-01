@@ -94,9 +94,6 @@ export default class Component extends ComponentBase {
 			getTitleForPublishButton() {
 				return elementor.config.document.panel.publish_button_title ?? '';
 			},
-			allowClosingRemoteLibrary() {
-				return elementor.config.document.panel.allow_closing_remote_library ?? true;
-			},
 		};
 	}
 }
