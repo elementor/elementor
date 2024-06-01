@@ -374,6 +374,12 @@
 				},
 			};
 
+			if (window.elementor) {
+				settings.hide.onOutsideClick = elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
+				settings.hide.onBackgroundClick = elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
+				settings.hide.onEscKeyPress = elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
+			}
+
 			$.extend(true, settings, self.getDefaultSettings(), userSettings);
 
 			initSettingsEvents();
