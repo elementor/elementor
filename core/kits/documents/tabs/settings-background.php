@@ -60,6 +60,24 @@ class Settings_Background extends Tab_Base {
 		);
 
 		$this->add_control(
+			'body_overscroll_behavior',
+			[
+				'label' => esc_html__( 'Overscroll Behavior', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'none' => esc_html__( 'None', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
+					'contain' => esc_html__( 'Contain', 'elementor' ),
+				],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => 'overscroll-behavior: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
 			'mobile_browser_background',
 			[
 				'label' => esc_html__( 'Mobile Browser Background', 'elementor' ),
