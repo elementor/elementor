@@ -3,6 +3,9 @@
 	--e-contact-buttons-size-small: #{$contact-buttons-size-small};
 	--e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
 	--e-contact-buttons-size-large: #{$contact-buttons-size-large};
+	--e-contact-buttons-svg-size-small: #{$contact-buttons-svg-size-small};
+	--e-contact-buttons-svg-size-medium: #{$contact-buttons-svg-size-medium};
+	--e-contact-buttons-svg-size-large: #{$contact-buttons-svg-size-large};
 	--e-contact-buttons-profile-image-size-small: #{$contact-buttons-profile-image-size-small};
 	--e-contact-buttons-profile-image-size-medium: #{$contact-buttons-profile-image-size-medium};
 	--e-contact-buttons-profile-image-size-large: #{$contact-buttons-profile-image-size-large};
@@ -315,6 +318,7 @@
 		border: 0;
 		display: flex;
 		justify-content: center;
+		padding: 0;
 		position: relative;
 		transition: $transition-hover;
 
@@ -352,8 +356,8 @@
 			width: var(--e-contact-buttons-size-small);
 
 			svg {
-				height: 32px;
-				width: 32px;
+				height: var(--e-contact-buttons-svg-size-small);
+				width: var(--e-contact-buttons-svg-size-small);
 			}
 		}
 
@@ -362,8 +366,8 @@
 			width: var(--e-contact-buttons-size-medium);
 
 			svg {
-				height: 38px;
-				width: 38px;
+				height: var(--e-contact-buttons-svg-size-medium);
+				width: var(--e-contact-buttons-svg-size-medium);
 			}
 		}
 
@@ -372,8 +376,8 @@
 			width: var(--e-contact-buttons-size-large);
 
 			svg {
-				height: 42px;
-				width: 42px;
+				height: var(--e-contact-buttons-svg-size-large);
+				width: var(--e-contact-buttons-svg-size-large);
 			}
 		}
 	}
