@@ -56,6 +56,7 @@ const PromptDialog = ( props ) => {
 			hideBackdrop={ true }
 			PaperComponent={ DraggablePaper }
 			disableScrollLock={ true }
+			// DisablePortal={ true }
 			sx={ {
 				'& .MuiDialog-container': {
 					alignItems: 'flex-start',

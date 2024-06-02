@@ -13,7 +13,6 @@ const AIMedia = ( { onClose } ) => {
 				getControlValue={ () => {} }
 				setControlValue={ () => {} }
 				onClose={ onClose }
-				isRTL={ elementorCommon.config.isRTL }
 			/>
 		</>
 	);
@@ -43,7 +42,6 @@ const StyledButton = styled.a`
 	padding: 0 10px;
 	background: #f6f7f7;
 
-
 	&:hover {
 		color: #C00BB9;
 		background: #eeefef;
@@ -63,13 +61,13 @@ const GenerateImageWithAI = () => {
 
 	return (
 		<div style={ { padding: '0.5em' } }>
-			<StyledButton onClick={ handleClick }>
-				<RequestIdsProvider>
+			<RequestIdsProvider>
+				<StyledButton onClick={ handleClick }>
 					<Icon className={ 'eicon-ai' } />
 					{ __( 'Generate with Elementor AI', 'elementor' ) }
-					{ isOpen && <AIMedia onClose={ handleClose } /> }
-				</RequestIdsProvider>
-			</StyledButton>
+				</StyledButton>
+				{ isOpen && <AIMedia onClose={ handleClose } /> }
+			</RequestIdsProvider>
 		</div>
 	);
 };

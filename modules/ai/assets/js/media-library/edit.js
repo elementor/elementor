@@ -16,7 +16,6 @@ const AIMedia = ( { onClose, imageId } ) => {
 				getControlValue={ () => image.attributes }
 				setControlValue={ () => {} }
 				onClose={ onClose }
-				isRTL={ elementorCommon.config.isRTL }
 				additionalOptions={ {
 					location: LOCATIONS.IMAGE_TOOLS,
 				} }
@@ -52,7 +51,19 @@ const EditImageWithAI = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const getImageId = () => {
-		return wp.media.frames?.edit?.model?.id?.toString();
+		const imageId = wp.media?.frames?.edit?.model?.id?.toString();
+		if ( imageId ) {
+			return imageId;
+		}
+
+		// In case the image is not in the current frame, we need to find it in the library.
+		return getImageIdByUrl();
+	};
+	const getImageIdByUrl = () => {
+		const imageUrl = document.getElementById( 'attachment-details-copy-link' ).value;
+		const images = MediaFrame?.content?.view?.states?.models[ 0 ]?.attributes?.library?.models;
+		const image = images.find( ( img ) => img.attributes.url === imageUrl );
+		return image ? image.attributes.id.toString() : null;
 	};
 
 	const [ imageId, setImageId ] = useState( getImageId );
