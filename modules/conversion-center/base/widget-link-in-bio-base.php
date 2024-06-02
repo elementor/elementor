@@ -384,6 +384,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 			],
 		);
 
