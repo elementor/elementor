@@ -1,45 +1,35 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import EditorSelectors from '../../../../../../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
 
-	await editor.page.click( '#elementor-panel-header-menu-button' );
+	// Exit to `dashboard`
+	await editor.openUserPreferencesPanel();
+	await editor.setSelectControlValue( 'exit_to', 'dashboard' );
+	await editor.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Elementor Logo' } ).click();
+	await editor.page.waitForTimeout( 500 );
+	const exit1 = await editor.page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+	await page.press( 'body', 'Escape' );
+	expect( exit1 ).toContain( '/wp-admin/' );
 
-	// Trigger dialog by click on the "Exit" button
-	await editor.page.click( 'text=Exit' );
-	await editor.page.click( 'a:has-text("User Preferences")' );
+	// Exit to `this_post`
+	await editor.openUserPreferencesPanel();
+	await editor.setSelectControlValue( 'exit_to', 'this_post' );
+	await editor.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Elementor Logo' } ).click();
+	await editor.page.waitForTimeout( 500 );
+	const exit2 = await editor.page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+	await page.press( 'body', 'Escape' );
+	expect( exit2 ).toContain( '/wp-admin/post.php?post=' );
 
-	await editor.page.click( '#elementor-panel-header-menu-button' );
-
-	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
-	let exitHref = '';
-
-	// Select dashboard
-	await setExitUserPreference( page, 'dashboard' );
-
-	exitHref = await exit.getAttribute( 'href' );
-
-	expect( exitHref ).toContain( '/wp-admin/' );
-
-	// Select wp_post_type
-	await setExitUserPreference( page, 'this_post' );
-
-	exitHref = await exit.getAttribute( 'href' );
-
-	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
-
-	// Select all_posts
-	await setExitUserPreference( page, 'all_posts' );
-
-	exitHref = await exit.getAttribute( 'href' );
-
-	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
+	// Exit to `all_posts`
+	await editor.openUserPreferencesPanel();
+	await editor.setSelectControlValue( 'exit_to', 'all_posts' );
+	await editor.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Elementor Logo' } ).click();
+	await editor.page.waitForTimeout( 500 );
+	const exit3 = await editor.page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+	await page.press( 'body', 'Escape' );
+	expect( exit3 ).toContain( '/wp-admin/edit.php?post_type=' );
 } );
-
-const setExitUserPreference = async ( page: Page, option: string ) => {
-	await page.click( '.elementor-panel-menu-item-editor-preferences' );
-	await page.selectOption( '.elementor-control-exit_to >> select', option );
-	await page.click( '#elementor-panel-header-menu-button' );
-};
