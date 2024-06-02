@@ -509,7 +509,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elements' ).click();
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Elements' } ).click();
 		} else {
 			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
@@ -526,7 +526,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Page Settings' ).click();
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Page Settings' } ).click();
 		} else {
 			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
 		}
