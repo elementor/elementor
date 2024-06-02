@@ -51,7 +51,7 @@ const Generate = () => {
 
 	const { data: generatedImages, setResult, send, isLoading: isGenerating, error, reset } = useTextToImage( {} );
 
-	const { use, edit, isLoading: isUploading } = useImageActions( );
+	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const isLoading = isPreloading || isGenerating || isUploading;
 

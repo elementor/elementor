@@ -3,21 +3,48 @@ import GenerateImageWithAI from './generate';
 import EditImageWithAI from './edit';
 import { createRoot } from '@wordpress/element';
 
-( function() {
-	const isMediaLibrary = () => {
-		const { location } = window;
-		return location.href.includes( '/upload.php' );
-	};
+const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
+const createAndInsertContainer = ( parentElement, containerId ) => {
+	const container = document.createElement( 'div' );
+	container.id = containerId;
+	parentElement.insertAdjacentElement( 'afterend', container );
+	return container;
+};
+
+const insertStyleTag = () => {
+	const style = document.createElement( 'style' );
+	style.appendChild( document.createTextNode( `
+		#e-image-ai-media-library {
+			display: inline-block;
+		}
+		#menu- {
+			z-index: 180000;
+		}
+	` ) );
+	document.head.appendChild( style );
+};
+
+const renderComponent = ( containerId, Component ) => {
+	const container = document.getElementById( containerId );
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <Component /> );
+	}
+};
+
+const addEventListener = ( eventName, containerId, Component ) => {
+	window.addEventListener( eventName, () => {
+		setTimeout( () => renderComponent( containerId, Component ), 1 );
+	} );
+};
+
+( function() {
 	if ( isMediaLibrary() ) {
 		const mediaLibrary = document.querySelector( '.page-title-action' );
 		if ( mediaLibrary ) {
-			const container = document.createElement( 'div' );
-			container.id = 'e-image-ai-media-library';
-
-			mediaLibrary.insertAdjacentElement( 'afterend', container );
-			const root = createRoot( container );
-			root.render( <GenerateImageWithAI /> );
+			createAndInsertContainer( mediaLibrary, 'e-image-ai-media-library' );
+			renderComponent( 'e-image-ai-media-library', GenerateImageWithAI );
 		}
 	}
 
@@ -58,40 +85,8 @@ import { createRoot } from '@wordpress/element';
 			},
 		} );
 	}
+	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', EditImageWithAI );
+	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', EditImageWithAI );
+
+	insertStyleTag();
 } )();
-
-window.addEventListener( 'renderInsertMediaEvent', function() {
-	setTimeout( () => {
-		const content = document.getElementById( 'e-image-ai-insert-media' );
-		const root = createRoot( content );
-		root.render( <EditImageWithAI /> );
-	}, 1 );
-} );
-
-window.addEventListener( 'renderAttachmentsDetailsEvent', function() {
-	setTimeout( () => {
-		const content = document.getElementById( 'e-image-ai-attachment-details' );
-		const root = createRoot( content );
-		root.render( <EditImageWithAI /> );
-	}, 1 );
-} );
-
-function insertStyleTag() {
-	const style = document.createElement( 'style' );
-
-	const css = `
-	#e-image-ai-media-library {
-		display: inline-block;
-	}
-
-	#menu- {
-      z-index: 180000;
-    }
-
-  `;
-
-	style.appendChild( document.createTextNode( css ) );
-	document.head.appendChild( style );
-}
-
-insertStyleTag();
