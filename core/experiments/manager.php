@@ -79,6 +79,7 @@ class Manager extends Base_Object {
 				'default_active' => false,
 				'always_active' => false,
 				'minimum_installation_version' => null,
+				'default_inactive' => false,
 			],
 			'on_state_change' => null,
 			'generator_tag' => false,
@@ -92,10 +93,14 @@ class Manager extends Base_Object {
 
 		$new_site = $experimental_data['new_site'];
 
-		if ( $new_site['default_active'] || $new_site['always_active'] ) {
+		if ( $new_site['default_active'] || $new_site['always_active'] || $new_site['default_inactive'] ) {
 			$is_new_installation = $this->install_compare( $new_site['minimum_installation_version'] );
 
-			if ( $is_new_installation ) {
+			if ( $new_site['default_inactive'] && $is_new_installation ) {
+				$experimental_data['default'] = self::STATE_INACTIVE;
+			}
+
+			if ( ! $new_site['default_inactive'] && $is_new_installation ) {
 				if ( $new_site['always_active'] ) {
 					$experimental_data['state'] = self::STATE_ACTIVE;
 
