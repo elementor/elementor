@@ -484,10 +484,10 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Whether the Top Bar is active or not.
 	 *
-	 * @return {boolean}
+	 * @return {Promise<boolean>}
 	 */
-	async hasTopBar() {
-		return await this.page.locator( EditorSelectors.topBar.wrapper ).isVisible();
+	async hasTopBar(): Promise<boolean> {
+		return await this.page.evaluate( () => document.getElementById( EditorSelectors.topBar.wrapper ) ? true : false );
 	}
 
 	/**
