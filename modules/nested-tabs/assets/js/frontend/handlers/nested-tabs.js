@@ -69,7 +69,7 @@ export default class NestedTabs extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			$wdigetContainer: this.findElement( selectors.widgetContainer ),
+			$widgetContainer: this.findElement( selectors.widgetContainer ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -100,7 +100,7 @@ export default class NestedTabs extends Base {
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
 
-		this.elements.$wdigetContainer.addClass( 'e-activated' );
+		this.elements.$widgetContainer.addClass( 'e-activated' );
 	}
 
 	deactivateActiveTab( newTabIndex ) {
@@ -172,7 +172,10 @@ export default class NestedTabs extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute );
+		const isActiveTabTitle = 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute ),
+			isActiveTabContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ).hasClass( this.getActiveClass() );
+
+		return isActiveTabTitle && isActiveTabContent;
 	}
 
 	onTabClick( event ) {
@@ -409,6 +412,10 @@ export default class NestedTabs extends Base {
 			this.updateListeners( view );
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
+
+		const targetIndex = event.detail.index + 1 || 1;
+
+		this.changeActiveTab( targetIndex );
 	}
 
 	updateListeners( view ) {
@@ -419,27 +426,26 @@ export default class NestedTabs extends Base {
 	}
 
 	updateIndexValues() {
-		const { $tabContents, $tabTitles } = this.getDefaultElements(),
+		const { $widgetContainer, $tabContents, $tabTitles } = this.getDefaultElements(),
 			settings = this.getSettings(),
-			itemIdBase = $tabTitles[ 0 ].getAttribute( 'id' ).slice( 0, -1 ),
-			containerIdBase = $tabContents[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+			widgetNumber = $widgetContainer.data( 'widgetNumber' );
 
 		$tabTitles.each( ( index, element ) => {
 			const newIndex = index + 1,
-				updatedTabID = itemIdBase + newIndex,
-				updatedContainerID = containerIdBase + newIndex;
+				updatedTabID = `e-n-tab-title-${ widgetNumber }${ newIndex }`,
+				updatedContainerID = `e-n-tab-content-${ widgetNumber }${ newIndex }`;
 
 			element.setAttribute( 'id', updatedTabID );
 			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 			element.setAttribute( 'data-tab-index', newIndex );
+			element.setAttribute( 'aria-controls', updatedContainerID );
 
 			element.querySelector( settings.selectors.tabTitleIcon )?.setAttribute( 'data-binding-index', newIndex );
 
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
-			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'aria-controls', updatedTabID );
 
 			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
-			$tabContents[ index ].setAttribute( 'data-tab-index', updatedTabID );
+			$tabContents[ index ].setAttribute( 'data-tab-index', newIndex );
 			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
 			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 		} );

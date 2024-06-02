@@ -27,5 +27,4 @@ class Link_In_Bio extends Widget_Link_In_Bio_Base {
 	public function get_title(): string {
 		return esc_html__( 'Link In Bio', 'elementor' );
 	}
-
 }
