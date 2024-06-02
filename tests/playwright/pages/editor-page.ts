@@ -592,21 +592,58 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
+	/**
+	 * Publish page.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async publishPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-		await this.page.waitForLoadState();
-		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Publish' } ).click();
+		} else {
+			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
+			await this.page.waitForLoadState();
+			await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		}
 	}
 
+	/**
+	 * Publish and view page.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async publishAndViewPage() {
+		const hasTopBar = await this.hasTopBar();
+
 		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
-		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Save Options' } ).click();
+			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+		} else {
+			await this.openMenuPanel();
+			await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		}
+
 		await this.page.waitForLoadState();
 	}
 
+	/**
+	 * Save and reload page.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async saveAndReloadPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Publish' } ).click();
+		} else {
+			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
+		}
+
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
