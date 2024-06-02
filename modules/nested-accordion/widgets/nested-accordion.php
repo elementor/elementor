@@ -897,7 +897,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'node' => 'details',
 				'is_interlaced' => true,
 				'title_container' => '.e-n-accordion-item-title-text',
-				'supports_atomic_dynamic_titles' => true,
 			] );
 		}
 
@@ -928,6 +927,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'items',
 			'data-binding-setting': ['item_title'],
 			'data-binding-index': view.collection.length + 1,
+			'data-binding-dynamic': 'true',
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
@@ -1003,6 +1003,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-repeater-name': 'items',
 						'data-binding-setting': ['item_title'],
 						'data-binding-index': itemCount,
+						'data-binding-dynamic': 'true',
 					});
 				#>
 

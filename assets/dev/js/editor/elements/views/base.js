@@ -617,18 +617,11 @@ BaseElementView = BaseContainer.extend( {
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
 			let isContentChanged = ! hasChanged,
-				isRenderRequired = ! hasChanged,
-				dynamicValue = null,
-				isAtomicRepeater = false;
+				isRenderRequired = ! hasChanged;
 
 			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
-					return;
-				}
-
-				if ( this.isAtomicDynamic( settingKey ) ) { // Before and after have different settingKey values
-					isAtomicRepeater = true;
 					return;
 				}
 
@@ -652,13 +645,6 @@ BaseElementView = BaseContainer.extend( {
 				}
 			} );
 
-
-			if ( isAtomicRepeater ) {
-				dynamicValue = this.getDynamicValue( settings );
-
-				this.renderDynamicValue( dynamicValue );
-			}
-
 			if ( ! isRenderRequired ) {
 				return;
 			}
@@ -673,15 +659,12 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( settingKey ) {
-		const widgetConfig = elementor.widgetsCache[ this.model.config.name ]
-		return settingKey.includes( '__dynamic__' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-			widgetConfig.supports_atomic_dynamic_titles; // May be redundant
+	isAtomicDynamic( dataBinding ) {
+		return dataBinding.el.hasAttribute( 'data-binding-dynamic' );
 	},
 
-	getDynamicValue( settings ) {
-		const valueToParse = settings.attributes.__dynamic__.item_title,
+	getDynamicValue( settings, bindingSetting ) {
+		const valueToParse = settings.attributes.__dynamic__[ bindingSetting ],
 			dynamicSettings = { active: true };
 
 		if ( valueToParse ) {
@@ -696,8 +679,8 @@ BaseElementView = BaseContainer.extend( {
 			widgetConfig = elementor.widgetsCache[ this.model.config.name ],
 			titleContainers = this.$el.find( widgetConfig.title_container );
 
-		if ( activeItem && widgetConfig.supports_atomic_dynamic_titles ) {
-			titleContainers[ activeItem - 1 ].innerText = dynamicValue;
+		if ( activeItem ) {
+			titleContainers[ activeItem - 1 ].innerHTML = dynamicValue;
 			return;
 		}
 	},
@@ -772,7 +755,12 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = ( dataBinding ) => {
-			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+			const { bindingSetting } = dataBinding.dataset;
+			let change = settings.changed[ bindingSetting ];
+
+			if ( this.isAtomicDynamic( dataBinding ) ) {
+				change = this.getDynamicValue( settings, bindingSetting );
+			}
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
