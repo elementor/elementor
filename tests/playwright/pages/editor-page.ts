@@ -548,6 +548,7 @@ export default class EditorPage extends BasePage {
 			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		} else {
 			await this.openMenuPanel();
+			await this.page.waitForTimeout( 10 );
 			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
 		}
 
