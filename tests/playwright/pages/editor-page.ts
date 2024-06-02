@@ -535,7 +535,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elementor logo' ).click();
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elementor Logo' ).click();
 			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
 		} else {
 			await this.openMenuPanel();
