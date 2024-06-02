@@ -1,5 +1,5 @@
-name: Get Changelog From Changelog Text File
-description: Get Changelog From Changelog Text File - publish in wordpress.org.
+name: Get Changelog From changelog and readme Text Files
+description: Get Changelog From changelog and readme Text Files - publish in wordpress.org.
 
 inputs:
   VERSION:

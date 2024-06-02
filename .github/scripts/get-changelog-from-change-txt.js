@@ -15,9 +15,12 @@ for (let fileName of ['changelog', 'readme'] ) {
 		try {
 			const changelogText = fs.readFileSync(`${fileName}.txt`, 'utf-8');
 			const data = marked.lexer(changelogText);
-			const headerIndex = data.findIndex((section) => section.type === 'heading' && section.text.startsWith(VERSION));
+			const headerIndex = data.findIndex((section) => {
+				const text = section?.text?.match(/\d+\.\d+\.\d+/g)?.[0] || '';
+				return section.type === 'paragraph' && VERSION == text;
+			});
 			if (headerIndex === -1) {
-				console.error(`Failed to find version: ${VERSION} in ${fileName}.txt file`);
+				console.error(`Change-log for release ${version} not found in ${filename}`);
 				process.exit(1);
 				return;
 			}
@@ -25,7 +28,7 @@ for (let fileName of ['changelog', 'readme'] ) {
 			fs.writeFileSync(`temp-${fileName}.txt`, versionLog);
 			console.log('success: ', fileName);
 		} catch (err) {
-			console.error('this is my error', fileName, err)
+			console.error(`Change-log for release ${version} not found in ${filename}`, err)
 			process.exit(1);
 		}
 	})();

@@ -105,64 +105,64 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
-#      - name: Publish to WordPress.org SVN
-#        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
-#        env:
-#          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-#          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-#          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-#          CHANNEL: ${{ env.CHANNEL }}
-#          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
-#        run: |
-#          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
-#          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-#      - name: Release Dev From Beta
-#        if: env.CHANNEL == 'beta' # Only for beta releases
-#        uses: ./.github/workflows/release-dev-from-beta
-#        with:
-#          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
-#          PLUGIN_NAME: ${{ github.event.repository.name }}
-#          REPOSITORY_OWNER: ${{ github.repository_owner }}
-#          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-#          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-#          PRE_RELEASE: ${{ github.event.inputs.pre_release }}
-#          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
-#      - name: Post To Slack Created Release
-#        if: github.event.inputs.pre_release == 'false'
-#        uses : ./.github/workflows/post-to-slack
-#        with:
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-#          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-#          PAYLOAD: |
-#                    {
-#                      "blocks": [
-#                        {
-#                          "type": "section",
-#                          "text": {
-#                            "type": "mrkdwn",
-#                            "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
-#                          }
-#                        },
-#                        {
-#                          "type": "divider"
-#                        },
-#                        {
-#                          "type": "section",
-#                          "text": {
-#                            "type": "mrkdwn",
-#                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
-#                          },
-#                          "accessory": {
-#                            "type": "button",
-#                            "text": {
-#                              "type": "plain_text",
-#                              "text": "Open :point_left:",
-#                              "emoji": true
-#                            },
-#                            "value": "open-release",
-#                            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
-#                            "action_id": "button-action"
-#                          }
-#                        }
-#                      ]
-#                    }
+      - name: Publish to WordPress.org SVN
+        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      - name: Release Dev From Beta
+        if: env.CHANNEL == 'beta' # Only for beta releases
+        uses: ./.github/workflows/release-dev-from-beta
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+      - name: Post To Slack Created Release
+        if: github.event.inputs.pre_release == 'false'
+        uses : ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+          PAYLOAD: |
+                    {
+                      "blocks": [
+                        {
+                          "type": "section",
+                          "text": {
+                            "type": "mrkdwn",
+                            "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
+                          }
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "section",
+                          "text": {
+                            "type": "mrkdwn",
+                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                          },
+                          "accessory": {
+                            "type": "button",
+                            "text": {
+                              "type": "plain_text",
+                              "text": "Open :point_left:",
+                              "emoji": true
+                            },
+                            "value": "open-release",
+                            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
+                            "action_id": "button-action"
+                          }
+                        }
+                      ]
+                    }
