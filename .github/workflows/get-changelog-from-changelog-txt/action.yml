@@ -13,5 +13,5 @@ runs:
       env:
         VERSION: ${{ inputs.VERSION }}
       run: |
-        npm install --no-package-lock --no-save marked@2.0.6
+        npm install --no-package-lock --no-save marked@12.0.2
         node ./.github/scripts/get-changelog-from-change-txt.js
