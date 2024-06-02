@@ -90,7 +90,7 @@ jobs:
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
-      - name: Check that the version contains updated Change-log
+      - name: Check that the version contains an updated change log
         if: github.event.inputs.channel == 'ga'
         uses: ./.github/workflows/get-changelog-from-changelog-txt
         with:
