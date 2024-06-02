@@ -56,12 +56,12 @@ const EditImageWithAI = () => {
 			return imageId;
 		}
 
-		// In case the image is not in the current frame, we need to find it in the library.
+		// In case the image is not in the current frame, we need to find it from the media library
 		return getImageIdByUrl();
 	};
 	const getImageIdByUrl = () => {
 		const imageUrl = document.getElementById( 'attachment-details-copy-link' ).value;
-		const images = MediaFrame?.content?.view?.states?.models[ 0 ]?.attributes?.library?.models;
+		const images = wp.media.frame?.content?.get()?.collection?.models;
 		const image = images.find( ( img ) => img.attributes.url === imageUrl );
 		return image ? image.attributes.id.toString() : null;
 	};
@@ -74,6 +74,7 @@ const EditImageWithAI = () => {
 	};
 
 	const handleClose = () => {
+		wp.media.frame.content.get().collection._requery( true ); // Refresh the media library
 		setIsOpen( false );
 	};
 
