@@ -307,6 +307,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			],
 		} );
 
+		window.currentMediaFrame = this.frame;
+
 		// Remove unwanted elements when frame is opened.
 		this.frame.on( 'ready open', this.onFrameReady.bind( this ) );
 

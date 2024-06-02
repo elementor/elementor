@@ -58,7 +58,6 @@ const GenerateImageWithAI = () => {
 	};
 
 	const handleClose = () => {
-		// Location.reload(); // Update media library with the new image
 		setIsOpen( false );
 	};
 
