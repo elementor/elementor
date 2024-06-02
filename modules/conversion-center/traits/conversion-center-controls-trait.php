@@ -60,6 +60,7 @@ trait Conversion_Center_Controls_Trait {
 		$other_attributes = []
 	) {
 		$url_attrs = [];
+		$rel_string = '';
 
 		if ( ! empty( $link['url'] ) ) {
 			$url_attrs['href'] = esc_url( $link['url'] );
@@ -67,11 +68,15 @@ trait Conversion_Center_Controls_Trait {
 
 		if ( ! empty( $link['is_external'] ) ) {
 			$url_attrs['target'] = '_blank';
-			$url_attrs['rel'] = 'noopener ';
+			$rel_string .= 'noopener ';
 		}
 
 		if ( ! empty( $link['nofollow'] ) ) {
-			$url_attrs['rel'] .= 'nofollow ';
+			$rel_string .= 'nofollow ';
+		}
+
+		if ( ! empty( $rel_string ) ) {
+			$url_attrs['rel'] = $rel_string;
 		}
 
 		/**
