@@ -487,7 +487,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<boolean>}
 	 */
 	async hasTopBar(): Promise<boolean> {
-		return await this.page.evaluate( () => document.getElementById( EditorSelectors.topBar.wrapper ) ? true : false );
+		return await this.page.evaluate( () => document.getElementById( 'elementor-editor-wrapper-v2' ) ? true : false );
 	}
 
 	/**
