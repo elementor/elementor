@@ -20,7 +20,7 @@ for (let fileName of ['changelog', 'readme'] ) {
 				return section.type === 'paragraph' && VERSION == text;
 			});
 			if (headerIndex === -1) {
-				console.error(`Change-log for release ${version} not found in ${filename}`);
+				console.error(`Change-log for release ${version} not found in ${filename}.txt`);
 				process.exit(1);
 				return;
 			}
@@ -28,7 +28,7 @@ for (let fileName of ['changelog', 'readme'] ) {
 			fs.writeFileSync(`temp-${fileName}.txt`, versionLog);
 			console.log('success: ', fileName);
 		} catch (err) {
-			console.error(`Change-log for release ${version} not found in ${filename}`, err)
+			console.error(err)
 			process.exit(1);
 		}
 	})();
