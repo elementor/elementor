@@ -492,6 +492,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the menu panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openMenuPanel() {
 		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
@@ -500,6 +502,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the elements/widgets panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openElementsPanel() {
 		const hasTopBar = await this.hasTopBar();
@@ -515,6 +519,8 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the page settings panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel() {
 		const hasTopBar = await this.hasTopBar();
@@ -530,13 +536,16 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Open the user preferences panel.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel() {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.page.locator( EditorSelectors.topBar.wrapper ).getByText( 'Elementor Logo' ).click();
-			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
+			await this.page.locator( EditorSelectors.topBar.wrapper ).getByRole( 'button', { name: 'Elementor Logo' } ).click();
+			await this.page.waitForTimeout( 100 );
+			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		} else {
 			await this.openMenuPanel();
 			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
@@ -549,6 +558,8 @@ export default class EditorPage extends BasePage {
 	 * Change the display mode of the editor.
 	 *
 	 * @param {string} uiMode - Either 'light', 'dark', or 'auto';
+	 *
+	 * @return {Promise<void>}
 	 */
 	async setDisplayMode( uiMode: string ) {
 		const uiThemeOptions = {
