@@ -84,9 +84,10 @@ function insertStyleTag() {
 		display: inline-block;
 	}
 
-    // #e-form-media {
-    //   z-index: 999999;
-    // }
+	#menu- {
+      z-index: 180000;
+    }
+
   `;
 
 	style.appendChild( document.createTextNode( css ) );
