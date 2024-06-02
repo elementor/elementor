@@ -52,9 +52,7 @@ const EditImageWithAI = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const getImageId = () => {
-		// Const d = wp.media.frames.edit.model.id;
-		const url = new URL( window.location.href );
-		return url.searchParams.get( 'item' );
+		return wp.media.frames?.edit?.model?.id?.toString();
 	};
 
 	const [ imageId, setImageId ] = useState( getImageId );
