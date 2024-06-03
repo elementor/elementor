@@ -16,8 +16,8 @@ export default class VideoWidget extends Content {
 
 	async getVideoSrc( isFrontend: boolean ) {
 		const page = isFrontend ? this.page : this.editor.getPreviewFrame();
-
-		return await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
+		const src = await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
+		return src;
 	}
 
 	async selectVideoSource( option: string ) {

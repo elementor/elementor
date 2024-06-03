@@ -7,26 +7,6 @@ import VideoWidget from '../pages/widgets/video';
 import videos from '../testData/video.json';
 
 test.describe( 'Video tests inside a container @video', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
-	} );
-
 	test( 'Verify Video Promotions', async ( { browser }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
