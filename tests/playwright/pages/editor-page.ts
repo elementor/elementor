@@ -943,9 +943,15 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async previewChanges( context: BrowserContext ) {
+		const hasTopBar = await this.hasTopBar();
 		const previewPagePromise = context.waitForEvent( 'page' );
 
-		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Preview Changes' );
+		} else {
+			await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		}
+
 		await this.page.waitForLoadState( 'networkidle' );
 
 		const previewPage = await previewPagePromise;
