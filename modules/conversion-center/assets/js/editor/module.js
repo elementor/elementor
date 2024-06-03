@@ -15,6 +15,19 @@ class LinksPageLibraryModule extends elementorModules.editor.utils.Module {
 			}
 			return behaviors;
 		}, 1000 );
+
+		wp.hooks.addFilter( 'elementorEditorBaseComponentTabs', 'elementor', ( tabs, element ) => {
+			if (
+				this.isContactDocument() &&
+				'panel/elements' === element.getNamespace() &&
+				! tabs[ 'advanced-tab-contact-buttons' ]
+			) {
+				tabs[ 'advanced-tab-contact-buttons' ] = {
+					title: 'Advanced',
+				};
+			}
+			return tabs;
+		}, 10 );
 	}
 
 	filterOutUnsupportedActions() {
