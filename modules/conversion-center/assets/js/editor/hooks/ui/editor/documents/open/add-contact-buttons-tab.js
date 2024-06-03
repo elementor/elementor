@@ -18,7 +18,6 @@ export class ContactPageAddLibraryTab extends $e.modules.hookUI.After {
 			filter: {
 				source: 'remote',
 				type: 'contact_button',
-				subtype: 'page',
 			},
 		}, 2 );
 
