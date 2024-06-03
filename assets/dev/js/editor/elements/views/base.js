@@ -678,16 +678,6 @@ BaseElementView = BaseContainer.extend( {
 		return settings.attributes.item_title; // Default title
 	},
 
-	renderDynamicValue( dynamicValue ) {
-		const activeItem = this?.model?.attributes?.editSettings?.attributes.activeItemIndex,
-			widgetConfig = elementor.widgetsCache[ this.model.config.name ],
-			titleContainers = this.$el.find( widgetConfig.title_container );
-
-		if ( activeItem ) {
-			titleContainers[ activeItem - 1 ].innerHTML = dynamicValue;
-		}
-	},
-
 	/**
 	 * Function linkDataBindings().
 	 *
