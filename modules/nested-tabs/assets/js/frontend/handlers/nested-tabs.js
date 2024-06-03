@@ -42,9 +42,10 @@ export default class NestedTabs extends Base {
 	getActiveTabIndex() {
 		const settings = this.getSettings(),
 			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+			tabIndexSelector = settings.dataAttributes.dataTabIndex,
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
 
-		return $activeTitle.attr( 'data-tab-index' ) || null;
+		return $activeTitle.attr( tabIndexSelector ) || null;
 	}
 
 	getWidgetNumber() {
@@ -66,6 +67,9 @@ export default class NestedTabs extends Base {
 			},
 			classes: {
 				active: 'e-active',
+			},
+			dataAttributes: {
+				dataTabIndex: 'data-tab-index',
 			},
 			ariaAttributes: {
 				titleStateAttribute: 'aria-selected',
