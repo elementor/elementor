@@ -136,7 +136,6 @@ const PageContent = (
 						onClose={ onClose }
 						getControlValue={ getControlValue }
 						setControlValue={ setControlValue }
-						controlView={ controlView }
 						additionalOptions={ additionalOptions }
 						credits={ credits }
 						maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
