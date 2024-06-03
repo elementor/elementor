@@ -11,6 +11,7 @@ const insertStyleTag = () => {
 		#e-image-ai-media-library {
 			display: inline-block;
 		}
+		// Make sure the dropdowns in the images feature appear above the AI modal
 		#menu- {
 			z-index: 180000;
 		}
