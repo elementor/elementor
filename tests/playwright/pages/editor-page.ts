@@ -700,7 +700,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<boolean>}
 	 */
 	async hasTopBar(): Promise<boolean> {
-		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
+		return await this.page.evaluate( () => document.getElementById( EditorSelectors.panels.topBar.wrapper ) ? true : false );
 	}
 
 	/**
@@ -711,7 +711,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async clickTopBarItem( text: string ) {
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( text ).click();
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
@@ -785,10 +785,12 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Elementor logo' );
-			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
+			await this.clickTopBarItem( 'Elementor Logo' );
+			await this.page.waitForTimeout( 100 );
+			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		} else {
 			await this.openMenuPanel();
+			await this.page.waitForTimeout( 10 );
 			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
 		}
 
@@ -876,9 +878,15 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-		await this.page.waitForLoadState();
-		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Publish' );
+		} else {
+			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
+			await this.page.waitForLoadState();
+			await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		}
 	}
 
 	/**
@@ -887,9 +895,18 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishAndViewPage() {
+		const hasTopBar = await this.hasTopBar();
+
 		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
-		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Save Options' );
+			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+		} else {
+			await this.openMenuPanel();
+			await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		}
+
 		await this.page.waitForLoadState();
 	}
 
@@ -899,7 +916,14 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async saveAndReloadPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Publish' );
+		} else {
+			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
+		}
+
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
