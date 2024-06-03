@@ -33,7 +33,6 @@ const StyledButton = styled.a`
 	font: inherit;
 	display: inline-block;
 	position: relative;
-	box-sizing: border-box;
 	top: -3px;
 	margin-left: 4px;
 	border: 1px solid #C00BB9;
