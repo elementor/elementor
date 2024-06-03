@@ -50,7 +50,7 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'new_site' => [
 				'default_inactive' => true,
-				'minimum_installation_version' => '3.20.0',
+				'minimum_installation_version' => '3.22.0',
 			],
 		];
 	}
