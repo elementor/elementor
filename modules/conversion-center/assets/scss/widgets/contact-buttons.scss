@@ -13,9 +13,6 @@
 	--e-contact-buttons-dot-size: #{$contact-buttons-dots-size};
 	--e-contact-buttons-profile-dot-bg: #{$contact-buttons-profile-dot-bg};
 	--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
-	--e-contact-button-chat-button-animation-duration-slow: #{$contact-buttons-animation-duration-slow};
-	--e-contact-button-chat-button-animation-duration-normal: #{$contact-buttons-animation-duration-normal};
-	--e-contact-button-chat-button-animation-duration-fast: #{$contact-buttons-animation-duration-fast};
 	--e-contact-button-chat-button-animation-delay: #{$contact-buttons-animation-delay};
 	--e-contact-buttons-chat-box-bg: #{$contact-buttons-chat-box-bg};
 	--e-contact-buttons-icon-size-small: #{$contact-buttons-icon-size-small};
@@ -166,18 +163,6 @@
 		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-sharp};
 	}
 
-	.has-animation-duration-slow {
-		animation-duration: var(--e-contact-button-chat-button-animation-duration-slow);
-	}
-
-	.has-animation-duration-normal {
-		animation-duration: var(--e-contact-button-chat-button-animation-duration-normal);
-	}
-
-	.has-animation-duration-fast {
-		animation-duration: var(--e-contact-button-chat-button-animation-duration-fast);
-	}
-
 	&:not(.has-animations) {
 
 		.e-contact-buttons__content-wrapper {
@@ -322,10 +307,6 @@
 		position: relative;
 		transition: $transition-hover;
 
-		&.animated {
-			animation-delay: var(--e-contact-button-chat-button-animation-delay);
-		}
-
 		svg {
 			fill: var(--e-contact-buttons-button-icon);
 		}
@@ -379,6 +360,30 @@
 				height: var(--e-contact-buttons-svg-size-large);
 				width: var(--e-contact-buttons-svg-size-large);
 			}
+		}
+
+		&.has-entrance-animation-delay {
+			animation-delay: var(--e-contact-button-chat-button-animation-delay);
+		}
+
+		&.has-entrance-animation-duration-slow {
+			animation-duration: #{$contact-buttons-animation-duration-slow}
+		}
+
+		&.has-entrance-animation-duration-normal {
+			animation-duration: #{$contact-buttons-animation-duration-normal}
+		}
+
+		&.has-entrance-animation-duration-fast {
+			animation-duration: #{$contact-buttons-animation-duration-fast}
+		}
+
+		&.has-entrance-animation {
+			opacity: 0;
+		}
+
+		&.visible {
+			opacity: 1;
 		}
 	}
 
