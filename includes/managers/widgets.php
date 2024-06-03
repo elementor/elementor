@@ -385,7 +385,7 @@ class Widgets_Manager {
 			if ( isset( $data['exclude'][ $widget_key ] ) ) {
 				continue;
 			}
-			error_log( $widget_key );
+
 			$config[ $widget_key ] = [
 				'controls' => $widget->get_stack( false )['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
