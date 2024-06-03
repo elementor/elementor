@@ -13,8 +13,6 @@ test.describe( 'Container tests @container', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			container: true,
-			container_grid: true,
 			e_nested_atomic_repeaters: true,
 		} );
 	} );
@@ -24,8 +22,6 @@ test.describe( 'Container tests @container', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			container_grid: false,
-			container: false,
 			e_nested_atomic_repeaters: false,
 		} );
 	} );
@@ -876,7 +872,6 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			container: 'active',
 			'nested-elements': 'active',
 		} );
 
@@ -956,7 +951,6 @@ test.describe( 'Container tests @container', () => {
 
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
-			container: 'inactive',
 		} );
 	} );
 

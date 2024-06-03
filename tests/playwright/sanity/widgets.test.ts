@@ -3,12 +3,8 @@ import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Widget tests', () => {
 	test( 'Widget Transform controls', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			widgetId = await editor.addWidget( 'heading', containerId ),

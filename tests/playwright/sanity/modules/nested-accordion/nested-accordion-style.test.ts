@@ -11,7 +11,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'active',
 			'nested-elements': 'active',
 		} );
 
@@ -24,7 +23,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
-			container: 'inactive',
 		} );
 
 		await page.close();

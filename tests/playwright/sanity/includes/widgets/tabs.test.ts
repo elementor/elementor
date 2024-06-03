@@ -8,7 +8,6 @@ test.describe( 'Tabs widget tests', () => {
 	// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			container: 'active',
 			'nested-elements': 'active',
 		} );
 		const editor = await wpAdmin.openNewPage();
@@ -21,7 +20,6 @@ test.describe( 'Tabs widget tests', () => {
 			.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
 
 		await wpAdmin.setExperiments( {
-			container: 'inactive',
 			'nested-elements': 'inactive',
 		} );
 	} );

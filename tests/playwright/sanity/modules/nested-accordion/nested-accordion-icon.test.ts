@@ -9,7 +9,6 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'active',
 			'nested-elements': 'active',
 		} );
 
@@ -22,7 +21,6 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
-			container: 'inactive',
 			e_font_icon_svg: 'default',
 		} );
 

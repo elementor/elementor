@@ -2,26 +2,6 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Container Grid tests @container', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-			container_grid: true,
-		} );
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: false,
-			container_grid: false,
-		} );
-	} );
-
 	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),

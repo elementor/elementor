@@ -11,7 +11,6 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'inactive',
 			'nested-elements': 'inactive',
 			e_nested_atomic_repeaters: 'active',
 		} );
@@ -25,7 +24,6 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'active',
-			container: 'active',
 			e_nested_atomic_repeaters: 'inactive',
 		} );
 
@@ -59,7 +57,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'active',
 			'nested-elements': 'active',
 			e_nested_atomic_repeaters: 'active',
 		} );
@@ -73,7 +70,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
-			container: 'inactive',
 			e_nested_atomic_repeaters: 'inactive',
 		} );
 

@@ -5,7 +5,6 @@ export async function beforeAll( browser, testInfo, iconExperimentState = 'activ
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.setExperiments( {
-		container: 'active',
 		e_font_icon_svg: 'active' === iconExperimentState,
 	} );
 
@@ -17,7 +16,6 @@ export async function afterAll( browser, testInfo ) {
 	const page = await context.newPage();
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.setExperiments( {
-		container: 'inactive',
 		e_font_icon_svg: 'inactive',
 	} );
 
