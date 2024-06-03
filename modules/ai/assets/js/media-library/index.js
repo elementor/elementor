@@ -7,11 +7,11 @@ const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
 const insertStyleTag = () => {
 	const style = document.createElement( 'style' );
+	// Make sure the dropdowns in the images feature appear above the AI modal and the generate button placed correctly.
 	style.appendChild( document.createTextNode( `
 		#e-image-ai-media-library {
 			display: inline-block;
 		}
-		// Make sure the dropdowns in the images feature appear above the AI modal
 		#menu- {
 			z-index: 180000;
 		}
