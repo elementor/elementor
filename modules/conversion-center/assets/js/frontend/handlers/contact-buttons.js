@@ -60,11 +60,19 @@ export default class ContactButtonsHandler extends Base {
 		if ( isExitAnimation ) {
 			this.elements.content.classList.remove( animated );
 			this.elements.content.classList.remove( reverse );
-			this.elements.content.classList.remove( exitAnimationClass );
+
+			if ( exitAnimationClass ) {
+				this.elements.content.classList.remove( exitAnimationClass );
+			}
+
 			this.elements.content.classList.remove( visible );
 		} else {
 			this.elements.content.classList.remove( animated );
-			this.elements.content.classList.remove( openAnimationClass );
+
+			if ( openAnimationClass ) {
+				this.elements.content.classList.remove( openAnimationClass );
+			}
+
 			this.elements.content.classList.add( visible );
 		}
 	}
@@ -79,7 +87,11 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		this.elements.content.classList.add( animated );
-		this.elements.content.classList.add( entranceAnimationControl );
+
+		if ( entranceAnimationControl ) {
+			this.elements.content.classList.add( entranceAnimationControl );
+		}
+
 		this.elements.contentWrapper.classList.remove( animatedWrapper );
 	}
 
@@ -94,7 +106,11 @@ export default class ContactButtonsHandler extends Base {
 
 		this.elements.content.classList.add( animated );
 		this.elements.content.classList.add( reverse );
-		this.elements.content.classList.add( exitAnimationControl );
+
+		if ( exitAnimationControl ) {
+			this.elements.content.classList.add( exitAnimationControl );
+		}
+
 		this.elements.contentWrapper.classList.add( animatedWrapper );
 	}
 
@@ -152,7 +168,10 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		this.elements.chatButton.classList.add( animated );
-		this.elements.chatButton.classList.add( entranceAnimationControl );
+
+		if ( entranceAnimationControl ) {
+			this.elements.chatButton.classList.add( entranceAnimationControl );
+		}
 	}
 
 	initDefaultState() {
