@@ -384,6 +384,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 			],
 		);
 
@@ -602,13 +605,15 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'options' => false,
 				'dynamic' => [
 					'active' => true,
 				],
 				'autocomplete' => true,
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::VIMEO,
