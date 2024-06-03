@@ -99,6 +99,7 @@ class Modules_Manager {
 			'admin-top-bar',
 			'element-manager',
 			'nested-elements',
+			'pro-install',
 			// Depends on Nested Elements module
 			'nested-tabs',
 			'nested-accordion',

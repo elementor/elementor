@@ -109,7 +109,7 @@ class Ai extends Library {
 		return $payload;
 	}
 
-	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '', $format = 'default' ) {
+	protected function ai_request( $method, $endpoint, $body, $file = false, $file_name = '', $format = 'default' ) {
 		$headers = [
 			'x-elementor-ai-version' => '2',
 		];
