@@ -5,6 +5,7 @@ namespace Elementor\Modules\ConversionCenter\Traits;
 use Elementor\Controls_Manager;
 use Elementor\Shapes;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 trait Conversion_Center_Controls_Trait {
 
@@ -59,6 +60,7 @@ trait Conversion_Center_Controls_Trait {
 		$other_attributes = []
 	) {
 		$url_attrs = [];
+		$rel_string = '';
 
 		if ( ! empty( $link['url'] ) ) {
 			$url_attrs['href'] = esc_url( $link['url'] );
@@ -66,11 +68,15 @@ trait Conversion_Center_Controls_Trait {
 
 		if ( ! empty( $link['is_external'] ) ) {
 			$url_attrs['target'] = '_blank';
-			$url_attrs['rel'] = 'noopener ';
+			$rel_string .= 'noopener ';
 		}
 
 		if ( ! empty( $link['nofollow'] ) ) {
-			$url_attrs['rel'] .= 'nofollow ';
+			$rel_string .= 'nofollow ';
+		}
+
+		if ( ! empty( $rel_string ) ) {
+			$url_attrs['rel'] = $rel_string;
 		}
 
 		/**
@@ -249,5 +255,22 @@ trait Conversion_Center_Controls_Trait {
 			?>
 		</div>
 		<?php
+	}
+
+	protected function get_configured_breakpoints( $add_desktop = 'true' ) {
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$active_breakpoint_instances = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$devices_options = [];
+
+		foreach ( $active_devices as $device_key ) {
+			$device_label = 'desktop' === $device_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoint_instances[ $device_key ]->get_label();
+			$devices_options[ $device_key ] = $device_label;
+		}
+
+		return [
+			'active_devices' => $active_devices,
+			'devices_options' => $devices_options,
+		];
 	}
 }
