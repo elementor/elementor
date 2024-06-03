@@ -14,18 +14,19 @@ export default class VideoWidget extends Content {
 		await this.page.locator( EditorSelectors.video.suggestedVideoSelect ).selectOption( option );
 	}
 
-	async getVideoSrc( isPublished: boolean ) {
-		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
-		const src = await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
-		return src;
+	async getVideoSrc( isFrontend: boolean ) {
+		const page = isFrontend ? this.page : this.editor.getPreviewFrame();
+
+		return await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
 	}
 
 	async selectVideoSource( option: string ) {
 		await this.page.locator( EditorSelectors.video.videoSourceSelect ).selectOption( option );
 	}
 
-	async verifyVideoLightBox( isPublished: boolean ) {
-		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
+	async verifyVideoLightBox( isFrontend: boolean ) {
+		const page = isFrontend ? this.page : this.editor.getPreviewFrame();
+
 		await expect( page.locator( EditorSelectors.video.lightBoxSetting ) ).toBeVisible();
 		await page.locator( EditorSelectors.video.image ).click( );
 		await expect( page.locator( EditorSelectors.video.lightBoxDialog ) ).toBeVisible();
