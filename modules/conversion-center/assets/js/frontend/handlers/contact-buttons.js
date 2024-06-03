@@ -22,6 +22,7 @@ export default class ContactButtonsHandler extends Base {
 				hidden: 'hidden',
 				hasAnimations: 'has-animations',
 				none: 'none',
+				isEditor: 'elementor-editor-active',
 			},
 		};
 	}
@@ -154,10 +155,20 @@ export default class ContactButtonsHandler extends Base {
 		this.elements.chatButton.classList.add( entranceAnimationControl );
 	}
 
+	initDefaultState() {
+		const { isEditor } = this.getSettings( 'constants' );
+
+		if ( document.body.classList.contains( isEditor ) ) {
+			this.openChatBox();
+		}
+	}
+
 	onInit( ...args ) {
 		super.onInit( ...args );
 
 		this.initMessageBubbleTime();
+
+		this.initDefaultState();
 
 		this.initChatButtonEntranceAnimation();
 	}
