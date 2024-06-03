@@ -734,7 +734,6 @@ class Module extends BaseModule {
 			'prompt' => $data['payload']['prompt'],
 			'attachment_id' => $data['payload']['image']['id'],
 			'mask' => $data['payload']['mask'],
-			'image_base64' => $data['payload']['image_base64'],
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
