@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import EditorSelectors from '../../../../../../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {

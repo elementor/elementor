@@ -700,7 +700,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<boolean>}
 	 */
 	async hasTopBar(): Promise<boolean> {
-		return await this.page.evaluate( () => document.getElementById( EditorSelectors.panels.topBar.wrapper ) ? true : false );
+		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
 	}
 
 	/**
@@ -861,15 +861,21 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async changeResponsiveView( device: string ) {
-		const hasResponsiveViewBar = await this.page.evaluate( () => {
-			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
-		} );
+		const hasTopBar = await this.hasTopBar();
 
-		if ( ! hasResponsiveViewBar ) {
-			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( device );
+		} else {
+			const hasResponsiveViewBar = await this.page.evaluate( () => {
+				return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
+			} );
+
+			if ( ! hasResponsiveViewBar ) {
+				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+			}
+
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 		}
-
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
 	/**
