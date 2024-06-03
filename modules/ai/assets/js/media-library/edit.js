@@ -74,7 +74,7 @@ const EditImageWithAI = () => {
 	};
 
 	const handleClose = () => {
-		wp.media.frame.content.get().collection._requery( true ); // Refresh the media library
+		wp.media.frame.content.get().collection?._requery( true ); // Refresh the media library
 		setIsOpen( false );
 	};
 

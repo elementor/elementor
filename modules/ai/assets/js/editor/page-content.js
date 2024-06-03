@@ -25,7 +25,6 @@ const PageContent = (
 		onConnect,
 		getControlValue,
 		setControlValue,
-		controlView,
 		additionalOptions,
 	} ) => {
 	const {
@@ -223,7 +222,6 @@ PageContent.propTypes = {
 	getControlValue: PropTypes.func.isRequired,
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
-	controlView: PropTypes.object,
 };
 
 export default PageContent;
