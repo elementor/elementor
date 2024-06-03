@@ -951,9 +951,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
-			<#
-			console.log('re-rendered');
-			if ( settings['items'] ) {
+			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
 				defaultState = settings.default_state,
