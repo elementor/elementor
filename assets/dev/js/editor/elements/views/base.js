@@ -660,7 +660,13 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isAtomicDynamic( dataBinding ) {
-		return dataBinding.el.hasAttribute( 'data-binding-dynamic' );
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) && elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters );
+	},
+
+	isTitle( bindingSetting ) {
+		const titleSettings = [ 'item_title', 'tab_title' ];
+
+		return titleSettings.includes( bindingSetting );
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
@@ -751,7 +757,7 @@ BaseElementView = BaseContainer.extend( {
 			const { bindingSetting } = dataBinding.dataset;
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding ) ) {
+			if ( this.isAtomicDynamic( dataBinding ) && this.isTitle( bindingSetting ) ) {
 				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
