@@ -3,6 +3,7 @@
 namespace Elementor\Modules\ConversionCenter;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
@@ -72,6 +73,14 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_contact_pages_cpt();
+
+		add_filter( 'elementor/widget/common/register_controls', function( $register_common_controls ) {
+			if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
+				return false;
+			}
+
+			return $register_common_controls;
+		} );
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
@@ -240,6 +249,24 @@ class Module extends BaseModule {
 			Contact_Buttons::get_labels(),
 			self::CPT_CONTACT_PAGES
 		);
+	}
+
+	private function is_editing_existing_floating_buttons_page() {
+		$action = filter_input( INPUT_GET, 'action', FILTER_UNSAFE_RAW );
+		$post_id = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+
+		return 'elementor' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	private function is_creating_floating_buttons_page() {
+		$action = filter_input( INPUT_POST, 'action', FILTER_UNSAFE_RAW );
+		$post_id = filter_input( INPUT_POST, 'editor_post_id', FILTER_VALIDATE_INT );
+
+		return 'elementor_ajax' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	private function is_floating_buttons_type_meta_key( $post_id ) {
+		return self::CONTACT_PAGE_DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 	}
 
 	private function register_post_type( array $labels, string $cpt ) {
