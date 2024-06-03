@@ -668,7 +668,11 @@ BaseElementView = BaseContainer.extend( {
 			dynamicSettings = { active: true };
 
 		if ( valueToParse ) {
-			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			try {
+				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			} catch {
+				return false;
+			}
 		}
 
 		return settings.attributes.item_title; // Default title
@@ -681,7 +685,6 @@ BaseElementView = BaseContainer.extend( {
 
 		if ( activeItem ) {
 			titleContainers[ activeItem - 1 ].innerHTML = dynamicValue;
-			return;
 		}
 	},
 
@@ -759,7 +762,11 @@ BaseElementView = BaseContainer.extend( {
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding ) ) {
-				change = this.getDynamicValue( settings, bindingSetting );
+				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+
+				if ( dynamicValue ) {
+					change = dynamicValue;
+				}
 			}
 
 			if ( change !== undefined ) {
