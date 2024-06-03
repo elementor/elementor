@@ -12,9 +12,9 @@ const insertStyleTag = () => {
 		#e-image-ai-media-library {
 			display: inline-block;
 		}
-		#menu- {
-			z-index: 180000;
-		}
+		// #menu- {
+		// 	z-index: 180000;
+		// }
 	` ) );
 	document.head.appendChild( style );
 };
