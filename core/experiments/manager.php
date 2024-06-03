@@ -76,8 +76,8 @@ class Manager extends Base_Object {
 			'mutable' => true,
 			static::TYPE_HIDDEN => false,
 			'new_site' => [
-				'default_active' => false,
 				'always_active' => false,
+				'default_active' => false,
 				'default_inactive' => false,
 				'minimum_installation_version' => null,
 			],
