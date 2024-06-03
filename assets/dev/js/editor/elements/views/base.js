@@ -664,7 +664,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
-		const valueToParse = settings.attributes.__dynamic__[ bindingSetting ],
+		const valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ],
 			dynamicSettings = { active: true };
 
 		if ( valueToParse ) {
@@ -675,7 +675,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 		}
 
-		return settings.attributes.item_title; // Default title
+		return settings.attributes[ bindingSetting ];
 	},
 
 	/**
