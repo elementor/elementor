@@ -659,6 +659,35 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
+	isAtomicDynamic( dataBinding, changedSetting ) {
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+			this.isAddingDynamicToTitle( dataBinding, changedSetting );
+	},
+
+	isAddingDynamicToTitle( dataBinding, changedSetting ) {
+		return (
+			'object' === typeof changedSetting?.__dynamic__ &&
+			Object.keys( changedSetting?.__dynamic__ )[ 0 ]?.length > 0 &&
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
+		);
+	},
+
+	getDynamicValue( settings, bindingSetting ) {
+		const valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			dynamicSettings = { active: true };
+
+		if ( valueToParse ) {
+			try {
+				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			} catch {
+				return false;
+			}
+		}
+
+		return settings.attributes[ bindingSetting ];
+	},
+
 	/**
 	 * Function linkDataBindings().
 	 *
@@ -677,8 +706,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
+	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
+	 * UPDATE: Support for dynamics has experimentally been added in v3.23
 	 */
 	linkDataBindings() {
 		/**
@@ -729,7 +760,16 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = ( dataBinding ) => {
-			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+			const { bindingSetting } = dataBinding.dataset;
+			let change = settings.changed[ bindingSetting ];
+
+			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
+				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+
+				if ( dynamicValue ) {
+					change = dynamicValue;
+				}
+			}
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
