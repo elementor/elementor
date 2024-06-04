@@ -77,6 +77,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+        sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
