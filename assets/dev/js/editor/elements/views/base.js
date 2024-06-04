@@ -663,10 +663,10 @@ BaseElementView = BaseContainer.extend( {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) && elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters );
 	},
 
-	isTitle( bindingSetting ) {
+	isTitle( changedControl ) {
 		const titleSettings = [ 'item_title', 'tab_title' ];
 
-		return titleSettings.includes( bindingSetting );
+		return titleSettings.includes( changedControl );
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
