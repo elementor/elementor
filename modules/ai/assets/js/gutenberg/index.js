@@ -35,7 +35,7 @@ import GenerateExcerptWithAI from './excerpt';
 
 		// Add the custom link to the excerpt panel when the editor sidebar is rendered
 		wp.data.subscribe( () => {
-			const isSidebarOpened = wp.data.select( 'core/edit-post' ).isEditorPanelOpened( 'post-excerpt' );
+			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( 'post-excerpt' );
 			if ( isSidebarOpened ) {
 				setTimeout( function() {
 					addGenerateExcerptWithAI();
