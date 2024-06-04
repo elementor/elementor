@@ -775,7 +775,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function render() {
-		// Hi.
 		$settings = $this->get_settings_for_display();
 		$items = $settings['items'];
 		$id_int = substr( $this->get_id_int(), 0, 3 );
