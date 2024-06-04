@@ -47,44 +47,17 @@ const eventsConfig = {
 	},
 
 	names: {
-		layout: {
-			v1: 'v1_widgets_tab_layout_section',
-			topBar: 'top_bar_widgets_tab_layout_section',
-		},
-		basic: {
-			v1: 'v1_widgets_tab_basic_section',
-			topBar: 'top_bar_widgets_tab_basic_section',
-		},
-		'pro-elements': {
-			v1: 'v1_widgets_tab_pro_section',
-			topBar: 'top_bar_widgets_tab_pro_section',
-		},
-		general: {
-			v1: 'v1_widgets_tab_general_section',
-			topBar: 'top_bar_widgets_tab_general_section',
-		},
-		'theme-elements': {
-			v1: 'v1_widgets_tab_site_section',
-			topBar: 'top_bar_widgets_tab_site_section',
-		},
-		'theme-elements-single': {
-			v1: 'v1_widgets_tab_single_section',
-			topBar: 'top_bar_widgets_tab_site_single_section',
-		},
-		'woocommerce-elements': {
-			v1: 'v1_widgets_tab_woocommerce_section',
-			topBar: 'top_bar_widgets_tab_woocommerce_section',
-		},
-		wordpress: {
-			v1: 'v1_widgets_tab_wordpress_section',
-			topBar: 'top_bar_widgets_tab_wordpress_section',
-		},
-		categories: {
-			v1: 'v1_widgets_tab',
-			topBar: 'top_bar_widgets_tab',
-		},
-		global: {
-			v1: 'v1_globals_tab',
+		v1: {
+			layout: 'v1_widgets_tab_layout_section',
+			basic: 'v1_widgets_tab_basic_section',
+			'pro-elements': 'v1_widgets_tab_pro_section',
+			general: 'v1_widgets_tab_general_section',
+			'theme-elements': 'v1_widgets_tab_site_section',
+			'theme-elements-single': 'v1_widgets_tab_single_section',
+			'woocommerce-elements': 'v1_widgets_tab_woocommerce_section',
+			wordpress: 'v1_widgets_tab_wordpress_section',
+			categories: 'v1_widgets_tab',
+			global: 'v1_globals_tab',
 		},
 		topBar: {
 			whatsNew: 'top_bar_whats_new',
