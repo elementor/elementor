@@ -757,7 +757,7 @@ BaseElementView = BaseContainer.extend( {
 			const { bindingSetting } = dataBinding.dataset;
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding ) && this.isTitle( bindingSetting ) ) {
+			if ( this.isAtomicDynamic( dataBinding ) && this.isTitle( settings.changed ) ) {
 				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
