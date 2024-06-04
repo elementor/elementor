@@ -59,7 +59,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'username' => null,
 						'location' => null,
 						'url' => null,
-					]
+					],
 				],
 				'top_bar_section' => [
 					'has_image' => true,
@@ -1166,7 +1166,7 @@ JS;
 					'prefix_class' => 'animated-',
 				]
 			);
-	
+
 			$this->add_control(
 				'style_chat_button_animation_delay',
 				[
