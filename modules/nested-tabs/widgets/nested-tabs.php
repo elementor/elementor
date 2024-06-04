@@ -1173,7 +1173,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$widget_number = substr( $this->get_id_int(), 0, 3 );
+		$widget_number = $this->get_id_int();
 
 		if ( ! empty( $settings['link'] ) ) {
 			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
@@ -1196,7 +1196,7 @@ class NestedTabs extends Widget_Nested_Base {
 				$tab_count = $index + 1;
 
 				$tab_id = empty( $item['element_id'] )
-					? 'e-n-tabs-title-' . $widget_number . $tab_count
+					? 'e-n-tab-title-' . $widget_number . $tab_count
 					: $item['element_id'];
 
 				$item_settings = [
@@ -1238,7 +1238,7 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<#
 		const tabIndex = view.collection.length,
-			elementUid = view.getIDInt().toString().substr( 0, 3 ),
+			elementUid = view.getIDInt().toString(),
 			item = data,
 			hoverAnimationSetting = view?.container?.settings?.attributes?.hover_animation;
 			hoverAnimationClass = hoverAnimationSetting
@@ -1250,7 +1250,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 	protected function content_template() {
 		?>
-		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+		<# const elementUid = view.getIDInt().toString(); #>
 		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
@@ -1301,6 +1301,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'tabs',
 			'data-binding-setting': [ 'tab_title' ],
 			'data-binding-index': tabCount,
+			'data-binding-dynamic': 'true',
 		}, null, true );
 
 		view.addRenderAttribute( 'tab-icon', {

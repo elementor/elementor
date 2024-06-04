@@ -18,7 +18,7 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabTitleFilterSelector( tabIndex ) {
-		return `[data-tab-index="${ tabIndex }"]`;
+		return `[${ this.getSettings( 'dataAttributes' ).tabIndex }="${ tabIndex }"]`;
 	}
 
 	/**
@@ -36,22 +36,40 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabIndex( tabTitleElement ) {
-		return tabTitleElement.getAttribute( 'data-tab-index' );
+		return tabTitleElement.getAttribute( this.getSettings( 'dataAttributes' ).tabIndex );
+	}
+
+	getActiveTabIndex() {
+		const settings = this.getSettings(),
+			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+			tabIndexSelector = settings.dataAttributes.tabIndex,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
+
+		return $activeTitle.attr( tabIndexSelector ) || null;
+	}
+
+	getWidgetNumber() {
+		return this.$element.find( '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs' ).attr( 'data-widget-number' );
 	}
 
 	getDefaultSettings() {
+		const widgetNumber = this.getWidgetNumber();
+
 		return {
 			selectors: {
-				widgetContainer: '.e-n-tabs',
-				tabTitle: '.e-n-tab-title',
-				tabTitleIcon: '.e-n-tab-icon',
-				tabTitleText: '.e-n-tab-title-text',
-				tabContent: '.e-n-tabs-content > .e-con',
-				headingContainer: '.e-n-tabs-heading',
-				activeTabContentContainers: '.e-con.e-active',
+				widgetContainer: `[data-widget-number="${ widgetNumber }"]`,
+				tabTitle: `[id*="e-n-tab-title-${ widgetNumber }"]`,
+				tabTitleIcon: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-icon`,
+				tabTitleText: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-title-text`,
+				tabContent: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-content > .e-con`,
+				headingContainer: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-heading`,
+				activeTabContentContainers: `[id*="e-n-tab-content-${ widgetNumber }"].e-active`,
 			},
 			classes: {
 				active: 'e-active',
+			},
+			dataAttributes: {
+				tabIndex: 'data-tab-index',
 			},
 			ariaAttributes: {
 				titleStateAttribute: 'aria-selected',
@@ -172,7 +190,8 @@ export default class NestedTabs extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		const isActiveTabTitle = 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute ),
+		const settings = this.getSettings(),
+			isActiveTabTitle = 'true' === this.elements.$tabTitles.filter( `[${ settings.dataAttributes.tabIndex }="${ tabIndex }"]` ).attr( settings.ariaAttributes.titleStateAttribute ),
 			isActiveTabContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ).hasClass( this.getActiveClass() );
 
 		return isActiveTabTitle && isActiveTabContent;
@@ -180,7 +199,7 @@ export default class NestedTabs extends Base {
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget?.getAttribute( 'data-tab-index' ), true );
+		this.changeActiveTab( event.currentTarget?.getAttribute( this.getSettings( 'dataAttributes' ).tabIndex ), true );
 	}
 
 	getTabEvents() {
@@ -413,9 +432,10 @@ export default class NestedTabs extends Base {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
 
-		const targetIndex = event.detail.index + 1 || 1;
-
-		this.changeActiveTab( targetIndex );
+		if ( ! this.getActiveTabIndex() ) {
+			const targetIndex = event.detail.index + 1 || 1;
+			this.changeActiveTab( targetIndex );
+		}
 	}
 
 	updateListeners( view ) {
@@ -428,6 +448,7 @@ export default class NestedTabs extends Base {
 	updateIndexValues() {
 		const { $widgetContainer, $tabContents, $tabTitles } = this.getDefaultElements(),
 			settings = this.getSettings(),
+			dataTabIndex = settings.dataAttributes.tabIndex,
 			widgetNumber = $widgetContainer.data( 'widgetNumber' );
 
 		$tabTitles.each( ( index, element ) => {
@@ -437,7 +458,7 @@ export default class NestedTabs extends Base {
 
 			element.setAttribute( 'id', updatedTabID );
 			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
-			element.setAttribute( 'data-tab-index', newIndex );
+			element.setAttribute( dataTabIndex, newIndex );
 			element.setAttribute( 'aria-controls', updatedContainerID );
 
 			element.querySelector( settings.selectors.tabTitleIcon )?.setAttribute( 'data-binding-index', newIndex );
@@ -445,7 +466,7 @@ export default class NestedTabs extends Base {
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
 
 			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
-			$tabContents[ index ].setAttribute( 'data-tab-index', newIndex );
+			$tabContents[ index ].setAttribute( dataTabIndex, newIndex );
 			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
 			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 		} );
