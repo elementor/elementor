@@ -69,14 +69,6 @@ export default class ContactButtonsHandler extends Base {
 			this.elements.contentWrapper.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
 		}
 
-		if ( this.elements.contactButtonsVar5 ) {
-			this.elements.contactButtonsVar5.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
-		}
-
-		if ( this.elements.contactButtonsVar6 ) {
-			this.elements.contactButtonsVar6.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
-		}
-
 		window.addEventListener( 'beforeunload', () => {
 			if ( this.clicks.length > 0 ) {
 				this.sendClicks();
