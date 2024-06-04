@@ -61,6 +61,10 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	removeAnimationClasses() {
+		if ( ! this.elements.content ) {
+			return;
+		}
+
 		const { reverse, entranceAnimation, exitAnimation, animated, visible } = this.getSettings( 'constants' );
 
 		const isExitAnimation = this.elements.content.classList.contains( reverse ),
@@ -92,17 +96,18 @@ export default class ContactButtonsHandler extends Base {
 
 		const entranceAnimationControl = this.getResponsiveSetting( entranceAnimation );
 
-		if ( none === entranceAnimationControl ) {
+		if ( ! entranceAnimationControl || none === entranceAnimationControl ) {
 			return;
 		}
 
-		this.elements.content.classList.add( animated );
-
-		if ( entranceAnimationControl ) {
+		if ( this.elements.content ) {
+			this.elements.content.classList.add( animated );
 			this.elements.content.classList.add( entranceAnimationControl );
 		}
 
-		this.elements.contentWrapper.classList.remove( animatedWrapper );
+		if ( this.elements.contentWrapper ) {
+			this.elements.contentWrapper.classList.remove( animatedWrapper );
+		}
 	}
 
 	chatBoxExitAnimation() {
@@ -110,50 +115,69 @@ export default class ContactButtonsHandler extends Base {
 
 		const exitAnimationControl = this.getResponsiveSetting( exitAnimation );
 
-		if ( none === exitAnimationControl ) {
+		if ( ! exitAnimationControl || none === exitAnimationControl ) {
 			return;
 		}
 
-		this.elements.content.classList.add( animated );
-		this.elements.content.classList.add( reverse );
-
-		if ( exitAnimationControl ) {
+		if ( this.elements.content ) {
+			this.elements.content.classList.add( animated );
+			this.elements.content.classList.add( reverse );
 			this.elements.content.classList.add( exitAnimationControl );
 		}
 
-		this.elements.contentWrapper.classList.add( animatedWrapper );
+		if ( this.elements.contentWrapper ) {
+			this.elements.contentWrapper.classList.add( animatedWrapper );
+		}
 	}
 
 	openChatBox() {
 		const { hasAnimations, visible, hidden } = this.getSettings( 'constants' );
 
-		if ( this.elements.main.classList.contains( hasAnimations ) ) {
+		if ( this.elements.main && this.elements.main.classList.contains( hasAnimations ) ) {
 			this.chatBoxEntranceAnimation();
-		} else {
+		} else if ( this.elements.content ) {
 			this.elements.content.classList.add( visible );
 		}
-		this.elements.contentWrapper.classList.remove( hidden );
-		this.elements.chatButton.setAttribute( 'aria-hidden', 'true' );
-		this.elements.closeButton.setAttribute( 'aria-hidden', 'false' );
+
+		if ( this.elements.contentWrapper ) {
+			this.elements.contentWrapper.classList.remove( hidden );
+		}
+
+		if ( this.elements.chatButton ) {
+			this.elements.chatButton.setAttribute( 'aria-hidden', 'true' );
+		}
+
+		if ( this.elements.closeButton ) {
+			this.elements.closeButton.setAttribute( 'aria-hidden', 'false' );
+		}
 	}
 
 	closeChatBox() {
 		const { hasAnimations, visible, hidden } = this.getSettings( 'constants' );
 
-		if ( this.elements.main.classList.contains( hasAnimations ) ) {
+		if ( this.elements.main && this.elements.main.classList.contains( hasAnimations ) ) {
 			this.chatBoxExitAnimation();
-		} else {
+		} else if ( this.elements.content ) {
 			this.elements.content.classList.remove( visible );
 		}
-		this.elements.contentWrapper.classList.add( hidden );
-		this.elements.chatButton.setAttribute( 'aria-hidden', 'false' );
-		this.elements.closeButton.setAttribute( 'aria-hidden', 'true' );
+
+		if ( this.elements.contentWrapper ) {
+			this.elements.contentWrapper.classList.add( hidden );
+		}
+
+		if ( this.elements.chatButton ) {
+			this.elements.chatButton.setAttribute( 'aria-hidden', 'false' );
+		}
+
+		if ( this.elements.closeButton ) {
+			this.elements.closeButton.setAttribute( 'aria-hidden', 'true' );
+		}
 	}
 
 	onChatButtonClick() {
 		const { hidden } = this.getSettings( 'constants' );
 
-		if ( this.elements.contentWrapper.classList.contains( hidden ) ) {
+		if ( this.elements.contentWrapper && this.elements.contentWrapper.classList.contains( hidden ) ) {
 			this.openChatBox();
 		} else {
 			this.closeChatBox();
@@ -161,6 +185,10 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	initMessageBubbleTime() {
+		if ( ! this.elements.messageBubbleTime ) {
+			return;
+		}
+
 		const messageBubbleTimeFormat = this.elements.messageBubbleTime.dataset.timeFormat;
 		const is12hFormat = '12h' === messageBubbleTimeFormat;
 		const time = new Intl.DateTimeFormat( 'default',
@@ -173,6 +201,10 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	removeChatButtonAnimationClasses() {
+		if ( ! this.elements.chatButton ) {
+			return;
+		}
+
 		const { chatButtonAnimation, visible } = this.getSettings( 'constants' );
 
 		this.elements.chatButton.classList.remove( chatButtonAnimation );
@@ -184,7 +216,7 @@ export default class ContactButtonsHandler extends Base {
 
 		const entranceAnimationControl = this.getResponsiveSetting( chatButtonAnimation );
 
-		if ( none === entranceAnimationControl ) {
+		if ( ! entranceAnimationControl || none === entranceAnimationControl ) {
 			return;
 		}
 
