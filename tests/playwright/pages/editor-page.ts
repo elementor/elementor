@@ -887,7 +887,9 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( device );
+			const deviceLabel = device.charAt( 0 ).toUpperCase() + device.slice( 1 );
+
+			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
 		} else {
 			const hasResponsiveViewBar = await this.page.evaluate( () => {
 				return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
