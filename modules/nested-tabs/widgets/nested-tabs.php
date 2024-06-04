@@ -1301,6 +1301,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'tabs',
 			'data-binding-setting': [ 'tab_title' ],
 			'data-binding-index': tabCount,
+			'data-binding-dynamic': 'true',
 		}, null, true );
 
 		view.addRenderAttribute( 'tab-icon', {
