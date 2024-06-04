@@ -29,12 +29,6 @@ AIMedia.propTypes = {
 	imageId: PropTypes.string,
 };
 
-const Icon = styled.i`
-	color: #C00BB9;
-	padding-right: 0.5em;
-	cursor: pointer;
-`;
-
 const ImageLink = styled.a`
 	&& {
 		color: #C00BB9;
@@ -79,9 +73,8 @@ const EditImageWithAI = () => {
 	};
 
 	return (
-		<div style={ { paddingTop: '0.8em' } }>
+		<div style={ { paddingTop: '0.2em' } }>
 			<RequestIdsProvider>
-				<Icon className={ 'eicon-ai' } />
 				<ImageLink onClick={ handleClick }>{ __( 'Edit with Elementor AI', 'elementor' ) }</ImageLink>
 				{ isOpen && <AIMedia onClose={ handleClose } imageId={ imageId } /> }
 			</RequestIdsProvider>

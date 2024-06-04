@@ -52,7 +52,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const content = document.createElement( 'div' );
 				content.innerHTML = html;
 
-				const compatMeta = content.querySelector( '.compat-meta' );
+				const compatMeta = content.querySelector( '.dimensions' );
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-insert-media';
 				compatMeta.insertAdjacentElement( 'beforeend', container );
