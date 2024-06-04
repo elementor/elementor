@@ -58,6 +58,10 @@ export default class NestedAccordion extends Base {
 				toggleTitle: this.clickListener.bind( this ),
 			} );
 		}
+
+		if ( true ) {
+			console.log( 'something' );
+		}
 	}
 
 	interlaceContainers() {
