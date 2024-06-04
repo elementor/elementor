@@ -1,6 +1,8 @@
 import Base from 'elementor-frontend/handlers/base';
 
 export default class ContactButtonsHandler extends Base {
+	clicks = [];
+
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -10,6 +12,9 @@ export default class ContactButtonsHandler extends Base {
 				chatButton: '.e-contact-buttons__chat-button',
 				closeButton: '.e-contact-buttons__close-button',
 				messageBubbleTime: '.e-contact-buttons__message-bubble-time',
+				contactButtonCore: '.e-contact-buttons__send-button',
+				contactButtonsVar5: '.e-contact-buttons__chat-button',
+				contactButtonsVar6: '.e-contact-buttons-var-6',
 			},
 			constants: {
 				entranceAnimation: 'style_chat_box_entrance_animation',
@@ -35,7 +40,8 @@ export default class ContactButtonsHandler extends Base {
 			chatButton: this.$element[ 0 ].querySelector( selectors.chatButton ),
 			closeButton: this.$element[ 0 ].querySelector( selectors.closeButton ),
 			messageBubbleTime: this.$element[ 0 ].querySelector( selectors.messageBubbleTime ),
-			contactButtonsVar4: this.$element[ 0 ].querySelector( selectors.contactButtonsVar4 ),
+			contactButtonsVar5: this.$element[ 0 ].querySelector( selectors.contactButtonsVar5 ),
+			contactButtonsVar6: this.$element[ 0 ].querySelector( selectors.contactButtonsVar6 ),
 		};
 	}
 
@@ -48,6 +54,62 @@ export default class ContactButtonsHandler extends Base {
 		this.elements.closeButton.addEventListener( 'click', this.closeChatBox.bind( this ) );
 		this.elements.chatButton.addEventListener( 'click', this.onChatButtonClick.bind( this ) );
 		this.elements.content.addEventListener( 'animationend', this.removeAnimationClasses.bind( this ) );
+
+		if ( this.elements.contentWrapper ) {
+			this.elements.contentWrapper.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
+		}
+
+		if ( this.elements.contactButtonsVar5 ) {
+			this.elements.contactButtonsVar5.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
+		}
+		console.log('asdaddasd')
+		if ( this.elements.contactButtonsVar6 ) {
+			this.elements.contactButtonsVar6.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
+		}
+
+		window.addEventListener( 'beforeunload', () => {
+			if ( this.clicks.length > 0 ) {
+				this.sendClicks();
+			}
+		} );
+	}
+
+	onChatButtonTrackClick( event ) {
+		const targetElement = event.target || event.srcElement;
+		const selectors = this.getSettings( 'selectors' );
+		if (
+			targetElement.matches( selectors.contactButtonCore ) ||
+			targetElement.closest( selectors.contactButtonCore ) ) {
+			const documentId = targetElement.closest( selectors.main ).dataset.documentId;
+			this.trackClick( documentId );
+		}
+	}
+
+	trackClick( documentId ) {
+		if ( ! documentId ) {
+			return;
+		}
+
+		this.clicks.push( documentId );
+
+		if ( this.clicks.length >= 10 ) {
+			this.sendClicks();
+		}
+	}
+
+	sendClicks() {
+		const formData = new FormData();
+		formData.append( 'action', 'elementor_send_clicks' );
+		formData.append( '_nonce', elementorCommonConfig.conversionCenter.nonce );
+		this.clicks.forEach( ( documentId ) => formData.append( 'clicks[]', documentId ) );
+
+		fetch( elementorCommonConfig.conversionCenter.ajaxurl, {
+			method: 'POST',
+			body: formData,
+		} )
+			.then( () => {
+				this.clicks = [];
+			} );
 	}
 
 	removeAnimationClasses() {
