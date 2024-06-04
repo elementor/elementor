@@ -933,6 +933,8 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.clickTopBarItem( 'Save Options' );
 			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+			const pageId = await this.getPageId();
+			await this.page.goto( `/?p=${ pageId }` );
 		} else {
 			await this.openMenuPanel();
 			await this.page.getByRole( 'link', { name: 'View Page' } ).click();
