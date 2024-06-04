@@ -84,7 +84,6 @@ const eventsConfig = {
 		},
 		global: {
 			v1: 'v1_globals_tab',
-			topBar: 'top_bar_globals_tab',
 		},
 		topBar: {
 			whatsNew: 'top_bar_whats_new',
