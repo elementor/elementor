@@ -24,7 +24,7 @@ export default class Component extends ComponentBase {
 		super.activateTab( tab );
 
 		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names[ tab ]?.v1,
+			elementor.editorEvents.config.names.v1[ tab ],
 			{
 				location: elementor.editorEvents.config.locations.widgetPanel,
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations[ tab ],
