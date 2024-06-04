@@ -59,8 +59,9 @@ class Test_Manager extends Elementor_Test_Base {
 			'state' => Experiments_Manager::STATE_DEFAULT,
 			'on_state_change' => null,
 			'new_site' => [
-				'default_active' => false,
 				'always_active' => false,
+				'default_active' => false,
+				'default_inactive' => false,
 				'minimum_installation_version' => null,
 			],
 			'mutable' => true,
