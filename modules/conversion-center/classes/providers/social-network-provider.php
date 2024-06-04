@@ -145,7 +145,7 @@ class Social_Network_Provider {
 
 		static::$social_networks[ static::APPLEMUSIC ] = [
 			'text' => esc_html__( 'Apple Music', 'elementor' ),
-			'icon' => 'fab fa-apple-music',
+			'icon' => 'fa fa-music',
 			'name' => 'apple-music',
 		];
 
