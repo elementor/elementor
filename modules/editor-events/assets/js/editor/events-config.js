@@ -3,7 +3,7 @@ const eventsConfig = {
 		click: 'Click',
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
-		clickTrigger: 'Click Dropdown',
+		dropdownClick: 'Click Dropdown',
 	},
 
 	locations: {
@@ -29,6 +29,7 @@ const eventsConfig = {
 		'widget-panel': 'Widget Panel Icon',
 		finder: 'Finder',
 		help: 'Help',
+		elementorLogoDropdown: 'top_bar_elementor_logo_dropdown',
 		elementorLogo: 'Elementor Logo',
 		notes: 'Notes',
 		siteSettings: 'Site Settings',
