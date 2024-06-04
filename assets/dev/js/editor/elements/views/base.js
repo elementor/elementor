@@ -659,14 +659,18 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding ) {
-		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) && elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters );
+	isAtomicDynamic( dataBinding, changedSetting ) {
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+			this.isAddingDynamicToTitle( dataBinding, changedSetting );
 	},
 
-	isTitle( changedControl ) {
-		const titleSettings = [ 'item_title', 'tab_title' ];
-
-		return titleSettings.includes( changedControl );
+	isAddingDynamicToTitle( dataBinding, changedSetting ) {
+		return (
+			'object' === typeof changedSetting?.__dynamic__ &&
+			Object.keys( changedSetting?.__dynamic__ )[ 0 ]?.length > 0 &&
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
+		);
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
@@ -759,7 +763,7 @@ BaseElementView = BaseContainer.extend( {
 			const { bindingSetting } = dataBinding.dataset;
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding ) && this.isTitle( settings.changed ) ) {
+			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
 				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
