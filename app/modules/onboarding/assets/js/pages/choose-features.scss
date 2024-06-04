@@ -7,7 +7,7 @@
 			display: flex;
 			flex-wrap: wrap;
 			gap: 10px 20px;
-			margin-block: 24px;
+			margin-block: 20px;
 
 			&__label {
 				display: flex;
@@ -29,13 +29,21 @@
 				height: 16px;
 			}
 
-			&__plan {
+			&__message {
 				font-size: 18px;
 				font-weight: 400;
 				line-height: 27px;
 				letter-spacing: -0.01em;
 				padding-inline-end: 120px;
+				min-height: 55px;
+				margin-block-end: 20px;
 			}
+		}
+	}
+
+	&__page-chooseFeatures {
+		.e-onboarding__page-content {
+			margin-bottom: 0;
 		}
 	}
 }

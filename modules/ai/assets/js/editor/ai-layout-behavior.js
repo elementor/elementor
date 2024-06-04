@@ -24,6 +24,8 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	onAiButtonClick( e ) {
 		e.stopPropagation();
 
+		window.elementorAiCurrentContext = this.getOption( 'context' );
+
 		renderLayoutApp( {
 			parentContainer: elementor.getPreviewContainer(),
 			mode: MODE_LAYOUT,
