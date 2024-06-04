@@ -21,6 +21,7 @@ export default class ContactButtonsHandler extends Base {
 				reverse: 'reverse',
 				hidden: 'hidden',
 				hasAnimations: 'has-animations',
+				hasEntranceAnimation: 'has-entrance-animation',
 				none: 'none',
 			},
 		};
@@ -45,9 +46,18 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	bindEvents() {
-		this.elements.closeButton.addEventListener( 'click', this.closeChatBox.bind( this ) );
-		this.elements.chatButton.addEventListener( 'click', this.onChatButtonClick.bind( this ) );
-		this.elements.content.addEventListener( 'animationend', this.removeAnimationClasses.bind( this ) );
+		if ( this.elements.closeButton ) {
+			this.elements.closeButton.addEventListener( 'click', this.closeChatBox.bind( this ) );
+		}
+
+		if ( this.elements.chatButton ) {
+			this.elements.chatButton.addEventListener( 'click', this.onChatButtonClick.bind( this ) );
+			this.elements.chatButton.addEventListener( 'animationend', this.removeChatButtonAnimationClasses.bind( this ) );
+		}
+
+		if ( this.elements.content ) {
+			this.elements.content.addEventListener( 'animationend', this.removeAnimationClasses.bind( this ) );
+		}
 	}
 
 	removeAnimationClasses() {
@@ -107,6 +117,8 @@ export default class ContactButtonsHandler extends Base {
 			this.elements.content.classList.add( visible );
 		}
 		this.elements.contentWrapper.classList.remove( hidden );
+		this.elements.chatButton.setAttribute( 'aria-hidden', 'true' );
+		this.elements.closeButton.setAttribute( 'aria-hidden', 'false' );
 	}
 
 	closeChatBox() {
@@ -118,6 +130,8 @@ export default class ContactButtonsHandler extends Base {
 			this.elements.content.classList.remove( visible );
 		}
 		this.elements.contentWrapper.classList.add( hidden );
+		this.elements.chatButton.setAttribute( 'aria-hidden', 'false' );
+		this.elements.closeButton.setAttribute( 'aria-hidden', 'true' );
 	}
 
 	onChatButtonClick() {
@@ -141,8 +155,15 @@ export default class ContactButtonsHandler extends Base {
 			} ).format( new Date() );
 	}
 
+	removeChatButtonAnimationClasses() {
+		const { chatButtonAnimation, visible } = this.getSettings( 'constants' );
+
+		this.elements.chatButton.classList.remove( chatButtonAnimation );
+		this.elements.chatButton.classList.add( visible );
+	}
+
 	initChatButtonEntranceAnimation() {
-		const { none, chatButtonAnimation, animated } = this.getSettings( 'constants' );
+		const { none, chatButtonAnimation } = this.getSettings( 'constants' );
 
 		const entranceAnimationControl = this.getResponsiveSetting( chatButtonAnimation );
 
@@ -150,15 +171,20 @@ export default class ContactButtonsHandler extends Base {
 			return;
 		}
 
-		this.elements.chatButton.classList.add( animated );
 		this.elements.chatButton.classList.add( entranceAnimationControl );
 	}
 
 	onInit( ...args ) {
+		const { hasEntranceAnimation } = this.getSettings( 'constants' );
+
 		super.onInit( ...args );
 
-		this.initMessageBubbleTime();
+		if ( this.elements.messageBubbleTime ) {
+			this.initMessageBubbleTime();
+		}
 
-		this.initChatButtonEntranceAnimation();
+		if ( this.elements.chatButton.classList.contains( hasEntranceAnimation ) ) {
+			this.initChatButtonEntranceAnimation();
+		}
 	}
 }
