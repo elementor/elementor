@@ -26,5 +26,7 @@ class Module extends \Elementor\Core\Base\Module {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
+
+		echo '';
 	}
 }
