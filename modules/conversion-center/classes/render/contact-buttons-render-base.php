@@ -252,8 +252,6 @@ abstract class Contact_Buttons_Render_Base {
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
 						'viber_action' => $icon['contact_icon_viber_action'],
-						'url' => $icon['contact_icon_url'] ?? '',
-						'location' => $icon['contact_icon_waze'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );

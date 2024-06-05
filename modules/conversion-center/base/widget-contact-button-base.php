@@ -160,10 +160,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				],
 			],
 			'advanced' => [
-				'has_horizontal_position' => true,
+				'has_layout_position' => true,
+				'horizontal_position_default' => 'end',
 				'horizontal_offset_default' => 25,
 				'vertical_offset_default' => 25,
 				'has_mobile_full_width' => false,
+				'has_vertical_offset' => true,
 			],
 		];
 	}
@@ -219,6 +221,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'label_block' => true,
 				'placeholder' => esc_html__( '@', 'elementor' ),
 				'default' => $config['content']['chat_button_section']['defaults']['mail'],
@@ -264,6 +269,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
 				'default' => $config['content']['chat_button_section']['defaults']['number'],
@@ -285,6 +293,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'label_block' => true,
 				'default' => $config['content']['chat_button_section']['defaults']['username'],
@@ -339,6 +350,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'autocomplete' => true,
 				'label_block' => true,
@@ -684,17 +698,17 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'label_block' => true,
 				'condition' => [
 					'contact_icon_platform' => [
 						Social_Network_Provider::EMAIL,
 					],
 				],
-				'ai' => [
-					'active' => false,
-				],
-			]
-		);
+				]
+			);
 
 		$repeater->add_control(
 			'contact_icon_mail_subject',
@@ -734,6 +748,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
 				'condition' => [
@@ -743,9 +760,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::VIBER,
 						Social_Network_Provider::TELEPHONE,
 					],
-				],
-				'ai' => [
-					'active' => false,
 				],
 			],
 		);
@@ -757,6 +771,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
@@ -776,6 +793,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'autocomplete' => true,
 				'label_block' => true,
@@ -1854,12 +1874,12 @@ JS;
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%', 'em', 'rem' ],
 					'default' => [
-						'top' => '20',
-						'bottom' => '20',
-						'left' => '20',
-						'right' => '20',
+						'top' => '16',
+						'bottom' => '16',
+						'left' => '16',
+						'right' => '16',
 						'unit' => 'px',
-						'isLinked' => false,
+						'isLinked' => true,
 					],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-button-bar-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-start: {{LEFT}}{{UNIT}};',
@@ -2292,7 +2312,7 @@ JS;
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
-		if ( $config['advanced']['has_horizontal_position'] ) {
+		if ( $config['advanced']['has_layout_position'] ) {
 			$this->start_controls_section(
 				'advanced_layout_section',
 				[
@@ -2320,7 +2340,7 @@ JS;
 							'icon' => 'eicon-h-align-right',
 						],
 					],
-					'default' => 'end',
+					'default' => $config['advanced']['horizontal_position_default'],
 					'toggle' => true,
 				]
 			);
@@ -2375,31 +2395,33 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
-				'advanced_vertical_offset',
-				[
-					'label' => esc_html__( 'Offset', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'%' => [
-							'min' => 10,
-							'max' => 100,
+			if ( $config['advanced']['has_vertical_offset'] ) {
+				$this->add_responsive_control(
+					'advanced_vertical_offset',
+					[
+						'label' => esc_html__( 'Offset', 'elementor' ),
+						'type' => Controls_Manager::SLIDER,
+						'range' => [
+							'%' => [
+								'min' => 10,
+								'max' => 100,
+							],
+							'px' => [
+								'min' => 0,
+								'max' => 100,
+							],
 						],
-						'px' => [
-							'min' => 0,
-							'max' => 100,
+						'default' => [
+							'unit' => 'px',
+							'size' => $config['advanced']['vertical_offset_default'],
 						],
-					],
-					'default' => [
-						'unit' => 'px',
-						'size' => $config['advanced']['vertical_offset_default'],
-					],
-					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-					'selectors' => [
-						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-vertical-offset: {{SIZE}}{{UNIT}}',
-					],
-				]
-			);
+						'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+						'selectors' => [
+							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-vertical-offset: {{SIZE}}{{UNIT}}',
+						],
+					]
+				);
+			}
 
 			if ( $config['advanced']['has_mobile_full_width'] ) {
 				$this->add_control(
