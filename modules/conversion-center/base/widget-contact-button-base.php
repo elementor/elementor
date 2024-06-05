@@ -730,8 +730,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::EMAIL,
 					],
 				],
-				]
-			);
+			],
+		);
 
 		$repeater->add_control(
 			'contact_icon_mail_subject',
