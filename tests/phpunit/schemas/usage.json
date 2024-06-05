@@ -1073,7 +1073,8 @@
 								"font_display": "swap"
 							},
 							"performance": {
-								"css_print_method": "internal"
+								"css_print_method": "internal",
+								"optimized_css_loading": "1"
 							},
 							"experiments": {
 								"landing-pages": {
