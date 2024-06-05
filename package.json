@@ -119,7 +119,7 @@
 	},
 	"dependencies": {
 		"@elementor/editor": "0.10.11",
-		"@elementor/editor-app-bar": "0.12.0",
+		"@elementor/editor-app-bar": "0.13.0",
 		"@elementor/editor-app-bar-ui": "0.3.0",
 		"@elementor/editor-documents": "0.11.0",
 		"@elementor/editor-panels": "0.4.12",
