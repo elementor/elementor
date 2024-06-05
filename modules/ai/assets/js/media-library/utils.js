@@ -13,6 +13,7 @@ export const AIMedia = ( { onClose, imageId } ) => {
 				getControlValue={ () => image.attributes }
 				setControlValue={ () => {} }
 				onClose={ onClose }
+				isRTL={ elementorCommon.config.isRTL }
 				additionalOptions={ {
 					location: LOCATIONS.IMAGE_TOOLS,
 				} }

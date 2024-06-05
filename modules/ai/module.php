@@ -346,14 +346,15 @@ class Module extends BaseModule {
 
 		return $app->get_remote_config();
 	}
-
-	private function verify_permissions( $editor_post_id ) {
+	public function verify_upload_permissions() {
 		$referer = wp_get_referer();
 
 		if ( str_contains( $referer, 'wp-admin/upload.php' ) && current_user_can( 'upload_files' ) ) {
 			return true;
 		}
-
+		return false;
+	}
+	private function verify_permissions( $editor_post_id ) {
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
 		if ( ! $document ) {
@@ -366,7 +367,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_prompt_enhancer( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
@@ -583,7 +586,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_text_to_image( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
@@ -610,7 +615,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
@@ -645,7 +652,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_upscale( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
@@ -679,7 +688,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_replace_background( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
@@ -713,7 +724,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_remove_background( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
@@ -741,7 +754,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_mask( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
@@ -783,7 +798,9 @@ class Module extends BaseModule {
 		];
 	}
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if (!$this->verify_upload_permissions()) {
+			$this->verify_permissions($data['editor_post_id']);
+		}
 
 		$app = $this->get_ai_app();
 
