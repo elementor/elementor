@@ -119,7 +119,7 @@
 	},
 	"dependencies": {
 		"@elementor/editor": "0.10.11",
-		"@elementor/editor-app-bar": "0.12.0",
+		"@elementor/editor-app-bar": "^0.14.0",
 		"@elementor/editor-app-bar-ui": "0.3.0",
 		"@elementor/editor-documents": "0.11.0",
 		"@elementor/editor-panels": "0.4.12",
@@ -131,7 +131,7 @@
 		"@elementor/locations": "0.7.2",
 		"@elementor/query": "0.2.0",
 		"@elementor/store": "0.8.2",
-		"@elementor/ui": "1.8.2",
+		"@elementor/ui": "^1.10.0",
 		"@lodder/grunt-postcss": "^3.1.1",
 		"@reach/router": "1.3.4",
 		"@reduxjs/toolkit": "^1.8.3",
