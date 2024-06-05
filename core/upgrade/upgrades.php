@@ -1010,4 +1010,20 @@ class Upgrades {
 
 		update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 	}
+
+	/**
+	 * Move experiment to settings page.
+	 */
+	public static function _v_3_23_0_move_experiment_to_settings_page() {
+		$experiment_value = get_option( 'elementor_experiment-e_optimized_css_loading' );
+
+		if ( ! $experiment_value ) {
+			return;
+		}
+
+		$setting_value = 'inactive' === $experiment_value ? '0' : '1';
+
+		add_option( 'elementor_optimized_css_loading', $setting_value );
+		delete_option( 'elementor_experiment-e_optimized_css_loading' );
+	}
 }

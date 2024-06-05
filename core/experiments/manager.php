@@ -343,6 +343,8 @@ class Manager extends Base_Object {
 				esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
+			static::TYPE_HIDDEN => true,
+			'mutable' => false,
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
