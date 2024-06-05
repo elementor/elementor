@@ -367,7 +367,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_prompt_enhancer( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -586,7 +586,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_text_to_image( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -615,7 +615,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -652,7 +652,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_upscale( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -688,7 +688,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_replace_background( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -724,7 +724,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_remove_background( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -754,7 +754,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_mask( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
@@ -798,7 +798,7 @@ class Module extends BaseModule {
 		];
 	}
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
-		if (!$this->verify_upload_permissions()) {
+		if ( ! $this->verify_upload_permissions() ) {
 			$this->verify_permissions($data['editor_post_id']);
 		}
 
