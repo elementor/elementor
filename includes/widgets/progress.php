@@ -73,6 +73,10 @@ class Widget_Progress extends Widget_Base {
 		return [ 'progress', 'bar' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register progress widget controls.
 	 *

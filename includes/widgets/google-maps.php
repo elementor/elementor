@@ -88,6 +88,10 @@ class Widget_Google_Maps extends Widget_Base {
 		return [ 'google', 'map', 'embed', 'location' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register google maps widget controls.
 	 *
@@ -116,7 +120,7 @@ class Widget_Google_Maps extends Widget_Base {
 						'content' => sprintf(
 							/* translators: 1: Integration settings link open tag, 2: Create API key link open tag, 3: Link close tag. */
 							esc_html__( 'Set your Google Maps API Key in Elementor\'s %1$sIntegrations Settings%3$s page. Create your key %2$shere.%3$s', 'elementor' ),
-							'<a href="' . Settings::get_url() . '#tab-integrations" target="_blank">',
+							'<a href="' . Settings::get_settings_tab_url( 'integrations' ) . '" target="_blank">',
 							'<a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">',
 							'</a>'
 						),

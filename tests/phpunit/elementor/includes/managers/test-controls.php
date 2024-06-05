@@ -34,7 +34,6 @@ class Test_Controls extends Elementor_Test_Base {
 
 	public function test_get_responsive_control_device_suffix_tablet() {
 		$device_suffix = Controls_Manager::get_responsive_control_device_suffix( static::$responsive_control_tablet_mock );
-
 		$this->assertEquals( '_tablet', $device_suffix );
 	}
 
@@ -56,6 +55,46 @@ class Test_Controls extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNull( Plugin::$instance->controls_manager->get_stacks( $widget->get_unique_name() ) );
+	}
+
+	/**
+	 *
+	 * @expectedIncorrectUsage Elementor\Controls_Manager::add_control_to_stack
+	 */
+	public function test_control_not_added_if_min_value_greather_than_default_items() {
+		$control_data = [
+			'type'=> Controls_Manager::REPEATER,
+			'tab'=>'content',
+			'section'=>'section_repeat',
+			'label'=>'Repeater Type',
+			'min_items' => 2,
+		];
+
+		$widget = new Mock_Widget( [
+			'settings' => [],
+			'id' => '1',
+		], [] );
+
+		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
+
+		$this->assertFalse( $added );
+
+		$control_data['default'] = [
+			['key' => 'value'],
+		];
+
+		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
+
+		$this->assertFalse( $added );
+
+		$control_data['default'] = [
+			['key' => 'value'],
+			['key' => 'value'],
+		];
+
+		$added = Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'repeater_test', $control_data );
+
+		$this->assertTrue( $added );
 	}
 
 	public function test_clear_stack_cache() {

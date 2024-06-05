@@ -4,7 +4,7 @@ import ImageCarousel from '../../../../../../../pages/widgets/image-carousel';
 
 test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+		editor = await wpAdmin.openNewPage();
 	const imageCarousel = new ImageCarousel( page, testInfo );
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
@@ -15,7 +15,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo )
 
 	// Set Image carousel settings
 	await page.click( '#elementor-controls >> text=Image Carousel' );
-	await page.selectOption( '.elementor-control-slides_to_show >> select', '1' );
+	await editor.setSelectControlValue( 'slides_to_show', '1' );
 
 	const widget = await editor.getPreviewFrame().waitForSelector( '.elementor-image-carousel' );
 	const widgetImages = await widget.$$( '.swiper-slide >> img' );

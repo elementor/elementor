@@ -57,6 +57,12 @@ class Loader extends Module {
 		foreach ( $assets_data as $assets_type => $assets_list ) {
 			foreach ( $assets_list as $asset_name ) {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
+
+				if ( 'scripts' === $assets_type ) {
+					wp_enqueue_script( $asset_name );
+				} else {
+					wp_enqueue_style( $asset_name );
+				}
 			}
 		}
 	}
@@ -75,14 +81,16 @@ class Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
+	/**
+	 * @deprecated 3.22.0
+	 */
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
-		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 
 		foreach ( $assets as $assets_type => $assets_type_data ) {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
-				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode || ! $is_optimized_assets_loading ) {
+				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else {

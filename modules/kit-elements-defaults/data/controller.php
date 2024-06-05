@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\Data;
 
+use Elementor\Core\Frontend\Performance;
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Modules\KitElementsDefaults\Utils\Settings_Sanitizer;
 use Elementor\Plugin;
@@ -37,17 +38,23 @@ class Controller extends Base_Controller {
 					return is_array( $settings );
 				},
 				'sanitize_callback' => function( $settings, \WP_REST_Request $request ) {
+					Performance::set_use_style_controls( true );
+
 					$sanitizer = new Settings_Sanitizer(
 						Plugin::$instance->elements_manager,
 						array_keys( Plugin::$instance->widgets_manager->get_widget_types() )
 					);
 
-					return $sanitizer
+					$sanitized_data = $sanitizer
 						->for( $request->get_param( 'type' ) )
 						->using( $settings )
 						->remove_invalid_settings()
 						->kses_deep()
 						->get();
+
+					Performance::set_use_style_controls( false );
+
+					return $sanitized_data;
 				},
 			],
 		] );

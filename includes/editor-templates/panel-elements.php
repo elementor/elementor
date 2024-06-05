@@ -9,10 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements">
+	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets()) { #>
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
 		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo esc_html__( 'Elements', 'elementor' ); ?></button>
 		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></button>
 	</div>
+	<# } #>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-notice-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
@@ -28,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	] );
 	$promotion_data_sticky = [
 		'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
-		'message' => __( 'Access all Pro widgets. ', 'elementor' ),
+		'message' => __( 'Access all Pro widgets.', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	];
 	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data_sticky, 'elementor/editor/panel/get_pro_details-sticky', 'url' );
@@ -42,7 +44,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( ! $has_pro ) : ?>
 	<div id="elementor-panel-get-pro-elements-sticky">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
-		<div class="elementor-get-pro-sticky-message"><?php echo esc_html( $promotion_data_sticky['message'] ); ?><a target="_blank" href="<?php echo esc_url( $promotion_data_sticky['url'] ); ?>"><?php echo esc_html( $promotion_data_sticky['button_text'] ); ?></a></div>
+		<div class="elementor-get-pro-sticky-message">
+			<?php echo esc_html( $promotion_data_sticky['message'] ); ?>
+			<a target="_blank" href="<?php echo esc_url( $promotion_data_sticky['url'] ); ?>"><?php echo esc_html( $promotion_data_sticky['button_text'] ); ?></a>
+		</div>
 	</div>
 	<?php endif; ?>
 </script>

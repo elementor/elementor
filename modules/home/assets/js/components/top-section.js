@@ -5,12 +5,11 @@ import YoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ...props } ) => {
 	return (
-		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 } } }>
-			<Stack gap={ 3 }>
+		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 } } }>
+			<Stack gap={ 3 } justifyContent="center">
 				<Box>
-					<Typography variant="body2">{ props.topData.title_small }</Typography>
 					<Typography variant="h6">{ props.topData.title }</Typography>
-					<Typography variant="body2" >{ props.topData.description }</Typography>
+					<Typography variant="body2" color="secondary">{ props.topData.description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
 					<Button variant="contained" size="small" href={ props.createNewPageUrl } target="_blank">{ props.topData.button_create_page_title }</Button>

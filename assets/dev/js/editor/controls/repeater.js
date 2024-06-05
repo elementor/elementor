@@ -98,12 +98,40 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	toggleMinRowsClass() {
-		if ( ! this.model.get( 'prevent_empty' ) ) {
+	toggleClasses() {
+		this.toggleMinRowsClass();
+		this.toggleMaxRowsClass();
+	},
+
+	toggleMaxRowsClass() {
+		const maxItems = this.model.get( 'max_items' );
+		if ( ! maxItems || ! Number.isInteger( maxItems ) ) {
 			return;
 		}
 
-		this.$el.toggleClass( 'elementor-repeater-has-minimum-rows', 1 >= this.collection.length );
+		this.$el.toggleClass( 'elementor-repeater-has-maximum-rows', maxItems <= this.collection.length );
+	},
+
+	getMinItems() {
+		let minItems = 0;
+
+		if ( this.model.get( 'min_items' ) && Number.isInteger( this.model.get( 'min_items' ) ) ) {
+			minItems = this.model.get( 'min_items' );
+		} else if ( this.model.get( 'prevent_empty' ) ) {
+			minItems = 1;
+		}
+
+		return minItems;
+	},
+
+	toggleMinRowsClass() {
+		const minItems = this.getMinItems();
+
+		if ( ! minItems ) {
+			return;
+		}
+
+		this.$el.toggleClass( 'elementor-repeater-has-minimum-rows', minItems >= this.collection.length );
 	},
 
 	updateActiveRow() {
@@ -142,7 +170,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			this.ui.fieldContainer.sortable( this.getSortableParams() );
 		}
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onSortStart( event, ui ) {
@@ -187,6 +215,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	onAddChild() {
 		this.updateChildIndexes();
 		this.updateActiveRow();
+		this.toggleClasses();
 	},
 
 	/**
@@ -250,7 +279,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 
 		this.editRow( newChild );
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickRemove( childView ) {
@@ -267,7 +296,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 		this.updateChildIndexes();
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickDuplicate( childView ) {
@@ -277,7 +306,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			index: childView._index,
 		} );
 
-		this.toggleMinRowsClass();
+		this.toggleClasses();
 	},
 
 	onChildviewClickEdit( childView ) {

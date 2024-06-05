@@ -48,6 +48,7 @@ class Module extends BaseModule {
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
+				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
 				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
 				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
 				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
@@ -102,6 +103,41 @@ class Module extends BaseModule {
 			}
 		} );
 
+		add_action( 'enqueue_block_editor_assets', function() {
+			wp_enqueue_script( 'elementor-ai-gutenberg',
+				$this->get_js_assets_url( 'ai-gutenberg' ),
+				[
+					'jquery',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
+				],
+			ELEMENTOR_VERSION, true );
+
+			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+
+			$config = [
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+				'client_session_id' => $session_id,
+			];
+
+			if ( $this->get_ai_app()->is_connected() ) {
+				$usage = $this->get_ai_app()->get_usage( 'gutenberg-loader', $session_id );
+
+				if ( ! is_wp_error( $usage ) ) {
+					$config['usage'] = $usage;
+				}
+			}
+
+			wp_localize_script(
+				'elementor-ai-gutenberg',
+				'ElementorAiConfig',
+				$config
+			);
+
+			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
+		});
+
 		add_filter( 'elementor/document/save/data', function ( $data ) {
 			if ( $this->is_layout_active() ) {
 				return $this->remove_temporary_containers( $data );
@@ -144,14 +180,20 @@ class Module extends BaseModule {
 			true
 		);
 
+		$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
+			'client_session_id' => $session_id,
 		];
 
 		if ( $this->get_ai_app()->is_connected() ) {
-			// Use a cached version, don't call the API on every editor load.
-			$config['usage'] = $this->get_ai_app()->get_cached_usage();
+			$usage = $this->get_ai_app()->get_usage( 'elementor-loader', $session_id );
+
+			if ( ! is_wp_error( $usage ) ) {
+				$config['usage'] = $usage;
+			}
 		}
 
 		wp_localize_script(
@@ -250,7 +292,7 @@ class Module extends BaseModule {
 			];
 		}
 
-		$user_usage = wp_parse_args( $app->get_usage(), [
+		$user_usage = wp_parse_args( $app->get_usage( 'elementor-editor', $data['editor_session_id'] ), [
 			'hasAiSubscription' => false,
 			'usedQuota' => 0,
 			'quota' => 100,
@@ -280,7 +322,7 @@ class Module extends BaseModule {
 			throw new \Exception( 'Document not found' );
 		}
 
-		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+		if ( ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied' );
 		}
 	}
@@ -297,8 +339,9 @@ class Module extends BaseModule {
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_prompt_enhanced( $data['prompt'] );
+		$result = $app->get_image_prompt_enhanced( $data['prompt'], [], $request_ids );
 		$this->throw_on_error( $result );
 
 		return [
@@ -326,6 +369,32 @@ class Module extends BaseModule {
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
+		$this->throw_on_error( $result );
+
+		return [
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+
+	public function ajax_ai_get_excerpt( $data ): array {
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['content'] ) ) {
+			throw new \Exception( 'Missing content' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'Not connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_excerpt( $data['payload']['content'], $context, $request_ids );
 		$this->throw_on_error( $result );
 
 		return [
@@ -507,10 +576,6 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['payload']['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
-
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
@@ -667,7 +732,6 @@ class Module extends BaseModule {
 
 		$result = $app->get_image_to_image_mask( [
 			'prompt' => $data['payload']['prompt'],
-			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
 			'mask' => $data['payload']['mask'],
 		], $context, $request_ids );
@@ -685,10 +749,6 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['payload']['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
-
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
@@ -700,8 +760,10 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_out_painting( [
-			'prompt' => $data['payload']['prompt'],
+			'size' => $data['payload']['size'],
+			'position' => $data['payload']['position'],
 			'mask' => $data['payload']['mask'],
+			'image_base64' => $data['payload']['image_base64'],
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
@@ -755,7 +817,7 @@ class Module extends BaseModule {
 
 		$result = $app->generate_layout(
 			$data,
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context( $data )
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -828,7 +890,7 @@ class Module extends BaseModule {
 		$result = $app->get_layout_prompt_enhanced(
 			$data['prompt'],
 			$data['enhance_type'],
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context( $data )
 		);
 
 		$this->throw_on_error( $result );
@@ -840,11 +902,12 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function prepare_generate_layout_context() {
+	private function prepare_generate_layout_context( $data ) {
+		$request_context = $this->get_request_context( $data );
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( ! $kit ) {
-			return [];
+			return $request_context;
 		}
 
 		$kits_data = Collection::make( $kit->get_data()['settings'] ?? [] );
@@ -899,12 +962,12 @@ class Module extends BaseModule {
 				];
 			} );
 
-		return [
-			'globals' => [
-				'colors' => $colors->all(),
-				'typography' => $typography->all(),
-			],
+		$request_context['globals'] = [
+			'colors' => $colors->all(),
+			'typography' => $typography->all(),
 		];
+
+		return $request_context;
 	}
 
 	private function upload_image( $image_url, $image_title, $parent_post_id = 0 ) {

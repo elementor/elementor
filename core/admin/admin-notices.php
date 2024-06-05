@@ -6,6 +6,7 @@ use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
@@ -28,6 +29,7 @@ class Admin_Notices extends Module {
 		'role_manager_promote',
 		'experiment_promotion',
 		'design_not_appearing',
+		'plugin_image_optimization',
 	];
 
 	private $elementor_pages_count = null;
@@ -349,8 +351,7 @@ class Admin_Notices extends Module {
 		$experiments = Plugin::$instance->experiments;
 		$is_all_performance_features_active = (
 			$experiments->is_feature_active( 'additional_custom_breakpoints' ) &&
-			$experiments->is_feature_active( 'e_optimized_css_loading' ) &&
-			$experiments->is_feature_active( 'e_optimized_assets_loading' )
+			$experiments->is_feature_active( 'e_optimized_css_loading' )
 		);
 
 		if ( $is_all_performance_features_active ) {
@@ -363,7 +364,7 @@ class Admin_Notices extends Module {
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Try it out', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=elementor#tab-experiments' ),
+				'url' => Settings::get_settings_tab_url( 'experiments' ),
 				'type' => 'cta',
 			],
 			'button_secondary' => [
@@ -423,6 +424,65 @@ class Admin_Notices extends Module {
 	// For testing purposes
 	public function get_elementor_version() {
 		return ELEMENTOR_VERSION;
+	}
+
+	private function notice_plugin_image_optimization() {
+		$notice_id = 'plugin_image_optimization';
+
+		if ( 'upload' !== $this->current_screen_id ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$attachments = new \WP_Query( [
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+			'fields' => 'ids',
+		] );
+
+		if ( 1 > $attachments->found_posts ) {
+			return false;
+		}
+
+		$plugin_file_path = 'image-optimization/image-optimization.php';
+		$plugin_slug = 'image-optimization';
+
+		if ( is_plugin_active( $plugin_file_path ) ) {
+			return false;
+		}
+
+		if ( $this->is_plugin_installed( $plugin_file_path ) ) {
+			$url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_file_path );
+			$cta_text = esc_html__( 'Activate Plugin', 'elementor' );
+		} else {
+			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ), 'install-plugin_' . $plugin_slug );
+			$cta_text = esc_html__( 'Install Plugin', 'elementor' );
+		}
+
+		$options = [
+			'title' => esc_html__( 'Speed up your website with Image Optimizer by Elementor', 'elementor' ),
+			'description' => esc_html__( 'Automatically compress and optimize images, resize larger files, or convert to WebP. Optimize images individually, in bulk, or on upload.', 'elementor' ),
+			'id' => $notice_id,
+			'type' => 'cta',
+			'button_secondary' => [
+				'text' => $cta_text,
+				'url' => $url,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function is_plugin_installed( $file_path ): bool {
+		$installed_plugins = get_plugins();
+
+		return isset( $installed_plugins[ $file_path ] );
 	}
 
 	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDED_PAGES ) {
