@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import App from '../editor/app';
+import { IMAGE_PROMPT_CATEGORIES } from '../editor/pages/form-media/constants';
 
 const AIMedia = ( { onClose } ) => {
 	return (
@@ -13,7 +14,9 @@ const AIMedia = ( { onClose } ) => {
 				getControlValue={ () => {} }
 				setControlValue={ () => {} }
 				onClose={ onClose }
-				isRTL={ elementorCommon.config.isRTL }
+				additionalOptions={ {
+					defaultImageType: Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
+				} }
 			/>
 		</>
 	);
