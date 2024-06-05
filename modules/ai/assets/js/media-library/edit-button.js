@@ -6,14 +6,13 @@ import { AIMedia, getImageId } from './utils';
 
 const Icon = styled.i`
 	color: #C00BB9;
-	padding-right: 0.5em;
+	padding-inline-end: 0.5em;
 	cursor: pointer;
 `;
 
 const StyledButton = styled.a`
 	font: inherit;
 	display: inline-block;
-	text-decoration: none;
 	font-size: 13px;
 	line-height: 2.15384615;
 	padding: 0 10px;
@@ -21,8 +20,6 @@ const StyledButton = styled.a`
 	border-width: 1px;
 	border-style: solid;
 	border-radius: 3px;
-	white-space: nowrap;
-	box-sizing: border-box;
 	background: #f6f7f7;
 	color: #C00BB9;
 
