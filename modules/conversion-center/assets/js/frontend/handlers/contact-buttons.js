@@ -116,8 +116,8 @@ export default class ContactButtonsHandler extends Base {
 			this.elements.content.classList.add( visible );
 		}
 		this.elements.contentWrapper.classList.remove( hidden );
-		this.elements.chatButton.setAttribute( 'aria-hidden', 'true' );
-		this.elements.closeButton.setAttribute( 'aria-hidden', 'false' );
+		this.elements.chatButton.setAttribute( 'aria-expanded', 'false' );
+		this.elements.closeButton.setAttribute( 'aria-expanded', 'true' );
 	}
 
 	closeChatBox() {
@@ -129,8 +129,8 @@ export default class ContactButtonsHandler extends Base {
 			this.elements.content.classList.remove( visible );
 		}
 		this.elements.contentWrapper.classList.add( hidden );
-		this.elements.chatButton.setAttribute( 'aria-hidden', 'false' );
-		this.elements.closeButton.setAttribute( 'aria-hidden', 'true' );
+		this.elements.chatButton.setAttribute( 'aria-expanded', 'true' );
+		this.elements.closeButton.setAttribute( 'aria-expanded', 'false' );
 	}
 
 	onChatButtonClick() {
