@@ -537,7 +537,9 @@ class Frontend extends App {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$frontend_file_name = 'frontend-lite' . $direction_suffix . $min_suffix . '.css';
+		$frontend_base_file_name = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
+
+		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
@@ -1523,5 +1525,11 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
+	}
+
+	private function is_optimized_css_mode() {
+		$is_optimized_css_loading = '1' === get_option( 'elementor_optimized_css_loading', '1' );
+
+		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}
 }

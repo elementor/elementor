@@ -1229,8 +1229,9 @@ abstract class Widget_Base extends Element_Base {
 		if ( null === $is_active ) {
 			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 			$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+			$is_optimized_mode = '1' === get_option( 'elementor_optimized_css_loading', '1' );
 
-			$is_active = ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode ) ? false : true;
+			$is_active = ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode|| ! $is_optimized_mode ) ? false : true;
 		}
 
 		return $is_active;
