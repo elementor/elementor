@@ -334,6 +334,7 @@ class Manager extends Base_Object {
 	}
 
 	private function add_default_features() {
+		/* TODO: Moved to settings in 3.23, should be delete in 3.25. */
 		$this->add_feature( [
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
