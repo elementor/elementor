@@ -411,6 +411,18 @@ class Settings extends Settings_Page {
 										. '</div>',
 								],
 							],
+							'optimized_css_loading' => [
+								'label' => esc_html__( 'Optimized CSS Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Reduce the CSS files size by conditionally loading only CSS files for widgets that are used on the page.', 'elementor' ),
+								],
+							],
 							'optimized_image_loading' => [
 								'label' => esc_html__( 'Optimized Image Loading', 'elementor' ),
 								'field_args' => [
@@ -438,18 +450,6 @@ class Settings extends Settings_Page {
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
 									'desc' => esc_html__( 'Reduce unnecessary render-blocking loads by dequeuing unused Gutenberg block editor scripts and styles.', 'elementor' ),
-								],
-							],
-							'optimized_css_loading' => [
-								'label' => esc_html__( 'Improved CSS Loading', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => '1',
-									'options' => [
-										'1' => esc_html__( 'Enable', 'elementor' ),
-										'0' => esc_html__( 'Disable', 'elementor' ),
-									],
-									'desc' => esc_html__( 'The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
 								],
 							],
 						],
