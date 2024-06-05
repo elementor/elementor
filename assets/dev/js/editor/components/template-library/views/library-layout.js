@@ -12,6 +12,11 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
 		return {
 			id: 'elementor-template-library-modal',
+			hide: {
+				onOutsideClick: elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
+				onBackgroundClick: elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
+				onEscKeyPress: elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
+			},
 		};
 	},
 
