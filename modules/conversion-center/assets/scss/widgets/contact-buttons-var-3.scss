@@ -8,6 +8,10 @@
     --e-contact-buttons-icon-link-gap: 12px;
     --e-contact-buttons-icon-link-spacing: 8px;
     --e-contact-buttons-icon-link-divider-weight: 1px;
+    --e-contact-buttons-send-button-padding-block-end: 8px;
+	--e-contact-buttons-send-button-padding-block-start: 8px;
+	--e-contact-buttons-send-button-padding-inline-end: 16px;
+	--e-contact-buttons-send-button-padding-inline-start: 16px;
 
     --e-contact-buttons-button-bg: #324A6D;
 	--e-contact-buttons-button-bg-hover: #1C2448;
@@ -18,6 +22,10 @@
     --e-contact-buttons-icon-link-text-color: #1C2448;
     --e-contact-buttons-icon-link-text-color-hover: #324A6D;
     --e-contact-buttons-icon-link-divider-color: #324A6D;
+    --e-contact-buttons-send-button-text: #ffffff;
+    --e-contact-buttons-send-button-text-hover: #ffffff;
+    --e-contact-buttons-send-button-bg: #467FF7;
+    --e-contact-buttons-send-button-bg-hover: #324A6D;
 
     width: auto;
 
@@ -74,8 +82,7 @@
 
         &__top-bar {
             background-color: var(--e-contact-buttons-chat-box-bg);
-            padding: 16px;
-            padding-block-end: 20px;
+            padding: 16px 16px 20px;
 
             .e-contact-buttons__close-button {
                 background: none;
@@ -101,11 +108,15 @@
             line-height: 18px;
         }
 
+        &__links-container {
+            padding: 0 16px 16px;
+        }
+
         &__links {
             background-color: var(--e-contact-buttons-chat-box-bg);
             display: flex;
             flex-direction: column;
-            padding-inline: 32px;
+            padding-inline: 16px;
             padding-block-end: 20px;
         }
 
@@ -186,6 +197,27 @@
                         display: none;
                     }
                 }
+            }
+        }
+
+        &__cta-button {
+            background-color: var(--e-contact-buttons-send-button-bg);
+            border-radius: 5px;
+            color: var(--e-contact-buttons-send-button-text);
+            display: flex;
+            font-size: 16px;
+            font-weight: 500;
+            justify-content: center;
+            line-height: 24px;
+            padding-block-start: var(--e-contact-buttons-send-button-padding-block-start);
+            padding-block-end: var(--e-contact-buttons-send-button-padding-block-end);
+            padding-inline-start: var(--e-contact-buttons-send-button-padding-inline-start);
+            padding-inline-end: var(--e-contact-buttons-send-button-padding-inline-end);
+
+            &:hover,
+            &:focus {
+                background-color: var(--e-contact-buttons-send-button-bg-hover);
+                color: var(--e-contact-buttons-send-button-text-hover);
             }
         }
     }

@@ -126,6 +126,13 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 					],
 				],
+				'send_button_section' => [
+					'section_name' => esc_html__( 'Send Button', 'elementor' ),
+					'has_link' => false,
+					'text' => [
+						'default' => esc_html__( 'Click to start chat', 'elementor' ),
+					]
+				]
 			],
 			'style' => [
 				'has_platform_colors' => true,
@@ -160,6 +167,13 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_icon_bg_color' => true,
 					'has_button_bar' => false,
 					'has_tabs' => true,
+				],
+				'send_button_section' => [
+					'has_platform_colors' => true,
+					'has_icon_color' => true,
+					'has_background_color' => true,
+					'has_text_color' => false,
+					'has_typography' => false,
 				],
 				'chat_box_section' => [
 					'section_name' => esc_html__( 'Chat Box', 'elementor' ),
@@ -865,7 +879,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'fields' => $repeater->get_controls(),
 				'title_field' => $this->get_icon_title_field(),
 				'prevent_empty' => true,
-				'button_text' => esc_html__( 'Add Icon', 'elementor' ),
+				'button_text' => esc_html__( 'Add Item', 'elementor' ),
 				'default' => $config['content']['contact_section']['default'],
 			]
 		);
@@ -888,11 +902,13 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 JS;
 	}
 
-	private function add_send_button_section(): void {
+	protected function add_send_button_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'send_button_section',
 			[
-				'label' => esc_html__( 'Send Button', 'elementor' ),
+				'label' => $config['content']['send_button_section']['section_name'],
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -902,10 +918,34 @@ JS;
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Click to start chat', 'elementor' ),
+				'default' => $config['content']['send_button_section']['text']['default'],
 				'placeholder' => esc_html__( 'Type your text here', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
+
+		if ( $config['content']['send_button_section']['has_link'] ) {
+			$this->add_control(
+				'send_button_url',
+				[
+					'label' => esc_html__( 'Link', 'elementor' ),
+					'type' => Controls_Manager::URL,
+					'dynamic' => [
+						'active' => true,
+					],
+					'ai' => [
+						'active' => false,
+					],
+					'autocomplete' => true,
+					'label_block' => true,
+				],
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -2206,19 +2246,29 @@ JS;
 			]
 		);
 
-		// YOU ARE HERE
-
 		$this->end_controls_section();
 	}
 
 	protected function add_style_send_button_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'style_send_section',
 			[
-				'label' => esc_html__( 'Send Button', 'elementor' ),
+				'label' => $config['content']['send_button_section']['section_name'],
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
+
+		if ( $config['style']['send_button_section']['has_typography'] ) {
+			$this->add_group_control(
+				Group_Control_Typography::get_type(),
+				[
+					'name' => 'style_send_typography',
+					'selector' => '{{WRAPPER}} .e-contact-buttons__cta-button',
+				]
+			);
+		}
 
 		$this->start_controls_tabs(
 			'style_send_tabs'
@@ -2231,46 +2281,65 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_send_normal_colors',
-			[
-				'label' => esc_html__( 'Colors', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'custom'  => esc_html__( 'Custom', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['style']['send_button_section']['has_platform_colors'] ) {
+			$this->add_control(
+				'style_send_normal_colors',
+				[
+					'label' => esc_html__( 'Colors', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => [
+						'default' => esc_html__( 'Default', 'elementor' ),
+						'custom'  => esc_html__( 'Custom', 'elementor' ),
+					],
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_send_normal_icon_color',
-			[
-				'label' => esc_html__( 'Icon Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon: {{VALUE}}',
-				],
-				'condition' => [
-					'style_send_normal_colors' => 'custom',
-				],
-			]
-		);
+		if ( $config['style']['send_button_section']['has_icon_color'] ) {
+			$this->add_control(
+				'style_send_normal_icon_color',
+				[
+					'label' => esc_html__( 'Icon Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon: {{VALUE}}',
+					],
+					'condition' => [
+						'style_send_normal_colors' => 'custom',
+					]
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_send_normal_background_color',
-			[
-				'label'     => esc_html__( 'Background Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg: {{VALUE}}',
-				],
-				'condition' => [
-					'style_send_normal_colors' => 'custom',
-				],
-			]
-		);
+		if ( $config['style']['send_button_section']['has_text_color'] ) {
+			$this->add_control(
+				'style_send_normal_text_color',
+				[
+					'label'     => esc_html__( 'Text Color', 'elementor' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-text: {{VALUE}}',
+					],
+				]
+			);
+		}
+
+		if ( $config['style']['send_button_section']['has_background_color'] ) {
+			$this->add_control(
+				'style_send_normal_background_color',
+				[
+					'label'     => esc_html__( 'Background Color', 'elementor' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg: {{VALUE}}',
+					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_send_normal_colors' => 'custom',
+					] ),
+				]
+			);
+		}
 
 		$this->end_controls_tab();
 
@@ -2281,46 +2350,65 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_send_hover_colors',
-			[
-				'label'   => esc_html__( 'Colors', 'elementor' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'custom'  => esc_html__( 'Custom', 'elementor' ),
-				],
-			]
-		);
+		if ( $config['style']['send_button_section']['has_platform_colors'] ) {
+			$this->add_control(
+				'style_send_hover_colors',
+				[
+					'label'   => esc_html__( 'Colors', 'elementor' ),
+					'type'    => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => [
+						'default' => esc_html__( 'Default', 'elementor' ),
+						'custom'  => esc_html__( 'Custom', 'elementor' ),
+					],
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_send_hover_icon_color',
-			[
-				'label'     => esc_html__( 'Icon Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon-hover: {{VALUE}}',
-				],
-				'condition' => [
-					'style_send_hover_colors' => 'custom',
-				],
-			]
-		);
+		if ( $config['style']['send_button_section']['has_icon_color'] ) {
+			$this->add_control(
+				'style_send_hover_icon_color',
+				[
+					'label'     => esc_html__( 'Icon Color', 'elementor' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon-hover: {{VALUE}}',
+					],
+					'condition' => [
+						'style_send_hover_colors' => 'custom',
+					]
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_send_hover_background_color',
-			[
-				'label'     => esc_html__( 'Background Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg-hover: {{VALUE}}',
-				],
-				'condition' => [
-					'style_send_hover_colors' => 'custom',
-				],
-			]
-		);
+		if ( $config['style']['send_button_section']['has_text_color'] ) {
+			$this->add_control(
+				'style_send_hover_text_color',
+				[
+					'label'     => esc_html__( 'Text Color', 'elementor' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-text-hover: {{VALUE}}',
+					],
+				]
+			);
+		}
+
+		if ( $config['style']['send_button_section']['has_background_color'] ) {
+			$this->add_control(
+				'style_send_hover_background_color',
+				[
+					'label'     => esc_html__( 'Background Color', 'elementor' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg-hover: {{VALUE}}',
+					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_send_hover_colors' => 'custom',
+					] ),
+				]
+			);
+		}
 
 		$this->add_control(
 			'style_send_hover_animation',
@@ -2334,6 +2422,27 @@ JS;
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'style_chat_button_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem' ],
+				'default' => [
+					'top' => '8',
+					'bottom' => '8',
+					'left' => '16',
+					'right' => '16',
+					'unit' => 'px',
+					'isLinked' => true,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-send-button-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-send-button-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-send-button-padding-inline-start: {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
 
 		$this->end_controls_section();
 	}
