@@ -1,7 +1,8 @@
 import React from 'react';
 import GenerateImageWithAI from './generate';
-import EditImageWithAI from './edit';
 import { createRoot } from '@wordpress/element';
+import EditImageWithAILink from './edit-link';
+import EditImageWithAIButton from './edit-button';
 
 const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
@@ -9,12 +10,13 @@ const insertStyleTag = () => {
 	const style = document.createElement( 'style' );
 	// Make sure the dropdowns in the images feature appear above the AI modal and the generate button placed correctly.
 	style.appendChild( document.createTextNode( `
+		#e-image-ai-attachment-details,
 		#e-image-ai-media-library {
 			display: inline-block;
 		}
-		// #menu- {
-		// 	z-index: 180000;
-		// }
+		#menu- {
+			z-index: 180000;
+		}
 	` ) );
 	document.head.appendChild( style );
 };
@@ -71,7 +73,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const content = document.createElement( 'div' );
 				content.innerHTML = html;
 
-				const details = content.querySelector( '.details' );
+				const details = content.querySelector( '.attachment-actions' );
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
@@ -81,8 +83,8 @@ const addEventListener = ( eventName, containerId, Component ) => {
 			},
 		} );
 	}
-	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', EditImageWithAI );
-	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', EditImageWithAI );
+	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', EditImageWithAILink );
+	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', EditImageWithAIButton );
 
 	insertStyleTag();
 } )();

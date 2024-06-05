@@ -40,7 +40,7 @@ const PageContent = (
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
-			// ZIndex: 170000, // Make sure the dialog is above wp attachment details view
+			zIndex: 170000, // Make sure the dialog is above wp attachment details view
 			'& .MuiDialog-container': {
 				alignItems: 'flex-start',
 				mt: 'media' === type ? '2.5vh' : '18vh',
