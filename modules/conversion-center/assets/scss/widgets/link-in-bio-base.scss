@@ -9,9 +9,14 @@
 	--e-link-in-bio-content-align-h: center;
 	--e-link-in-bio-content-align-v: center;
 	--e-link-in-bio-content-width: #{$link-in-bio-default-content-width};
+	--e-link-in-bio-full-height: 100vh;
 	--e-link-in-bio-gutter-block-end: 45px;
 	--e-link-in-bio-gutter-block-start: 38px;
 	--e-link-in-bio-gutter-inline: 40px;
+
+	@supports (height: 100dvh) {
+		--e-link-in-bio-full-height: 100dvh;
+	}
 
 	// Identity config - Cover
 	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
@@ -55,6 +60,14 @@
 	--e-link-in-bio-ctas-padding-inline-start: 20px;
 	--e-link-in-bio-ctas-text-color: #{$white};
 
+	// Image links config
+	--e-link-in-bio-image-links-border-color: transparent;
+	--e-link-in-bio-image-links-border-style: solid;
+	--e-link-in-bio-image-links-border-width: 0;
+	--e-link-in-bio-image-links-columns: 2;
+	--e-link-in-bio-image-links-gap: 10px;
+	--e-link-in-bio-image-links-height: auto;
+
 	// Background config
 	--background-overlay-opacity: 0.5;
 
@@ -76,42 +89,55 @@
 		--e-link-in-bio-border-style: solid;
 	}
 
-	@mixin full-height($breakpoint) {
-		@media (max-width: $breakpoint) {
-			--e-link-in-bio-container-height: 100vh;
+	@mixin full-height($min: null, $max: null) {
+		$query: null;
 
-			@supports (height: 100dvh) {
-				--e-link-in-bio-container-height: 100dvh;
-			}
+		@if $min != null and $max != null {
+			$query: "(min-width: " + $min + ") and (max-width: " + $max + ")";
+		} @else if $max != null {
+			$query: "(max-width: " + $max + ")";
+		} @else if $min != null {
+			$query: "(min-width: " + $min + ")";
+		}
+
+		@if $query != null {
+			@media #{$query} {
+				--e-link-in-bio-container-height: var(--e-link-in-bio-full-height, 100vh);
+			};
 		}
 	}
 
-	&.-is-full-height-mobile {
-		@include full-height($screen-mobile-max);
+	&.is-full-height-mobile {
+		@include full-height(null, $screen-mobile-max);
 	}
 
-	&.-is-full-height-mobile_extra {
-		@include full-height($screen-mobile-extra-max);
+	&.is-full-height-mobile_extra {
+		@include full-height($screen-mobile-extra-min, $screen-mobile-extra-max);
 	}
 
-	&.-is-full-height-tablet {
-		@include full-height($screen-tablet-max);
+	&.is-full-height-tablet {
+		@include full-height($screen-tablet-min, $screen-tablet-max);
 	}
 
-	&.-is-full-height-tablet_extra {
-		@include full-height($screen-tablet-extra-max);
+	&.is-full-height-tablet_extra {
+		@include full-height($screen-tablet-extra-min, $screen-tablet-extra-max);
 	}
 
-	&.-is-full-height-laptop {
-		@include full-height($screen-laptop-max);
+	&.is-full-height-laptop {
+		@include full-height($screen-laptop-min, $screen-laptop-max);
 	}
 
-	&.-is-full-height-desktop {
-		@include full-height($screen-desktop-max);
+	&.is-full-height-desktop {
+
+		@include full-height($screen-desktop-min, null);
+
+		&.is-full-height-widescreen {
+			@include full-height($screen-desktop-min, $screen-desktop-max);
+		}
 	}
 
-	&.-is-full-height-widescreen {
-		@include full-height(99999px);
+	&.is-full-height-widescreen {
+		@include full-height($screen-widescreen-min, null);
 	}
 
 	&.is-full-width {
@@ -119,6 +145,9 @@
 	}
 
 	&__bg {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
 		display: grid;
 		inset: 0;
 		position: absolute;
@@ -126,6 +155,9 @@
 	}
 
 	&__bg-overlay {
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
 		opacity: var(--background-overlay-opacity);
 	}
 
@@ -315,6 +347,40 @@
 			font-weight: 500;
 			line-height: 20px;
 			text-align: center;
+		}
+	}
+
+	&__image-links {
+		display: grid;
+		grid-template-columns: repeat(var(--e-link-in-bio-image-links-columns, 2), minmax(0, 1fr));
+		grid-template-rows: auto;
+		gap: var(--e-link-in-bio-image-links-gap);
+		margin-block-start: 24px;
+
+		&.has-1-columns {
+			--e-link-in-bio-image-links-columns: 1;
+			--e-link-in-bio-image-links-gap: 14px;
+		}
+
+		&.has-3-columns {
+			--e-link-in-bio-image-links-columns: 3;
+			--e-link-in-bio-image-links-gap: 5px;
+		}
+
+		.e-link-in-bio__image-links-link {
+			display: grid;
+		}
+
+		// Specificity required to override .elementor img defaults
+		img.e-link-in-bio__image-links-img {
+			aspect-ratio: 1;
+			border-color: var(--e-link-in-bio-image-links-border-color);
+			border-style: var(--e-link-in-bio-image-links-border-style);
+			border-width: var(--e-link-in-bio-image-links-border-width);
+			display: block;
+			height: var(--e-link-in-bio-image-links-height, auto);
+			object-fit: cover;
+			width: 100%;
 		}
 	}
 

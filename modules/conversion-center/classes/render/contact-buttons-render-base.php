@@ -47,6 +47,9 @@ abstract class Contact_Buttons_Render_Base {
 		$display_dot = $this->settings['chat_button_show_dot'] ?? '';
 		$button_size = $this->settings['style_chat_button_size'];
 		$hover_animation = $this->settings['style_button_color_hover_animation'];
+		$entrance_animation = $this->settings['style_chat_button_animation'];
+		$entrance_animation_duration = $this->settings['style_chat_button_animation_duration'];
+		$entrance_animation_delay = $this->settings['style_chat_button_animation_delay'];
 
 		$button_classnames = 'e-contact-buttons__chat-button e-contact-buttons__chat-button-shadow';
 
@@ -58,17 +61,29 @@ abstract class Contact_Buttons_Render_Base {
 			$button_classnames .= ' elementor-animation-' . $hover_animation;
 		}
 
+		if ( ! empty( $entrance_animation ) && 'none' != $entrance_animation ) {
+			$button_classnames .= ' has-entrance-animation';
+		}
+
+		if ( ! empty( $entrance_animation_delay ) ) {
+			$button_classnames .= ' has-entrance-animation-delay';
+		}
+
+		if ( ! empty( $entrance_animation_duration ) ) {
+			$button_classnames .= ' has-entrance-animation-duration-' . $entrance_animation_duration;
+		}
+
 		if ( 'yes' === $display_dot ) {
 			$button_classnames .= ' has-dot';
 		}
 
-		$this->widget->add_render_attribute( 'button-', [
+		$this->widget->add_render_attribute( 'button', [
 			'class' => $button_classnames,
 		] );
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
-			<button <?php echo $this->widget->get_render_attribute_string( 'button-' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Open Contact Buttons', 'elementor' ); ?>">
+			<button <?php echo $this->widget->get_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Open Contact Buttons', 'elementor' ); ?>">
 				<?php
 					$this->render_chat_button_icon();
 				?>
@@ -101,11 +116,11 @@ abstract class Contact_Buttons_Render_Base {
 			$profile_image_classnames .= ' has-dot';
 		}
 
-		$top_bar_name = $this->settings['top_bar_name'] ?? '';
 		$top_bar_title = $this->settings['top_bar_title'] ?? '';
+		$top_bar_subtitle = $this->settings['top_bar_subtitle'] ?? '';
 
-		$has_top_bar_name = ! empty( $top_bar_name );
 		$has_top_bar_title = ! empty( $top_bar_title );
+		$has_top_bar_subtitle = ! empty( $top_bar_subtitle );
 
 		$this->widget->add_render_attribute( 'profile-image', [
 			'class' => $profile_image_classnames,
@@ -130,11 +145,11 @@ abstract class Contact_Buttons_Render_Base {
 			</div>
 
 			<div class="e-contact-buttons__top-bar-details">
-				<?php if ( $has_top_bar_name ) { ?>
-					<p class="e-contact-buttons__top-bar-name"><?php echo esc_html( $top_bar_name ); ?></p>
-				<?php } ?>
 				<?php if ( $has_top_bar_title ) { ?>
 					<p class="e-contact-buttons__top-bar-title"><?php echo esc_html( $top_bar_title ); ?></p>
+				<?php } ?>
+				<?php if ( $has_top_bar_subtitle ) { ?>
+					<p class="e-contact-buttons__top-bar-subtitle"><?php echo esc_html( $top_bar_subtitle ); ?></p>
 				<?php } ?>
 			</div>
 		</div>
@@ -179,7 +194,7 @@ abstract class Contact_Buttons_Render_Base {
 		$powered_by_url = 'https://elementor.com/pro';
 		?>
 			<div class="e-contact-buttons__powered-container">
-				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text">
+				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text" target="_blank">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
 				</a>
 			</div>
@@ -209,16 +224,20 @@ abstract class Contact_Buttons_Render_Base {
 		<?php
 	}
 
-	protected function render_contact_section(): void {
+	protected function render_contact_text(): void {
 		$contact_cta_text = $this->settings['contact_cta_text'] ?? '';
+		?>
+			<?php if ( ! empty( $contact_cta_text ) ) { ?>
+				<p class="e-contact-buttons__contact-text"><?php echo esc_html( $contact_cta_text ); ?></p>
+			<?php } ?>
+		<?php
+	}
+
+	protected function render_contact_links(): void {
 		$contact_icons = $this->settings['contact_repeater'] ?? [];
 		$icons_size = $this->settings['style_contact_button_size'] ?? 'small';
 		$hover_animation = $this->settings['style_contact_button_hover_animation'];
 		?>
-		<div class="e-contact-buttons__contact">
-			<?php if ( ! empty( $contact_cta_text ) ) { ?>
-				<p class="e-contact-buttons__contact-text"><?php echo esc_html( $contact_cta_text ); ?></p>
-			<?php } ?>
 			<div class="e-contact-buttons__contact-links">
 				<?php
 				foreach ( $contact_icons as $key => $icon ) {
@@ -248,7 +267,7 @@ abstract class Contact_Buttons_Render_Base {
 					$this->widget->add_render_attribute( 'icon-link-' . $key, [
 						'aria-label' => esc_attr( $icon['contact_icon_platform'] ),
 						'class' => $icon_classnames,
-						'href' => esc_url( $formatted_link ),
+						'href' => $formatted_link,
 						'rel' => 'noopener noreferrer',
 						'target' => '_blank',
 					] );
@@ -271,7 +290,16 @@ abstract class Contact_Buttons_Render_Base {
 					</a>
 				<?php } ?>
 			</div>
+		<?php
+	}
 
+	protected function render_contact_section(): void {
+		?>
+		<div class="e-contact-buttons__contact">
+			<?php
+				$this->render_contact_text();
+				$this->render_contact_links();
+			?>
 		</div>
 		<?php
 	}
@@ -303,6 +331,7 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
+			'target' => '_blank',
 		] );
 
 		?>
@@ -367,7 +396,7 @@ abstract class Contact_Buttons_Render_Base {
 				break;
 		}
 
-		return $formatted_link;
+		return esc_html( $formatted_link );
 	}
 
 	protected function build_layout_render_attribute(): void {

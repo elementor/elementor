@@ -18,7 +18,7 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabTitleFilterSelector( tabIndex ) {
-		return `[data-tab-index="${ tabIndex }"]`;
+		return `[${ this.getSettings( 'dataAttributes' ).tabIndex }="${ tabIndex }"]`;
 	}
 
 	/**
@@ -36,21 +36,40 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabIndex( tabTitleElement ) {
-		return tabTitleElement.getAttribute( 'data-tab-index' );
+		return tabTitleElement.getAttribute( this.getSettings( 'dataAttributes' ).tabIndex );
+	}
+
+	getActiveTabIndex() {
+		const settings = this.getSettings(),
+			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+			tabIndexSelector = settings.dataAttributes.tabIndex,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
+
+		return $activeTitle.attr( tabIndexSelector ) || null;
+	}
+
+	getWidgetNumber() {
+		return this.$element.find( '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs' ).attr( 'data-widget-number' );
 	}
 
 	getDefaultSettings() {
+		const widgetNumber = this.getWidgetNumber();
+
 		return {
 			selectors: {
-				widgetContainer: '.e-n-tabs',
-				tabTitle: '.e-n-tab-title',
-				tabTitleText: '.e-n-tab-title-text',
-				tabContent: '.e-n-tabs-content > .e-con',
-				headingContainer: '.e-n-tabs-heading',
-				activeTabContentContainers: '.e-con.e-active',
+				widgetContainer: `[data-widget-number="${ widgetNumber }"]`,
+				tabTitle: `[id*="e-n-tab-title-${ widgetNumber }"]`,
+				tabTitleIcon: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-icon`,
+				tabTitleText: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-title-text`,
+				tabContent: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-content > .e-con`,
+				headingContainer: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-heading`,
+				activeTabContentContainers: `[id*="e-n-tab-content-${ widgetNumber }"].e-active`,
 			},
 			classes: {
 				active: 'e-active',
+			},
+			dataAttributes: {
+				tabIndex: 'data-tab-index',
 			},
 			ariaAttributes: {
 				titleStateAttribute: 'aria-selected',
@@ -68,7 +87,7 @@ export default class NestedTabs extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			$wdigetContainer: this.findElement( selectors.widgetContainer ),
+			$widgetContainer: this.findElement( selectors.widgetContainer ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -99,7 +118,7 @@ export default class NestedTabs extends Base {
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
 
-		this.elements.$wdigetContainer.addClass( 'e-activated' );
+		this.elements.$widgetContainer.addClass( 'e-activated' );
 	}
 
 	deactivateActiveTab( newTabIndex ) {
@@ -171,12 +190,16 @@ export default class NestedTabs extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute );
+		const settings = this.getSettings(),
+			isActiveTabTitle = 'true' === this.elements.$tabTitles.filter( `[${ settings.dataAttributes.tabIndex }="${ tabIndex }"]` ).attr( settings.ariaAttributes.titleStateAttribute ),
+			isActiveTabContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( tabIndex ) ).hasClass( this.getActiveClass() );
+
+		return isActiveTabTitle && isActiveTabContent;
 	}
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget?.getAttribute( 'data-tab-index' ), true );
+		this.changeActiveTab( event.currentTarget?.getAttribute( this.getSettings( 'dataAttributes' ).tabIndex ), true );
 	}
 
 	getTabEvents() {
@@ -408,6 +431,11 @@ export default class NestedTabs extends Base {
 			this.updateListeners( view );
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
 		}
+
+		if ( ! this.getActiveTabIndex() ) {
+			const targetIndex = event.detail.index + 1 || 1;
+			this.changeActiveTab( targetIndex );
+		}
 	}
 
 	updateListeners( view ) {
@@ -418,23 +446,27 @@ export default class NestedTabs extends Base {
 	}
 
 	updateIndexValues() {
-		const { $tabContents, $tabTitles } = this.getDefaultElements(),
+		const { $widgetContainer, $tabContents, $tabTitles } = this.getDefaultElements(),
 			settings = this.getSettings(),
-			itemIdBase = $tabTitles[ 0 ].getAttribute( 'id' ).slice( 0, -1 ),
-			containerIdBase = $tabContents[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+			dataTabIndex = settings.dataAttributes.tabIndex,
+			widgetNumber = $widgetContainer.data( 'widgetNumber' );
 
 		$tabTitles.each( ( index, element ) => {
 			const newIndex = index + 1,
-				updatedTabID = itemIdBase + newIndex,
-				updatedContainerID = containerIdBase + newIndex;
+				updatedTabID = `e-n-tab-title-${ widgetNumber }${ newIndex }`,
+				updatedContainerID = `e-n-tab-content-${ widgetNumber }${ newIndex }`;
 
 			element.setAttribute( 'id', updatedTabID );
 			element.setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
-			element.setAttribute( 'data-tab-index', newIndex );
+			element.setAttribute( dataTabIndex, newIndex );
+			element.setAttribute( 'aria-controls', updatedContainerID );
+
+			element.querySelector( settings.selectors.tabTitleIcon )?.setAttribute( 'data-binding-index', newIndex );
+
 			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'data-binding-index', newIndex );
-			element.querySelector( settings.selectors.tabTitleText ).setAttribute( 'aria-controls', updatedTabID );
+
 			$tabContents[ index ].setAttribute( 'aria-labelledby', updatedTabID );
-			$tabContents[ index ].setAttribute( 'data-tab-index', updatedTabID );
+			$tabContents[ index ].setAttribute( dataTabIndex, newIndex );
 			$tabContents[ index ].setAttribute( 'id', updatedContainerID );
 			$tabContents[ index ].setAttribute( 'style', `--n-tabs-title-order: ${ newIndex }` );
 		} );

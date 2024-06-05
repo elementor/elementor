@@ -27,6 +27,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'value' => 'far fa-comment-dots',
 						'library' => 'fa-regular',
 					],
+					'icons_recommended' => [
+						'fa-regular' => [
+							'comment',
+							'comment-dots',
+							'comment-alt',
+						],
+						'fa-solid' => [
+							'ellipsis-v',
+						],
+					],
 					'has_notification_dot' => true,
 					'has_active_tab' => false,
 					'platform' => [
@@ -40,20 +50,38 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 					],
 				],
+				'top_bar_section' => [
+					'has_image' => true,
+					'has_active_dot' => true,
+					'title' => [
+						'label' => esc_html__( 'Name', 'elementor' ),
+						'default' => esc_html__( 'Rob Jones', 'elementor' ),
+						'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
+						'dynamic' => false,
+						'ai' => false,
+						'label_block' => false,
+					],
+					'subtitle' => [
+						'label' => esc_html__( 'Title', 'elementor' ),
+						'default' => esc_html__( 'Store Manager', 'elementor' ),
+						'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
+						'dynamic' => false,
+						'ai' => false,
+						'label_block' => false,
+					],
+				],
 				'message_bubble_section' => [
 					'has_typing_animation' => true,
 				],
 				'contact_section' => [
-					'section_name' => esc_html__( 'Contact', 'elementor' ),
-					'has_tooltip' => false,
+					'section_name' => esc_html__( 'Contact Buttons', 'elementor' ),
 					'has_cta_text' => true,
-					'has_buttons_heading' => true,
-					'has_buttons_size' => true,
-					'has_box_shadow' => false,
-					'has_buttons_spacing' => false,
-					'has_hover_animation' => true,
-					'has_chat_box_animation' => false,
-					'icon_text_label' => esc_html__( 'Text', 'elementor' ),
+					'repeater' => [
+						'has_tooltip' => false,
+						'tooltip_label' => esc_html__( 'Text', 'elementor' ),
+						'has_title' => false,
+						'has_description' => false,
+					],
 					'platform' => [
 						'group-1' => [
 							Social_Network_Provider::EMAIL,
@@ -70,9 +98,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							'contact_icon_platform' => Social_Network_Provider::WHATSAPP,
 						],
 						[
-							'contact_icon_platform' => Social_Network_Provider::MESSENGER,
-						],
-						[
 							'contact_icon_platform' => Social_Network_Provider::EMAIL,
 						],
 						[
@@ -81,14 +106,41 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						[
 							'contact_icon_platform' => Social_Network_Provider::VIBER,
 						],
+						[
+							'contact_icon_platform' => Social_Network_Provider::MESSENGER,
+						],
 					],
 				],
 			],
 			'style' => [
 				'has_platform_colors' => true,
+				'top_bar_section' => [
+					'title_heading_label' => esc_html__( 'Name', 'elementor' ),
+					'subtitle_heading_label' => esc_html__( 'Title', 'elementor' ),
+					'has_style_close_button' => true,
+				],
 				'message_bubble_section' => [
 					'has_chat_background' => true,
 				],
+				'contact_section' => [
+					'has_buttons_heading' => true,
+					'buttons_heading_label' => esc_html__( 'Buttons', 'elementor' ),
+					'has_buttons_size' => true,
+					'has_box_shadow' => false,
+					'has_buttons_spacing' => false,
+					'has_hover_animation' => true,
+					'has_chat_box_animation' => false,
+					'has_icon_bg_color' => true,
+					'has_button_bar' => false,
+					'has_tabs' => true,
+				],
+				'chat_box_section' => [
+					'section_name' => esc_html__( 'Chat Box', 'elementor' ),
+					'width' => 360,
+				],
+			],
+			'advanced' => [
+				'has_horizontal_position' => true,
 			],
 		];
 	}
@@ -117,6 +169,21 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 		$this->add_advanced_tab();
 	}
+
+	const BOX_SHADOW_FIELDS_OPTIONS = [
+		'box_shadow_type' => [
+			'default' => 'yes',
+		],
+		'box_shadow' => [
+			'default' => [
+				'horizontal' => 4,
+				'vertical' => 4,
+				'blur' => 10,
+				'spread' => 0,
+				'color' => 'rgba(0,0,0,0.15)',
+			],
+		],
+	];
 
 	private function social_media_controls(): void {
 
@@ -271,16 +338,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'label' => esc_html__( 'Icon', 'elementor' ),
 					'type' => Controls_Manager::ICONS,
 					'default' => $config['content']['chat_button_section']['icon_default'],
-					'recommended' => [
-						'fa-regular' => [
-							'comment',
-							'comment-dots',
-							'comment-alt',
-						],
-						'fa-solid' => [
-							'ellipsis-v',
-						],
-					],
+					'recommended' => $config['content']['chat_button_section']['icons_recommended'],
 				]
 			);
 		}
@@ -303,6 +361,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	protected function add_top_bar_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'top_bar_section',
 			[
@@ -312,47 +372,63 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'top_bar_name',
-			[
-				'label' => esc_html__( 'Name', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Rob Jones', 'elementor' ),
-				'placeholder' => esc_html__( 'Type your name here', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
 			'top_bar_title',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => $config['content']['top_bar_section']['title']['label'],
 				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Store Manager', 'elementor' ),
-				'placeholder' => esc_html__( 'Type your title here', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'top_bar_image',
-			[
-				'label' => esc_html__( 'Profile Image', 'elementor' ),
-				'type' => Controls_Manager::MEDIA,
-				'default' => [
-					'url' => Utils::get_placeholder_image_src(),
+				'default' => $config['content']['top_bar_section']['title']['default'],
+				'placeholder' => $config['content']['top_bar_section']['title']['placeholder'],
+				'dynamic' => [
+					'active' => $config['content']['top_bar_section']['title']['dynamic'],
 				],
+				'ai' => [
+					'active' => $config['content']['top_bar_section']['title']['ai'],
+				],
+				'label_block' => $config['content']['top_bar_section']['title']['label_block'],
 			]
 		);
 
 		$this->add_control(
-			'top_bar_show_dot',
+			'top_bar_subtitle',
 			[
-				'label' => esc_html__( 'Display Active Dot', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => 'yes',
+				'label' => $config['content']['top_bar_section']['subtitle']['label'],
+				'type' => Controls_Manager::TEXT,
+				'default' => $config['content']['top_bar_section']['subtitle']['default'],
+				'placeholder' => $config['content']['top_bar_section']['subtitle']['placeholder'],
+				$config['content']['top_bar_section']['subtitle']['dynamic'],
+				'ai' => [
+					'active' => $config['content']['top_bar_section']['subtitle']['ai'],
+				],
+				'label_block' => $config['content']['top_bar_section']['title']['label_block'],
 			]
 		);
+
+		if ( $config['content']['top_bar_section']['has_image'] ) {
+			$this->add_control(
+				'top_bar_image',
+				[
+					'label' => esc_html__( 'Profile Image', 'elementor' ),
+					'type' => Controls_Manager::MEDIA,
+					'default' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				]
+			);
+		}
+
+		if ( $config['content']['top_bar_section']['has_active_dot'] ) {
+			$this->add_control(
+				'top_bar_show_dot',
+				[
+					'label' => esc_html__( 'Display Active Dot', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'Yes', 'elementor' ),
+					'label_off' => esc_html__( 'No', 'elementor' ),
+					'return_value' => 'yes',
+					'default' => 'yes',
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}
@@ -473,11 +549,11 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			],
 		);
 
-		if ( $config['content']['contact_section']['has_tooltip'] ) {
+		if ( $config['content']['contact_section']['repeater']['has_tooltip'] ) {
 			$repeater->add_control(
 				'contact_tooltip',
 				[
-					'label' => $config['content']['contact_section']['icon_text_label'],
+					'label' => $config['content']['contact_section']['repeater']['tooltip_label'],
 					'type' => Controls_Manager::TEXT,
 					'dynamic' => [
 						'active' => true,
@@ -488,10 +564,40 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			);
 		}
 
+		if ( $config['content']['contact_section']['repeater']['has_title'] ) {
+			$repeater->add_control(
+				'contact_title',
+				[
+					'label' => 'Title',
+					'type' => Controls_Manager::TEXT,
+					'dynamic' => [
+						'active' => true,
+					],
+					'default' => 'Title',
+					'placeholder' => esc_html__( 'Enter title', 'elementor' ),
+				],
+			);
+		}
+
+		if ( $config['content']['contact_section']['repeater']['has_description'] ) {
+			$repeater->add_control(
+				'contact_description',
+				[
+					'label' => 'Description',
+					'type' => Controls_Manager::TEXT,
+					'dynamic' => [
+						'active' => true,
+					],
+					'default' => 'Description',
+					'placeholder' => esc_html__( 'Enter description', 'elementor' ),
+				],
+			);
+		}
+
 		$repeater->add_control(
 			'contact_icon_mail',
 			[
-				'label' => esc_html__( 'Mail', 'elementor' ),
+				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
 				'dynamic' => [
@@ -554,6 +660,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::SMS,
 						Social_Network_Provider::WHATSAPP,
 						Social_Network_Provider::VIBER,
+						Social_Network_Provider::TELEPHONE,
 					],
 				],
 				'ai' => [
@@ -615,6 +722,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::WAZE,
 					],
 				],
+				'ai' => [
+					'active' => false,
+				],
 			],
 		);
 
@@ -655,14 +765,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	protected function get_icon_title_field(): string {
 		$platform_icons_js = json_encode( Social_Network_Provider::get_social_networks_icons() );
+		$platform_text_js = json_encode( Social_Network_Provider::get_social_networks_text() );
 
 		return <<<JS
 	<#
 	elementor.helpers.enqueueIconFonts( 'fa-solid' );
 	elementor.helpers.enqueueIconFonts( 'fa-brands' );
 	const mapping = {$platform_icons_js};
+	const text_mapping = {$platform_text_js};
 	#>
-	<i class='{{{ mapping[contact_icon_platform] }}}' ></i> {{{ contact_icon_platform }}}
+	<i class='{{{ mapping[contact_icon_platform] }}}' ></i> {{{ text_mapping[contact_icon_platform] }}}
 JS;
 	}
 
@@ -885,34 +997,13 @@ JS;
 
 		$this->end_controls_tabs();
 
-		$this->add_control(
-			'style_chat_button_box_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'style_chat_button_box_shadow',
-				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button-shadow',
-			]
-		);
-
-		$this->add_control(
-			'style_chat_button_animation_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
 		$this->add_responsive_control(
 			'style_chat_button_animation',
 			[
 				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -920,23 +1011,14 @@ JS;
 			'style_chat_button_animation_duration',
 			[
 				'label' => esc_html__( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 800,
+				'type' => Controls_Manager::SELECT,
+				'default' => 'normal',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'normal' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-button-chat-button-animation-duration: {{SIZE}}ms;',
-				],
-				'condition' => [
-					'style_chat_button_animation!' => '',
-				],
+				'prefix_class' => 'animated-',
 			]
 		);
 
@@ -951,11 +1033,18 @@ JS;
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-button-chat-button-animation-delay: {{SIZE}}ms;',
 				],
-				'condition' => [
-					'style_chat_button_animation!' => '',
-				],
 				'render_type' => 'none',
 				'frontend_available' => true,
+				'separator' => 'after',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'style_chat_button_box_shadow',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__chat-button-shadow',
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
@@ -963,6 +1052,7 @@ JS;
 	}
 
 	protected function add_style_top_bar_section(): void {
+		$config = static::get_configuration();
 
 		$this->start_controls_section(
 			'style_top_bar_section',
@@ -972,86 +1062,53 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_top_bar_profile_heading',
-			[
-				'label' => esc_html__( 'Profile Image', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
+		if ( $config['content']['top_bar_section']['has_image'] ) {
+			$this->add_control(
+				'style_top_bar_profile_heading',
+				[
+					'label' => esc_html__( 'Profile Image', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
+				]
+			);
 
-		$this->add_control(
-			'style_top_bar_image_size',
-			[
-				'label' => esc_html__( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'medium',
-				'options' => [
-					'small' => esc_html__( 'Small', 'elementor' ),
-					'medium' => esc_html__( 'Medium', 'elementor' ),
-					'large' => esc_html__( 'Large', 'elementor' ),
-				],
-			]
-		);
+			$this->add_control(
+				'style_top_bar_image_size',
+				[
+					'label' => esc_html__( 'Size', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'medium',
+					'options' => [
+						'small' => esc_html__( 'Small', 'elementor' ),
+						'medium' => esc_html__( 'Medium', 'elementor' ),
+						'large' => esc_html__( 'Large', 'elementor' ),
+					],
+				]
+			);
+		}
 
-		$this->add_control(
-			'style_top_bar_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_control(
-			'style_top_bar_colors',
-			[
-				'label' => esc_html__( 'Colors', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'custom' => esc_html__( 'Custom', 'elementor' ),
-				],
-			]
-		);
-
-		$this->add_control(
-			'style_top_bar_name_heading',
-			[
-				'label' => esc_html__( 'Name', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => false,
-			]
-		);
-
-		$this->add_control(
-			'style_top_bar_name_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-name: {{VALUE}}',
-				],
-				'condition' => $this->get_platform_color_condition( [
-					'style_top_bar_colors' => 'custom',
-				] ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'style_top_bar_name_typography',
-				'selector' => '{{WRAPPER}} .e-contact-buttons__top-bar-name',
-			]
-		);
+		if ( $config['style']['has_platform_colors'] ) {
+			$this->add_control(
+				'style_top_bar_colors',
+				[
+					'label' => esc_html__( 'Colors', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => [
+						'default' => esc_html__( 'Default', 'elementor' ),
+						'custom' => esc_html__( 'Custom', 'elementor' ),
+					],
+					'separator' => 'before',
+				]
+			);
+		}
 
 		$this->add_control(
 			'style_top_bar_title_heading',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => $config['style']['top_bar_section']['title_heading_label'],
 				'type' => Controls_Manager::HEADING,
-				'separator' => false,
+				'separator' => ! $config['style']['has_platform_colors'] ? 'before' : false,
 			]
 		);
 
@@ -1078,21 +1135,21 @@ JS;
 		);
 
 		$this->add_control(
-			'style_top_bar_close_button_heading',
+			'style_top_bar_subtitle_heading',
 			[
-				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'label' => $config['style']['top_bar_section']['subtitle_heading_label'],
 				'type' => Controls_Manager::HEADING,
 				'separator' => false,
 			]
 		);
 
 		$this->add_control(
-			'style_top_bar_close_button_color',
+			'style_top_bar_subtitle_color',
 			[
-				'label' => esc_html__( 'Close Button Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-color: {{VALUE}}',
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-subtitle: {{VALUE}}',
 				],
 				'condition' => $this->get_platform_color_condition( [
 					'style_top_bar_colors' => 'custom',
@@ -1100,12 +1157,51 @@ JS;
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'style_top_bar_subtitle_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__top-bar-subtitle',
+			]
+		);
+
+		if ( $config['style']['top_bar_section']['has_style_close_button'] ) {
+			$this->add_control(
+				'style_top_bar_close_button_heading',
+				[
+					'label' => esc_html__( 'Close Button', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => false,
+					'condition' => $this->get_platform_color_condition( [
+						'style_top_bar_colors' => 'custom',
+					] ),
+				]
+			);
+
+			$this->add_control(
+				'style_top_bar_close_button_color',
+				[
+					'label' => esc_html__( 'Close Button Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-close-button-color: {{VALUE}}',
+					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_top_bar_colors' => 'custom',
+					] ),
+				]
+			);
+		}
+
 		$this->add_control(
 			'style_top_bar_background_heading',
 			[
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => false,
+				'condition' => $this->get_platform_color_condition( [
+					'style_top_bar_colors' => 'custom',
+				] ),
 			]
 		);
 
@@ -1346,11 +1442,11 @@ JS;
 			);
 		}
 
-		if ( $config['content']['contact_section']['has_buttons_heading'] ) {
+		if ( $config['style']['contact_section']['has_buttons_heading'] ) {
 			$this->add_control(
 				'style_contact_buttons_heading',
 				[
-					'label' => esc_html__( 'Buttons', 'elementor' ),
+					'label' => $config['style']['contact_section']['buttons_heading_label'],
 					'type' => Controls_Manager::HEADING,
 					'separator' => false,
 					'condition' => $this->get_platform_color_condition( [
@@ -1360,13 +1456,13 @@ JS;
 			);
 		}
 
-		if ( $config['content']['contact_section']['has_buttons_size'] ) {
+		if ( $config['style']['contact_section']['has_buttons_size'] ) {
 			$this->add_control(
 				'style_contact_button_size',
 				[
 					'label' => esc_html__( 'Size', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => 'medium',
+					'default' => 'small',
 					'options' => [
 						'small' => esc_html__( 'Small', 'elementor' ),
 						'medium' => esc_html__( 'Medium', 'elementor' ),
@@ -1398,16 +1494,18 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_contact_button_color_background',
-			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg: {{VALUE}}',
-				],
-			]
-		);
+		if ( $config['style']['contact_section']['has_icon_bg_color'] ) {
+			$this->add_control(
+				'style_contact_button_color_background',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg: {{VALUE}}',
+					],
+				]
+			);
+		}
 
 		$this->end_controls_tab();
 
@@ -1429,18 +1527,20 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_contact_button_color_background_hover',
-			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg-hover: {{VALUE}}',
-				],
-			]
-		);
+		if ( $config['style']['contact_section']['has_icon_bg_color'] ) {
+			$this->add_control(
+				'style_contact_button_color_background_hover',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg-hover: {{VALUE}}',
+					],
+				]
+			);
+		}
 
-		if ( $config['content']['contact_section']['has_hover_animation'] ) {
+		if ( $config['style']['contact_section']['has_hover_animation'] ) {
 			$this->add_control(
 				'style_contact_button_hover_animation',
 				[
@@ -1455,14 +1555,7 @@ JS;
 
 		$this->end_controls_tabs();
 
-		if ( $config['content']['contact_section']['has_buttons_spacing'] ) {
-
-			$this->add_control(
-				'style_contact_buttons_spacing_divider',
-				[
-					'type' => Controls_Manager::DIVIDER,
-				]
-			);
+		if ( $config['style']['contact_section']['has_buttons_spacing'] ) {
 
 			$this->add_responsive_control(
 				'style_contact_buttons_spacing',
@@ -1487,21 +1580,23 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-gap: {{SIZE}}{{UNIT}}',
 					],
+					'separator' => 'before',
 				]
 			);
 		}
 
-		if ( $config['content']['contact_section']['has_box_shadow'] ) {
+		if ( $config['style']['contact_section']['has_box_shadow'] ) {
 			$this->add_group_control(
 				Group_Control_Box_Shadow::get_type(),
 				[
 					'name' => 'style_contact_icons_box_shadow',
 					'selector' => '{{WRAPPER}} .e-contact-buttons__contact-box-shadow',
+					'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 				]
 			);
 		}
 
-		if ( $config['content']['contact_section']['has_tooltip'] ) {
+		if ( $config['content']['contact_section']['repeater']['has_tooltip'] ) {
 			$this->add_control(
 				'style_contact_tooltip_heading',
 				[
@@ -1542,16 +1637,205 @@ JS;
 			);
 		}
 
-		if ( $config['content']['contact_section']['has_chat_box_animation'] ) {
+		if ( $config['style']['contact_section']['has_chat_box_animation'] ) {
+			$this->chat_box_animation_controls();
+		}
+
+		if ( $config['style']['contact_section']['has_button_bar'] ) {
 			$this->add_control(
-				'style_contact_animation_divider',
+				'style_contact_button_bar_heading',
 				[
-					'type' => Controls_Manager::DIVIDER,
+					'label' => esc_html__( 'Button Bar', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
 				]
 			);
 
-			$this->chat_box_animation_controls();
+			$this->add_control(
+				'style_contact_button_bar_bg_color',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-bg: {{VALUE}}',
+					],
+				]
+			);
+
+			$this->add_control(
+				'style_contact_button_bar_corners',
+				[
+					'label'     => esc_html__( 'Corners', 'elementor' ),
+					'type'      => Controls_Manager::SELECT,
+					'default'   => 'round',
+					'options'   => [
+						'round'   => esc_html__( 'Round', 'elementor' ),
+						'rounded' => esc_html__( 'Rounded', 'elementor' ),
+						'sharp'   => esc_html__( 'Sharp', 'elementor' ),
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				'style_contact_button_bar_padding',
+				[
+					'label' => esc_html__( 'Padding', 'elementor' ),
+					'type' => Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px', '%', 'em', 'rem' ],
+					'default' => [
+						'top' => '20',
+						'bottom' => '20',
+						'left' => '20',
+						'right' => '20',
+						'unit' => 'px',
+						'isLinked' => false,
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-button-bar-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-start: {{LEFT}}{{UNIT}};',
+					],
+					'separator' => 'before',
+				]
+			);
 		}
+
+		$this->end_controls_section();
+	}
+
+	protected function add_style_resource_links_section(): void {
+		$this->start_controls_section(
+			'style_resource_links_section',
+			[
+				'label' => esc_html__( 'Resource Links', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_icons_heading',
+			[
+				'label' => esc_html__( 'Icons', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_button_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'small',
+				'options' => [
+					'small' => esc_html__( 'Small', 'elementor' ),
+					'medium' => esc_html__( 'Medium', 'elementor' ),
+					'large' => esc_html__( 'Large', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_color_select',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'custom',
+				'options' => [
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'custom'  => esc_html__( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_contact_icon_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon: {{VALUE}}',
+				],
+				'condition' => [
+					'style_resource_links_color_select' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_title_heading',
+			[
+				'label' => esc_html__( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_title_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-title-text-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'style_resource_links_title_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__contact-title',
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_description_heading',
+			[
+				'label' => esc_html__( 'Description', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => false,
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_description_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-description-text-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'style_resource_links_description_typography',
+				'selector' => '{{WRAPPER}} .e-contact-buttons__contact-description',
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_bg_color',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg: {{VALUE}}',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'style_resource_links_hover_animation',
+			[
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'frontend_available' => true,
+			]
+		);
 
 		$this->end_controls_section();
 	}
@@ -1690,6 +1974,7 @@ JS;
 				'label' => esc_html__( 'Open Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -1706,20 +1991,14 @@ JS;
 			'style_chat_box_animation_duration',
 			[
 				'label' => esc_html__( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 800,
+				'type' => Controls_Manager::SELECT,
+				'default' => 'normal',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'normal' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 3000,
-						'step' => 100,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-animation-duration: {{SIZE}}ms;',
-				],
+				'prefix_class' => 'animated-',
 			]
 		);
 	}
@@ -1730,7 +2009,7 @@ JS;
 		$this->start_controls_section(
 			'style_chat_box_section',
 			[
-				'label' => esc_html__( 'Chat Box', 'elementor' ),
+				'label' => $config['style']['chat_box_section']['section_name'],
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -1781,7 +2060,7 @@ JS;
 				],
 				'default' => [
 					'unit' => 'px',
-					'size' => 360,
+					'size' => $config['style']['chat_box_section']['width'],
 				],
 				'mobile_default' => [
 					'unit' => 'vw',
@@ -1813,6 +2092,7 @@ JS;
 			[
 				'name' => 'style_chat_box_box_shadow',
 				'selector' => '{{WRAPPER}} .e-contact-buttons__content',
+				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
 
@@ -1834,40 +2114,44 @@ JS;
 	}
 
 	private function add_advanced_tab(): void {
+		$config = static::get_configuration();
+
 		Controls_Manager::add_tab(
 			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
 
-		$this->start_controls_section(
-			'advanced_layout_section',
-			[
-				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab'   => static::TAB_ADVANCED,
-			]
-		);
+		if ( $config['advanced']['has_horizontal_position'] ) {
+			$this->start_controls_section(
+				'advanced_layout_section',
+				[
+					'label' => esc_html__( 'Layout', 'elementor' ),
+					'tab'   => static::TAB_ADVANCED,
+				]
+			);
 
-		$this->add_responsive_control(
-			'advanced_horizontal_position',
-			[
-				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'start' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+			$this->add_responsive_control(
+				'advanced_horizontal_position',
+				[
+					'label' => esc_html__( 'Horizontal Position', 'elementor' ),
+					'type' => Controls_Manager::CHOOSE,
+					'options' => [
+						'start' => [
+							'title' => esc_html__( 'Left', 'elementor' ),
+							'icon' => 'eicon-h-align-left',
+						],
+						'end' => [
+							'title' => esc_html__( 'Right', 'elementor' ),
+							'icon' => 'eicon-h-align-right',
+						],
 					],
-					'end' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
-					],
-				],
-				'default' => 'end',
-				'toggle' => true,
-			]
-		);
+					'default' => 'end',
+					'toggle' => true,
+				]
+			);
 
-		$this->end_controls_section();
+			$this->end_controls_section();
+		}
 
 		$this->start_controls_section(
 			'advanced_responsive_section',
