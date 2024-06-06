@@ -350,7 +350,7 @@ class Module extends BaseModule {
 		$referer = wp_get_referer();
 
 		if ( str_contains( $referer, 'wp-admin/upload.php' ) && current_user_can( 'upload_files' ) ) {
-			return true;
+			return;
 		}
 		$this->verify_permissions( $data['editor_post_id'] );
 	}
