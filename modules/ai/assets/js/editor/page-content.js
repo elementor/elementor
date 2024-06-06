@@ -25,7 +25,6 @@ const PageContent = (
 		onConnect,
 		getControlValue,
 		setControlValue,
-		controlView,
 		additionalOptions,
 	} ) => {
 	const {
@@ -41,6 +40,7 @@ const PageContent = (
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
+			zIndex: 170000, // Make sure the dialog is above wp attachment details view
 			'& .MuiDialog-container': {
 				alignItems: 'flex-start',
 				mt: 'media' === type ? '2.5vh' : '18vh',
@@ -134,7 +134,7 @@ const PageContent = (
 					<FormMedia
 						onClose={ onClose }
 						getControlValue={ getControlValue }
-						controlView={ controlView }
+						setControlValue={ setControlValue }
 						additionalOptions={ additionalOptions }
 						credits={ credits }
 						maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
@@ -222,7 +222,6 @@ PageContent.propTypes = {
 	getControlValue: PropTypes.func.isRequired,
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
-	controlView: PropTypes.object,
 };
 
 export default PageContent;
