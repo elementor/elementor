@@ -148,7 +148,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public function get_categories(): array {
-		return [ 'general' ];
+		return [ 'link-in-bio' ];
 	}
 
 	public function get_keywords(): array {
@@ -384,6 +384,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					],
 				],
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 			],
 		);
 
@@ -602,13 +605,15 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'options' => false,
 				'dynamic' => [
 					'active' => true,
 				],
 				'autocomplete' => true,
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::VIMEO,
@@ -872,13 +877,7 @@ JS;
 			],
 		);
 
-		// Getting active breakpoints and setting dynamic options
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
-		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
-			$available_devices[ $breakpoint_key ] = $breakpoint->get_label();
-			$default_devices[] = $breakpoint_key;
-		}
+		$configured_breakpoints = $this->get_configured_breakpoints();
 
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
@@ -887,8 +886,8 @@ JS;
 				'type' => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'multiple' => true,
-				'options' => $available_devices,
-				'default' => $default_devices,
+				'options' => $configured_breakpoints['devices_options'],
+				'default' => $configured_breakpoints['active_devices'],
 				'condition' => [
 					'advanced_layout_full_width_custom' => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
@@ -1476,7 +1475,7 @@ JS;
 		$this->add_control(
 			'icons_size',
 			[
-				'label' => esc_html__( 'Icon Size', 'elementor' ),
+				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'small',
 				'options' => [
@@ -1512,21 +1511,12 @@ JS;
 			'background' => [
 				'default' => 'classic',
 			],
-			'size' => [
-				'default' => 'cover',
-			],
-			'position' => [
-				'default' => 'center center',
-			],
 		];
 
 		$config = static::get_configuration();
 
 		if ( $config['style']['border_section']['field_options'] ) {
-			$bg_image_field_options = array_merge(
-				$bg_image_field_options,
-				$config['style']['border_section']['field_options']
-			);
+			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
 		}
 
 		$this->add_group_control(

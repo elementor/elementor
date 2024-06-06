@@ -5,24 +5,19 @@
 	--e-contact-buttons-button-bar-bg: #324A6D;
 	--e-contact-buttons-links-border-radius: #{$contact-buttons-border-radius-round};
 	--e-contact-buttons-contact-button-icon-hover: #C8D5DC;
-	--e-contact-buttons-button-bar-padding-block-end: 10px;
-	--e-contact-buttons-button-bar-padding-block-start: 10px;
-	--e-contact-buttons-button-bar-padding-inline-end: 20px;
-	--e-contact-buttons-button-bar-padding-inline-start: 20px;
+	--e-contact-buttons-button-bar-padding-block-end: 16px;
+	--e-contact-buttons-button-bar-padding-block-start: 16px;
+	--e-contact-buttons-button-bar-padding-inline-end: 16px;
+	--e-contact-buttons-button-bar-padding-inline-start: 16px;
 
-	display: flex;
-	inset-inline-start: 50%;
-	justify-content: center;
-	transform: translateX(-50%);
 	width: auto;
 
 	.e-contact-buttons__contact-links {
 		background-color: var(--e-contact-buttons-button-bar-bg);
 		border-radius: var(--e-contact-buttons-links-border-radius);
 		display: flex;
-		gap: 20px;
-		padding-block-end: var(--e-contact-buttons-button-bar-padding-block-end);
-		padding-block-start: var(--e-contact-buttons-button-bar-padding-block-start);
+		justify-content: center;
+		gap: 0;
 		padding-inline-end: var(--e-contact-buttons-button-bar-padding-inline-end);
 		padding-inline-start: var(--e-contact-buttons-button-bar-padding-inline-start);
 
@@ -41,6 +36,10 @@
 
 	.e-contact-buttons__contact-icon-link {
 		display: flex;
+		padding-block-end: var(--e-contact-buttons-button-bar-padding-block-end);
+		padding-block-start: var(--e-contact-buttons-button-bar-padding-block-start);
+		padding-inline-end: var(--e-contact-buttons-button-bar-padding-inline-end);
+		padding-inline-start: var(--e-contact-buttons-button-bar-padding-inline-start);
 
 		svg {
 			fill: var(--e-contact-buttons-contact-button-icon);
