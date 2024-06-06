@@ -348,6 +348,7 @@ class Module extends BaseModule {
 		}
 		$this->verify_permissions( $data['editor_post_id'] );
 	}
+
 	private function verify_permissions( $editor_post_id ) {
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
