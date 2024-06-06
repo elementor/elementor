@@ -28,6 +28,8 @@ class Module extends BaseModule {
 
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
 
+	const CLICK_TRACKING_NONCE = 'elementor-conversion-center-click';
+
 	const CONTACT_PAGE_DOCUMENT_TYPE = 'contact-buttons';
 	const CPT_CONTACT_PAGES = 'e-contact-pages';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=' . self::CPT_CONTACT_PAGES;
@@ -91,6 +93,15 @@ class Module extends BaseModule {
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		add_action( 'elementor/common/localize_settings', function ( $settings ) {
+			$settings['conversionCenter'] = [
+				'nonce' => wp_create_nonce( self::CLICK_TRACKING_NONCE ),
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			];
+
+			return $settings;
+		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
 
@@ -188,11 +199,12 @@ class Module extends BaseModule {
 			'_nonce' => FILTER_UNSAFE_RAW,
 		] );
 
-		if ( ! wp_verify_nonce( $data['_nonce'], 'elementor-pro-frontend' ) ) {
+
+		if ( ! wp_verify_nonce( $data['_nonce'], self::CLICK_TRACKING_NONCE ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
 		}
 
-		if ( ! check_ajax_referer( 'elementor-pro-frontend', '_nonce', false ) ) {
+		if ( ! check_ajax_referer( self::CLICK_TRACKING_NONCE, '_nonce', false ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid referrer' ] );
 		}
 
