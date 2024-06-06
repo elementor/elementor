@@ -432,9 +432,6 @@ abstract class Contact_Buttons_Render_Base {
 			$layout_classnames .= ' ' . $custom_classes;
 		}
 
-		$this->widget->add_render_attribute( 'layout', [
-			'class' => $layout_classnames,
-			'id'    => $this->settings['advanced_custom_css_id'],
-		] );
+		$this->add_layout_render_attribute( $layout_classnames );
 	}
 }
