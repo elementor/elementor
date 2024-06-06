@@ -41,7 +41,7 @@ jobs:
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
