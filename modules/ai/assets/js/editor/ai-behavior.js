@@ -13,7 +13,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
 		this.context = {};
-
 		this.config = window.ElementorAiConfig;
 	}
 
@@ -48,7 +47,6 @@ export default class AiBehavior extends Marionette.Behavior {
 				getControlValue={ this.getOption( 'getControlValue' ) }
 				setControlValue={ this.getOption( 'setControlValue' ) }
 				additionalOptions={ this.getOption( 'additionalOptions' ) }
-				controlView={ this.getOption( 'controlView' ) }
 				onClose={ () => {
 					unmount();
 					rootElement.remove();
