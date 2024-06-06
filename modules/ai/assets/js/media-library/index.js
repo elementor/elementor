@@ -59,12 +59,14 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				content.innerHTML = html;
 
 				const compatMeta = content.querySelector( '.dimensions' );
-				const container = document.createElement( 'div' );
-				container.id = 'e-image-ai-insert-media';
-				compatMeta.insertAdjacentElement( 'beforeend', container );
+				if ( compatMeta ) {
+					const container = document.createElement( 'div' );
+					container.id = 'e-image-ai-insert-media';
+					compatMeta.insertAdjacentElement( 'beforeend', container );
 
-				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
-				return content.innerHTML;
+					window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
+					return content.innerHTML;
+				}
 			},
 		} );
 	}
