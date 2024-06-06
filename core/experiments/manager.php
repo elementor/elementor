@@ -76,8 +76,9 @@ class Manager extends Base_Object {
 			'mutable' => true,
 			static::TYPE_HIDDEN => false,
 			'new_site' => [
-				'default_active' => false,
 				'always_active' => false,
+				'default_active' => false,
+				'default_inactive' => false,
 				'minimum_installation_version' => null,
 			],
 			'on_state_change' => null,
@@ -92,7 +93,7 @@ class Manager extends Base_Object {
 
 		$new_site = $experimental_data['new_site'];
 
-		if ( $new_site['default_active'] || $new_site['always_active'] ) {
+		if ( $new_site['default_active'] || $new_site['always_active'] || $new_site['default_inactive'] ) {
 			$is_new_installation = $this->install_compare( $new_site['minimum_installation_version'] );
 
 			if ( $is_new_installation ) {
@@ -102,6 +103,8 @@ class Manager extends Base_Object {
 					$experimental_data['mutable'] = false;
 				} elseif ( $new_site['default_active'] ) {
 					$experimental_data['default'] = self::STATE_ACTIVE;
+				} elseif ( $new_site['default_inactive'] ) {
+					$experimental_data['default'] = self::STATE_INACTIVE;
 				}
 			}
 		}
@@ -138,7 +141,7 @@ class Manager extends Base_Object {
 					$message = sprintf(
 						'<p>%s</p><p><a href="#" onclick="location.href=\'%s\'">%s</a></p>',
 						esc_html( $e->getMessage() ),
-						site_url( 'wp-admin/admin.php?page=elementor#tab-experiments' ),
+						Settings::get_settings_tab_url( 'experiments' ),
 						esc_html__( 'Back', 'elementor' )
 					);
 
@@ -332,22 +335,6 @@ class Manager extends Base_Object {
 
 	private function add_default_features() {
 		$this->add_feature( [
-			'name' => 'e_optimized_assets_loading',
-			'title' => esc_html__( 'Improved Asset Loading', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => sprintf(
-				'%1$s <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">%2$s</a>',
-				esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
-				esc_html__( 'Learn more', 'elementor' )
-			),
-			static::TYPE_HIDDEN => true,
-			'mutable' => false,
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
@@ -461,6 +448,11 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.22.0',
+			],
+			'generator_tag' => true,
 		] );
 
 		$this->add_feature( [
@@ -468,6 +460,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
+			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
 		] );
@@ -478,10 +471,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'New plugin onboarding.', 'elementor' ),
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => false,
-			],
+			'default' => self::STATE_ACTIVE,
 		] );
 	}
 

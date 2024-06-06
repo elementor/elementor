@@ -3,6 +3,8 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 		data.context = window.elementorAiCurrentContext;
 	}
 
+	data.editor_session_id = window.EDITOR_SESSION_ID;
+
 	return new Promise( ( resolve, reject ) => {
 		const ajaxData = elementorCommon.ajax.addRequest(
 			endpoint,
@@ -20,11 +22,13 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	} );
 };
 
-export const getUserInformation = () => request( 'ai_get_user_information' );
+export const getUserInformation = ( immediately ) => request( 'ai_get_user_information', undefined, immediately );
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
+
+export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
 
 export const getEditText = ( payload ) => request( 'ai_get_edit_text', { payload } );
 

@@ -47,6 +47,7 @@
 	z-index: var(--z-index);
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
+	--flex-wrap-mobile: wrap;
 
 	& {
 		--margin-block-start: var(--margin-top);
@@ -282,6 +283,6 @@
 @media (max-width: $editor-screen-sm-max) {
 	.e-con.e-flex {
 		--width: 100%;
-		--flex-wrap: wrap;
+		--flex-wrap: var(--flex-wrap-mobile);
 	}
 }
