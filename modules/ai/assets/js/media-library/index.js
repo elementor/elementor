@@ -42,6 +42,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 ( function() {
 	if ( isMediaLibrary() ) {
 		const mediaLibrary = document.querySelector( '.page-title-action' );
+
 		if ( mediaLibrary ) {
 			const container = document.createElement( 'div' );
 			container.id = 'e-image-ai-media-library';
@@ -54,19 +55,20 @@ const addEventListener = ( eventName, containerId, Component ) => {
 		wp.media.view.Attachment.Details = wp.media.view.Attachment.Details.extend( {
 			template( view ) {
 				const html = wp.media.template( 'attachment-details' )( view );
-
 				const content = document.createElement( 'div' );
 				content.innerHTML = html;
-
 				const compatMeta = content.querySelector( '.dimensions' );
-				if ( compatMeta ) {
-					const container = document.createElement( 'div' );
-					container.id = 'e-image-ai-insert-media';
-					compatMeta.insertAdjacentElement( 'beforeend', container );
 
-					window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
+				if ( ! compatMeta ) {
 					return content.innerHTML;
 				}
+
+				const container = document.createElement( 'div' );
+				container.id = 'e-image-ai-insert-media';
+				compatMeta.insertAdjacentElement( 'beforeend', container );
+
+				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
+				return content.innerHTML;
 			},
 		} );
 	}
@@ -75,11 +77,14 @@ const addEventListener = ( eventName, containerId, Component ) => {
 		wp.media.view.Attachment.Details.TwoColumn = wp.media.view.Attachment.Details.TwoColumn.extend( {
 			template( view ) {
 				const html = wp.media.template( 'attachment-details-two-column' )( view );
-
 				const content = document.createElement( 'div' );
 				content.innerHTML = html;
-
 				const details = content.querySelector( '.attachment-actions' );
+
+				if ( ! details ) {
+					return content.innerHTML;
+				}
+
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
@@ -91,6 +96,5 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	}
 	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', AIMediaEditAppLinkWrapper );
 	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', AIMediaEditAppButtonWrapper );
-
 	insertStyleTag();
 } )();
