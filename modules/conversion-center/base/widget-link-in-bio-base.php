@@ -1577,17 +1577,11 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'background_hr',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
 		$this->add_borders_control(
 			'background',
 			[
 				'selectors' => [],
+				'separator' => 'before',
 			],
 			[
 				'selectors' => [
