@@ -33,9 +33,7 @@ export default class ComponentBase extends Module {
 	}
 
 	registerAPI() {
-		Object.entries(
-			wp.hooks.applyFilters( 'elementorEditorBaseComponentTabs', this.getTabs(), this ),
-		).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
+		Object.entries( this.getTabs() ).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
 
 		Object.entries( this.getRoutes() ).forEach( ( [ route, callback ] ) => this.registerRoute( route, callback ) );
 

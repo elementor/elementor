@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
@@ -12,6 +13,7 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
+use Elementor\Modules\ConversionCenter\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\ConversionCenter\Documents\Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
@@ -76,6 +78,11 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
+
+		Controls_Manager::add_tab(
+			Widget_Contact_Button_Base::TAB_ADVANCED,
+			esc_html__( 'Advanced', 'elementor' )
+		);
 
 		$this->register_contact_pages_cpt();
 
