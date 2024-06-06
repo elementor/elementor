@@ -16,6 +16,7 @@ function echo_select_your_structure_title() {
 </script>
 
 <script type="text/template" id="tmpl-elementor-add-section">
+	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
 	<div class="elementor-add-section-inner">
 		<div class="elementor-add-section-close elementor-wizard-icon">
 			<i class="eicon-close" aria-hidden="true"></i>
@@ -114,6 +115,7 @@ function echo_select_your_structure_title() {
 			</div>
 		</div>
 	</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-tag-controls-stack-empty">
