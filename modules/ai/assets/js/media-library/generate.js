@@ -10,21 +10,21 @@ const Icon = styled.i`
 `;
 
 const StyledButton = styled.a`
-	color: #C00BB9;
+	color: var(--e-a-color-primary-bold);
 	cursor: pointer;
 	font: inherit;
 	display: inline-block;
 	position: relative;
 	top: -3px;
 	margin-left: 4px;
-	border: 1px solid #C00BB9;
+	border: 1px solid var(--e-a-color-primary-bold);
 	border-radius: 3px;
 	line-height: 2.15384615;
 	padding: 0 10px;
 	background: #f6f7f7;
 
 	&:hover {
-		color: #C00BB9;
+		color: var(--e-a-color-primary-bold);
 		background: #eeefef;
 	}
 `;

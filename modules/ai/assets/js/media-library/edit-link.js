@@ -7,13 +7,13 @@ import { AIMediaEditApp } from './componenets';
 
 const ImageLink = styled.a`
 	&& {
-		color: #C00BB9;
+		color: var(--e-a-color-primary-bold);
 		cursor: pointer;
 		font-size: inherit;
 		display: inline-block;
 
 		&:hover {
-			color: #C00BB9;
+			color: var(--e-a-color-primary-bold);
 		}
 	}
 `;

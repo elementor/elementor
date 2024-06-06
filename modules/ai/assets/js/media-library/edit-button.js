@@ -6,7 +6,7 @@ import { getImageId } from './utils';
 import { AIMediaEditApp } from './componenets';
 
 const Icon = styled.i`
-	color: #C00BB9;
+	color: var(--e-a-color-primary-bold);
 	padding-inline-end: 0.5em;
 	cursor: pointer;
 `;
@@ -22,10 +22,10 @@ const StyledButton = styled.a`
 	border-style: solid;
 	border-radius: 3px;
 	background: #f6f7f7;
-	color: #C00BB9;
+	color: var(--e-a-color-primary-bold);
 
 	&:hover {
-		color: #C00BB9;
+		color: var(--e-a-color-primary-bold);
 		background: #eeefef;
 	}
 `;
