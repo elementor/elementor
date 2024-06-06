@@ -113,7 +113,9 @@ class Module extends BaseModule {
 					'elementor-v2-ui',
 					'elementor-v2-icons',
 				],
-				ELEMENTOR_VERSION, true );
+				ELEMENTOR_VERSION,
+				true
+			);
 
 			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
 
