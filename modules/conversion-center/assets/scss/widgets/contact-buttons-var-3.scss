@@ -95,15 +95,17 @@
 		&__top-bar {
 			background-color: var(--e-contact-buttons-chat-box-bg);
 			padding: 0 0 20px;
+			position: relative;
 
 			.e-contact-buttons__close-button {
 				background: none;
 				border: 0;
 				color: var(--e-contact-buttons-close-button-color);
+				display: flex;
 				padding: 0;
 				position: absolute;
-				inset-inline-end: 16px;
-				top: 16px;
+				inset-inline-end: 0;
+				top: 0;
 		
 				&:hover,
 				&:focus {
