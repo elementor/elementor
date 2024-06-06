@@ -136,7 +136,7 @@
 			.e-contact-buttons__content-wrapper {
 				order: 2;
 			}
-	
+
 			.e-contact-buttons__chat-button-container {
 				order: 1;
 				padding-inline: 0;
@@ -361,7 +361,7 @@
 			position: relative;
 		}
 	}
-	
+
 	&__chat-button {
 		align-items: center;
 		background-color: var(--e-contact-buttons-button-bg);
@@ -376,12 +376,12 @@
 		svg {
 			fill: var(--e-contact-buttons-button-icon);
 		}
-		
+
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-button-bg-hover);
 			transition: $transition-hover;
-			
+
 			svg {
 				fill: var(--e-contact-buttons-button-icon-hover);
 			}
@@ -526,10 +526,6 @@
 		color: #{$contact-buttons-default-text-color};
 		font-size: 16px;
 		font-weight: 500;
-		
-		.elementor & {
-			text-decoration: underline;
-		}
 	}
 
 	&__dots-container {
@@ -554,11 +550,11 @@
 	&__dot-1 {
 		animation-delay: 200ms;
 	}
-	
+
 	&__dot-2 {
 		animation-delay: 400ms;
 	}
-	
+
 	&__dot-3 {
 		animation-delay: 600ms;
 	}
