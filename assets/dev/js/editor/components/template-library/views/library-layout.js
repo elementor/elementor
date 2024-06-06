@@ -13,9 +13,9 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return {
 			id: 'elementor-template-library-modal',
 			hide: {
-				onOutsideClick: windows?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
-				onBackgroundClick: windows?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
-				onEscKeyPress: windows?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
+				onOutsideClick: window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
+				onBackgroundClick: window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
+				onEscKeyPress: window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true,
 			},
 		};
 	},
