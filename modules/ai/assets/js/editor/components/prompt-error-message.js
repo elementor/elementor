@@ -89,6 +89,10 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 				buttonText: __( 'Reconnect', 'elementor' ),
 				buttonAction: onRetry,
 			},
+			file_too_large: {
+				text: <AlertTitle>{ __( 'The file is too large.', 'elementor' ) }</AlertTitle>,
+				description: __( 'Please upload a file that is less than 4MB.', 'elementor' ),
+			},
 		};
 
 		return messages[ errMsg ] || messages.default;
@@ -121,7 +125,10 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 };
 
 PromptErrorMessage.propTypes = {
-	error: PropTypes.string,
+	error: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.string,
+	] ),
 	onRetry: PropTypes.func,
 	actionPosition: PropTypes.oneOf( [ 'default', 'bottom' ] ),
 };

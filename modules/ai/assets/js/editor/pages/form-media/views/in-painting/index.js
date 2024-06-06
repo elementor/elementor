@@ -30,7 +30,7 @@ const InPainting = () => {
 
 	const isLoading = isGenerating || isUploading;
 
-	const handleSubmit = ( event ) => {
+	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 
 		// The fallback instruction should be hidden for the user.

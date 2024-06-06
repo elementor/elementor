@@ -828,6 +828,15 @@ class Controls_Manager {
 			return false;
 		}
 
+		if ( $control_type_instance instanceof Has_Validation ) {
+			try {
+				$control_type_instance->validate( $control_data );
+			} catch ( \Exception $e ) {
+				_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), esc_html( $e->getMessage() ), '3.23.0' );
+				return false;
+			}
+		}
+
 		if ( $control_type_instance instanceof Base_Data_Control ) {
 			$control_default_value = $control_type_instance->get_default_value();
 
@@ -939,11 +948,17 @@ class Controls_Manager {
 	 * @return array|\WP_Error The control, or an error.
 	 */
 	public function get_control_from_stack( $stack_id, $control_id ) {
-		if ( empty( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			return new \WP_Error( 'Cannot get a not-exists control.' );
+		$stack_data = $this->get_stacks( $stack_id );
+
+		if ( ! empty( $stack_data['controls'][ $control_id ] ) ) {
+			return $stack_data['controls'][ $control_id ];
 		}
 
-		return $this->stacks[ $stack_id ]['controls'][ $control_id ];
+		if ( ! empty( $stack_data['style_controls'][ $control_id ] ) ) {
+			return $stack_data['style_controls'][ $control_id ];
+		}
+
+		return new \WP_Error( 'Cannot get a not-exists control.' );
 	}
 
 	/**
@@ -1179,12 +1194,12 @@ class Controls_Manager {
 	 *
 	 * @param Controls_Stack $controls_stack.
 	 */
-	public function add_custom_attributes_controls( Controls_Stack $controls_stack ) {
+	public function add_custom_attributes_controls( Controls_Stack $controls_stack, string $tab = self::TAB_ADVANCED ) {
 		$controls_stack->start_controls_section(
 			'section_custom_attributes_pro',
 			[
 				'label' => esc_html__( 'Attributes', 'elementor' ),
-				'tab' => self::TAB_ADVANCED,
+				'tab' => $tab,
 			]
 		);
 
@@ -1353,6 +1368,10 @@ class Controls_Manager {
 	private function is_style_control( $control_data ): bool {
 		$frontend_available = $control_data['frontend_available'] ?? false;
 		if ( $frontend_available ) {
+			return false;
+		}
+
+		if ( ! empty( $control_data['control_type'] ) && 'content' === $control_data['control_type'] ) {
 			return false;
 		}
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { getUserInformation } from '../api';
+import PropTypes from 'prop-types';
 
-const useUserInfo = () => {
+const useUserInfo = ( immediately = false ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ userInfo, setUserInfo ] = useState( {
@@ -21,7 +22,7 @@ const useUserInfo = () => {
 	const fetchData = async () => {
 		setIsLoading( true );
 
-		const userInfoResult = await getUserInformation();
+		const userInfoResult = await getUserInformation( immediately );
 
 		setUserInfo( ( prevState ) => ( { ...prevState, ...userInfoResult } ) );
 
@@ -46,6 +47,10 @@ const useUserInfo = () => {
 		usagePercentage: Math.round( usagePercentage ),
 		fetchData,
 	};
+};
+
+useUserInfo.propTypes = {
+	immediately: PropTypes.bool,
 };
 
 export default useUserInfo;

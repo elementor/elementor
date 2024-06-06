@@ -21,7 +21,8 @@ import RedoIcon from '../../../../icons/redo-icon';
 
 const STROKE_SELECT_WIDTH = 120;
 
-const BRUSH_COLOR = 'rgba(0, 0, 0, 0.75)';
+const BRUSH_COLOR = 'rgba(255, 255, 255)';
+const CANVAS_COLOR = 'rgba(0, 0, 0)';
 
 const StyledUndoIcon = withDirection( UndoIcon );
 const StyledRedoIcon = withDirection( RedoIcon );
@@ -153,6 +154,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					width={ canvasWidth + 'px' }
 					strokeWidth={ stroke }
 					strokeColor={ BRUSH_COLOR }
+					canvasColor={ CANVAS_COLOR }
 					backgroundImage={ editImage.url }
 					onChange={ async () => {
 						const svg = await sketchRef.current.exportSvg();

@@ -204,7 +204,7 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: $editor-background;
+	background-color: var(--e-a-bg-default);
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 
@@ -215,7 +215,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		border-inline-end-color: $editor-background;
+		border-inline-end-color: var(--e-a-bg-default);
 	}
 
 	&__title {
@@ -226,8 +226,8 @@
 		&-header {
 			display: flex;
 			padding: 20px 20px 0;
-			color: $editor-darkest;
-			border-block-end: 1px solid $editor-background;
+			color: var(--e-a-color-txt);
+			border-block-end: 1px solid var(--e-a-bg-default);
 			font-weight: 500;
 
 			.eicon-pro-icon {
@@ -240,7 +240,7 @@
 			.eicon-close {
 				cursor: pointer;
 				margin-inline-start: auto;
-				color: $editor-light;
+				color: var(--e-a-color-txt);
 			}
 		}
 

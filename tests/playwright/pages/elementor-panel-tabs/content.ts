@@ -6,10 +6,10 @@ import { LinkOptions } from '../../types/types';
 
 export default class Content {
 	readonly page: Page;
-	readonly editorPage: EditorPage;
+	readonly editor: EditorPage;
 	constructor( page: Page, testInfo: TestInfo ) {
 		this.page = page;
-		this.editorPage = new EditorPage( this.page, testInfo );
+		this.editor = new EditorPage( this.page, testInfo );
 	}
 
 	async selectLinkSource( option: string ) {
@@ -43,7 +43,7 @@ export default class Content {
 				.first()
 				.type( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
 		}
-		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
+		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 
 	/**
@@ -74,15 +74,15 @@ export default class Content {
 	}
 
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ) {
-		await this.editorPage.getPreviewFrame().locator( args.widget ).click();
+		await this.editor.getPreviewFrame().locator( args.widget ).click();
 		await this.page.locator( args.select ).selectOption( args.imageSize );
-		await this.editorPage.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
+		await this.editor.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
 	}
 
 	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ) {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
-			: await this.editorPage.getPreviewFrame().waitForSelector( args.selector );
+			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
 		const attribute = args.isVideo ? 'style' : 'src';
 		const src = await image.getAttribute( attribute );
 		const regex = new RegExp( args.imageTitle );
@@ -90,7 +90,7 @@ export default class Content {
 	}
 
 	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ) {
-		await this.editorPage.getPreviewFrame().locator( args.selector ).click();
+		await this.editor.getPreviewFrame().locator( args.selector ).click();
 		await this.page.locator( args.select ).selectOption( 'custom' );
 		await this.page.locator( EditorSelectors.image.widthInp ).type( args.width );
 		await this.page.locator( EditorSelectors.image.heightInp ).type( args.height );
@@ -106,7 +106,7 @@ export default class Content {
 
 	async setLightBox( option: string ) {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
-		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
+		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 
 	async toggleControls( controlSelectors: string[] ) {

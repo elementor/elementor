@@ -17,8 +17,8 @@ export default class NestedAccordion extends Base {
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionItemTitlesText: '.e-n-accordion-item-title-text',
 				accordionContent: '.e-n-accordion-item > .e-con',
-				directAccordionItems: '& > .e-n-accordion-item',
-				directAccordionItemTitles: '& > .e-n-accordion-item > .e-n-accordion-item-title',
+				directAccordionItems: ':scope > .e-n-accordion-item',
+				directAccordionItemTitles: ':scope > .e-n-accordion-item > .e-n-accordion-item-title',
 			},
 			default_state: 'expanded',
 			attributes: {
@@ -43,7 +43,7 @@ export default class NestedAccordion extends Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( elementorFrontend.isEditMode() ) {
+		if ( elementorFrontend.isEditMode() && ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) {
 			this.interlaceContainers();
 		}
 
