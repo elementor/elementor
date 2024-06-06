@@ -131,8 +131,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_link' => false,
 					'text' => [
 						'default' => esc_html__( 'Click to start chat', 'elementor' ),
-					]
-				]
+					],
+				],
 			],
 			'style' => [
 				'has_platform_colors' => true,
@@ -1387,7 +1387,7 @@ JS;
 					'separator' => false,
 				]
 			);
-	
+
 			$this->add_control(
 				'style_top_bar_subtitle_color',
 				[
@@ -1401,7 +1401,7 @@ JS;
 					] ),
 				]
 			);
-	
+
 			$this->add_group_control(
 				Group_Control_Typography::get_type(),
 				[
@@ -1454,7 +1454,7 @@ JS;
 					] ),
 				]
 			);
-	
+
 			$this->add_control(
 				'style_top_bar_background_color',
 				[
@@ -2244,7 +2244,7 @@ JS;
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'yes',
 				'default' => 'yes',
-				'separator' => 'before'
+				'separator' => 'before',
 			]
 		);
 
@@ -2258,7 +2258,7 @@ JS;
 				],
 				'condition' => [
 					'style_info_links_dividers' => 'yes',
-				]
+				],
 			]
 		);
 
@@ -2287,7 +2287,7 @@ JS;
 				],
 				'condition' => [
 					'style_info_links_dividers' => 'yes',
-				]
+				],
 			]
 		);
 
@@ -2352,7 +2352,7 @@ JS;
 					],
 					'condition' => [
 						'style_send_normal_colors' => 'custom',
-					]
+					],
 				]
 			);
 		}
@@ -2421,7 +2421,7 @@ JS;
 					],
 					'condition' => [
 						'style_send_hover_colors' => 'custom',
-					]
+					],
 				]
 			);
 		}
