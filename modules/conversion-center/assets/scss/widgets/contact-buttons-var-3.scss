@@ -12,6 +12,10 @@
 	--e-contact-buttons-send-button-padding-block-start: 8px;
 	--e-contact-buttons-send-button-padding-inline-end: 16px;
 	--e-contact-buttons-send-button-padding-inline-start: 16px;
+    --e-contact-buttons-chat-box-padding-block-end: 16px;
+	--e-contact-buttons-chat-box-padding-block-start: 16px;
+	--e-contact-buttons-chat-box-padding-inline-end: 16px;
+	--e-contact-buttons-chat-box-padding-inline-start: 16px;
 
     --e-contact-buttons-button-bg: #324A6D;
 	--e-contact-buttons-button-bg-hover: #1C2448;
@@ -80,9 +84,17 @@
             }
 		}
 
+        &__content {
+            background-color: var(--e-contact-buttons-chat-box-bg);
+            padding-block-start: var(--e-contact-buttons-chat-box-padding-block-start);
+            padding-block-end: var(--e-contact-buttons-chat-box-padding-block-end);
+            padding-inline-start: var(--e-contact-buttons-chat-box-padding-inline-start);
+            padding-inline-end: var(--e-contact-buttons-chat-box-padding-inline-end);
+        }
+
         &__top-bar {
             background-color: var(--e-contact-buttons-chat-box-bg);
-            padding: 16px 16px 20px;
+            padding: 0 0 20px;
 
             .e-contact-buttons__close-button {
                 background: none;
@@ -106,10 +118,6 @@
             font-size: 18px;
             font-weight: 600;
             line-height: 18px;
-        }
-
-        &__links-container {
-            padding: 0 16px 16px;
         }
 
         &__links {

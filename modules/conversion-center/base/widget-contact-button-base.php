@@ -178,6 +178,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'chat_box_section' => [
 					'section_name' => esc_html__( 'Chat Box', 'elementor' ),
 					'width' => 360,
+					'has_width' => true,
+					'has_padding' => false,
 				],
 			],
 			'advanced' => [
@@ -2246,6 +2248,49 @@ JS;
 			]
 		);
 
+		$this->add_control(
+			'style_info_links_divider_color',
+			[
+				'label'     => esc_html__( 'Color', 'elementor' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-icon-link-divider-color: {{VALUE}}',
+				],
+				'condition' => [
+					'style_info_links_dividers' => 'yes',
+				]
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_info_links_divider_weight',
+			[
+				'label' => esc_html__( 'Weight', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 1,
+						'max' => 10,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+					'size' => 1,
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-icon-link-divider-weight: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'style_info_links_dividers' => 'yes',
+				]
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -2523,35 +2568,37 @@ JS;
 			]
 		);
 
-		$this->add_responsive_control(
-			'style_chat_box_width',
-			[
-				'label' => esc_html__( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'%' => [
-						'min' => 10,
-						'max' => 100,
+		if ( $config['style']['chat_box_section']['has_width'] ) {
+			$this->add_responsive_control(
+				'style_chat_box_width',
+				[
+					'label' => esc_html__( 'Width', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'%' => [
+							'min' => 10,
+							'max' => 100,
+						],
+						'px' => [
+							'min' => 0,
+							'max' => 400,
+						],
 					],
-					'px' => [
-						'min' => 0,
-						'max' => 400,
+					'default' => [
+						'unit' => 'px',
+						'size' => $config['style']['chat_box_section']['width'],
 					],
-				],
-				'default' => [
-					'unit' => 'px',
-					'size' => $config['style']['chat_box_section']['width'],
-				],
-				'mobile_default' => [
-					'unit' => 'vw',
-					'size' => 100,
-				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
+					'mobile_default' => [
+						'unit' => 'vw',
+						'size' => 100,
+					],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-width: {{SIZE}}{{UNIT}}',
+					],
+				]
+			);
+		}
 
 		$this->add_control(
 			'style_chat_box_corners',
@@ -2564,6 +2611,7 @@ JS;
 					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -2575,6 +2623,28 @@ JS;
 				'fields_options' => static::BOX_SHADOW_FIELDS_OPTIONS,
 			]
 		);
+
+		if ( $config['style']['chat_box_section']['has_padding'] ) {
+			$this->add_responsive_control(
+				'style_chat_box_padding',
+				[
+					'label' => esc_html__( 'Padding', 'elementor' ),
+					'type' => Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px', '%', 'em', 'rem' ],
+					'default' => [
+						'top' => '16',
+						'bottom' => '16',
+						'left' => '16',
+						'right' => '16',
+						'unit' => 'px',
+						'isLinked' => true,
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-chat-box-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-chat-box-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-chat-box-padding-inline-start: {{LEFT}}{{UNIT}};',
+					],
+				]
+			);
+		}
 
 		$this->chat_box_animation_controls();
 
