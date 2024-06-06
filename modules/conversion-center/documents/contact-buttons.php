@@ -14,19 +14,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Contact_Buttons extends PageBase {
 	use Library_Trait;
 
+	const LOCATION_META_KEY = '_elementor_location';
+
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['support_kit'] = false;
-		$properties['show_in_library'] = false;
+		$properties['support_kit'] = true;
+		$properties['show_in_library'] = true;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_CONTACT_PAGES ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
+		$properties['support_conditions'] = true;
+		$properties['condition_type'] = 'general';
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
 
 		return $properties;
+	}
+
+	public function get_location() {
+		$value = self::get_property( 'location' );
+		if ( ! $value ) {
+			$value = $this->get_main_meta( self::LOCATION_META_KEY );
+		}
+
+		return $value;
 	}
 
 	public static function get_type() {
