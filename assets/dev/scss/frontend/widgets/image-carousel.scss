@@ -20,7 +20,7 @@
 }
 
 // Before the image-carousel layout is calculated by JS. //
-.elementor-image-carousel-wrapper:not(.swiper-container-initialized):not(.swiper-initialized) {
+.elementor-image-carousel-wrapper:not(.swiper-initialized) {
 
 	.swiper-slide {
 		max-width: calc(100% / var(--e-image-carousel-slides-to-show, 3));
