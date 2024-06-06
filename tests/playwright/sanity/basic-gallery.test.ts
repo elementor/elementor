@@ -4,8 +4,8 @@ import ImageCarousel from '../pages/widgets/image-carousel';
 
 test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
 	// Close Navigator
@@ -22,37 +22,10 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 		.toMatchSnapshot( 'gallery.jpeg' );
 } );
 
-test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testInfo ) => {
+test( 'Basic Gallery Lightbox', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const imageCarousel = new ImageCarousel( page, testInfo );
-
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: true,
-	} );
-
-	const editor = await wpAdmin.openNewPage();
-
-	// Close Navigator
-	await editor.closeNavigatorIfOpen();
-	await editor.addWidget( 'image-gallery' );
-	// Act.
-	await testBasicSwiperGallery( editor, page, imageCarousel );
-
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: false,
-	} );
-} );
-
-test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInfo ) => {
-	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	const imageCarousel = new ImageCarousel( page, testInfo );
-
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: false,
-	} );
-
 	const editor = await wpAdmin.openNewPage();
 
 	// Close Navigator
