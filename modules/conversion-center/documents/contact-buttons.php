@@ -29,6 +29,7 @@ class Contact_Buttons extends PageBase {
 		$properties['condition_type'] = 'general';
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
+		$properties['allow_closing_remote_library'] = false;
 
 		return $properties;
 	}

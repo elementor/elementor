@@ -252,8 +252,6 @@ abstract class Contact_Buttons_Render_Base {
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
 						'viber_action' => $icon['contact_icon_viber_action'],
-						'url' => $icon['contact_icon_url'] ?? '',
-						'location' => $icon['contact_icon_waze'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
@@ -403,7 +401,8 @@ abstract class Contact_Buttons_Render_Base {
 		$layout_classnames = 'e-contact-buttons e-' . $this->widget->get_name();
 		$platform = $this->settings['chat_button_platform'] ?? '';
 		$border_radius = $this->settings['style_chat_box_corners'];
-		$alignment_position = $this->settings['advanced_horizontal_position'];
+		$alignment_position_horizontal = $this->settings['advanced_horizontal_position'];
+		$alignment_position_vertical = $this->settings['advanced_vertical_position'];
 		$has_animations = ! empty( $this->settings['style_chat_box_exit_animation'] ) || ! empty( $this->settings['style_chat_box_entrance_animation'] );
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
 
@@ -417,8 +416,12 @@ abstract class Contact_Buttons_Render_Base {
 			$layout_classnames .= ' has-corners-' . $border_radius;
 		}
 
-		if ( ! empty( $alignment_position ) ) {
-			$layout_classnames .= ' has-alignment-' . $alignment_position;
+		if ( ! empty( $alignment_position_horizontal ) ) {
+			$layout_classnames .= ' has-h-alignment-' . $alignment_position_horizontal;
+		}
+
+		if ( ! empty( $alignment_position_vertical ) ) {
+			$layout_classnames .= ' has-v-alignment-' . $alignment_position_vertical;
 		}
 
 		if ( $has_animations ) {

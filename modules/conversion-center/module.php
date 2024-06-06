@@ -168,6 +168,7 @@ class Module extends BaseModule {
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
 			$posts_columns['click_tracking'] = esc_html__( 'Click Tracking', 'elementor' );
+
 			if ( ! static::is_pro_active() ) {
 				$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
 			}
