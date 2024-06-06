@@ -28,7 +28,6 @@ export default class ContactButtonsHandler extends Base {
 				hasAnimations: 'has-animations',
 				hasEntranceAnimation: 'has-entrance-animation',
 				none: 'none',
-				isEditor: 'elementor-editor-active',
 			},
 		};
 	}
@@ -278,9 +277,8 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	initDefaultState() {
-		const { isEditor } = this.getSettings( 'constants' );
 
-		if ( document.body.classList.contains( isEditor ) ) {
+		if ( elementorFrontend.isEditMode() ) {
 			this.openChatBox();
 		}
 	}
