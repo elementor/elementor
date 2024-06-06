@@ -132,6 +132,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				],
 				'border_section' => [
 					'field_options' => false,
+					'overlay_field_options' => false,
 				],
 				'image_links_section' => false,
 			],
@@ -1490,6 +1491,41 @@ JS;
 	}
 
 	protected function add_style_background_controls(): void {
+		$config = static::get_configuration();
+
+		// Defaults for background image and overlay
+		$bg_section_image_field_option_defaults = [
+			'background' => [
+				'default' => 'classic',
+			],
+			'position' => [
+				'default' => 'center center',
+			],
+			'size' => [
+				'default' => 'cover',
+			],
+		];
+
+		// Background image
+		$bg_image_field_options = $bg_section_image_field_option_defaults;
+
+		if ( $config['style']['border_section']['field_options'] ) {
+			$bg_image_field_options = array_merge(
+				$bg_section_image_field_option_defaults,
+				$config['style']['border_section']['field_options']
+			);
+		}
+
+		// Background overlay
+		$bg_overlay_image_field_options = $bg_section_image_field_option_defaults;
+
+		if ( $config['style']['border_section']['overlay_field_options'] ) {
+			$bg_overlay_image_field_options = array_merge(
+				$bg_section_image_field_option_defaults,
+				$config['style']['border_section']['overlay_field_options']
+			);
+		}
+
 		$this->start_controls_section(
 			'background_border_section_style',
 			[
@@ -1506,18 +1542,6 @@ JS;
 				'separator' => 'before',
 			]
 		);
-
-		$bg_image_field_options = [
-			'background' => [
-				'default' => 'classic',
-			],
-		];
-
-		$config = static::get_configuration();
-
-		if ( $config['style']['border_section']['field_options'] ) {
-			$bg_image_field_options = array_merge( $bg_image_field_options, $config['style']['border_section']['field_options'] );
-		}
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
@@ -1544,11 +1568,7 @@ JS;
 				'name' => 'background_border_background_overlay_group',
 				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
-				'fields_options' => [
-					'background' => [
-						'default' => 'classic',
-					],
-				],
+				'fields_options' => $bg_overlay_image_field_options,
 			]
 		);
 
