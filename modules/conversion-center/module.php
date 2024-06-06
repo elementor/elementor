@@ -16,6 +16,7 @@ use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -39,6 +40,10 @@ class Module extends BaseModule {
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
+	}
+
+	public static function is_pro_active(): bool {
+		return API::is_license_active();
 	}
 
 	public function get_name(): string {
@@ -163,7 +168,9 @@ class Module extends BaseModule {
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
 			$posts_columns['click_tracking'] = esc_html__( 'Click Tracking', 'elementor' );
-			$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
+			if ( ! static::is_pro_active() ) {
+				$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
+			}
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
@@ -225,6 +232,9 @@ class Module extends BaseModule {
 				echo esc_html( $click_tracking );
 				break;
 			case 'instances':
+				if ( static::is_pro_active() ) {
+					break;
+				}
 				$instances = get_post_meta( $post_id, '_elementor_conditions', true );
 				if ( $instances ) {
 					echo esc_html__( 'Entire Site', 'elementor' );
