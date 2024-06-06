@@ -128,6 +128,7 @@ const entry = {
 	'ai-gutenberg': path.resolve( __dirname, '../modules/ai/assets/js/gutenberg/index.js' ),
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
 	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
+	'ai-media-library': path.resolve( __dirname, '../modules/ai/assets/js/media-library/index.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
