@@ -277,7 +277,6 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	initDefaultState() {
-
 		if ( elementorFrontend.isEditMode() ) {
 			this.openChatBox();
 		}
