@@ -103,6 +103,8 @@ class Module extends BaseModule {
 			}
 		} );
 
+		add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+
 		add_action( 'enqueue_block_editor_assets', function() {
 			wp_enqueue_script( 'elementor-ai-gutenberg',
 				$this->get_js_assets_url( 'ai-gutenberg' ),
@@ -111,7 +113,7 @@ class Module extends BaseModule {
 					'elementor-v2-ui',
 					'elementor-v2-icons',
 				],
-			ELEMENTOR_VERSION, true );
+				ELEMENTOR_VERSION, true );
 
 			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
 
@@ -158,6 +160,36 @@ class Module extends BaseModule {
 				'container',
 			],
 		] );
+	}
+
+	public function enqueue_ai_media_library() {
+		wp_enqueue_script( 'elementor-ai-media-library',
+			$this->get_js_assets_url( 'ai-media-library' ),
+			[
+				'jquery',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+				'media-grid',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
+
+		$config = [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+			'client_session_id' => $session_id,
+		];
+
+		wp_localize_script(
+			'elementor-ai-media-library',
+			'ElementorAiConfig',
+			$config
+		);
+
+		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
 	}
 
 	private function enqueue_main_script() {
@@ -314,7 +346,14 @@ class Module extends BaseModule {
 
 		return $app->get_remote_config();
 	}
+	public function verify_upload_permissions() {
+		$referer = wp_get_referer();
 
+		if ( str_contains( $referer, 'wp-admin/upload.php' ) && current_user_can( 'upload_files' ) ) {
+			return true;
+		}
+		return false;
+	}
 	private function verify_permissions( $editor_post_id ) {
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
@@ -328,7 +367,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_prompt_enhancer( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -545,7 +586,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_text_to_image( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
@@ -572,7 +615,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -607,7 +652,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_upscale( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -641,7 +688,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_replace_background( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -675,7 +724,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_remove_background( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -703,7 +754,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_mask( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -745,7 +798,9 @@ class Module extends BaseModule {
 		];
 	}
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		if ( ! $this->verify_upload_permissions() ) {
+			$this->verify_permissions( $data['editor_post_id'] );
+		}
 
 		$app = $this->get_ai_app();
 
@@ -793,8 +848,8 @@ class Module extends BaseModule {
 		}
 
 		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
-			 $app = $this->get_ai_app();
-			 $app->set_used_gallery_image( $image['id'] );
+			$app = $this->get_ai_app();
+			$app->set_used_gallery_image( $image['id'] );
 		}
 
 		return [

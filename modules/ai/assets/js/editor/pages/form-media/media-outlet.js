@@ -17,10 +17,10 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
 
-const MediaOutlet = () => {
+const MediaOutlet = ( { additionalOptions = null } ) => {
 	const { editImage } = useEditImage();
 
-	const { current, navigate } = useLocation( { current: LOCATIONS.GENERATE } );
+	const { current, navigate } = useLocation( { current: additionalOptions?.location || LOCATIONS.GENERATE } );
 
 	useEffect( () => {
 		const isNotPlaceholderImage = editImage.id;
@@ -64,3 +64,7 @@ const MediaOutlet = () => {
 };
 
 export default MediaOutlet;
+
+MediaOutlet.propTypes = {
+	additionalOptions: PropTypes.object,
+};
