@@ -1,31 +1,3 @@
-import App from '../editor/app';
-import { LOCATIONS } from '../editor/pages/form-media/constants';
-import PropTypes from 'prop-types';
-import React from 'react';
-
-export const AIMedia = ( { onClose, imageId } ) => {
-	const image = wp.media.attachment( imageId );
-
-	return (
-		<>
-			<App
-				type={ 'media' }
-				getControlValue={ () => image.attributes }
-				setControlValue={ () => {} }
-				onClose={ onClose }
-				additionalOptions={ {
-					location: LOCATIONS.IMAGE_TOOLS,
-				} }
-			/>
-		</>
-	);
-};
-
-AIMedia.propTypes = {
-	onClose: PropTypes.func.isRequired,
-	imageId: PropTypes.string,
-};
-
 export const getImageId = () => {
 	const imageId = wp.media?.frames?.edit?.model?.id?.toString();
 	if ( imageId ) {

@@ -1,8 +1,8 @@
 import React from 'react';
-import GenerateImageWithAI from './generate';
+import AIMediaGenerateAppWrapper from './generate';
 import { createRoot } from '@wordpress/element';
-import EditImageWithAILink from './edit-link';
-import EditImageWithAIButton from './edit-button';
+import AIMediaEditAppButtonWrapper from './edit-button';
+import AIMediaEditAppLinkWrapper from './edit-link';
 
 const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
@@ -46,7 +46,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 			const container = document.createElement( 'div' );
 			container.id = 'e-image-ai-media-library';
 			mediaLibrary.insertAdjacentElement( 'afterend', container );
-			renderComponent( 'e-image-ai-media-library', GenerateImageWithAI );
+			renderComponent( 'e-image-ai-media-library', AIMediaGenerateAppWrapper );
 		}
 	}
 
@@ -87,8 +87,8 @@ const addEventListener = ( eventName, containerId, Component ) => {
 			},
 		} );
 	}
-	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', EditImageWithAILink );
-	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', EditImageWithAIButton );
+	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', AIMediaEditAppLinkWrapper );
+	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', AIMediaEditAppButtonWrapper );
 
 	insertStyleTag();
 } )();

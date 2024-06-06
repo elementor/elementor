@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
-import { AIMedia, getImageId } from './utils';
+import { getImageId } from './utils';
+import { AIMediaEditApp } from './componenets';
 
 const ImageLink = styled.a`
 	&& {
@@ -17,7 +18,7 @@ const ImageLink = styled.a`
 	}
 `;
 
-const EditImageWithAILink = () => {
+const AIMediaEditAppLinkWrapper = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ imageId, setImageId ] = useState( getImageId );
 
@@ -35,9 +36,9 @@ const EditImageWithAILink = () => {
 		<div style={ { paddingTop: '0.2em' } }>
 			<RequestIdsProvider>
 				<ImageLink onClick={ handleClick }>{ __( 'Edit with Elementor AI', 'elementor' ) }</ImageLink>
-				{ isOpen && <AIMedia onClose={ handleClose } imageId={ imageId } /> }
+				{ isOpen && <AIMediaEditApp onClose={ handleClose } imageId={ imageId } /> }
 			</RequestIdsProvider>
 		</div> );
 };
 
-export default EditImageWithAILink;
+export default AIMediaEditAppLinkWrapper;

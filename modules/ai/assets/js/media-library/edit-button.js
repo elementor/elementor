@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
-import { AIMedia, getImageId } from './utils';
+import { getImageId } from './utils';
+import { AIMediaEditApp } from './componenets';
 
 const Icon = styled.i`
 	color: #C00BB9;
@@ -29,7 +30,7 @@ const StyledButton = styled.a`
 	}
 `;
 
-const EditImageWithAIButton = () => {
+const AIMediaEditAppButtonWrapper = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ imageId, setImageId ] = useState( getImageId );
 
@@ -50,9 +51,9 @@ const EditImageWithAIButton = () => {
 					<Icon className={ 'eicon-ai' } />
 					{ __( 'Edit with Elementor AI', 'elementor' ) }
 				</StyledButton>
-				{ isOpen && <AIMedia onClose={ handleClose } imageId={ imageId } /> }
+				{ isOpen && <AIMediaEditApp onClose={ handleClose } imageId={ imageId } /> }
 			</RequestIdsProvider>
 		</div> );
 };
 
-export default EditImageWithAIButton;
+export default AIMediaEditAppButtonWrapper;

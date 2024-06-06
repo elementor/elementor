@@ -2,29 +2,7 @@ import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
-import PropTypes from 'prop-types';
-import App from '../editor/app';
-import { IMAGE_PROMPT_CATEGORIES } from '../editor/pages/form-media/constants';
-
-const AIMedia = ( { onClose } ) => {
-	return (
-		<>
-			<App
-				type={ 'media' }
-				getControlValue={ () => {} }
-				setControlValue={ () => {} }
-				onClose={ onClose }
-				additionalOptions={ {
-					defaultImageType: Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
-				} }
-			/>
-		</>
-	);
-};
-
-AIMedia.propTypes = {
-	onClose: PropTypes.func.isRequired,
-};
+import { AIMediaGenerateApp } from './componenets';
 
 const Icon = styled.i`
 	padding-right: 0.5em;
@@ -51,7 +29,7 @@ const StyledButton = styled.a`
 	}
 `;
 
-const GenerateImageWithAI = () => {
+const AIMediaGenerateAppWrapper = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleClick = () => {
@@ -70,10 +48,10 @@ const GenerateImageWithAI = () => {
 					<Icon className={ 'eicon-ai' } />
 					{ __( 'Generate with Elementor AI', 'elementor' ) }
 				</StyledButton>
-				{ isOpen && <AIMedia onClose={ handleClose } /> }
+				{ isOpen && <AIMediaGenerateApp onClose={ handleClose } /> }
 			</RequestIdsProvider>
 		</div>
 	);
 };
 
-export default GenerateImageWithAI;
+export default AIMediaGenerateAppWrapper;
