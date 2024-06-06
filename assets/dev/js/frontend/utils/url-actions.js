@@ -57,6 +57,8 @@ export default class extends elementorModules.ViewModule {
 			settings = JSON.parse( atob( settingsMatch[ 1 ] ) );
 		}
 
+		settings.isKeyboardEvent = 'mouse' !== event?.pointerType;
+
 		action( settings, ...restArgs );
 	}
 
