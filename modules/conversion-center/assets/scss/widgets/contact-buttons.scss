@@ -108,8 +108,9 @@
 			padding-inline: 0;
 		}
 
-		&.has-v-alignment-middle {
-			justify-content: flex-start;
+		.e-contact-buttons__content-wrapper {
+			inset-inline-end: calc(var(--e-contact-buttons-chat-box-width) / 2 - 40px);
+			position: relative;
 		}
 	}
 
@@ -146,6 +147,11 @@
 				padding-inline: 0;
 			}
 		}
+	}
+
+	&.has-h-alignment-center.has-v-alignment-middle {
+		flex-direction: column;
+		transform: translate(-50%, -50%);
 	}
 
 	&.has-v-alignment-bottom {

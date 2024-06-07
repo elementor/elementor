@@ -166,6 +166,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'vertical_offset_default' => 25,
 				'has_mobile_full_width' => false,
 				'has_vertical_offset' => true,
+				'has_horizontal_offset' => true,
 			],
 		];
 	}
@@ -2345,37 +2346,39 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
-				'advanced_horizontal_offset',
-				[
-					'label' => esc_html__( 'Offset', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'%' => [
-							'min' => 10,
-							'max' => 100,
+			if ( $config['advanced']['has_horizontal_offset'] ) {
+				$this->add_responsive_control(
+					'advanced_horizontal_offset',
+					[
+						'label' => esc_html__( 'Offset', 'elementor' ),
+						'type' => Controls_Manager::SLIDER,
+						'range' => [
+							'%' => [
+								'min' => 10,
+								'max' => 100,
+							],
+							'px' => [
+								'min' => 0,
+								'max' => 100,
+							],
 						],
-						'px' => [
-							'min' => 0,
-							'max' => 100,
+						'default' => [
+							'unit' => 'px',
+							'size' => $config['advanced']['horizontal_offset_default'],
 						],
-					],
-					'default' => [
-						'unit' => 'px',
-						'size' => $config['advanced']['horizontal_offset_default'],
-					],
-					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-					'selectors' => [
-						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-horizontal-offset: {{SIZE}}{{UNIT}}',
-					],
-					'condition' => [
-						'advanced_horizontal_position' => [
-							'start',
-							'end',
+						'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+						'selectors' => [
+							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-horizontal-offset: {{SIZE}}{{UNIT}}',
 						],
-					],
-				]
-			);
+						'condition' => [
+							'advanced_horizontal_position' => [
+								'start',
+								'end',
+							],
+						],
+					]
+				);
+			}
 
 			$this->add_responsive_control(
 				'advanced_vertical_position',
