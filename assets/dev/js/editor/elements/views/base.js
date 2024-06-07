@@ -659,18 +659,34 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, changedSetting ) {
+	isAtomicDynamic( dataBinding, settings ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			this.isAddingDynamicToTitle( dataBinding, changedSetting );
+			this.isDynamicTitle( dataBinding, settings );
+	},
+
+	isDynamicTitle( dataBinding, settings ) {
+		return this.isAddingDynamicToTitle( dataBinding, settings.changed ) ||
+			this.isRemovingDynamicFromTitle( settings, dataBinding.dataset.bindingSetting );
 	},
 
 	isAddingDynamicToTitle( dataBinding, changedSetting ) {
+		debugger;
 		return (
 			'object' === typeof changedSetting?.__dynamic__ &&
 			Object.keys( changedSetting?.__dynamic__ )[ 0 ]?.length > 0 &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
 		);
+	},
+
+	isRemovingDynamicFromTitle( settings, bindingSetting ) {
+		for ( const key of Object.keys( settings._previousAttributes.__dynamic__ ) ) {
+			if ( key === bindingSetting ) {
+				return true;
+			}
+		}
+
+		return false;
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
@@ -763,7 +779,7 @@ BaseElementView = BaseContainer.extend( {
 			const { bindingSetting } = dataBinding.dataset;
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
+			if ( this.isAtomicDynamic( dataBinding, settings ) ) {
 				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
