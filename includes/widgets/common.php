@@ -1145,15 +1145,6 @@ class Widget_Common extends Widget_Base {
 	 * @access protected
 	 */
 	protected function register_controls() {
-		$register_common_controls = apply_filters(
-			'elementor/widget/common/register_controls',
-			true,
-			$this
-		);
-
-		if ( false === $register_common_controls ) {
-			return;
-		}
 
 		$this->register_layout_section();
 

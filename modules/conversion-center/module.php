@@ -19,6 +19,7 @@ use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -79,20 +80,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		Controls_Manager::add_tab(
-			Widget_Contact_Button_Base::TAB_ADVANCED,
-			esc_html__( 'Advanced', 'elementor' )
-		);
+		if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
+			Controls_Manager::add_tab(
+				Widget_Contact_Button_Base::TAB_ADVANCED,
+				esc_html__( 'Advanced', 'elementor' )
+			);
+		}
 
 		$this->register_contact_pages_cpt();
-
-		add_filter( 'elementor/widget/common/register_controls', function( $register_common_controls ) {
-			if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
-				return false;
-			}
-
-			return $register_common_controls;
-		} );
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
@@ -348,15 +343,15 @@ class Module extends BaseModule {
 	}
 
 	private function is_editing_existing_floating_buttons_page() {
-		$action = filter_input( INPUT_GET, 'action', FILTER_UNSAFE_RAW );
-		$post_id = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
+		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );;
 
 		return 'elementor' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
 	}
 
 	private function is_creating_floating_buttons_page() {
-		$action = filter_input( INPUT_POST, 'action', FILTER_UNSAFE_RAW );
-		$post_id = filter_input( INPUT_POST, 'editor_post_id', FILTER_VALIDATE_INT );
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' );
+		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' );
 
 		return 'elementor_ajax' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
 	}

@@ -2479,7 +2479,7 @@ JS;
 			'responsive_description',
 			[
 				'raw' => sprintf(
-				/* translators: 1: Link open tag, 2: Link close tag. */
+					/* translators: 1: Link open tag, 2: Link close tag. */
 					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
 					'<a href="javascript: $e.run( \'panel/close\' )">',
 					'</a>'
