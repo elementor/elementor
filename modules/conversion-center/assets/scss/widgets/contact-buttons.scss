@@ -32,7 +32,7 @@
 	--e-contact-buttons-top-bar-title: #ffffff;
 	--e-contact-buttons-top-bar-subtitle: #ffffff;
 	--e-contact-buttons-close-button-color: #ffffff;
-	--e-contact-buttons-close-button-bg: #ffffff;
+	--e-contact-buttons-active-button-bg: #ffffff;
 	--e-contact-buttons-message-bubble-name: #000000;
 	--e-contact-buttons-message-bubble-body: #000000;
 	--e-contact-buttons-message-bubble-time: #000000;
@@ -284,6 +284,7 @@
 		display: flex;
 		gap: 20px;
 		padding: 20px;
+		position: relative;
 	}
 
 	&__top-bar-title {
