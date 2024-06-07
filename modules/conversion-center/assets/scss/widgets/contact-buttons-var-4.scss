@@ -10,6 +10,8 @@
 	--e-contact-buttons-contact-button-icon-hover: #467FF7;
 	--e-contact-buttons-contact-button-bg-hover: #FFFFFF;
 
+	width: auto;
+
 	&.has-h-alignment-end {
 		
 		.e-contact-buttons__chat-button-container {
@@ -76,6 +78,10 @@
 
 		.e-contact-buttons__contact-links {
 			align-items: center;
+		}
+
+		.e-contact-buttons__content-wrapper {
+			inset-inline-end: 40px;
 		}
 	}
 

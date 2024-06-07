@@ -107,6 +107,11 @@
 			justify-content: center;
 			padding-inline: 0;
 		}
+
+		.e-contact-buttons__content-wrapper {
+			inset-inline-end: calc(var(--e-contact-buttons-chat-box-width) / 2 - 40px);
+			position: relative;
+		}
 	}
 
 	&.has-v-alignment-top {
@@ -136,12 +141,17 @@
 			.e-contact-buttons__content-wrapper {
 				order: 2;
 			}
-	
+
 			.e-contact-buttons__chat-button-container {
 				order: 1;
 				padding-inline: 0;
 			}
 		}
+	}
+
+	&.has-h-alignment-center.has-v-alignment-middle {
+		flex-direction: column;
+		transform: translate(-50%, -50%);
 	}
 
 	&.has-v-alignment-bottom {
@@ -229,6 +239,27 @@
 		--e-contact-buttons-send-button-bg: #7360F2;
 		--e-contact-buttons-send-button-icon-hover: #ffffff;
 		--e-contact-buttons-send-button-bg-hover: #4E4879;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
+
+	&.has-platform-waze {
+		--e-contact-buttons-button-bg: #33CCFF;
+		--e-contact-buttons-button-bg-hover: #0099FF;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #0099FF;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #ECE5DD;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #33CCFF;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #0099FF;
 		--e-contact-buttons-chat-box-bg: #FFFFFF;
 	}
 
@@ -362,7 +393,7 @@
 			position: relative;
 		}
 	}
-	
+
 	&__chat-button {
 		align-items: center;
 		background-color: var(--e-contact-buttons-button-bg);
@@ -377,12 +408,12 @@
 		svg {
 			fill: var(--e-contact-buttons-button-icon);
 		}
-		
+
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-button-bg-hover);
 			transition: $transition-hover;
-			
+
 			svg {
 				fill: var(--e-contact-buttons-button-icon-hover);
 			}
@@ -527,10 +558,6 @@
 		color: #{$contact-buttons-default-text-color};
 		font-size: 16px;
 		font-weight: 500;
-		
-		.elementor & {
-			text-decoration: underline;
-		}
 	}
 
 	&__dots-container {
@@ -555,11 +582,11 @@
 	&__dot-1 {
 		animation-delay: 200ms;
 	}
-	
+
 	&__dot-2 {
 		animation-delay: 400ms;
 	}
-	
+
 	&__dot-3 {
 		animation-delay: 600ms;
 	}
