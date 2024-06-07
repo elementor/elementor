@@ -239,6 +239,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'autocomplete' => true,
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 			],
 		);
 
