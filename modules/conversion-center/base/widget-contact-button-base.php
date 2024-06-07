@@ -38,6 +38,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 					],
 					'has_notification_dot' => true,
+					'has_notification_dot_default_enabled' => true,
 					'has_active_tab' => false,
 					'has_display_text' => false,
 					'platform' => [
@@ -407,6 +408,15 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		}
 
 		if ( $config['content']['chat_button_section']['has_notification_dot'] ) {
+
+			$notification_dot_return_value = 'yes';
+			$notification_dot_default = $notification_dot_return_value;
+
+			// Only clear if explicitly passed
+			if ( false === $config['content']['chat_button_section']['has_notification_dot_default_enabled'] ) {
+				$notification_dot_default = '';
+			}
+
 			$this->add_control(
 				'chat_button_show_dot',
 				[
@@ -414,8 +424,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'type' => Controls_Manager::SWITCHER,
 					'label_on' => esc_html__( 'Show', 'elementor' ),
 					'label_off' => esc_html__( 'Hide', 'elementor' ),
-					'return_value' => 'yes',
-					'default' => 'yes',
+					'return_value' => $notification_dot_return_value,
+					'default' => $notification_dot_default,
 				]
 			);
 		}
