@@ -353,9 +353,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'chat_button_waze',
 			[
 				'label' => esc_html__( 'Location', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
@@ -863,7 +866,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'contact_icon_waze',
 			[
 				'label' => esc_html__( 'Location', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
 				],
