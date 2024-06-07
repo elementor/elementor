@@ -460,6 +460,39 @@ class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
+	 * @throws \Exception If post ID is missing.
+	 * @throws \Exception If current user don't have permissions to edit the post.
+	 */
+	public function ajax_render_tags_single( $data ) {
+		if ( empty( $data['post_id'] ) ) {
+			throw new \Exception( 'Missing post id.' );
+		}
+
+		if ( ! User::is_current_user_can_edit( $data['post_id'] ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		Plugin::$instance->db->switch_to_post( $data['post_id'] );
+
+		$tags_data = [];
+
+		$tag_key_parts = explode( '-', $data['tag'] );
+
+		$tag_name = base64_decode( $tag_key_parts[0] );
+
+		$tag_settings = json_decode( urldecode( base64_decode( $tag_key_parts[1] ) ), true );
+
+		$tag = $this->create_tag( null, $tag_name, $tag_settings );
+
+		$tags_data[ $data['tag'] ] = $tag->get_content();
+
+		return $tags_data;
+	}
+
+	/**
+	 * @since 2.0.0
+	 * @access public
+	 *
 	 * @param $mode
 	 */
 	public function set_parsing_mode( $mode ) {
@@ -495,6 +528,8 @@ class Manager {
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'render_tags', [ $this, 'ajax_render_tags' ] );
+		$ajax->register_ajax_action( 'render_tags_single', [ $this, 'ajax_render_tags_single' ] );
+
 	}
 
 	/**

@@ -668,7 +668,17 @@ BaseElementView = BaseContainer.extend( {
 			dynamicSettings = { active: true };
 
 		if ( valueToParse ) {
-			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			try {
+				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			} catch {
+				// return false;
+				const request = elementor.dynamicTags.createCacheKey( this ); // This this is incorrect, we should add the tag.js this of build a dedicated this.
+				console.log( { request } );
+				elementor.dynamicTags.loadSingleCacheRequest( request );
+
+				console.log( 'cache:', elementor.dynamicTags.cache )
+
+			}
 		}
 
 		return settings.attributes.item_title; // Default title

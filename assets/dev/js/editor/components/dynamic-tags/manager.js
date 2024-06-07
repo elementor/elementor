@@ -58,6 +58,23 @@ module.exports = elementorModules.Module.extend( {
 		} );
 	},
 
+	loadSingleCacheRequest( request ) {
+		elementorCommon.ajax.addRequest( 'render_tags_single', {
+			data: {
+				post_id: elementor.config.document.id,
+				tags: Object.keys( request ),
+			},
+			success: ( data ) => {
+				this.cache = {
+					...this.cache,
+					...data,
+				};
+			},
+		} );
+
+		return this.cache;
+	},
+
 	refreshCacheFromServer( callback ) {
 		this.cacheCallbacks.push( callback );
 
