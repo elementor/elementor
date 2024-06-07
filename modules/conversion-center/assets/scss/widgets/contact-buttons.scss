@@ -107,6 +107,10 @@
 			justify-content: center;
 			padding-inline: 0;
 		}
+
+		&.has-v-alignment-middle {
+			justify-content: flex-start;
+		}
 	}
 
 	&.has-v-alignment-top {

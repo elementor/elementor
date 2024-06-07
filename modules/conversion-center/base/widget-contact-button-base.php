@@ -2368,6 +2368,12 @@ JS;
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-horizontal-offset: {{SIZE}}{{UNIT}}',
 					],
+					'condition' => [
+						'advanced_horizontal_position' => [
+							'start',
+							'end',
+						],
+					],
 				]
 			);
 
@@ -2418,6 +2424,12 @@ JS;
 						'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 						'selectors' => [
 							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-vertical-offset: {{SIZE}}{{UNIT}}',
+						],
+						'condition' => [
+							'advanced_vertical_position' => [
+								'top',
+								'bottom',
+							],
 						],
 					]
 				);
