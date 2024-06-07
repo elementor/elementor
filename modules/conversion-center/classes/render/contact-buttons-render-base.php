@@ -191,12 +191,11 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function render_message_bubble_powered_by(): void {
-		$powered_by_url = 'https://elementor.com/pro';
 		?>
 			<div class="e-contact-buttons__powered-container">
-				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text" target="_blank">
+				<p class="e-contact-buttons__powered-text">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
-				</a>
+				</p>
 			</div>
 		<?php
 	}
