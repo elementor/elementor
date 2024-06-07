@@ -4,6 +4,7 @@ namespace Elementor\Modules\ConversionCenter;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
@@ -13,11 +14,13 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Ite
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
 use Elementor\Modules\ConversionCenter\Controls\Hover_Animation_Contact_Buttons;
+use Elementor\Modules\ConversionCenter\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\ConversionCenter\Documents\Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -81,6 +84,13 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
+
+		if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
+			Controls_Manager::add_tab(
+				Widget_Contact_Button_Base::TAB_ADVANCED,
+				esc_html__( 'Advanced', 'elementor' )
+			);
+		}
 
 		$this->register_contact_pages_cpt();
 
@@ -336,6 +346,24 @@ class Module extends BaseModule {
 			Contact_Buttons::get_labels(),
 			self::CPT_CONTACT_PAGES
 		);
+	}
+
+	private function is_editing_existing_floating_buttons_page() {
+		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
+		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );
+
+		return 'elementor' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	private function is_creating_floating_buttons_page() {
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		return 'elementor_ajax' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	private function is_floating_buttons_type_meta_key( $post_id ) {
+		return self::CONTACT_PAGE_DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 	}
 
 	private function register_post_type( array $labels, string $cpt ) {
