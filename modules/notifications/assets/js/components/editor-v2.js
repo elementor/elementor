@@ -29,6 +29,16 @@ export const editorV2 = () => {
 				title: __( "What's New", 'elementor' ),
 				icon: () => <IconWithBadge invisible={ isRead } />,
 				onClick: () => {
+					elementor.editorEvents.dispatchEvent(
+						elementor.editorEvents.config.names.topBar.whatsNew,
+						{
+							location: elementor.editorEvents.config.locations.topBar,
+							secondaryLocation: elementor.editorEvents.config.secondaryLocations[ 'whats-new' ],
+							trigger: elementor.editorEvents.config.triggers.click,
+							element: elementor.editorEvents.config.elements.buttonIcon,
+						},
+					);
+
 					setIsRead( true );
 					elementorNotifications.is_unread = false;
 
