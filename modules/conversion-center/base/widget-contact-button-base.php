@@ -108,6 +108,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							Social_Network_Provider::VIBER,
 						],
 						'limit' => 5,
+						'min_items' => 0,
 					],
 					'default' => [
 						[
@@ -602,7 +603,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'chat_button_time_format',
 			[
 				'label' => esc_html__( 'Time format', 'elementor' ),
-				'type'  => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SELECT,
 				'default' => '12h',
 				'options' => [
 					'12h' => esc_html__( '2:20 PM', 'elementor' ),
@@ -652,17 +653,32 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		}
 
 		if ( $config['content']['contact_section']['platform']['limit'] ) {
-			$this->add_control(
-				'contact_custom_panel_alert',
-				[
-					'type' => Controls_Manager::ALERT,
-					'alert_type' => 'info',
-					'content' => sprintf(
-						__( 'Add up to <b>%d</b> icons', 'elementor' ),
-						$config['content']['contact_section']['platform']['limit']
-					),
-				]
-			);
+			if ( $config['content']['contact_section']['platform']['min_items'] ) {
+				$this->add_control(
+					'contact_custom_panel_alert',
+					[
+						'type' => Controls_Manager::ALERT,
+						'alert_type' => 'info',
+						'content' => sprintf(
+							__( 'Add between <b>%1$d</b> to <b>%2$d</b> icons', 'elementor' ),
+							$config['content']['contact_section']['platform']['min_items'],
+							$config['content']['contact_section']['platform']['limit']
+						),
+					]
+				);
+			} else {
+				$this->add_control(
+					'contact_custom_panel_alert',
+					[
+						'type' => Controls_Manager::ALERT,
+						'alert_type' => 'info',
+						'content' => sprintf(
+							__( 'Add up to <b>%d</b> icons', 'elementor' ),
+							$config['content']['contact_section']['platform']['limit']
+						),
+					]
+				);
+			}
 		}
 
 		$repeater = new Repeater();
@@ -887,6 +903,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			'contact_repeater',
 			[
 				'max_items' => $config['content']['contact_section']['platform']['limit'],
+				'min_items' => $config['content']['contact_section']['platform']['min_items'],
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
 				'title_field' => $this->get_icon_title_field(),
@@ -1926,13 +1943,13 @@ JS;
 			$this->add_control(
 				'style_contact_button_bar_corners',
 				[
-					'label'     => esc_html__( 'Corners', 'elementor' ),
-					'type'      => Controls_Manager::SELECT,
-					'default'   => 'round',
-					'options'   => [
-						'round'   => esc_html__( 'Round', 'elementor' ),
+					'label' => esc_html__( 'Corners', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'round',
+					'options' => [
+						'round' => esc_html__( 'Round', 'elementor' ),
 						'rounded' => esc_html__( 'Rounded', 'elementor' ),
-						'sharp'   => esc_html__( 'Sharp', 'elementor' ),
+						'sharp' => esc_html__( 'Sharp', 'elementor' ),
 					],
 				]
 			);
@@ -2371,8 +2388,8 @@ JS;
 			$this->add_control(
 				'style_send_normal_text_color',
 				[
-					'label'     => esc_html__( 'Text Color', 'elementor' ),
-					'type'      => Controls_Manager::COLOR,
+					'label' => esc_html__( 'Text Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-text: {{VALUE}}',
 					],
@@ -2384,8 +2401,8 @@ JS;
 			$this->add_control(
 				'style_send_normal_background_color',
 				[
-					'label'     => esc_html__( 'Background Color', 'elementor' ),
-					'type'      => Controls_Manager::COLOR,
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg: {{VALUE}}',
 					],
@@ -2409,12 +2426,12 @@ JS;
 			$this->add_control(
 				'style_send_hover_colors',
 				[
-					'label'   => esc_html__( 'Colors', 'elementor' ),
-					'type'    => Controls_Manager::SELECT,
+					'label' => esc_html__( 'Colors', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => [
 						'default' => esc_html__( 'Default', 'elementor' ),
-						'custom'  => esc_html__( 'Custom', 'elementor' ),
+						'custom' => esc_html__( 'Custom', 'elementor' ),
 					],
 				]
 			);
@@ -2424,8 +2441,8 @@ JS;
 			$this->add_control(
 				'style_send_hover_icon_color',
 				[
-					'label'     => esc_html__( 'Icon Color', 'elementor' ),
-					'type'      => Controls_Manager::COLOR,
+					'label' => esc_html__( 'Icon Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-icon-hover: {{VALUE}}',
 					],
@@ -2440,8 +2457,8 @@ JS;
 			$this->add_control(
 				'style_send_hover_text_color',
 				[
-					'label'     => esc_html__( 'Text Color', 'elementor' ),
-					'type'      => Controls_Manager::COLOR,
+					'label' => esc_html__( 'Text Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-text-hover: {{VALUE}}',
 					],
@@ -2453,8 +2470,8 @@ JS;
 			$this->add_control(
 				'style_send_hover_background_color',
 				[
-					'label'     => esc_html__( 'Background Color', 'elementor' ),
-					'type'      => Controls_Manager::COLOR,
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-send-button-bg-hover: {{VALUE}}',
 					],
@@ -2553,12 +2570,12 @@ JS;
 			$this->add_control(
 				'style_chat_box_bg_select',
 				[
-					'label'   => esc_html__( 'Background Color', 'elementor' ),
-					'type'    => Controls_Manager::SELECT,
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
 					'default' => 'default',
 					'options' => [
 						'default' => esc_html__( 'Default', 'elementor' ),
-						'custom'  => esc_html__( 'Custom', 'elementor' ),
+						'custom' => esc_html__( 'Custom', 'elementor' ),
 					],
 				]
 			);
@@ -2567,8 +2584,8 @@ JS;
 		$this->add_control(
 			'style_chat_box_bg_color',
 			[
-				'label'     => esc_html__( 'Background Color', 'elementor' ),
-				'type'      => Controls_Manager::COLOR,
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-box-bg: {{VALUE}}',
 				],
@@ -2613,13 +2630,13 @@ JS;
 		$this->add_control(
 			'style_chat_box_corners',
 			[
-				'label'     => esc_html__( 'Corners', 'elementor' ),
-				'type'      => Controls_Manager::SELECT,
-				'default'   => 'rounded',
-				'options'   => [
-					'round'   => esc_html__( 'Round', 'elementor' ),
+				'label' => esc_html__( 'Corners', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'rounded',
+				'options' => [
+					'round' => esc_html__( 'Round', 'elementor' ),
 					'rounded' => esc_html__( 'Rounded', 'elementor' ),
-					'sharp'   => esc_html__( 'Sharp', 'elementor' ),
+					'sharp' => esc_html__( 'Sharp', 'elementor' ),
 				],
 				'separator' => 'before',
 			]
@@ -2686,7 +2703,7 @@ JS;
 				'advanced_layout_section',
 				[
 					'label' => esc_html__( 'Layout', 'elementor' ),
-					'tab'   => static::TAB_ADVANCED,
+					'tab' => static::TAB_ADVANCED,
 				]
 			);
 
@@ -2813,7 +2830,7 @@ JS;
 			'advanced_responsive_section',
 			[
 				'label' => esc_html__( 'Responsive', 'elementor' ),
-				'tab'   => static::TAB_ADVANCED,
+				'tab' => static::TAB_ADVANCED,
 			]
 		);
 
