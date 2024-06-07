@@ -57,6 +57,8 @@ export default class extends elementorModules.ViewModule {
 			settings = JSON.parse( atob( settingsMatch[ 1 ] ) );
 		}
 
+		settings.previousEvent = event;
+
 		action( settings, ...restArgs );
 	}
 
