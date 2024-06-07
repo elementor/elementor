@@ -33,6 +33,13 @@
 
 	width: auto;
 
+	&.has-h-alignment-center {
+
+		.e-contact-buttons__content-wrapper {
+			inset-inline-end: 40px;
+		}
+	}
+
 	.e-contact-buttons {
 
 		&__chat-buttons-container {
