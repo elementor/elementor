@@ -381,7 +381,7 @@ abstract class Contact_Buttons_Render_Base {
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $link['location'] ) ? 'https://www.waze.com/ul?ll=' . $link['location'] . '&navigate=yes' : '';
+				$formatted_link = ! empty( $link['location'] ) ? $link['location'] : '';
 				break;
 			case Social_Network_Provider::URL:
 				$formatted_link = ! empty( $link['url'] ) ? $link['url'] : '';
