@@ -232,6 +232,27 @@
 		--e-contact-buttons-chat-box-bg: #FFFFFF;
 	}
 
+	&.has-platform-waze {
+		--e-contact-buttons-button-bg: #33CCFF;
+		--e-contact-buttons-button-bg-hover: #0099FF;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #0099FF;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #ECE5DD;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #33CCFF;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #0099FF;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
+
 	&.has-corners-rounded {
 		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
 	}
