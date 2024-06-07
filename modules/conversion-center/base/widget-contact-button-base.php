@@ -410,10 +410,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			$this->add_control(
 				'chat_button_show_dot',
 				[
-					'label' => esc_html__( 'Display Notification Dot', 'elementor' ),
+					'label' => esc_html__( 'Notification Dot', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_on' => esc_html__( 'Yes', 'elementor' ),
-					'label_off' => esc_html__( 'No', 'elementor' ),
+					'label_on' => esc_html__( 'Show', 'elementor' ),
+					'label_off' => esc_html__( 'Hide', 'elementor' ),
 					'return_value' => 'yes',
 					'default' => 'yes',
 				]
@@ -515,10 +515,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			$this->add_control(
 				'top_bar_show_dot',
 				[
-					'label' => esc_html__( 'Display Active Dot', 'elementor' ),
+					'label' => esc_html__( 'Active Dot', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_on' => esc_html__( 'Yes', 'elementor' ),
-					'label_off' => esc_html__( 'No', 'elementor' ),
+					'label_on' => esc_html__( 'Show', 'elementor' ),
+					'label_off' => esc_html__( 'Hide', 'elementor' ),
 					'return_value' => 'yes',
 					'default' => 'yes',
 				]
