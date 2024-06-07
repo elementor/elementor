@@ -198,11 +198,11 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		if ( this.elements.chatButton ) {
-			this.elements.chatButton.setAttribute( 'aria-hidden', 'true' );
+			this.elements.chatButton.setAttribute( 'aria-expanded', 'false' );
 		}
 
 		if ( this.elements.closeButton ) {
-			this.elements.closeButton.setAttribute( 'aria-hidden', 'false' );
+			this.elements.closeButton.setAttribute( 'aria-expanded', 'true' );
 		}
 	}
 
@@ -220,11 +220,11 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		if ( this.elements.chatButton ) {
-			this.elements.chatButton.setAttribute( 'aria-hidden', 'false' );
+			this.elements.chatButton.setAttribute( 'aria-expanded', 'true' );
 		}
 
 		if ( this.elements.closeButton ) {
-			this.elements.closeButton.setAttribute( 'aria-hidden', 'true' );
+			this.elements.closeButton.setAttribute( 'aria-expanded', 'false' );
 		}
 	}
 
