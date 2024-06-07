@@ -233,14 +233,24 @@ abstract class Render_Base {
 					'class' => $icon_class_names,
 				] );
 
-				$this->widget->add_render_attribute( 'icon-link-' . $key, [
+				// Manage Link attributes
+
+				$url_attrs = [
 					'aria-label' => esc_attr( $icon['icon_platform'] ),
 					'class' => 'e-link-in-bio__icon-link',
 					'href' => esc_url( $formatted_link ),
-					'rel' => 'noopener noreferrer',
-					'target' => '_blank',
-				] );
+				];
 
+				$url_combined_attrs = $this->get_link_attributes(
+					$icon['icon_url'],
+					$url_attrs
+				);
+
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
+					$this->widget->add_render_attribute( 'icon-link-' . $key, [
+						$attr_key => $attr_value,
+					] );
+				}
 				?>
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<a <?php echo $this->widget->get_render_attribute_string( 'icon-link-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>

@@ -703,8 +703,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
+	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
+	 * UPDATE: Support for dynamics has experimentally been added in v3.23
 	 */
 	linkDataBindings() {
 		/**
@@ -757,10 +759,6 @@ BaseElementView = BaseContainer.extend( {
 		const renderDataBinding = ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset;
 			let change = settings.changed[ bindingSetting ];
-
-			if ( this.isAtomicDynamic( dataBinding ) ) {
-				change = this.getDynamicValue( settings, bindingSetting );
-			}
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
