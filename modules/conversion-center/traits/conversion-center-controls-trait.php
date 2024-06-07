@@ -273,4 +273,31 @@ trait Conversion_Center_Controls_Trait {
 			'devices_options' => $devices_options,
 		];
 	}
+
+	protected function add_hover_animation_control(
+		string $name,
+		array $args = []
+	): void {
+
+		$this->add_control(
+			$name,
+			array_merge(
+				[
+					'label' => esc_html__( 'Hover Animation', 'elementor' ),
+					'type' => Controls_Manager::SELECT2,
+					'frontend_available' => true,
+					'label_block' => true,
+					'options' => [
+						'none' => 'None',
+						'grow' => 'Grow',
+						'pulse' => 'Pulse',
+						'push' => 'Push',
+						'float' => 'Float',
+					],
+					'default' => 'grow',
+				],
+				$args
+			)
+		);
+	}
 }
