@@ -88,7 +88,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await editor.setSelectControlValue( 'max_items_expended', 'multiple' );
 
 		await test.step( 'Open accordion', async () => {
-			for ( let i = 1; i < await nestedAccordionItemContent.count(); i++ ) {
+			for ( let i = 1; i < 3; i++ ) {
 				await nestedAccordionItemTitle.nth( i ).click();
 				await nestedAccordionItemContent.nth( i ).waitFor( { state: 'visible' } );
 			}
