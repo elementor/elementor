@@ -1145,7 +1145,6 @@ class Widget_Common extends Widget_Base {
 	 * @access protected
 	 */
 	protected function register_controls() {
-
 		$this->register_layout_section();
 
 		$this->register_effects_section();
