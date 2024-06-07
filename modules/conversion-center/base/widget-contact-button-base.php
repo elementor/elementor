@@ -1615,21 +1615,9 @@ JS;
 		);
 
 		$this->add_control(
-			'style_bubble_background_heading',
-			[
-				'label' => esc_html__( 'Bubble Background', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => false,
-				'condition' => $this->get_platform_color_condition( [
-					'style_bubble_colors' => 'custom',
-				] ),
-			]
-		);
-
-		$this->add_control(
 			'style_bubble_background_color',
 			[
-				'label' => esc_html__( 'Color', 'elementor' ),
+				'label' => esc_html__( 'Bubble Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-bubble-bg: {{VALUE}}',
@@ -1637,6 +1625,7 @@ JS;
 				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
 				] ),
+				'separator' => 'before',
 			]
 		);
 
