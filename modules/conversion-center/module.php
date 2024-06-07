@@ -201,7 +201,6 @@ class Module extends BaseModule {
 			'_nonce' => FILTER_UNSAFE_RAW,
 		] );
 
-
 		if ( ! wp_verify_nonce( $data['_nonce'], self::CLICK_TRACKING_NONCE ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
 		}
@@ -344,14 +343,14 @@ class Module extends BaseModule {
 
 	private function is_editing_existing_floating_buttons_page() {
 		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
-		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );;
+		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );
 
 		return 'elementor' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
 	}
 
 	private function is_creating_floating_buttons_page() {
-		$action = ElementorUtils::get_super_global_value( $_POST, 'action' );
-		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' );
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		return 'elementor_ajax' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
 	}
