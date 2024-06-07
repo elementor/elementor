@@ -13,8 +13,6 @@ export default class ContactButtonsHandler extends Base {
 				closeButton: '.e-contact-buttons__close-button',
 				messageBubbleTime: '.e-contact-buttons__message-bubble-time',
 				contactButtonCore: '.e-contact-buttons__send-button',
-				contactButtonsVar5: '.e-contact-buttons__chat-button',
-				contactButtonsVar6: '.e-contact-buttons-var-6',
 			},
 			constants: {
 				entranceAnimation: 'style_chat_box_entrance_animation',
@@ -41,8 +39,6 @@ export default class ContactButtonsHandler extends Base {
 			chatButton: this.$element[ 0 ].querySelector( selectors.chatButton ),
 			closeButton: this.$element[ 0 ].querySelector( selectors.closeButton ),
 			messageBubbleTime: this.$element[ 0 ].querySelector( selectors.messageBubbleTime ),
-			contactButtonsVar5: this.$element[ 0 ].querySelector( selectors.contactButtonsVar5 ),
-			contactButtonsVar6: this.$element[ 0 ].querySelector( selectors.contactButtonsVar6 ),
 		};
 	}
 
@@ -81,7 +77,8 @@ export default class ContactButtonsHandler extends Base {
 		const selectors = this.getSettings( 'selectors' );
 		if (
 			targetElement.matches( selectors.contactButtonCore ) ||
-			targetElement.closest( selectors.contactButtonCore ) ) {
+			targetElement.closest( selectors.contactButtonCore )
+		) {
 			const documentId = targetElement.closest( selectors.main ).dataset.documentId;
 			this.trackClick( documentId );
 		}
