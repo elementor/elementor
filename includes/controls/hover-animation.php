@@ -25,7 +25,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 *
 	 * @var array
 	 */
-	private static $_animations;
+	protected static $_animations;
 
 	/**
 	 * Get hover animation control type.
@@ -123,7 +123,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php $this->print_control_uid(); ?>" data-setting="{{ data.name }}">
 					<option value=""><?php echo esc_html__( 'None', 'elementor' ); ?></option>
-					<?php foreach ( self::get_animations() as $animation_name => $animation_title ) : ?>
+					<?php foreach ( static::get_animations() as $animation_name => $animation_title ) : ?>
 						<option value="<?php Utils::print_unescaped_internal_string( $animation_name ); ?>"><?php Utils::print_unescaped_internal_string( $animation_title ); ?></option>
 					<?php endforeach; ?>
 				</select>

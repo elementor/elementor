@@ -43,7 +43,6 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function render_chat_button(): void {
-		$platform = $this->settings['chat_button_platform'] ?? '';
 		$display_dot = $this->settings['chat_button_show_dot'] ?? '';
 		$button_size = $this->settings['style_chat_button_size'];
 		$hover_animation = $this->settings['style_button_color_hover_animation'];

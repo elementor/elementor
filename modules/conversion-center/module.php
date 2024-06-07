@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
@@ -11,6 +12,7 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
+use Elementor\Modules\ConversionCenter\Controls\Hover_Animation_Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
@@ -73,6 +75,10 @@ class Module extends BaseModule {
 
 	}
 
+	public function register_controls( Controls_Manager $controls_manager ) {
+		$controls_manager->register( new Hover_Animation_Contact_Buttons() );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -81,6 +87,8 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
 		} );
+
+		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );

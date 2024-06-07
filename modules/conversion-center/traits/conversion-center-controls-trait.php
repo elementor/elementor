@@ -3,6 +3,7 @@
 namespace Elementor\Modules\ConversionCenter\Traits;
 
 use Elementor\Controls_Manager;
+use Elementor\Modules\ConversionCenter\Controls\Hover_Animation_Contact_Buttons;
 use Elementor\Shapes;
 use Elementor\Utils;
 use Elementor\Plugin;
@@ -284,16 +285,8 @@ trait Conversion_Center_Controls_Trait {
 			array_merge(
 				[
 					'label' => esc_html__( 'Hover Animation', 'elementor' ),
-					'type' => Controls_Manager::SELECT2,
+					'type' => Hover_Animation_Contact_Buttons::TYPE,
 					'frontend_available' => true,
-					'label_block' => true,
-					'options' => [
-						'none' => 'None',
-						'grow' => 'Grow',
-						'pulse' => 'Pulse',
-						'push' => 'Push',
-						'float' => 'Float',
-					],
 					'default' => 'grow',
 				],
 				$args
