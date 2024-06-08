@@ -145,7 +145,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public function get_icon(): string {
-		return 'eicon-bullet-list';
+		return 'eicon-site-identity';
 	}
 
 	public function get_categories(): array {
@@ -153,7 +153,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public function get_keywords(): array {
-		return [ 'buttons', 'bio', 'widget' ];
+		return [ 'buttons', 'bio', 'widget', 'link in bio' ];
 	}
 
 	public function show_in_panel(): bool {
@@ -165,8 +165,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		$this->add_content_tab();
 
 		$this->add_style_tab();
-
-		$this->add_advanced_tab();
 	}
 
 	protected function render(): void {
@@ -241,6 +239,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'autocomplete' => true,
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+				'default' => [
+					'is_external' => true,
+				],
 			],
 		);
 
@@ -792,157 +793,6 @@ JS;
 		$this->add_style_image_links_controls();
 
 		$this->add_style_background_controls();
-
-		$this->add_style_layout_controls();
-	}
-
-	protected function add_style_layout_controls() {
-		$this->start_controls_section(
-			'advanced_layout_section',
-			[
-				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'advanced_layout_full_width_custom',
-			[
-				'label' => esc_html__( 'Full Width', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'default' => '',
-			]
-		);
-
-		$this->add_responsive_control(
-			'advanced_layout_width',
-			[
-				'label' => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 500,
-						'step' => 1,
-					],
-				],
-				'default' => [
-					'unit' => 'px',
-				],
-				'condition' => [
-					'advanced_layout_full_width_custom' => '',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'advanced_layout_content_width',
-			[
-				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 400,
-						'step' => 1,
-					],
-				],
-				'default' => [
-					'unit' => 'px',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'advanced_layout_full_screen_height',
-			[
-				'label' => esc_html__( 'Full Screen Height', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => '',
-				'condition' => [
-					'advanced_layout_full_width_custom' => 'yes',
-				],
-			],
-		);
-
-		$configured_breakpoints = $this->get_configured_breakpoints();
-
-		$this->add_control(
-			'advanced_layout_full_screen_height_controls',
-			[
-				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
-				'type' => Controls_Manager::SELECT2,
-				'label_block' => true,
-				'multiple' => true,
-				'options' => $configured_breakpoints['devices_options'],
-				'default' => $configured_breakpoints['active_devices'],
-				'condition' => [
-					'advanced_layout_full_width_custom' => 'yes',
-					'advanced_layout_full_screen_height' => 'yes',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	protected function add_advanced_tab(): void {
-
-		$this->start_controls_section(
-			'advanced_custom_controls_section',
-			[
-				'label' => esc_html__( 'Custom', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->add_control(
-			'advanced_custom_css_id',
-			[
-				'label' => esc_html__( 'CSS ID', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'ai' => [
-					'active' => false,
-				],
-				'dynamic' => [
-					'active' => true,
-				],
-				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'style_transfer' => false,
-			]
-		);
-
-		$this->add_control(
-			'advanced_custom_css_classes',
-			[
-				'label' => esc_html__( 'CSS Classes', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => '',
-				'ai' => [
-					'active' => false,
-				],
-				'dynamic' => [
-					'active' => true,
-				],
-				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
-			]
-		);
-
-		$this->end_controls_section();
 	}
 
 	protected function add_bio_section(): void {
@@ -1529,7 +1379,7 @@ JS;
 		$this->start_controls_section(
 			'background_border_section_style',
 			[
-				'label' => esc_html__( 'Background and Border', 'elementor' ),
+				'label' => esc_html__( 'Box', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -1611,6 +1461,106 @@ JS;
 			[
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_dimensions',
+			[
+				'label' => esc_html__( 'Dimensions', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'advanced_layout_full_width_custom',
+			[
+				'label' => esc_html__( 'Full Width', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'default' => '',
+			]
+		);
+
+		$this->add_responsive_control(
+			'advanced_layout_width',
+			[
+				'label' => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+				],
+				'condition' => [
+					'advanced_layout_full_width_custom' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'advanced_layout_content_width',
+			[
+				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 400,
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'advanced_layout_full_screen_height',
+			[
+				'label' => esc_html__( 'Full Screen Height', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => '',
+				'condition' => [
+					'advanced_layout_full_width_custom' => 'yes',
+				],
+			],
+		);
+
+		$configured_breakpoints = $this->get_configured_breakpoints();
+
+		$this->add_control(
+			'advanced_layout_full_screen_height_controls',
+			[
+				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
+				'type' => Controls_Manager::SELECT2,
+				'label_block' => true,
+				'multiple' => true,
+				'options' => $configured_breakpoints['devices_options'],
+				'default' => $configured_breakpoints['active_devices'],
+				'condition' => [
+					'advanced_layout_full_width_custom' => 'yes',
+					'advanced_layout_full_screen_height' => 'yes',
 				],
 			]
 		);
