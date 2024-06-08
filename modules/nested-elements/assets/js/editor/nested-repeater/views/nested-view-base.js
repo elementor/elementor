@@ -5,7 +5,7 @@ export default class NestedViewBase extends elementor.modules.elements.views.Bas
 		const { elements_placeholder_selector: customSelector, child_container_placeholder_selector: childContainerSelector } = this.model.config.defaults;
 
 		if ( childView !== undefined && childView._index !== undefined && childContainerSelector ) {
-			return containerView.$el.find( `${ childContainerSelector }:nth-child(${ childView._index + 1 })` );
+			return containerView.$el.find( `${ childContainerSelector }` )[ childView._index ];
 		}
 
 		if ( customSelector ) {

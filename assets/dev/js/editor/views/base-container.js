@@ -283,14 +283,26 @@ Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffe
 	const $container = this.getChildViewContainer( compositeView );
 
 	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced ) {
-		const $items = $container.find( this.model?.config?.defaults?.child_container_placeholder_selector );
+		const childContainerSelector = this.model?.config?.defaults?.child_container_placeholder_selector || '',
+			childContainerClass = childContainerSelector.replace( '.', '' )
 
-		_.each( $items, function( item ) {
-			item.appendChild( buffer.childNodes[ 0 ] );
-			buffer.appendChild( item );
-		} );
+		_updateChildContainers( $container[ 0 ], childContainerClass, buffer );
+	} else {
+		$container.append( buffer );
 	}
-
-	$container.append( buffer );
 };
 
+function _updateChildContainers( wrapper, childContainerClass, buffer, index = 0 ) {
+	_.each( wrapper.children, ( childContainer ) => {
+		if ( childContainer.classList?.contains( childContainerClass ) ) {
+			const numberOfItems = buffer.childNodes.length;
+
+			childContainer.appendChild( buffer.childNodes[ 0 ] );
+			buffer.appendChild( childContainer );
+			wrapper.append( buffer.childNodes[ numberOfItems - 1 ] );
+			index++;
+		} else {
+			_updateChildContainers( childContainer, childContainerClass, buffer, index );
+		}
+	} );
+}
