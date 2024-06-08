@@ -280,15 +280,10 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
  * @inheritDoc
  */
 Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffer ) {
-	const $container = this.getChildViewContainer( compositeView );
+	const $container = this.getChildViewContainer( compositeView ),
+		isControlElement = ! $container.hasClass( 'elementor-widget' ) && 0 === $container.closest( '.elementor-widget' ).length;
 
-	let excludedElement = false;
-
-	if ( 'elementor-controls' === $container.attr( 'id' ) || $container.hasClass( 'elementor-navigator__elements' ) ) {
-		excludedElement = true;
-	}
-
-	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced && ! excludedElement ) {
+	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced && ! isControlElement ) {
 		const childContainerSelector = this.model?.config?.defaults?.child_container_placeholder_selector || '',
 			childContainerClass = childContainerSelector.replace( '.', '' );
 
