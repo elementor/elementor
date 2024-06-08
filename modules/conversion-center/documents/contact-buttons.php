@@ -33,15 +33,8 @@ class Contact_Buttons extends PageBase {
 		return $properties;
 	}
 
-	public function get_content( $with_css = false ) {
-
-		$content = parent::get_content( $with_css );
-
-		return $content;
-	}
-
 	public function print_content() {
-		$plugin = Plugin::elementor();
+		$plugin = \Elementor\Plugin::$instance;
 
 		if ( $plugin->preview->is_preview_mode( $this->get_main_id() ) ) {
 			// PHPCS - the method builder_wrapper is safe.

@@ -8,6 +8,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Core\Wp_Api;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
@@ -19,8 +20,8 @@ use Elementor\Modules\ConversionCenter\Documents\Links_Page;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use ElementorPro\License\API;
 use Elementor\Utils as ElementorUtils;
+use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -47,6 +48,9 @@ class Module extends BaseModule {
 	}
 
 	public static function is_pro_active(): bool {
+		if (  ! class_exists( 'ElementorPro\License\API' ) ) {
+			return false;
+		}
 		return API::is_license_active();
 	}
 
@@ -101,6 +105,35 @@ class Module extends BaseModule {
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
+		if ( ! static::is_pro_active() ) {
+			add_action( 'wp_footer', function () {
+				$query = new \WP_Query( [
+					'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
+					'posts_per_page' => -1,
+					'post_status' => 'publish',
+					'fields' => 'ids',
+					'meta_key' => '_elementor_conditions',
+					'meta_compare' => 'EXISTS',
+				] );
+
+				if ( ! $query->have_posts() ) {
+					return;
+				}
+
+				foreach ( $query->posts as $post_id ) {
+					$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
+					if ( ! $conditions ) {
+						continue;
+					}
+					if ( in_array( 'include/general', $conditions ) ) {
+						$document = Plugin::$instance->documents->get( $post_id );
+						$document->print_content();
+						break;
+					}
+				}
+
+			} );
+		}
 		add_action( 'elementor/common/localize_settings', function ( $settings ) {
 			$settings['conversionCenter'] = [
 				'nonce' => wp_create_nonce( self::CLICK_TRACKING_NONCE ),
