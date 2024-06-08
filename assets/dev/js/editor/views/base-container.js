@@ -282,7 +282,13 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
 Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffer ) {
 	const $container = this.getChildViewContainer( compositeView );
 
-	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced ) {
+	let excludedElement = false;
+
+	if ( 'elementor-controls' === $container.attr( 'id' ) || $container.hasClass( 'elementor-navigator__elements' ) ) {
+		excludedElement = true;
+	}
+
+	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced && ! excludedElement ) {
 		const childContainerSelector = this.model?.config?.defaults?.child_container_placeholder_selector || '',
 			childContainerClass = childContainerSelector.replace( '.', '' );
 
@@ -293,15 +299,20 @@ Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffe
 };
 
 function _updateChildContainers( wrapper, childContainerClass, buffer, index = 0 ) {
-	_.each( wrapper.children, ( childContainer ) => {
-		if ( childContainer.classList?.contains( childContainerClass ) ) {
-			const numberOfItems = buffer.childNodes.length;
+	if ( ! wrapper?.children ) {
+		return;
+	}
 
+	_.each( wrapper.children, ( childContainer, wrapperIndex ) => {
+		const numberOfItems = buffer.childNodes.length;
+
+		if ( childContainer.classList?.contains( childContainerClass ) ) {
 			childContainer.appendChild( buffer.childNodes[ 0 ] );
 			buffer.appendChild( childContainer );
-			wrapper.append( buffer.childNodes[ numberOfItems - 1 ] );
+			wrapper.insertBefore( buffer.childNodes[ numberOfItems - 1 ], wrapper.children[ wrapperIndex ] );
+			wrapper.childNodes[ wrapperIndex + 1 ].remove();
 			index++;
-		} else {
+		} else if ( 0 !== childContainer?.children?.length ) {
 			_updateChildContainers( childContainer, childContainerClass, buffer, index );
 		}
 	} );
