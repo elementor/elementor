@@ -6,6 +6,8 @@ use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
+use ElementorPro\Modules\ThemeBuilder\Module;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -14,13 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Contact_Buttons extends PageBase {
 	use Library_Trait;
 
-	const LOCATION_META_KEY = '_elementor_location';
-
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['support_kit'] = true;
-		$properties['show_in_library'] = true;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_CONTACT_PAGES ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
@@ -30,16 +28,32 @@ class Contact_Buttons extends PageBase {
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
 		$properties['allow_closing_remote_library'] = false;
+		$properties['location'] = 'elementor_body_end';
+
 		return $properties;
 	}
 
-	public function get_location() {
-		$value = self::get_property( 'location' );
-		if ( ! $value ) {
-			$value = $this->get_main_meta( self::LOCATION_META_KEY );
-		}
+	public function get_content( $with_css = false ) {
 
-		return $value;
+		$content = parent::get_content( $with_css );
+
+		return $content;
+	}
+
+	public function print_content() {
+		$plugin = Plugin::elementor();
+
+		if ( $plugin->preview->is_preview_mode( $this->get_main_id() ) ) {
+			// PHPCS - the method builder_wrapper is safe.
+			echo $plugin->preview->builder_wrapper( '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			// PHPCS - the method get_content is safe.
+			echo $this->get_content(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+	}
+
+	public function get_location() {
+		return self::get_property( 'location' );
 	}
 
 	public static function get_type() {
