@@ -902,7 +902,8 @@ class Upgrades {
 		if ( $optimized_css_loading_experiment_value ) {
 			$setting_value = 'inactive' === $optimized_css_loading_experiment_value ? '0' : '1';
 			add_option( 'elementor_optimized_css_loading', $setting_value );
-			delete_option( 'elementor_experiment-e_optimized_css_loading' );
+			// TODO: To keep BC for rollback users, don't delete the following DB setting, do that in 3.25 or later.
+			// delete_option( 'elementor_experiment-e_optimized_css_loading' );
 		}
 	}
 
