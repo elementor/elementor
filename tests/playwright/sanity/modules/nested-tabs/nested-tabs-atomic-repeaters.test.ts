@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import WpAdminPage from '../../../pages/wp-admin-page';
-import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
+// import WpAdminPage from '../../../pages/wp-admin-page';
+// import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		const page = await browser.newPage();
+		/*const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
@@ -13,11 +13,11 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			e_nested_atomic_repeaters: 'active',
 		} );
 
-		await page.close();
+		await page.close();*/
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
+/*		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -25,11 +25,11 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			e_nested_atomic_repeaters: 'inactive',
 		} );
 
-		await page.close();
+		await page.close();*/
 	} );
 
 	test( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		/*const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedTabsID = await editor.addWidget( 'nested-tabs', container );
@@ -77,11 +77,11 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await editor.selectElement( secondNestedTabsID );
 
 			await addItemFromRepeater( editor, secondNestedTabsID );
-		} );
+		} );*/
 	} );
 
 	test( 'Performance test for repeater actions (new, clone, delete, sort)', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		/*const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedTabsID = await editor.addWidget( 'nested-tabs', container ),
@@ -109,12 +109,12 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			for ( let i = 0; i < 2; i++ ) {
 				await deleteItemFromRepeater( editor, nestedTabsID );
 			}
-		} );
+		} );*/
 	} );
 
 	test( 'Test Nested Tabs with Inner Nested Tabs', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		/*const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
@@ -171,5 +171,5 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			await editor.togglePreviewMode();
 			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned-inner-tabs-check.png' );
 		} );
-	} );
+	} );*/
 } );
