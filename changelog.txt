@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.22.0 - 2024-06-09 =
+
+* New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
+
 = 3.21.8 - 2024-05-26 =
 
 * Fix: Can't click on the AI consent modal checkbox
