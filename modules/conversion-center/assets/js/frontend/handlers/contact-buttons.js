@@ -26,7 +26,6 @@ export default class ContactButtonsHandler extends Base {
 				hasAnimations: 'has-animations',
 				hasEntranceAnimation: 'has-entrance-animation',
 				none: 'none',
-				isEditor: 'elementor-editor-active',
 			},
 		};
 	}
