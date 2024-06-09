@@ -1400,6 +1400,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			expect.soft( await frame.locator( '.e-n-tabs-heading' ).first().screenshot( {
 				type: 'png',
 			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-editor.png' );
+			expect( false ).toBeTruthy();
 		} );
 
 		await test.step( 'Assert scrolling behaviour on the Frontend', async () => {
