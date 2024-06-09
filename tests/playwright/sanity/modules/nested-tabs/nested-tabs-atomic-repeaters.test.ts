@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-// import WpAdminPage from '../../../pages/wp-admin-page';
-// import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		/*const page = await browser.newPage();
+		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
@@ -13,11 +13,11 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			e_nested_atomic_repeaters: 'active',
 		} );
 
-		await page.close();*/
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-/*		const context = await browser.newContext();
+		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -25,7 +25,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			e_nested_atomic_repeaters: 'inactive',
 		} );
 
-		await page.close();*/
+		await page.close();
 	} );
 
 	test( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
