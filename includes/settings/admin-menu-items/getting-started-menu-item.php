@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 	public function is_visible() {
-		if (  Plugin::instance()->experiments->is_feature_active( Home_Module::PAGE_ID ) ) {
+		if ( Plugin::instance()->experiments->is_feature_active( Home_Module::PAGE_ID ) ) {
 			return false;
 		}
 		return true;
