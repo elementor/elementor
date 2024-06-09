@@ -170,6 +170,6 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			// Assert
 			await editor.togglePreviewMode();
 			await expect.soft( frame.locator( '.e-n-tabs' ).nth( 0 ) ).toHaveScreenshot( 'outer-tabs-cloned-inner-tabs-check.png' );
-		} );
-	} );*/
+		} );*/
+	} );
 } );
