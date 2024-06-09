@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
-import _path from 'path';
+// import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
+// import _path from 'path';
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
