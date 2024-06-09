@@ -38,7 +38,8 @@ export default class extends Marionette.LayoutView {
 
 		if (
 			window.elementor && elementor.config?.admin_conversion_center_contact_url &&
-			'contact-buttons' === elementor.config?.document?.type
+			'contact-buttons' === elementor.config?.document?.type &&
+			this.$el.find( '#elementor-template-library-header-menu' ).length
 		) {
 			window.location.href = elementor.config.admin_conversion_center_contact_url;
 		}
