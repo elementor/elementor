@@ -659,19 +659,10 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, settings, changedControl ) {
+	isAtomicDynamic( dataBinding, changedControl ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
-			// ( isAddingDynamicToTitle || isRemovingDynamicFromTitle );
-	},
-
-	isAddingDynamicToTitle( dataBinding, changedSetting ) {
-		return (
-			'object' === typeof changedSetting?.__dynamic__ &&
-			this.isKeyInObject( dataBinding.el.getAttribute( 'data-binding-setting' ), changedSetting?.__dynamic__ )
-			// dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
-		);
 	},
 
 	isRemovingDynamicFromTitle( settings, bindingSetting ) {
@@ -688,13 +679,11 @@ BaseElementView = BaseContainer.extend( {
 		return false;
 	},
 
-	getDynamicValue( settings, bindingSetting, isRemovingDynamicFromTitle ) {
-		const dynamicSettings = { active: true };
-		let valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ];
-
-		if ( isRemovingDynamicFromTitle ) {
-			valueToParse = settings?.[ bindingSetting ];
-		}
+	getDynamicValue( settings, bindingSetting ) {
+		const dynamicSettings = { active: true },
+			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
 			try {
@@ -705,15 +694,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return settings.attributes[ bindingSetting ];
-	},
-
-	objDiff( obj1, obj2 ) {
-		const keys1 = Object.keys( obj1 ),
-			keys2 = Object.keys( obj2 );
-
-
-
-		return _.difference( keys2, keys1 );
 	},
 
 	findUniqueKey( obj1, obj2 ) {
@@ -728,7 +708,7 @@ BaseElementView = BaseContainer.extend( {
 		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
 	},
 
-/**
+	/**
 	 * Function linkDataBindings().
 	 *
 	 * Link data to allow partial render, instead of full re-render
@@ -801,13 +781,11 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderDataBinding = ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
-				// isAddingDynamicToTitle = this.isAddingDynamicToTitle( dataBinding, settings.changed ),
-				// isRemovingDynamicFromTitle = this.isRemovingDynamicFromTitle( settings, ( changedControl || bindingSetting ) ),
-			 	changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, settings, changedControl ) ) {
-				const dynamicValue = this.getDynamicValue( settings, bindingSetting, isRemovingDynamicFromTitle );
+			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
+				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
