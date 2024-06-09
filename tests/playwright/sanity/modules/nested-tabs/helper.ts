@@ -53,6 +53,7 @@ export async function setup( wpAdmin: WpAdminPage, customExperiment: {[ n: strin
 	let experiments = {
 		container: 'active',
 		'nested-elements': 'active',
+		e_nested_atomic_repeaters: 'active',
 	};
 
 	experiments = { ...experiments, ...customExperiment };
@@ -63,6 +64,7 @@ export async function cleanup( wpAdmin, customExperiment: {[ n: string ]: boolea
 	let experiments = {
 		'nested-elements': 'inactive',
 		container: 'inactive',
+		e_nested_atomic_repeaters: 'inactive',
 	};
 
 	experiments = { ...experiments, ...customExperiment };
