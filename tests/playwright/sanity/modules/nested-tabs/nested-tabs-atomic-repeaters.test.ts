@@ -20,10 +20,10 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		// await wpAdmin.setExperiments( {
-		// 	'nested-elements': 'inactive',
-		// 	e_nested_atomic_repeaters: 'inactive',
-		// } );
+		await wpAdmin.setExperiments( {
+			'nested-elements': 'inactive',
+			e_nested_atomic_repeaters: 'inactive',
+		} );
 
 		await page.close();
 	} );
