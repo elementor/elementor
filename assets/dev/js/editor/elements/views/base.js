@@ -665,20 +665,6 @@ BaseElementView = BaseContainer.extend( {
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
-	isRemovingDynamicFromTitle( settings, bindingSetting ) {
-		return this.isKeyInObject( bindingSetting, settings._previousAttributes.__dynamic__ );
-	},
-
-	isKeyInObject( desiredKey, object ) {
-		for ( const key of Object.keys( object ) ) {
-			if ( key === desiredKey ) {
-				return true;
-			}
-		}
-
-		return false;
-	},
-
 	getDynamicValue( settings, bindingSetting ) {
 		const dynamicSettings = { active: true },
 			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
