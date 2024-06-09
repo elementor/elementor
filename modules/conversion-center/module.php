@@ -135,13 +135,19 @@ class Module extends BaseModule {
 			} );
 		}
 
+		add_filter( 'elementor-pro/theme-builder/conditions-manager/additional-cpts', function( $cpts ) {
+			$cpts[] = self::CPT_CONTACT_PAGES;
+
+			return $cpts;
+		} );
+
 		add_filter( 'elementor-pro/theme-builder/allowed-documents', function( $allowed, $document ) {
 			if ( $document instanceof Contact_Buttons ) {
 				return true;
 			}
 
 			return $allowed;
-		} );
+		}, 10, 2 );
 
 		add_action( 'elementor/common/localize_settings', function ( $settings ) {
 			$settings['conversionCenter'] = [
