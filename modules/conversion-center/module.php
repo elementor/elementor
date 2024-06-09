@@ -48,7 +48,7 @@ class Module extends BaseModule {
 	}
 
 	public static function is_pro_active(): bool {
-		if (  ! class_exists( 'ElementorPro\License\API' ) ) {
+		if ( ! class_exists( 'ElementorPro\License\API' ) ) {
 			return false;
 		}
 		return API::is_license_active();
