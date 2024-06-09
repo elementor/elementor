@@ -659,29 +659,29 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, settings ) {
+	isAtomicDynamic( dataBinding, settings, isAddingDynamicToTitle, isRemovingDynamicFromTitle ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			this.isDynamicTitle( dataBinding, settings );
-	},
-
-	isDynamicTitle( dataBinding, settings ) {
-		return this.isAddingDynamicToTitle( dataBinding, settings.changed ) ||
-			this.isRemovingDynamicFromTitle( settings, dataBinding.dataset.bindingSetting );
+			( isAddingDynamicToTitle || isRemovingDynamicFromTitle );
 	},
 
 	isAddingDynamicToTitle( dataBinding, changedSetting ) {
 		debugger;
 		return (
 			'object' === typeof changedSetting?.__dynamic__ &&
-			Object.keys( changedSetting?.__dynamic__ )[ 0 ]?.length > 0 &&
+			this.isKeyInObject( dataBinding.el.getAttribute( 'data-binding-setting' ), changedSetting?.__dynamic__ ) &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
+
 		);
 	},
 
 	isRemovingDynamicFromTitle( settings, bindingSetting ) {
-		for ( const key of Object.keys( settings._previousAttributes.__dynamic__ ) ) {
-			if ( key === bindingSetting ) {
+		return this.isKeyInObject( bindingSetting, settings._previousAttributes.__dynamic__ );
+	},
+
+	isKeyInObject( desiredKey, object ) {
+		for ( const key of Object.keys( object ) ) {
+			if ( key === desiredKey ) {
 				return true;
 			}
 		}
@@ -689,9 +689,13 @@ BaseElementView = BaseContainer.extend( {
 		return false;
 	},
 
-	getDynamicValue( settings, bindingSetting ) {
-		const valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ],
-			dynamicSettings = { active: true };
+	getDynamicValue( settings, bindingSetting, isRemovingDynamicFromTitle ) {
+		const dynamicSettings = { active: true };
+		let valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ];
+
+		if ( isRemovingDynamicFromTitle ) {
+			valueToParse = settings?.[ bindingSetting ];
+		}
 
 		if ( valueToParse ) {
 			try {
@@ -776,11 +780,13 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset;
+			const { bindingSetting } = dataBinding.dataset,
+				isAddingDynamicToTitle = this.isAddingDynamicToTitle( dataBinding, settings.changed ),
+				isRemovingDynamicFromTitle = this.isRemovingDynamicFromTitle( settings, bindingSetting );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, settings ) ) {
-				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+			if ( this.isAtomicDynamic( dataBinding, settings, isAddingDynamicToTitle, isRemovingDynamicFromTitle ) ) {
+				const dynamicValue = this.getDynamicValue( settings, bindingSetting, isRemovingDynamicFromTitle );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
