@@ -135,7 +135,7 @@ class Module extends BaseModule {
 			} );
 		}
 
-		add_filter( 'elementor-pro/theme-builder/conditions-manager/additional-cpts', function( $cpts ) {
+		add_filter( 'elementor-pro/theme-builder/conditions-manager/additional-cpts', function( array $cpts ) {
 			$cpts[] = self::CPT_CONTACT_PAGES;
 
 			return $cpts;
