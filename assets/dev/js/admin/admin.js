@@ -316,13 +316,6 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 				} ).show();
 			} );
 
-			$( '.elementor_css_print_method select' ).on( 'change', function() {
-				var $descriptions = $( '.elementor-css-print-method-description' );
-
-				$descriptions.hide();
-				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
-			} ).trigger( 'change' );
-
 			$( '.elementor_google_font select' ).on( 'change', function() {
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
