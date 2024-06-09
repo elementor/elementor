@@ -19,6 +19,8 @@
 	--e-contact-buttons-icon-size-medium: #{$contact-buttons-icon-size-medium};
 	--e-contact-buttons-icon-size-large: #{$contact-buttons-icon-size-large};
 	--e-contact-buttons-contact-gap: #{$contact-buttons-contact-gap};
+	--e-contact-buttons-horizontal-offset: #{$contact-buttons-offset-preset};
+	--e-contact-buttons-vertical-offset: #{$contact-buttons-offset-preset};
 
 	// Platform specific colors
 	// Default used for email, sms
@@ -30,7 +32,7 @@
 	--e-contact-buttons-top-bar-title: #ffffff;
 	--e-contact-buttons-top-bar-subtitle: #ffffff;
 	--e-contact-buttons-close-button-color: #ffffff;
-	--e-contact-buttons-close-button-bg: #ffffff;
+	--e-contact-buttons-active-button-bg: #ffffff;
 	--e-contact-buttons-message-bubble-name: #000000;
 	--e-contact-buttons-message-bubble-body: #000000;
 	--e-contact-buttons-message-bubble-time: #000000;
@@ -50,9 +52,10 @@
 	--e-contact-buttons-contact-title-text-color: #1C2448;
 	--e-contact-buttons-contact-description-text-color: #1C2448;
 
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 	position: fixed;
-	bottom: 20px;
-	inset-inline-end: $contact-buttons-offset-preset;
 	width: var(--e-contact-buttons-chat-box-width);
 	z-index: 99;
 
@@ -60,13 +63,99 @@
 		inset-inline-end: 0;
 	}
 
-	&.has-alignment-start {
-		inset-inline-end: 0;
-		inset-inline-start: $contact-buttons-offset-preset;
+	&.has-h-alignment-start {
+		justify-content: flex-start;
+		inset-inline-start: var(--e-contact-buttons-horizontal-offset);
 
 		@media (max-width: $screen-mobile-max) {
 			inset-inline-start: 0;
 		}
+
+		.e-contact-buttons__chat-button-container {
+			justify-content: flex-start;
+			padding-inline-start: 20px;
+			padding-inline-end: 0;
+
+			@media (max-width: $screen-mobile-max) {
+				inset-inline-end: unset;
+				inset-inline-start: var(--e-contact-buttons-horizontal-offset);
+			}
+		}
+	}
+
+	&.has-h-alignment-end {
+		justify-content: flex-end;
+		inset-inline-end: var(--e-contact-buttons-horizontal-offset);
+
+		.e-contact-buttons__chat-button-container {
+			justify-content: flex-end;
+			inset-inline-end: var(--e-contact-buttons-horizontal-offset);
+			padding-inline-end: 20px;
+
+			@media (max-width: $screen-mobile-max) {
+				inset-inline-end: unset;
+			}
+		}
+	}
+
+	&.has-h-alignment-center {
+		inset-inline-start: 50%;
+		justify-content: center;
+		transform: translateX(-50%);
+
+		.e-contact-buttons__chat-button-container {
+			justify-content: center;
+			padding-inline: 0;
+		}
+
+		.e-contact-buttons__content-wrapper {
+			inset-inline-end: calc(var(--e-contact-buttons-chat-box-width) / 2 - 40px);
+			position: relative;
+		}
+	}
+
+	&.has-v-alignment-top {
+		top: var(--e-contact-buttons-vertical-offset);
+
+		.e-contact-buttons__content-wrapper {
+			order: 2;
+		}
+
+		.e-contact-buttons__chat-button-container {
+			order: 1;
+		}
+	}
+
+	&.has-v-alignment-middle {
+		align-items: center;
+		flex-direction: row;
+		top: 50%;
+		transform: translateY(-50%);
+
+		.e-contact-buttons__chat-button-container {
+			padding-inline: 0;
+		}
+
+		&.has-h-alignment-start {
+
+			.e-contact-buttons__content-wrapper {
+				order: 2;
+			}
+
+			.e-contact-buttons__chat-button-container {
+				order: 1;
+				padding-inline: 0;
+			}
+		}
+	}
+
+	&.has-h-alignment-center.has-v-alignment-middle {
+		flex-direction: column;
+		transform: translate(-50%, -50%);
+	}
+
+	&.has-v-alignment-bottom {
+		bottom: var(--e-contact-buttons-vertical-offset);
 	}
 
 	&.has-platform-whatsapp {
@@ -153,6 +242,27 @@
 		--e-contact-buttons-chat-box-bg: #FFFFFF;
 	}
 
+	&.has-platform-waze {
+		--e-contact-buttons-button-bg: #33CCFF;
+		--e-contact-buttons-button-bg-hover: #0099FF;
+		--e-contact-buttons-button-icon: #ffffff;
+		--e-contact-buttons-button-icon-hover: #ffffff;
+		--e-contact-buttons-top-bar-bg: #0099FF;
+		--e-contact-buttons-top-bar-title: #ffffff;
+		--e-contact-buttons-top-bar-subtitle: #ffffff;
+		--e-contact-buttons-close-button-color: #ffffff;
+		--e-contact-buttons-message-bubble-body: #000000;
+		--e-contact-buttons-message-bubble-time: #000000;
+		--e-contact-buttons-message-bubble-name: #000000;
+		--e-contact-buttons-message-bubble-bubble-bg: #ffffff;
+		--e-contact-buttons-message-bubble-chat-bg: #ECE5DD;
+		--e-contact-buttons-send-button-icon: #ffffff;
+		--e-contact-buttons-send-button-bg: #33CCFF;
+		--e-contact-buttons-send-button-icon-hover: #ffffff;
+		--e-contact-buttons-send-button-bg-hover: #0099FF;
+		--e-contact-buttons-chat-box-bg: #FFFFFF;
+	}
+
 	&.has-corners-rounded {
 		--e-contact-buttons-border-radius: #{$contact-buttons-border-radius-rounded};
 	}
@@ -196,7 +306,6 @@
 	&__content {
 		border-radius: var(--e-contact-buttons-border-radius);
 		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
-		margin-block-end: 20px;
 		overflow: hidden;
 	}
 
@@ -206,6 +315,7 @@
 		display: flex;
 		gap: 20px;
 		padding: 20px;
+		position: relative;
 	}
 
 	&__top-bar-title {
@@ -278,29 +388,12 @@
 
 	&__chat-button-container {
 		display: flex;
-		justify-content: flex-end;
-		padding-inline-end: 20px;
 
 		@media (max-width: $screen-mobile-max) {
-			inset-inline-end: $contact-buttons-offset-preset;
 			position: relative;
 		}
 	}
 
-	&.has-alignment-start {
-
-		.e-contact-buttons__chat-button-container {
-			justify-content: flex-start;
-			padding-inline-start: 20px;
-			padding-inline-end: 0;
-
-			@media (max-width: $screen-mobile-max) {
-				inset-inline-end: unset;
-				inset-inline-start: $contact-buttons-offset-preset;
-			}
-		}
-	}
-	
 	&__chat-button {
 		align-items: center;
 		background-color: var(--e-contact-buttons-button-bg);
@@ -315,12 +408,12 @@
 		svg {
 			fill: var(--e-contact-buttons-button-icon);
 		}
-		
+
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-button-bg-hover);
 			transition: $transition-hover;
-			
+
 			svg {
 				fill: var(--e-contact-buttons-button-icon-hover);
 			}
@@ -465,10 +558,6 @@
 		color: #{$contact-buttons-default-text-color};
 		font-size: 16px;
 		font-weight: 500;
-		
-		.elementor & {
-			text-decoration: underline;
-		}
 	}
 
 	&__dots-container {
@@ -493,11 +582,11 @@
 	&__dot-1 {
 		animation-delay: 200ms;
 	}
-	
+
 	&__dot-2 {
 		animation-delay: 400ms;
 	}
-	
+
 	&__dot-3 {
 		animation-delay: 600ms;
 	}

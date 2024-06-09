@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\ConversionCenter;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
@@ -11,10 +13,13 @@ use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Links_Menu_Item;
+use Elementor\Modules\ConversionCenter\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\ConversionCenter\Documents\Contact_Buttons;
 use Elementor\Modules\ConversionCenter\Documents\Links_Page;
+use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -23,6 +28,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'conversion-center';
+
+	const META_CLICK_TRACKING = '_elementor_click_tracking';
+
+	const CLICK_TRACKING_NONCE = 'elementor-conversion-center-click';
 
 	const CONTACT_PAGE_DOCUMENT_TYPE = 'contact-buttons';
 	const CPT_CONTACT_PAGES = 'e-contact-pages';
@@ -71,10 +80,29 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
+			Controls_Manager::add_tab(
+				Widget_Contact_Button_Base::TAB_ADVANCED,
+				esc_html__( 'Advanced', 'elementor' )
+			);
+		}
+
 		$this->register_contact_pages_cpt();
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
+		} );
+
+		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		add_action( 'elementor/common/localize_settings', function ( $settings ) {
+			$settings['conversionCenter'] = [
+				'nonce' => wp_create_nonce( self::CLICK_TRACKING_NONCE ),
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			];
+
+			return $settings;
 		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
@@ -106,16 +134,38 @@ class Module extends BaseModule {
 
 		add_action( 'admin_init', function () {
 			$action = filter_input( INPUT_GET, 'action' );
+			$menu_args = $this->get_contact_menu_args();
 
-			if ( 'set_as_homepage' === $action ) {
-				$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-				check_admin_referer( 'set_as_homepage_' . $post );
-				update_option( 'page_on_front', $post );
-				update_option( 'show_on_front', 'page' );
-				$menu_args = $this->get_links_menu_args();
+			switch ( $action ) {
+				case 'remove_from_entire_site':
+					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+					check_admin_referer( 'remove_from_entire_site_' . $post );
+					delete_post_meta( $post, '_elementor_conditions' );
+					wp_redirect( $menu_args['menu_slug'] );
+					exit;
+				case 'set_as_entire_site':
+					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+					check_admin_referer( 'set_as_entire_site_' . $post );
 
-				wp_redirect( $menu_args['menu_slug'] );
-				exit;
+					$posts = get_posts( [
+						'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
+						'posts_per_page' => -1,
+						'post_status' => 'publish',
+						'fields' => 'ids',
+						'meta_key' => '_elementor_conditions',
+						'meta_compare' => 'EXISTS',
+					] );
+
+					foreach ( $posts as $post_id ) {
+						delete_post_meta( $post_id, '_elementor_conditions' );
+					}
+
+					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
+
+					wp_redirect( $menu_args['menu_slug'] );
+					exit;
+				default:
+					break;
 			}
 		} );
 
@@ -123,7 +173,8 @@ class Module extends BaseModule {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
-			unset( $posts_columns['cb'] );
+			$posts_columns['click_tracking'] = esc_html__( 'Click Tracking', 'elementor' );
+			$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
@@ -141,10 +192,58 @@ class Module extends BaseModule {
 		}, 100 );
 	}
 
+	public function handle_click_tracking() {
+		$data = filter_input_array( INPUT_POST, [
+			'clicks' => [
+				'filter' => FILTER_VALIDATE_INT,
+				'flags' => FILTER_REQUIRE_ARRAY,
+			],
+			'_nonce' => FILTER_UNSAFE_RAW,
+		] );
+
+		if ( ! wp_verify_nonce( $data['_nonce'], self::CLICK_TRACKING_NONCE ) ) {
+			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
+		}
+
+		if ( ! check_ajax_referer( self::CLICK_TRACKING_NONCE, '_nonce', false ) ) {
+			wp_send_json_error( [ 'message' => 'Invalid referrer' ] );
+		}
+
+		$posts_to_update = [];
+
+		foreach ( $data['clicks'] as $post_id ) {
+			if ( ! isset( $posts_to_update[ $post_id ] ) ) {
+				$starting_clicks = (int) get_post_meta( $post_id, self::META_CLICK_TRACKING, true );
+				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
+			}
+			$posts_to_update[ $post_id ] ++;
+		}
+
+		foreach ( $posts_to_update as $post_id => $clicks ) {
+			update_post_meta( $post_id, self::META_CLICK_TRACKING, $clicks );
+		}
+
+		wp_send_json_success();
+	}
+
 	public function set_admin_columns_content( $column_name, $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		$document->admin_columns_content( $column_name );
+		switch ( $column_name ) {
+			case 'click_tracking':
+				$click_tracking = get_post_meta( $post_id, self::META_CLICK_TRACKING, true );
+				echo esc_html( $click_tracking );
+				break;
+			case 'instances':
+				$instances = get_post_meta( $post_id, '_elementor_conditions', true );
+				if ( $instances ) {
+					echo esc_html__( 'Entire Site', 'elementor' );
+				}
+				break;
+			default:
+				break;
+		}
 	}
 
 	private function get_trashed_contact_posts(): array {
@@ -240,6 +339,24 @@ class Module extends BaseModule {
 			Contact_Buttons::get_labels(),
 			self::CPT_CONTACT_PAGES
 		);
+	}
+
+	private function is_editing_existing_floating_buttons_page() {
+		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
+		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );
+
+		return 'elementor' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	private function is_creating_floating_buttons_page() {
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		return 'elementor_ajax' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	private function is_floating_buttons_type_meta_key( $post_id ) {
+		return self::CONTACT_PAGE_DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 	}
 
 	private function register_post_type( array $labels, string $cpt ) {

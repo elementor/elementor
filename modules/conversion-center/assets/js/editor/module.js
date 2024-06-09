@@ -3,6 +3,21 @@ import Component from './component';
 class LinksPageLibraryModule extends elementorModules.editor.utils.Module {
 	onElementorLoaded() {
 		this.component = $e.components.register( new Component( { manager: this } ) );
+		elementor.channels.editor.on( 'section:activated', this.hideAdvancedTab.bind( this ) );
+	}
+
+	hideAdvancedTab( sectionName, editor ) {
+		const widgetType = editor?.model?.get( 'widgetType' ) || '';
+
+		if ( ! widgetType.startsWith( 'contact-buttons' ) ) {
+			return;
+		}
+
+		const advancedTab = editor?.el.querySelector( '.elementor-tab-control-advanced' ) || false;
+
+		if ( advancedTab ) {
+			advancedTab.style.display = 'none';
+		}
 	}
 
 	onElementorInit() {

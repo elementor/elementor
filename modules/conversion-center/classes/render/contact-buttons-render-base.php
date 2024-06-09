@@ -191,12 +191,11 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function render_message_bubble_powered_by(): void {
-		$powered_by_url = 'https://elementor.com/pro';
 		?>
 			<div class="e-contact-buttons__powered-container">
-				<a href="<?php esc_url( $powered_by_url ); ?>" class="e-contact-buttons__powered-text" target="_blank">
+				<p class="e-contact-buttons__powered-text">
 					<?php echo esc_attr__( 'Powered by Elementor', 'elementor' ); ?>
-				</a>
+				</p>
 			</div>
 		<?php
 	}
@@ -252,8 +251,6 @@ abstract class Contact_Buttons_Render_Base {
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
 						'viber_action' => $icon['contact_icon_viber_action'],
-						'url' => $icon['contact_icon_url'] ?? '',
-						'location' => $icon['contact_icon_waze'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
@@ -384,7 +381,7 @@ abstract class Contact_Buttons_Render_Base {
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $link['location'] ) ? 'https://www.waze.com/ul?ll=' . $link['location'] . '&navigate=yes' : '';
+				$formatted_link = ! empty( $link['location'] ) ? $link['location'] : '';
 				break;
 			case Social_Network_Provider::URL:
 				$formatted_link = ! empty( $link['url'] ) ? $link['url'] : '';
@@ -403,7 +400,8 @@ abstract class Contact_Buttons_Render_Base {
 		$layout_classnames = 'e-contact-buttons e-' . $this->widget->get_name();
 		$platform = $this->settings['chat_button_platform'] ?? '';
 		$border_radius = $this->settings['style_chat_box_corners'];
-		$alignment_position = $this->settings['advanced_horizontal_position'];
+		$alignment_position_horizontal = $this->settings['advanced_horizontal_position'];
+		$alignment_position_vertical = $this->settings['advanced_vertical_position'];
 		$has_animations = ! empty( $this->settings['style_chat_box_exit_animation'] ) || ! empty( $this->settings['style_chat_box_entrance_animation'] );
 		$custom_classes = $this->settings['advanced_custom_css_classes'] ?? '';
 
@@ -417,8 +415,12 @@ abstract class Contact_Buttons_Render_Base {
 			$layout_classnames .= ' has-corners-' . $border_radius;
 		}
 
-		if ( ! empty( $alignment_position ) ) {
-			$layout_classnames .= ' has-alignment-' . $alignment_position;
+		if ( ! empty( $alignment_position_horizontal ) ) {
+			$layout_classnames .= ' has-h-alignment-' . $alignment_position_horizontal;
+		}
+
+		if ( ! empty( $alignment_position_vertical ) ) {
+			$layout_classnames .= ' has-v-alignment-' . $alignment_position_vertical;
 		}
 
 		if ( $has_animations ) {
@@ -429,9 +431,6 @@ abstract class Contact_Buttons_Render_Base {
 			$layout_classnames .= ' ' . $custom_classes;
 		}
 
-		$this->widget->add_render_attribute( 'layout', [
-			'class' => $layout_classnames,
-			'id'    => $this->settings['advanced_custom_css_id'],
-		] );
+		$this->add_layout_render_attribute( $layout_classnames );
 	}
 }
