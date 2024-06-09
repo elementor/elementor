@@ -406,7 +406,7 @@ class Settings extends Settings_Page {
 									],
 									'desc' => sprintf(
 										/* translators: %s: <head> tag. */
-										esc_html__( 'Internal embedding places all the CSS in the %s to troubleshoot issues. External CSS files improve performance (recommended).', 'elementor' ),
+										esc_html__( 'Internal Embedding places all CSS in the %s which works great for troubleshooting, while External File uses external CSS file for better performance (recommended).', 'elementor' ),
 										'<code>&lt;head&gt;</code>',
 									),
 								],
