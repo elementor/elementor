@@ -250,7 +250,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
- 3.22.0 - 2024-06-09 =
+= 3.22.0 - 2024-06-09 =
 
 * New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
 
