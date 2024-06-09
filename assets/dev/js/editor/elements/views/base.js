@@ -686,6 +686,7 @@ BaseElementView = BaseContainer.extend( {
 		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
 			return false;
 		}
+
 		const keys1 = Object.keys( obj1 ),
 			keys2 = Object.keys( obj2 );
 
