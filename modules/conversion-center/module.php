@@ -134,6 +134,15 @@ class Module extends BaseModule {
 
 			} );
 		}
+
+		add_filter( 'elementor-pro/theme-builder/allowed-documents', function( $allowed, $document ) {
+			if ( $document instanceof Contact_Buttons ) {
+				return true;
+			}
+
+			return $allowed;
+		} );
+
 		add_action( 'elementor/common/localize_settings', function ( $settings ) {
 			$settings['conversionCenter'] = [
 				'nonce' => wp_create_nonce( self::CLICK_TRACKING_NONCE ),
