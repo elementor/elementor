@@ -220,7 +220,7 @@ export default class WpAdminPage extends BasePage {
 	 */
 	async resetExperiments() {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
-		await this.page.locator( 'css=button[value="default"' ).click();
+		await this.page.locator( 'css=button[value=\"default\"' ).click();
 	}
 
 	/**
