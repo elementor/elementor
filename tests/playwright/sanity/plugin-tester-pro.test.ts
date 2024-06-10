@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import WpEnvCli from '../assets/wp-env-cli';
+import { deletePlugin, installPlugin } from '../assets/api-requests';
 
 const pluginList1 = [
 	'essential-addons-for-elementor-lite',
@@ -56,11 +57,9 @@ test.describe( `Plugin tester tests: containers`, () => {
 		test( `"${ plugin }" plugin: @pluginTester1_containers`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
-			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			await installPlugin( page.context().request, plugin, true );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -81,7 +80,7 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			await deletePlugin( page.context().request, plugin );
 		} );
 	}
 
@@ -89,11 +88,9 @@ test.describe( `Plugin tester tests: containers`, () => {
 		test( `"${ plugin }" plugin: @pluginTester2_containers`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
-			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			await installPlugin( page.context().request, plugin, true );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -114,7 +111,7 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			deletePlugin( page.context().request, plugin );
 		} );
 	}
 } );
@@ -128,11 +125,9 @@ test.describe( 'Plugin tester tests: sections', () => {
 		test( `"${ plugin }" plugin: @pluginTester1_sections`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
-			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			await installPlugin( page.context().request, plugin, true );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -153,7 +148,7 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			deletePlugin( page.context().request, plugin );
 		} );
 	}
 
@@ -161,11 +156,9 @@ test.describe( 'Plugin tester tests: sections', () => {
 		test( `"${ plugin }" plugin: @pluginTester2_sections`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
-			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin }` );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin activate ${ plugin }` );
+			await installPlugin( page.context().request, plugin, true );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -186,7 +179,7 @@ test.describe( 'Plugin tester tests: sections', () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			deletePlugin( page.context().request, plugin );
 		} );
 	}
 } );
