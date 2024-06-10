@@ -28,14 +28,17 @@
 		&__chat-button {
 			border-radius: 0;
 			color: var(--e-contact-buttons-button-icon);
+			display: inline-flex;
 			font-size: 18px;
 			font-weight: 500;
 			gap: var(--e-contact-buttons-chat-button-gap);
+			height: fit-content;
 			line-height: 28px;
 			padding-block-end: var(--e-contact-buttons-chat-button-padding-block-end);
 			padding-block-start: var(--e-contact-buttons-chat-button-padding-block-start);
 			padding-inline-end: var(--e-contact-buttons-chat-button-padding-inline-end);
 			padding-inline-start: var(--e-contact-buttons-chat-button-padding-inline-start);
+			width: fit-content;
 
 			// SVG width and height are relative to the font size
 			svg {

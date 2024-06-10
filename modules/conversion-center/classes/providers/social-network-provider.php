@@ -205,7 +205,7 @@ class Social_Network_Provider {
 
 		static::$social_networks[ static::URL ] = [
 			'text' => esc_html__( 'URL', 'elementor' ),
-			'icon' => 'fas fa-link',
+			'icon' => 'fas fa-globe',
 			'name' => 'url',
 		];
 
