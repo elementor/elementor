@@ -52,6 +52,8 @@ const pluginList2 = [
 	// 'happy-elementor-addons',
 ];
 
+const wpEnvCli = new WpEnvCli();
+
 test.describe( `Plugin tester tests: containers`, () => {
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_containers`, async ( { page }, testInfo ) => {
@@ -81,7 +83,7 @@ test.describe( `Plugin tester tests: containers`, () => {
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			// await deletePlugin( page.context().request, plugin );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin uninstall ${ plugin }` );
 		} );
 	}
 
@@ -119,7 +121,6 @@ test.describe( `Plugin tester tests: containers`, () => {
 
 test.describe.skip( 'Plugin tester tests: sections', () => {
 	test.beforeAll( async () => {
-		const wpEnvCli = new WpEnvCli();
 		wpEnvCli.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
 	} );
 	for ( const plugin of pluginList1 ) {
