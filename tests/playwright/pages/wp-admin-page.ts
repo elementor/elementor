@@ -210,6 +210,20 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
+	 * Activate and deactivate Elementor experiments.
+	 *
+	 * TODO: The testing environment isn't clean between tests - Use with caution!
+	 *
+	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 *
+	 * @return {Promise<void>}
+	 */
+	async resetExperiments() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		await this.page.click( 'button[value="default"' );
+	}
+
+	/**
 	 * Set site language.
 	 *
 	 * @param {string} language     - The site language to set.

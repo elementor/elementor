@@ -18,7 +18,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin, { e_nested_atomic_repeaters: 'active' } );
+		await wpAdmin.resetExperiments();
 
 		await page.close();
 	} );
@@ -27,7 +27,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin, { e_nested_atomic_repeaters: 'inactive' } );
+		await wpAdmin.resetExperiments();
 
 		await page.close();
 	} );
