@@ -366,7 +366,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'active' => false,
 				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
+				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
 				'default' => $config['content']['chat_button_section']['defaults']['location'],
 				'condition' => [
 					'chat_button_platform' => [
@@ -885,7 +885,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'active' => true,
 				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
+				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
 				'condition' => [
 					'contact_icon_platform' => [
 						Social_Network_Provider::WAZE,
@@ -1981,10 +1981,10 @@ JS;
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%', 'em', 'rem' ],
 					'default' => [
-						'top' => '16',
-						'bottom' => '16',
-						'left' => '16',
-						'right' => '16',
+						'top' => '12',
+						'bottom' => '12',
+						'left' => '12',
+						'right' => '12',
 						'unit' => 'px',
 						'isLinked' => true,
 					],

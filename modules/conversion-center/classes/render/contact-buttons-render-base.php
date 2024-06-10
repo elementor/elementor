@@ -217,7 +217,6 @@ abstract class Contact_Buttons_Render_Base {
 			<?php
 				$this->render_message_bubble_typing_animation();
 				$this->render_message_bubble_container();
-				$this->render_message_bubble_powered_by();
 			?>
 		</div>
 		<?php
@@ -246,11 +245,11 @@ abstract class Contact_Buttons_Render_Base {
 						'number' => $icon['contact_icon_number'] ?? '',
 						'username' => $icon['contact_icon_username'] ?? '',
 						'email_data' => [
-							'contact_icon_mail' => $icon['contact_icon_mail'],
+							'contact_icon_mail' => $icon['contact_icon_mail'] ?? '',
 							'contact_icon_mail_subject' => $icon['contact_icon_mail_subject'] ?? '',
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
-						'viber_action' => $icon['contact_icon_viber_action'],
+						'viber_action' => $icon['contact_icon_viber_action'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
@@ -333,6 +332,7 @@ abstract class Contact_Buttons_Render_Base {
 
 		?>
 		<div class="e-contact-buttons__send-button">
+			<?php $this->render_message_bubble_powered_by(); ?>
 			<div class="e-contact-buttons__send-button-container">
 				<?php if ( $send_button_text ) { ?>
 					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
