@@ -210,11 +210,7 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
-	 * Activate and deactivate Elementor experiments.
-	 *
-	 * TODO: The testing environment isn't clean between tests - Use with caution!
-	 *
-	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * Reset all Elementor experiments to their default settings.
 	 *
 	 * @return {Promise<void>}
 	 */
