@@ -17,7 +17,7 @@ export class ContactPageAddLibraryTab extends $e.modules.hookUI.After {
 			title: __( 'Floating Buttons', 'elementor' ),
 			filter: {
 				source: 'remote',
-				type: 'contact_button',
+				type: 'floating_button',
 			},
 		}, 2 );
 
