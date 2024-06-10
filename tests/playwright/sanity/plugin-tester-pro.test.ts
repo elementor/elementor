@@ -55,7 +55,6 @@ const pluginList2 = [
 const wpEnvCli = new WpEnvCli();
 
 test.describe( `Plugin tester tests: containers`, () => {
-
 	test.beforeAll( () => {
 		wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ pluginList1.join( ' ' ) }` );
 	} );

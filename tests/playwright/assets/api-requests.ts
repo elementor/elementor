@@ -186,7 +186,7 @@ export async function activatePlugin( request: APIRequestContext, slug: string, 
 	if ( ! response.ok() ) {
 		const response2 = await request.get( '/index.php', {
 			params: {
-				rest_route: `/wp/v2/plugins/${ slug }`,
+				rest_route: `/wp/v2/plugins`,
 			},
 			headers,
 		} );
