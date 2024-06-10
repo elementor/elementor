@@ -4,6 +4,14 @@ import EditorPage from '../../../../pages/editor-page';
 import _path from 'path';
 
 test.describe( 'Icons (FA Brands)', () => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
 	for ( const status of [ 'inactive', 'active' ] ) {
 		test( `Inline Icons experiment status - ${ status }`, async ( { page }, testInfo ) => {
 			// Arrange.
