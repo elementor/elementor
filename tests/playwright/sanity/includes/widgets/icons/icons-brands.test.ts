@@ -28,6 +28,7 @@ test.describe( 'Icons (FA Brands)', () => {
 			const icons = page.locator( '.e-con-inner' ).first();
 			await icons.waitFor();
 			await expect.soft( icons ).toHaveScreenshot( `${ iconsType }.png` );
+			expect( true ).toBeFalsy();
 		} );
 	}
 } );
