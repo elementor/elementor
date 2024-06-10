@@ -2,70 +2,64 @@ import { test, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import WpEnvCli from '../assets/wp-env-cli';
-import { deletePlugin, activatePlugin } from '../assets/api-requests';
 
 const pluginList1 = [
 	'essential-addons-for-elementor-lite',
-	// 'jetsticky-for-elementor',
-	// 'jetgridbuilder',
-	// 'the-plus-addons-for-elementor-page-builder',
-	// 'stratum',
-	// 'bdthemes-prime-slider-lite',
-	// 'wunderwp',
-	// 'addon-elements-for-elementor-page-builder',
-	// 'addons-for-elementor',
-	// 'anywhere-elementor',
-	// 'astra-sites',
-	// 'connect-polylang-elementor',
-	// 'dynamic-visibility-for-elementor',
-	// 'ele-custom-skin',
-	// 'elementskit-lite',
-	// 'envato-elements',
-	// 'exclusive-addons-for-elementor',
-	// // 'header-footer-elementor',
-	// 'jeg-elementor-kit',
-	// 'make-column-clickable-elementor',
-	// 'metform',
-	// 'music-player-for-elementor',
-	// 'ooohboi-steroids-for-elementor',
+	'jetsticky-for-elementor',
+	'jetgridbuilder',
+	'the-plus-addons-for-elementor-page-builder',
+	'stratum',
+	'bdthemes-prime-slider-lite',
+	'wunderwp',
+	'addon-elements-for-elementor-page-builder',
+	'addons-for-elementor',
+	'anywhere-elementor',
+	'astra-sites',
+	'connect-polylang-elementor',
+	'dynamic-visibility-for-elementor',
+	'ele-custom-skin',
+	'elementskit-lite',
+	'envato-elements',
+	'exclusive-addons-for-elementor',
+	// 'header-footer-elementor',
+	'jeg-elementor-kit',
+	'make-column-clickable-elementor',
+	'metform',
+	'music-player-for-elementor',
+	'ooohboi-steroids-for-elementor',
 ];
 
 const pluginList2 = [
-	// 'post-grid-elementor-addon',
-	// 'powerpack-lite-for-elementor',
-	// 'premium-addons-for-elementor',
-	// 'rife-elementor-extensions',
-	// 'royal-elementor-addons',
-	// 'sb-elementor-contact-form-db',
-	// 'skyboot-custom-icons-for-elementor',
-	// 'sticky-header-effects-for-elementor',
-	// 'timeline-widget-addon-for-elementor',
+	'post-grid-elementor-addon',
+	'powerpack-lite-for-elementor',
+	'premium-addons-for-elementor',
+	'rife-elementor-extensions',
+	'royal-elementor-addons',
+	'sb-elementor-contact-form-db',
+	'skyboot-custom-icons-for-elementor',
+	'sticky-header-effects-for-elementor',
+	'timeline-widget-addon-for-elementor',
 	// 'unlimited-elements-for-elementor',
 	// 'visibility-logic-elementor',
-	// 'ht-mega-for-elementor',
-	// 'jetgridbuilder',
-	// 'jetsticky-for-elementor',
-	// 'tutor-lms-elementor-addons',
-	// 'code-block-for-elementor',
-	// 'jetwidgets-for-elementor',
-	// 'envato-elements',
-	// 'happy-elementor-addons',
+	'ht-mega-for-elementor',
+	'jetgridbuilder',
+	'jetsticky-for-elementor',
+	'tutor-lms-elementor-addons',
+	'code-block-for-elementor',
+	'jetwidgets-for-elementor',
+	'envato-elements',
+	'happy-elementor-addons',
 ];
 
-const wpEnvCli = new WpEnvCli();
-
 test.describe( `Plugin tester tests: containers`, () => {
-	test.beforeAll( () => {
-		wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ pluginList1.join( ' ' ) }` );
-	} );
-
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_containers`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			await activatePlugin( page.context().request, plugin, true );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin } --activate` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -86,9 +80,7 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			// await deletePlugin( page.context().request, plugin );
-			// wpEnvCli.cmd( `npm run wp-env run cli wp plugin uninstall ${ plugin }` );
-			await activatePlugin( page.context().request, plugin, false );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 
@@ -96,9 +88,10 @@ test.describe( `Plugin tester tests: containers`, () => {
 		test( `"${ plugin }" plugin: @pluginTester2_containers`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			await installPlugin( page.context().request, plugin, true );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin } --activate` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -119,22 +112,24 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			deletePlugin( page.context().request, plugin );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 } );
 
-test.describe.skip( 'Plugin tester tests: sections', () => {
+test.describe( 'Plugin tester tests: sections', () => {
 	test.beforeAll( async () => {
+		const wpEnvCli = new WpEnvCli();
 		wpEnvCli.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
 	} );
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_sections`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			await installPlugin( page.context().request, plugin, true );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin } --activate` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -155,7 +150,7 @@ test.describe.skip( 'Plugin tester tests: sections', () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			deletePlugin( page.context().request, plugin );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 
@@ -163,9 +158,10 @@ test.describe.skip( 'Plugin tester tests: sections', () => {
 		test( `"${ plugin }" plugin: @pluginTester2_sections`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
+			const wpEnvCli = new WpEnvCli();
 			const adminBar = 'wpadminbar';
 
-			await installPlugin( page.context().request, plugin, true );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin } --activate` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -186,7 +182,7 @@ test.describe.skip( 'Plugin tester tests: sections', () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			deletePlugin( page.context().request, plugin );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 } );
