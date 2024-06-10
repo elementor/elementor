@@ -381,10 +381,10 @@ abstract class Contact_Buttons_Render_Base {
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $link['location'] ) ? $link['location'] : '';
+				$formatted_link = ! empty( $link['location'] ) ? $link['location']['url'] : '';
 				break;
 			case Social_Network_Provider::URL:
-				$formatted_link = ! empty( $link['url'] ) ? $link['url'] : '';
+				$formatted_link = ! empty( $link['url'] ) ? $link['url']['url'] : '';
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $link['number'] ) ? 'tel:' . $link['number'] : '';
@@ -394,6 +394,27 @@ abstract class Contact_Buttons_Render_Base {
 		}
 
 		return esc_html( $formatted_link );
+	}
+
+	protected function is_url_link( string $platform ): bool {
+		return $platform == Social_Network_Provider::URL || $platform == Social_Network_Provider::WAZE;
+	}
+
+	protected function render_link_attributes( array $link, string $key ) {
+		switch ( $link['platform'] ) {
+			case Social_Network_Provider::WAZE:
+				if ( ! empty( $link['location']['url'] ) ) {
+					$this->widget->add_link_attributes( $key, $link['location'] );
+				}
+				break;
+			case Social_Network_Provider::URL:
+				if ( ! empty( $link['url']['url'] ) ) {
+					$this->widget->add_link_attributes( $key, $link['url'] );
+				}
+				break;
+			default:
+				break;
+		}
 	}
 
 	protected function build_layout_render_attribute(): void {

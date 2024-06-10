@@ -58,8 +58,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'mail_body' => null,
 						'number' => null,
 						'username' => null,
-						'location' => null,
-						'url' => null,
+						'location' => [
+							'is_external' => true,
+						],
+						'url' => [
+							'is_external' => true,
+						],
 					],
 				],
 				'top_bar_section' => [
@@ -377,6 +381,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'default' => [
+					'is_external' => true,	
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -859,6 +866,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::URL,
 					],
 				],
+				'default' => [
+					'is_external' => true,	
+				],
 				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
 			],
 		);
@@ -868,6 +878,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'default' => [
+					'is_external' => true,	
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -968,6 +981,9 @@ JS;
 				[
 					'label' => esc_html__( 'Link', 'elementor' ),
 					'type' => Controls_Manager::URL,
+					'default' => [
+						'is_external' => true,	
+					],
 					'dynamic' => [
 						'active' => true,
 					],
@@ -2225,7 +2241,7 @@ JS;
 		$this->add_control(
 			'style_info_links_normal_text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text and Icon Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-icon-link-text-color: {{VALUE}}',
@@ -2245,7 +2261,7 @@ JS;
 		$this->add_control(
 			'style_info_links_hover_text_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
+				'label'     => esc_html__( 'Text and Icon Color', 'elementor' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-icon-link-text-color-hover: {{VALUE}}',
