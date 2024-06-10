@@ -7,7 +7,7 @@ test.describe( `Plugin tester tests: sections`, () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { container: false } );
+		await wpAdmin.setExperiments( { container: 'inactive' } );
 
 		await page.close();
 	} );
