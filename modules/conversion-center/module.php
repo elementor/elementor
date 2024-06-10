@@ -99,7 +99,7 @@ class Module extends BaseModule {
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
-		if ( !  ElementorUtils::has_pro() ) {
+		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'wp_footer', function () {
 				$query = new \WP_Query( [
 					'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
@@ -320,9 +320,9 @@ class Module extends BaseModule {
 		}
 
 		return Plugin::$instance->documents->get_create_new_post_url(
-				self::CPT_CONTACT_PAGES,
-				self::CONTACT_PAGE_DOCUMENT_TYPE
-			) . '#library';
+			self::CPT_CONTACT_PAGES,
+			self::CONTACT_PAGE_DOCUMENT_TYPE
+		) . '#library';
 	}
 
 	public function print_empty_contact_pages_page() {
