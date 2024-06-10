@@ -8,7 +8,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Core\Wp_Api;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Empty_View_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Contact_Menu_Item;
 use Elementor\Modules\ConversionCenter\AdminMenuItems\Conversion_Center_Menu_Item;
@@ -45,13 +44,6 @@ class Module extends BaseModule {
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
-	}
-
-	public static function is_pro_active(): bool {
-		if ( ! class_exists( 'ElementorPro\License\API' ) ) {
-			return false;
-		}
-		return API::is_license_active();
 	}
 
 	public function get_name(): string {
@@ -98,14 +90,16 @@ class Module extends BaseModule {
 
 		$this->register_contact_pages_cpt();
 
-		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
-		} );
+		if ( ! ElementorUtils::has_pro() ) {
+			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
+				$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
+			} );
+		}
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
-		if ( ! static::is_pro_active() ) {
+		if ( !  ElementorUtils::has_pro() ) {
 			add_action( 'wp_footer', function () {
 				$query = new \WP_Query( [
 					'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
@@ -134,20 +128,6 @@ class Module extends BaseModule {
 
 			} );
 		}
-
-		add_filter( 'elementor-pro/theme-builder/conditions-manager/additional-cpts', function( array $cpts ) {
-			$cpts[] = self::CPT_CONTACT_PAGES;
-
-			return $cpts;
-		} );
-
-		add_filter( 'elementor-pro/theme-builder/allowed-documents', function( $allowed, $document ) {
-			if ( $document instanceof Contact_Buttons ) {
-				return true;
-			}
-
-			return $allowed;
-		}, 10, 2 );
 
 		add_action( 'elementor/common/localize_settings', function ( $settings ) {
 			$settings['conversionCenter'] = [
@@ -228,7 +208,7 @@ class Module extends BaseModule {
 			unset( $posts_columns['comments'] );
 			$posts_columns['click_tracking'] = esc_html__( 'Click Tracking', 'elementor' );
 
-			if ( ! static::is_pro_active() ) {
+			if ( ! ElementorUtils::has_pro() ) {
 				$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
 			}
 
@@ -292,7 +272,7 @@ class Module extends BaseModule {
 				echo esc_html( $click_tracking );
 				break;
 			case 'instances':
-				if ( static::is_pro_active() ) {
+				if ( ElementorUtils::has_pro() ) {
 					break;
 				}
 				$instances = get_post_meta( $post_id, '_elementor_conditions', true );
@@ -332,14 +312,17 @@ class Module extends BaseModule {
 	}
 
 	private function get_add_new_contact_page_url() {
-		if ( ! $this->new_contact_pages_url ) {
-			$this->new_contact_pages_url = Plugin::$instance->documents->get_create_new_post_url(
+		if ( ElementorUtils::has_pro() ) {
+			return Plugin::$instance->documents->get_create_new_post_url(
+				self::CPT_CONTACT_PAGES,
+				self::CONTACT_PAGE_DOCUMENT_TYPE
+			);
+		}
+
+		return Plugin::$instance->documents->get_create_new_post_url(
 				self::CPT_CONTACT_PAGES,
 				self::CONTACT_PAGE_DOCUMENT_TYPE
 			) . '#library';
-		}
-
-		return $this->new_contact_pages_url;
 	}
 
 	public function print_empty_contact_pages_page() {
