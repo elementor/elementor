@@ -178,7 +178,7 @@ export async function loginApi( user: string, pw: string, url: string ) {
 
 export async function activatePlugin( request: APIRequestContext, slug: string, isActive: boolean = true ) {
 	const response = await request.post( '/index.php', {
-		params: { rest_route: `/wp/v2/plugins/${ slug }` },
+		params: { rest_route: `/wp/v2/plugins/build\\/${ slug }` },
 		headers,
 		multipart: { status: isActive ? 'active' : 'inactive' },
 	} );
