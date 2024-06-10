@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import WpEnvCli from '../assets/wp-env-cli';
-import { deletePlugin, installPlugin } from '../assets/api-requests';
+import { deletePlugin, activatePlugin } from '../assets/api-requests';
 
 const pluginList1 = [
 	'essential-addons-for-elementor-lite',
@@ -55,13 +55,18 @@ const pluginList2 = [
 const wpEnvCli = new WpEnvCli();
 
 test.describe( `Plugin tester tests: containers`, () => {
+
+	test.beforeAll( () => {
+		wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ pluginList1.join( ' ' ) }` );
+	} );
+
 	for ( const plugin of pluginList1 ) {
 		test( `"${ plugin }" plugin: @pluginTester1_containers`, async ( { page }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
 			const adminBar = 'wpadminbar';
 
-			await installPlugin( page.context().request, plugin, true );
+			await activatePlugin( page.context().request, plugin, true );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -83,7 +88,8 @@ test.describe( `Plugin tester tests: containers`, () => {
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			// await deletePlugin( page.context().request, plugin );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin uninstall ${ plugin }` );
+			// wpEnvCli.cmd( `npm run wp-env run cli wp plugin uninstall ${ plugin }` );
+			await activatePlugin( page.context().request, plugin, false );
 		} );
 	}
 

@@ -176,11 +176,11 @@ export async function loginApi( user: string, pw: string, url: string ) {
 	return cookies;
 }
 
-export async function installPlugin( request: APIRequestContext, slug: string, isActive: boolean = true ) {
+export async function activatePlugin( request: APIRequestContext, slug: string, isActive: boolean = true ) {
 	const response = await request.post( '/index.php', {
-		params: { rest_route: `/wp/v2/plugins` },
+		params: { rest_route: `/wp/v2/plugins/${ slug }` },
 		headers,
-		multipart: { slug, status: isActive ? 'active' : 'inactive' },
+		multipart: { status: isActive ? 'active' : 'inactive' },
 	} );
 
 	if ( ! response.ok() ) {
