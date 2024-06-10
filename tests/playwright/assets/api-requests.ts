@@ -184,9 +184,16 @@ export async function activatePlugin( request: APIRequestContext, slug: string, 
 	} );
 
 	if ( ! response.ok() ) {
+		const response2 = await request.get( '/index.php', {
+			params: {
+				rest_route: `/wp/v2/plugins/${ slug }`,
+			},
+			headers,
+		} );
 		throw new Error( `
 			Failed to install plugin ${ slug }: ${ response.status() }.
 			${ await response.text() }
+			${ await response2.text() }
 		` );
 	}
 }
