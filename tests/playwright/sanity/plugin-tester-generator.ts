@@ -39,12 +39,9 @@ const pluginList = [
 	// 'unlimited-elements-for-elementor',
 	// 'visibility-logic-elementor',
 	'ht-mega-for-elementor',
-	'jetgridbuilder',
-	'jetsticky-for-elementor',
 	'tutor-lms-elementor-addons',
 	'code-block-for-elementor',
 	'jetwidgets-for-elementor',
-	'envato-elements',
 	'happy-elementor-addons',
 ];
 
