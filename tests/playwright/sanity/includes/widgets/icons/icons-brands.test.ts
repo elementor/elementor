@@ -8,6 +8,9 @@ test.describe( 'Icons (FA Brands)', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.resetExperiments();
+		await wpAdmin.setExperiments( {
+			container: 'active',
+		} );
 
 		await page.close();
 	} );
