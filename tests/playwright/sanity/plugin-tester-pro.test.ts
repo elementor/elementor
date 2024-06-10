@@ -80,7 +80,8 @@ test.describe( `Plugin tester tests: containers`, () => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			await deletePlugin( page.context().request, plugin );
+			// await deletePlugin( page.context().request, plugin );
+			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
 		} );
 	}
 
