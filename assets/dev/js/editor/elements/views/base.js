@@ -659,23 +659,17 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, changedSetting ) {
+	isAtomicDynamic( dataBinding, changedControl ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			this.isAddingDynamicToTitle( dataBinding, changedSetting );
-	},
-
-	isAddingDynamicToTitle( dataBinding, changedSetting ) {
-		return (
-			'object' === typeof changedSetting?.__dynamic__ &&
-			Object.keys( changedSetting?.__dynamic__ )[ 0 ]?.length > 0 &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
-		);
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
-		const valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ],
-			dynamicSettings = { active: true };
+		const dynamicSettings = { active: true },
+			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
 			try {
@@ -686,6 +680,19 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return settings.attributes[ bindingSetting ];
+	},
+
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+			return false;
+		}
+
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
+
+		const allKeys = keys1.concat( keys2 );
+
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
 	},
 
 	/**
@@ -760,10 +767,11 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset;
+			const { bindingSetting } = dataBinding.dataset,
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
+			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
 				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
