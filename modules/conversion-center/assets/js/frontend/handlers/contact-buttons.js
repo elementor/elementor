@@ -192,10 +192,11 @@ export default class ContactButtonsHandler extends Base {
 
 		if ( this.elements.contentWrapper ) {
 			this.elements.contentWrapper.classList.remove( hidden );
+			this.elements.contentWrapper.setAttribute( 'aria-hidden', 'false' );
 		}
 
 		if ( this.elements.chatButton ) {
-			this.elements.chatButton.setAttribute( 'aria-expanded', 'false' );
+			this.elements.chatButton.setAttribute( 'aria-expanded', 'true' );
 		}
 
 		if ( this.elements.closeButton ) {
@@ -214,10 +215,11 @@ export default class ContactButtonsHandler extends Base {
 
 		if ( this.elements.contentWrapper ) {
 			this.elements.contentWrapper.classList.add( hidden );
+			this.elements.contentWrapper.setAttribute( 'aria-hidden', 'true' );
 		}
 
 		if ( this.elements.chatButton ) {
-			this.elements.chatButton.setAttribute( 'aria-expanded', 'true' );
+			this.elements.chatButton.setAttribute( 'aria-expanded', 'false' );
 		}
 
 		if ( this.elements.closeButton ) {
@@ -274,6 +276,37 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	initDefaultState() {
+		// Manage a11ly
+		const { hidden } = this.getSettings( 'constants' );
+		const randomishId = String(
+			Date.now().toString( 32 ) +
+				Math.random().toString( 16 ),
+		).replace( /\./g, '' );
+
+		const wrapperID = this.elements.contentWrapper.id
+			? this.elements.contentWrapper.id
+			: `e-contact-buttons__content-wrapper-${ randomishId }`;
+
+		const isHidden = this.elements.contentWrapper
+			? this.elements.contentWrapper.classList.contains( hidden )
+			: false;
+
+		if ( this.elements.contentWrapper ) {
+			this.elements.contentWrapper.setAttribute( 'id', wrapperID );
+			this.elements.contentWrapper.setAttribute( 'aria-hidden', isHidden );
+		}
+
+		if ( this.elements.chatButton ) {
+			this.elements.chatButton.setAttribute( 'aria-expanded', ! isHidden );
+			this.elements.chatButton.setAttribute( 'aria-controls', wrapperID );
+		}
+
+		if ( this.elements.closeButton ) {
+			this.elements.closeButton.setAttribute( 'aria-expanded', ! isHidden );
+			this.elements.closeButton.setAttribute( 'aria-controls', wrapperID );
+		}
+
+		// Default to open in Editor
 		if ( elementorFrontend.isEditMode() ) {
 			this.openChatBox();
 		}
