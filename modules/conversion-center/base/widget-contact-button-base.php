@@ -156,8 +156,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'title_heading_label' => esc_html__( 'Name', 'elementor' ),
 					'subtitle_heading_label' => esc_html__( 'Title', 'elementor' ),
 					'has_style_close_button' => true,
-					'has_close_button_heading' => true,
+					'has_close_button_heading' => false,
 					'has_background' => true,
+					'has_background_heading' => false,
 				],
 				'message_bubble_section' => [
 					'has_chat_background' => true,
@@ -627,10 +628,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			$this->add_control(
 				'chat_button_show_animation',
 				[
-					'label' => esc_html__( 'Display Typing Animation', 'elementor' ),
+					'label' => esc_html__( 'Typing Animation', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_on' => esc_html__( 'Yes', 'elementor' ),
-					'label_off' => esc_html__( 'No', 'elementor' ),
+					'label_on' => esc_html__( 'Show', 'elementor' ),
+					'label_off' => esc_html__( 'Hide', 'elementor' ),
 					'return_value' => 'yes',
 					'default' => 'yes',
 				]
@@ -1458,6 +1459,8 @@ JS;
 			);
 		}
 
+		$close_and_background_partial_divider = 'before';
+
 		if ( $config['style']['top_bar_section']['has_style_close_button'] ) {
 
 			if ( $config['style']['top_bar_section']['has_close_button_heading'] ) {
@@ -1466,12 +1469,13 @@ JS;
 					[
 						'label' => esc_html__( 'Close Button', 'elementor' ),
 						'type' => Controls_Manager::HEADING,
-						'separator' => false,
+						'separator' => $close_and_background_partial_divider,
 						'condition' => $this->get_platform_color_condition( [
 							'style_top_bar_colors' => 'custom',
 						] ),
 					]
 				);
+				$close_and_background_partial_divider = false;
 			}
 
 			$this->add_control(
@@ -1485,27 +1489,34 @@ JS;
 					'condition' => $this->get_platform_color_condition( [
 						'style_top_bar_colors' => 'custom',
 					] ),
+					'separator' => $close_and_background_partial_divider,
 				]
 			);
+
+			$close_and_background_partial_divider = false;
 		}
 
 		if ( $config['style']['top_bar_section']['has_background'] ) {
-			$this->add_control(
-				'style_top_bar_background_heading',
-				[
-					'label' => esc_html__( 'Background', 'elementor' ),
-					'type' => Controls_Manager::HEADING,
-					'separator' => false,
-					'condition' => $this->get_platform_color_condition( [
-						'style_top_bar_colors' => 'custom',
-					] ),
-				]
-			);
+
+			if ( $config['style']['top_bar_section']['has_background_heading'] ) {
+				$this->add_control(
+					'style_top_bar_background_heading',
+					[
+						'label' => esc_html__( 'Background', 'elementor' ),
+						'type' => Controls_Manager::HEADING,
+						'separator' => $close_and_background_partial_divider,
+						'condition' => $this->get_platform_color_condition( [
+							'style_top_bar_colors' => 'custom',
+						] ),
+					]
+				);
+				$close_and_background_partial_divider = false;
+			}
 
 			$this->add_control(
 				'style_top_bar_background_color',
 				[
-					'label' => esc_html__( 'Background', 'elementor' ),
+					'label' => esc_html__( 'Background Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-top-bar-bg: {{VALUE}}',
@@ -1513,6 +1524,7 @@ JS;
 					'condition' => $this->get_platform_color_condition( [
 						'style_top_bar_colors' => 'custom',
 					] ),
+					'separator' => $close_and_background_partial_divider,
 				]
 			);
 		}
@@ -1640,21 +1652,9 @@ JS;
 		);
 
 		$this->add_control(
-			'style_bubble_background_heading',
-			[
-				'label' => esc_html__( 'Bubble Background', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => false,
-				'condition' => $this->get_platform_color_condition( [
-					'style_bubble_colors' => 'custom',
-				] ),
-			]
-		);
-
-		$this->add_control(
 			'style_bubble_background_color',
 			[
-				'label' => esc_html__( 'Color', 'elementor' ),
+				'label' => esc_html__( 'Bubble Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-bubble-bg: {{VALUE}}',
@@ -1662,26 +1662,15 @@ JS;
 				'condition' => $this->get_platform_color_condition( [
 					'style_bubble_colors' => 'custom',
 				] ),
+				'separator' => 'before',
 			]
 		);
 
 		if ( $config['style']['message_bubble_section']['has_chat_background'] ) {
 			$this->add_control(
-				'style_bubble_chat_heading',
-				[
-					'label' => esc_html__( 'Chat Background', 'elementor' ),
-					'type' => Controls_Manager::HEADING,
-					'separator' => false,
-					'condition' => $this->get_platform_color_condition( [
-						'style_bubble_colors' => 'custom',
-					] ),
-				]
-			);
-
-			$this->add_control(
 				'style_bubble_chat_color',
 				[
-					'label' => esc_html__( 'Color', 'elementor' ),
+					'label' => esc_html__( 'Chat Background Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-message-bubble-chat-bg: {{VALUE}}',
