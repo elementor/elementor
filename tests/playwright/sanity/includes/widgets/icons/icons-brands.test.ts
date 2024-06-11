@@ -30,7 +30,6 @@ test.describe( 'Icons (FA Brands)', () => {
 
 			const filePath = _path.resolve( __dirname, `./template/${ iconsType }.json` );
 			await editor.loadTemplate( filePath, true );
-			await editor.getPreviewFrame().locator( '.e-con-inner' ).first().waitFor();
 
 			await editor.publishAndViewPage();
 
