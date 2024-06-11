@@ -51,9 +51,7 @@ test.describe( 'Container Grid tests @container', () => {
 			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
 			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
-			// Reset desktop view
-			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
-			await page.locator( '#e-responsive-bar__close-button' ).click();
+			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
@@ -231,9 +229,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			expect( isOneColumn ).toBeTruthy();
 
-			// Reset desktop view
-			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
-			await page.locator( '#e-responsive-bar__close-button' ).click();
+			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Elements with class .ui-resizable-e inside grid-containers should not be visible', async () => {
