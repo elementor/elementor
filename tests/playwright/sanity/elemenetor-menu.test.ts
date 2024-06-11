@@ -6,7 +6,7 @@ test.describe( 'General Settings', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.gotoDashboard();
-		await wpAdmin.page.locator( 'li .toplevel_page_elementor').click();
+		await wpAdmin.page.locator( 'li .toplevel_page_elementor' ).click();
 		expect( await wpAdmin.page.getByText( `Getting Started` ).count() ).toEqual( 0 );
 		await wpAdmin.page.goto( '/wp-admin/admin.php?page=elementor-getting-started' );
 		expect( await wpAdmin.page.locator( '.e-getting-started' ).count() ).toEqual( 1 );
