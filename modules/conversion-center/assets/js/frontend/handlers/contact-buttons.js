@@ -63,6 +63,7 @@ export default class ContactButtonsHandler extends Base {
 
 		if ( this.elements.contentWrapper ) {
 			this.elements.contentWrapper.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
+			window.addEventListener( 'keyup', this.onDocumentKeyup.bind( this ) );
 		}
 
 		window.addEventListener( 'beforeunload', () => {
@@ -70,6 +71,19 @@ export default class ContactButtonsHandler extends Base {
 				this.sendClicks();
 			}
 		} );
+	}
+
+	onDocumentKeyup( event ) {
+		// Bail if not ESC key
+		if ( event.keyCode !== 27 || ! this.elements.contentWrapper ) {
+			return;
+		}
+
+		const { hidden } = this.getSettings( 'constants' );
+
+		if ( ! this.elements.contentWrapper.classList.contains( hidden ) ) {
+			this.closeChatBox();
+		}
 	}
 
 	onChatButtonTrackClick( event ) {
@@ -202,6 +216,12 @@ export default class ContactButtonsHandler extends Base {
 		if ( this.elements.closeButton ) {
 			this.elements.closeButton.setAttribute( 'aria-expanded', 'true' );
 		}
+
+		// Manage initial focus
+		if ( this.elements.content ) {
+			this.elements.content.setAttribute( 'tabindex', '0' );
+			this.elements.content.focus( { focusVisible: true } );
+		}
 	}
 
 	closeChatBox() {
@@ -220,6 +240,7 @@ export default class ContactButtonsHandler extends Base {
 
 		if ( this.elements.chatButton ) {
 			this.elements.chatButton.setAttribute( 'aria-expanded', 'false' );
+			this.elements.chatButton.focus( { focusVisible: true } );
 		}
 
 		if ( this.elements.closeButton ) {
