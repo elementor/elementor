@@ -18,7 +18,7 @@ test.describe( 'General Settings', () => {
 		await wpAdmin.setExperiments( { home_screen: false } );
 		await wpAdmin.gotoDashboard();
 		await wpAdmin.page.locator( 'li .toplevel_page_elementor' ).click();
-		expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( 0 );
+		expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( 1 );
 		await wpAdmin.setExperiments( { home_screen: true } );
 	} );
 } );
