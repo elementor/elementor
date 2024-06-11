@@ -217,7 +217,6 @@ abstract class Contact_Buttons_Render_Base {
 			<?php
 				$this->render_message_bubble_typing_animation();
 				$this->render_message_bubble_container();
-				$this->render_message_bubble_powered_by();
 			?>
 		</div>
 		<?php
@@ -246,11 +245,11 @@ abstract class Contact_Buttons_Render_Base {
 						'number' => $icon['contact_icon_number'] ?? '',
 						'username' => $icon['contact_icon_username'] ?? '',
 						'email_data' => [
-							'contact_icon_mail' => $icon['contact_icon_mail'],
+							'contact_icon_mail' => $icon['contact_icon_mail'] ?? '',
 							'contact_icon_mail_subject' => $icon['contact_icon_mail_subject'] ?? '',
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
 						],
-						'viber_action' => $icon['contact_icon_viber_action'],
+						'viber_action' => $icon['contact_icon_viber_action'] ?? '',
 					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
@@ -328,11 +327,13 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
+			'rel' => 'noopener noreferrer',
 			'target' => '_blank',
 		] );
 
 		?>
 		<div class="e-contact-buttons__send-button">
+			<?php $this->render_message_bubble_powered_by(); ?>
 			<div class="e-contact-buttons__send-button-container">
 				<?php if ( $send_button_text ) { ?>
 					<a <?php echo $this->widget->get_render_attribute_string( 'formatted-cta' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -381,10 +382,10 @@ abstract class Contact_Buttons_Render_Base {
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $link['location'] ) ? $link['location'] : '';
+				$formatted_link = ! empty( $link['location'] ) ? $link['location']['url'] : '';
 				break;
 			case Social_Network_Provider::URL:
-				$formatted_link = ! empty( $link['url'] ) ? $link['url'] : '';
+				$formatted_link = ! empty( $link['url'] ) ? $link['url']['url'] : '';
 				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $link['number'] ) ? 'tel:' . $link['number'] : '';
@@ -394,6 +395,27 @@ abstract class Contact_Buttons_Render_Base {
 		}
 
 		return esc_html( $formatted_link );
+	}
+
+	protected function is_url_link( string $platform ): bool {
+		return $platform == Social_Network_Provider::URL || $platform == Social_Network_Provider::WAZE;
+	}
+
+	protected function render_link_attributes( array $link, string $key ) {
+		switch ( $link['platform'] ) {
+			case Social_Network_Provider::WAZE:
+				if ( ! empty( $link['location']['url'] ) ) {
+					$this->widget->add_link_attributes( $key, $link['location'] );
+				}
+				break;
+			case Social_Network_Provider::URL:
+				if ( ! empty( $link['url']['url'] ) ) {
+					$this->widget->add_link_attributes( $key, $link['url'] );
+				}
+				break;
+			default:
+				break;
+		}
 	}
 
 	protected function build_layout_render_attribute(): void {

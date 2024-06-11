@@ -58,8 +58,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'mail_body' => null,
 						'number' => null,
 						'username' => null,
-						'location' => null,
-						'url' => null,
+						'location' => [
+							'is_external' => true,
+						],
+						'url' => [
+							'is_external' => true,
+						],
 					],
 				],
 				'top_bar_section' => [
@@ -363,7 +367,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'active' => false,
 				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
+				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
 				'default' => $config['content']['chat_button_section']['defaults']['location'],
 				'condition' => [
 					'chat_button_platform' => [
@@ -378,6 +382,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'default' => [
+					'is_external' => true,	
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -860,6 +867,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						Social_Network_Provider::URL,
 					],
 				],
+				'default' => [
+					'is_external' => true,	
+				],
 				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
 			],
 		);
@@ -869,11 +879,14 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'default' => [
+					'is_external' => true,	
+				],
 				'dynamic' => [
 					'active' => true,
 				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter the location', 'elementor' ),
+				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
 				'condition' => [
 					'contact_icon_platform' => [
 						Social_Network_Provider::WAZE,
@@ -969,6 +982,9 @@ JS;
 				[
 					'label' => esc_html__( 'Link', 'elementor' ),
 					'type' => Controls_Manager::URL,
+					'default' => [
+						'is_external' => true,	
+					],
 					'dynamic' => [
 						'active' => true,
 					],
@@ -1954,10 +1970,10 @@ JS;
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%', 'em', 'rem' ],
 					'default' => [
-						'top' => '16',
-						'bottom' => '16',
-						'left' => '16',
-						'right' => '16',
+						'top' => '12',
+						'bottom' => '12',
+						'left' => '12',
+						'right' => '12',
 						'unit' => 'px',
 						'isLinked' => true,
 					],
@@ -2214,7 +2230,7 @@ JS;
 		$this->add_control(
 			'style_info_links_normal_text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text and Icon Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-icon-link-text-color: {{VALUE}}',
@@ -2234,7 +2250,7 @@ JS;
 		$this->add_control(
 			'style_info_links_hover_text_color',
 			[
-				'label'     => esc_html__( 'Text Color', 'elementor' ),
+				'label'     => esc_html__( 'Text and Icon Color', 'elementor' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-icon-link-text-color-hover: {{VALUE}}',

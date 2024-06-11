@@ -101,7 +101,7 @@
 
 		&__top-bar {
 			background-color: var(--e-contact-buttons-chat-box-bg);
-			padding: 0 0 20px;
+			padding: 0 20px 20px 0;
 			position: relative;
 
 			.e-contact-buttons__close-button {
@@ -215,6 +215,11 @@
 					}
 				}
 			}
+		}
+
+		&__contact-icon-container {
+			align-items: center;
+			display: flex;
 		}
 
 		&__cta-button {
