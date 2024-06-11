@@ -327,6 +327,7 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
+			'rel' => 'noopener noreferrer',
 			'target' => '_blank',
 		] );
 
