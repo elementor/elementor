@@ -21,11 +21,11 @@
 			justify-content: center;
 			position: relative;
 			transition: var(--e-contact-buttons-transition);
-			z-index: 1;
+			z-index: $first-layer;
 
 			svg {
 				position: relative;
-				z-index: 2;
+				z-index: $second-layer;
 			}
 		}
 
