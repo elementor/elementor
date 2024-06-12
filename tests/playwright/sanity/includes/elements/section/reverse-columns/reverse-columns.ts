@@ -56,7 +56,7 @@ export default class ReverseColumns {
 	async testReverseColumnsOneActivated( testDevice, isExperimentBreakpoints = false ) {
 		await this.init( isExperimentBreakpoints );
 
-		await this.page.click( `#e-responsive-bar-switcher__option-${ testDevice }` );
+		await this.editor.changeResponsiveView( testDevice );
 		const firstColumn = this.getFirstColumn();
 		await expect( firstColumn ).toHaveCSS( 'order', '0' );
 
@@ -68,7 +68,7 @@ export default class ReverseColumns {
 			filteredBreakpoints = breakpoints.filter( ( value ) => testDevice !== value );
 
 		for ( const breakpoint of filteredBreakpoints ) {
-			await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
+			await this.editor.changeResponsiveView( breakpoint );
 			await expect( firstColumn ).toHaveCSS( 'order', '0' );
 		}
 	}
@@ -79,7 +79,7 @@ export default class ReverseColumns {
 		const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic();
 
 		for ( const breakpoint of breakpoints ) {
-			await this.page.click( `#e-responsive-bar-switcher__option-${ breakpoint }` );
+			await this.editor.changeResponsiveView( breakpoint );
 			const firstColumn = this.getFirstColumn();
 			if ( 'desktop' === breakpoint ) {
 				await expect( firstColumn ).toHaveCSS( 'order', '0' );

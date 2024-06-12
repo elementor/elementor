@@ -57,15 +57,6 @@ export default class ElementRegressionHelper {
 		}
 	}
 
-	async setResponsiveMode( mode: string ) {
-		// Mobile tablet desktop
-		if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
-			await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
-		}
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } + i` ).click();
-		await this.editor.getPreviewFrame().locator( '#site-header' ).click();
-	}
-
 	async doResponsiveScreenshot( args: Omit<ScreenShot, 'hoverSelector'> ) {
 		let page: Page | Frame;
 		let label = '';
@@ -82,7 +73,7 @@ export default class ElementRegressionHelper {
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
 			page = this.editor.getPreviewFrame();
-			await this.setResponsiveMode( args.device );
+			await this.editor.changeResponsiveView( args.device );
 			await this.page.evaluate( () => {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );
 				iframe.style.height = '3000px';
