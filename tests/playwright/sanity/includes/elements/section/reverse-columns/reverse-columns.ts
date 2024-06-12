@@ -42,13 +42,13 @@ export default class ReverseColumns {
 		} );
 		await this.wpAdmin.openNewPage();
 		await this.editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
-		if ( isExperimentBreakpoints ) {
-			const pageUrl = new URL( this.page.url() );
-			const searchParams = pageUrl.searchParams;
-
-			const breakpoints = new Breakpoints( this.page );
-			await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
-		}
+		// if ( isExperimentBreakpoints ) {
+		// 	const pageUrl = new URL( this.page.url() );
+		// 	const searchParams = pageUrl.searchParams;
+		//
+		// 	const breakpoints = new Breakpoints( this.page );
+		// 	await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
+		// }
 
 		await this.open();
 	}
