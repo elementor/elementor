@@ -188,17 +188,20 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		const Swiper = elementorFrontend.utils.swiper;
-
-		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
-
-		// Expose the swiper instance in the frontend
-		this.elements.$swiperContainer.data( 'swiper', this.swiper );
+		await this.initSwiper();
 
 		const elementSettings = this.getElementSettings();
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
+	}
+
+	async initSwiper() {
+		const Swiper = elementorFrontend.utils.swiper;
+		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
+
+		// Expose the swiper instance in the frontend
+		this.elements.$swiperContainer.data( 'swiper', this.swiper );
 	}
 
 	bindEvents() {
@@ -325,8 +328,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetPaginationTabindex() {
-		const bulletClass = this.swiper?.params.pagination.bulletClass,
-			activeBulletClass = this.swiper?.params.pagination.bulletActiveClass;
+		const bulletClass = this.swiper?.params?.pagination.bulletClass,
+			activeBulletClass = this.swiper?.params?.pagination.bulletActiveClass;
 
 		this.getPaginationBullets().forEach( ( bullet ) => {
 			if ( ! bullet.classList?.contains( activeBulletClass ) ) {
