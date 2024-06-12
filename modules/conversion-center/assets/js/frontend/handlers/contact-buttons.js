@@ -73,17 +73,44 @@ export default class ContactButtonsHandler extends Base {
 		} );
 	}
 
-	onDocumentKeyup( event ) {
-		// Bail if not ESC key
-		if ( event.keyCode !== 27 || ! this.elements.contentWrapper ) {
-			return;
+	contentWrapperIsHidden( hide ) {
+		if ( ! this.elements.contentWrapper ) {
+			return false;
 		}
 
 		const { hidden } = this.getSettings( 'constants' );
 
-		if ( ! this.elements.contentWrapper.classList.contains( hidden ) ) {
+		// Set current state
+		if ( true === hide ) {
+			this.elements.contentWrapper.classList.add( hidden );
+			this.elements.contentWrapper.setAttribute( 'aria-hidden', 'true' );
+			return;
+		}
+
+		if ( false === hide ) {
+			this.elements.contentWrapper.classList.remove( hidden );
+			this.elements.contentWrapper.setAttribute( 'aria-hidden', 'false' );
+			return;
+		}
+
+		// Get current state
+		return this.elements.contentWrapper.classList.contains( hidden );
+	}
+
+	onDocumentKeyup( event ) {
+		// Bail if not ESC key
+		if ( event.keyCode !== 27 || ! this.elements.main ) {
+			return;
+		}
+
+		/* eslint-disable @wordpress/no-global-active-element */
+		if (
+			! this.contentWrapperIsHidden() &&
+			this.elements.main.contains( document.activeElement )
+		) {
 			this.closeChatBox();
 		}
+		/* eslint-enable @wordpress/no-global-active-element */
 	}
 
 	onChatButtonTrackClick( event ) {
@@ -196,7 +223,7 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	openChatBox() {
-		const { hasAnimations, visible, hidden } = this.getSettings( 'constants' );
+		const { hasAnimations, visible } = this.getSettings( 'constants' );
 
 		if ( this.elements.main && this.elements.main.classList.contains( hasAnimations ) ) {
 			this.chatBoxEntranceAnimation();
@@ -205,8 +232,7 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		if ( this.elements.contentWrapper ) {
-			this.elements.contentWrapper.classList.remove( hidden );
-			this.elements.contentWrapper.setAttribute( 'aria-hidden', 'false' );
+			this.contentWrapperIsHidden( false );
 		}
 
 		if ( this.elements.chatButton ) {
@@ -225,7 +251,7 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	closeChatBox() {
-		const { hasAnimations, visible, hidden } = this.getSettings( 'constants' );
+		const { hasAnimations, visible } = this.getSettings( 'constants' );
 
 		if ( this.elements.main && this.elements.main.classList.contains( hasAnimations ) ) {
 			this.chatBoxExitAnimation();
@@ -234,8 +260,7 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		if ( this.elements.contentWrapper ) {
-			this.elements.contentWrapper.classList.add( hidden );
-			this.elements.contentWrapper.setAttribute( 'aria-hidden', 'true' );
+			this.contentWrapperIsHidden( true );
 		}
 
 		if ( this.elements.chatButton ) {
@@ -249,9 +274,7 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	onChatButtonClick() {
-		const { hidden } = this.getSettings( 'constants' );
-
-		if ( this.elements.contentWrapper && this.elements.contentWrapper.classList.contains( hidden ) ) {
+		if ( this.elements.contentWrapper && this.contentWrapperIsHidden() ) {
 			this.openChatBox();
 		} else {
 			this.closeChatBox();
@@ -297,9 +320,8 @@ export default class ContactButtonsHandler extends Base {
 	}
 
 	initDefaultState() {
-		// Manage a11ly
+		// Manage accessibility
 		if ( this.elements.contentWrapper ) {
-			const { hidden } = this.getSettings( 'constants' );
 			const randomishId = String(
 				Date.now().toString( 32 ) +
 					Math.random().toString( 16 ),
@@ -309,10 +331,11 @@ export default class ContactButtonsHandler extends Base {
 				? this.elements.contentWrapper.id
 				: `e-contact-buttons__content-wrapper-${ randomishId }`;
 
-			const isHidden = this.elements.contentWrapper.classList.contains( hidden );
+			const isHidden = this.contentWrapperIsHidden();
 
 			this.elements.contentWrapper.setAttribute( 'id', wrapperID );
-			this.elements.contentWrapper.setAttribute( 'aria-hidden', isHidden );
+			// Looks like passing isHidden is redundant, but additional attributes are added
+			this.contentWrapperIsHidden( isHidden );
 
 			if ( this.elements.chatButton ) {
 				this.elements.chatButton.setAttribute( 'aria-expanded', ! isHidden );
