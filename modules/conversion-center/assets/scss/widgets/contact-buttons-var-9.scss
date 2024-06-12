@@ -1,0 +1,127 @@
+.e-contact-buttons-var-9 {
+	--e-contact-buttons-size-small: 48px;
+	--e-contact-buttons-size-medium: 56px;
+	--e-contact-buttons-size-large: 64px;
+	--e-contact-buttons-svg-size-small: 24px;
+	--e-contact-buttons-svg-size-medium: 28px;
+	--e-contact-buttons-svg-size-large: 32px;
+	--e-contact-buttons-transition-duration: all .5s;
+
+	.e-contact-buttons {
+
+		&__chat-button-icon-container {
+			align-items: center;
+			background-color: var(--e-contact-buttons-button-bg);
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			position: relative;
+			transition: var(--e-contact-buttons-transition-duration);
+			z-index: 0;
+
+			@media (min-width: $screen-desktop-min) {
+				inset-inline-start: calc(100% - var(--e-contact-buttons-horizontal-offset));
+			}
+
+			svg {
+				position: relative;
+				z-index: 1;
+			}
+		}
+
+		&__chat-button-text {
+			background-color: var(--e-contact-buttons-button-bg);
+			border-start-start-radius: 0;
+			border-start-end-radius: 0;
+			border-start-end-radius: 50px;
+			border-end-end-radius: 50px;
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 24px;
+			margin-left: -10px;
+			padding-block-end: var(--e-contact-buttons-chat-button-padding-block-end);
+			padding-block-start: var(--e-contact-buttons-chat-button-padding-block-start);
+			padding-inline-end: var(--e-contact-buttons-chat-button-padding-inline-end);
+			padding-inline-start: var(--e-contact-buttons-chat-button-padding-inline-start);
+			position: relative;
+			transition: var(--e-contact-buttons-transition-duration);
+
+			@media (min-width: $screen-desktop-min) {
+				clip-path: inset(0 0 0 100%);
+			}
+		}
+
+		&__chat-button {
+			background-color: transparent;
+			border-radius: 0;
+			color: var(--e-contact-buttons-button-icon);
+			height: auto;
+			width: auto;
+
+			&:hover,
+			&:focus {
+				color: var(--e-contact-buttons-button-icon-hover);
+
+				.e-contact-buttons__chat-button-icon-container,
+				.e-contact-buttons__chat-button-text,
+				.e-contact-buttons__chat-button-text::before {
+					background-color: var(--e-contact-buttons-button-bg-hover);
+					transition: var(--e-contact-buttons-transition-duration);
+				}
+
+				@media (min-width: $screen-desktop-min) {
+
+					.e-contact-buttons__chat-button-text {
+						clip-path: inset(0 0 0 0);
+						transition: var(--e-contact-buttons-transition-duration);
+						z-index: 1;
+					}
+	
+					.e-contact-buttons__chat-button-icon-container {
+						inset-inline-start: 0;
+						transition: var(--e-contact-buttons-transition-duration);
+					}
+				}
+			}
+
+			&.has-size-small {
+
+				.e-contact-buttons__chat-button-icon-container {
+					height: var(--e-contact-buttons-size-small);
+					width: var(--e-contact-buttons-size-small);
+			
+					svg {
+						height: var(--e-contact-buttons-svg-size-small);
+						width: var(--e-contact-buttons-svg-size-small);
+					}
+				}
+			}
+		
+			&.has-size-medium {
+		
+				.e-contact-buttons__chat-button-icon-container {
+					height: var(--e-contact-buttons-size-medium);
+					width: var(--e-contact-buttons-size-medium);
+		
+					svg {
+						height: var(--e-contact-buttons-svg-size-medium);
+						width: var(--e-contact-buttons-svg-size-medium);
+					}
+				}
+			}
+		
+			&.has-size-large {
+		
+				.e-contact-buttons__chat-button-icon-container {
+					height: var(--e-contact-buttons-size-large);
+					width: var(--e-contact-buttons-size-large);
+			
+					svg {
+						height: var(--e-contact-buttons-svg-size-large);
+						width: var(--e-contact-buttons-svg-size-large);
+					}
+				}
+			}
+		}
+	}
+}

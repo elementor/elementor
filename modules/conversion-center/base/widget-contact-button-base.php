@@ -41,6 +41,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_notification_dot_default_enabled' => true,
 					'has_active_tab' => false,
 					'has_display_text' => false,
+					'display_text_label' => esc_html__( 'Call now', 'elementor' ),
+					'has_display_text_select' => true,
 					'platform' => [
 						'group' => [
 							Social_Network_Provider::EMAIL,
@@ -145,11 +147,22 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'chat_button_section' => [
 					'has_entrance_animation' => true,
 					'has_box_shadow' => true,
+					'has_drop_shadow' => false,
 					'has_padding' => false,
 					'has_button_size' => true,
 					'has_typography' => false,
 					'has_icon_position' => false,
 					'has_icon_spacing' => false,
+					'hover_animation_type' => 'default',
+					'icon_color_label' => esc_html__( 'Icon Color', 'elementor' ),
+					'padding_defaults' => [
+						'top' => '16',
+						'bottom' => '16',
+						'left' => '20',
+						'right' => '20',
+						'unit' => 'px',
+						'isLinked' => false,
+					],
 				],
 				'top_bar_section' => [
 					'has_title_heading' => true,
@@ -403,6 +416,16 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		);
 	}
 
+	private function get_display_text_condition( $condition ) {
+		$config = static::get_configuration();
+
+		if ( true == $config['content']['chat_button_section']['has_display_text_select'] ) {
+			return $condition;
+		}
+
+		return null;
+	}
+
 	protected function add_chat_button_section(): void {
 		$config = static::get_configuration();
 
@@ -467,18 +490,21 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		}
 
 		if ( $config['content']['chat_button_section']['has_display_text'] ) {
-			$this->add_control(
-				'chat_button_display_text_select',
-				[
-					'label' => esc_html__( 'Display Text', 'elementor' ),
-					'type'  => Controls_Manager::SELECT,
-					'default' => 'details',
-					'options' => [
-						'details' => esc_html__( 'Contact Details', 'elementor' ),
-						'cta' => esc_html__( 'Call to Action', 'elementor' ),
-					],
-				]
-			);
+
+			if ( $config['content']['chat_button_section']['has_display_text_select'] ) {
+				$this->add_control(
+					'chat_button_display_text_select',
+					[
+						'label' => esc_html__( 'Display Text', 'elementor' ),
+						'type'  => Controls_Manager::SELECT,
+						'default' => 'details',
+						'options' => [
+							'details' => esc_html__( 'Contact Details', 'elementor' ),
+							'cta' => esc_html__( 'Call to Action', 'elementor' ),
+						],
+					]
+				);
+			}
 
 			$this->add_control(
 				'chat_button_display_text',
@@ -490,10 +516,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					],
 					'label_block' => true,
 					'placeholder' => esc_html__( 'Enter the text', 'elementor' ),
-					'default' => esc_html__( 'Call now', 'elementor' ),
-					'condition' => [
+					'default' => $config['content']['chat_button_section']['display_text_label'],
+					'condition' => $this-> get_display_text_condition([
 						'chat_button_display_text_select' => 'cta',
-					],
+					]),
 				],
 			);
 		}
@@ -1137,7 +1163,7 @@ JS;
 		$this->add_control(
 			'style_button_color_icon',
 			[
-				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'label' => $config['style']['chat_button_section']['icon_color_label'],
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
@@ -1189,7 +1215,7 @@ JS;
 		$this->add_control(
 			'style_button_color_icon_hover',
 			[
-				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'label' => $config['style']['chat_button_section']['icon_color_label'],
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon-hover: {{VALUE}}',
@@ -1214,14 +1240,16 @@ JS;
 			]
 		);
 
-		$this->add_control(
-			'style_button_color_hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-				'frontend_available' => true,
-			]
-		);
+		if ( 'default' == $config['style']['chat_button_section']['hover_animation_type'] ) {
+			$this->add_control(
+				'style_button_color_hover_animation',
+				[
+					'label' => esc_html__( 'Hover Animation', 'elementor' ),
+					'type' => Controls_Manager::HOVER_ANIMATION,
+					'frontend_available' => true,
+				]
+			);
+		}
 
 		$this->end_controls_tab();
 
@@ -1315,6 +1343,32 @@ JS;
 			);
 		}
 
+		if ( $config['style']['chat_button_section']['has_drop_shadow'] ) {
+			$this->add_group_control(
+				Group_Control_Box_Shadow::get_type(),
+				[
+					'name' => 'style_chat_button_box_shadow',
+					'fields_options' => [
+						'box_shadow_type' => [
+							'default' => 'yes',
+						],
+						'box_shadow' => [
+							'default' => [
+								'horizontal' => 4,
+								'vertical' => 4,
+								'blur' => 10,
+								'spread' => 0,
+								'color' => 'rgba(0,0,0,0.15)',
+							],
+							'selectors' => [
+								'{{WRAPPER}} .e-contact-buttons__chat-button-drop-shadow' => 'filter: drop-shadow({{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}});',
+							],
+						],
+					],
+				]
+			);
+		}
+
 		if ( $config['style']['chat_button_section']['has_padding'] ) {
 			$this->add_responsive_control(
 				'style_chat_button_padding',
@@ -1322,14 +1376,7 @@ JS;
 					'label' => esc_html__( 'Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%', 'em', 'rem' ],
-					'default' => [
-						'top' => '16',
-						'bottom' => '16',
-						'left' => '20',
-						'right' => '20',
-						'unit' => 'px',
-						'isLinked' => false,
-					],
+					'default' => $config['style']['chat_button_section']['padding_defaults'],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-button-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-chat-button-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-chat-button-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-chat-button-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
