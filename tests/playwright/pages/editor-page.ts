@@ -899,7 +899,7 @@ export default class EditorPage extends BasePage {
 				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
 			}
 
-			await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ device } + i` ).click();
 		}
 	}
 

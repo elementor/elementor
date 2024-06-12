@@ -8,8 +8,8 @@ const defaultBtnName = 'Click here';
 
 test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
 
 	// Act.
 	await editor.addWidget( 'button' );
@@ -22,12 +22,11 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 
 test( 'Button controls should return to default', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'button' );
 	await editor.openPanelTab( 'style' );
-
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	const widget = editor.getPreviewFrame().locator( EditorSelectors.widget ),
@@ -48,13 +47,17 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 } );
 
 test( 'Verify button Id control', async ( { page }, testInfo ) => {
+	// Arrange.
 	const buttonId = 'mySuperId';
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const buttonWidget = new ButtonWidget( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
+
 	await buttonWidget.addWidget( defaultBtnName );
 	await buttonWidget.setButtonId( buttonId, defaultBtnName );
 	await editor.publishAndViewPage();
+
+	// Assert
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );
 
@@ -79,8 +82,8 @@ test( 'Verify Button with Icon styling', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
-
 	const filePath = _path.resolve( __dirname, `./templates/button-icon-styling.json` );
+
 	await editor.loadTemplate( filePath, false );
 	await editor.getPreviewFrame().locator( '.elementor-widget-button' ).first().waitFor();
 	await editor.closeNavigatorIfOpen();

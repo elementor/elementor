@@ -1,48 +1,49 @@
 export type Image = {
-    title: string,
-    description?: string,
-    alt_text?: string,
-    caption?: string,
-    extension: string,
-    filePath?: string
+	title: string,
+	description?: string,
+	alt_text?: string,
+	caption?: string,
+	extension: string,
+	filePath?: string
 }
 
 export type StorageState = {
-    cookies: Array<{
-        name: string;
-        value: string;
-        domain: string;
-        path: string;
-        expires: number;
-        httpOnly: boolean;
-        secure: boolean;
-        sameSite: 'Strict' | 'Lax' | 'None';
-    }>;
-    origins: Array<{
-        origin: string;
-        localStorage: Array<{
-            name: string;
-            value: string;
-        }>;
-    }>;
+	cookies: Array<{
+		name: string;
+		value: string;
+		domain: string;
+		path: string;
+		expires: number;
+		httpOnly: boolean;
+		secure: boolean;
+		sameSite: 'Strict' | 'Lax' | 'None';
+	}>;
+	origins: Array<{
+		origin: string;
+		localStorage: Array<{
+			name: string;
+			value: string;
+		}>;
+	}>;
 };
+
 export type VideoParams = {
-        'autoplay': string,
-        'endscreen-enable': string,
-        'mute': string,
-        'start': string,
-        'playsinline': string,
-        'controls': string,
-        'ui-start-screen-info': string,
-        'ui-logo': string
+	'autoplay': string,
+	'endscreen-enable': string,
+	'mute': string,
+	'start': string,
+	'playsinline': string,
+	'controls': string,
+	'ui-start-screen-info': string,
+	'ui-logo': string
 }
 
 export type LinkOptions = {
-    targetBlank?: boolean,
-    noFollow?: boolean,
-    customAttributes?: {key:string, value: string },
-    linkTo?: boolean,
-    linkInpSelector?: string
+	targetBlank?: boolean,
+	noFollow?: boolean,
+	customAttributes?: { key: string, value: string },
+	linkTo?: boolean,
+	linkInpSelector?: string
 }
 
 export type WpPage = {
@@ -97,31 +98,37 @@ export type Post = {
 
 export type WindowType = Window & {
 	$e?: {
-		run: ( s: string, o: object )=> unknown
+		run: ( s: string, o: object ) => unknown
 	}
 	wpApiSettings?: { nonce: string }
 };
+
 export type BackboneType = {
-	Model: new ( o: {title: string} )=> unknown
+	Model: new ( o: { title: string } ) => unknown
 };
 
 export type $eType = {
-	run: ( s: string, o: object )=> unknown
+	run: ( s: string, o: object ) => unknown
 }
 
 export type ElementorType = {
 	navigator?: {
-		isOpen: ()=> unknown
+		isOpen: () => unknown
 	},
-	getContainer?: ( id: string )=> unknown,
+	getContainer?: ( id: string ) => unknown,
 	config?: {
-		initial_document:{
+		initial_document: {
 			id: string
 		}
 	}
 }
 
-export type ElementorFrontendConfig = { post: { id: number } }
+export type ElementorFrontendConfig = {
+	post: {
+		id: number
+	}
+}
+
 export type el = {
 	dataset: {
 		widget_type: string
