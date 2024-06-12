@@ -469,7 +469,8 @@ test.describe( 'Container tests @container', () => {
 
 		try {
 			await wpAdmin.setSiteLanguage( 'he_IL' );
-			const editor = await createCanvasPage( wpAdmin );
+			const editor = await wpAdmin.openNewPage();
+			await editor.useCanvasTemplate();
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
 			expect.soft( await container.screenshot( {
@@ -480,7 +481,8 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setSiteLanguage( '' );
 		}
 
-		const editor = await createCanvasPage( wpAdmin );
+		const editor = await wpAdmin.openNewPage();
+		await editor.useCanvasTemplate();
 		const container = await addContainerAndHover( editor );
 
 		expect.soft( await container.screenshot( {
@@ -1008,12 +1010,6 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 } );
-
-async function createCanvasPage( wpAdmin: WpAdminPage ) {
-	const editor = await wpAdmin.openNewPage();
-	await editor.useCanvasTemplate();
-	return editor;
-}
 
 async function addContainerAndHover( editor: EditorPage ) {
 	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
