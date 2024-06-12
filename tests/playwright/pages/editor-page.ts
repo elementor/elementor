@@ -891,7 +891,9 @@ export default class EditorPage extends BasePage {
 
 			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
 		} else {
-			const hasResponsiveViewBar = await this.page.locator( '#e-responsive-bar' ).isVisible();
+			const hasResponsiveViewBar = await this.page.evaluate( () => {
+				return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
+			} );
 
 			if ( ! hasResponsiveViewBar ) {
 				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();

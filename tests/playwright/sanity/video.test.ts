@@ -18,14 +18,14 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+		const promotion = page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		await editor.selectElement( videoId );
 		await editor.closeSection( 'section_video' );
 
 		// Assert
-		expect.soft( await promoArea.screenshot( {
+		expect.soft( await promotion.screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'video-widget-sidebar-promotion.png' );
 	} );
