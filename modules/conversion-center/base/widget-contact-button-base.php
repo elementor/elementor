@@ -150,6 +150,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_drop_shadow' => false,
 					'has_padding' => false,
 					'has_button_size' => true,
+					'button_size_default' => 'small',
 					'has_typography' => false,
 					'has_icon_position' => false,
 					'has_icon_spacing' => false,
@@ -1063,7 +1064,7 @@ JS;
 				[
 					'label' => esc_html__( 'Size', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => 'small',
+					'default' => $config['style']['chat_button_section']['button_size_default'],
 					'options' => [
 						'small' => esc_html__( 'Small', 'elementor' ),
 						'medium' => esc_html__( 'Medium', 'elementor' ),
@@ -1381,6 +1382,48 @@ JS;
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-button-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-chat-button-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-chat-button-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-chat-button-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
 					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( 'custom' == $config['style']['chat_button_section']['hover_animation_type'] ) {
+			$this->add_control(
+				'style_chat_button_custom_animation_heading',
+				[
+					'label' => esc_html__( 'Hover Animation', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
+				]
+			);
+
+			$this->add_control(
+				'style_chat_button_custom_animation_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => __( 'Hover animation is <b>desktop only</b>', 'elementor' ),
+				]
+			);
+
+			$this->add_control(
+				'style_chat_button_custom_animation_transition',
+				[
+					'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						's' => [
+							'min' => 0,
+							'max' => 3,
+							'step' => 0.1,
+						],
+					],
+					'default' => [
+						'unit' => 's',
+						'size' => 0.3,
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-transition-duration: {{SIZE}}{{UNIT}}',
+					],
 				]
 			);
 		}
