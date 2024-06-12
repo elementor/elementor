@@ -23,9 +23,11 @@
 	--e-link-in-bio-identity-image-cover-border-color: transparent;
 	--e-link-in-bio-identity-image-cover-border-style: none;
 	--e-link-in-bio-identity-image-cover-height: 170px;
+	--e-link-in-bio-identity-image-cover-position: center center;
 
 	// Identity config - Profile
 	--e-link-in-bio-identity-image-profile-border-color: transparent;
+	--e-link-in-bio-identity-image-profile-position: center center;
 	--e-link-in-bio-identity-image-profile-border-radius: 50%;
 	--e-link-in-bio-identity-image-profile-border-style: none;
 	--e-link-in-bio-identity-image-profile-border-width: 0;
@@ -209,6 +211,10 @@
 			&.has-border {
 				--e-link-in-bio-identity-image-cover-border-style: solid;
 			}
+
+			.e-link-in-bio__identity-image-element {
+				object-position: var(--e-link-in-bio-identity-image-cover-position);
+			}
 		}
 
 		.e-link-in-bio__identity-image-profile {
@@ -237,6 +243,7 @@
 
 			.e-link-in-bio__identity-image-element {
 				aspect-ratio: inherit;
+				object-position: var(--e-link-in-bio-identity-image-profile-position);
 			}
 		}
 
