@@ -62,7 +62,7 @@ export default class ElementRegressionHelper {
 		if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
 			await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
 		}
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
+		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } + i` ).click();
 		await this.editor.getPreviewFrame().locator( '#site-header' ).click();
 	}
 
