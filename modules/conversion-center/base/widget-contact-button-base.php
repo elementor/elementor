@@ -183,11 +183,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_buttons_size' => true,
 					'has_box_shadow' => false,
 					'has_buttons_spacing' => false,
+					'buttons_spacing_default' => [
+						'unit' => 'px',
+						'size' => 15,
+					],
 					'has_hover_animation' => true,
 					'has_chat_box_animation' => false,
 					'has_icon_bg_color' => true,
 					'has_button_bar' => false,
 					'has_tabs' => true,
+					'has_padding' => false,
+					'has_button_corners' => false,
+					'has_typography' => false,
+					'icon_color_label' => esc_html__( 'Icon Color', 'elementor' ),
 				],
 				'send_button_section' => [
 					'has_platform_colors' => true,
@@ -1849,6 +1857,16 @@ JS;
 			);
 		}
 
+		if ( $config['style']['contact_section']['has_typography'] ) {
+			$this->add_group_control(
+				Group_Control_Typography::get_type(),
+				[
+					'name' => 'style_contact_typography',
+					'selector' => '{{WRAPPER}} .e-contact-buttons__contact-icon-link',
+				]
+			);
+		}
+
 		$this->start_controls_tabs(
 			'style_contact_button_color_tabs'
 		);
@@ -1863,7 +1881,7 @@ JS;
 		$this->add_control(
 			'style_contact_button_color_icon',
 			[
-				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'label' => $config['style']['contact_section']['icon_color_label'],
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon: {{VALUE}}',
@@ -1949,15 +1967,28 @@ JS;
 							'max' => 100,
 						],
 					],
-					'default' => [
-						'unit' => 'px',
-						'size' => 15,
-					],
+					'default' => $config['style']['contact_section']['buttons_spacing_default'],
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-gap: {{SIZE}}{{UNIT}}',
 					],
 					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_button_corners'] ) {
+			$this->add_control(
+				'style_contact_corners',
+				[
+					'label' => esc_html__( 'Corners', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'round',
+					'options' => [
+						'round' => esc_html__( 'Round', 'elementor' ),
+						'rounded' => esc_html__( 'Rounded', 'elementor' ),
+						'sharp' => esc_html__( 'Sharp', 'elementor' ),
+					],
 				]
 			);
 		}
@@ -2069,6 +2100,29 @@ JS;
 					],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-button-bar-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-start: {{LEFT}}{{UNIT}};',
+					],
+					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_padding'] ) {
+			$this->add_responsive_control(
+				'style_contact_padding',
+				[
+					'label' => esc_html__( 'Padding', 'elementor' ),
+					'type' => Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px', '%', 'em', 'rem' ],
+					'default' => [
+						'top' => '8',
+						'bottom' => '8',
+						'left' => '12',
+						'right' => '12',
+						'unit' => 'px',
+						'isLinked' => true,
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-contact-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
 					'separator' => 'before',
 				]
@@ -2414,6 +2468,18 @@ JS;
 				'condition' => [
 					'style_info_links_dividers' => 'yes',
 				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	protected function add_style_sticky_links_section(): void {
+		$this->start_controls_section(
+			'style_sticky_links_section',
+			[
+				'label' => esc_html__( 'Contact Buttons', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
