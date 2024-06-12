@@ -94,7 +94,7 @@ abstract class Contact_Buttons_Render_Base {
 
 	protected function render_close_button(): void {
 		?>
-			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_attr__( 'Close Contact Buttons', 'elementor' ); ?>>
+			<button type="button" class="e-contact-buttons__close-button" aria-label="<?php echo esc_attr__( 'Close Contact Buttons', 'elementor' ); ?>">
 				<i class="eicon-close"></i>
 			</button>
 		<?php

@@ -233,6 +233,8 @@ export default class ContactButtonsHandler extends Base {
 
 		if ( this.elements.contentWrapper ) {
 			this.contentWrapperIsHidden( false );
+			this.elements.contentWrapper.setAttribute( 'tabindex', '0' );
+			this.elements.contentWrapper.focus( { focusVisible: true } );
 		}
 
 		if ( this.elements.chatButton ) {
@@ -241,12 +243,6 @@ export default class ContactButtonsHandler extends Base {
 
 		if ( this.elements.closeButton ) {
 			this.elements.closeButton.setAttribute( 'aria-expanded', 'true' );
-		}
-
-		// Manage initial focus
-		if ( this.elements.content ) {
-			this.elements.content.setAttribute( 'tabindex', '0' );
-			this.elements.content.focus( { focusVisible: true } );
 		}
 	}
 
@@ -334,8 +330,6 @@ export default class ContactButtonsHandler extends Base {
 			const isHidden = this.contentWrapperIsHidden();
 
 			this.elements.contentWrapper.setAttribute( 'id', wrapperID );
-			// Looks like passing isHidden is redundant, but additional attributes are added
-			this.contentWrapperIsHidden( isHidden );
 
 			if ( this.elements.chatButton ) {
 				this.elements.chatButton.setAttribute( 'aria-expanded', ! isHidden );
