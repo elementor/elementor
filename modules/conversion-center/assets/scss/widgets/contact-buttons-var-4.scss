@@ -13,7 +13,7 @@
 	width: auto;
 
 	&.has-h-alignment-end {
-		
+
 		.e-contact-buttons__chat-button-container {
 			padding-inline-end: 0;
 		}
@@ -91,7 +91,7 @@
 		& .e-contact-buttons__contact-icon-container {
 			height: var(--e-contact-buttons-size-small);
 			width: var(--e-contact-buttons-size-small);
-	
+
 			svg {
 				height: var(--e-contact-buttons-icon-small);
 				width: var(--e-contact-buttons-icon-small);
@@ -105,7 +105,7 @@
 		& .e-contact-buttons__contact-icon-container {
 			height: var(--e-contact-buttons-size-medium);
 			width: var(--e-contact-buttons-size-medium);
-	
+
 			svg {
 				height: var(--e-contact-buttons-icon-medium);
 				width: var(--e-contact-buttons-icon-medium);
@@ -119,7 +119,7 @@
 		& .e-contact-buttons__contact-icon-container {
 			height: var(--e-contact-buttons-size-large);
 			width: var(--e-contact-buttons-size-large);
-	
+
 			svg {
 				height: var(--e-contact-buttons-icon-large);
 				width: var(--e-contact-buttons-icon-large);
@@ -132,7 +132,7 @@
 		&__chat-buttons-container {
 			display: flex;
 		}
-	
+
 		&__close-button {
 			background-color: var(--e-contact-buttons-active-button-bg);
 			color: var(--e-contact-buttons-active-button-color);
@@ -142,28 +142,35 @@
 			position: relative;
 			top: unset;
 		}
-	
-		&__close-button,
+
+
 		&__chat-button {
-	
+
+			&[aria-expanded="true"] {
+				display: none;
+			}
+		}
+
+		&__close-button {
+
 			&[aria-expanded="false"] {
 				display: none;
 			}
 		}
-	
+
 		&__content {
 			border-radius: 0;
 			box-shadow: none;
 			margin: 0;
 			overflow: visible;
 		}
-	
+
 		&__contact-links {
 			display: flex;
 			flex-direction: column;
 			gap: var(--e-contact-buttons-contact-gap);
 		}
-	
+
 		&__contact-icon-container {
 			align-items: center;
 			background-color: var(--e-contact-buttons-contact-button-bg);
@@ -172,31 +179,31 @@
 			justify-content: center;
 			transition: $transition-hover;
 		}
-	
+
 		&__contact-icon-link {
 			align-items: center;
 			display: flex;
 			flex-direction: row;
 			gap: 14px;
-	
+
 			svg {
 				fill: var(--e-contact-buttons-contact-button-icon);
 			}
-	
+
 			&:hover,
 			&:focus {
-	
+
 				.e-contact-buttons__contact-icon-container {
 					background-color: var(--e-contact-buttons-contact-button-bg-hover);
 					transition: $transition-hover;
 				}
-	
+
 				svg {
 					fill: var(--e-contact-buttons-contact-button-icon-hover);
 				}
 			}
 		}
-	
+
 		&__contact-tooltip {
 			background-color: var(--e-contact-buttons-tooltip-bg);
 			border-radius: 16px;
@@ -206,7 +213,7 @@
 			line-height: 25px;
 			padding: 4px 14px;
 			position: relative;
-	
+
 			&::after {
 				border-style: solid;
 				content: "";
