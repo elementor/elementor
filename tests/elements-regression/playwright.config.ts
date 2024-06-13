@@ -27,6 +27,6 @@ export default defineConfig( {
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
-		storageState: './storageState.json',
+		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},
 } );
