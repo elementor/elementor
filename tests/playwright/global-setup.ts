@@ -14,7 +14,7 @@ async function globalSetup( config: FullConfig ) {
 	);
 	await context.addCookies( cookies );
 	await page.goto( `${ baseURL }/wp-admin` );
-	const storageState = await page.context().storageState( { path: './storageState.json' } );
+	const storageState = await page.context().storageState( { path: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json` } );
 
 	// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
 	let window: WindowType;
