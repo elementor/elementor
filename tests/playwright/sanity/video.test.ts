@@ -119,7 +119,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await editor.setSwitcherControlValue( 'show_image_overlay' );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await videoWidget.chooseImage( `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
 		await videoWidget.selectImageSize(
@@ -151,9 +151,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await editor.setSwitcherControlValue( 'show_image_overlay' );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await videoWidget.chooseImage( 'About-Pic-3-1.png' );
-		await editor.setSwitcherControlValue( 'lightbox' );
+		await editor.setSwitcherControlValue( 'lightbox', true );
 		await videoWidget.verifyVideoLightBox( false );
 		await editor.publishAndViewPage();
 		await videoWidget.verifyVideoLightBox( true );
