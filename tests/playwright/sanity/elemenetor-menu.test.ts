@@ -18,6 +18,7 @@ test.describe( 'General Settings', () => {
 		await wpAdmin.setExperiments( { home_screen: false } );
 		// We need to navigate away
 		await wpAdmin.page.goto( '/wp-admin/admin.php?page=elementor-getting-started' );
+		await wpAdmin.page.waitForLoadState( 'networkidle' );
 		await wpAdmin.page.locator( 'li .toplevel_page_elementor' ).click();
 		expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( 1 );
 		await wpAdmin.setExperiments( { home_screen: true } );
