@@ -53,6 +53,7 @@ export default class ReverseColumns {
 	}
 
 	async resetAdditionalBreakpoints() {
+		await this.wpAdmin.openNewPage();
 		const breakpoints = new Breakpoints( this.page );
 		await breakpoints.resetBreakpoints();
 	}
