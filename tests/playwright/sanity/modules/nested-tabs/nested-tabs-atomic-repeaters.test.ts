@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setup } from './helper';
 import _path from 'path';
 
-test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
+test.describe( 'Nested Tabs experiment is active', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );

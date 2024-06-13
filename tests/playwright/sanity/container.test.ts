@@ -7,7 +7,7 @@ import ImageCarousel from '../pages/widgets/image-carousel';
 import EditorPage from '../pages/editor-page';
 import _path from 'path';
 
-test.describe( 'Container tests @container', () => {
+test.describe( 'Container tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

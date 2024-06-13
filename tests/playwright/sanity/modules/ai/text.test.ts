@@ -6,7 +6,7 @@ import {
 	editTextMock,
 } from './text.mock';
 
-test.describe( 'AI @ai', () => {
+test.describe( 'AI', () => {
 	const mockRoute = async ( page: Page ) => {
 		await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
 			const requestPostData = route.request().postData();

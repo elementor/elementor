@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 
-test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
+test.describe( 'Nested Accordion Title Icon and Text No Overlap', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

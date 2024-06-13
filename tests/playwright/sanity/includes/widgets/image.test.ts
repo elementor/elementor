@@ -4,7 +4,7 @@ import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import Content from '../../../pages/elementor-panel-tabs/content';
 
-test.describe( 'Image widget tests @styleguide_image_link', () => {
+test.describe( 'Image widget tests', () => {
 	const data = [
 		{
 			widgetTitle: 'image',

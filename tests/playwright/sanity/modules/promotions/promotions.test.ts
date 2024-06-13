@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-test.describe( 'Promotion tests @promotions', () => {
+test.describe( 'Promotion tests', () => {
 	test( 'Menu Items Promotions - screenshots', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			promotionContainer = '.e-feature-promotion';

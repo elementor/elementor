@@ -6,7 +6,7 @@ import _path from 'path';
 const iconExperimentStates = [ 'inactive', 'active' ];
 
 iconExperimentStates.forEach( ( iconExperimentState ) => {
-	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
+	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState }`, () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			await beforeAll( browser, testInfo, iconExperimentState );
 		} );

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Container Grid tests @container', () => {
+test.describe( 'Container Grid tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

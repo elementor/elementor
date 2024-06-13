@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, setTitleHorizontalAlignment } from './helper';
 
-test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
+test.describe( 'Nested Accordion Content Tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );

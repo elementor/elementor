@@ -4,7 +4,7 @@ import EditorSelectors from '../selectors/editor-selectors';
 import Content from '../pages/elementor-panel-tabs/content';
 import ImageCarousel from '../pages/widgets/image-carousel';
 
-test.describe( 'Testing link control for widgets: @styleguide_image_link', () => {
+test.describe( 'Testing link control for widgets', () => {
 	const data = [
 		{ title: 'heading', selector: EditorSelectors.heading.link, linkTo: false },
 		{ title: 'button', selector: EditorSelectors.button.getByName( 'Click here' ), linkTo: false },

@@ -5,7 +5,7 @@ import _path from 'path';
 import { setup } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
+test.describe( 'Nested Accordion experiment inactive', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -53,7 +53,7 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	} );
 } );
 
-test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
+test.describe( 'Nested Accordion experiment is active', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );

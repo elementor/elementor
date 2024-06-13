@@ -3,7 +3,7 @@ import Breakpoints from '../../../../../assets/breakpoints';
 import ReverseColumns from './reverse-columns';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
-test.describe( 'Reverse Columns tests @reverse-columns', () => {
+test.describe( 'Reverse Columns tests', () => {
 	test.describe( 'Experiment Breakpoints: Off', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			const context = await browser.newContext();
