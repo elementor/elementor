@@ -10,6 +10,7 @@ export default defineConfig( {
 	testDir: './tests/',
 
 	timeout: 3 * 60_000,
+	globalTimeout: 60 * 15_000,
 	// globalSetup: resolve( __dirname, '../playwright/global-setup.ts' ),
 	expect: {
 		timeout: 8_000,

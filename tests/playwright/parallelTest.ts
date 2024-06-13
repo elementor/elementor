@@ -28,7 +28,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		}
 
 		// Important: make sure we authenticate in a clean environment by unsetting storage state.
-		const baseURL = testInfo.project.use.baseURL;
+		const baseURL = 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888';
 		const cookies = await loginApi(
 			process.env.USERNAME || 'admin',
 			process.env.PASSWORD || 'password',
