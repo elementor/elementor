@@ -559,6 +559,21 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set an image on a media control.
+	 *
+	 * @param {string}  controlId  - The control to set the value to.
+	 * @param {boolean} imageTitle - The title of the image to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setMediaControlImageValue( controlId: string, imageTitle: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-media__preview` ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await this.page.locator( `[aria-label="${ imageTitle }"]` ).click();
+		await this.page.locator( '.button.media-button' ).click();
+	}
+
+	/**
 	 * Set typography control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
