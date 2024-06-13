@@ -27,6 +27,7 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 
 	await editor.addWidget( 'button' );
 	await editor.openPanelTab( 'style' );
+
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	const widget = editor.getPreviewFrame().locator( EditorSelectors.widget ),

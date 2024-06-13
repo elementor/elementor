@@ -26,7 +26,6 @@ export default class VideoWidget extends Content {
 
 	async verifyVideoLightBox( isPublished: boolean ) {
 		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
-
 		await expect( page.locator( EditorSelectors.video.lightBoxSetting ) ).toBeVisible();
 		await page.locator( EditorSelectors.video.image ).click( );
 		await expect( page.locator( EditorSelectors.video.lightBoxDialog ) ).toBeVisible();
