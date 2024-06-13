@@ -16,7 +16,7 @@ test.describe( 'General Settings', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( { home_screen: false } );
-		await wpAdmin.page.waitForLoadState();
+		await wpAdmin.page.waitForLoadState( 'networkidle' );
 		await wpAdmin.page.locator( 'li .toplevel_page_elementor' ).click();
 		expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( 1 );
 		await wpAdmin.setExperiments( { home_screen: true } );
