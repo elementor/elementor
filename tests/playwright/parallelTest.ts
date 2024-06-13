@@ -8,8 +8,8 @@ export * from '@playwright/test';
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string }>( {
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
-	workerBaseURL: [ async ( {}, _use, testInfo ) => {
-		return 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888';
+	workerBaseURL: [ async ( {}, use, testInfo ) => {
+		await use( 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888' );
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
@@ -42,7 +42,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 		let window: WindowType;
 		const nonce = await page.evaluate( () => window.wpApiSettings.nonce );
-		if ( process.env.WP_REST_NONCE ) {
+		if ( ! process.env.WP_REST_NONCE ) {
 			process.env.WP_REST_NONCE = [];
 		}
 		process.env.WP_REST_NONCE[ id ] = nonce;
