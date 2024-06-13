@@ -93,7 +93,7 @@ test.describe( 'Video tests inside a container @video', () => {
 			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
 				await editor.setNumberControlValue( 'end', endTime );
-				await editor.setSelectControlValue( 'rel', 'Any Video' );
+				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 
 			const controls = player.controls.map( ( control ) => {
