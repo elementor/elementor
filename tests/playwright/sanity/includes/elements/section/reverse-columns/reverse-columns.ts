@@ -35,26 +35,31 @@ export default class ReverseColumns {
 		await contentTab.toggleControls( [ `[data-setting="reverse_order_${ device }"]` ] );
 	}
 
-	async init( isExperimentBreakpoints: boolean ) {
-		await this.wpAdmin.setExperiments( {
-			additional_custom_breakpoints: isExperimentBreakpoints,
-			container: false,
-		} );
+	async init() {
 		await this.wpAdmin.openNewPage();
 		await this.editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
-		if ( isExperimentBreakpoints ) {
-			const pageUrl = new URL( this.page.url() );
-			const searchParams = pageUrl.searchParams;
-
-			const breakpoints = new Breakpoints( this.page );
-			await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
-		}
 
 		await this.open();
 	}
 
+	async initAdditionalBreakpoints() {
+		await this.wpAdmin.openNewPage();
+		await this.editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
+		const pageUrl = new URL( this.page.url() );
+		const searchParams = pageUrl.searchParams;
+
+		const breakpoints = new Breakpoints( this.page );
+		await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
+	}
+
+	async resetAdditionalBreakpoints() {
+		await this.wpAdmin.openNewPage();
+		const breakpoints = new Breakpoints( this.page );
+		await breakpoints.resetBreakpoints();
+	}
+
 	async testReverseColumnsOneActivated( testDevice, isExperimentBreakpoints = false ) {
-		await this.init( isExperimentBreakpoints );
+		await this.init();
 
 		await this.page.click( `#e-responsive-bar-switcher__option-${ testDevice }` );
 		const firstColumn = this.getFirstColumn();
@@ -74,7 +79,7 @@ export default class ReverseColumns {
 	}
 
 	async testReverseColumnsAllActivated( isExperimentBreakpoints = false ) {
-		await this.init( isExperimentBreakpoints );
+		await this.init();
 
 		const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic();
 
