@@ -46,10 +46,12 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      fail-fast: ${{inputs.fail_fast || true}}
+      fail-fast: ${{ inputs.fail_fast || true }}
       matrix:
-        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "elements-regression" ]
-        shardTotal: [ 12 ]
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+        shardTotal: [ 10 ]
+        include:
+        - shardIndex: "elements-regression"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -88,16 +90,16 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        if: ${{matrix.shardIndex !='elements-regression'}}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{inputs.reporter || 'list,github'}}
+        if: ${{ matrix.shardIndex !='elements-regression' }}
+        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }}
       - name: Run element regression tests
-        if: ${{matrix.shardIndex =='elements-regression'}}
-        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
+        if: ${{ matrix.shardIndex =='elements-regression' }}
+        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-test-results-${{ matrix.shardIndex }}
-          path: ${{inputs.path-to-results || 'test-results/'}}
+          path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
 
