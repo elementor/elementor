@@ -391,6 +391,29 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Close a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to close.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeSection( sectionId: string ) {
+		const sectionSelector = `.elementor-control-${ sectionId }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + '.e-open:visible' );
+
+		if ( ! section || ! isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + '.e-open:visible .elementor-panel-heading' ).click();
+	}
+
+	/**
 	 * Set a custom width value to a widget.
 	 *
 	 * @param {string} width - The custom width value (as a percentage).
