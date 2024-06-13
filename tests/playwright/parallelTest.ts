@@ -5,15 +5,21 @@ import { createApiContext, createDefaultMedia, loginApi } from './assets/api-req
 import { WindowType } from './types/types';
 
 export * from '@playwright/test';
-export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string }>( {
+export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string }>( {
+	// Use the same storage state for all tests in this worker.
+	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
+	workerBaseURL: [ async ( {}, _use, testInfo ) => {
+		return 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888';
+	}, { scope: 'worker' } ],
+
 	// Use the same storage state for all tests in this worker.
 	storageState: ( { workerStorageState }, use ) => use( workerStorageState ),
 
 	// Authenticate once per worker with a worker-scoped fixture.
-	workerStorageState: [ async ( { browser }, use ) => {
+	workerStorageState: [ async ( { browser }, use, testInfo ) => {
 		// Use parallelIndex as a unique identifier for each worker.
-		const id = test.info().parallelIndex;
-		const fileName = path.resolve( test.info().project.outputDir, `.storageState-${ id }.json` );
+		const id = testInfo.parallelIndex;
+		const fileName = path.resolve( testInfo.project.outputDir, `.storageState-${ id }.json` );
 
 		if ( fs.existsSync( fileName ) ) {
 			// Reuse existing authentication state if any.
@@ -22,7 +28,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		}
 
 		// Important: make sure we authenticate in a clean environment by unsetting storage state.
-		const baseURL = test.info().project.use.baseURL;
+		const baseURL = testInfo.project.use.baseURL;
 		const cookies = await loginApi(
 			process.env.USERNAME || 'admin',
 			process.env.PASSWORD || 'password',
