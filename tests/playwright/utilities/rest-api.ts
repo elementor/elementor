@@ -1,17 +1,18 @@
-import { request } from '@playwright/test';
+import { request, BrowserContextOptions } from '@playwright/test';
 
-async function createWpRestContext() {
+type StorageState = Exclude<BrowserContextOptions['storageState'], undefined>;
+async function createWpRestContext( baseURL: string, storageState: StorageState ) {
 	return await request.newContext( {
-		baseURL: process.env.BASE_URL,
-		storageState: JSON.parse( process.env.STORAGE_STATE ),
+		baseURL,
+		storageState,
 		extraHTTPHeaders: {
-			'X-WP-Nonce': process.env.WP_REST_NONCE,
+			'X-WP-Nonce': process.env.WP_REST_NONCE[ process.env.TEST_PARALLEL_INDEX ],
 		},
 	} );
 }
 
-export async function createPage( apiContext = null ) {
-	apiContext = apiContext || ( await createWpRestContext() );
+export async function createPage( apiContext = null, baseURL: string, storageState: StorageState ) {
+	apiContext = apiContext || ( await createWpRestContext( baseURL, storageState ) );
 
 	const id = `${ Date.now() }${ Math.floor( Math.random() * 1000 ) }`;
 
@@ -26,8 +27,8 @@ export async function createPage( apiContext = null ) {
 	return ( await response.json() ).id;
 }
 
-export async function deletePage( pageId: string, apiContext = null ) {
-	apiContext = apiContext || ( await createWpRestContext() );
+export async function deletePage( pageId: string, apiContext = null, baseURL: string, storageState: StorageState ) {
+	apiContext = apiContext || ( await createWpRestContext( baseURL, storageState ) );
 
 	await apiContext.delete( '/index.php', {
 		params: { rest_route: `/wp/v2/pages/${ pageId }` },
@@ -35,7 +36,6 @@ export async function deletePage( pageId: string, apiContext = null ) {
 }
 
 module.exports = {
-	createWpRestContext,
 	createPage,
 	deletePage,
 };

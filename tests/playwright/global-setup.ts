@@ -20,7 +20,6 @@ async function globalSetup( config: FullConfig ) {
 	let window: WindowType;
 	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
 	process.env.STORAGE_STATE = JSON.stringify( storageState );
-	process.env.BASE_URL = baseURL;
 
 	const imageIds = [];
 	const image1 = {

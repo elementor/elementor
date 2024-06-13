@@ -4,8 +4,10 @@ import { APIRequest, type APIRequestContext } from '@playwright/test';
 import { Image, StorageState, Post, WpPage } from '../types/types';
 import axios from 'axios';
 import FormData from 'form-data';
-const headers = {
-	'X-WP-Nonce': process.env.WP_REST_NONCE,
+const headers = () => {
+	return {
+		'X-WP-Nonce': process.env.WP_REST_NONCE[ process.env.TEST_PARALLEL_INDEX ],
+	};
 };
 
 export async function createDefaultMedia( request: APIRequestContext, image: Image ) {
@@ -13,7 +15,7 @@ export async function createDefaultMedia( request: APIRequestContext, image: Ima
 	const response = await request.post( '/index.php', {
 
 		params: { rest_route: '/wp/v2/media' },
-		headers,
+		headers: headers(),
 		multipart: {
 			file: fs.createReadStream( _path.resolve( __dirname, imagePath ) ),
 			title: image.title,
@@ -40,7 +42,7 @@ export async function deleteDefaultMedia( request: APIRequestContext, ids: strin
 	const requests = [];
 	for ( const id in ids ) {
 		requests.push( request.delete( `/index.php`, {
-			headers,
+			headers: headers(),
 			params: {
 				rest_route: `/wp/v2/media/${ ids[ id ] }`,
 				force: 1,
@@ -80,7 +82,7 @@ export async function createApiContext( request: APIRequest,
 async function _delete( request: APIRequestContext, entity: string, id: string ) {
 	const response = await request.delete( '/index.php', {
 		params: { rest_route: `/wp/v2/${ entity }/${ id }` },
-		headers,
+		headers: headers(),
 	} );
 
 	if ( ! response.ok() ) {
@@ -105,7 +107,7 @@ async function get( request: APIRequestContext, entity: string, status: string =
 			rest_route: `/wp/v2/${ entity }`,
 			status,
 		},
-		headers,
+		headers: headers(),
 	} );
 
 	if ( ! response.ok() ) {
@@ -121,7 +123,7 @@ async function get( request: APIRequestContext, entity: string, status: string =
 export async function create( request: APIRequestContext, entity: string, data: Post ) {
 	const response = await request.post( '/index.php', {
 		params: { rest_route: `/wp/v2/${ entity }` },
-		headers,
+		headers: headers(),
 		multipart: data,
 	} );
 

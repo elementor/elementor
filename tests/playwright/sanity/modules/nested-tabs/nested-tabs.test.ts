@@ -33,12 +33,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.close();
 	} );
 
-	test.beforeEach( async () => {
-		pageId = await createPage();
+	test.beforeEach( async ( { baseURL, storageState } ) => {
+		pageId = await createPage( undefined, baseURL, storageState );
 	} );
 
-	test.afterEach( async () => {
-		await deletePage( pageId );
+	test.afterEach( async ( { baseURL, storageState } ) => {
+		await deletePage( pageId, undefined, baseURL, storageState );
 	} );
 
 	test( 'General test', async ( { page }, testInfo ) => {

@@ -39,12 +39,13 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		await page.goto( `${ baseURL }/wp-admin` );
 		// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
 		const storageState = await page.context().storageState( { path: fileName } );
-		await page.close();
 
 		let window: WindowType;
-		process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
-		process.env.STORAGE_STATE = JSON.stringify( storageState );
-		process.env.BASE_URL = baseURL;
+		const nonce = await page.evaluate( () => window.wpApiSettings.nonce );
+		if ( process.env.WP_REST_NONCE ) {
+			process.env.WP_REST_NONCE = [];
+		}
+		process.env.WP_REST_NONCE[ id ] = nonce;
 
 		const imageIds = [];
 		const image1 = {
@@ -58,12 +59,14 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 		const apiContext = await createApiContext( request, {
 			storageStateObject: storageState,
-			wpRESTNonce: process.env.WP_REST_NONCE,
+			wpRESTNonce: process.env.WP_REST_NONCE[ id ],
 			baseURL,
 		} );
 
 		imageIds.push( await createDefaultMedia( apiContext, image1 ) );
 		imageIds.push( await createDefaultMedia( apiContext, image2 ) );
+
+		await page.close();
 
 		await use( fileName );
 	}, { scope: 'worker' } ],
