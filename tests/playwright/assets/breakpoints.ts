@@ -51,7 +51,7 @@ export default class {
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const removeBreakpointButton = '#elementor-kit-panel-content .select2-selection__choice__remove';
-		while ( await this.page.$( removeBreakpointButton ) ) {
+		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}
 
