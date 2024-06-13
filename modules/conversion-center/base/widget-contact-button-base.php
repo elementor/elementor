@@ -2595,18 +2595,6 @@ JS;
 		$this->end_controls_section();
 	}
 
-	protected function add_style_sticky_links_section(): void {
-		$this->start_controls_section(
-			'style_sticky_links_section',
-			[
-				'label' => esc_html__( 'Contact Buttons', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
 	protected function add_style_send_button_section(): void {
 		$config = static::get_configuration();
 
