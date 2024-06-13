@@ -5,7 +5,6 @@ use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
-use Elementor\Modules\Home\Module as Home_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 	public function is_visible() {
-		if ( Plugin::instance()->experiments->is_feature_active( Home_Module::PAGE_ID ) ) {
+		if ( Plugin::instance()->experiments->is_feature_active( 'home_screen' ) ) {
 			return false;
 		}
 		return true;
