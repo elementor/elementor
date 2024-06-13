@@ -90,10 +90,10 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        if: ${{ matrix.shardIndex !='elements-regression' }}
+        if: ${{ matrix.shardIndex != 'elements-regression' }}
         run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }}
       - name: Run element regression tests
-        if: ${{ matrix.shardIndex =='elements-regression' }}
+        if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
       - uses: actions/upload-artifact@v4
         if: always()
