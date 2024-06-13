@@ -1,4 +1,5 @@
-import { test, expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';

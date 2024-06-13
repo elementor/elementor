@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {

@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 import FavoriteWidgetsHelper from './helpers';
 import NotificationsHelpers from '../../../../../../../assets/js/editor/utils/notifications/helpers';

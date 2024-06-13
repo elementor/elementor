@@ -1,4 +1,5 @@
-import { test, Page, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import {
 	reuseAndEditTextDataMock,
 	differentPeriodsDataMock,

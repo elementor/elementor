@@ -1,5 +1,5 @@
 import { playAudit } from 'playwright-lighthouse';
-import { test } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import config from 'lighthouse/lighthouse-core/config/desktop-config';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';

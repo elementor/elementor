@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { parallelTest as test } from '../../../../../parallelTest';
 import Breakpoints from '../../../../../assets/breakpoints';
 import ReverseColumns from './reverse-columns';
 import WpAdminPage from '../../../../../pages/wp-admin-page';

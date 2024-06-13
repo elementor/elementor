@@ -1,4 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import { getElementSelector } from '../assets/elements-utils';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';

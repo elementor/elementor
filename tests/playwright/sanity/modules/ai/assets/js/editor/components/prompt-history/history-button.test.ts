@@ -1,5 +1,5 @@
-import { test, Page } from '@playwright/test';
-
+import { Page } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import { closeAIDialog, findPromptHistoryButton } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';

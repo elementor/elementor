@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import { generatePluginTests } from './plugin-tester-generator';
 import WpAdminPage from '../pages/wp-admin-page';
 
