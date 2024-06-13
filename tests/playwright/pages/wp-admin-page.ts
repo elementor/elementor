@@ -210,6 +210,16 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
+	 * Reset all Elementor experiments to their default settings.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async resetExperiments() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		await this.page.getByRole( 'button', { name: 'default' } ).click();
+	}
+
+	/**
 	 * Set site language.
 	 *
 	 * @param {string} language     - The site language to set.
