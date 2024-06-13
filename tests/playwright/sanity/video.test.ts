@@ -88,12 +88,12 @@ test.describe( 'Video tests inside a container @video', () => {
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 			await editor.addWidget( 'video' );
-			await videoWidget.selectVideoSource( video );
+			await editor.setSelectControlValue( 'video_type', video );
 
-			await videoWidget.setTime( 'Start', startTime );
+			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
-				await videoWidget.setTime( 'End', endTime );
-				await videoWidget.selectSuggestedVideos( 'Any Video' );
+				await editor.setNumberControlValue( 'end', endTime );
+				await editor.setSelectControlValue( 'rel', 'Any Video' );
 			}
 
 			const controls = player.controls.map( ( control ) => {

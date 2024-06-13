@@ -158,11 +158,11 @@ test.describe( 'Image carousel tests', () => {
 		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
 		const title = [ 'A', 'B', 'C' ];
 
-		await imageCarousel.setCaption( 'caption' );
+		await editor.setSelectControlValue( 'caption_type', 'caption' );
 		await imageCarousel.verifyCaption( caption );
-		await imageCarousel.setCaption( 'description' );
+		await editor.setSelectControlValue( 'caption_type', 'description' );
 		await imageCarousel.verifyCaption( description );
-		await imageCarousel.setCaption( 'title' );
+		await editor.setSelectControlValue( 'caption_type', 'title' );
 		await imageCarousel.verifyCaption( title );
 	} );
 } );

@@ -20,10 +20,6 @@ export default class VideoWidget extends Content {
 		return src;
 	}
 
-	async selectVideoSource( option: string ) {
-		await this.page.locator( EditorSelectors.video.videoSourceSelect ).selectOption( option );
-	}
-
 	async verifyVideoLightBox( isPublished: boolean ) {
 		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
 		await expect( page.locator( EditorSelectors.video.lightBoxSetting ) ).toBeVisible();
