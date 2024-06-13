@@ -21,7 +21,7 @@ export default defineConfig( {
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	workers: process.env.CI ? 1 : 1,
+	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
@@ -34,7 +34,7 @@ export default defineConfig( {
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? 'http://localhost:8889' : 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
 		storageState: './storageState.json',
 	},
