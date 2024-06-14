@@ -13,6 +13,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 
 	public function render(): void {
 		$this->build_layout_render_attribute();
+		$this->add_content_wrapper_render_attribute();
 
 		$content_classnames = 'e-contact-buttons__content';
 		$animation_duration = $this->settings['style_chat_box_animation_duration'];
@@ -26,7 +27,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 		] );
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<div class="e-contact-buttons__content-wrapper hidden">
+			<div <?php echo $this->widget->get_render_attribute_string( 'content-wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<div <?php echo $this->widget->get_render_attribute_string( 'content' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php
 					$this->render_top_bar();
@@ -47,6 +48,15 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 			'class' => $layout_classnames,
 			'id' => $this->settings['advanced_custom_css_id'],
 			'data-document-id' => get_the_ID(),
+		] );
+	}
+
+	protected function add_content_wrapper_render_attribute() {
+		$this->widget->add_render_attribute( 'content-wrapper', [
+			'aria-hidden' => "true",
+			'aria-label' => __( 'Links window', 'elementor' ),
+			'class' => "e-contact-buttons__content-wrapper hidden",
+			'id' => uniqid('e-contact-buttons__content-wrapper-'),
 		] );
 	}
 

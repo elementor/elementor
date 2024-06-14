@@ -155,6 +155,21 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		return [ 'buttons', 'bio', 'widget', 'link in bio' ];
 	}
 
+	public function get_image_position_options(): array {
+		return [
+			'' => esc_html__( 'Default', 'elementor' ),
+			'center center' => esc_html__( 'Center Center', 'elementor' ),
+			'center left' => esc_html__( 'Center Left', 'elementor' ),
+			'center right' => esc_html__( 'Center Right', 'elementor' ),
+			'top center' => esc_html__( 'Top Center', 'elementor' ),
+			'top left' => esc_html__( 'Top Left', 'elementor' ),
+			'top right' => esc_html__( 'Top Right', 'elementor' ),
+			'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+			'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+			'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+		];
+	}
+
 	public function show_in_panel(): bool {
 		return Plugin::$instance->experiments->is_feature_active( ConversionCenterModule::EXPERIMENT_NAME );
 	}
@@ -904,6 +919,24 @@ JS;
 					],
 				]
 			);
+
+			$this->add_responsive_control(
+				'identity_image_cover_position',
+				[
+					'label' => esc_html__( 'Position', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'desktop_default' => 'center center',
+					'tablet_default' => 'center center',
+					'mobile_default' => 'center center',
+					'options' => $this->get_image_position_options(),
+					'selectors' => [
+						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-position: {{VALUE}}',
+					],
+					'condition' => [
+						'identity_image_cover[url]!' => '',
+					],
+				]
+			);
 		}
 
 		if ( $config['content']['identity_section']['has_heading_text'] ) {
@@ -938,6 +971,24 @@ JS;
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'identity_image_position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'desktop_default' => 'center center',
+				'tablet_default' => 'center center',
+				'mobile_default' => 'center center',
+				'options' => $this->get_image_position_options(),
+				'selectors' => [
+					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-position: {{VALUE}}',
+				],
+				'condition' => [
+					'identity_image[url]!' => '',
 				],
 			]
 		);

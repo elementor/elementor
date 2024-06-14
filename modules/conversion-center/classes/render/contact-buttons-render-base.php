@@ -83,7 +83,7 @@ abstract class Contact_Buttons_Render_Base {
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
-			<button <?php echo $this->widget->get_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Open Contact Buttons', 'elementor' ); ?>">
+			<button <?php echo $this->widget->get_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Toggle Links Popup', 'elementor' ); ?>">
 				<?php
 					$this->render_chat_button_icon();
 				?>
@@ -94,7 +94,7 @@ abstract class Contact_Buttons_Render_Base {
 
 	protected function render_close_button(): void {
 		?>
-			<button type="button" class="e-contact-buttons__close-button" aria-label=<?php echo esc_attr__( 'Close Contact Buttons', 'elementor' ); ?>>
+			<button type="button" class="e-contact-buttons__close-button" aria-label="<?php echo esc_attr__( 'Close Links Popup', 'elementor' ); ?>">
 				<i class="eicon-close"></i>
 			</button>
 		<?php

@@ -48,7 +48,7 @@
 
 		&__chat-button {
 
-			&[aria-expanded="false"] {
+			&[aria-expanded="true"] {
 				background-color: var(--e-contact-buttons-active-button-bg);
 
 				svg {
@@ -63,27 +63,27 @@
 			&.has-size-small {
 				height: var(--e-contact-buttons-size-small);
 				width: var(--e-contact-buttons-size-small);
-		
+
 				svg {
 					height: var(--e-contact-buttons-svg-size-small);
 					width: var(--e-contact-buttons-svg-size-small);
 				}
 			}
-		
+
 			&.has-size-medium {
 				height: var(--e-contact-buttons-size-medium);
 				width: var(--e-contact-buttons-size-medium);
-		
+
 				svg {
 					height: var(--e-contact-buttons-svg-size-medium);
 					width: var(--e-contact-buttons-svg-size-medium);
 				}
 			}
-		
+
 			&.has-size-large {
 				height: var(--e-contact-buttons-size-large);
 				width: var(--e-contact-buttons-size-large);
-		
+
 				svg {
 					height: var(--e-contact-buttons-svg-size-large);
 					width: var(--e-contact-buttons-svg-size-large);
@@ -113,7 +113,7 @@
 				position: absolute;
 				inset-inline-end: 0;
 				top: 0;
-		
+
 				&:hover,
 				&:focus {
 					background: none;
@@ -168,7 +168,7 @@
 			}
 
 			&.has-icon-position-start {
-				
+
 				.e-contact-buttons__contact-icon-container {
 					order: 1;
 				}
