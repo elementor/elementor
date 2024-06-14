@@ -55,7 +55,6 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 		const apiContext = await createApiContext( request, {
 			storageStateObject: storageState,
-			wpRESTNonce: process.env.WP_REST_NONCE[ id ],
 			baseURL,
 		} );
 

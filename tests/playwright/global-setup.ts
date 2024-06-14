@@ -33,7 +33,6 @@ async function globalSetup( config: FullConfig ) {
 
 	const apiContext = await createApiContext( request, {
 		storageStateObject: storageState,
-		wpRESTNonce: process.env.WP_REST_NONCE,
 		baseURL,
 	} );
 

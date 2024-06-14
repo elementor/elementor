@@ -67,13 +67,11 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 }
 
 export async function createApiContext( request: APIRequest,
-	options: { storageStateObject: string| StorageState, wpRESTNonce: string, baseURL: string } ) {
+	options: { storageStateObject: string| StorageState, baseURL: string } ) {
 	const context = await request.newContext( {
 		baseURL: options.baseURL,
 		storageState: options.storageStateObject,
-		extraHTTPHeaders: {
-			'X-WP-Nonce': options.wpRESTNonce,
-		},
+		extraHTTPHeaders: headers(),
 	} );
 
 	return context;
