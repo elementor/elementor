@@ -278,17 +278,14 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 
-		// Set Canvas template.
+		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
-		await page.waitForLoadState( 'domcontentloaded' );
 
 		await editor.selectElement( container );
 		// Set row direction.
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		// Set flex-wrap: wrap.
 		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
-
-		await editor.closeNavigatorIfOpen();
 
 		// Act.
 		await editor.addWidget( 'divider', container );
@@ -365,10 +362,9 @@ test.describe( 'Container tests @container', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
-		// Set Canvas template.
+		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
 
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.selectElement( containerId );
 		await editor.setSliderControlValue( 'min_height', '200' );
 		await editor.openPanelTab( 'style' );
@@ -383,7 +379,6 @@ test.describe( 'Container tests @container', () => {
 		await editor.setChooseControlValue( 'background_overlay_background', 'eicon-paint-brush' );
 		await editor.setColorControlValue( 'background_overlay_color', '#61CE70' );
 
-		await editor.closeNavigatorIfOpen();
 		await editor.togglePreviewMode();
 
 		expect.soft( await container.screenshot( {
@@ -469,8 +464,8 @@ test.describe( 'Container tests @container', () => {
 		try {
 			await wpAdmin.setSiteLanguage( 'he_IL' );
 			const editor = await wpAdmin.openNewPage();
-			await editor.useCanvasTemplate();
 			await editor.closeNavigatorIfOpen();
+			await editor.useCanvasTemplate();
 			const container = await addContainerAndHover( editor );
 			expect.soft( await container.screenshot( {
 				type: 'jpeg',
