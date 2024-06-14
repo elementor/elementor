@@ -154,6 +154,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_typography' => false,
 					'has_icon_position' => false,
 					'has_icon_spacing' => false,
+					'has_tabs' => true,
+					'has_platform_color_controls' => false,
 					'hover_animation_type' => 'default',
 					'icon_color_label' => esc_html__( 'Icon Color', 'elementor' ),
 					'padding_defaults' => [
@@ -183,11 +185,22 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_buttons_size' => true,
 					'has_box_shadow' => false,
 					'has_buttons_spacing' => false,
+					'buttons_spacing_default' => [
+						'unit' => 'px',
+						'size' => 15,
+					],
 					'has_hover_animation' => true,
 					'has_chat_box_animation' => false,
 					'has_icon_bg_color' => true,
 					'has_button_bar' => false,
 					'has_tabs' => true,
+					'has_text_color' => false,
+					'has_bg_color' => false,
+					'has_padding' => false,
+					'has_button_corners' => false,
+					'has_typography' => false,
+					'icon_color_label' => esc_html__( 'Icon Color', 'elementor' ),
+					'has_hover_transition_duration' => false,
 				],
 				'send_button_section' => [
 					'has_platform_colors' => true,
@@ -1135,159 +1148,206 @@ JS;
 			);
 		}
 
-		$this->start_controls_tabs(
-			'style_button_color_tabs'
-		);
-
-		$this->start_controls_tab(
-			'style_button_color_tabs_normal',
-			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
-		);
-
-		if ( $config['style']['has_platform_colors'] ) {
-			$this->add_control(
-				'style_button_color_select',
-				[
-					'label' => esc_html__( 'Colors', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => [
-						'default' => esc_html__( 'Default', 'elementor' ),
-						'custom' => esc_html__( 'Custom', 'elementor' ),
-					],
-				]
+		if ( $config['style']['chat_button_section']['has_tabs'] ) {
+			$this->start_controls_tabs(
+				'style_button_color_tabs'
 			);
-		}
 
-		$this->add_control(
-			'style_button_color_icon',
-			[
-				'label' => $config['style']['chat_button_section']['icon_color_label'],
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
-				],
-				'condition' => $this->get_platform_color_condition( [
-					'style_button_color_select' => 'custom',
-				] ),
-			]
-		);
-
-		$this->add_control(
-			'style_button_color_background',
-			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg: {{VALUE}}',
-				],
-				'condition' => $this->get_platform_color_condition( [
-					'style_button_color_select' => 'custom',
-				] ),
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab(
-			'style_button_color_tabs_hover',
-			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
-		);
-
-		if ( $config['style']['has_platform_colors'] ) {
-			$this->add_control(
-				'style_button_color_select_hover',
-				[
-					'label' => esc_html__( 'Colors', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => [
-						'default' => esc_html__( 'Default', 'elementor' ),
-						'custom' => esc_html__( 'Custom', 'elementor' ),
-					],
-				]
-			);
-		}
-
-		$this->add_control(
-			'style_button_color_icon_hover',
-			[
-				'label' => $config['style']['chat_button_section']['icon_color_label'],
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon-hover: {{VALUE}}',
-				],
-				'condition' => $this->get_platform_color_condition( [
-					'style_button_color_select_hover' => 'custom',
-				] ),
-			]
-		);
-
-		$this->add_control(
-			'style_button_color_background_hover',
-			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg-hover: {{VALUE}}',
-				],
-				'condition' => $this->get_platform_color_condition( [
-					'style_button_color_select_hover' => 'custom',
-				] ),
-			]
-		);
-
-		if ( 'default' == $config['style']['chat_button_section']['hover_animation_type'] ) {
-			$this->add_control(
-				'style_button_color_hover_animation',
-				[
-					'label' => esc_html__( 'Hover Animation', 'elementor' ),
-					'type' => Controls_Manager::HOVER_ANIMATION,
-					'frontend_available' => true,
-				]
-			);
-		}
-
-		$this->end_controls_tab();
-
-		if ( $config['content']['chat_button_section']['has_active_tab'] ) {
 			$this->start_controls_tab(
-				'style_button_color_tabs_active',
+				'style_button_color_tabs_normal',
 				[
-					'label' => esc_html__( 'Active', 'elementor' ),
+					'label' => esc_html__( 'Normal', 'elementor' ),
 				]
 			);
 
+			if ( $config['style']['has_platform_colors'] ) {
+				$this->add_control(
+					'style_button_color_select',
+					[
+						'label' => esc_html__( 'Colors', 'elementor' ),
+						'type' => Controls_Manager::SELECT,
+						'default' => 'default',
+						'options' => [
+							'default' => esc_html__( 'Default', 'elementor' ),
+							'custom' => esc_html__( 'Custom', 'elementor' ),
+						],
+					]
+				);
+			}
+
 			$this->add_control(
-				'style_button_color_icon_active',
+				'style_button_color_icon',
 				[
-					'label' => esc_html__( 'Icon Color', 'elementor' ),
+					'label' => $config['style']['chat_button_section']['icon_color_label'],
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
-						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-active-button-color: {{VALUE}}',
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
 					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_button_color_select' => 'custom',
+					] ),
 				]
 			);
 
 			$this->add_control(
-				'style_button_color_background_active',
+				'style_button_color_background',
 				[
 					'label' => esc_html__( 'Background Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
-						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-active-button-bg: {{VALUE}}',
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg: {{VALUE}}',
 					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_button_color_select' => 'custom',
+					] ),
 				]
 			);
 
 			$this->end_controls_tab();
+
+			$this->start_controls_tab(
+				'style_button_color_tabs_hover',
+				[
+					'label' => esc_html__( 'Hover', 'elementor' ),
+				]
+			);
+
+			if ( $config['style']['has_platform_colors'] ) {
+				$this->add_control(
+					'style_button_color_select_hover',
+					[
+						'label' => esc_html__( 'Colors', 'elementor' ),
+						'type' => Controls_Manager::SELECT,
+						'default' => 'default',
+						'options' => [
+							'default' => esc_html__( 'Default', 'elementor' ),
+							'custom' => esc_html__( 'Custom', 'elementor' ),
+						],
+					]
+				);
+			}
+
+			$this->add_control(
+				'style_button_color_icon_hover',
+				[
+					'label' => $config['style']['chat_button_section']['icon_color_label'],
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon-hover: {{VALUE}}',
+					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_button_color_select_hover' => 'custom',
+					] ),
+				]
+			);
+
+			$this->add_control(
+				'style_button_color_background_hover',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg-hover: {{VALUE}}',
+					],
+					'condition' => $this->get_platform_color_condition( [
+						'style_button_color_select_hover' => 'custom',
+					] ),
+				]
+			);
+
+			if ( 'default' == $config['style']['chat_button_section']['hover_animation_type'] ) {
+				$this->add_control(
+					'style_button_color_hover_animation',
+					[
+						'label' => esc_html__( 'Hover Animation', 'elementor' ),
+						'type' => Controls_Manager::HOVER_ANIMATION,
+						'frontend_available' => true,
+					]
+				);
+			}
+
+			$this->end_controls_tab();
+
+			if ( $config['content']['chat_button_section']['has_active_tab'] ) {
+				$this->start_controls_tab(
+					'style_button_color_tabs_active',
+					[
+						'label' => esc_html__( 'Active', 'elementor' ),
+					]
+				);
+
+				$this->add_control(
+					'style_button_color_icon_active',
+					[
+						'label' => esc_html__( 'Icon Color', 'elementor' ),
+						'type' => Controls_Manager::COLOR,
+						'selectors' => [
+							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-active-button-color: {{VALUE}}',
+						],
+					]
+				);
+
+				$this->add_control(
+					'style_button_color_background_active',
+					[
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'type' => Controls_Manager::COLOR,
+						'selectors' => [
+							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-active-button-bg: {{VALUE}}',
+						],
+					]
+				);
+
+				$this->end_controls_tab();
+			}
+
+			$this->end_controls_tabs();
 		}
 
-		$this->end_controls_tabs();
+		if ( $config['style']['chat_button_section']
+		['has_platform_color_controls'] ) {
+			$this->add_control(
+				'style_platform_control_select',
+				[
+					'label' => esc_html__( 'Colors', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => [
+						'default' => esc_html__( 'Default', 'elementor' ),
+						'custom' => esc_html__( 'Custom', 'elementor' ),
+					],
+					'separator' => 'before',
+				]
+			);
+
+			$this->add_control(
+				'style_button_color_icon',
+				[
+					'label' => $config['style']['chat_button_section']['icon_color_label'],
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-icon: {{VALUE}}',
+					],
+					'condition' => [
+						'style_platform_control_select' => 'custom',
+					],
+				]
+			);
+
+			$this->add_control(
+				'style_button_color_background',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bg: {{VALUE}}',
+					],
+					'condition' => [
+						'style_platform_control_select' => 'custom',
+					],
+				]
+			);
+		}
 
 		if ( $config['style']['chat_button_section']['has_entrance_animation'] ) {
 			$this->add_responsive_control(
@@ -1849,31 +1909,32 @@ JS;
 			);
 		}
 
-		$this->start_controls_tabs(
-			'style_contact_button_color_tabs'
-		);
-
-		$this->start_controls_tab(
-			'style_contact_button_color_tabs_normal',
-			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'style_contact_button_color_icon',
-			[
-				'label' => esc_html__( 'Icon Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon: {{VALUE}}',
-				],
-			]
-		);
-
-		if ( $config['style']['contact_section']['has_icon_bg_color'] ) {
+		if ( $config['style']['contact_section']['has_text_color'] ) {
 			$this->add_control(
-				'style_contact_button_color_background',
+				'style_contact_button_text_color',
+				[
+					'label' => $config['style']['contact_section']['icon_color_label'],
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon: {{VALUE}}',
+					],
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_typography'] ) {
+			$this->add_group_control(
+				Group_Control_Typography::get_type(),
+				[
+					'name' => 'style_contact_typography',
+					'selector' => '{{WRAPPER}} .e-contact-buttons__contact-icon-link',
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_bg_color'] ) {
+			$this->add_control(
+				'style_contact_button_bg_color',
 				[
 					'label' => esc_html__( 'Background Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
@@ -1884,53 +1945,90 @@ JS;
 			);
 		}
 
-		$this->end_controls_tab();
+		if ( $config['style']['contact_section']['has_tabs'] ) {
+			$this->start_controls_tabs(
+				'style_contact_button_color_tabs'
+			);
 
-		$this->start_controls_tab(
-			'style_contact_button_color_tabs_hover',
-			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_control(
-			'style_contact_button_color_icon_hover',
-			[
-				'label' => esc_html__( 'Icon Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon-hover: {{VALUE}}',
-				],
-			]
-		);
-
-		if ( $config['style']['contact_section']['has_icon_bg_color'] ) {
-			$this->add_control(
-				'style_contact_button_color_background_hover',
+			$this->start_controls_tab(
+				'style_contact_button_color_tabs_normal',
 				[
-					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'label' => esc_html__( 'Normal', 'elementor' ),
+				]
+			);
+
+			$this->add_control(
+				'style_contact_button_color_icon',
+				[
+					'label' => $config['style']['contact_section']['icon_color_label'],
 					'type' => Controls_Manager::COLOR,
 					'selectors' => [
-						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg-hover: {{VALUE}}',
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon: {{VALUE}}',
 					],
 				]
 			);
-		}
 
-		if ( $config['style']['contact_section']['has_hover_animation'] ) {
-			$this->add_control(
-				'style_contact_button_hover_animation',
+			if ( $config['style']['contact_section']['has_icon_bg_color'] ) {
+				$this->add_control(
+					'style_contact_button_color_background',
+					[
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'type' => Controls_Manager::COLOR,
+						'selectors' => [
+							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg: {{VALUE}}',
+						],
+					]
+				);
+			}
+
+			$this->end_controls_tab();
+
+			$this->start_controls_tab(
+				'style_contact_button_color_tabs_hover',
 				[
-					'label' => esc_html__( 'Hover Animation', 'elementor' ),
-					'type' => Controls_Manager::HOVER_ANIMATION,
-					'frontend_available' => true,
+					'label' => esc_html__( 'Hover', 'elementor' ),
 				]
 			);
+
+			$this->add_control(
+				'style_contact_button_color_icon_hover',
+				[
+					'label' => esc_html__( 'Icon Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-icon-hover: {{VALUE}}',
+					],
+				]
+			);
+
+			if ( $config['style']['contact_section']['has_icon_bg_color'] ) {
+				$this->add_control(
+					'style_contact_button_color_background_hover',
+					[
+						'label' => esc_html__( 'Background Color', 'elementor' ),
+						'type' => Controls_Manager::COLOR,
+						'selectors' => [
+							'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-button-bg-hover: {{VALUE}}',
+						],
+					]
+				);
+			}
+
+			if ( $config['style']['contact_section']['has_hover_animation'] ) {
+				$this->add_control(
+					'style_contact_button_hover_animation',
+					[
+						'label' => esc_html__( 'Hover Animation', 'elementor' ),
+						'type' => Controls_Manager::HOVER_ANIMATION,
+						'frontend_available' => true,
+					]
+				);
+			}
+
+			$this->end_controls_tab();
+
+			$this->end_controls_tabs();
 		}
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
 
 		if ( $config['style']['contact_section']['has_buttons_spacing'] ) {
 
@@ -1949,15 +2047,28 @@ JS;
 							'max' => 100,
 						],
 					],
-					'default' => [
-						'unit' => 'px',
-						'size' => 15,
-					],
+					'default' => $config['style']['contact_section']['buttons_spacing_default'],
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-gap: {{SIZE}}{{UNIT}}',
 					],
 					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_button_corners'] ) {
+			$this->add_control(
+				'style_contact_corners',
+				[
+					'label' => esc_html__( 'Corners', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'round',
+					'options' => [
+						'round' => esc_html__( 'Round', 'elementor' ),
+						'rounded' => esc_html__( 'Rounded', 'elementor' ),
+						'sharp' => esc_html__( 'Sharp', 'elementor' ),
+					],
 				]
 			);
 		}
@@ -2071,6 +2182,70 @@ JS;
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-button-bar-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-button-bar-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-button-bar-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
 					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_padding'] ) {
+			$this->add_responsive_control(
+				'style_contact_padding',
+				[
+					'label' => esc_html__( 'Padding', 'elementor' ),
+					'type' => Controls_Manager::DIMENSIONS,
+					'size_units' => [ 'px', '%', 'em', 'rem' ],
+					'default' => [
+						'top' => '8',
+						'bottom' => '8',
+						'left' => '12',
+						'right' => '12',
+						'unit' => 'px',
+						'isLinked' => true,
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-contact-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-start: {{LEFT}}{{UNIT}};',
+					],
+					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( $config['style']['contact_section']['has_hover_transition_duration'] ) {
+			$this->add_control(
+				'style_contact_custom_animation_heading',
+				[
+					'label' => esc_html__( 'Animation', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+				]
+			);
+
+			$this->add_control(
+				'style_contact_custom_animation_alert',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => __( 'Adjust transition duration to change the speed of the <b>hover animation on desktop</b> and the <b>click animation on touchscreen</b>.', 'elementor' ),
+				]
+			);
+
+			$this->add_control(
+				'style_contact_custom_animation_transition',
+				[
+					'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						's' => [
+							'min' => 0,
+							'max' => 3,
+							'step' => 0.1,
+						],
+					],
+					'default' => [
+						'unit' => 's',
+						'size' => 0.3,
+					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-transition-duration: {{SIZE}}{{UNIT}}',
+					],
 				]
 			);
 		}

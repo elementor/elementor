@@ -54,7 +54,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 	protected function add_content_wrapper_render_attribute() {
 		$this->widget->add_render_attribute( 'content-wrapper', [
 			'aria-hidden' => "true",
-			'aria-label' => __( 'Contact Buttons window', 'elementor' ),
+			'aria-label' => __( 'Links window', 'elementor' ),
 			'class' => "e-contact-buttons__content-wrapper hidden",
 			'id' => uniqid('e-contact-buttons__content-wrapper-'),
 		] );
