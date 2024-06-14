@@ -1,9 +1,9 @@
 import { type APIRequestContext, expect } from '@playwright/test';
-import { execSync } from 'child_process';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
 import { ElementorType, WindowType } from '../types/types';
+import { wpEnvCli } from '../assets/wp-env-cli';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -280,11 +280,11 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	getActiveTheme() {
-		return execSync( `npx wp-env run cli wp theme list --status=active --field=name --format=csv` ).toString().trim();
+		return wpEnvCli( `wp theme list --status=active --field=name --format=csv` ).toString().trim();
 	}
 
 	activateTheme( theme: string ) {
-		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
+		wpEnvCli( `wp theme activate ${ theme }` );
 	}
 
 	/**
