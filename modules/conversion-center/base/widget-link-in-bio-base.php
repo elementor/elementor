@@ -47,7 +47,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 							Social_Network_Provider::WAZE,
 							Social_Network_Provider::WHATSAPP,
 						],
-						'limit' => 6,
+						'limit' => 5,
 					],
 					'default' => [
 						[
