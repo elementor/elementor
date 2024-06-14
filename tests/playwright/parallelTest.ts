@@ -41,11 +41,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		const storageState = await page.context().storageState( { path: fileName } );
 
 		let window: WindowType;
-		const nonce = await page.evaluate( () => window.wpApiSettings.nonce );
-		if ( ! process.env.WP_REST_NONCE ) {
-			process.env.WP_REST_NONCE = [];
-		}
-		process.env.WP_REST_NONCE[ id ] = nonce;
+		process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
 
 		const imageIds = [];
 		const image1 = {

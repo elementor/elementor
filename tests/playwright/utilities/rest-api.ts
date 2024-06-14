@@ -6,7 +6,7 @@ async function createWpRestContext( baseURL: string, storageState: StorageState 
 		baseURL,
 		storageState,
 		extraHTTPHeaders: {
-			'X-WP-Nonce': process.env.WP_REST_NONCE[ process.env.TEST_PARALLEL_INDEX ],
+			'X-WP-Nonce': process.env[ `WP_REST_NONCE_${ process.env.TEST_PARALLEL_INDEX }` ],
 		},
 	} );
 }

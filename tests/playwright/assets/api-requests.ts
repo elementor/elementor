@@ -6,7 +6,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 const headers = () => {
 	return {
-		'X-WP-Nonce': process.env.WP_REST_NONCE[ process.env.TEST_PARALLEL_INDEX ],
+		'X-WP-Nonce': process.env[ `WP_REST_NONCE_${ process.env.TEST_PARALLEL_INDEX }` ],
 	};
 };
 
