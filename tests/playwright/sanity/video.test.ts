@@ -39,14 +39,14 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+		const promotion = page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		await editor.selectElement( videoId );
-		await promoArea.scrollIntoViewIfNeeded();
+		await editor.closeSection( 'section_video' );
 
 		// Assert
-		expect.soft( await promoArea.screenshot( {
+		expect.soft( await promotion.screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'video-widget-sidebar-promotion.png' );
 	} );
@@ -89,12 +89,12 @@ test.describe( 'Video tests inside a container @video', () => {
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 			await editor.addWidget( 'video' );
-			await videoWidget.selectVideoSource( video );
+			await editor.setSelectControlValue( 'video_type', video );
 
-			await videoWidget.setTime( 'Start', startTime );
+			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
-				await videoWidget.setTime( 'End', endTime );
-				await videoWidget.selectSuggestedVideos( 'Any Video' );
+				await editor.setNumberControlValue( 'end', endTime );
+				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 
 			const controls = player.controls.map( ( control ) => {
@@ -120,8 +120,8 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
-		await videoWidget.chooseImage( `${ imageTitle }.png` );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
 		await videoWidget.selectImageSize(
 			{
@@ -152,9 +152,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
-		await videoWidget.chooseImage( 'About-Pic-3-1.png' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.lightBoxControlInp ] );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.setMediaControlImageValue( 'image_overlay', 'About-Pic-3-1.png' );
+		await editor.setSwitcherControlValue( 'lightbox', true );
 		await videoWidget.verifyVideoLightBox( false );
 		await editor.publishAndViewPage();
 		await videoWidget.verifyVideoLightBox( true );

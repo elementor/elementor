@@ -32,7 +32,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 			await wpAdmin.openNewPage();
 			await editor.addWidget( data[ i ].widgetTitle );
-			await contentTab.chooseImage( `${ imageTitle }.png` );
+			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 
 			const imageSize = [ 'thumbnail', 'large', 'full' ];
 			for ( const id in imageSize ) {
@@ -85,7 +85,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 			await wpAdmin.openNewPage();
 			await editor.addWidget( data[ i ].widgetTitle );
-			await contentTab.chooseImage( `${ imageTitle }.png` );
+			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 			await contentTab.setCustomImageSize(
 				{
 					selector: data[ i ].image,
@@ -101,16 +101,15 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		const contentTab = new Content( page, testInfo );
 		const image = 'About-Pic-3-1';
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'image' );
-		await contentTab.chooseImage( `${ image }.png` );
-		await contentTab.setCaption( 'attachment' );
-		await contentTab.selectLinkSource( 'file' );
-		await contentTab.setLightBox( 'yes' );
+		await editor.setMediaControlImageValue( 'image', `${ image }.png` );
+		await editor.setSelectControlValue( 'caption_source', 'attachment' );
+		await editor.setSelectControlValue( 'link_to', 'file' );
+		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
 		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
 			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );

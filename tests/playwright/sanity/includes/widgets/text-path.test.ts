@@ -13,7 +13,7 @@ test( 'Custom path type', async ( { page }, testInfo ) => {
 	await wpAdmin.openNewPage();
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'text-path' );
-	await page.getByRole( 'combobox', { name: 'Path Type' } ).selectOption( 'custom' );
+	await editor.setSelectControlValue( 'path', 'custom' );
 	await contentTab.uploadSVG( { widget: 'text-path' } );
 	await expect( editor.getPreviewFrame().locator( EditorSelectors.textPath.svgIcon ) ).toBeVisible();
 	await editor.publishAndViewPage();

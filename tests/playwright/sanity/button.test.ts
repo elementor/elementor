@@ -62,16 +62,13 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.openNewPage();
-	const buttonWidget = new ButtonWidget( page, testInfo );
-	await buttonWidget.addWidget( defaultBtnName );
-	const promoArea = page.locator( '.elementor-nerd-box--upsale' );
-
-	// Act.
-	await promoArea.scrollIntoViewIfNeeded();
+	const editor = await wpAdmin.openNewPage();
+	await editor.addWidget( 'button' );
+	await editor.closeSection( 'section_button' );
+	const promotion = page.locator( '.elementor-nerd-box--upsale' );
 
 	// Assert
-	expect.soft( await promoArea.screenshot( {
+	expect.soft( await promotion.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( 'button-widget-sidebar-promotion.png' );
 } );
