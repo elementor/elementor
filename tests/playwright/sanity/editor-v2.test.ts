@@ -13,6 +13,7 @@ test.describe( 'Editor top bar', () => {
 
 		wpAdmin = new WpAdminPage( page, testInfo );
 
+		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( { editor_v2: true } );
 
 		editor = await wpAdmin.openNewPage();
