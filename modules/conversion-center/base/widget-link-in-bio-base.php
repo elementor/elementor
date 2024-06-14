@@ -468,9 +468,12 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'cta_link_location',
 			[
 				'label' => esc_html__( 'Location', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
+				],
+				'default' => [
+					'is_external' => true,	
 				],
 				'label_block' => true,
 				'condition' => [
@@ -478,7 +481,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						Social_Network_Provider::WAZE,
 					],
 				],
-				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
+				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
 			],
 		);
 
@@ -716,12 +719,15 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'icon_location',
 			[
 				'label' => esc_html__( 'Location', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
 				],
+				'default' => [
+					'is_external' => true,	
+				],
 				'label_block' => true,
-				'placeholder' => esc_html__( 'Enter your location', 'elementor' ),
+				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
 				'condition' => [
 					'icon_platform' => [
 						Social_Network_Provider::WAZE,

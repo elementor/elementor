@@ -165,15 +165,30 @@ abstract class Render_Base {
 					$url_attrs['download'] = 'download';
 				}
 
-				$url_combined_attrs = $this->get_link_attributes(
-					$cta['cta_link_url'],
-					$url_attrs
-				);
+				if ( $cta['cta_link_url'] ) {
+					$url_combined_attrs = $this->get_link_attributes(
+						$cta['cta_link_url'],
+						$url_attrs
+					);
+	
+					foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
+						$this->widget->add_render_attribute( 'cta-' . $key, [
+							$attr_key => $attr_value,
+						] );
+					}
+				}
 
-				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-					$this->widget->add_render_attribute( 'cta-' . $key, [
-						$attr_key => $attr_value,
-					] );
+				if ( $cta['cta_link_location'] ) {
+					$waze_combined_attrs = $this->get_link_attributes(
+						$cta['cta_link_location'],
+						$url_attrs
+					);
+
+					foreach ( $waze_combined_attrs as $attr_key => $attr_value ) {
+						$this->widget->add_render_attribute( 'cta-' . $key, [
+							$attr_key => $attr_value,
+						] );
+					}
 				}
 				?>
 				<a <?php echo $this->widget->get_render_attribute_string( 'cta-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -461,7 +476,7 @@ abstract class Render_Base {
 					'';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $cta['cta_link_location'] ) ? 'https://www.waze.com/ul?ll=' . $cta['cta_link_location'] . '&navigate=yes' : '';
+				$formatted_link = ! empty( $cta['cta_link_location']['url'] ) ? $cta['cta_link_location']['url'] : '';
 				break;
 			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'https://wa.me/' . $cta['cta_link_number'] : '';
@@ -496,7 +511,7 @@ abstract class Render_Base {
 					'';
 				break;
 			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $icon['icon_location'] ) ? 'https://www.waze.com/ul?ll=' . $icon['icon_location'] . '&navigate=yes' : '';
+				$formatted_link = ! empty( $icon['icon_location']['url'] ) ? $icon['icon_location']['url'] : '';
 				break;
 			case Social_Network_Provider::WHATSAPP:
 				$formatted_link = ! empty( $icon['icon_number'] ) ? 'https://wa.me/' . $icon['icon_number'] : '';
