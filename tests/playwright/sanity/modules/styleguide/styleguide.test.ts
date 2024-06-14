@@ -506,7 +506,6 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	await page.waitForTimeout( 1000 );
 
 	await page.click( `.elementor-panel-menu-item-title:has-text("${ tabName }")` );
-	await page.waitForLoadState( 'networkidle' );
 
 	await page.waitForTimeout( 1000 );
 
