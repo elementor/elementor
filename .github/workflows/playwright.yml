@@ -48,11 +48,10 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast || true }}
       matrix:
-#        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
-        shardIndex: [ 10 ]
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
-#        include:
-#        - shardIndex: "elements-regression"
+        include:
+        - shardIndex: "elements-regression"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
