@@ -46,9 +46,8 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 							Social_Network_Provider::MESSENGER,
 							Social_Network_Provider::WAZE,
 							Social_Network_Provider::WHATSAPP,
-
 						],
-						'limit' => 5,
+						'limit' => 6,
 					],
 					'default' => [
 						[
@@ -594,6 +593,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 								Social_Network_Provider::SPOTIFY,
 								Social_Network_Provider::SOUNDCLOUD,
 								Social_Network_Provider::VIMEO,
+								Social_Network_Provider::WAZE,
 							]
 						),
 					],
