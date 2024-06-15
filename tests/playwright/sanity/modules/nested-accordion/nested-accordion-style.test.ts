@@ -226,7 +226,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.publishAndViewPage();
 			await nestedAccordionItemFront.first().click();
 			await nestedAccordionItemFront.nth( 2 ).hover();
-			await page.waitForLoadState( 'networkidle' );
 
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-front.png', nestedAccordionWidgetFront );

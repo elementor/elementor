@@ -834,7 +834,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
 		await page.locator( '.elementor-control-hover_animation .select2' ).click();
 		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert.
 		// Test inside editor.
