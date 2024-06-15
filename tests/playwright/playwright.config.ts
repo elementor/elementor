@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
-process.env.DEBUG_PORT = '9222';
+process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
 _config( {
 	path: resolve( __dirname, './.env' ),
@@ -28,7 +28,7 @@ export default defineConfig( {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
-		headless: process.env.CI ? true : false,
+		headless: !! process.env.CI,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
 		navigationTimeout: 10_000,
