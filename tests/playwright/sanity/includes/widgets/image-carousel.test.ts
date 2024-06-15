@@ -17,6 +17,7 @@ test.describe( 'Image carousel tests', () => {
 
 		await wpAdmin.openNewPage();
 		await editor.useCanvasTemplate();
+		await editor.closeNavigatorIfOpen();
 		const widgetId = await imageCarousel.addWidget();
 		await imageCarousel.selectNavigation( 'none' );
 		await imageCarousel.addImageGallery();
@@ -62,7 +63,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test.skip( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
+	test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
@@ -73,7 +74,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.closeNavigatorIfOpen();
 		// Add breakpoints.
 		const breakpoints = new Breakpoints( page );
-		await breakpoints.addAllBreakpoints();
+		await breakpoints.addAllBreakpoints( editor );
 		await editor.addWidget( 'image-carousel' );
 		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
@@ -81,21 +82,19 @@ test.describe( 'Image carousel tests', () => {
 		await editor.openSection( 'section_style_image' );
 		await editor.setSelectControlValue( 'image_spacing', 'custom' );
 		// Test Desktop
-		await editor.setNumberControlValue( 'image_spacing_custom', '100' );
+		await editor.setSliderControlValue( 'image_spacing_custom', '100' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
 		// Test Tablet Extra
 		await editor.togglePreviewMode();
-		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers__holder' ).click();
-		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers [data-device="tablet_extra"]' ).click();
-		await editor.setNumberControlValue( 'image_spacing_custom_tablet_extra', '50' );
+		await editor.changeResponsiveView( 'tablet_extra' );
+		await editor.setSliderControlValue( 'image_spacing_custom_tablet_extra', '50' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
 		// Test Tablet
 		await editor.togglePreviewMode();
-		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers__holder' ).click();
-		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers [data-device="tablet"]' ).click();
-		await editor.setNumberControlValue( 'image_spacing_custom_tablet', '10' );
+		await editor.changeResponsiveView( 'tablet' );
+		await editor.setSliderControlValue( 'image_spacing_custom_tablet', '10' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 		await wpAdmin.setExperiments( {
@@ -146,8 +145,8 @@ test.describe( 'Image carousel tests', () => {
 		} );
 
 		await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
+		await editor.closeNavigatorIfOpen();
 		await imageCarousel.addWidget();
 		await imageCarousel.selectNavigation( 'none' );
 		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );

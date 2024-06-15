@@ -797,11 +797,13 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the site settings panel.
+	 * Open the site settings panel. Or, when an inner panel is provided, open the inner panel.
+	 *
+	 * @param {string} innerPanel - Optional. The inner menu to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openSiteSettings() {
+	async openSiteSettings( innerPanel?: string ) {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
@@ -812,6 +814,10 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
+
+		if ( innerPanel ) {
+			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+		}
 	}
 
 	/**
@@ -905,15 +911,13 @@ export default class EditorPage extends BasePage {
 
 			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
 		} else {
-			const hasResponsiveViewBar = await this.page.evaluate( () => {
-				return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
-			} );
+			const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
 
 			if ( ! hasResponsiveViewBar ) {
 				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
 			}
 
-			await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
 		}
 	}
 
