@@ -25,7 +25,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
 	workerBaseURL: [ async ( {}, use, testInfo ) => {
-		await use( 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888' );
+		await use( ( 1 === Number( testInfo.parallelIndex ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER );
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
@@ -44,7 +44,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		}
 
 		// Send authentication request.
-		const baseURL = 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888';
+		const baseURL = ( 1 === Number( testInfo.parallelIndex ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER;
 		const storageState = await loginApi(
 			request,
 			process.env.USERNAME || 'admin',
