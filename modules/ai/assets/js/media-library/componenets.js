@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import App from '../editor/app';
 import { IMAGE_PROMPT_CATEGORIES, LOCATIONS } from '../editor/pages/form-media/constants';
 
-export const AIMediaGenerateApp = ( { onClose } ) => {
+export const AIMediaGenerateApp = ( { onClose, predefinedPrompt = '', textToImageHook = null } ) => {
 	return (
 		<>
 			<App
@@ -13,6 +13,8 @@ export const AIMediaGenerateApp = ( { onClose } ) => {
 				isRTL={ elementorCommon.config.isRTL }
 				additionalOptions={ {
 					defaultImageType: Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
+					textToImageHook,
+					predefinedPrompt,
 				} }
 			/>
 		</>
@@ -21,6 +23,8 @@ export const AIMediaGenerateApp = ( { onClose } ) => {
 
 AIMediaGenerateApp.propTypes = {
 	onClose: PropTypes.func.isRequired,
+	predefinedPrompt: PropTypes.string,
+	textToImageHook: PropTypes.func,
 };
 
 export const AIMediaEditApp = ( { onClose, imageId } ) => {
