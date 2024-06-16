@@ -178,7 +178,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
-	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {Object}            experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 *
 	 * @param {(boolean|string)=} oldUrl
 	 * @return {Promise<void>}
