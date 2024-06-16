@@ -30,6 +30,8 @@ export async function createDefaultMedia( request: APIRequestContext, image: Ima
 		throw new Error( `
 			Failed to create default media: ${ response.status() }.
 			${ await response.text() }
+			${ response.url() }
+			TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
 		` );
 	}
 
@@ -87,6 +89,8 @@ async function _delete( request: APIRequestContext, entity: string, id: string )
 		throw new Error( `
 			Failed to delete a ${ entity }: ${ response.status() }.
 			${ await response.text() }
+			${ response.url() }
+			TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
 		` );
 	}
 }
@@ -112,6 +116,8 @@ async function get( request: APIRequestContext, entity: string, status: string =
 		throw new Error( `
 			Failed to get a ${ entity }: ${ response.status() }.
 			${ await response.text() }
+			${ response.url() }
+			TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
 		` );
 	}
 	const data = await response.json();
@@ -129,6 +135,8 @@ export async function create( request: APIRequestContext, entity: string, data: 
 		throw new Error( `
 			Failed to create a ${ entity }: ${ response.status() }.
 			${ await response.text() }
+			${ response.url() }
+			TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
 		` );
 	}
 	const { id } = await response.json();
