@@ -28,6 +28,6 @@ test.describe( 'General Settings', () => {
 		await validateGettingsStartedPage( wpAdmin );
 		await validateGettingStartedLinkCount( wpAdmin, 1 );
 		await wpAdmin.gotoDashboard();
-		await wpAdmin.setExperiments( { home_screen: true } );
+		await wpAdmin.setExperiments( { home_screen: true }, true );
 	} );
 } );
