@@ -12,7 +12,6 @@ export default defineConfig( {
 	testDir: './sanity',
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
-	// globalSetup: resolve( __dirname, './global-setup.ts' ),
 	grepInvert: /elements-regression/,
 	expect: {
 		timeout: 5_000,

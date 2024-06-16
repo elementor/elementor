@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-// import { deletePage } from '../../../utilities/rest-api';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
@@ -37,10 +36,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		pageId = await wpAdmin.createNewPostWithAPI();
 	} );
-	//
-	// test.afterEach( async ( { baseURL, storageState } ) => {
-	// 	await deletePage( pageId, undefined, baseURL, storageState );
-	// } );
 
 	test( 'General test', async ( { page }, testInfo ) => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
@@ -852,7 +847,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const tabHover = await tabNormal.evaluate( ( element ) => {
 			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
 
-			return animationValue.includes( 'matrix(' ) ? true : false;
+			return animationValue.includes( 'matrix(' );
 		} );
 		expect.soft( tabHover ).toBe( true );
 		// Hover over an active tab.
