@@ -250,7 +250,8 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.22.0 - 2024-06-10 =
+= 3.22.0 - 2024-06-16 =
+
 * New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
 * New: Introducing the Performance Tab - Centralizing all stable performance features in one accessible location ([#21194](https://github.com/elementor/elementor/issues/21194))
 * New: Generate post excerpts with AI for concise summaries
@@ -269,6 +270,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 * Tweak: Activated Optimized Control Loading by default for new sites
 * Tweak: Changed Generative Fill AI image feature to use Clipdrop text-inpainting
 * Tweak: Added functionality to delay the running of the ready triggers on inner elements
+* Tweak: Deactivated Landing Page feature for new sites
 * Fix: "Exit to" functionality is not working with the Editor Top Bar ([#22828](https://github.com/elementor/elementor/issues/22828))
 * Fix: Row-reversed direction is not working on mobile portrait breakpoint in Container ([#23710](https://github.com/elementor/elementor/issues/23710))
 * Fix: The What's' New string in the Editor is not translatable (props [@DAnn2012](https://github.com/DAnn2012))
@@ -276,6 +278,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 * Fix: Transparency indicator not visible in UI Light theme for Color Picker
 * Fix: AI Expand Images not working on local and protected websites
 * Fix: `all: unset` assigned to buttons cause focus issues
-* Fix: Links to Elementor settings are broken in various locations
+* Fix: Links to Elementor Settings are broken in various locations
+* Fix: `RunReadyTrigger` returning incorrectly in various scenarios
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
