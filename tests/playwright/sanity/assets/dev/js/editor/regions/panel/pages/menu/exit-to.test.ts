@@ -3,6 +3,9 @@ import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
+	await wpAdmin.setExperiments( {
+		editor_v2: true,
+	} );
 	const editor = await wpAdmin.openNewPage();
 	const hasTopBar = await editor.hasTopBar();
 	let exit;
@@ -12,8 +15,8 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'dashboard' );
 		await editor.clickTopBarItem( 'Elementor Logo' );
-		await editor.page.waitForTimeout( 100 );
-		exit = await editor.page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+		await page.waitForTimeout( 100 );
+		exit = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 		await page.press( 'body', 'Escape' );
 		expect( exit ).toContain( '/wp-admin/' );
 
@@ -21,8 +24,8 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'this_post' );
 		await editor.clickTopBarItem( 'Elementor Logo' );
-		await editor.page.waitForTimeout( 100 );
-		exit = await editor.page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+		await page.waitForTimeout( 100 );
+		exit = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 		await page.press( 'body', 'Escape' );
 		expect( exit ).toContain( '/wp-admin/post.php?post=' );
 
@@ -30,12 +33,13 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'all_posts' );
 		await editor.clickTopBarItem( 'Elementor Logo' );
-		await editor.page.waitForTimeout( 100 );
-		exit = await editor.page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+		await page.waitForTimeout( 100 );
+		exit = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 		await page.press( 'body', 'Escape' );
 		expect( exit ).toContain( '/wp-admin/edit.php?post_type=' );
 	} else {
 		// Exit to `dashboard`
+		await editor.openElementsPanel();
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'dashboard' );
 		await editor.openMenuPanel();
