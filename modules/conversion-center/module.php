@@ -20,6 +20,7 @@ use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
+use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -89,12 +90,44 @@ class Module extends BaseModule {
 
 		$this->register_contact_pages_cpt();
 
-		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-			$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
-		} );
+		if ( ! ElementorUtils::has_pro() ) {
+			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
+				$documents_manager->register_document_type( self::CONTACT_PAGE_DOCUMENT_TYPE, Contact_Buttons::get_class_full_name() );
+			} );
+		}
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		if ( ! ElementorUtils::has_pro() ) {
+			add_action( 'wp_footer', function () {
+				$query = new \WP_Query( [
+					'post_type' => ConversionCenterModule::CPT_CONTACT_PAGES,
+					'posts_per_page' => -1,
+					'post_status' => 'publish',
+					'fields' => 'ids',
+					'meta_key' => '_elementor_conditions',
+					'meta_compare' => 'EXISTS',
+				] );
+
+				if ( ! $query->have_posts() ) {
+					return;
+				}
+
+				foreach ( $query->posts as $post_id ) {
+					$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
+					if ( ! $conditions ) {
+						continue;
+					}
+					if ( in_array( 'include/general', $conditions ) ) {
+						$document = Plugin::$instance->documents->get( $post_id );
+						$document->print_content();
+						break;
+					}
+				}
+
+			} );
+		}
 
 		add_action( 'elementor/common/localize_settings', function ( $settings ) {
 			$settings['conversionCenter'] = [
@@ -174,7 +207,10 @@ class Module extends BaseModule {
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
 			$posts_columns['click_tracking'] = esc_html__( 'Click Tracking', 'elementor' );
-			$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
+
+			if ( ! ElementorUtils::has_pro() ) {
+				$posts_columns['instances'] = esc_html__( 'Instances', 'elementor' );
+			}
 
 			return $source_local->admin_columns_headers( $posts_columns );
 		} );
@@ -236,6 +272,9 @@ class Module extends BaseModule {
 				echo esc_html( $click_tracking );
 				break;
 			case 'instances':
+				if ( ElementorUtils::has_pro() ) {
+					break;
+				}
 				$instances = get_post_meta( $post_id, '_elementor_conditions', true );
 				if ( $instances ) {
 					echo esc_html__( 'Entire Site', 'elementor' );
@@ -273,14 +312,17 @@ class Module extends BaseModule {
 	}
 
 	private function get_add_new_contact_page_url() {
-		if ( ! $this->new_contact_pages_url ) {
-			$this->new_contact_pages_url = Plugin::$instance->documents->get_create_new_post_url(
+		if ( ElementorUtils::has_pro() ) {
+			return Plugin::$instance->documents->get_create_new_post_url(
 				self::CPT_CONTACT_PAGES,
 				self::CONTACT_PAGE_DOCUMENT_TYPE
-			) . '#library';
+			);
 		}
 
-		return $this->new_contact_pages_url;
+		return Plugin::$instance->documents->get_create_new_post_url(
+			self::CPT_CONTACT_PAGES,
+			self::CONTACT_PAGE_DOCUMENT_TYPE
+		) . '#library';
 	}
 
 	public function print_empty_contact_pages_page() {

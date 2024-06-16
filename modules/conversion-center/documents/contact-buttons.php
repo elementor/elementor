@@ -6,6 +6,8 @@ use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\ConversionCenter\Module as ConversionCenterModule;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
+use ElementorPro\Modules\ThemeBuilder\Module;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -17,16 +19,34 @@ class Contact_Buttons extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['support_kit'] = false;
-		$properties['show_in_library'] = false;
 		$properties['cpt'] = [ ConversionCenterModule::CPT_CONTACT_PAGES ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
+		$properties['support_conditions'] = true;
+		$properties['condition_type'] = 'general';
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
 		$properties['allow_closing_remote_library'] = false;
+		$properties['location'] = 'elementor_body_end';
+
 		return $properties;
+	}
+
+	public function print_content() {
+		$plugin = \Elementor\Plugin::$instance;
+
+		if ( $plugin->preview->is_preview_mode( $this->get_main_id() ) ) {
+			// PHPCS - the method builder_wrapper is safe.
+			echo $plugin->preview->builder_wrapper( '' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			// PHPCS - the method get_content is safe.
+			echo $this->get_content(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+	}
+
+	public function get_location() {
+		return self::get_property( 'location' );
 	}
 
 	public static function get_type() {
