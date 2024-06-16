@@ -135,7 +135,7 @@ class Floating_Buttons extends PageBase {
 
 	protected function get_remote_library_config() {
 		$config = [
-			'type' => 'floating_button',
+			'type' => 'contact_button',
 			'default_route' => 'templates/floating-buttons',
 			'autoImportSettings' => true,
 		];

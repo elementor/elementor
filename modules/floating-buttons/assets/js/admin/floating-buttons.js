@@ -47,7 +47,6 @@ export default class FloatingButtonsHandler extends AdminMenuHandler {
 
 			this.highlightSubMenuItem( this.elements.$contactPagesMenuItem );
 
-			// Overwrite the 'Add New' button at the top of the page to open in Elementor with the library module open.
 			jQuery( settings.selectors.addButton ).attr( 'href', elementorAdminConfig.urls.addNewLinkUrlContact );
 		}
 	}

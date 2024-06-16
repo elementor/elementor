@@ -37,12 +37,12 @@ export default class extends Marionette.LayoutView {
 		this._parent._parent._parent.hideModal();
 
 		if ( this.isFloatingButtonLibraryClose() ) {
-			window.location.href = elementor.config.admin_conversion_center_contact_url;
+			window.location.href = elementor.config.admin_floating_button_admin_url;
 		}
 	}
 
 	isFloatingButtonLibraryClose() {
-		return window.elementor && elementor.config?.admin_conversion_center_contact_url &&
+		return window.elementor && elementor.config?.admin_floating_button_admin_url &&
 			'floating-buttons' === elementor.config?.document?.type &&
 			this.$el.find( '#elementor-template-library-header-menu' ).length;
 	}

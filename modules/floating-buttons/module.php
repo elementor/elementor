@@ -466,7 +466,7 @@ class Module extends BaseModule {
 	}
 
 	public function override_admin_bar_add_contact( $admin_bar ): void {
-		$new_contact_page_node = $admin_bar->get_node( 'new-e-contact-pages' );
+		$new_contact_page_node = $admin_bar->get_node( 'new-e-floating-buttons' );
 
 		if ( $new_contact_page_node ) {
 			$new_contact_page_node->href = $this->get_add_new_contact_page_url();
@@ -476,7 +476,7 @@ class Module extends BaseModule {
 	}
 
 	private function editor_localize_settings( $data ) {
-		$data['admin_conversion_center_contact_url'] = admin_url( $this->get_contact_menu_args()['menu_slug'] );
+		$data['admin_floating_button_admin_url'] = admin_url( $this->get_contact_menu_args()['menu_slug'] );
 		return $data;
 	}
 
