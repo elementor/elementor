@@ -10,10 +10,9 @@ const headers = () => {
 	};
 };
 
-export async function createDefaultMedia( request: APIRequestContext, image: Image ) {
+export async function createDefaultMedia( request: APIRequestContext, image: Image, retry: boolean = true ) {
 	const imagePath = image.filePath ? image.filePath : `../assets/test-images/${ image.title }.${ image.extension }`;
 	const response = await request.post( '/index.php', {
-
 		params: { rest_route: '/wp/v2/media' },
 		headers: headers(),
 		multipart: {
@@ -27,6 +26,9 @@ export async function createDefaultMedia( request: APIRequestContext, image: Ima
 	} );
 
 	if ( ! response.ok() ) {
+		if ( retry ) {
+			return createDefaultMedia( request, image, false );
+		}
 		throw new Error( `
 			Failed to create default media: ${ response.status() }.
 			${ await response.text() }
@@ -79,13 +81,16 @@ export async function createApiContext( request: APIRequest,
 	return context;
 }
 
-async function _delete( request: APIRequestContext, entity: string, id: string ) {
+async function _delete( request: APIRequestContext, entity: string, id: string, retry: boolean = true ) {
 	const response = await request.delete( '/index.php', {
 		params: { rest_route: `/wp/v2/${ entity }/${ id }` },
 		headers: headers(),
 	} );
 
 	if ( ! response.ok() ) {
+		if ( retry ) {
+			return _delete( request, entity, id, false );
+		}
 		throw new Error( `
 			Failed to delete a ${ entity }: ${ response.status() }.
 			${ await response.text() }
@@ -103,7 +108,7 @@ export async function deletePage( request: APIRequestContext, pageId: string ) {
 	await _delete( request, 'pages', pageId );
 }
 
-async function get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
+async function get( request: APIRequestContext, entity: string, status: string = 'publish', retry: boolean = true ) {
 	const response = await request.get( '/index.php', {
 		params: {
 			rest_route: `/wp/v2/${ entity }`,
@@ -113,6 +118,9 @@ async function get( request: APIRequestContext, entity: string, status: string =
 	} );
 
 	if ( ! response.ok() ) {
+		if ( retry ) {
+			return get( request, entity, status, false );
+		}
 		throw new Error( `
 			Failed to get a ${ entity }: ${ response.status() }.
 			${ await response.text() }
@@ -124,7 +132,7 @@ async function get( request: APIRequestContext, entity: string, status: string =
 	return data;
 }
 
-export async function create( request: APIRequestContext, entity: string, data: Post ) {
+export async function create( request: APIRequestContext, entity: string, data: Post, retry: boolean = true ) {
 	const response = await request.post( '/index.php', {
 		params: { rest_route: `/wp/v2/${ entity }` },
 		headers: headers(),
@@ -132,12 +140,15 @@ export async function create( request: APIRequestContext, entity: string, data: 
 	} );
 
 	if ( ! response.ok() ) {
+		if ( retry ) {
+			return create( request, entity, data, false );
+		}
 		throw new Error( `
-			Failed to create a ${ entity }: ${ response.status() }.
-			${ await response.text() }
-			${ response.url() }
-			TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
-		` );
+		Failed to create a ${ entity }: ${ response.status() }.
+		${ await response.text() }
+		${ response.url() }
+		TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
+	` );
 	}
 	const { id } = await response.json();
 
