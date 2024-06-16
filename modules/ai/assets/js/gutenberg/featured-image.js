@@ -6,7 +6,11 @@ import { AiLink, Icon } from './styles';
 import { useState } from '@wordpress/element';
 import useFeaturedImagePrompt from '../editor/hooks/use-featured-image-prompt';
 
+const { useDispatch } = wp.data;
+
 const GenerateFeaturedImageWithAI = () => {
+	const { editPost } = useDispatch( 'core/editor' );
+
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleButtonClick = () => {
@@ -28,6 +32,9 @@ const GenerateFeaturedImageWithAI = () => {
 					onClose={ handleClose }
 					predefinedPrompt={ postTextualContent }
 					textToImageHook={ useFeaturedImagePrompt }
+					setControlValue={ ( value ) => {
+						editPost( { featured_media: value?.id } );
+					} }
 				/> }
 			</RequestIdsProvider>
 		</div> );

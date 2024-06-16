@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Icon = styled.i`
   padding-right: 0.5em;
