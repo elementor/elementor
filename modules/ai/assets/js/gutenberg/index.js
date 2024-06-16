@@ -56,7 +56,6 @@ import GenerateFeaturedImageWithAI from './featured-image';
 			}
 		};
 
-		// Add the custom link to the excerpt panel when the editor sidebar is rendered
 		wp.data.subscribe( () => {
 			addAiIndicator( 'post-excerpt', addGenerateExcerptWithAI );
 			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
