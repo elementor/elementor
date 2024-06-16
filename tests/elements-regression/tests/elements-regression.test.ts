@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../../playwright/parallelTest';
+import { test } from '@playwright/test';
 import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
