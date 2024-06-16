@@ -2,9 +2,7 @@ import PropTypes from 'prop-types';
 import App from '../editor/app';
 import { IMAGE_PROMPT_CATEGORIES, LOCATIONS } from '../editor/pages/form-media/constants';
 
-
 export const AIMediaGenerateApp = ( { onClose, setControlValue, predefinedPrompt = '', textToImageHook = null } ) => {
-
 	return (
 		<>
 			<App
