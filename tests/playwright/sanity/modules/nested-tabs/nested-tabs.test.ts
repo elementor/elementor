@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import { createPage, deletePage } from '../../../utilities/rest-api';
+// import { deletePage } from '../../../utilities/rest-api';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
@@ -33,13 +33,14 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.close();
 	} );
 
-	test.beforeEach( async ( { baseURL, storageState } ) => {
-		pageId = await createPage( undefined, baseURL, storageState );
+	test.beforeEach( async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		pageId = await wpAdmin.createNewPostWithAPI();
 	} );
-
-	test.afterEach( async ( { baseURL, storageState } ) => {
-		await deletePage( pageId, undefined, baseURL, storageState );
-	} );
+	//
+	// test.afterEach( async ( { baseURL, storageState } ) => {
+	// 	await deletePage( pageId, undefined, baseURL, storageState );
+	// } );
 
 	test( 'General test', async ( { page }, testInfo ) => {
 		const imageCarousel = new ImageCarousel( page, testInfo );

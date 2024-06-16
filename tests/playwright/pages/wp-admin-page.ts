@@ -4,6 +4,8 @@ import EditorPage from './editor-page';
 import { create } from '../assets/api-requests';
 import { ElementorType, WindowType } from '../types/types';
 import { wpEnvCli } from '../assets/wp-env-cli';
+import path from 'path';
+import fs from 'fs';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -65,18 +67,24 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async createNewPostWithAPI() {
-		const request: APIRequestContext = this.page.context().request,
-			postDataInitial = {
-				title: 'Playwright Test Page - Uninitialized',
-				content: '',
-			},
-			postId = await create( request, 'pages', postDataInitial ),
-			postDataUpdated = {
-				title: `Playwright Test Page #${ postId }`,
-			};
+		try {
+			const request: APIRequestContext = this.page.context().request,
+				postDataInitial = {
+					title: 'Playwright Test Page - Uninitialized',
+					content: '',
+				},
+				postId = await create( request, 'pages', postDataInitial ),
+				postDataUpdated = {
+					title: `Playwright Test Page #${ postId }`,
+				};
 
-		await create( request, `pages/${ postId }`, postDataUpdated );
-		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+			await create( request, `pages/${ postId }`, postDataUpdated );
+			await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+			return postId;
+		} catch ( e ) {
+			fs.rmSync( path.resolve( this.testInfo.project.outputDir, `.storageState-${ this.testInfo.parallelIndex }.json` ) );
+			throw e;
+		}
 	}
 
 	/**

@@ -2,8 +2,7 @@ import fs from 'fs';
 import _path from 'path';
 import { APIRequest, type APIRequestContext } from '@playwright/test';
 import { Image, StorageState, Post, WpPage } from '../types/types';
-import axios from 'axios';
-import FormData from 'form-data';
+
 const headers = () => {
 	return {
 		'X-WP-Nonce': process.env[ `WP_REST_NONCE_${ process.env.TEST_PARALLEL_INDEX }` ],
@@ -72,13 +71,11 @@ export async function cleanUpTestPages( request: APIRequestContext ) {
 
 export async function createApiContext( request: APIRequest,
 	options: { storageStateObject: string| StorageState, baseURL: string } ) {
-	const context = await request.newContext( {
+	return await request.newContext( {
 		baseURL: options.baseURL,
 		storageState: options.storageStateObject,
 		extraHTTPHeaders: headers(),
 	} );
-
-	return context;
 }
 
 async function _delete( request: APIRequestContext, entity: string, id: string, retry: boolean = true ) {
@@ -98,10 +95,6 @@ async function _delete( request: APIRequestContext, entity: string, id: string, 
 			TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
 		` );
 	}
-}
-
-export async function deletePost( request: APIRequestContext, postId: string ) {
-	await _delete( request, 'posts', postId );
 }
 
 export async function deletePage( request: APIRequestContext, pageId: string ) {
@@ -155,42 +148,6 @@ export async function create( request: APIRequestContext, entity: string, data: 
 	return id;
 }
 
-export async function getPosts( request: APIRequestContext, status: string = 'publish' ) {
-	return await get( request, 'posts', status );
-}
-
 export async function getPages( request: APIRequestContext, status: string = 'publish' ) {
 	return await get( request, 'pages', status );
-}
-
-export async function loginApi( user: string, pw: string, url: string ) {
-	const data = new FormData();
-	data.append( 'log', user );
-	data.append( 'pwd', pw );
-	data.append( 'wp-submit', 'Log In' );
-	data.append( 'redirect_to', `${ url }/wp-admin/` );
-	data.append( 'testcookie', '1' );
-
-	const config = {
-		method: 'post',
-		maxBodyLength: Infinity,
-		url: `${ url }/wp-login.php`,
-		data,
-	};
-
-	const response = await axios.request( config );
-
-	const cookies: Array<{name: string, value: string, domain: string, path: string}> = [];
-	const domain = new URL( url );
-
-	response.headers[ 'set-cookie' ].forEach( ( cookie ) => {
-		const data1 = cookie.split( ';' )[ 0 ].split( '=' );
-		const obj = { name: data1[ 0 ], value: data1[ 1 ], domain: domain.hostname, path: '/' };
-		cookies.push( obj );
-	} );
-
-	if ( response.status !== 200 ) {
-		throw new Error( JSON.stringify( response.data ) );
-	}
-	return cookies;
 }
