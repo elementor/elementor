@@ -398,7 +398,7 @@ abstract class Floating_Buttons_Render_Base {
 	}
 
 	protected function is_url_link( string $platform ): bool {
-		return $platform == Social_Network_Provider::URL || $platform == Social_Network_Provider::WAZE;
+		return Social_Network_Provider::URL === $platform || Social_Network_Provider::WAZE === $platform;
 	}
 
 	protected function render_link_attributes( array $link, string $key ) {

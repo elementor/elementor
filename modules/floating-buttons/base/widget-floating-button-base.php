@@ -535,7 +535,7 @@ abstract class Widget_Floating_Button_Base extends Widget_Base {
 					'label_block' => true,
 					'placeholder' => esc_html__( 'Enter the text', 'elementor' ),
 					'default' => $config['content']['chat_button_section']['display_text_label'],
-					'condition' => $this-> get_display_text_condition([
+					'condition' => $this->get_display_text_condition([
 						'chat_button_display_text_select' => 'cta',
 					]),
 				],

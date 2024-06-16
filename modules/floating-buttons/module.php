@@ -322,8 +322,8 @@ class Module extends BaseModule {
 		}
 
 		return Plugin::$instance->documents->get_create_new_post_url(
-				static::CPT_FLOATING_BUTTONS,
-				static::FLOATING_BUTTONS_DOCUMENT_TYPE
+			static::CPT_FLOATING_BUTTONS,
+			static::FLOATING_BUTTONS_DOCUMENT_TYPE
 		) . '#library';
 	}
 
