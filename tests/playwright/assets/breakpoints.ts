@@ -44,4 +44,18 @@ export default class {
 
 		await this.page.waitForSelector( '#elementor-editor-wrapper' );
 	}
+
+	async resetBreakpoints() {
+		await this.page.click( '#elementor-panel-footer-responsive' );
+		await this.page.click( '#e-responsive-bar__settings-button' );
+		await this.page.waitForSelector( 'text=Active Breakpoints' );
+
+		const removeBreakpointButton = '#elementor-kit-panel-content .select2-selection__choice__remove';
+		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
+			await this.page.click( removeBreakpointButton );
+		}
+
+		await this.page.click( 'text=Update' );
+		await this.page.waitForSelector( '#elementor-toast' );
+	}
 }

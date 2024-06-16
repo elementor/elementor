@@ -391,6 +391,29 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Close a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to close.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeSection( sectionId: string ) {
+		const sectionSelector = `.elementor-control-${ sectionId }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + '.e-open:visible' );
+
+		if ( ! section || ! isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + '.e-open:visible .elementor-panel-heading' ).click();
+	}
+
+	/**
 	 * Set a custom width value to a widget.
 	 *
 	 * @param {string} width - The custom width value (as a percentage).
@@ -533,6 +556,21 @@ export default class EditorPage extends BasePage {
 		if ( currentState !== Boolean( value ) ) {
 			await controlLabel.click();
 		}
+	}
+
+	/**
+	 * Set an image on a media control.
+	 *
+	 * @param {string}  controlId  - The control to set the value to.
+	 * @param {boolean} imageTitle - The title of the image to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setMediaControlImageValue( controlId: string, imageTitle: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-media__preview` ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await this.page.locator( `[aria-label="${ imageTitle }"]` ).click();
+		await this.page.locator( '.button.media-button' ).click();
 	}
 
 	/**
