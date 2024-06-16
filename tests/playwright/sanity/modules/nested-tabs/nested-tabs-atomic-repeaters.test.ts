@@ -6,27 +6,27 @@ import _path from 'path';
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		// const page = await browser.newPage();
-		// const wpAdmin = new WpAdminPage( page, testInfo );
-		//
-		// await wpAdmin.setExperiments( {
-		// 	'nested-elements': 'active',
-		// 	e_nested_atomic_repeaters: 'active',
-		// } );
-		//
-		// await page.close();
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			'nested-elements': 'active',
+			e_nested_atomic_repeaters: 'active',
+		} );
+
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-		// const context = await browser.newContext();
-		// const page = await context.newPage();
-		// const wpAdmin = new WpAdminPage( page, testInfo );
-		// await wpAdmin.setExperiments( {
-		// 	'nested-elements': 'inactive',
-		// 	e_nested_atomic_repeaters: 'inactive',
-		// } );
-		//
-		// await page.close();
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			'nested-elements': 'inactive',
+			e_nested_atomic_repeaters: 'inactive',
+		} );
+
+		await page.close();
 	} );
 
 	test( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
