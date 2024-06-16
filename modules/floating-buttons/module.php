@@ -88,7 +88,10 @@ class Module extends BaseModule {
 
 		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-				$documents_manager->register_document_type( static::FLOATING_BUTTONS_DOCUMENT_TYPE, Floating_Buttons::get_class_full_name() );
+				$documents_manager->register_document_type(
+					static::FLOATING_BUTTONS_DOCUMENT_TYPE,
+					Floating_Buttons::get_class_full_name()
+				);
 			} );
 		}
 
@@ -261,7 +264,10 @@ class Module extends BaseModule {
 	public function set_admin_columns_content( $column_name, $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		$document->admin_columns_content( $column_name );
+		if ( method_exists( $document, 'admin_columns_content' ) ) {
+			$document->admin_columns_content( $column_name );
+		}
+
 		switch ( $column_name ) {
 			case 'click_tracking':
 				$click_tracking = get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
