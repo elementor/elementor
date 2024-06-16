@@ -753,13 +753,19 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the menu panel.
+	 * Open the menu panel. Or, when an inner panel is provided, open the inner panel.
+	 *
+	 * @param {string} innerPanel - Optional. The inner menu to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openMenuPanel() {
+	async openMenuPanel( innerPanel?: string ) {
 		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
 		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
+
+		if ( innerPanel ) {
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
+		}
 	}
 
 	/**
@@ -809,8 +815,7 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.clickTopBarItem( 'Site Settings' );
 		} else {
-			await this.openMenuPanel();
-			await this.page.locator( EditorSelectors.panels.siteSettings.menuPanelItem ).click();
+			await this.openMenuPanel( 'global-settings' );
 		}
 
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
@@ -833,8 +838,7 @@ export default class EditorPage extends BasePage {
 			await this.page.waitForTimeout( 100 );
 			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		} else {
-			await this.openMenuPanel();
-			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
+			await this.openMenuPanel( 'editor-preferences' );
 		}
 
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
