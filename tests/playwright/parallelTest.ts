@@ -15,7 +15,6 @@ export async function loginApi( apiRequest: APIRequest, user: string, pw: string
 			redirect_to: `${ url }/wp-admin/`,
 			testcookie: '1',
 		},
-		// maxBodyLength: Infinity,
 	} );
 	const storageState = await context.storageState( { path: storageStatePath } );
 	await context.dispose();
@@ -53,32 +52,16 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 			baseURL,
 			fileName,
 		);
-		const page = await browser.newPage( { storageState } );
 
-		// Save the nonce in an environment variable, to allow use them when creating the API context.
-		await page.goto( `${ baseURL }/wp-admin` );
-		let window: WindowType;
-		process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
+		if ( ! process.env[ `WP_REST_NONCE_${ id }` ] ) {
+			// Save the nonce in an environment variable, to allow use them when creating the API context.
+			const page = await browser.newPage( { storageState } );
+			await page.goto( `${ baseURL }/wp-admin` );
+			let window: WindowType;
+			process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
 
-		// const imageIds = [];
-		// const image1 = {
-		// 	title: 'image1',
-		// 	extension: 'jpg',
-		// };
-		// const image2 = {
-		// 	title: 'image2',
-		// 	extension: 'jpg',
-		// };
-		//
-		// const apiContext = await createApiContext( request, {
-		// 	storageStateObject: storageState,
-		// 	baseURL,
-		// } );
-		//
-		// imageIds.push( await createDefaultMedia( apiContext, image1 ) );
-		// imageIds.push( await createDefaultMedia( apiContext, image2 ) );
-
-		await page.close();
+			await page.close();
+		}
 
 		await use( fileName );
 	}, { scope: 'worker' } ],
