@@ -34,15 +34,12 @@ export const getUiConfig = () => {
 };
 
 const VARIATIONS_PROMPTS = [
-	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
-	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
-	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
-	{ text: __( 'Futuristic design with neon accents about', 'elementor' ) },
-	{ text: __( 'Professional look with clean lines for', 'elementor' ) },
-	{ text: __( 'Earthy tones and organic shapes featuring', 'elementor' ) },
-	{ text: __( 'Luxurious theme with rich colors discussing', 'elementor' ) },
-	{ text: __( 'Tech-inspired style with modern fonts about', 'elementor' ) },
-	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
+	{ text: __( 'Change the content to be about [topic]', 'elementor' ) },
+	{ text: __( 'Generate lorem ipsum placeholder text for all paragraphs', 'elementor' ) },
+	{ text: __( 'Revise the content to focus on [topic] and then translate it into Spanish', 'elementor' ) },
+	{ text: __( 'Shift the focus of the content to [topic] in order to showcase our company\'s mission and values', 'elementor' ) },
+	{ text: __( 'Alter the content to provide helpful tips related to [topic]', 'elementor' ) },
+	{ text: __( 'Adjust the content to include FAQs and answers for common inquiries about [topic]', 'elementor' ) },
 ];
 
 const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
