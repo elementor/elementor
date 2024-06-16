@@ -62,7 +62,6 @@
 		"@wordpress/eslint-plugin": "^17.2.0",
 		"allure-playwright": "^2.10.0",
 		"autoprefixer": "~10.4.12",
-		"axios": "^1.6.6",
 		"babel-jest": "^29.7.0",
 		"babel-loader": "8.2.5",
 		"chalk": "^4.1.0",
