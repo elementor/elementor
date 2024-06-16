@@ -278,17 +278,14 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 
-		// Set Canvas template.
+		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
-		await page.waitForLoadState( 'domcontentloaded' );
 
 		await editor.selectElement( container );
 		// Set row direction.
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		// Set flex-wrap: wrap.
 		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
-
-		await editor.closeNavigatorIfOpen();
 
 		// Act.
 		await editor.addWidget( 'divider', container );
@@ -299,7 +296,8 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
-		await page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
+		// Set widget size to grow
+		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 		// Set widget mask.
 		await editor.setWidgetMask();
 
@@ -326,7 +324,8 @@ test.describe( 'Container tests @container', () => {
 		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
 		// Add flex grow effect.
 		await editor.openPanelTab( 'advanced' );
-		await page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
+		// Set widget size to grow
+		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 
 		// Hide editor and map controls.
 		await editor.hideMapControls();
@@ -363,25 +362,23 @@ test.describe( 'Container tests @container', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
-		// Set Canvas template.
+		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
 
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.selectElement( containerId );
 		await editor.setSliderControlValue( 'min_height', '200' );
 		await editor.openPanelTab( 'style' );
-		await page.locator( '[data-tooltip="Video"]' ).click();
-		await page.locator( '[data-setting="background_video_link"]' ).fill( videoURL );
+		await editor.setChooseControlValue( 'background_background', 'eicon-video-camera' );
+		await editor.setTextControlValue( 'background_video_link', videoURL );
 		await page.locator( '.elementor-control-background_video_fallback .eicon-plus-circle' ).click();
 		await page.locator( '#menu-item-browse' ).click();
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
 		await page.waitForLoadState( 'networkidle' );
 		await page.click( '.button.media-button' );
 		await editor.openSection( 'section_background_overlay' );
-		await page.locator( '.elementor-control-background_overlay_background [data-tooltip="Classic"]' ).click();
+		await editor.setChooseControlValue( 'background_overlay_background', 'eicon-paint-brush' );
 		await editor.setColorControlValue( 'background_overlay_color', '#61CE70' );
 
-		await editor.closeNavigatorIfOpen();
 		await editor.togglePreviewMode();
 
 		expect.soft( await container.screenshot( {
@@ -466,8 +463,9 @@ test.describe( 'Container tests @container', () => {
 
 		try {
 			await wpAdmin.setSiteLanguage( 'he_IL' );
-			const editor = await createCanvasPage( wpAdmin );
+			const editor = await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
+			await editor.useCanvasTemplate();
 			const container = await addContainerAndHover( editor );
 			expect.soft( await container.screenshot( {
 				type: 'jpeg',
@@ -477,7 +475,8 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setSiteLanguage( '' );
 		}
 
-		const editor = await createCanvasPage( wpAdmin );
+		const editor = await wpAdmin.openNewPage();
+		await editor.useCanvasTemplate();
 		const container = await addContainerAndHover( editor );
 
 		expect.soft( await container.screenshot( {
@@ -1000,12 +999,6 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 } );
-
-async function createCanvasPage( wpAdmin: WpAdminPage ) {
-	const editor = await wpAdmin.openNewPage();
-	await editor.useCanvasTemplate();
-	return editor;
-}
 
 async function addContainerAndHover( editor: EditorPage ) {
 	const containerId = await editor.addElement( { elType: 'container' }, 'document' );

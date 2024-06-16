@@ -123,11 +123,11 @@ export async function selectDropdownContainer( editor: EditorPage, widgetId = ''
 	return await editor.getPreviewFrame().locator( activeContainerSelector ).getAttribute( 'data-id' );
 }
 
-export async function setBackgroundVideoUrl( page: Page, editor:EditorPage, elementId: string, videoUrl: string ) {
+export async function setBackgroundVideoUrl( editor:EditorPage, elementId: string, videoUrl: string ) {
 	await editor.selectElement( elementId );
 	await editor.openPanelTab( 'style' );
-	await page.locator( '.eicon-video-camera' ).first().click();
-	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+	await editor.setChooseControlValue( 'background_background', 'eicon-video-camera' );
+	await editor.setTextControlValue( 'background_video_link', videoUrl );
 }
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ) {
