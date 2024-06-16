@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
@@ -100,12 +99,26 @@ class Widgets_Manager {
 			'share-buttons',
 		];
 
+		$v2_build_filenames = [
+			'heading-v2',
+		];
+
 		$this->_widget_types = [];
 
 		$this->register_promoted_widgets();
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
+
+			$class_name = str_replace( '-', '_', $widget_filename );
+
+			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
+
+			$this->register( new $class_name() );
+		}
+
+		foreach ( $v2_build_filenames as $widget_filename ) {
+			include ELEMENTOR_PATH . 'includes/widgets/v2/' . $widget_filename . '.php';
 
 			$class_name = str_replace( '-', '_', $widget_filename );
 
@@ -386,8 +399,14 @@ class Widgets_Manager {
 				continue;
 			}
 
+			if ( $widget instanceof Widget_Base_V2 ) {
+				$controls = $widget->get_v2_controls();
+			} else {
+				$controls = $widget->get_stack( false )['controls'];
+			}
+
 			$config[ $widget_key ] = [
-				'controls' => $widget->get_stack( false )['controls'],
+				'controls' => $controls,
 				'tabs_controls' => $widget->get_tabs_controls(),
 			];
 		}

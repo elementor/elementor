@@ -154,6 +154,7 @@ class Autoloader {
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',
+			'Widget_Base_V2' => 'includes/widgets/v2/base.php',
 			'Widget_WordPress' => 'includes/widgets/wordpress.php',
 			'Widgets_Manager' => 'includes/managers/widgets.php',
 			'WordPress_Widgets_Manager' => 'includes/managers/wordpress-widgets.php',
