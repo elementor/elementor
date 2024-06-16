@@ -27,7 +27,6 @@ test.describe( 'General Settings', () => {
 		// We need to navigate away
 		await validateGettingsStartedPage( wpAdmin );
 		await validateGettingStartedLinkCount( wpAdmin, 1 );
-		await wpAdmin.gotoDashboard();
 		await wpAdmin.setExperiments( { home_screen: true }, true );
 	} );
 } );
