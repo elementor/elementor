@@ -18,8 +18,9 @@ export async function loginApi( apiRequest: APIRequest, user: string, pw: string
 		},
 		// maxBodyLength: Infinity,
 	} );
-	await context.storageState( { path: storageStatePath } );
+	const storageState = await context.storageState( { path: storageStatePath } );
 	await context.dispose();
+	return storageState;
 }
 
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string }>( {
@@ -46,18 +47,17 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 		// Send authentication request.
 		const baseURL = 1 === testInfo.parallelIndex ? 'http://localhost:8889' : 'http://localhost:8888';
-		await loginApi(
+		const storageState = await loginApi(
 			request,
 			process.env.USERNAME || 'admin',
 			process.env.PASSWORD || 'password',
 			baseURL,
 			fileName,
 		);
-		const page = await browser.newPage( { storageState: undefined } );
-		await page.goto( `${ baseURL }/wp-admin` );
-		// Save the nonce in an environment variable, to allow use them when creating the API context.
-		const storageState = await page.context().storageState( { path: fileName } );
+		const page = await browser.newPage( { storageState } );
 
+		// Save the nonce in an environment variable, to allow use them when creating the API context.
+		await page.goto( `${ baseURL }/wp-admin` );
 		let window: WindowType;
 		process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
 
