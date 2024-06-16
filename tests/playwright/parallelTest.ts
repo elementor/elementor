@@ -1,10 +1,9 @@
 import { APIRequest, request, test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { createApiContext, createDefaultMedia } from './assets/api-requests';
 import { WindowType } from './types/types';
 
-export async function loginApi( apiRequest: APIRequest, user: string, pw: string, url: string, storageStatePath: string ) {
+export async function loginApi( apiRequest: APIRequest, user: string, pw: string, url: string, storageStatePath?: string ) {
 	// Important: make sure we authenticate in a clean environment by unsetting storage state.
 	const context = await apiRequest.newContext( { storageState: undefined } );
 
@@ -61,23 +60,23 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		let window: WindowType;
 		process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
 
-		const imageIds = [];
-		const image1 = {
-			title: 'image1',
-			extension: 'jpg',
-		};
-		const image2 = {
-			title: 'image2',
-			extension: 'jpg',
-		};
-
-		const apiContext = await createApiContext( request, {
-			storageStateObject: storageState,
-			baseURL,
-		} );
-
-		imageIds.push( await createDefaultMedia( apiContext, image1 ) );
-		imageIds.push( await createDefaultMedia( apiContext, image2 ) );
+		// const imageIds = [];
+		// const image1 = {
+		// 	title: 'image1',
+		// 	extension: 'jpg',
+		// };
+		// const image2 = {
+		// 	title: 'image2',
+		// 	extension: 'jpg',
+		// };
+		//
+		// const apiContext = await createApiContext( request, {
+		// 	storageStateObject: storageState,
+		// 	baseURL,
+		// } );
+		//
+		// imageIds.push( await createDefaultMedia( apiContext, image1 ) );
+		// imageIds.push( await createDefaultMedia( apiContext, image2 ) );
 
 		await page.close();
 

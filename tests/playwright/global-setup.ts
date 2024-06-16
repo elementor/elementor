@@ -1,25 +1,15 @@
-import { chromium, request, type FullConfig } from '@playwright/test';
-import { cleanUpTestPages, createApiContext, createDefaultMedia, deleteDefaultMedia, loginApi } from './assets/api-requests';
-import { WindowType } from './types/types';
+import { request, type FullConfig } from '@playwright/test';
+import { cleanUpTestPages, createApiContext, createDefaultMedia, deleteDefaultMedia } from './assets/api-requests';
+import { loginApi } from './parallelTest';
 
 async function globalSetup( config: FullConfig ) {
-	const { baseURL, headless } = config.projects[ 0 ].use;
-	const browser = await chromium.launch( { headless } );
-	const context = await browser.newContext();
-	const page = await context.newPage();
-	const cookies = await loginApi(
+	const { baseURL } = config.projects[ 0 ].use;
+	const storageState = await loginApi(
+		request,
 		process.env.USERNAME || 'admin',
 		process.env.PASSWORD || 'password',
 		baseURL,
 	);
-	await context.addCookies( cookies );
-	await page.goto( `${ baseURL }/wp-admin` );
-	const storageState = await page.context().storageState( { path: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json` } );
-
-	// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
-	let window: WindowType;
-	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
-	process.env.STORAGE_STATE = JSON.stringify( storageState );
 
 	const imageIds = [];
 	const image1 = {
@@ -38,8 +28,6 @@ async function globalSetup( config: FullConfig ) {
 
 	imageIds.push( await createDefaultMedia( apiContext, image1 ) );
 	imageIds.push( await createDefaultMedia( apiContext, image2 ) );
-
-	await browser.close();
 
 	// Teardown function.
 	return async () => {
