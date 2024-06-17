@@ -183,7 +183,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setExperiments( experiments: {[ n: string ]: boolean | string }, oldUrl:boolean = false ) {
+	async setExperiments( experiments: { [ n: string ]: boolean | string }, oldUrl: boolean = false ) {
 		if ( oldUrl ) {
 			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 			await this.page.click( '#elementor-settings-tab-experiments' );

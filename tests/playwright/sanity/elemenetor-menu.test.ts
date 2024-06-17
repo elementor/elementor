@@ -15,6 +15,7 @@ test.describe( 'General Settings', () => {
 	test( 'Is hidden if home is active (default for plugin users)', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
+
 		await wpAdmin.gotoDashboard();
 		await validateGettingStartedLinkCount( wpAdmin, 0 );
 		await validateGettingsStartedPage( wpAdmin );
@@ -23,6 +24,7 @@ test.describe( 'General Settings', () => {
 	test( 'Is visible if home is not active (default for hosting users)', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
+
 		await wpAdmin.setExperiments( { home_screen: false } );
 		// We need to navigate away
 		await validateGettingsStartedPage( wpAdmin );
