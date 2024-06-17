@@ -33,7 +33,7 @@ export default class ApiRequests {
 		return id;
 	}
 
-	public async createDefaultMedia( request: APIRequestContext, image: Image ) {
+	public async createMedia( request: APIRequestContext, image: Image ) {
 		const imagePath = image.filePath;
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
@@ -63,7 +63,7 @@ export default class ApiRequests {
 		return id;
 	}
 
-	public async deleteDefaultMedia( request: APIRequestContext, ids: string[] ) {
+	public async deleteMedia( request: APIRequestContext, ids: string[] ) {
 		const requests = [];
 		for ( const id in ids ) {
 			requests.push( request.delete( `${ this.baseUrl }/index.php`, {
