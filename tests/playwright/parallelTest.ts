@@ -1,7 +1,6 @@
 import { APIRequest, request, test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { WindowType } from './types/types';
 import ApiRequests from './assets/api-requests';
 
 export async function loginApi( apiRequest: APIRequest, user: string, pw: string, url: string, storageStatePath?: string ) {
@@ -52,16 +51,6 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 			fileName,
 		);
 
-		// if ( ! process.env[ `WP_REST_NONCE_${ id }` ] ) {
-		// 	// Save the nonce in an environment variable, to allow use them when creating the API context.
-		// 	const page = await browser.newPage( { storageState } );
-		// 	await page.goto( `${ workerBaseURL }/wp-admin` );
-		// 	let window: WindowType;
-		// 	process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
-		//
-		// 	await page.close();
-		// }
-
 		await use( fileName );
 	}, { scope: 'worker' } ],
 
@@ -81,7 +70,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		const pageText = await response.text();
 		const nonceMatch = pageText.match( /var wpApiSettings = .*;/ );
 		if ( ! nonceMatch ) {
-			throw new Error( 'Nonce not found on the page' );
+			throw new Error( `Nonce not found on the page:\n"${ pageText }"` );
 		}
 
 		let nonce = nonceMatch[ 0 ];
