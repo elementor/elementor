@@ -48,7 +48,7 @@ async function globalSetup( config: FullConfig ) {
 		extension: 'jpg',
 	};
 
-	const apiRequests = new ApiRequests( nonce, baseURL );
+	const apiRequests = new ApiRequests( baseURL, nonce );
 	imageIds.push( await apiRequests.createDefaultMedia( context, image1 ) );
 	imageIds.push( await apiRequests.createDefaultMedia( context, image2 ) );
 
