@@ -1,6 +1,6 @@
 import { request, type FullConfig } from '@playwright/test';
 import ApiRequests from '../playwright/assets/api-requests';
-import path from "path";
+import path from 'path';
 
 async function globalSetup( config: FullConfig ) {
 	const { baseURL } = config.projects[ 0 ].use;
