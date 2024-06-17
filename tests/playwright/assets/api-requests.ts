@@ -1,5 +1,4 @@
 import fs from 'fs';
-import _path from 'path';
 import { type APIRequestContext } from '@playwright/test';
 import { Image, Post, WpPage } from '../types/types';
 
@@ -33,7 +32,7 @@ export default class ApiRequests {
 	}
 
 	public async createDefaultMedia( request: APIRequestContext, image: Image ) {
-		const imagePath = image.filePath ? image.filePath : `../assets/test-images/${ image.title }.${ image.extension }`;
+		const imagePath = image.filePath;
 		const response = await request.post( '/index.php', {
 
 			params: { rest_route: '/wp/v2/media' },
@@ -41,7 +40,7 @@ export default class ApiRequests {
 				'X-WP-Nonce': this.nonce,
 			},
 			multipart: {
-				file: fs.createReadStream( _path.resolve( __dirname, imagePath ) ),
+				file: fs.createReadStream( imagePath ),
 				title: image.title,
 				status: 'publish',
 				description: image.description,

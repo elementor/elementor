@@ -1,5 +1,6 @@
 import { request, type FullConfig } from '@playwright/test';
 import ApiRequests from './assets/api-requests';
+import path from "path";
 
 async function globalSetup( config: FullConfig ) {
 	const { baseURL } = config.projects[ 0 ].use;
@@ -37,10 +38,12 @@ async function globalSetup( config: FullConfig ) {
 
 	const imageIds = [];
 	const image1 = {
+		path: path.resolve( __dirname, '../assets/image1.jpg' ),
 		title: 'image1',
 		extension: 'jpg',
 	};
 	const image2 = {
+		path: path.resolve( __dirname, '../assets/image2.jpg' ),
 		title: 'image2',
 		extension: 'jpg',
 	};
