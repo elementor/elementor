@@ -16,8 +16,8 @@ export async function login( apiRequest: APIRequest, user: string, pw: string, u
 	return context;
 }
 
-export async function fetchNonce( context: APIRequestContext ) {
-	const response = await context.get( '/wp-admin/post-new.php' );
+export async function fetchNonce( context: APIRequestContext, baseUrl: string ) {
+	const response = await context.get( `${ baseUrl }/wp-admin/post-new.php` );
 
 	if ( ! response.ok() ) {
 		throw new Error( `

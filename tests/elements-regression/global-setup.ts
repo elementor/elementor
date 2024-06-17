@@ -7,7 +7,7 @@ async function globalSetup( config: FullConfig ) {
 	const { baseURL } = config.projects[ 0 ].use;
 
 	const context = await login( request, process.env.USERNAME || 'admin', process.env.PASSWORD || 'password', baseURL );
-	const nonce = await fetchNonce( context );
+	const nonce = await fetchNonce( context, baseURL );
 
 	const imageIds = [];
 	const image1 = {
