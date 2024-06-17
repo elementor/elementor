@@ -1,4 +1,4 @@
-import { APIRequest, Browser, request, test as baseTest } from '@playwright/test';
+import { APIRequest, request, test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { WindowType } from './types/types';
@@ -21,32 +21,6 @@ export async function loginApi( apiRequest: APIRequest, user: string, pw: string
 	return storageState;
 }
 
-const extractNonce = async ( id: number, browser: Browser, storageState: {
-	cookies: Array<{
-		name: string;
-		value: string;
-		domain: string;
-		path: string;
-		expires: number;
-		httpOnly: boolean;
-		secure: boolean;
-		sameSite: 'Strict' | 'Lax' | 'None'
-	}>;
-	origins: Array<{ origin: string; localStorage: Array<{ name: string; value: string }> }>
-}, baseURL: string ) => {
-	if ( ! process.env[ `WP_REST_NONCE_${ id }` ] ) {
-		// Save the nonce in an environment variable, to allow use them when creating the API context.
-		const page = await browser.newPage( { storageState } );
-		try {
-			await page.goto( `${ baseURL }/wp-admin` );
-			let window: WindowType;
-			process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
-		} finally {
-			await page.close();
-		}
-	}
-};
-
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string }>( {
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
@@ -58,7 +32,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	storageState: ( { workerStorageState }, use ) => use( workerStorageState ),
 
 	// Authenticate once per worker with a worker-scoped fixture.
-	workerStorageState: [ async ( { browser }, use, testInfo ) => {
+	workerStorageState: [ async ( { browser, workerBaseURL }, use, testInfo ) => {
 		// Use parallelIndex as a unique identifier for each worker.
 		const id = testInfo.parallelIndex;
 		const fileName = path.resolve( testInfo.project.outputDir, `.storageState-${ id }.json` );
@@ -70,18 +44,22 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		}
 
 		// Send authentication request.
-		const baseURL = ( 1 === Number( testInfo.parallelIndex ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER;
 		const storageState = await loginApi(
 			request,
 			process.env.USERNAME || 'admin',
 			process.env.PASSWORD || 'password',
-			baseURL,
+			workerBaseURL,
 			fileName,
 		);
-		try {
-			await extractNonce( id, browser, storageState, baseURL );
-		} catch ( e ) {
-			await extractNonce( id, browser, storageState, baseURL );
+
+		if ( ! process.env[ `WP_REST_NONCE_${ id }` ] ) {
+			// Save the nonce in an environment variable, to allow use them when creating the API context.
+			const page = await browser.newPage( { storageState } );
+			await page.goto( `${ workerBaseURL }/wp-admin` );
+			let window: WindowType;
+			process.env[ `WP_REST_NONCE_${ id }` ] = await page.evaluate( () => window.wpApiSettings.nonce );
+
+			await page.close();
 		}
 
 		await use( fileName );
