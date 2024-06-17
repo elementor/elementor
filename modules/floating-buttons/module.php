@@ -129,7 +129,7 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/common/localize_settings', function ( $settings ) {
-			$settings['conversionCenter'] = [
+			$settings['floatingButtons'] = [
 				'nonce' => wp_create_nonce( static::CLICK_TRACKING_NONCE ),
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			];

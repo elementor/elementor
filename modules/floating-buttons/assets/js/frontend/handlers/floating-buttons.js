@@ -140,10 +140,10 @@ export default class FloatingButtonsHandler extends Base {
 	sendClicks() {
 		const formData = new FormData();
 		formData.append( 'action', 'elementor_send_clicks' );
-		formData.append( '_nonce', elementorCommonConfig.conversionCenter.nonce );
+		formData.append( '_nonce', elementorCommonConfig.floatingButtons.nonce );
 		this.clicks.forEach( ( documentId ) => formData.append( 'clicks[]', documentId ) );
 
-		fetch( elementorCommonConfig.conversionCenter.ajaxurl, {
+		fetch( elementorCommonConfig.floatingButtons.ajaxurl, {
 			method: 'POST',
 			body: formData,
 		} )
