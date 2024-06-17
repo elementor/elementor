@@ -250,6 +250,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.22.1 - 2024-06-17 =
+
+* Fix: Editor not loading due to compatibility issue between Elementor AI and third-party plugins
+
 = 3.22.0 - 2024-06-16 =
 
 * New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
