@@ -74,8 +74,6 @@ class Module extends BaseModule {
 
 	}
 
-	public function init_widgets() {}
-
 	public function __construct() {
 		parent::__construct();
 

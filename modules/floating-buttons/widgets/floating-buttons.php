@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Floating_Buttons extends Widget_Floating_Button_Base {
 
 	public function get_name(): string {
-		return 'floating-buttons';
+		return 'contact-buttons';
 	}
 
 	public function get_title(): string {
