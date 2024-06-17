@@ -166,12 +166,18 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
-	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {Object}            experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {(boolean|string)=} oldUrl      - Optional. Whether to use the old URL structure. Default is false.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+	async setExperiments( experiments: { [ n: string ]: boolean | string }, oldUrl: boolean = false ) {
+		if ( oldUrl ) {
+			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+			await this.page.click( '#elementor-settings-tab-experiments' );
+		} else {
+			await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		}
 
 		const prefix = 'e-experiment';
 

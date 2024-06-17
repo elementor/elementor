@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Editor v2', () => {
+test.describe( 'Editor top bar', () => {
 	let editor;
 	let wpAdmin;
 	let context;
