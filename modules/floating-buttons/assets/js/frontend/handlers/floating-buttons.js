@@ -120,9 +120,16 @@ export default class FloatingButtonsHandler extends Base {
 			targetElement.matches( selectors.contactButtonCore ) ||
 			targetElement.closest( selectors.contactButtonCore )
 		) {
-			const documentId = targetElement.closest( selectors.main ).dataset.documentId;
-			this.trackClick( documentId );
+			this.getDocumentIdAndTrack( targetElement, selectors );
 		}
+	}
+
+	getDocumentIdAndTrack( targetElement, selectors ) {
+		let documentId = targetElement.closest( selectors.main ).dataset.documentId;
+		if ( ! documentId ) {
+			documentId = targetElement.closest( selectors.elementorWrapper ).dataset.elementorId;
+		}
+		this.trackClick( documentId );
 	}
 
 	trackClick( documentId ) {
