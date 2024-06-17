@@ -38,12 +38,12 @@ async function globalSetup( config: FullConfig ) {
 
 	const imageIds = [];
 	const image1 = {
-		path: path.resolve( __dirname, 'assets/image1.jpg' ),
+		filePath: path.resolve( __dirname, 'assets/image1.jpg' ),
 		title: 'image1',
 		extension: 'jpg',
 	};
 	const image2 = {
-		path: path.resolve( __dirname, 'assets/image2.jpg' ),
+		filePath: path.resolve( __dirname, 'assets/image2.jpg' ),
 		title: 'image2',
 		extension: 'jpg',
 	};
