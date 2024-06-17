@@ -55,19 +55,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
-	apiRequests: [ async ( { workerStorageState, workerBaseURL }, use ) => {
-		// Use parallelIndex as a unique identifier for each worker.
-		if ( ! fs.existsSync( workerStorageState ) ) {
-			// Send authentication request.
-			await loginApi(
-				request,
-				process.env.USERNAME || 'admin',
-				process.env.PASSWORD || 'password',
-				workerBaseURL,
-				workerStorageState,
-			);
-		}
-
+	apiRequests: [ async ( { workerStorageState }, use ) => {
 		const context = await request.newContext( { storageState: workerStorageState } );
 		const response = await context.get( '/wp-admin/post-new.php' );
 

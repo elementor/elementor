@@ -12,7 +12,7 @@ _config( {
 
 export default defineConfig( {
 	testDir: './tests/',
-
+	globalSetup: resolve( __dirname, 'global-setup.ts' ),
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
 	expect: {
@@ -35,7 +35,7 @@ export default defineConfig( {
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: process.env.BASE_URL || ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER,
+		baseURL: process.env.BASE_URL || process.env.DEV_SERVER,
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},

@@ -15,6 +15,35 @@ export type LinkOptions = {
     linkInpSelector?: string
 }
 
+export type WpPage = {
+	title: {
+		rendered?: string,
+	}
+	date?: string,
+	date_gmt?: string,
+	guid?: string,
+	id?: string,
+	link?: string,
+	modified?: string,
+	modified_gmt?: string,
+	slug: string,
+	status?: 'publish' | 'future' | 'draft' | 'pending' | 'private',
+	type?: string,
+	password?: string,
+	permalink_template?: string,
+	generated_slug?: string,
+	parent?: string,
+	content: string,
+	author?: string,
+	excerpt?: string,
+	featured_media?: string,
+	comment_status?: string,
+	ping_status?: string,
+	menu_order?: string,
+	meta?: string,
+	template?: string,
+}
+
 export type Post = {
 	id?: string,
 	date?: string,
