@@ -369,7 +369,7 @@
 		}
 	}
 
-	&__close-button {
+	&__close-button[type="button"] {
 		background: none;
 		border: 0;
 		color: var(--e-contact-buttons-close-button-color);
@@ -394,7 +394,7 @@
 		}
 	}
 
-	&__chat-button {
+	&__chat-button[type="button"] {
 		align-items: center;
 		background-color: var(--e-contact-buttons-button-bg);
 		border-radius: 50%;
