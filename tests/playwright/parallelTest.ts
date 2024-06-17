@@ -66,15 +66,26 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
-	apiRequests: [ async ( { browser, workerBaseURL }, use ) => {
-		// Save the nonce in an environment variable, to allow use them when creating the API context.
-		const page = await browser.newPage();
-		await page.goto( `${ workerBaseURL }/wp-admin` );
-		let window: WindowType;
-		const nonce = await page.evaluate( () => window.wpApiSettings.nonce );
+	apiRequests: [ async ( {}, use ) => {
+		const context = await request.newContext();
+		const response = await context.get( '/wp-admin/post-new.php' );
 
-		await page.close();
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to fetch nonce: ${ response.status() }.
+				${ await response.text() }
+				${ response.url() }
+				TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
+			` );
+		}
+		const pageText = await response.text();
+		const nonceMatch = pageText.match( /var wpApiSettings = .*;/ );
+		if ( ! nonceMatch ) {
+			throw new Error( 'Nonce not found on the page' );
+		}
 
+		let nonce = nonceMatch[ 0 ];
+		nonce = nonce.replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
 		const apiRequests = new ApiRequests( nonce );
 		await use( apiRequests );
 	}, { scope: 'worker' } ],
