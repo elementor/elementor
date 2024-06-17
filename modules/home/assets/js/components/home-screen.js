@@ -14,13 +14,19 @@ const HomeScreen = ( props ) => {
 		<Box sx={ { pr: 1 } }>
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 3 }, pt: { xs: 2, md: 6 }, pb: 2 } }>
 				<TopSection
-					topData={ props.homeScreenData.top }
+					topData={ props.homeScreenData.top_with_licences }
 					createNewPageUrl={ props.homeScreenData.create_new_page_url }
 				/>
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
 					<Stack sx={ { flex: 1, gap: 3 } }>
-						<GetStarted getStartedData={ props.homeScreenData.get_started } />
-						<Addons addonsData={ props.homeScreenData.add_ons } />
+						<GetStarted
+							getStartedData={ props.homeScreenData.get_started }
+							adminUrl={ props.adminUrl }
+						/>
+						<Addons
+							addonsData={ props.homeScreenData.add_ons }
+							adminUrl={ props.adminUrl }
+						/>
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarUpgrade &&
@@ -36,6 +42,7 @@ const HomeScreen = ( props ) => {
 
 HomeScreen.propTypes = {
 	homeScreenData: PropTypes.object,
+	adminUrl: PropTypes.string,
 };
 
 export default HomeScreen;

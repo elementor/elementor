@@ -8,10 +8,15 @@ test.describe( 'Lighthouse tests', () => {
 	test( 'Accordion widget test', async ( { page }, testInfo ) => {
 		const filePath = _path.resolve( __dirname, `../../elements-regression/tests/templates/accordion.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editorPage = await wpAdmin.openNewPage();
-		await editorPage.closeNavigatorIfOpen();
-		await editorPage.loadTemplate( filePath, true );
-		await editorPage.publishAndViewPage();
+
+		await wpAdmin.hideAdminBar();
+
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+		await editor.loadTemplate( filePath, true );
+		await editor.publishAndViewPage();
+
 		await playAudit( {
 			page,
 			config,
@@ -23,5 +28,11 @@ test.describe( 'Lighthouse tests', () => {
 			},
 			port: parseInt( process.env.DEBUG_PORT ),
 		} );
+	} );
+
+	test( 'Reset toolbar settings', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.showAdminBar();
 	} );
 } );

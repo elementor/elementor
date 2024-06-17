@@ -5,7 +5,7 @@ test.describe( 'Global font introduction tests', () => {
 	test( 'Check if globals introduction tooltip is being triggered by clicking on the font popover', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await page.evaluate( () => {
 			elementor.config.user.introduction.globals_introduction = false;
@@ -16,7 +16,7 @@ test.describe( 'Global font introduction tests', () => {
 
 		// Act.
 		await editor.addWidget( 'heading' );
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await page.click( '.elementor-control-typography_typography .elementor-control-popover-toggle-toggle-label' );
 		const tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
 
@@ -27,7 +27,7 @@ test.describe( 'Global font introduction tests', () => {
 	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await page.evaluate( () => {
 			elementor.config.user.introduction.globals_introduction = true;
@@ -38,7 +38,7 @@ test.describe( 'Global font introduction tests', () => {
 
 		// Act.
 		await editor.addWidget( 'heading' );
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await page.click( '.elementor-control-typography_typography .elementor-control-popover-toggle-toggle-label' );
 		const tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
 

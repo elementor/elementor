@@ -16,7 +16,7 @@ const SideBarPromotion = ( { ...props } ) => {
 				</Box>
 				<Button variant="contained" size="medium" color="promotion" href={ props.sideData.cta.url } startIcon={ <Box component="img" src={ props.sideData.cta.image } sx={ { width: '16px' } }></Box> } target="_blank" sx={ { maxWidth: 'fit-content' } }>{ props.sideData.cta.label }</Button>
 			</Stack>
-			<List>
+			<List sx={ { p: 0 } }>
 				{
 					props.sideData.repeater.map( ( item, index ) => {
 						return (

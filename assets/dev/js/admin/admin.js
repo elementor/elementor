@@ -5,6 +5,7 @@ import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
+import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -315,13 +316,6 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				} ).show();
 			} );
 
-			$( '.elementor_css_print_method select' ).on( 'change', function() {
-				var $descriptions = $( '.elementor-css-print-method-description' );
-
-				$descriptions.hide();
-				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
-			} ).trigger( 'change' );
-
 			$( '.elementor_google_font select' ).on( 'change', function() {
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
@@ -345,6 +339,11 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+
+			if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
+				new LinksPagesModule();
+			}
+
 			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();

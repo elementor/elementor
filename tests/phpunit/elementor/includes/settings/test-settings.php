@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Global_CSS;
+use Elementor\Utils;
 
 class Test_Settings extends Elementor_Test_Base {
 
@@ -48,7 +49,8 @@ class Test_Settings extends Elementor_Test_Base {
 		$elementor_menu = $submenu['elementor'];
 
 		$expected_items = [
-			'elementor' => 'Settings',
+			'elementor' => 'Home',
+			'elementor-settings' => 'Settings',
 			'elementor-role-manager' => 'Role Manager',
 			'elementor-element-manager' => 'Element Manager',
 			'elementor-tools' => 'Tools',
@@ -60,7 +62,7 @@ class Test_Settings extends Elementor_Test_Base {
 			'elementor_custom_icons' => 'Custom Icons',
 			'elementor_custom_code' => 'Custom Code',
 			'elementor-apps' => 'Add-ons',
-			'go_elementor_pro' => 'Upgrade',
+			'go_elementor_pro' => Utils::is_sale_time() ? 'Upgrade Sale Now' : 'Upgrade',
 		];
 
 		$index = 0;

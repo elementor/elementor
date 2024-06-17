@@ -9,11 +9,11 @@ type ScreenShot = {
 }
 export default class ElementRegressionHelper {
 	readonly page: Page;
-	readonly editorPage: EditorPage;
+	readonly editor: EditorPage;
 
 	constructor( page: Page, testInfo: TestInfo ) {
 		this.page = page;
-		this.editorPage = new EditorPage( page, testInfo );
+		this.editor = new EditorPage( page, testInfo );
 	}
 
 	getLabel( isPublished: boolean ) {
@@ -26,7 +26,7 @@ export default class ElementRegressionHelper {
 		}
 		const locator = isPublished
 			? this.page.locator( EditorSelectors.container )
-			: this.editorPage.getPreviewFrame().locator( EditorSelectors.container );
+			: this.editor.getPreviewFrame().locator( EditorSelectors.container );
 
 		const label = this.getLabel( isPublished );
 
@@ -44,7 +44,7 @@ export default class ElementRegressionHelper {
 		if ( args.widgetType.includes( 'hover' ) ) {
 			const widget = args.isPublished
 				? this.page.locator( EditorSelectors.widget )
-				: this.editorPage.getPreviewFrame().locator( EditorSelectors.widget );
+				: this.editor.getPreviewFrame().locator( EditorSelectors.widget );
 			const label = this.getLabel( args.isPublished );
 			const widgetCount = await widget.count();
 
@@ -58,12 +58,19 @@ export default class ElementRegressionHelper {
 	}
 
 	async setResponsiveMode( mode: string ) {
-		// Mobile tablet desktop
-		if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
-			await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
+		const hasTopBar = await this.editor.hasTopBar();
+
+		if ( hasTopBar ) {
+			const deviceLabel = mode.charAt( 0 ).toUpperCase() + mode.slice( 1 );
+
+			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
+		} else {
+			if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
+				await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
+			}
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
+			await this.editor.getPreviewFrame().locator( '#site-header' ).click();
 		}
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
-		await this.editorPage.getPreviewFrame().locator( '#site-header' ).click();
 	}
 
 	async doResponsiveScreenshot( args: Omit<ScreenShot, 'hoverSelector'> ) {
@@ -81,7 +88,7 @@ export default class ElementRegressionHelper {
 			await expect.soft( page.locator( EditorSelectors.container ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
-			page = this.editorPage.getPreviewFrame();
+			page = this.editor.getPreviewFrame();
 			await this.setResponsiveMode( args.device );
 			await this.page.evaluate( () => {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );

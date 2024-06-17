@@ -1,8 +1,8 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import PageContent from './page-content';
-import { onConnect } from './helpers';
 import { RequestIdsProvider } from './context/requests-ids';
+import { onConnect } from './utils/editor-integration';
 
 const App = ( props ) => {
 	return (
@@ -16,7 +16,6 @@ const App = ( props ) => {
 						onConnect={ onConnect }
 						getControlValue={ props.getControlValue }
 						setControlValue={ props.setControlValue }
-						controlView={ props.controlView }
 						additionalOptions={ props.additionalOptions }
 					/>
 				</RequestIdsProvider>
@@ -33,7 +32,6 @@ App.propTypes = {
 	getControlValue: PropTypes.func,
 	setControlValue: PropTypes.func,
 	additionalOptions: PropTypes.object,
-	controlView: PropTypes.object,
 	isRTL: PropTypes.bool,
 };
 

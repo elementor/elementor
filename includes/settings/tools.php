@@ -189,15 +189,9 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
-				$this->register_admin_menu( $menu );
-			} );
-		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
-			}, Settings::ADMIN_MENU_PRIORITY + 20 );
-		}
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );

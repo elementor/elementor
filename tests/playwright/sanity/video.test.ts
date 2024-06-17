@@ -38,14 +38,14 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+		const promotion = page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		await editor.selectElement( videoId );
-		await promoArea.scrollIntoViewIfNeeded();
+		await editor.closeSection( 'section_video' );
 
 		// Assert
-		expect.soft( await promoArea.screenshot( {
+		expect.soft( await promotion.screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'video-widget-sidebar-promotion.png' );
 	} );
@@ -63,10 +63,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		const videoId = await editor.addWidget( widgets.video, containerId );
 
 		// Act.
-		// Set container padding to 0.
 		await editor.selectElement( containerId );
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
+		await editor.openPanelTab( 'advanced' );
+		await editor.setDimensionsValue( 'padding', '0' );
 
 		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
 		const containerHeight = await container.boundingBox();
@@ -89,12 +88,12 @@ test.describe( 'Video tests inside a container @video', () => {
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 			await editor.addWidget( 'video' );
-			await videoWidget.selectVideoSource( video );
+			await editor.setSelectControlValue( 'video_type', video );
 
-			await videoWidget.setTime( 'Start', startTime );
+			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
-				await videoWidget.setTime( 'End', endTime );
-				await videoWidget.selectSuggestedVideos( 'Any Video' );
+				await editor.setNumberControlValue( 'end', endTime );
+				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 
 			const controls = player.controls.map( ( control ) => {
@@ -120,9 +119,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
-		await videoWidget.chooseImage( `${ imageTitle }.png` );
-		await wpAdmin.waitForPanel();
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
+		await editor.waitForPanelToLoad();
 		await videoWidget.selectImageSize(
 			{
 				widget: EditorSelectors.video.widget,
@@ -135,7 +134,7 @@ test.describe( 'Video tests inside a container @video', () => {
 			isPublished: false,
 			isVideo: true } );
 		await editor.publishAndViewPage();
-		await wpAdmin.waitForPanel();
+		await editor.waitForPanelToLoad();
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
@@ -152,9 +151,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
-		await videoWidget.chooseImage( 'About-Pic-3-1.png' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.lightBoxControlInp ] );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.setMediaControlImageValue( 'image_overlay', 'About-Pic-3-1.png' );
+		await editor.setSwitcherControlValue( 'lightbox', true );
 		await videoWidget.verifyVideoLightBox( false );
 		await editor.publishAndViewPage();
 		await videoWidget.verifyVideoLightBox( true );
@@ -185,17 +184,16 @@ test.describe( 'Video tests inside a section', () => {
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
 			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),
 			videoId = await editor.addWidget( widgets.video, columnId );
 
 		// Act.
-		// Set section padding to 0.
 		await editor.selectElement( columnId );
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
+		await editor.openPanelTab( 'advanced' );
+		await editor.setDimensionsValue( 'padding', '0' );
 
 		const columnHeight = await column.boundingBox(),
 			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();

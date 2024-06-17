@@ -4,11 +4,20 @@ import EditorPage from '../../../../pages/editor-page';
 import _path from 'path';
 
 test.describe( 'Icons (FA Brands)', () => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+		await wpAdmin.setExperiments( { container: 'active' } );
+
+		await page.close();
+	} );
+
 	for ( const status of [ 'inactive', 'active' ] ) {
 		test( `Inline Icons experiment status - ${ status }`, async ( { page }, testInfo ) => {
 			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo );
-			const editorPage = new EditorPage( page, testInfo );
+			const editor = new EditorPage( page, testInfo );
 			const iconsType = 'icons-brands';
 
 			// Act.
@@ -17,12 +26,12 @@ test.describe( 'Icons (FA Brands)', () => {
 			} );
 
 			await wpAdmin.openNewPage();
-			await editorPage.closeNavigatorIfOpen();
+			await editor.closeNavigatorIfOpen();
 
 			const filePath = _path.resolve( __dirname, `./template/${ iconsType }.json` );
-			await editorPage.loadTemplate( filePath, true );
+			await editor.loadTemplate( filePath, true );
 
-			await editorPage.publishAndViewPage();
+			await editor.publishAndViewPage();
 
 			// Assert.
 			const icons = page.locator( '.e-con-inner' ).first();

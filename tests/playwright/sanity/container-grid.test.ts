@@ -24,7 +24,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
+			editor = await wpAdmin.openNewPage(),
 			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -46,17 +46,12 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Mobile rows unit are on FR', async () => {
-			// Open responsive bar and select mobile view
-			await page.locator( '#elementor-panel-footer-responsive i' ).click();
-			await page.waitForSelector( '#e-responsive-bar' );
-			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+			await editor.changeResponsiveView( 'mobile' );
 
 			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
 			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
-			// Reset desktop view
-			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
-			await page.locator( '#e-responsive-bar__close-button' ).click();
+			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
@@ -118,7 +113,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert justify align and content start on full width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+			await editor.setSelectControlValue( 'content_width', 'full' );
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
 			container = frame.locator( `.elementor-element-${ containerId }` );
@@ -143,7 +138,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame()
 				.locator( '.elementor-empty-view' )
 				.evaluate( ( element: HTMLElement ) => {
@@ -153,8 +148,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert boxed width content alignment', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-			await page.locator( '.elementor-control-grid_columns_grid .elementor-slider-input input' ).fill( '' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
+			await editor.setSliderControlValue( 'grid_columns_grid', '' );
 
 			// Add flex container.
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -224,10 +219,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert mobile is in one column', async () => {
-			// Open responsive bar and select mobile view
-			await page.locator( '#elementor-panel-footer-responsive i' ).click();
-			await page.waitForSelector( '#e-responsive-bar' );
-			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+			await editor.changeResponsiveView( 'mobile' );
 
 			const gridTemplateColumnsCssValue = await container.evaluate( ( element ) => {
 				return window.getComputedStyle( element ).getPropertyValue( 'grid-template-columns' );
@@ -237,9 +229,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			expect( isOneColumn ).toBeTruthy();
 
-			// Reset desktop view
-			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
-			await page.locator( '#e-responsive-bar__close-button' ).click();
+			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Elements with class .ui-resizable-e inside grid-containers should not be visible', async () => {
@@ -274,7 +264,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Grid container presets', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 
 		await test.step( 'Assert preset: rows-1 columns-2', async () => {
@@ -304,7 +294,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid outline', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Arrange.
@@ -388,7 +378,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid outline multiple controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
 			gridOutline = frame.locator( '.e-grid-outline' );
 
@@ -420,7 +410,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Check empty view min height', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
@@ -492,7 +482,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid back arrow', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
 
@@ -525,7 +515,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.closeNavigatorIfOpen();
@@ -549,7 +539,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test Empty View should show', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
@@ -564,14 +554,14 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'On initial page load when container is not empty', async () => {
 			await editor.saveAndReloadPage();
-			await wpAdmin.waitForPanel();
+			await editor.waitForPanelToLoad();
 			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );
 
 	test( 'Test Empty View should not distorse preview', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		let containerId;
 		let gridRowsControl;
@@ -612,7 +602,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test Empty View should not distorse preview on tablet', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		let containerId;
 		await test.step( 'Arrange', async () => {

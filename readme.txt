@@ -2,7 +2,7 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.0
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -250,61 +250,39 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.20.3 - 2024-03-26 =
+= 3.22.1 - 2024-06-17 =
 
-* Fix: Edit with Elementor button is missing for pages that had been previously edited with Elementor when using WordPress 6.5 ([#25495](https://github.com/elementor/elementor/issues/25495), [#25496](https://github.com/elementor/elementor/issues/25496))
-* Security Fix: Improved code security enforcement in Text Path Widget
+* Fix: Editor not loading due to compatibility issue between Elementor AI and third-party plugins
 
-= 3.20.2 - 2024-03-20 =
+= 3.22.0 - 2024-06-16 =
 
-* Fix: Media file is not allowed to be uploaded within the editor ([#25077](https://github.com/elementor/elementor/issues/25077), [#25187](https://github.com/elementor/elementor/issues/25187))
-
-= 3.20.1 - 2024-03-13 =
-
-* Fix: Radial background gradient is not working as expected in responsive mode ([#25038](https://github.com/elementor/elementor/issues/25038))
-* Fix: Tabs widget remains visible when disabled in the Element Manager
-
-= 3.20.0 - 2024-03-11 =
-
-* Tweak: Enanached TTFB metric by removing UI controls and some arguments from frontend loading for better site performance
-* Tweak: Resolved excessive DOM output when using Grid Container and Flexbox Container widgets
-* Tweak: Added X icon to Font Awesome icon library ([#23345](https://github.com/elementor/elementor/issues/23345))
-* Tweak: Added Threads icon to Font Awesome icon library ([#23345](https://github.com/elementor/elementor/issues/23345))
-* Tweak: Restricted HTML widget privileges to admin users only for enhanced security and control
-* Tweak: Introduced the capability for admin users to grant HTML widget usage permissions to non-admin users in the Role Manager
-* Tweak: Refined Editor's unit selection DOM output for better efficiency
-* Tweak: Implemented accessibility improvements in Dynamic Tags control
-* Tweak: Implemented accessibility improvements in widget panel sections
-* Tweak: Implemented accessibility improvements in Site Settings items
-* Tweak: Implemented accessibility improvements in the Elements panel keyboard accessible
-* Tweak: Implemented accessibility improvements in Color Picker control
-* Tweak: Implemented accessibility improvements in Site Settings header buttons
-* Tweak: Implemented accessibility improvements for actions in the History panel
-* Tweak: Implemented accessibility improvements for revisions in History panel
-* Tweak: Added semantic `<time>` wrapper for items in History panel
-* Tweak: Added semantic `<search>` wrapper to Widgets search
-* Tweak: Promoted Build with AI feature to Stable status
-* Tweak: Global Style Guide feature merged to version
-* Tweak: Promoted Inline Font Icons feature to Stable status
-* Tweak: Activated Grid Container feature by default for new sites
-* Tweak: Removed separator-none argument from all Editor controls
-* Tweak: Relocated Icon and Content Spacing controls to the Box section in Icon Box widget
-* Tweak: Relocated Image and Content Spacing controls to the Box section in Image Box widget
-* Tweak: Relocated Alignment control from Content tab to Style tab in Button widget
-* Tweak: Replaced Position select control with toggle control in Tabs widget
-* Tweak: Replaced Icon Position select control with toggle control in Button widget
-* Tweak: Hide the Border Radius control of Drop Cap in Text Editor widget
-* Tweak: Hide image controls when image is not selected in Image widget
-* Tweak: Removed `Size` control for new usage in Button Widget
-* Tweak: Replaced Dismiss Icon select control with toggle control in Alert widget
-* Tweak: Replaced Additional Options select controls with toggle controls in Image Carousel widget
-* Tweak: Added missing `title` attribute to the Editor preview iframe
-* Tweak: Added a new reference to the Extensions page from Add New Plugin screen
-* Tweak: Improved flexibility of the widget promotion area for better extendability and customization
-* Tweak: Implemented general improvements to i18n for enhanced global support
-* Tweak: Updated `eicons` library to v5.28.0
-* Tweak: Standardized section names across various Elementor widgets for uniformity and clarity
-* Fix: Compatability issues with various 3rd party plugins when Optimize Image Loading feature is activated ([#24226](https://github.com/elementor/elementor/issues/24226))
-* Fix: `install_compare()` in Experiments Manager throw an error in PHP 8.2+ if `get_installs_history()` returned an empty result
+* New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
+* New: Introducing the Performance Tab - Centralizing all stable performance features in one accessible location ([#21194](https://github.com/elementor/elementor/issues/21194))
+* New: Generate post excerpts with AI for concise summaries
+* New: Generate and edit images with AI from WordPress media library
+* Tweak: Updated Google Fonts list with 170+ new fonts ([#25095](https://github.com/elementor/elementor/issues/25095))
+* Tweak: Improved Elementor translation functionality with `just-in-time` translation loading (props [@swissspidy](https://github.com/swissspidy), [#27199](https://github.com/elementor/elementor/issues/27199))
+* Tweak: Added View Page link to the Editor Top Bar ([#21925](https://github.com/elementor/elementor/issues/21925))
+* Tweak: Replaced `waypoints.js` library with the native Intersection Observer API
+* Tweak: Changed child containers' Content Width to Full Width as default
+* Tweak: Reorganized User Preferences panel for improved user experience
+* Tweak: Hide icon position & spacing controls if there is an icon but no text in Button widget
+* Tweak: Extended Alignment and Position capabilities in Button widget
+* Tweak: Implemented CSS logical properties to Icon Spacing control in Button widget
+* Tweak: Implemented CSS logical properties to Icon Position control in Button widget
+* Tweak: Promoted Grid Container feature to Stable status
+* Tweak: Activated Optimized Control Loading by default for new sites
+* Tweak: Changed Generative Fill AI image feature to use Clipdrop text-inpainting
+* Tweak: Added functionality to delay the running of the ready triggers on inner elements
+* Tweak: Deactivated Landing Page feature for new sites
+* Fix: "Exit to" functionality is not working with the Editor Top Bar ([#22828](https://github.com/elementor/elementor/issues/22828))
+* Fix: Row-reversed direction is not working on mobile portrait breakpoint in Container ([#23710](https://github.com/elementor/elementor/issues/23710))
+* Fix: The What's' New string in the Editor is not translatable (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Fatal error appears when updating a page with Tabs widget
+* Fix: Transparency indicator not visible in UI Light theme for Color Picker
+* Fix: AI Expand Images not working on local and protected websites
+* Fix: `all: unset` assigned to buttons cause focus issues
+* Fix: Links to Elementor Settings are broken in various locations
+* Fix: `RunReadyTrigger` returning incorrectly in various scenarios
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

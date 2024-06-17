@@ -15,6 +15,23 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId: string;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
 	test.beforeEach( async () => {
 		pageId = await createPage();
 	} );
@@ -65,9 +82,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 				buttonBelow = frame.locator( '.elementor-button >> nth=3' );
 
 			// Assert.
-			await frame.locator( '.page-header' ).click();
-
-			await page.keyboard.press( 'Tab' );
+			await tabTitleOne.focus();
 			await expect( tabTitleOne ).toBeFocused();
 			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
 			await page.keyboard.press( 'Tab' );
@@ -175,9 +190,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set tabs direction to 'stretch'.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-align-stretch-h' ).click();
+		await editor.setChooseControlValue( 'tabs_justify_horizontal', 'eicon-align-stretch-h' );
 		// Set align title to 'start'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
+		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-left' );
 
 		// Assert.
 		// Check if title's are aligned on the left.
@@ -198,8 +213,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
-		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
+		await editor.openSection( 'section_tabs_responsive' );
+		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 
 		const desktopTabWrapper = editor.getPreviewFrame().locator( '.e-n-tabs-heading' );
 
@@ -288,18 +303,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
-		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-		await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'mobile' } );
+		await editor.openSection( 'section_tabs_responsive' );
+		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 		await page.locator( '.elementor-tab-control-style' ).click();
 
-		// Open responsive bar and select mobile view
-		await page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await page.waitForSelector( '#e-responsive-bar' );
-		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+		// Change responsive view to mobile
+		await editor.changeResponsiveView( 'mobile' );
 
 		// Set controls values.
-		await page.locator( '.elementor-control-tabs_title_spacing_mobile .elementor-slider-input input' ).fill( '50' );
-		await page.locator( '.elementor-control-tabs_title_space_between_mobile .elementor-slider-input input' ).fill( '25' );
+		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
+		await editor.setSliderControlValue( 'tabs_title_space_between_mobile', '25' );
 
 		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ),
 			lastTab = editor.getPreviewFrame().locator( '.e-n-tab-title' ).last();
@@ -324,11 +337,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_title_style' ).click();
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'section_title_style' );
 		await page.locator( '.elementor-control-title_hover' ).click();
-		await page.locator( '.elementor-control-title_text_color_hover .pcr-button' ).click();
-		await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', '#ff0000' );
+		await editor.setColorControlValue( 'title_text_color_hover', '#ff0000' );
 
 		const rgbColor = 'rgb(255, 0, 0)';
 		const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ).first(),
@@ -395,13 +407,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tabs direction to 'stretch' for parent widget.
 		await editor.selectElement( parentWidgetId );
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-align-stretch-h' ).click();
+		await editor.setChooseControlValue( 'tabs_justify_horizontal', 'eicon-align-stretch-h' );
 		// Set align title to 'start'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-tabs_title_background_color_background .eicon-paint-brush' ).click();
-		await page.locator( '.elementor-control-tabs_title_background_color_color .pcr-button' ).click();
-		await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#ff0000' );
+		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-left' );
+		await editor.openPanelTab( 'style' );
+		await editor.setChooseControlValue( 'tabs_title_background_color_background', 'eicon-paint-brush' );
+		await editor.setColorControlValue( 'tabs_title_background_color_color', '#ff0000' );
 
 		// Assert.
 		// Check if title's are aligned on the left for the parent widget.
@@ -465,11 +476,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Tabs styling scenario 1: Direction: Top, Align Title: Left, Icon Position: Right.
 		// Set align title to 'start'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
+		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-left' );
 		// Set icon position to 'right'.
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_position i.eicon-h-align-right' ).click();
+		await editor.setChooseControlValue( 'icon_position', 'eicon-h-align-right' );
 
 		await editor.togglePreviewMode();
 
@@ -485,23 +496,23 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		// Set Direction: Left.
-		await editor.activatePanelTab( 'content' );
-		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		await editor.openPanelTab( 'content' );
+		await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-left' );
 		// Set align title to 'right'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
+		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-right' );
 		// Set icon position to 'top'.
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
+		await editor.setChooseControlValue( 'icon_position', 'eicon-v-align-top' );
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
 		// Unset Direction: Left.
-		await editor.activatePanelTab( 'content' );
-		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		await editor.openPanelTab( 'content' );
+		await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-left' );
 		// Justify: Stretch.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-align-stretch-h' ).click();
+		await editor.setChooseControlValue( 'tabs_justify_horizontal', 'eicon-align-stretch-h' );
 		// Unset align title to 'right'.
-		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
+		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-right' );
 
 		await editor.togglePreviewMode();
 
@@ -644,17 +655,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		// Set tab hover style.
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
-		// Select solid border
-		await page.locator( '.elementor-control-tabs_title_border_hover_border select' ).selectOption( 'solid' );
+		await editor.setSelectControlValue( 'tabs_title_border_hover_border', 'solid' );
 		// Set shadow
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
 		// Close shadow panel
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
 		// Set border radius
-		await page.locator( '.elementor-control-tabs_title_border_radius .elementor-control-dimensions li:first-child input' ).fill( '15' );
+		await editor.setDimensionsValue( 'tabs_title_border_radius', '15' );
 
 		// Act.
 		await editor.publishAndViewPage();
@@ -701,17 +711,17 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			colorPinkRgb = 'rgb(225, 8, 110)';
 
 		// Normal tab styling: text color green, border color: green and icon color: yellow.
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		// Set text color.
 		await setTabItemColor( page, editor, 'section_title_style', 'title_normal', 'title_text_color', colorGreen );
 		// Set border color.
 		await setTabBorderColor( page, editor, 'normal', '', colorGreen, '5' );
 		// Set icon color.
-		await editor.activatePanelTab( 'content' );
+		await editor.openPanelTab( 'content' );
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
-		await editor.activatePanelTab( 'content' );
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_tabs_style' ).click();
+		await editor.openPanelTab( 'content' );
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'section_tabs_style' );
 
 		// Hover tab styling: text color: red, border color: red and icon color: pink.
 		// Set text color.
@@ -719,11 +729,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set border color.
 		await setTabBorderColor( page, editor, 'hover', '_hover', colorRed, '5' );
 		// Set icon color.
-		await editor.activatePanelTab( 'content' );
+		await editor.openPanelTab( 'content' );
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
-		await editor.activatePanelTab( 'content' );
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.elementor-control-section_tabs_style' ).click();
+		await editor.openPanelTab( 'content' );
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'section_tabs_style' );
 
 		// Active tab styling: text color: blue, border color: blue and icon color: brown.
 		// Set text color.
@@ -731,9 +741,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set border color.
 		await setTabBorderColor( page, editor, 'active', '_active', colorBlue, '5' );
 		// Set icon color.
-		await editor.activatePanelTab( 'content' );
+		await editor.openPanelTab( 'content' );
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_active', 'icon_color_active', colorBrown );
-		await editor.activatePanelTab( 'content' );
+		await editor.openPanelTab( 'content' );
 
 		// Act.
 		await editor.getPreviewFrame().locator( '.e-n-tab-title:first-child' ).click();
@@ -780,8 +790,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set Direction: Left.
-		await editor.activatePanelTab( 'content' );
-		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		await editor.openPanelTab( 'content' );
+		await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-left' );
 		// Get the initial first tab width.
 		await editor.getPreviewFrame().locator( '.e-n-tab-title:first-child' ).click();
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
@@ -817,7 +827,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set the hover animation.
-		await editor.activatePanelTab( 'style' );
+		await editor.openPanelTab( 'style' );
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
 		await page.locator( '.elementor-control-hover_animation .select2' ).click();
 		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
@@ -900,10 +910,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.media-toolbar-primary .media-button-gallery' ).click();
 		await page.locator( '.media-toolbar-primary .media-button-insert' ).click();
 		// Modify widget settings.
-		await page.locator( '.elementor-control-slides_to_show select' ).selectOption( '2' );
-		await page.locator( '.elementor-control-section_additional_options .elementor-panel-heading-title' ).click();
+		await editor.setSelectControlValue( 'slides_to_show', '2' );
+		await editor.openSection( 'section_additional_options' );
 		await page.locator( '.elementor-control-infinite .elementor-switch-label' ).click();
-		await page.locator( '.elementor-control-autoplay_speed input' ).fill( '800' );
+		await editor.setNumberControlValue( 'autoplay_speed', '800' );
 
 		await editor.publishAndViewPage();
 
@@ -995,7 +1005,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Set container direction to `row`.
 		await editor.selectElement( container );
-		await page.locator( '.elementor-control-flex_direction .eicon-arrow-left' ).click();
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-left' );
 
 		// Assert
 		// Get content container widths.
@@ -1202,9 +1212,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Add nested tabs and select none as breakpoint', async () => {
 			await editor.addWidget( 'nested-tabs', container );
-
-			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
+			await editor.openSection( 'section_tabs_responsive' );
+			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
 		} );
 
 		await test.step( 'Assert no accordion on mobile view', async () => {
@@ -1237,9 +1246,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			firstTabContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
 
-		await setBackgroundVideoUrl( page, editor, contentContainerOneId, videoUrl );
-		await setBackgroundVideoUrl( page, editor, contentContainerTwoId, videoUrl );
-		await setBackgroundVideoUrl( page, editor, contentContainerThreeId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerOneId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerTwoId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerThreeId, videoUrl );
 
 		await expect.soft( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect.soft( videoContainer ).toHaveCount( 1 );
@@ -1275,14 +1284,14 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
-			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			await editor.setSelectControlValue( 'horizontal_scroll', 'enable' );
 
 			await editor.openSection( 'section_tabs' );
 			Array.from( { length: 3 }, async () => {
 				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
 			} );
 
-			await editor.activatePanelTab( 'style' );
+			await editor.openPanelTab( 'style' );
 			await editor.setSliderControlValue( 'tabs_title_space_between', '500' );
 		} );
 
@@ -1367,7 +1376,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		await wpAdmin.setLanguage( 'he_IL' );
+		await wpAdmin.setSiteLanguage( 'he_IL' );
 
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -1378,8 +1387,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
-			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
-			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
+			await editor.setSelectControlValue( 'horizontal_scroll', 'enable' );
 
 			await editor.openSection( 'section_tabs' );
 			Array.from( { length: 3 }, async () => {
@@ -1430,7 +1439,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		await test.step( 'Reset language to English', async () => {
-			await wpAdmin.setLanguage( '' );
+			await wpAdmin.setSiteLanguage( '' );
 		} );
 	} );
 
@@ -1444,8 +1453,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Add widget.
 		await editor.addWidget( 'nested-tabs', container );
 		// Act
-		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
-		await page.locator( '.elementor-control-tabs_justify_vertical i.eicon-align-stretch-v' ).click();
+		await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-left' );
+		await editor.setChooseControlValue( 'tabs_justify_vertical', 'eicon-align-stretch-v' );
 
 		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
 		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
@@ -1466,8 +1475,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Add widget.
 		await editor.addWidget( 'nested-tabs', container );
 		// Act
-		await page.locator( '.elementor-control-tabs_direction i.eicon-v-align-top' ).click();
-		await page.locator( '.elementor-control-tabs_justify_horizontal i.eicon-align-stretch-h' ).click();
+		await editor.setChooseControlValue( 'tabs_direction', 'eicon-v-align-top' );
+		await editor.setChooseControlValue( 'tabs_justify_horizontal', 'eicon-align-stretch-h' );
 
 		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
 		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
