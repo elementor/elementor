@@ -55,7 +55,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
-	apiRequests: [ async ( { workerStorageState }, use ) => {
+	apiRequests: [ async ( { workerStorageState, workerBaseURL }, use ) => {
 		const context = await request.newContext( { storageState: workerStorageState } );
 		const response = await context.get( '/wp-admin/post-new.php' );
 
@@ -75,7 +75,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 		let nonce = nonceMatch[ 0 ];
 		nonce = nonce.replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
-		const apiRequests = new ApiRequests( nonce );
+		const apiRequests = new ApiRequests( nonce, workerBaseURL );
 		await use( apiRequests );
 	}, { scope: 'worker' } ],
 

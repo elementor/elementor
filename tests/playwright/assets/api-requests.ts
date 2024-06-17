@@ -4,12 +4,14 @@ import { Image, Post, WpPage } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
-	constructor( nonce: string ) {
+	private readonly baseUrl: string;
+	constructor( baseUrl: string, nonce: string ) {
 		this.nonce = nonce;
+		this.baseUrl = baseUrl;
 	}
 
 	public async create( request: APIRequestContext, entity: string, data: Post ) {
-		const response = await request.post( '/index.php', {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
 			params: { rest_route: `/wp/v2/${ entity }` },
 			headers: {
 				'X-WP-Nonce': this.nonce,
@@ -33,7 +35,7 @@ export default class ApiRequests {
 
 	public async createDefaultMedia( request: APIRequestContext, image: Image ) {
 		const imagePath = image.filePath;
-		const response = await request.post( '/index.php', {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
 			params: { rest_route: '/wp/v2/media' },
 			headers: {
@@ -64,7 +66,7 @@ export default class ApiRequests {
 	public async deleteDefaultMedia( request: APIRequestContext, ids: string[] ) {
 		const requests = [];
 		for ( const id in ids ) {
-			requests.push( request.delete( `/index.php`, {
+			requests.push( request.delete( `${ this.baseUrl }/index.php`, {
 				headers: {
 					'X-WP-Nonce': this.nonce,
 				},
@@ -92,7 +94,7 @@ export default class ApiRequests {
 	}
 
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
-		const response = await request.get( '/index.php', {
+		const response = await request.get( `${ this.baseUrl }/index.php`, {
 			params: {
 				rest_route: `/wp/v2/${ entity }`,
 				status,
@@ -120,7 +122,7 @@ export default class ApiRequests {
 	}
 
 	private async _delete( request: APIRequestContext, entity: string, id: string ) {
-		const response = await request.delete( '/index.php', {
+		const response = await request.delete( `${ this.baseUrl }/index.php`, {
 			params: { rest_route: `/wp/v2/${ entity }/${ id }` },
 			headers: {
 				'X-WP-Nonce': this.nonce,

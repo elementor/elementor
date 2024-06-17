@@ -17,7 +17,7 @@ async function globalSetup( config: FullConfig ) {
 	} );
 
 	// Save the nonce and storage state in environment variables, to allow use them when creating the API context.
-	const response = await context.get( '/wp-admin/post-new.php' );
+	const response = await context.get( `${ baseURL }/wp-admin/post-new.php` );
 
 	if ( ! response.ok() ) {
 		throw new Error( `
@@ -48,7 +48,7 @@ async function globalSetup( config: FullConfig ) {
 		extension: 'jpg',
 	};
 
-	const apiRequests = new ApiRequests( nonce );
+	const apiRequests = new ApiRequests( nonce, baseURL );
 	imageIds.push( await apiRequests.createDefaultMedia( context, image1 ) );
 	imageIds.push( await apiRequests.createDefaultMedia( context, image2 ) );
 
