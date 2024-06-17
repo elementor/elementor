@@ -23,7 +23,7 @@ export class AfterSelect extends After {
 		switch ( type ) {
 			case 'section':
 			case 'container':
-				$e.run( 'document/elements/deselect', args );
+				$e.run( 'document/elements/select', { container: args.container.children[ 0 ], append: false } );
 				break;
 			default:
 				break;
