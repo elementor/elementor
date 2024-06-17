@@ -183,7 +183,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -199,7 +202,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -234,7 +240,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -249,7 +258,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -265,7 +277,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -288,7 +303,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -626,7 +644,10 @@ class Ai extends Library {
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 

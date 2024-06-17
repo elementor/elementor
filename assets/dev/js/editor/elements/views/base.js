@@ -659,6 +659,42 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
+	isAtomicDynamic( dataBinding, changedControl ) {
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+	},
+
+	getDynamicValue( settings, bindingSetting ) {
+		const dynamicSettings = { active: true },
+			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
+
+		if ( valueToParse ) {
+			try {
+				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			} catch {
+				return false;
+			}
+		}
+
+		return settings.attributes[ bindingSetting ];
+	},
+
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+			return false;
+		}
+
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
+
+		const allKeys = keys1.concat( keys2 );
+
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
+	},
+
 	/**
 	 * Function linkDataBindings().
 	 *
@@ -677,8 +713,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
+	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
+	 * UPDATE: Support for dynamics has experimentally been added in v3.23
 	 */
 	linkDataBindings() {
 		/**
@@ -729,7 +767,17 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = ( dataBinding ) => {
-			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+			const { bindingSetting } = dataBinding.dataset,
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+			let change = settings.changed[ bindingSetting ];
+
+			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
+				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+
+				if ( dynamicValue ) {
+					change = dynamicValue;
+				}
+			}
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;

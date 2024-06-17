@@ -15,6 +15,23 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId: string;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
 	test.beforeEach( async () => {
 		pageId = await createPage();
 	} );
@@ -65,9 +82,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 				buttonBelow = frame.locator( '.elementor-button >> nth=3' );
 
 			// Assert.
-			await frame.locator( '.page-header' ).click();
-
-			await page.keyboard.press( 'Tab' );
+			await tabTitleOne.focus();
 			await expect( tabTitleOne ).toBeFocused();
 			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
 			await page.keyboard.press( 'Tab' );
@@ -292,10 +307,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 		await page.locator( '.elementor-tab-control-style' ).click();
 
-		// Open responsive bar and select mobile view
-		await page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await page.waitForSelector( '#e-responsive-bar' );
-		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+		// Change responsive view to mobile
+		await editor.changeResponsiveView( 'mobile' );
 
 		// Set controls values.
 		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
@@ -1233,9 +1246,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			firstTabContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
 
-		await setBackgroundVideoUrl( page, editor, contentContainerOneId, videoUrl );
-		await setBackgroundVideoUrl( page, editor, contentContainerTwoId, videoUrl );
-		await setBackgroundVideoUrl( page, editor, contentContainerThreeId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerOneId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerTwoId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerThreeId, videoUrl );
 
 		await expect.soft( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect.soft( videoContainer ).toHaveCount( 1 );

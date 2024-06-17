@@ -6,9 +6,84 @@
 	--e-contact-buttons-icon-medium: 24px;
 	--e-contact-buttons-icon-large: 26px;
 	--e-contact-buttons-button-bg-hover: #324A6D;
-	--e-contact-buttons-close-button-color: #1C2448;
+	--e-contact-buttons-active-button-color: #1C2448;
 	--e-contact-buttons-contact-button-icon-hover: #467FF7;
 	--e-contact-buttons-contact-button-bg-hover: #FFFFFF;
+
+	width: auto;
+
+	&.has-h-alignment-end {
+		
+		.e-contact-buttons__chat-button-container {
+			padding-inline-end: 0;
+		}
+
+		.e-contact-buttons__contact-links {
+			align-items: flex-end;
+		}
+	}
+
+	&.has-h-alignment-end,
+	&.has-h-alignment-center {
+
+		.e-contact-buttons__contact-tooltip {
+			&::after {
+				border-inline-start-color: var(--e-contact-buttons-tooltip-bg);
+				border-inline-end-color: transparent;
+				border-block-start-color: transparent;
+				border-block-end-color: transparent;
+				border-inline-start-width: 10px;
+				border-inline-end-width: 0;
+				border-block-start-width: 8px;
+				border-block-end-width: 8px;
+				inset-inline-end: -8px;
+			}
+		}
+	}
+
+	&.has-h-alignment-start {
+
+		.e-contact-buttons__chat-button-container {
+			padding-inline-start: 0;
+		}
+
+		.e-contact-buttons__contact-links {
+			align-items: flex-start;
+		}
+
+		.e-contact-buttons__contact-tooltip {
+			order: 2;
+		}
+
+		.e-contact-buttons__contact-icon-container  {
+			order: 1;
+		}
+
+		.e-contact-buttons__contact-tooltip {
+			&::after {
+				border-inline-start-color: transparent;
+				border-inline-end-color: var(--e-contact-buttons-tooltip-bg);
+				border-block-start-color: transparent;
+				border-block-end-color: transparent;
+				border-inline-start-width: 0;
+				border-inline-end-width: 10px;
+				border-block-start-width: 8px;
+				border-block-end-width: 8px;
+				inset-inline-start: -8px;
+			}
+		}
+	}
+
+	&.has-h-alignment-center {
+
+		.e-contact-buttons__contact-links {
+			align-items: center;
+		}
+
+		.e-contact-buttons__content-wrapper {
+			inset-inline-end: 40px;
+		}
+	}
 
 	.has-size-small {
 		&.e-contact-buttons__chat-button,
@@ -57,7 +132,8 @@
 	}
 
 	.e-contact-buttons__close-button {
-		background-color: var(--e-contact-buttons-close-button-bg);
+		background-color: var(--e-contact-buttons-active-button-bg);
+		color: var(--e-contact-buttons-active-button-color);
 		border-radius: 50%;
 		inset-inline-end: unset;
 		inset-inline-start: unset;
@@ -68,7 +144,7 @@
 	.e-contact-buttons__close-button,
 	.e-contact-buttons__chat-button {
 
-		&[aria-hidden="true"] {
+		&[aria-expanded="false"] {
 			display: none;
 		}
 	}
@@ -81,11 +157,9 @@
 	}
 
 	.e-contact-buttons__contact-links {
-		align-items: flex-end;
 		display: flex;
 		flex-direction: column;
 		gap: var(--e-contact-buttons-contact-gap);
-		margin-bottom: var(--e-contact-buttons-contact-gap);
 	}
 
 	.e-contact-buttons__contact-icon-container {
@@ -133,18 +207,9 @@
 
 		&::after {
 			border-style: solid;
-			border-inline-start-width: 10px;
-			border-inline-end-width: 0;
-			border-block-start-width: 8px;
-			border-block-end-width: 8px;
-			border-inline-start-color: var(--e-contact-buttons-tooltip-bg);
-			border-inline-end-color: transparent;
-			border-block-start-color: transparent;
-			border-block-end-color: transparent;
 			content: "";
 			height: 0;
 			position: absolute;
-			inset-inline-end: -8px;
 			top: 50%;
 			transform: translateY(-50%);
 			width: 0;
