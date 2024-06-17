@@ -4,6 +4,7 @@ import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
+test.describe.configure( { mode: 'parallel' } );
 test.describe( 'Elementor regression tests with templates for CORE', () => {
 	const testData = [
 		'divider',

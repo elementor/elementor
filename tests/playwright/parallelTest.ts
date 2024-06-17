@@ -75,7 +75,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 		let nonce = nonceMatch[ 0 ];
 		nonce = nonce.replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
-		const apiRequests = new ApiRequests( nonce, workerBaseURL );
+		const apiRequests = new ApiRequests( workerBaseURL, nonce );
 		await use( apiRequests );
 	}, { scope: 'worker' } ],
 

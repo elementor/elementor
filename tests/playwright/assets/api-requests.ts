@@ -35,36 +35,32 @@ export default class ApiRequests {
 
 	public async createDefaultMedia( request: APIRequestContext, image: Image ) {
 		const imagePath = image.filePath;
-		try {
-			const response = await request.post( `${ this.baseUrl }/index.php`, {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
-				params: { rest_route: '/wp/v2/media' },
-				headers: {
-					'X-WP-Nonce': this.nonce,
-				},
-				multipart: {
-					file: fs.createReadStream( imagePath ),
-					title: image.title,
-					status: 'publish',
-					description: image.description,
-					alt_text: image.alt_text,
-					caption: image.caption,
-				},
-			} );
+			params: { rest_route: '/wp/v2/media' },
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart: {
+				file: fs.createReadStream( imagePath ),
+				title: image.title,
+				status: 'publish',
+				description: image.description,
+				alt_text: image.alt_text,
+				caption: image.caption,
+			},
+		} );
 
-			if ( ! response.ok() ) {
-				throw new Error( `
+		if ( ! response.ok() ) {
+			throw new Error( `
 			Failed to create default media: ${ response.status() }.
 			${ await response.text() }
 		` );
-			}
-
-			const { id } = await response.json();
-
-			return id;
-		} catch ( e ) {
-			throw new Error( `Failed to send request to url ${ this.baseUrl }/index.php`, { cause: e } );
 		}
+
+		const { id } = await response.json();
+
+		return id;
 	}
 
 	public async deleteDefaultMedia( request: APIRequestContext, ids: string[] ) {
