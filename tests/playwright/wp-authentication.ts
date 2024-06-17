@@ -1,15 +1,15 @@
 import { APIRequest, APIRequestContext } from '@playwright/test';
 
-export async function login( apiRequest: APIRequest, user: string, pw: string, url: string ) {
+export async function login( apiRequest: APIRequest, user: string, password: string, baseUrl: string ) {
 	// Important: make sure we authenticate in a clean environment by unsetting storage state.
 	const context = await apiRequest.newContext( { storageState: undefined } );
 
-	await context.post( `${ url }/wp-login.php`, {
+	await context.post( `${ baseUrl }/wp-login.php`, {
 		form: {
 			log: user,
-			pwd: pw,
+			pwd: password,
 			'wp-submit': 'Log In',
-			redirect_to: `${ url }/wp-admin/`,
+			redirect_to: `${ baseUrl }/wp-admin/`,
 			testcookie: '1',
 		},
 	} );
