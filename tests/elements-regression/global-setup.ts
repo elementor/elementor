@@ -1,5 +1,5 @@
 import { request, type FullConfig } from '@playwright/test';
-import ApiRequests from './assets/api-requests';
+import ApiRequests from '../playwright/assets/api-requests';
 import path from "path";
 
 async function globalSetup( config: FullConfig ) {
