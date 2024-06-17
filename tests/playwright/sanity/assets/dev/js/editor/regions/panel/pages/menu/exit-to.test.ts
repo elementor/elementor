@@ -1,45 +1,60 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.openNewPage();
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
+	const hasTopBar = await editor.hasTopBar();
+	let exit;
 
-	await editor.page.click( '#elementor-panel-header-menu-button' );
+	if ( hasTopBar ) {
+		// Exit to `dashboard`
+		await editor.openUserPreferencesPanel();
+		await editor.setSelectControlValue( 'exit_to', 'dashboard' );
+		await editor.clickTopBarItem( 'Elementor Logo' );
+		await page.waitForTimeout( 100 );
+		exit = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+		await page.press( 'body', 'Escape' );
+		expect( exit ).toContain( '/wp-admin/' );
 
-	// Trigger dialog by click on the "Exit" button
-	await editor.page.click( 'text=Exit' );
-	await editor.page.click( 'a:has-text("User Preferences")' );
+		// Exit to `this_post`
+		await editor.openUserPreferencesPanel();
+		await editor.setSelectControlValue( 'exit_to', 'this_post' );
+		await editor.clickTopBarItem( 'Elementor Logo' );
+		await page.waitForTimeout( 100 );
+		exit = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+		await page.press( 'body', 'Escape' );
+		expect( exit ).toContain( '/wp-admin/post.php?post=' );
 
-	await editor.page.click( '#elementor-panel-header-menu-button' );
-
-	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
-	let exitHref = '';
-
-	// Select dashboard
-	await setExitUserPreference( page, 'dashboard' );
-
-	exitHref = await exit.getAttribute( 'href' );
-
-	expect( exitHref ).toContain( '/wp-admin/' );
-
-	// Select wp_post_type
-	await setExitUserPreference( page, 'this_post' );
-
-	exitHref = await exit.getAttribute( 'href' );
-
-	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
-
-	// Select all_posts
-	await setExitUserPreference( page, 'all_posts' );
-
-	exitHref = await exit.getAttribute( 'href' );
-
-	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
+		// Exit to `all_posts`
+		await editor.openUserPreferencesPanel();
+		await editor.setSelectControlValue( 'exit_to', 'all_posts' );
+		await editor.clickTopBarItem( 'Elementor Logo' );
+		await page.waitForTimeout( 100 );
+		exit = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
+		await page.press( 'body', 'Escape' );
+		expect( exit ).toContain( '/wp-admin/edit.php?post_type=' );
+	} else {
+		// Exit to `dashboard`
+		await editor.openElementsPanel();
+		await editor.openUserPreferencesPanel();
+		await editor.setSelectControlValue( 'exit_to', 'dashboard' );
+		await editor.openMenuPanel();
+		exit = await page.locator( '.elementor-panel-menu-item-exit > a' ).getAttribute( 'href' );
+		expect( exit ).toContain( '/wp-admin/' );
+		// Exit to `this_post`
+		await editor.openElementsPanel();
+		await editor.openUserPreferencesPanel();
+		await editor.setSelectControlValue( 'exit_to', 'this_post' );
+		await editor.openMenuPanel();
+		exit = await page.locator( '.elementor-panel-menu-item-exit > a' ).getAttribute( 'href' );
+		expect( exit ).toContain( '/wp-admin/post.php?post=' );
+		// Exit to `all_posts`
+		await editor.openElementsPanel();
+		await editor.openUserPreferencesPanel();
+		await editor.setSelectControlValue( 'exit_to', 'all_posts' );
+		await editor.openMenuPanel();
+		exit = await page.locator( '.elementor-panel-menu-item-exit > a' ).getAttribute( 'href' );
+		expect( exit ).toContain( '/wp-admin/edit.php?post_type=' );
+	}
 } );
-
-const setExitUserPreference = async ( page: Page, option: string ) => {
-	await page.click( '.elementor-panel-menu-item-editor-preferences' );
-	await page.selectOption( '.elementor-control-exit_to >> select', option );
-	await page.click( '#elementor-panel-header-menu-button' );
-};
