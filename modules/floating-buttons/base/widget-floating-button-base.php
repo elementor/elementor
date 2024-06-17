@@ -16,6 +16,14 @@ abstract class Widget_Floating_Button_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
+	public function show_in_panel() {
+		return false;
+	}
+
+	public function hide_on_search() {
+		return true;
+	}
+
 	public static function get_configuration() {
 		return [
 			'content' => [
