@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Editor v2', () => {
+test.describe( 'Editor top bar', () => {
 	let editor;
 	let wpAdmin;
 	let context;

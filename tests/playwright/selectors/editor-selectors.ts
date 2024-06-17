@@ -25,11 +25,9 @@ const EditorSelectors = {
 		},
 		siteSettings: {
 			wrapper: '#elementor-panel-page-menu',
-			menuPanelItem: '.elementor-panel-menu-item-global-settings',
 		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
-			menuPanelItem: '.elementor-panel-menu-item-editor-preferences',
 		},
 		navigator: {
 			wrapper: '#elementor-navigator',
