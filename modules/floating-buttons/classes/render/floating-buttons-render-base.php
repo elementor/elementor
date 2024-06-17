@@ -5,6 +5,7 @@ namespace Elementor\Modules\FloatingButtons\Classes\Render;
 use Elementor\Icons_Manager;
 use Elementor\Modules\FloatingButtons\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Button_Base;
+use Elementor\Utils;
 
 /**
  * Class Contact_Buttons_Render_Base.
@@ -191,6 +192,9 @@ abstract class Floating_Buttons_Render_Base {
 	}
 
 	protected function render_message_bubble_powered_by(): void {
+		if ( Utils::has_pro() ) {
+			return;
+		}
 		?>
 			<div class="e-contact-buttons__powered-container">
 				<p class="e-contact-buttons__powered-text">
