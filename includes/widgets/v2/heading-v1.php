@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Widget_Heading_V2 extends Widget_Base_V2 {
+class Widget_Heading_V1 extends Widget_Base_V2 {
 	public function get_v2_controls() {
 		return [
 			'blabla' => 'blabla',
@@ -18,15 +18,15 @@ class Widget_Heading_V2 extends Widget_Base_V2 {
 	}
 
 	public function get_title() {
-		return 'Heading V2';
+		return 'Heading V1.5';
 	}
 
 	public function get_name() {
-		return 'heading-v2';
+		return 'heading-v1';
 	}
 
 	protected function render() {
-		echo '<h2>' . 'Heading ' . '</h2>';
+		echo '<h2>' . 'Heading  V1' . '</h2>';
 	}
 }
 

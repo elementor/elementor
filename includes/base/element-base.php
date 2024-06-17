@@ -27,7 +27,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @access private
 	 *
-	 * @var Element_Base[]
+	 * @var []
 	 */
 	private $children;
 
@@ -203,7 +203,6 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @param array $element_data Element data.
 	 *
-	 * @return Element_Base
 	 */
 	abstract protected function _get_default_child_type( array $element_data );
 
@@ -307,7 +306,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return Element_Base[] Child elements.
+	 * @return [] Child elements.
 	 */
 	public function get_children() {
 		if ( null === $this->children ) {
@@ -359,7 +358,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * @param array $child_data Child element data.
 	 * @param array $child_args Child element arguments.
 	 *
-	 * @return Element_Base|false Child element instance, or false if failed.
 	 */
 	public function add_child( array $child_data, array $child_args = [] ) {
 		if ( null === $this->children ) {
@@ -367,6 +365,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		$child_type = $this->get_child_type( $child_data );
+
 
 		if ( ! $child_type ) {
 			return false;
@@ -1476,7 +1475,6 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @param array $element_data Element ID.
 	 *
-	 * @return Element_Base|false Child type or false if type not found.
 	 */
 	private function get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
@@ -1495,7 +1493,6 @@ abstract class Element_Base extends Controls_Stack {
 		 *
 		 * @param Element_Base $child_type   The child element.
 		 * @param array        $element_data The original element ID.
-		 * @param Element_Base $this         The original element.
 		 */
 		$child_type = apply_filters( 'elementor/element/get_child_type', $child_type, $element_data, $this );
 

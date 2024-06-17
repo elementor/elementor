@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
-use Elementor\Controls_Stack;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Local_Cache;
 use Elementor\Core\Files\CSS\Post_Preview;
@@ -29,7 +28,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 		return false;
 	}
 
-	protected function render_styles( Element_Base $element ) {
+	protected function render_styles( $element ) {
 		$id = $element->get_id();
 
 		if ( in_array( $id, $this->post_dynamic_elements_ids ) ) {
@@ -101,7 +100,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 	 * @since 2.0.13
 	 * @access public
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules(  $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
 
 		if ( ! empty( $dynamic_settings ) ) {

@@ -44,7 +44,7 @@ abstract class Base {
 	 *
 	 * @return void
 	 */
-	public function unique_element_action( Element_Base $element_data ) {}
+	public function unique_element_action( $element_data ) {}
 
 	/**
 	 * Element Action.
@@ -56,7 +56,7 @@ abstract class Base {
 	 *
 	 * @return void
 	 */
-	public function element_action( Element_Base $element_data ) {}
+	public function element_action( $element_data ) {}
 
 	/**
 	 * After Elements Iteration.

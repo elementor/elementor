@@ -4,7 +4,6 @@ namespace Elementor\Core\Files\CSS;
 use Elementor\Base_Data_Control;
 use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
@@ -540,14 +539,14 @@ abstract class Base extends Base_File {
 	 * @since 1.6.0
 	 * @access public
 	 *
-	 * @param Controls_Stack $controls_stack The controls stack.
+	 * @param $controls_stack The controls stack.
 	 * @param array          $controls       Controls array.
 	 * @param array          $values         Values array.
 	 * @param array          $placeholders   Placeholders.
 	 * @param array          $replacements   Replacements.
 	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
 		if ( ! $all_controls ) {
 			$all_controls = $controls_stack->get_controls();
 		}
@@ -820,13 +819,13 @@ abstract class Base extends Base_File {
 	 * @since 2.0.0
 	 * @access private
 	 *
-	 * @param Controls_Stack $controls_stack   The control stack.
+	 * @param $controls_stack   The control stack.
 	 * @param array          $repeater_control The repeater control.
 	 * @param array          $repeater_values  Repeater values array.
 	 * @param array          $placeholders     Placeholders.
 	 * @param array          $replacements     Replacements.
 	 */
-	protected function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_control, array $repeater_values, array $placeholders, array $replacements ) {
+	protected function add_repeater_control_style_rules( $controls_stack, array $repeater_control, array $repeater_values, array $placeholders, array $replacements ) {
 		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
 		foreach ( $repeater_control['style_fields'] as $index => $item ) {
@@ -909,7 +908,7 @@ abstract class Base extends Base_File {
 		return $value;
 	}
 
-	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final protected function get_active_controls( $controls_stack, array $controls = null, array $settings = null ) {
 		if ( ! $controls ) {
 			$controls = $controls_stack->get_controls();
 		}
@@ -937,7 +936,7 @@ abstract class Base extends Base_File {
 		return $active_controls;
 	}
 
-	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final public function get_style_controls( $controls_stack, array $controls = null, array $settings = null ) {
 		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
 
 		$style_controls = [];
@@ -1000,7 +999,7 @@ abstract class Base extends Base_File {
 		return $settings;
 	}
 
-	private function is_global_control( Controls_Stack $controls_stack, $control_name, $controls ) {
+	private function is_global_control( $controls_stack, $control_name, $controls ) {
 		$control = $controls[ $control_name ];
 
 		$control_global_key = $control_name;

@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
@@ -33,6 +34,8 @@ class Widgets_Manager {
 	 * @var Widget_Base[]
 	 */
 	private $_widget_types = null;
+
+	private $_v2_widget_types = [];
 
 	/**
 	 * Promoted widget types.
@@ -100,7 +103,7 @@ class Widgets_Manager {
 		];
 
 		$v2_build_filenames = [
-			'heading-v2',
+			'heading-v1',
 		];
 
 		$this->_widget_types = [];
@@ -128,6 +131,8 @@ class Widgets_Manager {
 		}
 
 		$this->register_wp_widgets();
+
+		$this->register_v2_widgets();
 
 		/**
 		 * After widgets registered.
@@ -203,6 +208,31 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Register v2 widgets.
+	 *
+	 * Add Elementor v2 widgets to the list of registered widget types.
+	 *
+	 * @since 3.0.0
+	 * @access private
+	*/
+	private function register_v2_widgets()
+	{
+		$widgets = [
+			'heading-v2',
+		];
+
+		foreach ($widgets as $widget_filename) {
+			include ELEMENTOR_PATH . 'includes/widgets-v2/' . $widget_filename . '.php';
+
+			$class_name = str_replace('-', '_', $widget_filename);
+
+			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
+
+			$this->register_v2_widget(new $class_name());
+		}
+	}
+
+	/**
 	 * Require files.
 	 *
 	 * Require Elementor widget base class.
@@ -268,7 +298,7 @@ class Widgets_Manager {
 		 * @since 3.18.0
 		 *
 		 * @param bool $should_register Should widget be registered. Default is `true`.
-		 * @param \Elementor\Widget_Base $widget_instance Widget instance.
+		 * @param \Elementor\$widget_instance Widget instance.
 		 */
 		$should_register = apply_filters( 'elementor/widgets/is_widget_enabled', true, $widget_instance );
 
@@ -277,6 +307,12 @@ class Widgets_Manager {
 		}
 
 		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;
+
+		return true;
+	}
+
+	public function register_v2_widget( $widget_instance ) {
+		$this->_v2_widget_types[ $widget_instance->get_name() ] = $widget_instance;
 
 		return true;
 	}
@@ -358,10 +394,10 @@ class Widgets_Manager {
 		}
 
 		if ( null !== $widget_name ) {
-			return isset( $this->_widget_types[ $widget_name ] ) ? $this->_widget_types[ $widget_name ] : null;
+			return $this->_widget_types[ $widget_name ] ?? $this->_v2_widget_types[ $widget_name ] ?? null;
 		}
 
-		return $this->_widget_types;
+		return array_merge( $this->_widget_types, $this->_v2_widget_types );
 	}
 
 	/**
@@ -399,14 +435,16 @@ class Widgets_Manager {
 				continue;
 			}
 
-			if ( $widget instanceof Widget_Base_V2 ) {
-				$controls = $widget->get_v2_controls();
-			} else {
-				$controls = $widget->get_stack( false )['controls'];
+			if ( str_contains( $widget_key, 'v2' ) ){
+				$config[ $widget_key ] = [
+					'controls' => $widget->get_controls(),
+				];
+
+				continue;
 			}
 
 			$config[ $widget_key ] = [
-				'controls' => $controls,
+				'controls' => $widget->get_stack( false )['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
 			];
 		}
@@ -423,7 +461,7 @@ class Widgets_Manager {
 		$force_locale->force();
 
 		$controls = ( new Collection( $this->get_widget_types() ) )
-			->map( function ( Widget_Base $widget ) {
+			->map( function ( $widget ) {
 				$controls = $widget->get_stack( false )['controls'];
 
 				return [

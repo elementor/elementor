@@ -18,7 +18,7 @@ class Assets extends Base {
 	// Default value must be empty.
 	private $saved_page_assets;
 
-	public function element_action( Element_Base $element_data ) {
+	public function element_action( $element_data ) {
 		$settings = $element_data->get_active_settings();
 		$controls = $element_data->get_controls();
 
