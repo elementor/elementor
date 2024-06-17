@@ -17,8 +17,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Prompt History Button', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History Button', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 

@@ -1,21 +1,22 @@
-import { expect } from '@playwright/test';
+import { expect, Page, TestInfo } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import ApiRequests from '../../../assets/api-requests';
 
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 
 		await page.close();
 	} );
 
-	test( 'Enabling Styleguide Preview user preference enabled Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
+	test( 'Enabling Styleguide Preview user preference enabled Styleguide Preview at Global Colors and Global Typography', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		page.setDefaultTimeout( 20000 );
 
@@ -87,10 +88,10 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( styleguidePreviewDialog ).toBeVisible();
 	} );
 
-	test( 'Disabling Styleguide Preview user preference disables Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
+	test( 'Disabling Styleguide Preview user preference disables Styleguide Preview at Global Colors and Global Typography', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		page.setDefaultTimeout( 20000 );
 
@@ -151,9 +152,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( styleguidePreviewDialog ).toBeHidden();
 	} );
 
-	test( 'Enabling Styleguide Preview at Global Colors shows the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
+	test( 'Enabling Styleguide Preview at Global Colors shows the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', false );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', false );
 
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -176,9 +177,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 	} );
 
-	test( 'Enabling Styleguide Preview at Global Typography shows the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
+	test( 'Enabling Styleguide Preview at Global Typography shows the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', false );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', false );
 
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -201,10 +202,10 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 	} );
 
-	test( 'Disabling Styleguide Preview at Global Colors hides the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
+	test( 'Disabling Styleguide Preview at Global Colors hides the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
@@ -226,9 +227,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 	} );
 
-	test( 'Disabling Styleguide Preview at Global Typography hides the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
+	test( 'Disabling Styleguide Preview at Global Typography hides the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
 
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -251,9 +252,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 	} );
 
-	test( 'Clicks on color trigger picker state and active state', async ( { page }, testInfo ) => {
+	test( 'Clicks on color trigger picker state and active state', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 
 		const primaryColor = editor.getPreviewFrame().getByText( /Primary#[A-Fa-f0-9]{6}/i );
 		const picker = page.locator( '.pcr-button' ).first();
@@ -279,9 +280,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( primaryColor ).not.toHaveClass( /active/ );
 	} );
 
-	test( 'Clicks on font trigger picker state and active state', async ( { page }, testInfo ) => {
+	test( 'Clicks on font trigger picker state and active state', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
 
 		const secondaryFont = editor.getPreviewFrame().getByText( 'Secondary' + fontsContentText );
 		const picker = page.locator( '.elementor-control-popover-toggle-toggle-label' ).nth( 1 );
@@ -310,9 +311,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( secondaryFont ).not.toHaveClass( /active/ );
 	} );
 
-	test( 'Change font title', async ( { page }, testInfo ) => {
+	test( 'Change font title', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
 
 		const input = page.locator( '.elementor-repeater-fields' ).nth( 2 );
 
@@ -325,9 +326,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( TextFont ).toContainText( 'Textmore' );
 	} );
 
-	test( 'Change color title', async ( { page }, testInfo ) => {
+	test( 'Change color title', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 
 		const input = page.locator( '.elementor-repeater-fields' ).nth( 1 );
 
@@ -340,9 +341,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( secondaryColor ).toContainText( 'Secondarymore' );
 	} );
 
-	test( 'Adding and removing new colors', async ( { page }, testInfo ) => {
+	test( 'Adding and removing new colors', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 
 		const picker = page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.pcr-button' );
 		const addButton = page.getByRole( 'button', { name: 'Add Color' } );
@@ -370,9 +371,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( number ).toEqual( 0 );
 	} );
 
-	test( 'Adding and removing new fonts', async ( { page }, testInfo ) => {
+	test( 'Adding and removing new fonts', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
 		const addButton = page.getByRole( 'button', { name: 'Add Style' } );
 
 		// Act.
@@ -396,9 +397,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( number ).toEqual( 0 );
 	} );
 
-	test( 'Changed color in picker to reflect in styleguide', async ( { page }, testInfo ) => {
+	test( 'Changed color in picker to reflect in styleguide', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 		const secondaryColor = editor.getPreviewFrame().getByText( /Secondary#[A-Fa-f0-9]{6}/i );
 
 		const picker = page.locator( '.elementor-repeater-fields' ).nth( 1 ).locator( '.pcr-button' );
@@ -410,9 +411,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( secondaryColor.locator( 'div' ).first() ).toHaveCSS( 'background-color', 'rgb(89, 72, 51)' );
 	} );
 
-	test( 'Changed font values in picker to reflect in styleguide', async ( { page }, testInfo ) => {
+	test( 'Changed font values in picker to reflect in styleguide', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
 
 		const textFont = editor.getPreviewFrame().getByText( 'Text' + fontsContentText );
 		const picker = page.locator( '.elementor-repeater-fields' ).nth( 2 ).locator( '.eicon-edit' ).first();
@@ -430,9 +431,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( content ).toHaveCSS( 'text-decoration-line', 'underline' );
 	} );
 
-	test( 'Switching between tabs makes relevant area visible', async ( { page }, testInfo ) => {
+	test( 'Switching between tabs makes relevant area visible', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 		await page.waitForTimeout( 2000 );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
@@ -456,9 +457,9 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await expect( editor.getPreviewFrame().getByText( 'Global Colors' ) ).toBeVisible();
 	} );
 
-	test( 'Clicking header buttons makes relevant area visible', async ( { page }, testInfo ) => {
+	test( 'Clicking header buttons makes relevant area visible', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
 
 		const fontsButton = editor.getPreviewFrame().getByRole( 'button', { name: 'Fonts' } );
 		const colorButton = editor.getPreviewFrame().getByRole( 'button', { name: 'Colors' } );
@@ -477,12 +478,12 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	} );
 } );
 
-async function isStyleguidePreviewUserPreferencesEnabled( page ) {
+async function isStyleguidePreviewUserPreferencesEnabled( page: Page ) {
 	return await page.evaluate( () => elementor.getPreferences( 'enable_styleguide_preview' ) );
 }
 
-async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
-	const wpAdmin = new WpAdminPage( page, testInfo );
+async function getInSettingsTab( page: Page, testInfo: TestInfo, apiRequests: ApiRequests, tabName: string, styleguideOpen: boolean ) {
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 	page.setDefaultTimeout( 10000 );
 

@@ -4,8 +4,8 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Document tests', async () => {
 	test( 'Converting Gutenberg page to sections columns',
-		async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
+		async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				container: false,
 			} );
@@ -28,8 +28,8 @@ test.describe( 'Document tests', async () => {
 		} );
 
 	test( 'converting gutenberg page to container',
-		async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
+		async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				container: true,
 			} );

@@ -5,9 +5,9 @@ import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, set
 import _path from 'path';
 
 test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'active',
@@ -17,10 +17,10 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			e_nested_atomic_repeaters: 'inactive',
@@ -29,8 +29,8 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		await page.close();
 	} );
 
-	test( 'Repeaters functionality Test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Repeaters functionality Test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedTabsID = await editor.addWidget( 'nested-tabs', container );
@@ -81,8 +81,8 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		} );
 	} );
 
-	test( 'Performance test for repeater actions (new, clone, delete, sort)', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Performance test for repeater actions (new, clone, delete, sort)', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedTabsID = await editor.addWidget( 'nested-tabs', container ),
@@ -113,9 +113,9 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		} );
 	} );
 
-	test( 'Test Nested Tabs with Inner Nested Tabs', async ( { page }, testInfo ) => {
+	test( 'Test Nested Tabs with Inner Nested Tabs', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();

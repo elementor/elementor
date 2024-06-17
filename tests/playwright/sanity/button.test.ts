@@ -7,9 +7,9 @@ import _path from 'path';
 
 const defaultBtnName = 'Click here';
 
-test( 'Button widget sanity test', async ( { page }, testInfo ) => {
+test( 'Button widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
 	// Act.
@@ -21,9 +21,9 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	expect( await button.innerText() ).toBe( 'Click here' );
 } );
 
-test( 'Button controls should return to default', async ( { page }, testInfo ) => {
+test( 'Button controls should return to default', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'button' );
@@ -48,9 +48,9 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 	await expect( widget ).not.toHaveClass( alignCenterClassRegex );
 } );
 
-test( 'Verify button Id control', async ( { page }, testInfo ) => {
+test( 'Verify button Id control', async ( { page, apiRequests }, testInfo ) => {
 	const buttonId = 'mySuperId';
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const buttonWidget = new ButtonWidget( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
 	await buttonWidget.addWidget( defaultBtnName );
@@ -59,9 +59,9 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );
 
-test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
+test( 'Verify Button Promotions', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 	await editor.addWidget( 'button' );
 	await editor.closeSection( 'section_button' );
@@ -73,9 +73,9 @@ test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
 	} ) ).toMatchSnapshot( 'button-widget-sidebar-promotion.png' );
 } );
 
-test( 'Verify Button with Icon styling', async ( { page }, testInfo ) => {
+test( 'Verify Button with Icon styling', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
 	const filePath = _path.resolve( __dirname, `./templates/button-icon-styling.json` );

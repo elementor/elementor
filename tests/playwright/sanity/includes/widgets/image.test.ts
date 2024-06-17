@@ -24,8 +24,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	];
 
 	for ( const i in data ) {
-		test( `${ data[ i ].widgetTitle }: Image size test`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
+		test( `${ data[ i ].widgetTitle }: Image size test`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const contentTab = new Content( page, testInfo );
 			const imageTitle = 'About-Pic-3-1';
@@ -77,8 +77,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	}
 
 	for ( const i in data ) {
-		test( `${ data[ i ].widgetTitle }: Custom image size test`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
+		test( `${ data[ i ].widgetTitle }: Custom image size test`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const contentTab = new Content( page, testInfo );
 			const imageTitle = 'About-Pic-3-1';
@@ -98,8 +98,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		} );
 	}
 
-	test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Lightbox image captions aligned center', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const image = 'About-Pic-3-1';
 

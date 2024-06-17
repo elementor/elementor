@@ -5,8 +5,8 @@ import FavoriteWidgetsHelper from './helpers';
 import NotificationsHelpers from '../../../../../../../assets/js/editor/utils/notifications/helpers';
 
 test.describe( 'Favorite widgets', () => {
-	test( 'Add favorite', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Add favorite', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 

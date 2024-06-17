@@ -3,9 +3,9 @@ import { parallelTest as test } from '../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../pages/wp-admin-page';
 
 test.describe( 'ProgressBar test', () => {
-	test( 'Testing intersection observer in progress bar', async ( { page }, testInfo ) => {
+	test( 'Testing intersection observer in progress bar', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Assert.

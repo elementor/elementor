@@ -1,12 +1,18 @@
-import { type APIRequestContext, expect } from '@playwright/test';
+import { type APIRequestContext, expect, type Page, Response, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-import { create } from '../assets/api-requests';
 import { ElementorType, WindowType } from '../types/types';
 import { wpEnvCli } from '../assets/wp-env-cli';
+import ApiRequests from '../assets/api-requests';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
+	private readonly apiRequests: ApiRequests;
+	constructor( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) {
+		super( page, testInfo );
+		this.apiRequests = apiRequests;
+	}
+
 	/**
 	 * Go to the WordPress dashboard.
 	 *
@@ -68,12 +74,12 @@ export default class WpAdminPage extends BasePage {
 				title: 'Playwright Test Page - Uninitialized',
 				content: '',
 			},
-			postId = await create( request, 'pages', postDataInitial ),
+			postId = await this.apiRequests.create( request, 'pages', postDataInitial ),
 			postDataUpdated = {
 				title: `Playwright Test Page #${ postId }`,
 			};
 
-		await create( request, `pages/${ postId }`, postDataUpdated );
+		await this.apiRequests.create( request, `pages/${ postId }`, postDataUpdated );
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		return postId;
@@ -139,34 +145,16 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Get the response status for the API request.
 	 *
-	 * @param {Object} response - The response object.
-	 *
-	 * @return {Promise<boolean>}
+	 * @param {Response} response - The response object.
 	 */
-	async blockUrlResponse( response ): Promise<boolean> {
+	async blockUrlResponse( response: Response ): Promise<boolean> {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
 		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
 		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
 	}
 
 	/**
-	 * Skip the tutorial.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async skipTutorial() {
-		await this.page.waitForTimeout( 1000 );
-		const next = await this.page.$( "text='Next'" );
-
-		if ( next ) {
-			await this.page.click( '[aria-label="Close dialog"]' );
-		}
-	}
-
-	/**
 	 * Wait for the Elementor editor panel to finish loading.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async waitForPanel() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
@@ -222,12 +210,10 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Set site language.
 	 *
-	 * @param {string} language     - The site language to set.
-	 * @param {string} userLanguage - Optional. The user language to set.
-	 *
-	 * @return {Promise<void>}
+	 * @param {string}      language     - The site language to set.
+	 * @param {string|null} userLanguage - Optional. The user language to set.
 	 */
-	async setSiteLanguage( language: string, userLanguage = null ) {
+	async setSiteLanguage( language: string, userLanguage: string = null ) {
 		let languageCheck = language;
 
 		if ( 'he_IL' === language ) {

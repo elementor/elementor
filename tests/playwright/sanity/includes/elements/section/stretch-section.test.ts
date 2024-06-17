@@ -3,9 +3,9 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 
-test( 'Stretch section', async ( { page }, testInfo ) => {
+test( 'Stretch section', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 	try {
 		let editor = await wpAdmin.openNewPage();

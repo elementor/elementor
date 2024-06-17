@@ -7,12 +7,12 @@ test.describe( 'Editor v2', () => {
 	let wpAdmin;
 	let context;
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 
 		const page = await context.newPage();
 
-		wpAdmin = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( { editor_v2: true } );

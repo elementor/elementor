@@ -5,9 +5,9 @@ import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } fr
 import _path from 'path';
 
 test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'active',
@@ -17,10 +17,10 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			e_nested_atomic_repeaters: 'inactive',
@@ -29,8 +29,8 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		await page.close();
 	} );
 
-	test( 'Atomic repeaters functionality', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Atomic repeaters functionality', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
@@ -77,8 +77,8 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		} );
 	} );
 
-	test( 'Test with existing template', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Test with existing template', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		const filePath = _path.resolve( __dirname, `./templates/nested-accordion-with-content.json` );
@@ -93,8 +93,8 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		} );
 	} );
 
-	test( 'Nested Accordion with inner Nested Accordion', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Nested Accordion with inner Nested Accordion', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		const filePath = _path.resolve( __dirname, `./templates/nested-accordion-with-nested-accordion.json` );

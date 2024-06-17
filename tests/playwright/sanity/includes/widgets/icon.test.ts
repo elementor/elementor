@@ -6,22 +6,22 @@ import Content from '../../../pages/elementor-panel-tabs/content';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Icon and social icon widget tests', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.enableAdvancedUploads();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.disableAdvancedUploads();
 	} );
 
-	test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Enable SVG fit-to-size', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			iconWidget = await editor.addWidget( 'icon' ),
 			iconSelector = '.elementor-element-' + iconWidget + ' .elementor-icon';
@@ -61,8 +61,8 @@ test.describe( 'Icon and social icon widget tests', () => {
 		} );
 	} );
 
-	test( 'Social icons: upload svg', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Social icons: upload svg', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const contentTab = new Content( page, testInfo );
 		await wpAdmin.openNewPage();

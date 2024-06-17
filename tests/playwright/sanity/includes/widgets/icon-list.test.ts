@@ -3,9 +3,9 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Icon List', () => {
-	test( 'Test vertical alignment of the icons', async ( { page }, testInfo ) => {
+	test( 'Test vertical alignment of the icons', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.

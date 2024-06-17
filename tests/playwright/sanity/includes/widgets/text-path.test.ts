@@ -5,8 +5,8 @@ import EditorPage from '../../../pages/editor-page';
 import Content from '../../../pages/elementor-panel-tabs/content';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-test( 'Custom path type', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo );
+test( 'Custom path type', async ( { page, apiRequests }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = new EditorPage( page, testInfo );
 	const contentTab = new Content( page, testInfo );
 	await wpAdmin.enableAdvancedUploads();

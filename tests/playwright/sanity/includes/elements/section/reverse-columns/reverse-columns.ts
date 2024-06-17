@@ -10,10 +10,10 @@ export default class ReverseColumns {
 	readonly wpAdmin: WpAdminPage;
 	readonly editor: EditorPage;
 
-	constructor( page: Page, testInfo: TestInfo ) {
+	constructor( page: Page, testInfo: TestInfo, apiRequests ) {
 		this.page = page;
 		this.testInfo = testInfo;
-		this.wpAdmin = new WpAdminPage( this.page, this.testInfo );
+		this.wpAdmin = new WpAdminPage( this.page, this.testInfo, apiRequests );
 		this.editor = new EditorPage( this.page, this.testInfo );
 	}
 
