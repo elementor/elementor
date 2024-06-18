@@ -3,8 +3,8 @@
 namespace Elementor\Modules\FloatingButtons\Base;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Utils\Social_Network_Provider;
 use Elementor\Group_Control_Typography;
-use Elementor\Modules\FloatingButtons\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\FloatingButtons\Classes\Render\Floating_Buttons_Core_Render;
 use Elementor\Plugin;
 use Elementor\Utils;

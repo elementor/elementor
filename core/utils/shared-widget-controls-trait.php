@@ -1,13 +1,13 @@
 <?php
 
-namespace Elementor\Modules\LinkInBio\Traits;
+namespace Elementor\Core\Utils;
 
 use Elementor\Controls_Manager;
 use Elementor\Shapes;
 use Elementor\Utils;
 use Elementor\Plugin;
 
-trait Conversion_Center_Controls_Trait {
+trait Shared_Widget_Controls_Trait {
 
 	protected $border_width_range = [
 		'min' => 0,
