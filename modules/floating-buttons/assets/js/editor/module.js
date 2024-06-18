@@ -9,7 +9,7 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 	hideAdvancedTab( sectionName, editor ) {
 		const widgetType = editor?.model?.get( 'widgetType' ) || '';
 
-		if ( ! widgetType.startsWith( 'floating-buttons' ) ) {
+		if ( ! widgetType.startsWith( 'contact-buttons' ) ) {
 			return;
 		}
 
