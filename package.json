@@ -102,7 +102,7 @@
 		"karma-html2js-preprocessor": "1.1.0",
 		"karma-qunit": "4.1.2",
 		"karma-remap-coverage": "0.1.5",
-		"lighthouse": "^9.6.8",
+		"lighthouse": "^12.1.0",
 		"load-grunt-tasks": "^5.1.0",
 		"mini-css-extract-plugin": "^2.6.1",
 		"path": "^0.12.7",
