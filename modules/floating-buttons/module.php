@@ -462,7 +462,7 @@ class Module extends BaseModule {
 		return $data;
 	}
 
-	function render_floating_buttons(): void {
+	private function render_floating_buttons(): void {
 		$query = new \WP_Query( [
 			'post_type' => static::CPT_FLOATING_BUTTONS,
 			'posts_per_page' => - 1,
