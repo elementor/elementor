@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\FloatingButtons\Classes\Render;
 
-use Elementor\Core\Utils\Social_Network_Provider;
+use Elementor\Core\Base\Providers\Social_Network_Provider;
 use Elementor\Icons_Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Button_Base;
 use Elementor\Utils;

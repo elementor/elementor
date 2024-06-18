@@ -1,4 +1,4 @@
-export class ContactPageRemoveLibraryTab extends $e.modules.hookUI.After {
+export class FloatingButtonsRemoveLibraryTab extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'editor/documents/unload';
 	}
@@ -20,4 +20,4 @@ export class ContactPageRemoveLibraryTab extends $e.modules.hookUI.After {
 	}
 }
 
-export default ContactPageRemoveLibraryTab;
+export default FloatingButtonsRemoveLibraryTab;

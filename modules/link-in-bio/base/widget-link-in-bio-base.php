@@ -3,8 +3,8 @@
 namespace Elementor\Modules\LinkInBio\Base;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Utils\Shared_Widget_Controls_Trait;
-use Elementor\Core\Utils\Social_Network_Provider;
+use Elementor\Core\Base\Providers\Social_Network_Provider;
+use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\LinkInBio\Classes\Render\Core_Render;

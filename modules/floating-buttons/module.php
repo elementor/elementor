@@ -100,31 +100,7 @@ class Module extends BaseModule {
 
 		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'wp_footer', function () {
-				$query = new \WP_Query( [
-					'post_type' => static::CPT_FLOATING_BUTTONS,
-					'posts_per_page' => -1,
-					'post_status' => 'publish',
-					'fields' => 'ids',
-					'meta_key' => '_elementor_conditions',
-					'meta_compare' => 'EXISTS',
-				] );
-
-				if ( ! $query->have_posts() ) {
-					return;
-				}
-
-				foreach ( $query->posts as $post_id ) {
-					$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
-					if ( ! $conditions ) {
-						continue;
-					}
-					if ( in_array( 'include/general', $conditions ) ) {
-						$document = Plugin::$instance->documents->get( $post_id );
-						$document->print_content();
-						break;
-					}
-				}
-
+				$this->render_floating_buttons();
 			} );
 		}
 
@@ -484,6 +460,33 @@ class Module extends BaseModule {
 	private function editor_localize_settings( $data ) {
 		$data['admin_floating_button_admin_url'] = admin_url( $this->get_contact_menu_args()['menu_slug'] );
 		return $data;
+	}
+
+	function render_floating_buttons(): void {
+		$query = new \WP_Query( [
+			'post_type' => static::CPT_FLOATING_BUTTONS,
+			'posts_per_page' => - 1,
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'meta_key' => '_elementor_conditions',
+			'meta_compare' => 'EXISTS',
+		] );
+
+		if ( ! $query->have_posts() ) {
+			return;
+		}
+
+		foreach ( $query->posts as $post_id ) {
+			$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
+			if ( ! $conditions ) {
+				continue;
+			}
+			if ( in_array( 'include/general', $conditions ) ) {
+				$document = Plugin::$instance->documents->get( $post_id );
+				$document->print_content();
+				break;
+			}
+		}
 	}
 
 }

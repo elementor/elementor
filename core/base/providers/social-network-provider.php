@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\Utils;
+namespace Elementor\Core\Base\Providers;
 
 class Social_Network_Provider {
 

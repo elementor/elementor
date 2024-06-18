@@ -1,4 +1,4 @@
-export class ContactPageAddLibraryTab extends $e.modules.hookUI.After {
+export class FloatingButtonsAddLibraryTab extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'editor/documents/open';
 	}
@@ -26,4 +26,4 @@ export class ContactPageAddLibraryTab extends $e.modules.hookUI.After {
 	}
 }
 
-export default ContactPageAddLibraryTab;
+export default FloatingButtonsAddLibraryTab;

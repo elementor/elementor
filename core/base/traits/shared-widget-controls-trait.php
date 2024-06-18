@@ -1,11 +1,11 @@
 <?php
 
-namespace Elementor\Core\Utils;
+namespace Elementor\Core\Base\Traits;
 
 use Elementor\Controls_Manager;
+use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
-use Elementor\Plugin;
 
 trait Shared_Widget_Controls_Trait {
 

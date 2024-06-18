@@ -2,11 +2,10 @@
 
 namespace Elementor\Modules\LinkInBio\Classes\Render;
 
-use Elementor\Core\Utils\Shared_Widget_Controls_Trait;
-use Elementor\Core\Utils\Social_Network_Provider;
+use Elementor\Core\Base\Providers\Social_Network_Provider;
+use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Icons_Manager;
 use Elementor\Modules\LinkInBio\Base\Widget_Link_In_Bio_Base;
-
 use Elementor\Utils;
 
 /**
