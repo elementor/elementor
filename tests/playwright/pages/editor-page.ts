@@ -1383,4 +1383,22 @@ export default class EditorPage extends BasePage {
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
 	}
+
+	private async openElementorMenu() {
+		const child = this.page.locator( 'svg > title' ).getByText( 'Elementor Logo', { exact: true } );
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).locator( 'button' ).filter( { has: child } ).click();
+	}
+
+	private async closeElementorMenu() {
+		await this.page.locator( '.MuiBackdrop-root' ).click();
+	}
+
+	public async getExitToWordpressUrl() {
+		await this.openElementorMenu();
+		const child = this.page.getByText( 'Exit to WordPress', { exact: true } );
+		const exitToWordpressUrl = await this.page.locator( '.MuiMenuItem-root ' ).filter( { has: child } ).getAttribute( 'href' );
+		await this.closeElementorMenu();
+
+		return exitToWordpressUrl;
+	}
 }

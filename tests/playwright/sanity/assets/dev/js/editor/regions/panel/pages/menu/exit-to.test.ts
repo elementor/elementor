@@ -5,35 +5,27 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.openNewPage();
 
-	await editor.page.click( '#elementor-panel-header-menu-button' );
-
-	// Trigger dialog by click on the "Exit" button
-	await editor.page.click( 'text=Exit' );
-	await editor.page.click( 'a:has-text("User Preferences")' );
-
-	await editor.page.click( '#elementor-panel-header-menu-button' );
-
-	const exit = page.locator( '.elementor-panel-menu-item-exit >> a' );
-	let exitHref = '';
+	// Open User Preferences
+	await editor.openUserPreferencesPanel();
 
 	// Select dashboard
 	await setExitUserPreference( page, 'dashboard' );
 
-	exitHref = await exit.getAttribute( 'href' );
+	let exitHref = await editor.getExitToWordpressUrl();
 
 	expect( exitHref ).toContain( '/wp-admin/' );
 
 	// Select wp_post_type
 	await setExitUserPreference( page, 'this_post' );
 
-	exitHref = await exit.getAttribute( 'href' );
+	exitHref = await editor.getExitToWordpressUrl();
 
 	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
 
 	// Select all_posts
 	await setExitUserPreference( page, 'all_posts' );
 
-	exitHref = await exit.getAttribute( 'href' );
+	exitHref = await editor.getExitToWordpressUrl();
 
 	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
 } );
