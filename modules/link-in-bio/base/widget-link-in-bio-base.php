@@ -3,12 +3,12 @@
 namespace Elementor\Modules\LinkInBio\Base;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Utils\Shared_Widget_Controls_Trait;
+use Elementor\Core\Utils\Social_Network_Provider;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Modules\LinkInBio\Classes\Providers\Social_Network_Provider;
 use Elementor\Modules\LinkInBio\Classes\Render\Core_Render;
 use Elementor\Modules\LinkInBio\Module as ConversionCenterModule;
-use Elementor\Modules\LinkInBio\Traits\Conversion_Center_Controls_Trait;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -16,7 +16,7 @@ use Elementor\Widget_Base;
 
 abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
-	use Conversion_Center_Controls_Trait;
+	use Shared_Widget_Controls_Trait;
 
 	public static function get_configuration() {
 		return [

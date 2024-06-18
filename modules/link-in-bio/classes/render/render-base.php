@@ -2,10 +2,11 @@
 
 namespace Elementor\Modules\LinkInBio\Classes\Render;
 
+use Elementor\Core\Utils\Shared_Widget_Controls_Trait;
+use Elementor\Core\Utils\Social_Network_Provider;
 use Elementor\Icons_Manager;
 use Elementor\Modules\LinkInBio\Base\Widget_Link_In_Bio_Base;
-use Elementor\Modules\LinkInBio\Classes\Providers\Social_Network_Provider;
-use Elementor\Modules\LinkInBio\Traits\Conversion_Center_Controls_Trait;
+
 use Elementor\Utils;
 
 /**
@@ -17,7 +18,7 @@ use Elementor\Utils;
  */
 abstract class Render_Base {
 
-	use Conversion_Center_Controls_Trait;
+	use Shared_Widget_Controls_Trait;
 
 	protected Widget_Link_In_Bio_Base $widget;
 

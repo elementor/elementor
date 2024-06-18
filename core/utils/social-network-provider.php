@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\LinkInBio\Classes\Providers;
+namespace Elementor\Core\Utils;
 
 class Social_Network_Provider {
 
