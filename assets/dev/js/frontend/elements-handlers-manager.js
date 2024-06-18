@@ -35,7 +35,7 @@ module.exports = function( $ ) {
 	}
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'floating-buttons' ] ) {
-		this.elementsHandlers[ 'floating-buttons.default' ] = () => import( /* webpackChunkName: 'floating-buttons' */ 'elementor/modules/floating-buttons/assets/js/frontend/handlers/floating-buttons' );
+		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'floating-buttons' */ 'elementor/modules/floating-buttons/assets/js/frontend/handlers/floating-buttons' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
