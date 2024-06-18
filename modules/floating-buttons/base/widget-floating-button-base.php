@@ -3155,7 +3155,7 @@ JS;
 		$this->start_controls_section(
 			'advanced_custom_controls_section',
 			[
-				'label' => esc_html__( 'Custom', 'elementor' ),
+				'label' => esc_html__( 'CSS', 'elementor' ),
 				'tab' => static::TAB_ADVANCED,
 			]
 		);
