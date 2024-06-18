@@ -46,6 +46,7 @@
 			display: flex;
 		}
 
+		&__chat-button,
 		&__chat-button[type="button"] {
 
 			&[aria-expanded="true"] {
@@ -57,6 +58,8 @@
 			}
 		}
 
+		&__close-button,
+		&__chat-button,
 		&__close-button[type="button"],
 		&__chat-button[type="button"] {
 

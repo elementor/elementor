@@ -385,12 +385,6 @@ abstract class Floating_Buttons_Render_Base {
 			case Social_Network_Provider::SKYPE:
 				$formatted_link = ! empty( $link['username'] ) ? 'skype:' . $link['username'] . '?chat' : '';
 				break;
-			case Social_Network_Provider::WAZE:
-				$formatted_link = ! empty( $link['location'] ) ? $link['location']['url'] : '';
-				break;
-			case Social_Network_Provider::URL:
-				$formatted_link = ! empty( $link['url'] ) ? $link['url']['url'] : '';
-				break;
 			case Social_Network_Provider::TELEPHONE:
 				$formatted_link = ! empty( $link['number'] ) ? 'tel:' . $link['number'] : '';
 				break;

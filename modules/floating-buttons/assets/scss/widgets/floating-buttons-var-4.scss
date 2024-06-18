@@ -144,6 +144,7 @@
 		}
 
 
+		&__chat-button,
 		&__chat-button[type="button"] {
 
 			&[aria-expanded="true"] {
@@ -151,6 +152,7 @@
 			}
 		}
 
+		&__close-button,
 		&__close-button[type="button"] {
 
 			&[aria-expanded="false"] {
