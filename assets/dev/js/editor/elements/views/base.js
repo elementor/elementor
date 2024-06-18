@@ -685,7 +685,9 @@ BaseElementView = BaseContainer.extend( {
 					} );
 				} );
 
-				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+				return ! _.isEmpty( elementor.dynamicTags.cache )
+					? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+					: false;
 			}
 		}
 
