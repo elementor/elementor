@@ -339,7 +339,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_title_style' );
-		await page.locator( '.elementor-control-title_hover' ).click();
+		await editor.setTabControlValue( 'title_style', 'title_hover' );
 		await editor.setColorControlValue( 'title_text_color_hover', '#ff0000' );
 
 		const rgbColor = 'rgb(255, 0, 0)';
@@ -657,7 +657,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await editor.openPanelTab( 'style' );
 		// Set tab hover style.
-		await page.locator( '.elementor-control-tabs_title_hover' ).click();
+		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 		await editor.setSelectControlValue( 'tabs_title_border_hover_border', 'solid' );
 		// Set shadow
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
@@ -828,7 +828,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set the hover animation.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-tabs_title_hover' ).click();
+		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 		await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
 
 		// Assert.
