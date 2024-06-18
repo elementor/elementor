@@ -346,34 +346,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @access protected
 	 */
 	protected function render() {
-		$settings = $this->get_settings_for_display();
-
-		if ( '' === $settings['title'] ) {
-			return;
-		}
-
-		$this->add_render_attribute( 'title', 'class', 'elementor-heading-title' );
-
-		if ( ! empty( $settings['size'] ) ) {
-			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
-		} else {
-			$this->add_render_attribute( 'title', 'class', 'elementor-size-default' );
-		}
-
-		$this->add_inline_editing_attributes( 'title' );
-
-		$title = $settings['title'];
-
-		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'url', $settings['link'] );
-
-			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
-		}
-
-		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $settings['header_size'] ), $this->get_render_attribute_string( 'title' ), $title );
-
-		// PHPCS - the variable $title_html holds safe data.
-		echo $title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo '<h2>' . 'Heading  V1' . '</h2>';
 	}
 
 	/**

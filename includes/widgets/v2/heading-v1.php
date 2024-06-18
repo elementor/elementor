@@ -26,7 +26,7 @@ class Widget_Heading_V1 extends Widget_Base_V2 {
 	}
 
 	protected function render() {
-		echo '<h2>' . 'Heading  V1' . '</h2>';
+		echo '<h2>' . 'Heading  V1.5' . '</h2>';
 	}
 }
 
