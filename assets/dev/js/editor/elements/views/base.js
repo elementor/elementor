@@ -669,12 +669,6 @@ BaseElementView = BaseContainer.extend( {
 		return dataBinding.el.hasAttribute( 'data-binding-dynamic' );
 	},
 
-	isTestingShit() {
-		console.log( this );
-		console.log( 'asd' );
-		console.log( 'cache:', elementor.dynamicTags.cache );
-	},
-
 	async getDynamicValue( settings, bindingSetting ) {
 		const dynamicSettings = { active: true },
 			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
@@ -687,7 +681,6 @@ BaseElementView = BaseContainer.extend( {
 			} catch {
 				await new Promise( ( resolve ) => {
 					elementor.dynamicTags.refreshCacheFromServer( () => {
-						// This callback will be executed once the cache is refreshed from the server
 						resolve();
 					} );
 				} );

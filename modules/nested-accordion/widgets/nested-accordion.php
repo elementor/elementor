@@ -953,7 +953,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
 			<#
-			console.log('re-rendered');
 			if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
