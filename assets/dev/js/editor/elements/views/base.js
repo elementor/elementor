@@ -661,9 +661,8 @@ BaseElementView = BaseContainer.extend( {
 
 	isAtomicDynamic( dataBinding, changedControl ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-				changedControl?.__dynamic__[ dataBinding.el.getAttribute( 'data-binding-setting' ) ] );
+				elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
 	async getDynamicValue( settings, bindingSetting ) {
@@ -776,10 +775,11 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset;
+			const { bindingSetting } = dataBinding.dataset,
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
+			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
