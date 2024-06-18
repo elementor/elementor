@@ -15,6 +15,8 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	await editor.openPanelTab( 'style' );
 	await editor.setColorControlValue( 'title_color', '#77A5BD' );
 
+	await editor.publishPage();
+
 	// Act.
 	await editor.copyElement( heading1 );
 
@@ -34,7 +36,5 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	await publishButton.click();
 
 	// Assert.
-	await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, {
-		timeout: 10000,
-	} );
+	expect( await editor.canPublishPage() ).toBeFalsy();
 } );

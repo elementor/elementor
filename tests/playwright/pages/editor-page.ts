@@ -967,6 +967,20 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Publish the current page.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async canPublishPage() {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			return 0 === await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).count();
+		}
+		throw new Error( 'Not implemented' );
+	}
+
+	/**
 	 * Publish the current page and view it.
 	 *
 	 * @return {Promise<void>}
