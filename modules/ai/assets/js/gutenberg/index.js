@@ -40,8 +40,8 @@ import GenerateFeaturedImageWithAI from './featured-image';
 				const rootElement = document.createElement( 'div' );
 				rootElement.classList.add( 'e-featured-image-ai' );
 				featuredImagePanel.appendChild( rootElement );
-				const urlSearchParams = new URLSearchParams( window.location.search );
-				elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', urlSearchParams?.get( 'post' ) );
+				const postId = wp.data.select( 'core/editor' ).getCurrentPostId();
+				elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', postId );
 				const root = createRoot( rootElement );
 				root.render( <GenerateFeaturedImageWithAI /> );
 			}
