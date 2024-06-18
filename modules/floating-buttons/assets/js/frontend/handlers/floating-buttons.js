@@ -240,8 +240,11 @@ export default class FloatingButtonsHandler extends Base {
 
 		if ( this.elements.contentWrapper ) {
 			this.contentWrapperIsHidden( false );
-			this.elements.contentWrapper.setAttribute( 'tabindex', '0' );
-			this.elements.contentWrapper.focus( { focusVisible: true } );
+
+			if ( ! elementorFrontend.isEditMode() ) {
+				this.elements.contentWrapper.setAttribute( 'tabindex', '0' );
+				this.elements.contentWrapper.focus( { focusVisible: true } );
+			}
 		}
 
 		if ( this.elements.chatButton ) {

@@ -5,6 +5,7 @@ import widgets from '../enums/widgets';
 import Breakpoints from '../assets/breakpoints';
 import ImageCarousel from '../pages/widgets/image-carousel';
 import EditorPage from '../pages/editor-page';
+import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 
 test.describe( 'Container tests @container', () => {
@@ -723,8 +724,13 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.addWidget( widgets.button, containerId );
 
-		await page.click( '#elementor-panel-saver-button-publish-label' );
-		await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
+		if ( ! await editor.hasTopBar() ) {
+			await page.click( '#elementor-panel-saver-button-publish-label' );
+			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
+		} else {
+			await editor.publishPage();
+			await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
+		}
 
 		await page.reload();
 		await editor.waitForPanelToLoad();
