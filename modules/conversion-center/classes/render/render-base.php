@@ -539,10 +539,15 @@ abstract class Render_Base {
 			$layout_classnames .= ' ' . $custom_classes;
 		}
 
-		$this->widget->add_render_attribute( 'layout', [
+		$attrs = [
 			'class' => $layout_classnames,
-			'id' => $this->settings['advanced_custom_css_id'],
-		] );
+		];
+
+		if ( ! empty( $this->settings['advanced_custom_css_id'] ) ) {
+			$attrs['id'] = $this->settings['advanced_custom_css_id'];
+		}
+
+		$this->widget->add_render_attribute( 'layout', $attrs );
 	}
 
 	private function set_primary_image_properties( array $output_images ): array {

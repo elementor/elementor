@@ -58,12 +58,19 @@ export default class ElementRegressionHelper {
 	}
 
 	async setResponsiveMode( mode: string ) {
-		// Mobile tablet desktop
-		if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
-			await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
+		const hasTopBar = await this.editor.hasTopBar();
+
+		if ( hasTopBar ) {
+			const deviceLabel = mode.charAt( 0 ).toUpperCase() + mode.slice( 1 );
+
+			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
+		} else {
+			if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
+				await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
+			}
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
+			await this.editor.getPreviewFrame().locator( '#site-header' ).click();
 		}
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
-		await this.editor.getPreviewFrame().locator( '#site-header' ).click();
 	}
 
 	async doResponsiveScreenshot( args: Omit<ScreenShot, 'hoverSelector'> ) {

@@ -659,40 +659,40 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding ) {
-		return dataBinding.el.hasAttribute( 'data-binding-dynamic' );
+	isAtomicDynamic( dataBinding, changedControl ) {
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
 	getDynamicValue( settings, bindingSetting ) {
-		const valueToParse = settings.attributes.__dynamic__[ bindingSetting ],
-			dynamicSettings = { active: true };
+		const dynamicSettings = { active: true },
+			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
 			try {
 				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 			} catch {
-				// return false;
-				const request = elementor.dynamicTags.createCacheKey( this ); // This this is incorrect, we should add the tag.js this of build a dedicated this.
-				console.log( { request } );
-				elementor.dynamicTags.loadSingleCacheRequest( request );
-
-				console.log( 'cache:', elementor.dynamicTags.cache )
-
+				return false;
 			}
 		}
 
-		return settings.attributes.item_title; // Default title
+		return settings.attributes[ bindingSetting ];
 	},
 
-	renderDynamicValue( dynamicValue ) {
-		const activeItem = this?.model?.attributes?.editSettings?.attributes.activeItemIndex,
-			widgetConfig = elementor.widgetsCache[ this.model.config.name ],
-			titleContainers = this.$el.find( widgetConfig.title_container );
-
-		if ( activeItem ) {
-			titleContainers[ activeItem - 1 ].innerHTML = dynamicValue;
-			return;
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+			return false;
 		}
+
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
+
+		const allKeys = keys1.concat( keys2 );
+
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
 	},
 
 	/**
@@ -767,8 +767,17 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset;
+			const { bindingSetting } = dataBinding.dataset,
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
 			let change = settings.changed[ bindingSetting ];
+
+			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
+				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+
+				if ( dynamicValue ) {
+					change = dynamicValue;
+				}
+			}
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;

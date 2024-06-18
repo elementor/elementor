@@ -101,7 +101,7 @@ export default class Content {
 	}
 
 	async setCaption( option: string ) {
-		await this.page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( option );
+		await this.editor.setSelectControlValue( 'caption_type', option );
 	}
 
 	async setLightBox( option: string ) {

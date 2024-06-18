@@ -8,8 +8,8 @@
 
 	--e-contact-buttons-button-bg: #324A6D;
 	--e-contact-buttons-button-bg-hover: #1C2448;
-	--e-contact-buttons-close-button-bg: #F3F5F8;
-	--e-contact-buttons-close-button-color: #324A6D;
+	--e-contact-buttons-active-button-bg: #F3F5F8;
+	--e-contact-buttons-active-button-color: #324A6D;
 	--e-contact-buttons-top-bar-bg: #324A6D;
 	--e-contact-buttons-contact-button-bg: #C8D5DC;
 	--e-contact-buttons-contact-button-icon: #324A6D;
@@ -81,8 +81,9 @@
 		}
 	
 		&__close-button {
-			background-color: var(--e-contact-buttons-close-button-bg);
+			background-color: var(--e-contact-buttons-active-button-bg);
 			border-radius: 50%;
+			color: var(--e-contact-buttons-active-button-color);
 			inset-inline-end: unset;
 			inset-inline-start: unset;
 			position: relative;
@@ -92,7 +93,7 @@
 		&__close-button,
 		&__chat-button {
 	
-			&[aria-hidden="true"] {
+			&[aria-expanded="false"] {
 				display: none;
 			}
 		}
