@@ -12,10 +12,14 @@ export class SelectLoadingButtonOnOpen extends $e.modules.hookUI.After {
 	}
 
 	apply() {
-		$e.run(
-			'document/elements/select',
-			{ container: elementor?.documents?.currentDocument?.container?.children[ 0 ], append: false },
-		);
+		const children = elementor?.documents?.currentDocument?.container?.children;
+		if ( Array.isArray( children ) && children.length ) {
+			$e.run(
+				'document/elements/select',
+				{ container: children[ 0 ], append: false },
+			);
+		}
+
 	}
 }
 
