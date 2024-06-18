@@ -13,6 +13,7 @@ export class SelectLoadingButtonOnOpen extends $e.modules.hookUI.After {
 
 	apply() {
 		const children = elementor?.documents?.currentDocument?.container?.children;
+
 		if ( Array.isArray( children ) && children.length ) {
 			$e.run(
 				'document/elements/select',
