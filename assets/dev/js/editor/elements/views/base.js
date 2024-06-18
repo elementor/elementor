@@ -659,13 +659,23 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, changedControl ) {
-		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+	// IsAtomicDynamic( dataBinding, changedControl ) {
+	// 	return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+	// 		elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+	// 		dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+	// },
+
+	isAtomicDynamic( dataBinding ) {
+		return dataBinding.el.hasAttribute( 'data-binding-dynamic' );
 	},
 
-	getDynamicValue( settings, bindingSetting ) {
+	isTestingShit() {
+		console.log( this );
+		console.log( 'asd' );
+		console.log( 'cache:', elementor.dynamicTags.cache );
+	},
+
+	async getDynamicValue( settings, bindingSetting ) {
 		const dynamicSettings = { active: true },
 			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
 			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
@@ -675,7 +685,14 @@ BaseElementView = BaseContainer.extend( {
 			try {
 				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 			} catch {
-				return false;
+				await new Promise( ( resolve ) => {
+					elementor.dynamicTags.refreshCacheFromServer( () => {
+						// This callback will be executed once the cache is refreshed from the server
+						resolve();
+					} );
+				} );
+
+				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 			}
 		}
 
@@ -766,13 +783,12 @@ BaseElementView = BaseContainer.extend( {
 
 		let changed = false;
 
-		const renderDataBinding = ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset,
-				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+		const renderDataBinding = async ( dataBinding ) => {
+			const { bindingSetting } = dataBinding.dataset;
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
+				const dynamicValue = await this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
