@@ -52,13 +52,13 @@
 
 			&:hover,
 			&:focus {
-				color: var(--e-contact-buttons-button-icon-hover);
+				color: var(--e-contact-buttons-button-icon);
 
 				.e-contact-buttons__chat-button-icon-container,
 				.e-contact-buttons__chat-button-text,
 				.e-contact-buttons__chat-button-text::before {
-					background-color: var(--e-contact-buttons-button-bg-hover);
-					color: var(--e-contact-buttons-button-icon-hover);
+					background-color: var(--e-contact-buttons-button-bg);
+					color: var(--e-contact-buttons-button-icon);
 					transition: var(--e-contact-buttons-transition);
 				}
 			}

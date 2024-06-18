@@ -25,7 +25,8 @@
 
 	.e-contact-buttons {
 
-		&__chat-button {
+		&__chat-button,
+		&__chat-button[type="button"] {
 			border-radius: 0;
 			color: var(--e-contact-buttons-button-icon);
 			display: inline-flex;
