@@ -9,6 +9,7 @@ import useFeaturedImagePrompt from '../editor/hooks/use-featured-image-prompt';
 const { useDispatch } = wp.data;
 
 const GenerateFeaturedImageWithAI = () => {
+	const FEATURED_IMAGE_RATIO = '4:3';
 	const { editPost } = useDispatch( 'core/editor' );
 
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -35,6 +36,7 @@ const GenerateFeaturedImageWithAI = () => {
 					setControlValue={ ( value ) => {
 						editPost( { featured_media: value?.id } );
 					} }
+					initialSettings={ { aspectRatio: FEATURED_IMAGE_RATIO } }
 				/> }
 			</RequestIdsProvider>
 		</div> );

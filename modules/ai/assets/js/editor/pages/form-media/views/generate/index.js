@@ -36,12 +36,12 @@ const getPromptPlaceholder = ( images ) => {
 	return randomImage.prompt;
 };
 
-const Generate = ( { textToImageHook, predefinedPrompt = '' } ) => {
+const Generate = ( { textToImageHook, predefinedPrompt = '', initialSettings = {} } ) => {
 	const [ prompt, setPrompt ] = useState( predefinedPrompt );
 	const { setGenerate } = useRequestIds();
 	const { initialImageType } = useGlobalSettings();
 
-	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType } );
+	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType, ...initialSettings } );
 
 	const {
 		imagesData: suggestedImages,
@@ -199,6 +199,7 @@ const Generate = ( { textToImageHook, predefinedPrompt = '' } ) => {
 Generate.propTypes = {
 	predefinedPrompt: PropTypes.string,
 	textToImageHook: PropTypes.func,
+	initialSettings: PropTypes.object,
 };
 
 export default Generate;

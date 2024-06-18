@@ -55,7 +55,8 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 		<>
 			{ current === LOCATIONS.GENERATE && <Generate
 				textToImageHook={ additionalOptions?.textToImageHook ? additionalOptions?.textToImageHook : useTextToImage }
-				predefinedPrompt={ additionalOptions?.predefinedPrompt } /> }
+				predefinedPrompt={ additionalOptions?.predefinedPrompt }
+				initialSettings={ additionalOptions?.initialSettings } /> }
 			{ current === LOCATIONS.IMAGE_TOOLS && <ImageTools /> }
 			{ current === LOCATIONS.VARIATIONS && <Variations /> }
 			{ current === LOCATIONS.IN_PAINTING && <InPainting /> }
