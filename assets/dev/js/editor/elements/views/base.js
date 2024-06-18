@@ -659,14 +659,11 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	// IsAtomicDynamic( dataBinding, changedControl ) {
-	// 	return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-	// 		elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-	// 		dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
-	// },
-
-	isAtomicDynamic( dataBinding ) {
-		return dataBinding.el.hasAttribute( 'data-binding-dynamic' );
+	isAtomicDynamic( dataBinding, changedControl ) {
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+				changedControl?.__dynamic__[ dataBinding.el.getAttribute( 'data-binding-setting' ) ] );
 	},
 
 	async getDynamicValue( settings, bindingSetting ) {
