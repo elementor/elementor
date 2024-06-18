@@ -545,7 +545,7 @@ abstract class Widget_Floating_Button_Base extends Widget_Base {
 					'default' => $config['content']['chat_button_section']['display_text_label'],
 					'condition' => $this->get_display_text_condition([
 						'chat_button_display_text_select' => 'cta',
-					]),
+					] ),
 				],
 			);
 		}
@@ -1316,8 +1316,7 @@ JS;
 			$this->end_controls_tabs();
 		}
 
-		if ( $config['style']['chat_button_section']
-		['has_platform_color_controls'] ) {
+		if ( $config['style']['chat_button_section']['has_platform_color_controls'] ) {
 			$this->add_control(
 				'style_platform_control_select',
 				[
