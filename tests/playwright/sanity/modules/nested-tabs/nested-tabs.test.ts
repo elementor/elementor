@@ -268,9 +268,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set icon size.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
-		await page.locator( '.elementor-tab-control-style' ).click();
-		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'icon_section_style' );
+		await editor.setSliderControlValue( 'icon_size', '50' );
 		await editor.publishAndViewPage();
 
 		// Set published page variables
@@ -305,12 +305,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await editor.openSection( 'section_tabs_responsive' );
 		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
-		await page.locator( '.elementor-tab-control-style' ).click();
+		await editor.openPanelTab( 'style' );
 
-		// Open responsive bar and select mobile view
-		await page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await page.waitForSelector( '#e-responsive-bar' );
-		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+		// Change responsive view to mobile
+		await editor.changeResponsiveView( 'mobile' );
 
 		// Set controls values.
 		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
@@ -341,7 +339,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_title_style' );
-		await page.locator( '.elementor-control-title_hover' ).click();
+		await editor.setTabControlValue( 'title_style', 'title_hover' );
 		await editor.setColorControlValue( 'title_text_color_hover', '#ff0000' );
 
 		const rgbColor = 'rgb(255, 0, 0)';
@@ -481,7 +479,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-left' );
 		// Set icon position to 'right'.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await editor.openSection( 'icon_section_style' );
 		await editor.setChooseControlValue( 'icon_position', 'eicon-h-align-right' );
 
 		await editor.togglePreviewMode();
@@ -504,7 +502,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-right' );
 		// Set icon position to 'top'.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await editor.openSection( 'icon_section_style' );
 		await editor.setChooseControlValue( 'icon_position', 'eicon-v-align-top' );
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
@@ -659,7 +657,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await editor.openPanelTab( 'style' );
 		// Set tab hover style.
-		await page.locator( '.elementor-control-tabs_title_hover' ).click();
+		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 		await editor.setSelectControlValue( 'tabs_title_border_hover_border', 'solid' );
 		// Set shadow
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
@@ -830,10 +828,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set the hover animation.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-tabs_title_hover' ).click();
-		await page.locator( '.elementor-control-hover_animation .select2' ).click();
-		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
-		await page.waitForLoadState( 'networkidle' );
+		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
+		await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
 
 		// Assert.
 		// Test inside editor.
@@ -914,7 +910,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Modify widget settings.
 		await editor.setSelectControlValue( 'slides_to_show', '2' );
 		await editor.openSection( 'section_additional_options' );
-		await page.locator( '.elementor-control-infinite .elementor-switch-label' ).click();
+		await editor.setSwitcherControlValue( 'infinite', false );
 		await editor.setNumberControlValue( 'autoplay_speed', '800' );
 
 		await editor.publishAndViewPage();

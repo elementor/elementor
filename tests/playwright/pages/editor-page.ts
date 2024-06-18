@@ -435,7 +435,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTabControlValue( controlId: string, tabId: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-header_${ tabId }_title` ).first().click();
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-${ tabId }` ).first().click();
 	}
 
 	/**
@@ -487,7 +487,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Update select control value.
+	 * Set select control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} value     - The value to set.
@@ -496,6 +496,28 @@ export default class EditorPage extends BasePage {
 	 */
 	async setSelectControlValue( controlId: string, value: string ) {
 		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+	}
+
+	/**
+	 * Set select2 control value.
+	 *
+	 * @param {string}  controlId  - The control to set the value to.
+	 * @param {string}  value      - The value to set.
+	 * @param {boolean} exactMatch - Select only items that exactly match the provided value.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelect2ControlValue( controlId, value, exactMatch = true ) {
+		await this.page.locator( `.elementor-control-${ controlId } .select2:not( .select2-container--disabled )` ).click();
+		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
+
+		if ( exactMatch ) {
+			await this.page.locator( `.select2-results__option:text-is("${ value }")` ).first().click();
+		} else {
+			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
+		}
+
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	/**
@@ -541,7 +563,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Update switcher control value.
+	 * Set switcher control value.
 	 *
 	 * @param {string}  controlId - The control to set the value to.
 	 * @param {boolean} value     - The value to set (true|false).
@@ -749,17 +771,23 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async clickTopBarItem( text: string ) {
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByText( text ).click();
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
-	 * Open the menu panel.
+	 * Open the menu panel. Or, when an inner panel is provided, open the inner panel.
+	 *
+	 * @param {string} innerPanel - Optional. The inner menu to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openMenuPanel() {
+	async openMenuPanel( innerPanel?: string ) {
 		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
 		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
+
+		if ( innerPanel ) {
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
+		}
 	}
 
 	/**
@@ -797,21 +825,26 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the site settings panel.
+	 * Open the site settings panel. Or, when an inner panel is provided, open the inner panel.
+	 *
+	 * @param {string} innerPanel - Optional. The inner menu to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openSiteSettings() {
+	async openSiteSettings( innerPanel?: string ) {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
 			await this.clickTopBarItem( 'Site Settings' );
 		} else {
-			await this.openMenuPanel();
-			await this.page.locator( EditorSelectors.panels.siteSettings.menuPanelItem ).click();
+			await this.openMenuPanel( 'global-settings' );
 		}
 
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
+
+		if ( innerPanel ) {
+			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+		}
 	}
 
 	/**
@@ -823,11 +856,11 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Elementor logo' );
-			await this.page.locator( 'body' ).getByText( 'User Preferences' ).click();
+			await this.clickTopBarItem( 'Elementor Logo' );
+			await this.page.waitForTimeout( 100 );
+			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		} else {
-			await this.openMenuPanel();
-			await this.page.locator( EditorSelectors.panels.userPreferences.menuPanelItem ).click();
+			await this.openMenuPanel( 'editor-preferences' );
 		}
 
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
@@ -897,15 +930,21 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async changeResponsiveView( device: string ) {
-		const hasResponsiveViewBar = await this.page.evaluate( () => {
-			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
-		} );
+		const hasTopBar = await this.hasTopBar();
 
-		if ( ! hasResponsiveViewBar ) {
-			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		if ( hasTopBar ) {
+			const deviceLabel = device.charAt( 0 ).toUpperCase() + device.slice( 1 );
+
+			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
+		} else {
+			const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
+
+			if ( ! hasResponsiveViewBar ) {
+				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+			}
+
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
 		}
-
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
 	/**
@@ -914,9 +953,17 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-		await this.page.waitForLoadState();
-		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Publish' );
+			await this.page.waitForLoadState();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
+		} else {
+			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+			await this.page.waitForLoadState();
+			await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		}
 	}
 
 	/**
@@ -925,9 +972,19 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishAndViewPage() {
+		const hasTopBar = await this.hasTopBar();
+
 		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
-		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Save Options' );
+			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+			const pageId = await this.getPageId();
+			await this.page.goto( `/?p=${ pageId }` );
+		} else {
+			await this.openMenuPanel( 'view-page' );
+		}
+
 		await this.page.waitForLoadState();
 	}
 
@@ -937,7 +994,14 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async saveAndReloadPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Publish' );
+		} else {
+			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
+		}
+
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
@@ -951,9 +1015,15 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async previewChanges( context: BrowserContext ) {
+		const hasTopBar = await this.hasTopBar();
 		const previewPagePromise = context.waitForEvent( 'page' );
 
-		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( 'Preview Changes' );
+		} else {
+			await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		}
+
 		await this.page.waitForLoadState( 'networkidle' );
 
 		const previewPage = await previewPagePromise;
