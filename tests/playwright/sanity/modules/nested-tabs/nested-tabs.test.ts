@@ -829,9 +829,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set the hover animation.
 		await editor.openPanelTab( 'style' );
 		await page.locator( '.elementor-control-tabs_title_hover' ).click();
-		await page.locator( '.elementor-control-hover_animation .select2' ).click();
-		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
-		await page.waitForLoadState( 'networkidle' );
+		await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
 
 		// Assert.
 		// Test inside editor.
