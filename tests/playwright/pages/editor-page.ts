@@ -435,7 +435,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTabControlValue( controlId: string, tabId: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-header_${ tabId }_title` ).first().click();
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-${ tabId }` ).first().click();
 	}
 
 	/**
@@ -487,7 +487,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Update select control value.
+	 * Set select control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} value     - The value to set.
@@ -496,6 +496,28 @@ export default class EditorPage extends BasePage {
 	 */
 	async setSelectControlValue( controlId: string, value: string ) {
 		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+	}
+
+	/**
+	 * Set select2 control value.
+	 *
+	 * @param {string}  controlId  - The control to set the value to.
+	 * @param {string}  value      - The value to set.
+	 * @param {boolean} exactMatch - Select only items that exactly match the provided value.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelect2ControlValue( controlId, value, exactMatch = true ) {
+		await this.page.locator( `.elementor-control-${ controlId } .select2:not( .select2-container--disabled )` ).click();
+		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
+
+		if ( exactMatch ) {
+			await this.page.locator( `.select2-results__option:text-is("${ value }")` ).first().click();
+		} else {
+			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
+		}
+
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	/**
@@ -541,7 +563,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Update switcher control value.
+	 * Set switcher control value.
 	 *
 	 * @param {string}  controlId - The control to set the value to.
 	 * @param {boolean} value     - The value to set (true|false).
@@ -960,8 +982,7 @@ export default class EditorPage extends BasePage {
 			const pageId = await this.getPageId();
 			await this.page.goto( `/?p=${ pageId }` );
 		} else {
-			await this.openMenuPanel();
-			await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+			await this.openMenuPanel( 'view-page' );
 		}
 
 		await this.page.waitForLoadState();
