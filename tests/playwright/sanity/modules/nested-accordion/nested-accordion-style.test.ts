@@ -99,7 +99,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 		await test.step( 'Set background', async () => {
 			// Act
-			await editor.page.locator( '.elementor-control-content_background_background .eicon-paint-brush' ).click();
+			await editor.setChooseControlValue( 'content_background_background', 'eicon-paint-brush' );
 			await editor.setColorControlValue( 'content_background_color', colors.red.hex );
 		} );
 
@@ -132,7 +132,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				// Act
 				await editor.openPanelTab( 'style' );
 				await editor.openSection( 'section_background' );
-				await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
+				await editor.setChooseControlValue( 'background_background', 'eicon-paint-brush' );
 				await editor.setColorControlValue( 'background_color', colors.black.hex );
 				await editor.openSection( 'section_border' );
 				await editor.setSelectControlValue( 'border_border', borderStyle.dotted );

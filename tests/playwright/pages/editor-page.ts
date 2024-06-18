@@ -487,7 +487,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Update select control value.
+	 * Set select control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} value     - The value to set.
@@ -541,7 +541,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Update switcher control value.
+	 * Set switcher control value.
 	 *
 	 * @param {string}  controlId - The control to set the value to.
 	 * @param {boolean} value     - The value to set (true|false).
@@ -960,8 +960,7 @@ export default class EditorPage extends BasePage {
 			const pageId = await this.getPageId();
 			await this.page.goto( `/?p=${ pageId }` );
 		} else {
-			await this.openMenuPanel();
-			await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+			await this.openMenuPanel( 'view-page' );
 		}
 
 		await this.page.waitForLoadState();

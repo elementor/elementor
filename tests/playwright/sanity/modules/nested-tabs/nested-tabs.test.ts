@@ -268,9 +268,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set icon size.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
-		await page.locator( '.elementor-tab-control-style' ).click();
-		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'icon_section_style' );
+		await editor.setSliderControlValue( 'icon_size', '50' );
 		await editor.publishAndViewPage();
 
 		// Set published page variables
@@ -305,7 +305,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await editor.openSection( 'section_tabs_responsive' );
 		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
-		await page.locator( '.elementor-tab-control-style' ).click();
+		await editor.openPanelTab( 'style' );
 
 		// Change responsive view to mobile
 		await editor.changeResponsiveView( 'mobile' );
@@ -479,7 +479,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-left' );
 		// Set icon position to 'right'.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await editor.openSection( 'icon_section_style' );
 		await editor.setChooseControlValue( 'icon_position', 'eicon-h-align-right' );
 
 		await editor.togglePreviewMode();
@@ -502,7 +502,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-right' );
 		// Set icon position to 'top'.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await editor.openSection( 'icon_section_style' );
 		await editor.setChooseControlValue( 'icon_position', 'eicon-v-align-top' );
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
@@ -912,7 +912,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Modify widget settings.
 		await editor.setSelectControlValue( 'slides_to_show', '2' );
 		await editor.openSection( 'section_additional_options' );
-		await page.locator( '.elementor-control-infinite .elementor-switch-label' ).click();
+		await editor.setSwitcherControlValue( 'infinite', false );
 		await editor.setNumberControlValue( 'autoplay_speed', '800' );
 
 		await editor.publishAndViewPage();
