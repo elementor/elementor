@@ -17,7 +17,7 @@ use Elementor\Group_Control_Text_Stroke;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-
+// Dummy push.
 /**
  * Elementor Nested Accordion widget.
  *
