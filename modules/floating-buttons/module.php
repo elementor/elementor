@@ -10,7 +10,7 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
-use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Button_Base;
+use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -46,7 +46,7 @@ class Module extends BaseModule {
 
 	public function get_widgets(): array {
 		return [
-			'Floating_Buttons',
+			'Contact_Buttons',
 		];
 	}
 
@@ -79,7 +79,7 @@ class Module extends BaseModule {
 
 		if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
-				Widget_Floating_Button_Base::TAB_ADVANCED,
+				Widget_Contact_Button_Base::TAB_ADVANCED,
 				esc_html__( 'Advanced', 'elementor' )
 			);
 		}

@@ -9,7 +9,7 @@ namespace Elementor\Modules\FloatingButtons\Classes\Render;
  *
  * @since 3.23.0
  */
-class Floating_Buttons_Core_Render extends Floating_Buttons_Render_Base {
+class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 
 	public function render(): void {
 		$this->build_layout_render_attribute();
