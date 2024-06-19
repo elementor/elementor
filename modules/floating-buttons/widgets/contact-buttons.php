@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\FloatingButtons\Widgets;
 
-use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Button_Base;
+use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.23.0
  */
-class Floating_Buttons extends Widget_Floating_Button_Base {
+class Contact_Buttons extends Widget_Contact_Button_Base {
 
 	public function get_name(): string {
 		return 'contact-buttons';
