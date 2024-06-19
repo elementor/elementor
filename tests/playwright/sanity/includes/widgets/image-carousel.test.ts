@@ -11,10 +11,6 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
-
 		await wpAdmin.openNewPage();
 		await editor.useCanvasTemplate();
 		await editor.closeNavigatorIfOpen();
@@ -24,7 +20,7 @@ test.describe( 'Image carousel tests', () => {
 		await imageCarousel.setAutoplay();
 
 		await test.step( 'Verify image population', async () => {
-			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
+			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper.swiper-initialized' ).screenshot( {
 				type: 'jpeg',
 				quality: 90,
 			} ) ).toMatchSnapshot( 'carousel.jpeg' );
@@ -106,9 +102,6 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 		await wpAdmin.openNewPage();
 		await editor.useDefaultTemplate();
 		await editor.closeNavigatorIfOpen();
@@ -139,10 +132,6 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 
 		await wpAdmin.openNewPage();
 		await editor.useCanvasTemplate();
