@@ -23,6 +23,6 @@ elementorModules.frontend = {
 		NestedTabs,
 		NestedAccordion,
 		NestedTitleKeyboardHandler,
-		FloatingButtonsHandler: ContactButtonsHandler,
+		ContactButtonsHandler,
 	},
 };
