@@ -116,7 +116,8 @@ class Modules_Manager {
 			'element-cache',
 			'apps',
 			'home',
-			'conversion-center',
+			'link-in-bio',
+			'floating-buttons',
 			'content-sanitizer',
 			'editor-events',
 		];
