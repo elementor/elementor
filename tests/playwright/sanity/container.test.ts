@@ -312,12 +312,13 @@ test.describe( 'Container tests @container', () => {
 
 		// Hide carousel navigation.
 		const carouselOneId = await editor.addWidget( 'image-carousel', container );
-		await imageCarousel.selectNavigation( 'none' );
+		await editor.setSelectControlValue( 'navigation', 'none' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Add images.
 		await imageCarousel.addImageGallery();
-		await imageCarousel.setAutoplay();
+		await editor.openSection( 'section_additional_options' );
+		await editor.setSwitcherControlValue( 'autoplay', false );
 
 		// Duplicate carousel widget.
 		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId ).click( { button: 'right' } );
