@@ -1384,21 +1384,19 @@ export default class EditorPage extends BasePage {
 		return Number( itemID.replace( idPrefix, '' ) );
 	}
 
-	private async openElementorMenu() {
-		const child = this.page.locator( 'svg > title' ).getByText( 'Elementor Logo', { exact: true } );
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).locator( 'button' ).filter( { has: child } ).click();
-	}
-
 	private async closeElementorMenu() {
 		const isBackdropShown = await this.page.locator( '.MuiBackdrop-root' ).count() > 0;
 		if ( isBackdropShown ) {
 			await this.page.locator( 'body' ).press( 'Escape' );
+			// Backdrop not removed, force its removal
+			// See: https://github.com/mui/material-ui/issues/32286
+			await this.page.evaluate( () => document.querySelector( '.MuiBackdrop-root' ) );
 		}
 		expect( await this.page.locator( '.MuiBackdrop-root' ).count() ).toEqual( 0 );
 	}
 
 	public async getExitToWordpressUrl() {
-		await this.openElementorMenu();
+		await this.clickTopBarItem( 'Elementor Logo' );
 		const child = this.page.getByText( 'Exit to WordPress', { exact: true } );
 		const exitToWordpressUrl = await this.page.locator( '.MuiMenuItem-root ' ).filter( { has: child } ).getAttribute( 'href' );
 		await this.closeElementorMenu();
