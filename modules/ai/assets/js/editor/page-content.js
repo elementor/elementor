@@ -58,7 +58,7 @@ const PageContent = (
 			sx: {
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
-				height: ! isLoading && 'media' === type ? '95vh' : 'auto',
+				height: 'auto',
 			},
 		},
 	};
