@@ -6,23 +6,17 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Providers\Social_Network_Provider;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Modules\FloatingButtons\Classes\Render\Floating_Buttons_Core_Render;
+use Elementor\Modules\FloatingButtons\Classes\Render\Contact_Buttons_Core_Render;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
-abstract class Widget_Floating_Button_Base extends Widget_Base {
+abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
-	public function show_in_panel() {
-		return false;
-	}
 
-	public function hide_on_search() {
-		return true;
-	}
 
 	public static function get_configuration() {
 		return [
@@ -3197,7 +3191,7 @@ JS;
 	}
 
 	protected function render(): void {
-		$render_strategy = new Floating_Buttons_Core_Render( $this );
+		$render_strategy = new Contact_Buttons_Core_Render( $this );
 
 		$render_strategy->render();
 	}
