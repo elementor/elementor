@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Icon = styled.i`
-  padding-right: 0.5em;
+  padding-inline-end: 0.5em;
   cursor: pointer;
   color: #C00BB9;
 `;
