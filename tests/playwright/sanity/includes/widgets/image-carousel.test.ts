@@ -161,11 +161,11 @@ test.describe( 'Image carousel tests', () => {
 		await editor.openSection( 'section_image_carousel' );
 		await editor.setSelectControlValue( 'navigation', 'none' );
 		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
-		await imageCarousel.setCaption( 'caption' );
+		await editor.setSelectControlValue( 'caption_type', 'caption' );
 		await imageCarousel.verifyCaption( caption );
-		await imageCarousel.setCaption( 'description' );
+		await editor.setSelectControlValue( 'caption_type', 'description' );
 		await imageCarousel.verifyCaption( description );
-		await imageCarousel.setCaption( 'title' );
+		await editor.setSelectControlValue( 'caption_type', 'title' );
 		await imageCarousel.verifyCaption( title );
 	} );
 } );
