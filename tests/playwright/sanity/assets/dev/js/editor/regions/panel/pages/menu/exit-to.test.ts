@@ -8,25 +8,18 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 	// Open User Preferences
 	await editor.openUserPreferencesPanel();
 
+	// Default is "This Post" (wp_post_type)
+	let exitHref = await editor.getExitToWordpressUrl();
+	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
+
 	// Select dashboard
 	await setExitUserPreference( page, 'dashboard' );
-
-	let exitHref = await editor.getExitToWordpressUrl();
-
-	expect( exitHref ).toContain( '/wp-admin/' );
-
-	// Select wp_post_type
-	await setExitUserPreference( page, 'this_post' );
-
 	exitHref = await editor.getExitToWordpressUrl();
-
-	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
+	expect( exitHref ).toContain( '/wp-admin/' );
 
 	// Select all_posts
 	await setExitUserPreference( page, 'all_posts' );
-
 	exitHref = await editor.getExitToWordpressUrl();
-
 	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );
 } );
 
