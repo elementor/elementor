@@ -143,6 +143,10 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
+		const caption = [ 'Test caption!', 'Test caption!', 'Test caption!' ];
+		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
+		const title = [ 'A', 'B', 'C' ];
+
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
 		} );
@@ -152,20 +156,16 @@ test.describe( 'Image carousel tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		await editor.addWidget( 'image-carousel' );
-		await editor.setSelectControlValue( 'navigation', 'none' );
-		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
-
-		const caption = [ 'Test caption!', 'Test caption!', 'Test caption!' ];
-		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
-		const title = [ 'A', 'B', 'C' ];
-
-		await editor.setSelectControlValue( 'caption_type', 'caption' );
+		await editor.openSection( 'section_image_carousel' );
+		await editor.setSelectControlValue( 'navigation', 'none' );
+		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
+		await imageCarousel.setCaption( 'caption' );
 		await imageCarousel.verifyCaption( caption );
-		await editor.setSelectControlValue( 'caption_type', 'description' );
+		await imageCarousel.setCaption( 'description' );
 		await imageCarousel.verifyCaption( description );
-		await editor.setSelectControlValue( 'caption_type', 'title' );
+		await imageCarousel.setCaption( 'title' );
 		await imageCarousel.verifyCaption( title );
 	} );
 } );
