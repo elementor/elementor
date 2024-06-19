@@ -1384,20 +1384,19 @@ export default class EditorPage extends BasePage {
 		return Number( itemID.replace( idPrefix, '' ) );
 	}
 
-	private async openElementorMenu() {
-		const child = this.page.locator( 'svg > title' ).getByText( 'Elementor Logo', { exact: true } );
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).locator( 'button' ).filter( { has: child } ).click();
-	}
-
-	private async closeElementorMenu() {
-		await this.page.locator( '.MuiBackdrop-root' ).click();
+	private async setElementorMenu( menuShouldBeOpen: boolean ) {
+		const isMenuOpen = await this.page.locator( '.MuiBackdrop-root' ).count() > 0;
+		if ( ( menuShouldBeOpen && ! isMenuOpen ) || ( ! menuShouldBeOpen && isMenuOpen ) ) {
+			const child = this.page.locator( 'svg > title' ).getByText( 'Elementor Logo', { exact: true } );
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper ).locator( 'button' ).filter( { has: child } ).click();
+		}
 	}
 
 	public async getExitToWordpressUrl() {
-		await this.openElementorMenu();
+		await this.setElementorMenu( true );
 		const child = this.page.getByText( 'Exit to WordPress', { exact: true } );
 		const exitToWordpressUrl = await this.page.locator( '.MuiMenuItem-root ' ).filter( { has: child } ).getAttribute( 'href' );
-		await this.closeElementorMenu();
+		await this.setElementorMenu( false );
 
 		return exitToWordpressUrl;
 	}
