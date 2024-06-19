@@ -14,12 +14,15 @@
 
 	&.has-h-alignment-end {
 
-		.e-contact-buttons__chat-button-container {
-			padding-inline-end: 0;
-		}
+		.e-contact-buttons {
 
-		.e-contact-buttons__contact-links {
-			align-items: flex-end;
+			&__chat-button-container {
+				padding-inline-end: 0;
+			}
+	
+			&__contact-links {
+				align-items: flex-end;
+			}
 		}
 	}
 
@@ -43,45 +46,51 @@
 
 	&.has-h-alignment-start {
 
-		.e-contact-buttons__chat-button-container {
-			padding-inline-start: 0;
-		}
+		.e-contact-buttons {
 
-		.e-contact-buttons__contact-links {
-			align-items: flex-start;
-		}
-
-		.e-contact-buttons__contact-tooltip {
-			order: 2;
-		}
-
-		.e-contact-buttons__contact-icon-container  {
-			order: 1;
-		}
-
-		.e-contact-buttons__contact-tooltip {
-			&::after {
-				border-inline-start-color: transparent;
-				border-inline-end-color: var(--e-contact-buttons-tooltip-bg);
-				border-block-start-color: transparent;
-				border-block-end-color: transparent;
-				border-inline-start-width: 0;
-				border-inline-end-width: 10px;
-				border-block-start-width: 8px;
-				border-block-end-width: 8px;
-				inset-inline-start: -8px;
+			&__chat-button-container {
+				padding-inline-start: 0;
+			}
+	
+			&__contact-links {
+				align-items: flex-start;
+			}
+	
+			&__contact-tooltip {
+				order: 2;
+			}
+	
+			&__contact-icon-container  {
+				order: 1;
+			}
+	
+			&__contact-tooltip {
+				&::after {
+					border-inline-start-color: transparent;
+					border-inline-end-color: var(--e-contact-buttons-tooltip-bg);
+					border-block-start-color: transparent;
+					border-block-end-color: transparent;
+					border-inline-start-width: 0;
+					border-inline-end-width: 10px;
+					border-block-start-width: 8px;
+					border-block-end-width: 8px;
+					inset-inline-start: -8px;
+				}
 			}
 		}
 	}
 
 	&.has-h-alignment-center {
 
-		.e-contact-buttons__contact-links {
-			align-items: center;
-		}
+		.e-contact-buttons {
 
-		.e-contact-buttons__content-wrapper {
-			inset-inline-end: 40px;
+			&__contact-links {
+				align-items: center;
+			}
+	
+			&__content-wrapper {
+				inset-inline-end: 40px;
+			}
 		}
 	}
 

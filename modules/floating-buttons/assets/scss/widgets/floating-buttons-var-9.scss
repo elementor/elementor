@@ -53,13 +53,20 @@
 			&:hover,
 			&:focus {
 				color: var(--e-contact-buttons-button-icon);
+				
+				svg {
+					fill: var(--e-contact-buttons-button-icon);
+				}
 
-				.e-contact-buttons__chat-button-icon-container,
-				.e-contact-buttons__chat-button-text,
-				.e-contact-buttons__chat-button-text::before {
-					background-color: var(--e-contact-buttons-button-bg);
-					color: var(--e-contact-buttons-button-icon);
-					transition: var(--e-contact-buttons-transition);
+				.e-contact-buttons {
+
+					&__chat-button-icon-container,
+					&__chat-button-text,
+					&__chat-button-text::before {
+						background-color: var(--e-contact-buttons-button-bg);
+						color: var(--e-contact-buttons-button-icon);
+						transition: var(--e-contact-buttons-transition);
+					}
 				}
 			}
 
@@ -106,46 +113,52 @@
 
 	&.has-h-alignment-end {
 
-		.e-contact-buttons__chat-button-container {
-			padding-inline-end: 0;
-		}
+		.e-contact-buttons {
 
-		.e-contact-buttons__chat-button-icon-container {
-
-			@media (min-width: $screen-desktop-min) {
-				position: absolute;
-				inset-inline-end: -5px;
-				transition: var(--e-contact-buttons-transition);
+			&__chat-button-container {
+				padding-inline-end: 0;
 			}
-		}
-
-		.e-contact-buttons__chat-button-text {
-			border-start-start-radius: 0;
-			border-end-start-radius: 0;
-			border-start-end-radius: 50px;
-			border-end-end-radius: 50px;
-			margin-inline-start: var(--e-contact-buttons-overlap-margin);
-
-			@media (min-width: $screen-desktop-min) {
-				clip-path: inset(0 0 0 100%);
-			}
-		}
-
-		.e-contact-buttons__chat-button {
-
-			&:hover,
-			&:focus {
-
+	
+			&__chat-button-icon-container {
+	
 				@media (min-width: $screen-desktop-min) {
+					position: absolute;
+					inset-inline-end: -5px;
+					transition: var(--e-contact-buttons-transition);
+				}
+			}
+	
+			&__chat-button-text {
+				border-start-start-radius: 0;
+				border-end-start-radius: 0;
+				border-start-end-radius: 50px;
+				border-end-end-radius: 50px;
+				margin-inline-start: var(--e-contact-buttons-overlap-margin);
+	
+				@media (min-width: $screen-desktop-min) {
+					clip-path: inset(0 0 0 100%);
+				}
+			}
+	
+			&__chat-button {
+	
+				&:hover,
+				&:focus {
+	
+					@media (min-width: $screen-desktop-min) {
 
-					.e-contact-buttons__chat-button-text {
-						clip-path: inset(0 0 0 0);
-						transition: var(--e-contact-buttons-transition);
-					}
+						.e-contact-buttons {
 
-					.e-contact-buttons__chat-button-icon-container {
-						inset-inline-end: 100%;
-						transition: var(--e-contact-buttons-transition);
+							&__chat-button-text {
+								clip-path: inset(0 0 0 0);
+								transition: var(--e-contact-buttons-transition);
+							}
+		
+							&__chat-button-icon-container {
+								inset-inline-end: 100%;
+								transition: var(--e-contact-buttons-transition);
+							}
+						}
 					}
 				}
 			}
