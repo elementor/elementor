@@ -157,7 +157,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
+		await expect( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
 		await editor.togglePreviewMode();
 
@@ -171,7 +171,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect.soft( pageView ).toHaveScreenshot( 'heading-full-absolute.png' );
+		await expect( pageView ).toHaveScreenshot( 'heading-full-absolute.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -204,7 +204,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-fixed.png' );
+		await expect( pageView ).toHaveScreenshot( 'heading-boxed-fixed.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -243,7 +243,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect.soft( pageView ).toHaveScreenshot( 'heading-full-fixed.png' );
+		await expect( pageView ).toHaveScreenshot( 'heading-full-fixed.png' );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
