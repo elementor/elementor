@@ -244,10 +244,6 @@ abstract class Widget_Floating_Button_Base extends Widget_Base {
 		return [ 'general' ];
 	}
 
-	public function get_keywords(): array {
-		return [ 'buttons', 'contact', 'widget', 'floating' ];
-	}
-
 	public function get_stack( $with_common_controls = true ): array {
 		return parent::get_stack( false );
 	}
