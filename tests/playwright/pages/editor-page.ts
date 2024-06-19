@@ -1392,7 +1392,7 @@ export default class EditorPage extends BasePage {
 	private async closeElementorMenu() {
 		const isBackdropShown = await this.page.locator( '.MuiBackdrop-root' ).count() > 0;
 		if ( isBackdropShown ) {
-			await this.page.locator( '.MuiBackdrop-root' ).click();
+			await this.page.locator( 'body' ).press( 'Escape' );
 		}
 		expect( await this.page.locator( '.MuiBackdrop-root' ).count() ).toEqual( 0 );
 	}
