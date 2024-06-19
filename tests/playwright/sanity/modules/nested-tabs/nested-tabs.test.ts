@@ -372,7 +372,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set icon hover color.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
 			whiteColor = 'rgb(255, 255, 255)',
@@ -570,9 +570,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set tab hover color.
-		await setTabItemColor( page, editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
+		await setTabItemColor( editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
 		// Set tab active color.
-		await setTabItemColor( page, editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
+		await setTabItemColor( editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
 
 		await editor.publishAndViewPage();
 
@@ -713,36 +713,36 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Normal tab styling: text color green, border color: green and icon color: yellow.
 		await editor.openPanelTab( 'style' );
 		// Set text color.
-		await setTabItemColor( page, editor, 'section_title_style', 'title_normal', 'title_text_color', colorGreen );
+		await setTabItemColor( editor, 'section_title_style', 'title_normal', 'title_text_color', colorGreen );
 		// Set border color.
-		await setTabBorderColor( page, editor, 'normal', '', colorGreen, '5' );
+		await setTabBorderColor( editor, 'normal', '', colorGreen, '5' );
 		// Set icon color.
 		await editor.openPanelTab( 'content' );
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
 		await editor.openPanelTab( 'content' );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_tabs_style' );
 
 		// Hover tab styling: text color: red, border color: red and icon color: pink.
 		// Set text color.
-		await setTabItemColor( page, editor, 'section_title_style', 'title_hover', 'title_text_color_hover', colorRed );
+		await setTabItemColor( editor, 'section_title_style', 'title_hover', 'title_text_color_hover', colorRed );
 		// Set border color.
-		await setTabBorderColor( page, editor, 'hover', '_hover', colorRed, '5' );
+		await setTabBorderColor( editor, 'hover', '_hover', colorRed, '5' );
 		// Set icon color.
 		await editor.openPanelTab( 'content' );
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
 		await editor.openPanelTab( 'content' );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_tabs_style' );
 
 		// Active tab styling: text color: blue, border color: blue and icon color: brown.
 		// Set text color.
-		await setTabItemColor( page, editor, 'section_title_style', 'title_active', 'title_text_color_active', colorBlue );
+		await setTabItemColor( editor, 'section_title_style', 'title_active', 'title_text_color_active', colorBlue );
 		// Set border color.
-		await setTabBorderColor( page, editor, 'active', '_active', colorBlue, '5' );
+		await setTabBorderColor( editor, 'active', '_active', colorBlue, '5' );
 		// Set icon color.
 		await editor.openPanelTab( 'content' );
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_active', 'icon_color_active', colorBrown );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_active', 'icon_color_active', colorBrown );
 		await editor.openPanelTab( 'content' );
 
 		// Act.
