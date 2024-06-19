@@ -4,20 +4,6 @@ import { expect } from '@playwright/test';
 import { resolve } from 'path';
 
 export default class ImageCarousel extends Content {
-	async addWidget() {
-		const widgetId = await this.editor.addWidget( 'image-carousel' );
-		return widgetId;
-	}
-
-	async selectNavigation( option: string ) {
-		await this.page.selectOption( EditorSelectors.imageCarousel.navigationSelect, option );
-	}
-
-	async setAutoplay( option = 'false' ) {
-		await this.page.getByText( 'Additional Options' ).click();
-		await this.page.setChecked( EditorSelectors.imageCarousel.autoplaySelect, option );
-	}
-
 	async addImageGallery( args?: {images?: string[], metaData?: boolean} ) {
 		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
 
