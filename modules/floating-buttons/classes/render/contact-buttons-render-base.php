@@ -4,7 +4,7 @@ namespace Elementor\Modules\FloatingButtons\Classes\Render;
 
 use Elementor\Core\Base\Providers\Social_Network_Provider;
 use Elementor\Icons_Manager;
-use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Button_Base;
+use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
 use Elementor\Utils;
 
 /**
@@ -14,16 +14,16 @@ use Elementor\Utils;
  *
  * @since 3.23.0
  */
-abstract class Floating_Buttons_Render_Base {
+abstract class Contact_Buttons_Render_Base {
 
-	protected Widget_Floating_Button_Base $widget;
+	protected Widget_Contact_Button_Base $widget;
 
 	protected array $settings;
 
 
 	abstract public function render(): void;
 
-	public function __construct( Widget_Floating_Button_Base $widget ) {
+	public function __construct( Widget_Contact_Button_Base $widget ) {
 		$this->widget = $widget;
 		$this->settings = $widget->get_settings_for_display();
 	}
