@@ -32,7 +32,7 @@ class Module extends BaseModule {
 		return [
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Link In Bio', 'elementor' ),
-			'description' => esc_html__( 'A powerful feature to enhance your online presence. With the ability to create compelling Link in bio pages and easily accessible contact buttons, the Conversion Center is tailored to significantly boost your conversions.', 'elementor' ),
+			'description' => esc_html__( 'Create bio link landing pages and digital business cards that convert with Link in Bio widgets. Share your link in bio pages on your social media profiles. Create as many as you need for different audiences and goals.', 'elementor' ),
 			'hidden' => true,
 			'default' => Manager::STATE_INACTIVE,
 		];

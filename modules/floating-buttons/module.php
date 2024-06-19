@@ -54,7 +54,7 @@ class Module extends BaseModule {
 		return [
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
-			'description' => esc_html__( 'A powerful feature to enhance your online presence. With the ability to create compelling Link in bio pages and easily accessible contact buttons, the Conversion Center is tailored to significantly boost your conversions.', 'elementor' ),
+			'description' => esc_html__( 'Boost visitor engagement with Floating Buttons. The Floating Button template library offers a variety of interactive one-click contact options, highlighted links, and calls to action to increase your website conversions.', 'elementor' ),
 			'hidden' => true,
 			'default' => Manager::STATE_INACTIVE,
 			'dependencies' => [
