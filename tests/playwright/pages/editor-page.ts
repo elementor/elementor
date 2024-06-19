@@ -1394,6 +1394,7 @@ export default class EditorPage extends BasePage {
 		if ( isBackdropShown ) {
 			await this.page.locator( '.MuiBackdrop-root' ).click();
 		}
+		expect( await this.page.locator( '.MuiBackdrop-root' ).count() ).toEqual( 0 );
 	}
 
 	public async getExitToWordpressUrl() {
