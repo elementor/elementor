@@ -25,4 +25,5 @@ test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
 
 const setExitUserPreference = async ( page: Page, option: string ) => {
 	await page.selectOption( '.elementor-control-exit_to >> select', option );
+	await page.evaluate( () => console.log( elementor.getPreferences( 'exit_to' ) ) );
 };
