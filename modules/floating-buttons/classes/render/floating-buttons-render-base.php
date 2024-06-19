@@ -80,6 +80,7 @@ abstract class Floating_Buttons_Render_Base {
 
 		$this->widget->add_render_attribute( 'button', [
 			'class' => $button_classnames,
+			'aria-controls' => 'e-contact-buttons__content-wrapper',
 		] );
 
 		?>
@@ -95,7 +96,7 @@ abstract class Floating_Buttons_Render_Base {
 
 	protected function render_close_button(): void {
 		?>
-			<button type="button" class="e-contact-buttons__close-button" aria-label="<?php echo esc_attr__( 'Close Links Popup', 'elementor' ); ?>">
+			<button type="button" class="e-contact-buttons__close-button" aria-label="<?php echo esc_attr__( 'Close Links Popup', 'elementor' ); ?>" aria-controls="e-contact-buttons__content-wrapper">
 				<i class="eicon-close"></i>
 			</button>
 		<?php

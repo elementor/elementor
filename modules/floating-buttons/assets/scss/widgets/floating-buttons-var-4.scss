@@ -150,6 +150,11 @@
 			inset-inline-start: unset;
 			position: relative;
 			top: unset;
+
+			&:hover,
+			&:focus {
+				color: var(--e-contact-buttons-active-button-color);
+			}
 		}
 
 
