@@ -1,7 +1,7 @@
 import { Box } from '@elementor/ui';
 import { AIIcon } from '@elementor/icons';
 
-const VariationsPlaceholder = () => {
+const ImagesPlaceholder = () => {
 	return (
 		<Box sx={ { overflowY: 'scroll' } } flexGrow={ 1 }>
 			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 3 }>
@@ -23,6 +23,6 @@ const VariationsPlaceholder = () => {
 	);
 };
 
-VariationsPlaceholder.propTypes = {};
+ImagesPlaceholder.propTypes = {};
 
-export default VariationsPlaceholder;
+export default ImagesPlaceholder;
