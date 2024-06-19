@@ -1390,7 +1390,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( 'body' ).press( 'Escape' );
 			// Backdrop not removed, force its removal
 			// See: https://github.com/mui/material-ui/issues/32286
-			await this.page.evaluate( () => document.querySelector( '.MuiBackdrop-root' ) );
+			await this.page.evaluate( () => document.querySelector( '.MuiBackdrop-root' ).remove() );
 		}
 		expect( await this.page.locator( '.MuiBackdrop-root' ).count() ).toEqual( 0 );
 	}
