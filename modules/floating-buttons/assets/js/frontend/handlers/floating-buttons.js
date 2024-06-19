@@ -331,27 +331,14 @@ export default class FloatingButtonsHandler extends Base {
 	initDefaultState() {
 		// Manage accessibility
 		if ( this.elements.contentWrapper ) {
-			const randomishId = String(
-				Date.now().toString( 32 ) +
-					Math.random().toString( 16 ),
-			).replace( /\./g, '' );
-
-			const wrapperID = this.elements.contentWrapper.id
-				? this.elements.contentWrapper.id
-				: `e-contact-buttons__content-wrapper-${ randomishId }`;
-
 			const isHidden = this.contentWrapperIsHidden();
-
-			this.elements.contentWrapper.setAttribute( 'id', wrapperID );
 
 			if ( this.elements.chatButton ) {
 				this.elements.chatButton.setAttribute( 'aria-expanded', ! isHidden );
-				this.elements.chatButton.setAttribute( 'aria-controls', wrapperID );
 			}
 
 			if ( this.elements.closeButton ) {
 				this.elements.closeButton.setAttribute( 'aria-expanded', ! isHidden );
-				this.elements.closeButton.setAttribute( 'aria-controls', wrapperID );
 			}
 		}
 
