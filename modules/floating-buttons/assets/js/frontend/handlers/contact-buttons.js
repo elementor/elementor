@@ -1,6 +1,6 @@
 import Base from 'elementor-frontend/handlers/base';
 
-export default class FloatingButtonsHandler extends Base {
+export default class ContactButtonsHandler extends Base {
 	clicks = [];
 
 	getDefaultSettings() {
