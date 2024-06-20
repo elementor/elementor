@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
