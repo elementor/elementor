@@ -56,7 +56,6 @@ class Module extends BaseModule {
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
 			'description' => esc_html__( 'Boost visitor engagement with Floating Buttons. The Floating Button template library offers a variety of interactive one-click contact options, highlighted links, and calls to action to increase your website conversions.', 'elementor' ),
-			'hidden' => false,
 			'default' => Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'dependencies' => [
