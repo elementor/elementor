@@ -1,8 +1,9 @@
 import usePrompt from './use-prompt';
 import { getFeaturedImage } from '../api';
+import useImagePrompt from '../pages/form-media/hooks/use-image-prompt';
 
 const useFeaturedImagePrompt = ( initialValue ) => {
-	return usePrompt( async ( payload ) => getFeaturedImage( payload ), initialValue );
+	return useImagePrompt( async ( payload ) => getFeaturedImage( payload ), initialValue );
 };
 
 export default useFeaturedImagePrompt;
