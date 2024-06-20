@@ -58,11 +58,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-			e_nested_atomic_repeaters: 'active',
-		} );
+		await setup( wpAdmin, { e_nested_atomic_repeaters: 'active' } );
 
 		await page.close();
 	} );
@@ -255,7 +251,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 	test( 'Accessibility inside the Editor', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -276,7 +271,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 	test( 'Accessibility on the Front End', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -328,10 +322,9 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
 	await button1.press( 'Escape' );
-	const focusedId = await page.locator( '*:focus' ).getAttribute( 'id' );
 	const focusedClass = await page.locator( '*:focus' ).getAttribute( 'class' );
 	const focusedText = await page.locator( '*:focus' ).textContent();
-	console.log( `FOCUSED ELEMENT: #${ focusedId } Class: "${ focusedClass }" Text: "${ focusedText }"` );
+	console.log( `FOCUSED ELEMENT: Class: "${ focusedClass }" Text: "${ focusedText }"` );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 	await expect.soft( button1 ).toBeHidden();
