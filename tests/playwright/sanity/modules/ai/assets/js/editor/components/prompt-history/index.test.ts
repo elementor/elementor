@@ -56,6 +56,8 @@ test.describe( 'AI @ai', () => {
 			await closePromptHistory( page );
 
 			await expect( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeHidden();
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Shows a message when there is a free plan', async () => {
