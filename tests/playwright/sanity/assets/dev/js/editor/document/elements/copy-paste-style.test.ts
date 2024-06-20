@@ -1,34 +1,50 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
+import EditorSelectors from '../../../../../../../selectors/editor-selectors';
 
 test( 'A page can be saved successfully after copy-paste style', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
-
-	await editor.closeNavigatorIfOpen();
-
+	const hasTopBar = await editor.hasTopBar();
 	const heading1 = await editor.addWidget( 'heading' );
 	const heading2 = await editor.addWidget( 'heading' );
+	let publishButton;
 
+	await editor.closeNavigatorIfOpen();
 	await editor.selectElement( heading1 );
 	await editor.openPanelTab( 'style' );
 	await editor.setColorControlValue( 'title_color', '#77A5BD' );
 
-	await editor.publishPage();
-
 	// Act.
 	await editor.copyElement( heading1 );
-
 	await editor.pasteStyleElement( heading2 );
 
-	// Assert.
 	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
+
+	// Assert.
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
 
+	if ( hasTopBar ) {
+		publishButton = page.locator( EditorSelectors.panels.topBar.wrapper + ' button', { hasText: 'Publish' } );
+	} else {
+		publishButton = page.locator( '#elementor-panel-saver-button-publish' );
+	}
+
+	// Check that the panel footer save button is enabled.
+	if ( hasTopBar ) {
+		await expect( publishButton ).not.toBeDisabled();
+	} else {
+		await expect( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );
+	}
+
 	// Act.
-	await editor.publishPage();
+	await publishButton.click();
 
 	// Assert.
-	expect( await editor.canPublishPage() ).toBeFalsy();
+	if ( hasTopBar ) {
+		await expect( publishButton ).toBeDisabled( { timeout: 10000 } );
+	} else {
+		await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, { timeout: 10000 } );
+	}
 } );

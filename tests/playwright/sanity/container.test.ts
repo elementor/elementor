@@ -709,16 +709,17 @@ test.describe( 'Container tests @container', () => {
 	test( 'Convert to container does not show when only containers are on the page', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.openNewPage();
+		const hasTopBar = await editor.hasTopBar();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( widgets.button, containerId );
 
-		if ( ! await editor.hasTopBar() ) {
-			await page.click( '#elementor-panel-saver-button-publish-label' );
-			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
-		} else {
+		if ( hasTopBar ) {
 			await editor.publishPage();
 			await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
+		} else {
+			await page.locator( '#elementor-panel-saver-button-publish-label' ).click();
+			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
 		}
 
 		await page.reload();
