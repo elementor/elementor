@@ -20,7 +20,6 @@ export class SelectLoadingButtonOnOpen extends $e.modules.hookUI.After {
 				{ container: children[ 0 ], append: false },
 			);
 		} else {
-			// if the document is empty, open the library.
 			$e.run( 'library/open' );
 		}
 	}
