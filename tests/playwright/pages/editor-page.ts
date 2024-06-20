@@ -656,16 +656,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Remove the focus from the test elements by creating two new elements.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async removeFocus() {
-		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
-		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click();
-	}
-
-	/**
 	 * Hide controls from the video widgets.
 	 *
 	 * @return {Promise<void>}
@@ -717,29 +707,6 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
 			await this.page.waitForSelector( 'body.elementor-editor-active' );
 		}
-	}
-
-	/**
-	 * Change the WordPress template layout.
-	 *
-	 * @param {string} layout - The layout template to change to.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async changeEditorLayout( layout: string ) {
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', layout );
-		await this.waitForPreviewToLoad();
-	}
-
-	/**
-	 * Wait for the Elementor preview to finish loading.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async waitForPreviewToLoad() {
-		await this.page.waitForSelector( '#elementor-preview-loading' );
-		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
 	}
 
 	/**
@@ -867,29 +834,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the navigator/structure panel.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openNavigator( ) {
-		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
-
-		if ( isOpen ) {
-			return;
-		}
-
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Structure' );
-		} else {
-			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
-		}
-
-		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
-	}
-
-	/**
 	 * Close the navigator/structure panel.
 	 *
 	 * @return {Promise<void>}
@@ -967,20 +911,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Publish the current page.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async canPublishPage() {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			return 0 === await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).count();
-		}
-		throw new Error( 'Not implemented' );
-	}
-
-	/**
 	 * Publish the current page and view it.
 	 *
 	 * @return {Promise<void>}
@@ -1022,57 +952,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Preview the changes made in the editor.
-	 *
-	 * @param {BrowserContext} context - The browser context.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async previewChanges( context: BrowserContext ) {
-		const hasTopBar = await this.hasTopBar();
-		const previewPagePromise = context.waitForEvent( 'page' );
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Preview Changes' );
-		} else {
-			await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
-		}
-
-		await this.page.waitForLoadState( 'networkidle' );
-
-		const previewPage = await previewPagePromise;
-		await previewPage.waitForLoadState();
-
-		return previewPage;
-	}
-
-	/**
-	 * Edit current page from the Front End.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async editCurrentPage() {
-		const postId = await this.getPageIdFromFrontEnd();
-		expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
-		await this.gotoPostId( postId );
-	}
-
-	/**
 	 * Get the current page ID.
 	 *
 	 * @return {Promise<string>}
 	 */
 	async getPageId(): Promise<string> {
 		return await this.page.evaluate( () => elementor.config.initial_document.id );
-	}
-
-	/**
-	 * Get the current page ID from the Front End.
-	 *
-	 * @return {Promise<string>}
-	 */
-	async getPageIdFromFrontEnd() {
-		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 
 	/**
@@ -1143,36 +1028,6 @@ export default class EditorPage extends BasePage {
 	 */
 	async getWidgetCount(): Promise<number> {
 		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
-	}
-
-	/**
-	 * Get the widget element.
-	 *
-	 * @return {string} Elementor widget.
-	 */
-	getWidget() {
-		return this.getPreviewFrame().locator( EditorSelectors.widget );
-	}
-
-	async waitForElementRender( id: string ) {
-		if ( null === id ) {
-			throw new Error( 'Id is null' );
-		}
-
-		const loadingElement = `.elementor-element-${ id }.elementor-loading`;
-		let isLoading: boolean;
-
-		try {
-			await this.getPreviewFrame().waitForSelector( loadingElement, { timeout: 500 } );
-
-			isLoading = true;
-		} catch ( e ) {
-			isLoading = false;
-		}
-
-		if ( isLoading ) {
-			await this.getPreviewFrame().waitForSelector( loadingElement, { state: 'detached' } );
-		}
 	}
 
 	async waitForIframeToLoaded( widgetType: string, isPublished = false ) {
@@ -1382,25 +1237,5 @@ export default class EditorPage extends BasePage {
 	 */
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
-	}
-
-	private async closeElementorMenu() {
-		const isBackdropShown = await this.page.locator( '.MuiBackdrop-root' ).count() > 0;
-		if ( isBackdropShown ) {
-			await this.page.locator( 'body' ).press( 'Escape' );
-			// Backdrop not removed, force its removal
-			// See: https://github.com/mui/material-ui/issues/32286
-			await this.page.evaluate( () => document.querySelector( '.MuiBackdrop-root' ).remove() );
-		}
-		expect( await this.page.locator( '.MuiBackdrop-root' ).count() ).toEqual( 0 );
-	}
-
-	public async getExitToWordpressUrl() {
-		await this.clickTopBarItem( 'Elementor Logo' );
-		const child = this.page.getByText( 'Exit to WordPress', { exact: true } );
-		const exitToWordpressUrl = await this.page.locator( '.MuiMenuItem-root ' ).filter( { has: child } ).getAttribute( 'href' );
-		await this.closeElementorMenu();
-
-		return exitToWordpressUrl;
 	}
 }
