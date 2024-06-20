@@ -11,8 +11,9 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests 
 
 	await editor.addWidget( 'image-carousel' );
 	await imageCarousel.addImageGallery( { images } );
-	await imageCarousel.setAutoplay();
-	await page.click( '.elementor-control-lazyload >> span' );
+	await editor.openSection( 'section_additional_options' );
+	await editor.setSwitcherControlValue( 'lazyload', true );
+	await editor.setSwitcherControlValue( 'autoplay', false );
 
 	// Set Image carousel settings
 	await page.click( '#elementor-controls >> text=Image Carousel' );
