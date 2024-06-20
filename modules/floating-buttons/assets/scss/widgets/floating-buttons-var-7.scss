@@ -26,6 +26,7 @@
 	.e-contact-buttons {
 
 		&__chat-button,
+		&__chat-button:not([href]):not([tabindex]), // to override inline styles when the href is not set
 		&__chat-button[type="button"] {
 			border-radius: 0;
 			color: var(--e-contact-buttons-button-icon);
