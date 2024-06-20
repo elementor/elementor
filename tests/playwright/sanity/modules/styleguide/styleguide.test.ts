@@ -30,11 +30,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await page.waitForTimeout( 3000 );
 
-		await Promise.all( [
-			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( '#elementor-panel-header-menu-button' ).click(),
-			page.click( 'text=User Preferences' ),
-		] );
+		await editor.openUserPreferencesPanel();
 
 		const userPreferencesStyleguideSwitcherSelector = 'input[type=checkbox][data-setting="enable_styleguide_preview"]';
 		const userPreferencesStyleguideSwitcherBeforeClick = await page.isChecked( userPreferencesStyleguideSwitcherSelector );
@@ -105,11 +101,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await page.waitForTimeout( 3000 );
 
-		await Promise.all( [
-			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( '#elementor-panel-header-menu-button' ).click(),
-			page.click( 'text=User Preferences' ),
-		] );
+		await editor.openUserPreferencesPanel();
 
 		const userPreferencesStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="enable_styleguide_preview"]' );
 
