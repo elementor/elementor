@@ -1,16 +1,15 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type BrowserContext, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, WindowType, BackboneType, ElementorType, ElementorFrontendConfig } from '../types/types';
+import { $eType, WindowType, BackboneType, ElementorType } from '../types/types';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
-let elementorFrontendConfig: ElementorFrontendConfig;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
