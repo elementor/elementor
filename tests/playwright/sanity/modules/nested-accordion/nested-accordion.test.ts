@@ -264,7 +264,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = frame.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = frame.locator( '.elementor-button >> nth=0' );
 
-			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree, false );
 		} );
 	} );
 
@@ -286,7 +286,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = page.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = page.locator( '.elementor-button >> nth=0' );
 
-			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree, true );
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
@@ -299,7 +299,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 	} );
 } );
 
-async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
+async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator, frontend: boolean ) {
 	await accordionTitleOne.focus();
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
@@ -321,37 +321,48 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 	await expect.soft( button1 ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
-	await button1.press( 'Escape' );
-	const focusedClass = await page.locator( '*:focus' ).getAttribute( 'class' );
-	const focusedText = await page.locator( '*:focus' ).textContent();
-	console.log( `FOCUSED ELEMENT: Class: "${ focusedClass }" Text: "${ focusedText }"` );
-	await expect.soft( accordionTitleOne ).toBeFocused();
-	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-	await expect.soft( button1 ).toBeHidden();
+	if ( frontend ) {
+		await page.keyboard.press( 'Escape' );
+		await expect.soft( accordionTitleOne ).toBeFocused();
+		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+		await expect.soft( button1 ).toBeHidden();
+	} else {
+		await page.keyboard.press( 'Space' );
+		await expect.soft( accordionTitleOne ).toBeFocused();
+		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+		await expect.soft( button1 ).toBeVisible();
+	}
 
-	await accordionTitleOne.press( 'Space' );
+	await page.keyboard.press( 'Space' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 	await expect.soft( button1 ).toBeVisible();
 
-	await accordionTitleOne.press( 'Escape' );
-	await expect.soft( accordionTitleOne ).toBeFocused();
-	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-	await expect.soft( button1 ).toBeHidden();
+	if ( frontend ) {
+		await page.keyboard.press( 'Escape' );
+		await expect.soft( accordionTitleOne ).toBeFocused();
+		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+		await expect.soft( button1 ).toBeHidden();
+	} else {
+		await page.keyboard.press( 'Space' );
+		await expect.soft( accordionTitleOne ).toBeFocused();
+		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+		await expect.soft( button1 ).toBeVisible();
+	}
 
-	await accordionTitleOne.press( 'ArrowDown' );
+	await page.keyboard.press( 'ArrowDown' );
 	await expect.soft( accordionTitleTwo ).toBeFocused();
 	await expect.soft( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
 
-	await accordionTitleTwo.press( 'ArrowRight' );
+	await page.keyboard.press( 'ArrowRight' );
 	await expect.soft( accordionTitleThree ).toBeFocused();
 	await expect.soft( accordionTitleThree ).toHaveAttribute( 'aria-expanded', 'false' );
 
-	await accordionTitleThree.press( 'ArrowUp' );
+	await page.keyboard.press( 'ArrowUp' );
 	await expect.soft( accordionTitleTwo ).toBeFocused();
 	await expect.soft( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
 
-	await accordionTitleTwo.press( 'ArrowLeft' );
+	await page.keyboard.press( 'ArrowLeft' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 }
