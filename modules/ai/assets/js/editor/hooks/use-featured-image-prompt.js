@@ -1,4 +1,3 @@
-import usePrompt from './use-prompt';
 import { getFeaturedImage } from '../api';
 import useImagePrompt from '../pages/form-media/hooks/use-image-prompt';
 
