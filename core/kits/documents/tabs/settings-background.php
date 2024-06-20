@@ -60,6 +60,16 @@ class Settings_Background extends Tab_Base {
 		);
 
 		$this->add_control(
+			'mobile_browser_background',
+			[
+				'label' => esc_html__( 'Mobile Browser Background', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'description' => esc_html__( 'The `theme-color` meta tag will only be available in supported browsers and devices.', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'body_overscroll_behavior',
 			[
 				'label' => esc_html__( 'Overscroll Behavior', 'elementor' ),
@@ -74,16 +84,6 @@ class Settings_Background extends Tab_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'overscroll-behavior: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'mobile_browser_background',
-			[
-				'label' => esc_html__( 'Mobile Browser Background', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'description' => esc_html__( 'The `theme-color` meta tag will only be available in supported browsers and devices.', 'elementor' ),
-				'separator' => 'before',
 			]
 		);
 
