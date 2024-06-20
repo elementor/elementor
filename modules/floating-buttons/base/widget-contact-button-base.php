@@ -2206,7 +2206,7 @@ JS;
 						'left' => '12',
 						'right' => '12',
 						'unit' => 'px',
-						'isLinked' => true,
+						'isLinked' => false,
 					],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-contact-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-start: {{LEFT}}{{UNIT}};',
