@@ -17,10 +17,13 @@ test.describe( 'Image carousel tests', () => {
 
 		await wpAdmin.openNewPage();
 		await editor.useCanvasTemplate();
-		const widgetId = await imageCarousel.addWidget();
-		await imageCarousel.selectNavigation( 'none' );
+		await editor.closeNavigatorIfOpen();
+
+		const widgetId = await editor.addWidget( 'image-carousel' );
+		await editor.setSelectControlValue( 'navigation', 'none' );
 		await imageCarousel.addImageGallery();
-		await imageCarousel.setAutoplay();
+		await editor.openSection( 'section_additional_options' );
+		await editor.setSwitcherControlValue( 'autoplay', false );
 
 		await test.step( 'Verify image population', async () => {
 			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
@@ -35,7 +38,7 @@ test.describe( 'Image carousel tests', () => {
 		await test.step( 'Verify arrows position', async () => {
 		// Act
 			await editor.openSection( 'section_image_carousel' );
-			await imageCarousel.selectNavigation( 'both' );
+			await editor.setSelectControlValue( 'navigation', 'both' );
 			await editor.setSelectControlValue( 'image_stretch', 'yes' );
 
 			await editor.openPanelTab( 'style' );
@@ -73,29 +76,28 @@ test.describe( 'Image carousel tests', () => {
 		await editor.closeNavigatorIfOpen();
 		// Add breakpoints.
 		const breakpoints = new Breakpoints( page );
-		await breakpoints.addAllBreakpoints();
+		await breakpoints.addAllBreakpoints( editor );
 		await editor.addWidget( 'image-carousel' );
 		await imageCarousel.addImageGallery();
-		await imageCarousel.setAutoplay();
+		await editor.openSection( 'section_additional_options' );
+		await editor.setSwitcherControlValue( 'autoplay', false );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_style_image' );
 		await editor.setSelectControlValue( 'image_spacing', 'custom' );
 		// Test Desktop
-		await editor.setNumberControlValue( 'image_spacing_custom', '100' );
+		await editor.setSliderControlValue( 'image_spacing_custom', '100' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
 		// Test Tablet Extra
 		await editor.togglePreviewMode();
-		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers__holder' ).click();
-		await page.locator( '.elementor-control-image_spacing_custom .elementor-control-responsive-switchers [data-device="tablet_extra"]' ).click();
-		await editor.setNumberControlValue( 'image_spacing_custom_tablet_extra', '50' );
+		await editor.changeResponsiveView( 'tablet_extra' );
+		await editor.setSliderControlValue( 'image_spacing_custom_tablet_extra', '50' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
 		// Test Tablet
 		await editor.togglePreviewMode();
-		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers__holder' ).click();
-		await page.locator( '.elementor-control-image_spacing_custom_tablet_extra .elementor-control-responsive-switchers [data-device="tablet"]' ).click();
-		await editor.setNumberControlValue( 'image_spacing_custom_tablet', '10' );
+		await editor.changeResponsiveView( 'tablet' );
+		await editor.setSliderControlValue( 'image_spacing_custom_tablet', '10' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 		await wpAdmin.setExperiments( {
@@ -116,8 +118,8 @@ test.describe( 'Image carousel tests', () => {
 		await editor.addWidget( 'heading' );
 		await editor.addWidget( 'image-carousel' );
 		await imageCarousel.addImageGallery();
-		await imageCarousel.setAutoplay();
 		await editor.openSection( 'section_additional_options' );
+		await editor.setSwitcherControlValue( 'autoplay', false );
 
 		// Assert.
 		await test.step( 'Assert keyboard navigation in the Frontend', async () => {
@@ -141,28 +143,29 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
+		const caption = [ 'Test caption!', 'Test caption!', 'Test caption!' ];
+		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
+		const title = [ 'A', 'B', 'C' ];
+
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
 		} );
 
 		await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
-		await imageCarousel.addWidget();
-		await imageCarousel.selectNavigation( 'none' );
-		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
-		await imageCarousel.setAutoplay();
+		await editor.closeNavigatorIfOpen();
+
+		await editor.addWidget( 'image-carousel' );
+		await editor.openSection( 'section_additional_options' );
+		await editor.setSwitcherControlValue( 'autoplay', false );
 		await editor.openSection( 'section_image_carousel' );
-
-		const caption = [ 'Test caption!', 'Test caption!', 'Test caption!' ];
-		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
-		const title = [ 'A', 'B', 'C' ];
-
-		await imageCarousel.setCaption( 'caption' );
+		await editor.setSelectControlValue( 'navigation', 'none' );
+		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
+		await editor.setSelectControlValue( 'caption_type', 'caption' );
 		await imageCarousel.verifyCaption( caption );
-		await imageCarousel.setCaption( 'description' );
+		await editor.setSelectControlValue( 'caption_type', 'description' );
 		await imageCarousel.verifyCaption( description );
-		await imageCarousel.setCaption( 'title' );
+		await editor.setSelectControlValue( 'caption_type', 'title' );
 		await imageCarousel.verifyCaption( title );
 	} );
 } );

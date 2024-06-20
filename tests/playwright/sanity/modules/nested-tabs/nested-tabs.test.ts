@@ -15,6 +15,23 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId: string;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+	} );
+
 	test.beforeEach( async () => {
 		pageId = await createPage();
 	} );
@@ -251,9 +268,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set icon size.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
-		await page.locator( '.elementor-tab-control-style' ).click();
-		await page.locator( '.elementor-control-icon_section_style' ).click();
-		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'icon_section_style' );
+		await editor.setSliderControlValue( 'icon_size', '50' );
 		await editor.publishAndViewPage();
 
 		// Set published page variables
@@ -288,12 +305,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await editor.openSection( 'section_tabs_responsive' );
 		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
-		await page.locator( '.elementor-tab-control-style' ).click();
+		await editor.openPanelTab( 'style' );
 
-		// Open responsive bar and select mobile view
-		await page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await page.waitForSelector( '#e-responsive-bar' );
-		await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+		// Change responsive view to mobile
+		await editor.changeResponsiveView( 'mobile' );
 
 		// Set controls values.
 		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
@@ -324,7 +339,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_title_style' );
-		await page.locator( '.elementor-control-title_hover' ).click();
+		await editor.setTabControlValue( 'title_style', 'title_hover' );
 		await editor.setColorControlValue( 'title_text_color_hover', '#ff0000' );
 
 		const rgbColor = 'rgb(255, 0, 0)';
@@ -357,7 +372,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set icon hover color.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
 			whiteColor = 'rgb(255, 255, 255)',
@@ -464,7 +479,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-left' );
 		// Set icon position to 'right'.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await editor.openSection( 'icon_section_style' );
 		await editor.setChooseControlValue( 'icon_position', 'eicon-h-align-right' );
 
 		await editor.togglePreviewMode();
@@ -487,7 +502,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.setChooseControlValue( 'title_alignment', 'eicon-text-align-right' );
 		// Set icon position to 'top'.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-icon_section_style' ).click();
+		await editor.openSection( 'icon_section_style' );
 		await editor.setChooseControlValue( 'icon_position', 'eicon-v-align-top' );
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
@@ -555,9 +570,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set tab hover color.
-		await setTabItemColor( page, editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
+		await setTabItemColor( editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
 		// Set tab active color.
-		await setTabItemColor( page, editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
+		await setTabItemColor( editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
 
 		await editor.publishAndViewPage();
 
@@ -642,7 +657,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await editor.openPanelTab( 'style' );
 		// Set tab hover style.
-		await page.locator( '.elementor-control-tabs_title_hover' ).click();
+		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 		await editor.setSelectControlValue( 'tabs_title_border_hover_border', 'solid' );
 		// Set shadow
 		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
@@ -698,36 +713,36 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Normal tab styling: text color green, border color: green and icon color: yellow.
 		await editor.openPanelTab( 'style' );
 		// Set text color.
-		await setTabItemColor( page, editor, 'section_title_style', 'title_normal', 'title_text_color', colorGreen );
+		await setTabItemColor( editor, 'section_title_style', 'title_normal', 'title_text_color', colorGreen );
 		// Set border color.
-		await setTabBorderColor( page, editor, 'normal', '', colorGreen, '5' );
+		await setTabBorderColor( editor, 'normal', '', colorGreen, '5' );
 		// Set icon color.
 		await editor.openPanelTab( 'content' );
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_normal', 'icon_color', colorYellow );
 		await editor.openPanelTab( 'content' );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_tabs_style' );
 
 		// Hover tab styling: text color: red, border color: red and icon color: pink.
 		// Set text color.
-		await setTabItemColor( page, editor, 'section_title_style', 'title_hover', 'title_text_color_hover', colorRed );
+		await setTabItemColor( editor, 'section_title_style', 'title_hover', 'title_text_color_hover', colorRed );
 		// Set border color.
-		await setTabBorderColor( page, editor, 'hover', '_hover', colorRed, '5' );
+		await setTabBorderColor( editor, 'hover', '_hover', colorRed, '5' );
 		// Set icon color.
 		await editor.openPanelTab( 'content' );
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', colorPink );
 		await editor.openPanelTab( 'content' );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_tabs_style' );
 
 		// Active tab styling: text color: blue, border color: blue and icon color: brown.
 		// Set text color.
-		await setTabItemColor( page, editor, 'section_title_style', 'title_active', 'title_text_color_active', colorBlue );
+		await setTabItemColor( editor, 'section_title_style', 'title_active', 'title_text_color_active', colorBlue );
 		// Set border color.
-		await setTabBorderColor( page, editor, 'active', '_active', colorBlue, '5' );
+		await setTabBorderColor( editor, 'active', '_active', colorBlue, '5' );
 		// Set icon color.
 		await editor.openPanelTab( 'content' );
-		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_active', 'icon_color_active', colorBrown );
+		await setTabItemColor( editor, 'icon_section_style', 'icon_section_active', 'icon_color_active', colorBrown );
 		await editor.openPanelTab( 'content' );
 
 		// Act.
@@ -813,10 +828,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set the hover animation.
 		await editor.openPanelTab( 'style' );
-		await page.locator( '.elementor-control-tabs_title_hover' ).click();
-		await page.locator( '.elementor-control-hover_animation .select2' ).click();
-		await page.locator( '.select2-results__option:has-text("Grow")' ).first().click();
-		await page.waitForLoadState( 'networkidle' );
+		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
+		await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
 
 		// Assert.
 		// Test inside editor.
@@ -897,7 +910,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Modify widget settings.
 		await editor.setSelectControlValue( 'slides_to_show', '2' );
 		await editor.openSection( 'section_additional_options' );
-		await page.locator( '.elementor-control-infinite .elementor-switch-label' ).click();
+		await editor.setSwitcherControlValue( 'infinite', false );
 		await editor.setNumberControlValue( 'autoplay_speed', '800' );
 
 		await editor.publishAndViewPage();
@@ -1231,9 +1244,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			firstTabContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
 
-		await setBackgroundVideoUrl( page, editor, contentContainerOneId, videoUrl );
-		await setBackgroundVideoUrl( page, editor, contentContainerTwoId, videoUrl );
-		await setBackgroundVideoUrl( page, editor, contentContainerThreeId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerOneId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerTwoId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerThreeId, videoUrl );
 
 		await expect.soft( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect.soft( videoContainer ).toHaveCount( 1 );

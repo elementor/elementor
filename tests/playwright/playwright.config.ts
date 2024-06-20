@@ -4,50 +4,16 @@ import { config as _config } from 'dotenv';
 
 process.env.DEBUG_PORT = '9222';
 
-function getGrepInvert() {
-	if ( '@default' === process.env.TEST_SUITE ) {
-		return [
-			/@reverse-columns/,
-			/@nested-tabs/,
-			/@container/,
-			/@nested-accordion/,
-			/@styleguide_image_link/,
-			/@elements-regression/,
-			/@ai/,
-			/@onBoarding/,
-			/@video/,
-			/@rating/,
-			/@pluginTester1_containers/,
-			/@pluginTester2_containers/,
-			/@pluginTester1_sections/,
-			/@pluginTester2_sections/,
-			/@promotions/,
-			/@nested-atomic-repeaters/,
-		];
-	}
-	return [];
-}
-
 _config( {
 	path: resolve( __dirname, './.env' ),
 } );
-
-function getGrep() {
-	if ( undefined === process.env.TEST_SUITE || '@default' === process.env.TEST_SUITE ) {
-		return [ /.*/ ];
-	} else if ( 'default' !== process.env.TEST_SUITE ) {
-		return [ new RegExp( `${ process.env.TEST_SUITE }` ) ];
-	}
-	return [ /.*/ ];
-}
 
 export default defineConfig( {
 	testDir: './sanity',
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
 	globalSetup: resolve( __dirname, './global-setup.ts' ),
-	grepInvert: getGrepInvert(),
-	grep: getGrep(),
+	grepInvert: /elements-regression/,
 	expect: {
 		timeout: 5_000,
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },

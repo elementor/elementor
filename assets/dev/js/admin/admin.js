@@ -5,7 +5,7 @@ import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
-import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admin/module';
+import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -316,13 +316,6 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 				} ).show();
 			} );
 
-			$( '.elementor_css_print_method select' ).on( 'change', function() {
-				var $descriptions = $( '.elementor-css-print-method-description' );
-
-				$descriptions.hide();
-				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
-			} ).trigger( 'change' );
-
 			$( '.elementor_google_font select' ).on( 'change', function() {
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
@@ -347,8 +340,8 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 				new LandingPagesModule();
 			}
 
-			if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
-				new LinksPagesModule();
+			if ( elementorCommon.config.experimentalFeatures[ 'floating-buttons' ] ) {
+				new FloatingButtonsHandler();
 			}
 
 			this.templateControls = new TemplateControls();
