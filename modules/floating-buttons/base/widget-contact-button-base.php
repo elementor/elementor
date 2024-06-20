@@ -2206,7 +2206,7 @@ JS;
 						'left' => '12',
 						'right' => '12',
 						'unit' => 'px',
-						'isLinked' => true,
+						'isLinked' => false,
 					],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-contact-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-start: {{LEFT}}{{UNIT}};',
@@ -3132,12 +3132,7 @@ JS;
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => sprintf(
-					/* translators: 1: Link open tag, 2: Link close tag. */
-					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
-					'<a href="javascript: $e.run( \'panel/close\' )">',
-					'</a>'
-				),
+				'raw' => __( 'Responsive visibility will take effect only on preview mode or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -3201,5 +3196,4 @@ JS;
 
 		$render_strategy->render();
 	}
-
 }
