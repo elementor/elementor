@@ -323,16 +323,13 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 
 	if ( frontend ) {
 		await page.keyboard.press( 'Escape' );
-		await expect.soft( accordionTitleOne ).toBeFocused();
-		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-		await expect.soft( button1 ).toBeHidden();
 	} else {
 		await page.keyboard.press( 'Shift+Tab' );
 		await page.keyboard.press( 'Space' );
-		await expect.soft( accordionTitleOne ).toBeFocused();
-		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-		await expect.soft( button1 ).toBeHidden();
 	}
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect.soft( button1 ).toBeHidden();
 
 	await page.keyboard.press( 'Space' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
@@ -341,15 +338,12 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 
 	if ( frontend ) {
 		await page.keyboard.press( 'Escape' );
-		await expect.soft( accordionTitleOne ).toBeFocused();
-		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-		await expect.soft( button1 ).toBeHidden();
 	} else {
 		await page.keyboard.press( 'Space' );
-		await expect.soft( accordionTitleOne ).toBeFocused();
-		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-		await expect.soft( button1 ).toBeHidden();
 	}
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect.soft( button1 ).toBeHidden();
 
 	await page.keyboard.press( 'ArrowDown' );
 	await expect.soft( accordionTitleTwo ).toBeFocused();
