@@ -278,7 +278,7 @@ class Autoloader {
 		$classes_map = self::get_classes_map();
 
 		if ( isset( $classes_map[ $relative_class_name ] ) ) {
-			$filename = self::$default_path . '/' . $classes_map[ $relative_class_name ];
+			$filename = self::$default_path . DIRECTORY_SEPARATOR . $classes_map[ $relative_class_name ];
 		} else {
 			$filename = strtolower(
 				preg_replace(
