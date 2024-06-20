@@ -26,6 +26,11 @@ class Shapes {
 	const FILTER_INCLUDE = 'include';
 
 	/**
+	 * The shape name pattern.
+	 */
+	const SHAPE_NAME_PATTERN = '/^[a-zA-Z-]+$/';
+
+	/**
 	 * Shapes.
 	 *
 	 * Holds the list of supported shapes.
@@ -104,6 +109,9 @@ class Shapes {
 	 * @return string Shape file path.
 	 */
 	public static function get_shape_path( $shape, $is_negative = false ) {
+		if ( ! preg_match( self::SHAPE_NAME_PATTERN, $shape ) ) {
+			return '';
+		}
 
 		if ( isset( self::$shapes[ $shape ] ) && isset( self::$shapes[ $shape ]['path'] ) ) {
 			$path = self::$shapes[ $shape ]['path'];
