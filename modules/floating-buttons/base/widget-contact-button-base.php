@@ -248,10 +248,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return parent::get_stack( false );
 	}
 
-	public function get_help_url(): string {
-		return 'https://go.elementor.com/widget-' . $this->get_name();
-	}
-
 	protected function register_controls(): void {
 
 		$this->add_content_tab();
