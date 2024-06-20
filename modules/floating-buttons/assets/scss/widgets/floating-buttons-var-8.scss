@@ -88,6 +88,12 @@
 			inset-inline-start: unset;
 			position: relative;
 			top: unset;
+
+			&:hover,
+			&:focus {
+				background-color: var(--e-contact-buttons-active-button-bg);
+				color: var(--e-contact-buttons-active-button-color);
+			}
 		}
 
 		&__chat-button,
