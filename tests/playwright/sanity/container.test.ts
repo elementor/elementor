@@ -187,7 +187,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = editor.getPreviewFrame().locator( '#elementor-preview-responsive-wrapper' );
+			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act.
 		// Add widget.
@@ -220,7 +220,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = editor.getPreviewFrame().locator( '#elementor-preview-responsive-wrapper' );
+			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act
 		// Set container content full content width.
