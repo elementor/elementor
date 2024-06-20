@@ -149,8 +149,9 @@ class Settings_Layout extends Tab_Base {
 					'active' => false,
 				],
 				'selectors' => [
-					// Hack to convert the value into a CSS selector.
-					'' => '}{{VALUE}}{display: var(--page-title-display)',
+					// Hack to convert the value into a CSS selector. (The dummy selector will be empty
+					// and have no properties but is required for the CSS to be syntaxically correct.)
+					'.elementor-page-title-dummy-selector' => '}{{VALUE}}{display: var(--page-title-display)',
 				],
 			]
 		);
