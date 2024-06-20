@@ -334,6 +334,7 @@ class Manager extends Base_Object {
 	}
 
 	private function add_default_features() {
+		/* TODO: Moved to settings in 3.23, should be delete in 3.25. */
 		$this->add_feature( [
 			'name' => 'e_optimized_css_loading',
 			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
@@ -343,6 +344,7 @@ class Manager extends Base_Object {
 				esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
+			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,

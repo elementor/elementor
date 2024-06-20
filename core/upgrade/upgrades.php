@@ -878,6 +878,35 @@ class Upgrades {
 		update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
 	}
 
+	/**
+	 * Upgrade Elementor 3.23.0
+	 *
+	 * @since 3.23.0
+	 * @static
+	 * @access public
+	 */
+	public static function _v_3_23_0() {
+		// Delete old experiments from the DB.
+		delete_option( 'elementor_experiment-block_editor_assets_optimize' );
+		delete_option( 'elementor_experiment-e_dom_optimization' );
+		delete_option( 'elementor_experiment-e_global_styleguide' );
+		delete_option( 'elementor_experiment-e_image_loading_optimization' );
+		delete_option( 'elementor_experiment-e_optimized_assets_loading' );
+		delete_option( 'elementor_experiment-e_scroll_snap' );
+		delete_option( 'elementor_experiment-loop' );
+		delete_option( 'elementor_experiment-notes' );
+		delete_option( 'elementor_experiment-page-transitions' );
+
+		// Move "optimized CSS loading" from experiments tab to performance tab.
+		$optimized_css_loading_experiment_value = get_option( 'elementor_experiment-e_optimized_css_loading' );
+		if ( $optimized_css_loading_experiment_value ) {
+			$setting_value = 'inactive' === $optimized_css_loading_experiment_value ? '0' : '1';
+			add_option( 'elementor_optimized_css_loading', $setting_value );
+			// TODO: To keep BC for rollback users, don't delete the following DB setting, do that in 3.25 or later.
+			// delete_option( 'elementor_experiment-e_optimized_css_loading' );
+		}
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 

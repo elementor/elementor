@@ -1528,7 +1528,7 @@ class Frontend extends App {
 	}
 
 	private function is_optimized_css_mode() {
-		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+		$is_optimized_css_loading = '1' === get_option( 'elementor_optimized_css_loading', '1' );
 
 		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}

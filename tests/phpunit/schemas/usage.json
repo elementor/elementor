@@ -1073,19 +1073,10 @@
 								"font_display": "swap"
 							},
 							"performance": {
-								"css_print_method": "internal"
+								"css_print_method": "internal",
+								"optimized_css_loading": "1"
 							},
 							"experiments": {
-								"e_optimized_css_loading": {
-									"default": "inactive",
-									"state": "default",
-									"tags": [
-										{
-											"type": "default",
-											"label": "Performance"
-										}
-									]
-								},
 								"landing-pages": {
 									"default": "active",
 									"state": "default"

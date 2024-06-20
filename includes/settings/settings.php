@@ -411,6 +411,18 @@ class Settings extends Settings_Page {
 									),
 								],
 							],
+							'optimized_css_loading' => [
+								'label' => esc_html__( 'Optimized CSS Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Reduce the CSS files size by conditionally loading only CSS files for widgets that are used on the page.', 'elementor' ),
+								],
+							],
 							'optimized_image_loading' => [
 								'label' => esc_html__( 'Optimized Image Loading', 'elementor' ),
 								'field_args' => [
