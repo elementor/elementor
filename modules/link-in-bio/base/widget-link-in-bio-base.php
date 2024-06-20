@@ -155,6 +155,10 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		return [ 'buttons', 'bio', 'widget', 'link in bio' ];
 	}
 
+	public function get_help_url(): string {
+		return 'https://elementor.com/help/link-in-bio-widgets/';
+	}
+
 	public function get_image_position_options(): array {
 		return [
 			'' => esc_html__( 'Default', 'elementor' ),

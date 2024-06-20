@@ -249,7 +249,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	public function get_help_url(): string {
-		return 'https://elementor.com/help/';
+		return 'https://elementor.com/help/floating-button/';
 	}
 
 	protected function register_controls(): void {
