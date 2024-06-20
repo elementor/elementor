@@ -327,6 +327,7 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 		await expect.soft( button1 ).toBeHidden();
 	} else {
+		await page.keyboard.press( 'Shift+Tab' );
 		await page.keyboard.press( 'Space' );
 		await expect.soft( accordionTitleOne ).toBeFocused();
 		await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
