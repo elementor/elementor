@@ -269,7 +269,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = frame.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = frame.locator( '.elementor-button >> nth=0' );
 
-			await checkKeyboardNavigation( accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
 		} );
 	} );
 
@@ -292,7 +292,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = page.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = page.locator( '.elementor-button >> nth=0' );
 
-			await checkKeyboardNavigation( accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
