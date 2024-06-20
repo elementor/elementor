@@ -535,7 +535,7 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Set choose control value.
 	 *
-	 * TODO: For consistency, we need to rewrite to logic, from icon based to value based.
+	 * TODO: For consistency, we need to rewrite the logic, from icon based to value based.
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} icon      - The icon to choose.
