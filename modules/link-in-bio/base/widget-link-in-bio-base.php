@@ -925,9 +925,6 @@ JS;
 				[
 					'label' => esc_html__( 'Position', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'desktop_default' => 'center center',
-					'tablet_default' => 'center center',
-					'mobile_default' => 'center center',
 					'options' => $this->get_image_position_options(),
 					'selectors' => [
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-position: {{VALUE}}',
@@ -980,9 +977,6 @@ JS;
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'desktop_default' => 'center center',
-				'tablet_default' => 'center center',
-				'mobile_default' => 'center center',
 				'options' => $this->get_image_position_options(),
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-position: {{VALUE}}',
