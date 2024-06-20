@@ -104,7 +104,7 @@ class Shapes {
 	 * @return string Shape file path.
 	 */
 	public static function get_shape_path( $shape, $is_negative = false ) {
-		if ( empty( self::$shapes[ $shape ] ) ) {
+		if ( ! isset( self::$shapes[ $shape ] ) ) {
 			return '';
 		}
 
