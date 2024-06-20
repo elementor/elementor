@@ -1,4 +1,4 @@
-import { test, expect, Locator } from '@playwright/test';
+import { test, expect, Locator, Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
@@ -305,7 +305,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 	} );
 } );
 
-async function checkKeyboardNavigation( accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
+async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
 	await accordionTitleOne.focus();
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
@@ -328,6 +328,10 @@ async function checkKeyboardNavigation( accordionTitleOne: Locator, accordionTit
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
 	await button1.press( 'Escape' );
+	const focusedId = await page.locator( '*:focus' ).getAttribute( 'id' );
+	const focusedClass = await page.locator( '*:focus' ).getAttribute( 'class' );
+	const focusedText = await page.locator( '*:focus' ).textContent();
+	console.log( `FOCUSED ELEMENT: #${ focusedId } Class: "${ focusedClass }" Text: "${ focusedText }"` );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 	await expect.soft( button1 ).toBeHidden();
