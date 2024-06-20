@@ -37,6 +37,8 @@ export default class extends Marionette.LayoutView {
 		this._parent._parent._parent.hideModal();
 
 		if ( this.isFloatingButtonLibraryClose() ) {
+			// Had to use jQuery as it is the only thing that worked.
+			jQuery( window ).off( 'beforeunload' );
 			window.location.href = elementor.config.admin_floating_button_admin_url;
 		}
 	}

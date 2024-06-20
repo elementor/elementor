@@ -21,20 +21,20 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 	}
 
 	onElementorInit() {
-		elementor.hooks.addFilter( 'elements/base/behaviors', ( behaviors ) => {
+		elementor.hooks.addFilter( 'elements/base/behaviors', ( behaviors, element ) => {
 			if ( this.isFloatingButtonDocument() ) {
 				const { contextMenu: { groups } } = behaviors;
 				behaviors.contextMenu.groups = groups
-					.map( this.filterOutUnsupportedActions() )
+					.map( this.filterOutUnsupportedActions( element.options.model.get( 'elType' ) ) )
 					.filter( ( group ) => group.actions.length );
 			}
 			return behaviors;
 		}, 1000 );
 	}
 
-	filterOutUnsupportedActions() {
+	filterOutUnsupportedActions( type ) {
 		return ( group ) => {
-			const enabledCommands = [ 'edit', 'delete', 'resetStyle', 'save' ];
+			const enabledCommands = 'container' === type ? [ 'edit', 'delete', 'resetStyle', 'save' ] : [ 'edit', 'resetStyle', 'save' ];
 			const { name, actions } = group;
 			return {
 				name,
