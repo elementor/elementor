@@ -314,7 +314,9 @@ TemplateLibraryManager = function() {
 		}
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
-			templatesCollection = new TemplateLibraryCollection( result.data.templates );
+			templatesCollection = new TemplateLibraryCollection(
+				this.filterOutInactiveExperiments( result.data.templates ),
+			);
 
 			if ( result.data.config ) {
 				config = result.data.config;
@@ -325,6 +327,16 @@ TemplateLibraryManager = function() {
 			if ( onUpdate ) {
 				onUpdate();
 			}
+		} );
+	};
+
+	this.filterOutInactiveExperiments = function( templates ) {
+		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
+			return templates;
+		}
+		return templates.filter( function( template ) {
+			const { subtype } = template;
+			return subtype !== 'Link in Bio';
 		} );
 	};
 
