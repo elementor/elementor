@@ -336,6 +336,7 @@ TemplateLibraryManager = function() {
 		}
 
 		const dataToReturn = { ...configData };
+
 		dataToReturn.block.categories = configData.block.categories.filter( function( category ) {
 			return category !== 'Link in Bio';
 		} );
