@@ -229,17 +229,7 @@ TemplateLibraryManager = function() {
 		return templatesCollection;
 	};
 
-	this.filterOutExperimentsCategories = function() {
-		if ( ! elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
-			config.block.categories = config.block.categories.filter( function( category ) {
-				return category !== 'Link in Bio';
-			} );
-		}
-	};
-
 	this.getConfig = function( item ) {
-		this.filterOutExperimentsCategories();
-
 		if ( item ) {
 			return config[ item ] ? config[ item ] : {};
 		}
@@ -329,7 +319,7 @@ TemplateLibraryManager = function() {
 			);
 
 			if ( result.data.config ) {
-				config = result.data.config;
+				config = this.filterOutExperimentsCategories( result.data.config );
 			}
 
 			self.layout.hideLoadingView();
@@ -338,6 +328,19 @@ TemplateLibraryManager = function() {
 				onUpdate();
 			}
 		} );
+	};
+
+	this.filterOutExperimentsCategories = function( configData ) {
+		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
+			return configData;
+		}
+
+		const dataToReturn = { ...configData };
+		dataToReturn.block.categories = configData.block.categories.filter( function( category ) {
+			return category !== 'Link in Bio';
+		} );
+
+		return dataToReturn;
 	};
 
 	this.filterOutInactiveExperiments = function( templates ) {
