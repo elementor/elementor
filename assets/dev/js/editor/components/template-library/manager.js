@@ -230,6 +230,11 @@ TemplateLibraryManager = function() {
 	};
 
 	this.getConfig = function( item ) {
+		if ( ! elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
+			config.block.categories = config.block.categories.filter( function( category ) {
+				return category !== 'Link in Bio';
+			} );
+		}
 		if ( item ) {
 			return config[ item ] ? config[ item ] : {};
 		}
