@@ -371,7 +371,6 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'additional_custom_breakpoints',
 			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => sprintf(
 				'%1$s <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">%2$s</a>',
 				esc_html__( 'Get pixel-perfect design for every screen size. You can now add up to 6 customizable breakpoints beyond the default desktop setting: mobile, mobile extra, tablet, tablet extra, laptop, and widescreen.', 'elementor' ),
