@@ -3008,7 +3008,7 @@ JS;
 						],
 					],
 					'default' => $config['advanced']['horizontal_position_default'],
-					'toggle' => true,
+					'toggle' => false,
 				]
 			);
 
@@ -3066,7 +3066,7 @@ JS;
 						],
 					],
 					'default' => 'bottom',
-					'toggle' => true,
+					'toggle' => false,
 				]
 			);
 
