@@ -248,10 +248,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return parent::get_stack( false );
 	}
 
-	public function get_help_url(): string {
-		return 'https://elementor.com/help/floating-button/';
-	}
-
 	protected function register_controls(): void {
 
 		$this->add_content_tab();
@@ -3008,7 +3004,7 @@ JS;
 						],
 					],
 					'default' => $config['advanced']['horizontal_position_default'],
-					'toggle' => true,
+					'toggle' => false,
 				]
 			);
 
@@ -3066,7 +3062,7 @@ JS;
 						],
 					],
 					'default' => 'bottom',
-					'toggle' => true,
+					'toggle' => false,
 				]
 			);
 
