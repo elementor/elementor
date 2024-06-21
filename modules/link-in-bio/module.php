@@ -4,7 +4,6 @@ namespace Elementor\Modules\LinkInBio;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +34,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Link In Bio', 'elementor' ),
 			'description' => esc_html__( 'Create bio link landing pages and digital business cards that convert with Link in Bio widgets. Share your link in bio pages on your social media profiles. Create as many as you need for different audiences and goals.', 'elementor' ),
 			'default' => Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.23.0',

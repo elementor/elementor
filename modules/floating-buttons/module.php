@@ -8,7 +8,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
@@ -57,7 +56,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
 			'description' => esc_html__( 'Boost visitor engagement with Floating Buttons. The Floating Button template library offers a variety of interactive one-click contact options, highlighted links, and calls to action to increase your website conversions.', 'elementor' ),
 			'default' => Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'dependencies' => [
 				'container',
 			],
