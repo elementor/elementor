@@ -229,12 +229,17 @@ TemplateLibraryManager = function() {
 		return templatesCollection;
 	};
 
-	this.getConfig = function( item ) {
+	this.filterOutExperimentsCategories = function() {
 		if ( ! elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
 			config.block.categories = config.block.categories.filter( function( category ) {
 				return category !== 'Link in Bio';
 			} );
 		}
+	};
+
+	this.getConfig = function( item ) {
+		this.filterOutExperimentsCategories();
+
 		if ( item ) {
 			return config[ item ] ? config[ item ] : {};
 		}
