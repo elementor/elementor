@@ -15,7 +15,6 @@ use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
-use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
