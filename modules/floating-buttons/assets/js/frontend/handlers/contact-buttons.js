@@ -342,8 +342,10 @@ export default class ContactButtonsHandler extends Base {
 			}
 		}
 
-		// Default to open in Editor
-		if ( elementorFrontend.isEditMode() ) {
+		if (
+			elementorFrontend.isEditMode() &&
+			'floating-buttons' === elementor?.config?.document?.type
+		) {
 			this.openChatBox();
 		}
 	}
