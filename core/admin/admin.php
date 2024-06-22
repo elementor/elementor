@@ -948,7 +948,7 @@ class Admin extends App {
 	}
 
 	private function maybe_enqueue_hints() {
-		if ( ! Hints::should_display_hint( 'image-optimization-once-media-modal' ) && ! Hints::should_display_hint( 'image-optimization-media-modal' ) ) {
+		if ( ! Hints::should_display_hint( 'image-optimization' ) ) {
 			return;
 		}
 
@@ -960,26 +960,18 @@ class Admin extends App {
 			true
 		);
 
-		$once_dismissed = Hints::is_dismissed( 'image-optimization-once-media-modal' );
-		$content = $once_dismissed ?
-			sprintf("%1\$s <a href='%2\$s' class='e-btn-1' target='_blank'>%3\$s</a> %4\$s",
-				__( 'This image is large and may slow things down.', 'elementor' ),
-				Hints::get_plugin_action_url( 'image-optimization' ),
-				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' ),
-				__( 'to reduce size without losing quality.', 'elementor' )
-			) :
-			sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
-				__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
-				Hints::get_plugin_action_url( 'image-optimization' ),
-				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
-			);
+		$content = sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+			__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
+			Hints::get_plugin_action_url( 'image-optimization' ),
+			( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
+		);
 
-		$dismissible = $once_dismissed ? 'image-optimization-media-modal' : 'image-optimization-once-media-modal';
+		$dismissible = 'image_optimizer_hint';
 
 		wp_localize_script( 'media-hints', 'elementorAdminHints', [
 			'mediaHint' => [
-				'display' => ! $once_dismissed,
-				'type' => $once_dismissed ? 'warning' : 'info',
+				'display' => true,
+				'type' => 'info',
 				'content' => $content,
 				'icon' => true,
 				'dismissible' => $dismissible,

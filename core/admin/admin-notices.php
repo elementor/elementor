@@ -6,6 +6,7 @@ use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
@@ -349,8 +350,9 @@ class Admin_Notices extends Module {
 
 		$experiments = Plugin::$instance->experiments;
 		$is_all_performance_features_active = (
-			$experiments->is_feature_active( 'additional_custom_breakpoints' ) &&
-			$experiments->is_feature_active( 'e_optimized_css_loading' )
+			$experiments->is_feature_active( 'e_lazyload' ) &&
+			$experiments->is_feature_active( 'e_optimized_css_loading' ) &&
+			$experiments->is_feature_active( 'e_font_icon_svg' )
 		);
 
 		if ( $is_all_performance_features_active ) {
@@ -363,7 +365,7 @@ class Admin_Notices extends Module {
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Try it out', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=elementor#tab-experiments' ),
+				'url' => Settings::get_settings_tab_url( 'experiments' ),
 				'type' => 'cta',
 			],
 			'button_secondary' => [

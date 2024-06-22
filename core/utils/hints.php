@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\User;
+use Elementor\Utils;
 
 class Hints {
 	const INFO = 'info';
@@ -223,6 +224,10 @@ class Hints {
 			return false;
 		}
 
+		if ( static::is_conflict_plugin_installed() ) {
+			return false;
+		}
+
 		foreach ( $hint as $key => $value ) {
 			switch ( $key ) {
 				case self::DISMISSED:
@@ -253,6 +258,32 @@ class Hints {
 			}
 		}
 		return true;
+	}
+
+	private static function is_conflict_plugin_installed(): bool {
+		if ( ! Utils::has_pro() ) {
+			return false;
+		}
+
+		$conflicting_plugins = [
+			'imagify/imagify.php',
+			'optimole-wp/optimole-wp.php',
+			'ewww-image-optimizer/ewww-image-optimizer.php',
+			'ewww-image-optimizer-cloud/ewww-image-optimizer-cloud.php',
+			'kraken-image-optimizer/kraken.php',
+			'shortpixel-image-optimiser/wp-shortpixel.php',
+			'wp-smushit/wp-smush.php',
+			'wp-smush-pro/wp-smush.php',
+			'tiny-compress-images/tiny-compress-images.php',
+		];
+
+		foreach ( $conflicting_plugins as $plugin ) {
+			if ( self::is_plugin_active( $plugin ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -183,7 +183,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -199,7 +202,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -234,7 +240,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -249,7 +258,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -265,7 +277,10 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -288,7 +303,36 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
+	 * get_featured_image
+	 * @param $prompt
+	 * @param $prompt_settings
+	 *
+	 * @return mixed|\WP_Error
+	 */
+	public function get_featured_image( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'image/text-to-image/featured-image',
+			[
+				self::PROMPT => $data['payload']['prompt'],
+				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
+				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -626,7 +670,10 @@ class Ai extends Library {
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 

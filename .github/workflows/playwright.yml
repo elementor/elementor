@@ -41,32 +41,17 @@ jobs:
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      fail-fast: ${{inputs.fail_fast || true}}
+      fail-fast: ${{ inputs.fail_fast || true }}
       matrix:
-        testSuite: [
-          'ai',
-          'onBoarding',
-          'video',
-          'elements-regression',
-          'default',
-          'nested-tabs',
-          'reverse-columns',
-          'container',
-          'nested-accordion',
-          'styleguide_image_link',
-          'rating',
-          'pluginTester1_containers',
-          'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections',
-          'promotions',
-          'nested-atomic-repeaters',
-        ]
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+        shardTotal: [ 10 ]
+        include:
+        - shardIndex: "elements-regression"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -76,7 +61,9 @@ jobs:
           node-version: 20.x
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -99,25 +86,20 @@ jobs:
         run: |
           npx wp-env run cli wp core version
           npx wp-env run cli wp --info
-      - name: Activate performance experiments
-        run: |
-          npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints
       - name: Install playwright/test
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        if: ${{matrix.testSuite !='elements-regression'}}
-        env:
-          TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright -- --reporter=${{inputs.reporter || 'list,github'}}
+        if: ${{ matrix.shardIndex != 'elements-regression' }}
+        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }}
       - name: Run element regression tests
-        if: ${{matrix.testSuite =='elements-regression'}}
-        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
+        if: ${{ matrix.shardIndex == 'elements-regression' }}
+        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results-${{ matrix.testSuite }}
-          path: ${{inputs.path-to-results || 'test-results/'}}
+          name: playwright-test-results-${{ matrix.shardIndex }}
+          path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
 

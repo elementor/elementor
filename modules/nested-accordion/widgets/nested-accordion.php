@@ -926,6 +926,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'items',
 			'data-binding-setting': ['item_title'],
 			'data-binding-index': view.collection.length + 1,
+			'data-binding-dynamic': 'true',
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
@@ -999,6 +1000,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-repeater-name': 'items',
 						'data-binding-setting': ['item_title'],
 						'data-binding-index': itemCount,
+						'data-binding-dynamic': 'true',
 					});
 				#>
 

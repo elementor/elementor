@@ -263,7 +263,14 @@ module.exports = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			$videoElement = $( '<iframe>', { src: apiProvider.getAutoplayURL( options.url ), allowfullscreen: 1 } );
+			$videoElement = $( '<iframe>', { allowfullscreen: 1 } );
+
+			if ( 'yes' === options.autoplay ) {
+				$videoElement.attr( 'allow', 'autoplay' );
+				$videoElement.attr( 'src', apiProvider.getAutoplayURL( options.url ) );
+			} else {
+				$videoElement.attr( 'src', options.url );
+			}
 		}
 
 		const classes = this.getSettings( 'classes' ),

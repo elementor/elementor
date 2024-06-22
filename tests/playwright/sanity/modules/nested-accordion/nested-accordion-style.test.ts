@@ -99,7 +99,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 		await test.step( 'Set background', async () => {
 			// Act
-			await editor.page.locator( '.elementor-control-content_background_background .eicon-paint-brush' ).click();
+			await editor.setChooseControlValue( 'content_background_background', 'eicon-paint-brush' );
 			await editor.setColorControlValue( 'content_background_color', colors.red.hex );
 		} );
 
@@ -132,7 +132,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				// Act
 				await editor.openPanelTab( 'style' );
 				await editor.openSection( 'section_background' );
-				await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
+				await editor.setChooseControlValue( 'background_background', 'eicon-paint-brush' );
 				await editor.setColorControlValue( 'background_color', colors.black.hex );
 				await editor.openSection( 'section_border' );
 				await editor.setSelectControlValue( 'border_border', borderStyle.dotted );
@@ -251,14 +251,15 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );
 
+			await editor.setTabControlValue( 'header_title_color_style', 'header_normal_title' );
 			await editor.setShadowControlValue( 'title_normal_text_shadow', 'text' );
 			await editor.setTextStrokeControlValue( 'title_normal_stroke', 'text', 2, colors.red.hex );
 
-			await editor.setTabControlValue( 'header_title_color_style', 'hover' );
+			await editor.setTabControlValue( 'header_title_color_style', 'header_hover_title' );
 			await editor.setShadowControlValue( 'title_hover_text_shadow', 'text' );
 			await editor.setTextStrokeControlValue( 'title_hover_stroke', 'text', 5, colors.blue.hex );
 
-			await editor.setTabControlValue( 'header_title_color_style', 'active' );
+			await editor.setTabControlValue( 'header_title_color_style', 'header_active_title' );
 			await editor.setShadowControlValue( 'title_active_text_shadow', 'text' );
 			await editor.setTextStrokeControlValue( 'title_active_stroke', 'text', 1, colors.orange.hex );
 

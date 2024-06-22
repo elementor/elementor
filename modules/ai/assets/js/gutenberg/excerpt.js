@@ -5,49 +5,11 @@ import useUserInfo from '../editor/hooks/use-user-info';
 import useExcerptPrompt from '../editor/hooks/use-excerpt-prompt';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
-import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
+import { useGutenbergPostText } from './post-text-utils';
+import { AiLink, Icon } from './styles';
 
 const { useSelect, useDispatch } = wp.data;
-
-// Function to extract all textual content from a Gutenberg post
-const useGutenbergPostText = ( ) => {
-	const postContent = useSelect(
-		( select ) => select( 'core/editor' )?.getEditedPostContent(),
-		[],
-	);
-	const title = useSelect(
-		( select ) => select( 'core/editor' )?.getEditedPostAttribute( 'title' ),
-		[],
-	);
-	const [ postTextualContent, setPostTextualContent ] = useState( '' );
-
-	useEffect( () => {
-		// Create a temporary DOM element to parse the content
-		const tempDiv = document.createElement( 'div' );
-		tempDiv.innerHTML = postContent;
-		const extractedText = [ title ];
-
-		// Function to recursively extract text from all text nodes
-		function extractTextRecursively( element, extractedTextRec ) {
-			element.childNodes.forEach( ( node ) => {
-				if ( node.nodeType === Node.TEXT_NODE ) {
-					const text = node.textContent.trim();
-					if ( text ) {
-						extractedTextRec.push( text );
-					}
-				} else if ( node.nodeType === Node.ELEMENT_NODE ) {
-					extractTextRecursively( node, extractedTextRec );
-				}
-			} );
-		}
-		extractTextRecursively( tempDiv, extractedText );
-
-		setPostTextualContent( extractedText.join( '\n' ).trim() );
-	}, [ postContent, title ] );
-
-	return postTextualContent;
-};
 
 const AIExcerpt = ( { onClose } ) => {
 	const { editPost } = useDispatch( 'core/editor' );
@@ -120,23 +82,6 @@ AIExcerpt.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const Icon = styled.i`
-  padding-right: 0.5em;
-  cursor: pointer;
-  color: #C00BB9;
-`;
-
-const ExcerptLink = styled.a`
-  color: #C00BB9;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  &:hover {
-    text-decoration: underline;
-    color: #C00BB9;
-  }
-`;
-
 const GenerateExcerptWithAI = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -152,7 +97,7 @@ const GenerateExcerptWithAI = () => {
 		<div style={ { paddingBottom: '0.6em' } }>
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
-				<ExcerptLink onClick={ handleButtonClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</ExcerptLink>
+				<AiLink onClick={ handleButtonClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</AiLink>
 				{ isOpen && <AIExcerpt onClose={ handleClose } /> }
 			</RequestIdsProvider>
 		</div> );

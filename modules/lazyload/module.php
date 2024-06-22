@@ -23,12 +23,8 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Lazy loading images that are not in the viewport improves initial page load performance and user experience. By activating this experiment all background images except the first one on your page will be lazy loaded to improve your LCP score', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.21.0',
-			],
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'generator_tag' => true,
 		];
 	}

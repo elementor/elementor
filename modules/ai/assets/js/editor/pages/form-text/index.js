@@ -159,8 +159,8 @@ const FormText = (
 							<PromptLibraryLink libraryLink="https://go.elementor.com/ai-prompt-library-text/" />
 						</PromptSuggestions>
 					) }
-
-					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
+					<VoicePromotionAlert introductionKey="ai-context-text-promotion" />
+					<Stack direction="row" alignItems="center" sx={ { pb: 1.5, mt: 2 } }>
 						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>
 							<GenerateButton>
 								{ __( 'Generate text', 'elementor' ) }

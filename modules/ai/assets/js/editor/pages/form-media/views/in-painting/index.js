@@ -14,7 +14,6 @@ import useInPainting from './hooks/use-in-painting';
 import { useEditImage } from '../../context/edit-image-context';
 import useImageActions from '../../hooks/use-image-actions';
 import { useRequestIds } from '../../../../context/requests-ids';
-import { fetchImageAsBase64 } from '../../utils';
 
 const InPainting = () => {
 	const [ prompt, setPrompt ] = useState( '' );
@@ -37,8 +36,7 @@ const InPainting = () => {
 		// The fallback instruction should be hidden for the user.
 		const finalPrompt = prompt || 'Remove object and fill based on the surroundings';
 		setGenerate();
-		const imageBase64 = await fetchImageAsBase64( editImage.url );
-		send( { prompt: finalPrompt, settings, image: editImage, mask, image_base64: imageBase64 } );
+		send( { prompt: finalPrompt, settings, image: editImage, mask } );
 	};
 
 	return (

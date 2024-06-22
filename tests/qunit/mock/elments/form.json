@@ -1442,7 +1442,7 @@
 				"mailchimp_api_key_source": "default"
 			},
 			"section": "section_mailchimp",
-			"raw": "Set your MailChimp API Key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different MailChimp API Key by choosing \"Custom\".",
+			"raw": "Set your MailChimp API Key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor-settings#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different MailChimp API Key by choosing \"Custom\".",
 			"content_classes": "elementor-panel-alert elementor-panel-alert-danger",
 			"name": "mailchimp_api_key_msg"
 		},
@@ -1571,7 +1571,7 @@
 				"drip_api_token_source": "default"
 			},
 			"section": "section_drip",
-			"raw": "Set your Drip API Token in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different Drip API Token by choosing \"Custom\".",
+			"raw": "Set your Drip API Token in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor-settings#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different Drip API Token by choosing \"Custom\".",
 			"content_classes": "elementor-panel-alert elementor-panel-alert-danger",
 			"name": "drip_api_key_msg"
 		},
@@ -1709,7 +1709,7 @@
 				"activecampaign_api_credentials_source": "default"
 			},
 			"section": "section_activecampaign",
-			"raw": "Set your ActiveCampaign API credentials in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different ActiveCampaign API credentials by choosing \"Custom\".",
+			"raw": "Set your ActiveCampaign API credentials in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor-settings#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different ActiveCampaign API credentials by choosing \"Custom\".",
 			"content_classes": "elementor-panel-alert elementor-panel-alert-danger",
 			"name": "activecampaign_api_key_msg"
 		},
@@ -1846,7 +1846,7 @@
 				"getresponse_api_key_source": "default"
 			},
 			"section": "section_getresponse",
-			"raw": "Set your GetResponse API key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different GetResponse API key by choosing \"Custom\".",
+			"raw": "Set your GetResponse API key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor-settings#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different GetResponse API key by choosing \"Custom\".",
 			"content_classes": "elementor-panel-alert elementor-panel-alert-danger",
 			"name": "getresponse_api_key_msg"
 		},
@@ -1960,7 +1960,7 @@
 				"convertkit_api_key_source": "default"
 			},
 			"section": "section_convertkit",
-			"raw": "Set your ConvertKit API key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different ConvertKit API key by choosing \"Custom\".",
+			"raw": "Set your ConvertKit API key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor-settings#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different ConvertKit API key by choosing \"Custom\".",
 			"content_classes": "elementor-panel-alert elementor-panel-alert-danger",
 			"name": "convertkit_api_key_msg"
 		},
@@ -2077,7 +2077,7 @@
 				"mailerlite_api_key_source": "default"
 			},
 			"section": "section_mailerlite",
-			"raw": "Set your MailerLite API Key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different MailerLite API Key by choosing \"Custom\".",
+			"raw": "Set your MailerLite API Key in the <a href=\"http://localhost/elementor/wp-admin/admin.php?page=elementor-settings#tab-integrations\" target=\"_blank\">Integrations Settings</a>. You can also set a different MailerLite API Key by choosing \"Custom\".",
 			"content_classes": "elementor-panel-alert elementor-panel-alert-danger",
 			"name": "mailerlite_api_key_msg"
 		},

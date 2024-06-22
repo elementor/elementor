@@ -250,72 +250,39 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.21.8 - 2024-05-26 =
+= 3.22.1 - 2024-06-17 =
 
-* Fix: Can't click on the AI consent modal checkbox
+* Fix: Editor not loading due to compatibility issue between Elementor AI and third-party plugins
 
-= 3.21.7 - 2024-05-22 =
+= 3.22.0 - 2024-06-16 =
 
-* Fix: Unnecessary commas cause Cron Jobs to fail in various scenarios ([#25803](https://github.com/elementor/elementor/issues/25803))
-* Fix: AI Consent modal requires multiple clicks to check the box
-
-= 3.21.6 - 2024-05-20 =
-
-* Security Fix: Improved code security enforcement in Icon Box and Image Box widgets
-* Fix: Console error related to the AI tooltip
-* Fix: Redirecting issue in AI Connect flow
-
-= 3.21.5 - 2024-05-08 =
-
-* Tweak: Improved AI Image variations to use an updated and simplified model
-* Fix: Editor History actions are not working as expected when using keyboard shortcuts ([#27030](https://github.com/elementor/elementor/issues/27030), [#25861](https://github.com/elementor/elementor/issues/25861))
-
-= 3.21.4 - 2024-04-30 =
-
-* Fix: Improved code enforcement of post Preview mode ([#25860](https://github.com/elementor/elementor/issues/25622))
-* Fix: Accordion is not displayed as expected when using Safari browser in Accordion widget ([#25905](https://github.com/elementor/elementor/issues/25905), [#25789](https://github.com/elementor/elementor/issues/25789))
-
-= 3.21.3 - 2024-04-25 =
-
-* Fix: Error notices appear in the editor and front end when using Icon Box widget ([#25837](https://github.com/elementor/elementor/issues/25837))
-
-= 3.21.2 - 2024-04-24 =
-
-* Fix: Improved code security enforcement in Heading widget
-* Fix: Icon Box widget disappears on the frontend if its Title and Description fields are empty
-
-= 3.21.1 - 2024-04-18 =
-
-* Fix: Compatibility issue between Elementor Settings screen and 3rd party plugins
-* Fix: AI-generated images are consistently square and do not follow the selected aspect ratio
-
-= 3.21.0 - 2024-04-15 =
-
-* New: Introducing Optimized Control Loading experiment - Improved TTFB by excluding UI controls from the frontend load, enhancing overall site speed
-* New: Meet Elementor Home - Jumpstart your web creation and expand your design toolkit
-* Tweak: Enhanced the mechanism of Lazy Load Background Images experiment for better performance
-* Tweak: Added additional styling options to Counter widget ([#9068](https://github.com/elementor/elementor/issues/9068))
-* Tweak: Add additional unit options to Width and Height in Shape Dividers
-* Tweak: Optimized Button widget to eliminate unnecessary markup when no text is present
-* Tweak: Optimized Icon widget to eliminate unnecessary markup when no icon is present
-* Tweak: Optimized Spacer widget to eliminate unnecessary markup when no space is defined or set to 0
-* Tweak: Optimized Progress Bar widget to eliminate unnecessary markup when both title and percentage are empty.
-* Tweak: Optimized Testimonial widget to eliminate unnecessary markup when content controls are left empty
-* Tweak: Optimized Shortcode widget to eliminate unnecessary markup when the shortcode field is left empty
-* Tweak: Optimized Menu Anchor widget to eliminate unnecessary markup when the anchor ID is left empty
-* Tweak: Optimized Text Editor widget to eliminate unnecessary markup when the editor content is empty
-* Tweak: Optimized Icon Box widget to eliminate unnecessary markup when there is no content
-* Tweak: Optimized Image Box widget to eliminate unnecessary markup when there is no content
-* Tweak: Optimized Alert widget to eliminate unnecessary markup when the content is empty
-* Tweak: Improved Asset Loading feature merged to version
-* Tweak: Activated Grid Container feature for existing sites
-* Tweak: Promoted Editor Top Bar to Beta status
-* Tweak: Activated Lazy Load Background Images by default to new sites and changed status to Beta
-* Tweak: Optimized Gutenberg Loading feature merged to version and moved to Settings
-* Tweak: Optimize Image Loading feature merged to version and moved to Settings
-* Fix: Edit with Elementor button is missing in various scenarios when using WordPress 6.5.2
-* Fix: RTL websites using a LTR UI are flipping between 'left' and 'right' inside the editor
-* Fix: Deprecated styling has been removed from the Editor's tabs
-* Fix: Replaced deprecated `elementor.$previewElementorEl` with `documents.getCurrent().$element` (props [@vHeemstra](https://github.com/vHeemstra))
+* New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
+* New: Introducing the Performance Tab - Centralizing all stable performance features in one accessible location ([#21194](https://github.com/elementor/elementor/issues/21194))
+* New: Generate post excerpts with AI for concise summaries
+* New: Generate and edit images with AI from WordPress media library
+* Tweak: Updated Google Fonts list with 170+ new fonts ([#25095](https://github.com/elementor/elementor/issues/25095))
+* Tweak: Improved Elementor translation functionality with `just-in-time` translation loading (props [@swissspidy](https://github.com/swissspidy), [#27199](https://github.com/elementor/elementor/issues/27199))
+* Tweak: Added View Page link to the Editor Top Bar ([#21925](https://github.com/elementor/elementor/issues/21925))
+* Tweak: Replaced `waypoints.js` library with the native Intersection Observer API
+* Tweak: Changed child containers' Content Width to Full Width as default
+* Tweak: Reorganized User Preferences panel for improved user experience
+* Tweak: Hide icon position & spacing controls if there is an icon but no text in Button widget
+* Tweak: Extended Alignment and Position capabilities in Button widget
+* Tweak: Implemented CSS logical properties to Icon Spacing control in Button widget
+* Tweak: Implemented CSS logical properties to Icon Position control in Button widget
+* Tweak: Promoted Grid Container feature to Stable status
+* Tweak: Activated Optimized Control Loading by default for new sites
+* Tweak: Changed Generative Fill AI image feature to use Clipdrop text-inpainting
+* Tweak: Added functionality to delay the running of the ready triggers on inner elements
+* Tweak: Deactivated Landing Page feature for new sites
+* Fix: "Exit to" functionality is not working with the Editor Top Bar ([#22828](https://github.com/elementor/elementor/issues/22828))
+* Fix: Row-reversed direction is not working on mobile portrait breakpoint in Container ([#23710](https://github.com/elementor/elementor/issues/23710))
+* Fix: The What's' New string in the Editor is not translatable (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Fatal error appears when updating a page with Tabs widget
+* Fix: Transparency indicator not visible in UI Light theme for Color Picker
+* Fix: AI Expand Images not working on local and protected websites
+* Fix: `all: unset` assigned to buttons cause focus issues
+* Fix: Links to Elementor Settings are broken in various locations
+* Fix: `RunReadyTrigger` returning incorrectly in various scenarios
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

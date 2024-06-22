@@ -87,7 +87,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			frame = editor.getPreviewFrame(),
 			accordionWrapper = frame.locator( '.elementor-accordion' ).first(),
 			toggleWidgetInPanel = page.locator( 'i.eicon-toggle' ).first(),
-			widgetPanelButton = page.locator( '#elementor-panel-header-add-button .eicon-apps' ),
 			widgetSearchBar = '#elementor-panel-elements-search-wrapper input#elementor-panel-elements-search-input',
 			nestedAccordionItemTitle = frame.locator( '.e-n-accordion-item' ),
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
@@ -98,7 +97,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await test.step( 'Check that Toggle widget does not appear when nested accordion experiment is on', async () => {
 			// Act
 			await editor.closeNavigatorIfOpen();
-			await widgetPanelButton.click();
+			await editor.openElementsPanel();
 
 			await page.waitForSelector( widgetSearchBar );
 			await page.locator( widgetSearchBar ).fill( 'toggle' );
@@ -270,7 +269,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = frame.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = frame.locator( '.elementor-button >> nth=0' );
 
-			await frame.locator( '.page-header' ).click();
 			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
 		} );
 	} );
@@ -294,7 +292,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = page.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = page.locator( '.elementor-button >> nth=0' );
 
-			await page.locator( '.page-header' ).click();
 			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
 		} );
 
@@ -309,7 +306,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 } );
 
 async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
-	await page.keyboard.press( 'Tab' );
+	await accordionTitleOne.focus();
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 

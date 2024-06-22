@@ -4,8 +4,11 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
-	test.beforeAll( async ( { browser } ) => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.resetExperiments();
+
 		await page.close();
 	} );
 

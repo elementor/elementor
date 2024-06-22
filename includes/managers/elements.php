@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -294,6 +293,10 @@ class Elements_Manager {
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
+			],
+			'link-in-bio' => [
+				'title' => esc_html__( 'Link In Bio', 'elementor' ),
+				'hideIfEmpty' => true,
 			],
 			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
