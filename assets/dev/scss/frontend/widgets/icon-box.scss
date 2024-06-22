@@ -6,6 +6,15 @@
 	&.elementor#{$device}-position- {
 
 		&left,
+		&right,
+		&top,
+		&bottom {
+			.elementor-icon-box-wrapper {
+				gap: var(--icon-box-gap, 15px);
+			}
+		}
+
+		&left,
 		&right {
 
 			.elementor-icon-box-icon {
@@ -63,7 +72,7 @@
 
 	.elementor-icon-box-wrapper {
 		display: flex;
-		gap: 15px;
+		gap: var(--icon-box-gap, 15px);
 		text-align: center;
 	}
 
