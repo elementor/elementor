@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 
 _config( {
-	path: resolve( __dirname, './.env' ),
+	path: resolve( __dirname, '../../.env' ),
 } );
 
 export default defineConfig( {

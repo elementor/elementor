@@ -5,7 +5,7 @@ import { config as _config } from 'dotenv';
 process.env.DEBUG_PORT = '9222';
 
 _config( {
-	path: resolve( __dirname, './.env' ),
+	path: resolve( __dirname, '../../.env' ),
 } );
 
 export default defineConfig( {
