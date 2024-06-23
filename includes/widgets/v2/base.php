@@ -3,11 +3,21 @@
 namespace Elementor;
 
 abstract class Widget_Base_V2 extends Widget_Base {
+	private $styles = [];
+	private $props = [];
+
 	abstract public function get_v2_controls(): array;
 
 	abstract public function get_props(): array;
 
 	abstract public function get_styles(): array;
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct($data, $args);
+
+		$this->styles = $data['styles'] ?? [];
+		$this->props = $data['props'] ?? [];
+	}
 
 	public function get_initial_config()
 	{
