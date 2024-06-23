@@ -110,6 +110,7 @@ export default class ApiRequests {
 			${ await response.text() }
 		` );
 		}
+
 		return await response.json();
 	}
 
