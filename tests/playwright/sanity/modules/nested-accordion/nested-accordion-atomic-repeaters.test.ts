@@ -10,6 +10,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'active',
+			e_nested_atomic_repeaters: 'active',
 		} );
 
 		await page.close();
@@ -21,6 +22,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
+			e_nested_atomic_repeaters: 'inactive',
 		} );
 
 		await page.close();
