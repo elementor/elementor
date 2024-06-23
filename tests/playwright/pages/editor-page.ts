@@ -240,36 +240,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Use the Canvas post template.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async useCanvasTemplate() {
-		if ( await this.getPreviewFrame().$( '.elementor-template-canvas' ) ) {
-			return;
-		}
-
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', 'elementor_canvas' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
-	}
-
-	/**
-	 * Use the Default post template.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async useDefaultTemplate() {
-		if ( await this.getPreviewFrame().$( '.elementor-default' ) ) {
-			return;
-		}
-
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', 'default' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
-	}
-
-	/**
 	 * Select an element inside the editor.
 	 *
 	 * @param {string} elementId - Element ID.
@@ -720,19 +690,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Change the WordPress template layout.
-	 *
-	 * @param {string} layout - The layout template to change to.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async changeEditorLayout( layout: string ) {
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', layout );
-		await this.waitForPreviewToLoad();
-	}
-
-	/**
 	 * Wait for the Elementor preview to finish loading.
 	 *
 	 * @return {Promise<void>}
@@ -902,6 +859,58 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
+	}
+
+	/**
+	 * Set WordPress page template.
+	 *
+	 * @param {string} template - The page template to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setPageTemplate( template: string ) {
+		await this.openPageSettingsPanel();
+		await this.setSelectControlValue( 'template', template );
+		await this.waitForPreviewToLoad();
+	}
+
+	/**
+	 * Use the Default page template.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async useDefaultTemplate() {
+		if ( await this.getPreviewFrame().$( '.elementor-default' ) ) {
+			return;
+		}
+
+		await this.setPageTemplate( 'default' );
+	}
+
+	/**
+	 * Use the Canvas page template.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async useCanvasTemplate() {
+		if ( await this.getPreviewFrame().$( '.elementor-template-canvas' ) ) {
+			return;
+		}
+
+		await this.setPageTemplate( 'elementor_canvas' );
+	}
+
+	/**
+	 * Use the Full Width page template.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async useFullWidthTemplate() {
+		if ( await this.getPreviewFrame().$( '.elementor-template-full-width' ) ) {
+			return;
+		}
+
+		await this.setPageTemplate( 'elementor_header_footer' );
 	}
 
 	/**
