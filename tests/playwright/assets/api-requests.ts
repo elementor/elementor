@@ -65,6 +65,7 @@ export default class ApiRequests {
 
 	public async deleteMedia( request: APIRequestContext, ids: string[] ) {
 		const requests = [];
+
 		for ( const id in ids ) {
 			requests.push( request.delete( `${ this.baseUrl }/index.php`, {
 				headers: {
@@ -76,6 +77,7 @@ export default class ApiRequests {
 				},
 			} ) );
 		}
+
 		await Promise.all( requests );
 	}
 
