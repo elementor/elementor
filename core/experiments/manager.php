@@ -443,9 +443,6 @@ class Manager extends Base_Object {
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_ACTIVE,
-			'new_site' => [
-				'default_active' => true,
-			],
 		] );
 
 		$this->add_feature( [
