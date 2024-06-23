@@ -442,10 +442,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Improve the performance of the Nested widgets.', 'elementor' ),
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_DEV,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => false,
-			],
+			'default' => self::STATE_ACTIVE,
 		] );
 
 		$this->add_feature( [
