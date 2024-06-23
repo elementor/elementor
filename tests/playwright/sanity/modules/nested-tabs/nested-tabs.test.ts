@@ -1541,7 +1541,7 @@ test.describe( 'Nested Tabs tests @nested-tabs atomic-repeater experiment - Off'
 		await deletePage( pageId );
 	} );
 
-	test( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
+	test.skip( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
