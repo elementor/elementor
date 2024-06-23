@@ -132,7 +132,7 @@ class Widgets_Manager {
 
 		$this->register_wp_widgets();
 
-		$this->register_v2_widgets();
+//		$this->register_v2_widgets();
 
 		/**
 		 * After widgets registered.

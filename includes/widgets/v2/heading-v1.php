@@ -7,7 +7,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget_Heading_V1 extends Widget_Base_V2 {
-	public function get_v2_controls() {
+	public function get_v2_controls(): array {
+		return [
+			'blabla' => 'blabla',
+		];
+	}
+
+	public function get_props(): array {
+		return [
+			'blabla' => 'blabla',
+		];
+	}
+
+	public function get_styles(): array {
 		return [
 			'blabla' => 'blabla',
 		];
@@ -26,7 +38,7 @@ class Widget_Heading_V1 extends Widget_Base_V2 {
 	}
 
 	protected function render() {
-		echo '<h2>' . 'Heading  V1' . '</h2>';
+		echo '<h2>' . 'Heading  V1.5' . '</h2>';
 	}
 }
 
