@@ -444,7 +444,7 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_ACTIVE,
 			'new_site' => [
-				'default_active' => false,
+				'default_active' => true,
 			],
 		] );
 
