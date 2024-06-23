@@ -7,7 +7,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget_Heading_V1 extends Widget_Base_V2 {
-	public function get_v2_controls() {
+	public function get_v2_controls(): array {
+		return [
+			'blabla' => 'blabla',
+		];
+	}
+
+	public function get_props(): array {
+		return [
+			'blabla' => 'blabla',
+		];
+	}
+
+	public function get_styles(): array {
 		return [
 			'blabla' => 'blabla',
 		];
