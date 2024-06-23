@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
-test.describe( 'On boarding @onBoarding', async () => {
+test.describe( 'Onboarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
@@ -165,7 +165,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	} );
 } );
 
-test.describe( 'Onboarding @onBoarding', async () => {
+test.describe( 'Onboarding', async () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

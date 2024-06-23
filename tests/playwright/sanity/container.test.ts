@@ -8,7 +8,7 @@ import EditorPage from '../pages/editor-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 
-test.describe( 'Container tests @container', () => {
+test.describe( 'Container tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

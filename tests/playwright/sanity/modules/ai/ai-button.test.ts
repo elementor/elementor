@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-test.describe( 'AI @ai', () => {
+test.describe( 'AI', () => {
 	test( 'AI Button', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 

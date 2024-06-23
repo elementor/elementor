@@ -11,7 +11,7 @@ import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, 
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 import _path from 'path';
 
-test.describe( 'Nested Tabs tests @nested-tabs', () => {
+test.describe( 'Nested Tabs tests', () => {
 	let pageId: string;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 

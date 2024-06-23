@@ -14,7 +14,7 @@ import EditorSelectors from '../../../../../../../../selectors/editor-selectors'
 import { successMock } from './delete-history-item.mock';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe( 'AI @ai', () => {
+test.describe( 'AI', () => {
 	const mockRoute = async ( page: Page, { getHistoryMock = {}, deleteHistoryMock = {} } ) => {
 		await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
 			const requestPostData = route.request().postData();

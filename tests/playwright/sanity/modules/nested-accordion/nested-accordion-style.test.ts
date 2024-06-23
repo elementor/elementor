@@ -5,7 +5,7 @@ import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
 import { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } from './helper';
 
-test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
+test.describe( 'Nested Accordion Style Tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );

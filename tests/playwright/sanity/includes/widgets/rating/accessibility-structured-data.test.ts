@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
-test.describe( 'Accessibility & Structured data @rating', () => {
+test.describe( 'Accessibility & Structured data', () => {
 	test( 'Accessibility & Structured data', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),

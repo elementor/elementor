@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
+test.describe( 'Styleguide Preview tests', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
 	test.beforeAll( async ( { browser }, testInfo ) => {

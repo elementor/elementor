@@ -14,7 +14,7 @@ import {
 
 const CREDITS_USAGE_MESSAGE = 'You’ve used %s of credits for this AI feature.';
 
-test.describe( 'AI @ai', () => {
+test.describe( 'AI', () => {
 	test( 'User Information', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 

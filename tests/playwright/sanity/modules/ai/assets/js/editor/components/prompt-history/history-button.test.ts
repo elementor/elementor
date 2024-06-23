@@ -4,7 +4,7 @@ import { closeAIDialog, findPromptHistoryButton } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 
-test.describe( 'AI @ai', () => {
+test.describe( 'AI', () => {
 	const mockRoute = async ( page: Page ) => {
 		await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
 			const requestPostData = route.request().postData();
