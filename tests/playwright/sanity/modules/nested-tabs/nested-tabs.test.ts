@@ -1370,77 +1370,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-		await wpAdmin.setSiteLanguage( 'he_IL' );
-
-		const editor = await wpAdmin.openNewPage(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			frame = editor.getPreviewFrame();
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-
-		await test.step( 'Set scrolling settings', async () => {
-			await editor.openSection( 'section_tabs_responsive' );
-			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
-			await editor.setSelectControlValue( 'horizontal_scroll', 'enable' );
-
-			await editor.openSection( 'section_tabs' );
-			Array.from( { length: 3 }, async () => {
-				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
-			} );
-		} );
-
-		await test.step( 'Assert scrolling behaviour inside the Editor', async () => {
-			await page.waitForTimeout( 1000 );
-
-			const widgetHeading = frame.locator( '.e-n-tabs-heading' ),
-				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
-
-			await editor.changeResponsiveView( 'mobile' );
-			await editor.isUiStable( frame.locator( '.e-n-tabs-heading' ) );
-
-			const isFirstItemVisible = await isTabTitleVisible( frame, 0 ),
-				isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
-
-			expect.soft( isFirstItemVisible ).toBeTruthy();
-			expect.soft( isLastItemVisible ).not.toBeTruthy();
-			await expect.soft( frame.locator( '.e-n-tabs-heading' ) ).toHaveCSS( 'justify-content', 'start' );
-
-			expect.soft( await frame.locator( '.e-n-tabs-heading' ).first().screenshot( {
-				type: 'png',
-			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-editor.png' );
-		} );
-
-		await test.step( 'Assert scrolling behaviour on the Frontend', async () => {
-			await editor.publishAndViewPage();
-
-			const widgetHeading = page.locator( '.e-n-tabs-heading' ),
-				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
-
-			await page.setViewportSize( viewportSize.mobile );
-			await editor.isUiStable( page.locator( '.e-n-tabs-heading' ) );
-
-			const isFirstItemVisible = await isTabTitleVisible( page, 0 ),
-				isLastItemVisible = await isTabTitleVisible( page, ( itemCount - 1 ) );
-
-			expect.soft( isFirstItemVisible ).toBeTruthy();
-			expect.soft( isLastItemVisible ).not.toBeTruthy();
-			await expect.soft( page.locator( '.e-n-tabs-heading' ) ).toHaveCSS( 'justify-content', 'start' );
-
-			expect.soft( await page.locator( '.e-n-tabs-heading' ).first().screenshot( {
-				type: 'png',
-			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-frontend.png' );
-		} );
-
-		await test.step( 'Reset language to English', async () => {
-			await wpAdmin.setSiteLanguage( '' );
-		} );
-	} );
-
 	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -1577,5 +1506,109 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} ) ).toMatchSnapshot( 'tabs-long-titles.png' );
 
 		await cleanup( wpAdmin );
+	} );
+} );
+
+test.describe( 'Nested Tabs tests @nested-tabs atomic-repeater experiment - Off', () => {
+	let pageId: string;
+
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			e_nested_atomic_repeaters: 'inactive',
+		} );
+
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			e_nested_atomic_repeaters: 'active',
+		} );
+
+		await page.close();
+	} );
+
+	test.beforeEach( async () => {
+		pageId = await createPage();
+	} );
+
+	test.afterEach( async () => {
+		await deletePage( pageId );
+	} );
+
+	test( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		await wpAdmin.setSiteLanguage( 'he_IL' );
+
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+
+		await test.step( 'Set scrolling settings', async () => {
+			await editor.openSection( 'section_tabs_responsive' );
+			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
+			await editor.setSelectControlValue( 'horizontal_scroll', 'enable' );
+
+			await editor.openSection( 'section_tabs' );
+			Array.from( { length: 3 }, async () => {
+				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
+			} );
+		} );
+
+		await test.step( 'Assert scrolling behaviour inside the Editor', async () => {
+			await page.waitForTimeout( 1000 );
+
+			const widgetHeading = frame.locator( '.e-n-tabs-heading' ),
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
+
+			await editor.changeResponsiveView( 'mobile' );
+			await editor.isUiStable( frame.locator( '.e-n-tabs-heading' ) );
+
+			const isFirstItemVisible = await isTabTitleVisible( frame, 0 ),
+				isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
+
+			expect.soft( isFirstItemVisible ).toBeTruthy();
+			expect.soft( isLastItemVisible ).not.toBeTruthy();
+			await expect.soft( frame.locator( '.e-n-tabs-heading' ) ).toHaveCSS( 'justify-content', 'start' );
+
+			expect.soft( await frame.locator( '.e-n-tabs-heading' ).first().screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-editor.png' );
+		} );
+
+		await test.step( 'Assert scrolling behaviour on the Frontend', async () => {
+			await editor.publishAndViewPage();
+
+			const widgetHeading = page.locator( '.e-n-tabs-heading' ),
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
+
+			await page.setViewportSize( viewportSize.mobile );
+			await editor.isUiStable( page.locator( '.e-n-tabs-heading' ) );
+
+			const isFirstItemVisible = await isTabTitleVisible( page, 0 ),
+				isLastItemVisible = await isTabTitleVisible( page, ( itemCount - 1 ) );
+
+			expect.soft( isFirstItemVisible ).toBeTruthy();
+			expect.soft( isLastItemVisible ).not.toBeTruthy();
+			await expect.soft( page.locator( '.e-n-tabs-heading' ) ).toHaveCSS( 'justify-content', 'start' );
+
+			expect.soft( await page.locator( '.e-n-tabs-heading' ).first().screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-frontend.png' );
+		} );
+
+		await test.step( 'Reset language to English', async () => {
+			await wpAdmin.setSiteLanguage( '' );
+		} );
 	} );
 } );
