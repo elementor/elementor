@@ -8,13 +8,17 @@ export const wpEnvCli = ( command: string ) => {
 	// Print log for debuggability
 	// eslint-disable-next-line no-console
 	console.log( logs );
-	if ( process.env.CI ) {
-		if ( logs.includes( 'Warning' ) ) {
-			github.warning( logs );
-		}
-		if ( logs.includes( 'Error' ) ) {
-			github.error( logs );
-		}
+
+	if ( ! process.env.CI ) {
+		return logs;
+	}
+
+	if ( logs.includes( 'Warning' ) ) {
+		github.warning( logs );
+	}
+
+	if ( logs.includes( 'Error' ) ) {
+		github.error( logs );
 	}
 
 	return logs;
