@@ -4,6 +4,7 @@ namespace Elementor\Core\Editor\Loader\Common;
 use Elementor\Api;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Apps\Module as AppsModule;
 use Elementor\Modules\EditorEvents\Module as EditorEventsModule;
@@ -107,6 +108,7 @@ class Editor_Common_Scripts_Settings {
 					'upgrade_url'
 				),
 			],
+			'fontVariableRanges' => Group_Control_Typography::get_font_variable_ranges(),
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {

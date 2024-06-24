@@ -351,6 +351,10 @@ class Group_Control_Typography extends Group_Control_Base {
 		return $font_variables;
 	}
 
+	public static function get_font_variable_ranges() {
+		return apply_filters( 'elementor/typography/font_variable_ranges', [] );
+	}
+
 	/**
 	 * Prepare fields.
 	 *

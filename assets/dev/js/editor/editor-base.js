@@ -33,6 +33,7 @@ import LinksPageLibraryModule from 'elementor/modules/conversion-center/assets/j
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
+import { FontVariables } from './utils/font-variables';
 
 /**
  * @typedef {import('./container/container')} Container
@@ -455,6 +456,8 @@ export default class EditorBase extends Marionette.Application {
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
+
+		new FontVariables();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
