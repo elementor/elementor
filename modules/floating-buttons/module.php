@@ -11,6 +11,7 @@ use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -97,6 +98,10 @@ class Module extends BaseModule {
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
+			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
+		});
 
 		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'wp_footer', function () {

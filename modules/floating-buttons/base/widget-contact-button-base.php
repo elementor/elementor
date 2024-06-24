@@ -4,6 +4,7 @@ namespace Elementor\Modules\FloatingButtons\Base;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Providers\Social_Network_Provider;
+use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\FloatingButtons\Classes\Render\Contact_Buttons_Core_Render;
@@ -13,6 +14,8 @@ use Elementor\Utils;
 use Elementor\Widget_Base;
 
 abstract class Widget_Contact_Button_Base extends Widget_Base {
+
+	use Shared_Widget_Controls_Trait;
 
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
@@ -1260,13 +1263,8 @@ JS;
 			);
 
 			if ( 'default' == $config['style']['chat_button_section']['hover_animation_type'] ) {
-				$this->add_control(
+				$this->add_hover_animation_control(
 					'style_button_color_hover_animation',
-					[
-						'label' => esc_html__( 'Hover Animation', 'elementor' ),
-						'type' => Controls_Manager::HOVER_ANIMATION,
-						'frontend_available' => true,
-					]
 				);
 			}
 
@@ -2018,13 +2016,8 @@ JS;
 			}
 
 			if ( $config['style']['contact_section']['has_hover_animation'] ) {
-				$this->add_control(
+				$this->add_hover_animation_control(
 					'style_contact_button_hover_animation',
-					[
-						'label' => esc_html__( 'Hover Animation', 'elementor' ),
-						'type' => Controls_Manager::HOVER_ANIMATION,
-						'frontend_available' => true,
-					]
 				);
 			}
 
@@ -2383,13 +2376,8 @@ JS;
 			]
 		);
 
-		$this->add_control(
+		$this->add_hover_animation_control(
 			'style_resource_links_hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-				'frontend_available' => true,
-			]
 		);
 
 		$this->end_controls_section();
@@ -2759,13 +2747,8 @@ JS;
 			);
 		}
 
-		$this->add_control(
+		$this->add_hover_animation_control(
 			'style_send_hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-				'frontend_available' => true,
-			]
 		);
 
 		$this->end_controls_tab();
