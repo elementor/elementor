@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { execSync } from 'child_process';
+import { wpEnvCli } from '../assets/wp-env-cli';
 export class UpgradeElementor {
 	cmd( cmd: string ) {
 		try {
@@ -35,24 +36,24 @@ export class UpgradeElementor {
 		const version = process.env.ELEMENTOR_PLUGIN_VERSION;
 		console.log( 'version is: ' + version );
 		if ( version !== '' ) {
-			this.cmd( `npx wp-env run cli bash -c 'wp plugin install elementor --version=${ version }  --activate --force'` );
+			wpEnvCli( `bash -c 'wp plugin install elementor --version=${ version }  --activate --force'` );
 		} else {
-			this.cmd( `npx wp-env run cli wp plugin install elementor --activate` );
+			wpEnvCli( `wp plugin install elementor --activate` );
 		}
-		this.cmd( 'npx wp-env run cli wp plugin list' );
+		wpEnvCli( 'wp plugin list' );
 	}
 
 	setupTests() {
 		if ( ! process.env.CI ) {
 			this.cmd( 'npm run test:setup' );
-			this.cmd( 'npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
+			wpEnvCli( 'wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
 			this.cmd( 'cd ../../../ && npx playwright install chromium' );
 		}
 	}
 
 	installCurrentPlugin() {
-		this.cmd( `npx wp-env run cli wp plugin install ./plugin/elementor.zip --force` );
-		this.cmd( 'npx wp-env run cli wp plugin list' );
+		wpEnvCli( `wp plugin install ./plugin/elementor.zip --force` );
+		wpEnvCli( 'wp plugin list' );
 	}
 
 	runSmokeTest() {
