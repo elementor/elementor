@@ -19,6 +19,8 @@ export class SelectLoadingButtonOnOpen extends $e.modules.hookUI.After {
 				'document/elements/select',
 				{ container: children[ 0 ], append: false },
 			);
+		} else {
+			$e.run( 'library/open' );
 		}
 	}
 }
