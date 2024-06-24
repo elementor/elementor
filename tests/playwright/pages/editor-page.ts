@@ -34,11 +34,11 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Open a specific post in the elementor editor.
 	 *
-	 * @param {number|null} id - Optional. Post ID. Default is the ID of the current post.
+	 * @param {number|string} id - Optional. Post ID. Default is the ID of the current post.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async gotoPostId( id = this.postId ) {
+	async gotoPostId( id: number|string = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
 		await this.page.waitForLoadState( 'load' );
 		await this.waitForPanelToLoad();

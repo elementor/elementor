@@ -1,9 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
-test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page }, testInfo ) => {
+test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
 	const elementId = await editor.addElement( { widgetType: 'text-editor', elType: 'widget' } );

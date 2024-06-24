@@ -1,13 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import { resolve } from 'path';
 
 test.describe( 'URL Actions', () => {
-	test( 'Test Lightbox and URL Actions', async ( { page }, testInfo ) => {
+	test( 'Test Lightbox and URL Actions', async ( { page, apiRequests }, testInfo ) => {
 		/**
 		 * Open new empty page.
 		 */
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 

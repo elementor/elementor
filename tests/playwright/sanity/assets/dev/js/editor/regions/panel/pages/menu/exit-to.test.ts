@@ -1,8 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
-test( 'Exit to user preference sanity test', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo );
+test( 'Exit to user preference sanity test', async ( { page, apiRequests }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 	const hasTopBar = await editor.hasTopBar();
 	let exitHref = '';
