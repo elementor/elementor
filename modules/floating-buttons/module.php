@@ -467,6 +467,18 @@ class Module extends BaseModule {
 	}
 
 	private function render_floating_buttons(): void {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$post_id = ElementorUtils::get_super_global_value( $_GET, 'elementor-preview' );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if (
+				$document instanceof Document &&
+				$document->get_name() === static::FLOATING_BUTTONS_DOCUMENT_TYPE
+			) {
+				return;
+			}
+		}
+
 		$query = new \WP_Query( [
 			'post_type' => static::CPT_FLOATING_BUTTONS,
 			'posts_per_page' => - 1,
