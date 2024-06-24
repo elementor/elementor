@@ -467,7 +467,7 @@ class Module extends BaseModule {
 	}
 
 	private function render_floating_buttons(): void {
-		if ( isset( $_GET[ 'elementor-preview' ] ) ) {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$post_id = ElementorUtils::get_super_global_value( $_GET, 'elementor-preview' );
 			$document = Plugin::$instance->documents->get( $post_id );
 
