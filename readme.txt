@@ -250,6 +250,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.22.2 - 2024-06-24 =
+
+* Security Fix: Improved code security enforcement in Shape Divider
+
 = 3.22.1 - 2024-06-17 =
 
 * Fix: Editor not loading due to compatibility issue between Elementor AI and third-party plugins
