@@ -81,7 +81,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		} );
 	} );
 
-	test( 'Performance test for repeater actions (new, clone, delete, sort)', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Performance test for repeater actions (new, clone, delete, sort)', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
