@@ -3111,12 +3111,7 @@ JS;
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => sprintf(
-					/* translators: 1: Link open tag, 2: Link close tag. */
-					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
-					'<a href="javascript: $e.run( \'panel/close\' )">',
-					'</a>'
-				),
+				'raw' => __( 'Responsive visibility will take effect only on preview mode or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -3180,5 +3175,4 @@ JS;
 
 		$render_strategy->render();
 	}
-
 }

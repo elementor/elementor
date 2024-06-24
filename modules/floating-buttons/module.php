@@ -56,10 +56,14 @@ class Module extends BaseModule {
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
 			'description' => esc_html__( 'Boost visitor engagement with Floating Buttons. The Floating Button template library offers a variety of interactive one-click contact options, highlighted links, and calls to action to increase your website conversions.', 'elementor' ),
-			'hidden' => true,
 			'default' => Manager::STATE_INACTIVE,
+			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'dependencies' => [
 				'container',
+			],
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.23.0',
 			],
 		];
 	}
@@ -468,6 +472,18 @@ class Module extends BaseModule {
 	}
 
 	private function render_floating_buttons(): void {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$post_id = ElementorUtils::get_super_global_value( $_GET, 'elementor-preview' );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if (
+				$document instanceof Document &&
+				$document->get_name() === static::FLOATING_BUTTONS_DOCUMENT_TYPE
+			) {
+				return;
+			}
+		}
+
 		$query = new \WP_Query( [
 			'post_type' => static::CPT_FLOATING_BUTTONS,
 			'posts_per_page' => - 1,
