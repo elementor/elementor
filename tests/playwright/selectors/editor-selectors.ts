@@ -55,7 +55,7 @@ const EditorSelectors = {
 		imgCaption: '#attachment-details-caption',
 		imgDescription: '#attachment-details-description',
 	},
-	siteTitle: 'h1.site-title',
+	siteTitle: 'div.site-title >> nth=0',
 	pageTitle: 'h1.entry-title',
 	button: {
 		getByName: ( name: string ) => `.elementor-button:has-text("${ name }")`,
