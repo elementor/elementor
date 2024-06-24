@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../pages/wp-admin-page';
 
 test.describe( 'Global color introduction tests', () => {
-	test( 'Check if globals introduction tooltip is being triggered by clicking on the color picker', async ( { page }, testInfo ) => {
+	test( 'Check if globals introduction tooltip is being triggered by clicking on the color picker', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		await page.evaluate( () => {
@@ -24,9 +25,9 @@ test.describe( 'Global color introduction tests', () => {
 		expect( tooltipDialogCounter ).toBe( 1 );
 	} );
 
-	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page }, testInfo ) => {
+	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		await page.evaluate( () => {

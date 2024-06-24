@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../../../selectors/editor-selectors';
 
-test( 'A page can be saved successfully after copy-paste style', async ( { page }, testInfo ) => {
+test( 'A page can be saved successfully after copy-paste style', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 	const hasTopBar = await editor.hasTopBar();
 	const heading1 = await editor.addWidget( 'heading' );

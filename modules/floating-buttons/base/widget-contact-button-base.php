@@ -248,10 +248,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return parent::get_stack( false );
 	}
 
-	public function get_help_url(): string {
-		return 'https://elementor.com/help/';
-	}
-
 	protected function register_controls(): void {
 
 		$this->add_content_tab();
@@ -2206,7 +2202,7 @@ JS;
 						'left' => '12',
 						'right' => '12',
 						'unit' => 'px',
-						'isLinked' => true,
+						'isLinked' => false,
 					],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-contact-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-contact-buttons-contact-padding-block-start: {{TOP}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-contact-buttons-contact-padding-inline-start: {{LEFT}}{{UNIT}};',
@@ -3008,7 +3004,7 @@ JS;
 						],
 					],
 					'default' => $config['advanced']['horizontal_position_default'],
-					'toggle' => true,
+					'toggle' => false,
 				]
 			);
 
@@ -3066,7 +3062,7 @@ JS;
 						],
 					],
 					'default' => 'bottom',
-					'toggle' => true,
+					'toggle' => false,
 				]
 			);
 
