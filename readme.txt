@@ -253,6 +253,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 = 3.22.2 - 2024-06-24 =
 
 * Security Fix: Improved code security enforcement in Shape Divider
+* Fix: Refresh the media library after inserting an AI edited image
 
 = 3.22.1 - 2024-06-17 =
 
