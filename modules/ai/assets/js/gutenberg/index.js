@@ -1,5 +1,6 @@
 import { createRoot } from '@wordpress/element';
 import GenerateExcerptWithAI from './excerpt';
+import GenerateFeaturedImageWithAI from './featured-image';
 
 ( function() {
 	'use strict';
@@ -33,14 +34,31 @@ import GenerateExcerptWithAI from './excerpt';
 			}
 		};
 
-		// Add the custom link to the excerpt panel when the editor sidebar is rendered
-		wp.data.subscribe( () => {
-			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( 'post-excerpt' );
+		const addGenerateFeaturedImageWithAI = () => {
+			const featuredImagePanel = document.querySelector( '.editor-post-featured-image' );
+			if ( featuredImagePanel && ! document.querySelector( '.e-featured-image-ai' ) ) {
+				const rootElement = document.createElement( 'div' );
+				rootElement.classList.add( 'e-featured-image-ai' );
+				featuredImagePanel.appendChild( rootElement );
+				const postId = wp.data.select( 'core/editor' ).getCurrentPostId();
+				elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', postId );
+				const root = createRoot( rootElement );
+				root.render( <GenerateFeaturedImageWithAI /> );
+			}
+		};
+
+		const addAiIndicator = ( panelName, functionAddAi ) => {
+			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( panelName );
 			if ( isSidebarOpened ) {
 				setTimeout( function() {
-					addGenerateExcerptWithAI();
+					functionAddAi();
 				}, 1 );
 			}
+		};
+
+		wp.data.subscribe( () => {
+			addAiIndicator( 'post-excerpt', addGenerateExcerptWithAI );
+			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
 		} );
 	} );
 } )( jQuery );

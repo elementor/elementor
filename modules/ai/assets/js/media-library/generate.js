@@ -48,7 +48,7 @@ const AIMediaGenerateAppWrapper = () => {
 					<Icon className={ 'eicon-ai' } />
 					{ __( 'Generate with Elementor AI', 'elementor' ) }
 				</StyledButton>
-				{ isOpen && <AIMediaGenerateApp onClose={ handleClose } /> }
+				{ isOpen && <AIMediaGenerateApp onClose={ handleClose } setControlValue={ () => {} } /> }
 			</RequestIdsProvider>
 		</div>
 	);

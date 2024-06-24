@@ -1,12 +1,12 @@
-import { test } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: 'active',
@@ -16,10 +16,10 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
@@ -29,11 +29,11 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		await page.close();
 	} );
 
-	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser }, testInfo ) => {
+	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
 		await test.step( 'experiment Inline Font Icons off', async () => {
 			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo );
+				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: 'inactive',
 			} );
@@ -59,7 +59,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 
 		await test.step( 'experiment Inline Font Icons on (default)', async () => {
 			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo );
+				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: 'active',
 			} );

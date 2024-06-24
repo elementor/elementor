@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import Content from '../pages/elementor-panel-tabs/content';
@@ -17,10 +17,10 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 	];
 
 	for ( const widget in data ) {
-		test.skip( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
+		test.skip( `Verify ${ data[ widget ].title } link control`, async ( { page, apiRequests }, testInfo ) => {
 			const link = 'https://elementor.com/';
 			const customAttributes = { key: 'mykey', value: 'myValue' };
-			const wpAdmin = new WpAdminPage( page, testInfo );
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const imageCarousel = new ImageCarousel( page, testInfo );
 			const editor = await wpAdmin.openNewPage();
 			const contentTab = new Content( page, testInfo );
@@ -28,7 +28,8 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			await editor.addWidget( data[ widget ].title );
 			if ( 'image-carousel' === data[ widget ].title ) {
 				await imageCarousel.addImageGallery();
-				await imageCarousel.setAutoplay();
+				await editor.openSection( 'section_additional_options' );
+				await editor.setSwitcherControlValue( 'autoplay', false );
 				await editor.openSection( 'section_image_carousel' );
 			}
 

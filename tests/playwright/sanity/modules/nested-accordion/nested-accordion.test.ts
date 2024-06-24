@@ -1,4 +1,5 @@
-import { test, expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
@@ -6,9 +7,9 @@ import { setup } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: 'inactive',
@@ -19,10 +20,10 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'active',
 			container: 'active',
@@ -32,9 +33,9 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		await page.close();
 	} );
 
-	test( 'Nested-accordion should not appear in widgets panel', async ( { page }, testInfo ) => {
+	test( 'Nested-accordion should not appear in widgets panel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
@@ -54,9 +55,9 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 } );
 
 test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: 'active',
@@ -67,10 +68,10 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
@@ -80,14 +81,13 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await page.close();
 	} );
 
-	test( 'General Test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'General Test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
 			accordionWrapper = frame.locator( '.elementor-accordion' ).first(),
 			toggleWidgetInPanel = page.locator( 'i.eicon-toggle' ).first(),
-			widgetPanelButton = page.locator( '#elementor-panel-header-add-button .eicon-apps' ),
 			widgetSearchBar = '#elementor-panel-elements-search-wrapper input#elementor-panel-elements-search-input',
 			nestedAccordionItemTitle = frame.locator( '.e-n-accordion-item' ),
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
@@ -98,7 +98,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await test.step( 'Check that Toggle widget does not appear when nested accordion experiment is on', async () => {
 			// Act
 			await editor.closeNavigatorIfOpen();
-			await widgetPanelButton.click();
+			await editor.openElementsPanel();
 
 			await page.waitForSelector( widgetSearchBar );
 			await page.locator( widgetSearchBar ).fill( 'toggle' );
@@ -194,10 +194,10 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 	} );
 
-	test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
+	test( 'Nested Accordion Visual Regression Test', async ( { browser, apiRequests }, testInfo ) => {
 		// Act
 		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo ),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -214,8 +214,8 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 	} );
 
-	test( 'Nested Accordion stays full width in container Direction Row', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Nested Accordion stays full width in container Direction Row', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -231,10 +231,10 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		expect.soft( nestedAccordionWidth ).toEqual( containerWidth );
 	} );
 
-	test( 'Nested Accordion with inner Nested Accordion', async ( { browser }, testInfo ) => {
+	test( 'Nested Accordion with inner Nested Accordion', async ( { browser, apiRequests }, testInfo ) => {
 		// Act
 		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo ),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -253,9 +253,9 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 	} );
 
-	test( 'Accessibility inside the Editor', async ( { page }, testInfo ) => {
+	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
@@ -274,9 +274,9 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 	} );
 
-	test( 'Accessibility on the Front End', async ( { page }, testInfo ) => {
+	test( 'Accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();

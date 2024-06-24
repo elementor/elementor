@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { colors } from '../../../enums/colors';
 import { borderStyle } from '../../../enums/border-styles';
@@ -6,9 +7,9 @@ import { displayState } from '../../../enums/display-states';
 import { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } from './helper';
 
 test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: 'active',
@@ -18,10 +19,10 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
@@ -30,8 +31,8 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await page.close();
 	} );
 
-	test( 'Accordion style tests', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Accordion style tests', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
@@ -72,8 +73,8 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Content style tests', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Content style tests', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
@@ -172,8 +173,8 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Header style tests', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Header style tests', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 		const frame = editor.getPreviewFrame(),
@@ -225,15 +226,14 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.publishAndViewPage();
 			await nestedAccordionItemFront.first().click();
 			await nestedAccordionItemFront.nth( 2 ).hover();
-			await page.waitForLoadState( 'networkidle' );
 
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-front.png', nestedAccordionWidgetFront );
 		} );
 	} );
 
-	test( 'Header style tests - Text Stroke and Shadow', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Header style tests - Text Stroke and Shadow', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 		let frame = editor.getPreviewFrame();

@@ -100,10 +100,6 @@ export default class Content {
 		await response;
 	}
 
-	async setCaption( option: string ) {
-		await this.editor.setSelectControlValue( 'caption_type', option );
-	}
-
 	async setLightBox( option: string ) {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
 		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
