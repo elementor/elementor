@@ -1,4 +1,5 @@
-import { test, Page, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import {
 	reuseAndEditTextDataMock,
 	differentPeriodsDataMock,
@@ -39,8 +40,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Prompt History - Common', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Common', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
@@ -158,8 +159,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	} );
 
-	test( 'Prompt History - a11y', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - a11y', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
@@ -206,8 +207,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	} );
 
-	test( 'Prompt History - Text', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Text', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
@@ -260,8 +261,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	} );
 
-	test( 'Prompt History - Code', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Code', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
@@ -288,8 +289,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	} );
 
-	test( 'Prompt History - Image', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Image', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 

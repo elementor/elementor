@@ -3,6 +3,7 @@
 namespace Elementor\Core\Base\Traits;
 
 use Elementor\Controls_Manager;
+use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
@@ -272,5 +273,24 @@ trait Shared_Widget_Controls_Trait {
 			'active_devices' => $active_devices,
 			'devices_options' => $devices_options,
 		];
+	}
+
+	protected function add_hover_animation_control(
+		string $name,
+		array $args = []
+	): void {
+
+		$this->add_control(
+			$name,
+			array_merge(
+				[
+					'label' => esc_html__( 'Hover Animation', 'elementor' ),
+					'type' => Hover_Animation_Floating_Buttons::TYPE,
+					'frontend_available' => true,
+					'default' => 'grow',
+				],
+				$args
+			)
+		);
 	}
 }

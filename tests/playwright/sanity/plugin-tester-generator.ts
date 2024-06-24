@@ -1,7 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
-import WpEnvCli from '../assets/wp-env-cli';
+import { wpEnvCli } from '../assets/wp-env-cli';
 
 const pluginList = [
 	'essential-addons-for-elementor-lite',
@@ -47,13 +48,12 @@ const pluginList = [
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
-		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page }, testInfo ) => {
+		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			const editor = new EditorPage( page, testInfo );
-			const wpAdmin = new wpAdminPage( page, testInfo );
-			const wpEnvCli = new WpEnvCli();
+			const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
 			const adminBar = 'wpadminbar';
 
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin install ${ plugin } --activate` );
+			wpEnvCli( `wp plugin install ${ plugin } --activate` );
 
 			await page.goto( '/law-firm-about/' );
 			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
@@ -78,7 +78,7 @@ export const generatePluginTests = ( testType: string ) => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			wpEnvCli.cmd( `npm run wp-env run cli wp plugin deactivate ${ plugin }` );
+			wpEnvCli( `wp plugin deactivate ${ plugin }` );
 		} );
 	}
 };

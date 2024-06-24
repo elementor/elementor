@@ -1,11 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Promotion tests @promotions', () => {
-	test( 'Menu Items Promotions - screenshots', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Menu Items Promotions - screenshots', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = '.e-feature-promotion';
 
 		await wpAdmin.login();
@@ -27,8 +28,8 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test( 'Modal Promotions screenshots', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Modal Promotions screenshots', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -55,9 +56,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test( 'Context Menu Promotions - Free to Pro', async ( { page }, testInfo ) => {
+	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			heading = await editor.addWidget( 'heading' );
 
@@ -80,18 +81,18 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 
-	test( 'Promotions - Free to Pro - Admin top bar', async ( { page }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = '.e-admin-top-bar__secondary-area';
 
 		// Act.
 		await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
-	test( 'Promotions - Free to Pro - Navigator', async ( { page }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = EditorSelectors.panels.navigator.footer;
 
 		// Act.
@@ -103,9 +104,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
-	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			promotionContainer = EditorSelectors.panels.navigator.footer;
 
@@ -119,9 +120,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
 	} );
 
-	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page }, testInfo ) => {
+	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			editor_v2: false,
 		} );
@@ -138,9 +139,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
 	} );
 
-	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page }, testInfo ) => {
+	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			editor_v2: true,
 		} );
@@ -157,9 +158,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
 	} );
 
-	test( 'Promotion text behavior on resizing the structure panel', async ( { page }, testInfo ) => {
+	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			navigatorPanel = page.locator( EditorSelectors.panels.navigator.wrapper );
 
