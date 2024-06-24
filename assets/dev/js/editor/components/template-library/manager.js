@@ -314,10 +314,12 @@ TemplateLibraryManager = function() {
 		}
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
-			templatesCollection = new TemplateLibraryCollection( result.data.templates );
+			templatesCollection = new TemplateLibraryCollection(
+				this.filterOutInactiveExperiments( result.data.templates ),
+			);
 
 			if ( result.data.config ) {
-				config = result.data.config;
+				config = this.filterOutExperimentsCategories( result.data.config );
 			}
 
 			self.layout.hideLoadingView();
@@ -325,6 +327,30 @@ TemplateLibraryManager = function() {
 			if ( onUpdate ) {
 				onUpdate();
 			}
+		} );
+	};
+
+	this.filterOutExperimentsCategories = function( configData ) {
+		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
+			return configData;
+		}
+
+		const dataToReturn = { ...configData };
+
+		dataToReturn.block.categories = configData?.block?.categories.filter( function( category ) {
+			return category !== 'Link in Bio';
+		} );
+
+		return dataToReturn;
+	};
+
+	this.filterOutInactiveExperiments = function( templates ) {
+		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
+			return templates;
+		}
+		return templates.filter( function( template ) {
+			const { subtype } = template;
+			return subtype !== 'Link in Bio';
 		} );
 	};
 
