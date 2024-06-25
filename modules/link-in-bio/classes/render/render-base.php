@@ -247,8 +247,14 @@ abstract class Render_Base {
 					'href' => esc_url( $formatted_link ),
 				];
 
+				$icon_url = $icon['icon_url'];
+
+				if ( Social_Network_Provider::WAZE == $icon['icon_platform'] ) {
+					$icon_url = $icon['icon_location'];
+				}
+
 				$url_combined_attrs = $this->get_link_attributes(
-					$icon['icon_url'],
+					$icon_url,
 					$url_attrs
 				);
 
