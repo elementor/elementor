@@ -862,24 +862,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Change the display mode of the editor.
-	 *
-	 * @param {string} uiMode - Either 'light', 'dark', or 'auto'.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setDisplayMode( uiMode: string ) {
-		const uiThemeOptions = {
-			light: 'eicon-light-mode',
-			dark: 'eicon-dark-mode',
-			auto: 'eicon-header',
-		};
-
-		await this.openUserPreferencesPanel();
-		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
-	}
-
-	/**
 	 * Set WordPress page template.
 	 *
 	 * @param {string} template - The page template to set. Available options: 'default', 'canvas', 'full-width'.
@@ -914,6 +896,24 @@ export default class EditorPage extends BasePage {
 		await this.openPageSettingsPanel();
 		await this.setSelectControlValue( 'template', templateValue );
 		await this.waitForPreviewToLoad();
+	}
+
+	/**
+	 * Change the display mode of the editor.
+	 *
+	 * @param {string} uiMode - Either 'light', 'dark', or 'auto'.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDisplayMode( uiMode: string ) {
+		const uiThemeOptions = {
+			light: 'eicon-light-mode',
+			dark: 'eicon-dark-mode',
+			auto: 'eicon-header',
+		};
+
+		await this.openUserPreferencesPanel();
+		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
 	/**
