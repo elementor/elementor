@@ -34,7 +34,7 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 
 	filterOutUnsupportedActions() {
 		return ( group ) => {
-			const enabledCommands = elementorProEditorConfig && elementorProEditorConfig?.isActive
+			const enabledCommands = elementor.helpers.hasPro()
 				? [ 'edit', 'delete', 'resetStyle' ]
 				: [ 'edit', 'delete', 'resetStyle', 'save' ];
 			const { name, actions } = group;
