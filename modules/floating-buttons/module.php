@@ -25,6 +25,9 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'floating-buttons';
 
+	const ROUTER_VERSION = '1.0.0';
+	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
+
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
 
 	const CLICK_TRACKING_NONCE = 'elementor-conversion-center-click';
@@ -99,6 +102,8 @@ class Module extends BaseModule {
 				);
 			} );
 		}
+
+		add_action( 'save_post_' . static::CPT_FLOATING_BUTTONS, [ $this, 'flush_permalinks_on_save' ] );
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
@@ -269,6 +274,17 @@ class Module extends BaseModule {
 				break;
 			default:
 				break;
+		}
+	}
+
+	public function flush_permalinks_on_save() {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( get_option( static::ROUTER_OPTION_KEY ) !== static::ROUTER_VERSION ) {
+			flush_rewrite_rules();
+			update_option( static::ROUTER_OPTION_KEY, static::ROUTER_VERSION );
 		}
 	}
 
