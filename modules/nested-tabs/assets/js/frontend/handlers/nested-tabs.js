@@ -6,12 +6,6 @@ import {
 } from 'elementor-frontend-utils/flex-horizontal-scroll';
 
 export default class NestedTabs extends Base {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.resizeListenerNestedTabs = null;
-	}
-
 	/**
 	 * @param {string|number} tabIndex
 	 *
