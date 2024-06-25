@@ -122,6 +122,14 @@ class Module extends BaseModule {
 			return $settings;
 		} );
 
+		add_filter( 'elementor/common/connect/get_subscription_plans', function( $context ) {
+			if ( $this->is_creating_floating_buttons_page() || $this->is_editing_existing_floating_buttons_page() ) {
+				return 'template-library-floating-buttons';
+			}
+
+			return $context;
+		} );
+
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
 
 			if ( strpos( $current_screen->id ?? '', static::CPT_FLOATING_BUTTONS ) !== false ) {

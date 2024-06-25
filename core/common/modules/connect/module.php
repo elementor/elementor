@@ -198,6 +198,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function get_subscription_plans( $context = '' ) {
+		$context = apply_filters( 'elementor/common/connect/get_subscription_plans', $context );
 		$base_url = Utils::has_pro() ? 'https://my.elementor.com/upgrade-subscription' : 'https://elementor.com/pro';
 		$promotion_url = $base_url . '/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro';
 
