@@ -895,7 +895,7 @@ export default class EditorPage extends BasePage {
 		// Select the template
 		await this.openPageSettingsPanel();
 		await this.setSelectControlValue( 'template', templateValue );
-		await this.waitForPreviewToLoad();
+		await this.getPreviewFrame().waitForSelector( templateClass );
 	}
 
 	/**
