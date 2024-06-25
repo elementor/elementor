@@ -201,6 +201,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'type' => Controls_Manager::COLOR,
 			'default' => '#f2295b',
 			'render_type' => 'ui',
+			'control_type' => 'content',
 			'condition' => [
 				'background' => [ 'gradient' ],
 			],
