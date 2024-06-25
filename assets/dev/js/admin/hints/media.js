@@ -54,8 +54,8 @@
 		events: {
 			...wp.media.view.Attachment.Details.prototype.events,
 			'click .elementor-control-notice-dismiss': 'dismiss',
-			'click .e-hint__container .e-btn-1': 'onHintAction',
-			'click .e-hint__container a': 'onHintAction',
+			'click .e-hint__container a': 'onHintAnchorClick',
+			'click .e-hint__container button.e-btn-1': 'onHintAction',
 		},
 
 		shouldDisplayHint( view ) {
@@ -95,6 +95,10 @@
 			if ( actionURL ) {
 				window.open( actionURL, '_blank' );
 			}
+			this.dismiss( event );
+		},
+
+		onHintAnchorClick( event ) {
 			this.dismiss( event );
 		},
 
