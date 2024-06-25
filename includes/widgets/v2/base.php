@@ -3,29 +3,20 @@
 namespace Elementor;
 
 abstract class Widget_Base_V2 extends Widget_Base {
-	private $styles = [];
-	private $props = [];
-
-	abstract public function get_v2_controls(): array;
-
-	abstract public function get_props(): array;
-
-	abstract public function get_styles(): array;
+	protected $version = '2.0.0';
+	protected $styles = [];
 
 	public function __construct( $data = [], $args = null ) {
-		parent::__construct($data, $args);
+		parent::__construct( $data, $args );
 
 		$this->styles = $data['styles'] ?? [];
-		$this->props = $data['props'] ?? [];
 	}
 
-	public function get_initial_config()
-	{
-		$config =  parent::get_initial_config();
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
 
-		$config[ 'controls' ] = $this->get_v2_controls();
-		$config[ 'props' ] = $this->get_props();
-		$config[ 'styles' ] = $this->get_styles();
+		$config['controls'] = $this->get_controls();
+		$config['version'] = $this->version;
 
 		return $config;
 	}
@@ -33,16 +24,24 @@ abstract class Widget_Base_V2 extends Widget_Base {
 	public function get_data_for_save() {
 		$data = parent::get_data_for_save();
 
- 		$data['styles'] = $this->get_styles();
-		$data['props'] = $this->get_props();
+		$data['styles'] = $this->styles;
+		$data['version'] = $this->version;
 
 		return $data;
 	}
 
-	public function get_stack($with_common_controls = true) {
+	public function get_raw_data( $with_html_content = false ) {
+		$data = parent::get_raw_data( $with_html_content );
+
+		$data['styles'] = $this->get_data( 'styles' );
+
+		return $data;
+	}
+
+	public function get_stack( $with_common_controls = true ) {
 		return [
 			'controls' => [],
-			'tabs' => [],
+			'tabs' => [ 'content' => 'content' ],
 		];
 	}
 }

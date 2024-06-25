@@ -7,21 +7,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget_Heading_V1 extends Widget_Base_V2 {
-	public function get_v2_controls(): array {
+	public function get_controls( $control_id = null ): array {
 		return [
-			'blabla' => 'blabla',
-		];
-	}
-
-	public function get_props(): array {
-		return [
-			'blabla' => 'blabla',
-		];
-	}
-
-	public function get_styles(): array {
-		return [
-			'blabla' => 'blabla',
+			[
+				'bind' => 'tag',
+				'type' => 'select',
+				'label' => 'Tag',
+				'default' => 'h2',
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+				],
+			],
 		];
 	}
 
@@ -38,7 +39,11 @@ class Widget_Heading_V1 extends Widget_Base_V2 {
 	}
 
 	protected function render() {
-		echo '<h2>' . 'Heading  V1.5' . '</h2>';
+		$tag = $this->get_settings()['tag'] ?? 'h2';
+		$content = $this->get_settings()['content'] ?? 'Hello, World!';
+		$style = $this->styles['inline'];
+
+		echo "<$tag style=\"$style\">$content</$tag>";
 	}
 }
 
