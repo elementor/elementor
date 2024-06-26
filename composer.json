@@ -5,7 +5,8 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"php-di/php-di": "^7.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",

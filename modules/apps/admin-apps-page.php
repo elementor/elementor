@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\Apps;
 
-use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Apps_Page {
 
 	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
-
-	private static ?Wordpress_Adapter $wordpress_adapter = null;
 
 	private static ?Plugin_Status_Adapter $plugin_status_adapter = null;
 
@@ -46,12 +43,8 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		if ( ! self::$wordpress_adapter ) {
-			self::$wordpress_adapter = new Wordpress_Adapter();
-		}
-
 		if ( ! self::$plugin_status_adapter ) {
-			self::$plugin_status_adapter = new Plugin_Status_Adapter( self::$wordpress_adapter );
+			self::$plugin_status_adapter = new Plugin_Status_Adapter();
 		}
 
 		$apps = static::get_remote_apps();
@@ -102,7 +95,7 @@ class Admin_Apps_Page {
 	}
 
 	private static function filter_wporg_app( $app ) {
-		if ( self::$wordpress_adapter->is_plugin_active( $app['file_path'] ) ) {
+		if ( self::$plugin_status_adapter->wordpress_adapter->is_plugin_active( $app['file_path'] ) ) {
 			return null;
 		}
 
@@ -132,7 +125,7 @@ class Admin_Apps_Page {
 	}
 
 	private static function filter_ecom_app( $app ) {
-		if ( self::$wordpress_adapter->is_plugin_active( $app['file_path'] ) ) {
+		if ( self::$plugin_status_adapter->wordpress_adapter->is_plugin_active( $app['file_path'] ) ) {
 			return null;
 		}
 
