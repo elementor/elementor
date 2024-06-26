@@ -8,22 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Heading_V1 extends Widget_Base_V2 {
 	public function get_controls( $control_id = null ): array {
-		return [
-			[
-				'bind' => 'tag',
-				'type' => 'select',
-				'label' => 'Tag',
-				'default' => 'h2',
-				'options' => [
-					'h1' => 'H1',
-					'h2' => 'H2',
-					'h3' => 'H3',
-					'h4' => 'H4',
-					'h5' => 'H5',
-					'h6' => 'H6',
-				],
-			],
-		];
+		return [];
 	}
 
 	public function get_icon() {

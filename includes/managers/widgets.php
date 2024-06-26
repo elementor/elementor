@@ -35,8 +35,6 @@ class Widgets_Manager {
 	 */
 	private $_widget_types = null;
 
-	private $_v2_widget_types = [];
-
 	/**
 	 * Promoted widget types.
 	 *
@@ -113,26 +111,16 @@ class Widgets_Manager {
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
 
-			$class_name = str_replace( '-', '_', $widget_filename );
-
-			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
-
-			$this->register( new $class_name() );
+            $this->register_widget_by_filename($widget_filename);
 		}
 
 		foreach ( $v2_build_filenames as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/v2/' . $widget_filename . '.php';
 
-			$class_name = str_replace( '-', '_', $widget_filename );
-
-			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
-
-			$this->register( new $class_name() );
+			$this->register_widget_by_filename($widget_filename);
 		}
 
 		$this->register_wp_widgets();
-
-//		$this->register_v2_widgets();
 
 		/**
 		 * After widgets registered.
@@ -162,6 +150,14 @@ class Widgets_Manager {
 		 */
 		do_action( 'elementor/widgets/register', $this );
 	}
+
+    private function register_widget_by_filename(string $filename) {
+        $class_name = str_replace( '-', '_', $filename );
+
+        $class_name = __NAMESPACE__ . '\Widget_' . $class_name;
+
+        $this->register( new $class_name() );
+    }
 
 	/**
 	 * Register WordPress widgets.
@@ -204,31 +200,6 @@ class Widgets_Manager {
 					'widget_name' => $widget_class,
 				] )
 			);
-		}
-	}
-
-	/**
-	 * Register v2 widgets.
-	 *
-	 * Add Elementor v2 widgets to the list of registered widget types.
-	 *
-	 * @since 3.0.0
-	 * @access private
-	*/
-	private function register_v2_widgets()
-	{
-		$widgets = [
-			'heading-v2',
-		];
-
-		foreach ($widgets as $widget_filename) {
-			include ELEMENTOR_PATH . 'includes/widgets-v2/' . $widget_filename . '.php';
-
-			$class_name = str_replace('-', '_', $widget_filename);
-
-			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
-
-			$this->register_v2_widget(new $class_name());
 		}
 	}
 
@@ -311,12 +282,6 @@ class Widgets_Manager {
 		return true;
 	}
 
-	public function register_v2_widget( $widget_instance ) {
-		$this->_v2_widget_types[ $widget_instance->get_name() ] = $widget_instance;
-
-		return true;
-	}
-
 	/** Register promoted widgets
 	 *
 	 * Since we cannot allow widgets to place themselves is a specific
@@ -394,10 +359,10 @@ class Widgets_Manager {
 		}
 
 		if ( null !== $widget_name ) {
-			return $this->_widget_types[ $widget_name ] ?? $this->_v2_widget_types[ $widget_name ] ?? null;
+			return isset( $this->_widget_types[ $widget_name ] ) ? $this->_widget_types[ $widget_name ] : null;
 		}
 
-		return array_merge( $this->_widget_types, $this->_v2_widget_types );
+		return $this->_widget_types;
 	}
 
 	/**
@@ -435,14 +400,6 @@ class Widgets_Manager {
 				continue;
 			}
 
-			if ( str_contains( $widget_key, 'v2' ) ){
-				$config[ $widget_key ] = [
-					'controls' => $widget->get_controls(),
-				];
-
-				continue;
-			}
-
 			$config[ $widget_key ] = [
 				'controls' => $widget->get_stack( false )['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
@@ -461,7 +418,7 @@ class Widgets_Manager {
 		$force_locale->force();
 
 		$controls = ( new Collection( $this->get_widget_types() ) )
-			->map( function ( $widget ) {
+			->map( function ( Widget_Base $widget ) {
 				$controls = $widget->get_stack( false )['controls'];
 
 				return [

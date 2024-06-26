@@ -3,6 +3,7 @@ namespace Elementor\Core\Files\CSS;
 
 use Elementor\Base_Data_Control;
 use Elementor\Control_Repeater;
+use Elementor\Controls_Stack;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 
@@ -92,10 +93,11 @@ class Post extends Base {
 	 * @since 1.2.0
 	 * @access public
 	 *
+	 * @param Element_Base $element The element.
 	 *
 	 * @return string Unique element selector.
 	 */
-	public function get_element_unique_selector(  $element ) {
+	public function get_element_unique_selector( Element_Base $element ) {
 		return '.elementor-' . $this->post_id . ' .elementor-element' . $element->get_unique_selector();
 	}
 
@@ -209,14 +211,14 @@ class Post extends Base {
 	 * @since 1.6.0
 	 * @access public
 	 *
-	 * @param  $controls_stack The controls stack.
+	 * @param Controls_Stack $controls_stack The controls stack.
 	 * @param array          $controls       Controls array.
 	 * @param array          $values         Values array.
 	 * @param array          $placeholders   Placeholders.
 	 * @param array          $replacements   Replacements.
 	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules(  $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
 		parent::add_controls_stack_style_rules( $controls_stack, $controls, $values, $placeholders, $replacements, $all_controls );
 
 		if ( $controls_stack instanceof Element_Base ) {
@@ -276,9 +278,9 @@ class Post extends Base {
 	 * @since 1.2.0
 	 * @access protected
 	 *
-	 * @param
+	 * @param Element_Base $element The element.
 	 */
-	protected function render_styles(  $element ) {
+	protected function render_styles( Element_Base $element ) {
 		/**
 		 * Before element parse CSS.
 		 *
