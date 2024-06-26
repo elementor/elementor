@@ -1367,7 +1367,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test.skip( 'Nested tabs horizontal scroll - rtl', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested tabs horizontal scroll - rtl', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await setup( wpAdmin );
