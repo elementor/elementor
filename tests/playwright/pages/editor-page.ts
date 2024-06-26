@@ -713,9 +713,7 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Click on a top bar item.
 	 *
-	 * @param {string} selector - The selector of the top bar button.
-	 *
-	 * @return {Promise<void>}
+	 * @param {TopBarSelector} selector - The selector object for the top bar button.
 	 */
 	async clickTopBarItem( selector: TopBarSelector ) {
 		const topbarLocator = this.page.locator( EditorSelectors.panels.topBar.wrapper );

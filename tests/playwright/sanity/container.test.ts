@@ -158,7 +158,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		await expect( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
+		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
 		await editor.togglePreviewMode();
 

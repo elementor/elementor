@@ -2,7 +2,8 @@ export type TopBarSelector = {
 	attribute: string;
 	attributeValue: string;
 }
-const TopBarSelectors = {
+
+export default {
 	elementorLogo: {
 		attribute: 'value',
 		attributeValue: 'selected',
@@ -28,5 +29,3 @@ const TopBarSelectors = {
 		attributeValue: 'Publish',
 	},
 };
-
-export default TopBarSelectors;
