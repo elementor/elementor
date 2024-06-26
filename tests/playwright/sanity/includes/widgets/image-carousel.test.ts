@@ -17,7 +17,7 @@ test.describe( 'Image carousel tests', () => {
 		} );
 
 		await wpAdmin.openNewPage();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 		await editor.closeNavigatorIfOpen();
 
 		const widgetId = await editor.addWidget( 'image-carousel' );
@@ -63,7 +63,7 @@ test.describe( 'Image carousel tests', () => {
 		} );
 
 		// Reset the Default template.
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 	} );
 
 	test.skip( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
@@ -114,7 +114,7 @@ test.describe( 'Image carousel tests', () => {
 			e_swiper_latest: false,
 		} );
 		await wpAdmin.openNewPage();
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'heading' );
 		await editor.addWidget( 'image-carousel' );
@@ -153,7 +153,7 @@ test.describe( 'Image carousel tests', () => {
 		} );
 
 		await wpAdmin.openNewPage();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 		await editor.closeNavigatorIfOpen();
 
 		await editor.addWidget( 'image-carousel' );

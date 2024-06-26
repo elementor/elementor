@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
+import TopBarSelectors from '../../../../../../../../../selectors/top-bar-selectors';
 
 test( 'Exit to user preference sanity test', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -12,7 +13,7 @@ test( 'Exit to user preference sanity test', async ( { page, apiRequests }, test
 		// Exit to `dashboard`
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'dashboard' );
-		await editor.clickTopBarItem( 'Elementor Logo' );
+		await editor.clickTopBarItem( TopBarSelectors.elementorLogo );
 		await page.waitForTimeout( 100 );
 		exitHref = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 		await page.press( 'body', 'Escape' );
@@ -21,7 +22,7 @@ test( 'Exit to user preference sanity test', async ( { page, apiRequests }, test
 		// Exit to `this_post`
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'this_post' );
-		await editor.clickTopBarItem( 'Elementor Logo' );
+		await editor.clickTopBarItem( TopBarSelectors.elementorLogo );
 		await page.waitForTimeout( 100 );
 		exitHref = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 		await page.press( 'body', 'Escape' );
@@ -30,7 +31,7 @@ test( 'Exit to user preference sanity test', async ( { page, apiRequests }, test
 		// Exit to `all_posts`
 		await editor.openUserPreferencesPanel();
 		await editor.setSelectControlValue( 'exit_to', 'all_posts' );
-		await editor.clickTopBarItem( 'Elementor Logo' );
+		await editor.clickTopBarItem( TopBarSelectors.elementorLogo );
 		await page.waitForTimeout( 100 );
 		exitHref = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 		await page.press( 'body', 'Escape' );
