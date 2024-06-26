@@ -240,36 +240,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Use the Canvas post template.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async useCanvasTemplate() {
-		if ( await this.getPreviewFrame().$( '.elementor-template-canvas' ) ) {
-			return;
-		}
-
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', 'elementor_canvas' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
-	}
-
-	/**
-	 * Use the Default post template.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async useDefaultTemplate() {
-		if ( await this.getPreviewFrame().$( '.elementor-default' ) ) {
-			return;
-		}
-
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', 'default' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
-	}
-
-	/**
 	 * Select an element inside the editor.
 	 *
 	 * @param {string} elementId - Element ID.
@@ -420,7 +390,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setWidgetCustomWidth( width = '100' ) {
+	async setWidgetCustomWidth( width: string = '100' ) {
 		await this.openPanelTab( 'advanced' );
 		await this.setSelectControlValue( '_element_width', 'initial' );
 		await this.setSliderControlValue( '_element_custom_width', width );
@@ -507,7 +477,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setSelect2ControlValue( controlId, value, exactMatch = true ) {
+	async setSelect2ControlValue( controlId: string, value: string, exactMatch: boolean = true ) {
 		await this.page.locator( `.elementor-control-${ controlId } .select2:not( .select2-container--disabled )` ).click();
 		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
 
@@ -570,7 +540,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setSwitcherControlValue( controlId: string, value = true ) {
+	async setSwitcherControlValue( controlId: string, value: boolean = true ) {
 		const controlSelector = `.elementor-control-${ controlId }`,
 			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
 			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
@@ -717,19 +687,6 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( '#elementor-mode-switcher-preview' ).click();
 			await this.page.waitForSelector( 'body.elementor-editor-active' );
 		}
-	}
-
-	/**
-	 * Change the WordPress template layout.
-	 *
-	 * @param {string} layout - The layout template to change to.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async changeEditorLayout( layout: string ) {
-		await this.openPageSettingsPanel();
-		await this.setSelectControlValue( 'template', layout );
-		await this.waitForPreviewToLoad();
 	}
 
 	/**
@@ -902,6 +859,43 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
+	}
+
+	/**
+	 * Set WordPress page template.
+	 *
+	 * @param {string} template - The page template to set. Available options: 'default', 'canvas', 'full-width'.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setPageTemplate( template: 'default' | 'canvas' | 'full-width' ) {
+		let templateValue;
+		let templateClass;
+
+		switch ( template ) {
+			case 'default':
+				templateValue = 'default';
+				templateClass = '.elementor-default';
+				break;
+			case 'canvas':
+				templateValue = 'elementor_canvas';
+				templateClass = '.elementor-template-canvas';
+				break;
+			case 'full-width':
+				templateValue = 'elementor_header_footer';
+				templateClass = '.elementor-template-full-width';
+				break;
+		}
+
+		// Check if the template is already set
+		if ( await this.getPreviewFrame().$( templateClass ) ) {
+			return;
+		}
+
+		// Select the template
+		await this.openPageSettingsPanel();
+		await this.setSelectControlValue( 'template', templateValue );
+		await this.getPreviewFrame().waitForSelector( templateClass );
 	}
 
 	/**
@@ -1161,7 +1155,15 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async waitForIframeToLoaded( widgetType: string, isPublished = false ) {
+	/**
+	 * Wait for an iframe to load.
+	 *
+	 * @param {string}  widgetType  - Widget type.
+	 * @param {boolean} isPublished - Whether the element is published.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForIframeToLoaded( widgetType: string, isPublished: boolean = false ) {
 		const frames = {
 			video: [ EditorSelectors.video.iframe, EditorSelectors.video.playIcon ],
 			google_maps: [ EditorSelectors.googleMaps.iframe, EditorSelectors.googleMaps.showSatelliteViewBtn ],
@@ -1217,10 +1219,10 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Verify class in element.
 	 *
-	 * @param {Object}  args
-	 * @param {string}  args.selector
-	 * @param {string}  args.className
-	 * @param {boolean} args.isPublished
+	 * @param {Object}  args             - Arguments.
+	 * @param {string}  args.selector    - Element selector.
+	 * @param {string}  args.className   - Class name.
+	 * @param {boolean} args.isPublished - Whether the element is published.
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -1236,11 +1238,11 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Verify image size.
 	 *
-	 * @param {Object}  args
-	 * @param {string}  args.selector
-	 * @param {number}  args.width
-	 * @param {number}  args.height
-	 * @param {boolean} args.isPublished
+	 * @param {Object}  args             - Arguments.
+	 * @param {string}  args.selector    - Element selector.
+	 * @param {number}  args.width       - Image width.
+	 * @param {number}  args.height      - Image height.
+	 * @param {boolean} args.isPublished - Whether the element is published.
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -1263,7 +1265,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async isUiStable( locator, retries = 3, timeout = 500 ) {
+	async isUiStable( locator, retries: number = 3, timeout: number = 500 ) {
 		const comparator = getComparator( 'image/png' );
 		let retry = 0,
 			beforeImage,

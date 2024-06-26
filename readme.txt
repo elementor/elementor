@@ -250,6 +250,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.22.3 - 2024-06-26 =
+
+* Fix: PHP error appears on the front when using gradient background with the Optimized Control Loading feature activated ([#27733](https://github.com/elementor/elementor/issues/27733))
+
 = 3.22.2 - 2024-06-24 =
 
 * Security Fix: Improved code security enforcement in Shape Divider
