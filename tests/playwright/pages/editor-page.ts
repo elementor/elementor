@@ -1,16 +1,16 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type BrowserContext, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, WindowType, BackboneType, ElementorType, ElementorFrontendConfig } from '../types/types';
+import { $eType, WindowType, BackboneType, ElementorType } from '../types/types';
+import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
-let elementorFrontendConfig: ElementorFrontendConfig;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
@@ -656,16 +656,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Remove the focus from the test elements by creating two new elements.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async removeFocus() {
-		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
-		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click();
-	}
-
-	/**
 	 * Hide controls from the video widgets.
 	 *
 	 * @return {Promise<void>}
@@ -766,12 +756,15 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Click on a top bar item.
 	 *
-	 * @param {string} text - The text of the top bar button.
-	 *
-	 * @return {Promise<void>}
+	 * @param {TopBarSelector} selector - The selector object for the top bar button.
 	 */
-	async clickTopBarItem( text: string ) {
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByRole( 'button', { name: text } ).click();
+	async clickTopBarItem( selector: TopBarSelector ) {
+		const topbarLocator = this.page.locator( EditorSelectors.panels.topBar.wrapper );
+		if ( 'text' === selector.attribute ) {
+			await topbarLocator.getByRole( 'button', { name: selector.attributeValue } ).click();
+		} else {
+			await topbarLocator.locator( `button[${ selector.attribute }="${ selector.attributeValue }"]` ).click();
+		}
 	}
 
 	/**
@@ -799,7 +792,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Elements' );
+			await this.clickTopBarItem( TopBarSelectors.elementsPanel );
 		} else {
 			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
 		}
@@ -816,7 +809,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Page Settings' );
+			await this.clickTopBarItem( TopBarSelectors.documentSettings );
 		} else {
 			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
 		}
@@ -835,7 +828,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Site Settings' );
+			await this.clickTopBarItem( TopBarSelectors.siteSettings );
 		} else {
 			await this.openMenuPanel( 'global-settings' );
 		}
@@ -856,7 +849,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Elementor Logo' );
+			await this.clickTopBarItem( TopBarSelectors.elementorLogo );
 			await this.page.waitForTimeout( 100 );
 			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		} else {
@@ -864,29 +857,6 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
-	}
-
-	/**
-	 * Open the navigator/structure panel.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openNavigator( ) {
-		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
-
-		if ( isOpen ) {
-			return;
-		}
-
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Structure' );
-		} else {
-			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
-		}
-
-		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 	}
 
 	/**
@@ -956,7 +926,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Publish' );
+			await this.clickTopBarItem( TopBarSelectors.publish );
 			await this.page.waitForLoadState();
 			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
 		} else {
@@ -977,7 +947,7 @@ export default class EditorPage extends BasePage {
 		await this.publishPage();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Save Options' );
+			await this.clickTopBarItem( TopBarSelectors.saveOptions );
 			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
 			const pageId = await this.getPageId();
 			await this.page.goto( `/?p=${ pageId }` );
@@ -997,7 +967,7 @@ export default class EditorPage extends BasePage {
 		const hasTopBar = await this.hasTopBar();
 
 		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Publish' );
+			await this.clickTopBarItem( TopBarSelectors.publish );
 		} else {
 			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
 		}
@@ -1008,57 +978,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Preview the changes made in the editor.
-	 *
-	 * @param {BrowserContext} context - The browser context.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async previewChanges( context: BrowserContext ) {
-		const hasTopBar = await this.hasTopBar();
-		const previewPagePromise = context.waitForEvent( 'page' );
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( 'Preview Changes' );
-		} else {
-			await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
-		}
-
-		await this.page.waitForLoadState( 'networkidle' );
-
-		const previewPage = await previewPagePromise;
-		await previewPage.waitForLoadState();
-
-		return previewPage;
-	}
-
-	/**
-	 * Edit current page from the Front End.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async editCurrentPage() {
-		const postId = await this.getPageIdFromFrontEnd();
-		expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
-		await this.gotoPostId( postId );
-	}
-
-	/**
 	 * Get the current page ID.
 	 *
 	 * @return {Promise<string>}
 	 */
 	async getPageId(): Promise<string> {
 		return await this.page.evaluate( () => elementor.config.initial_document.id );
-	}
-
-	/**
-	 * Get the current page ID from the Front End.
-	 *
-	 * @return {Promise<string>}
-	 */
-	async getPageIdFromFrontEnd() {
-		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 
 	/**
