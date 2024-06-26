@@ -16,7 +16,6 @@ const App = ( props ) => {
 						onConnect={ onConnect }
 						getControlValue={ props.getControlValue }
 						setControlValue={ props.setControlValue }
-						controlView={ props.controlView }
 						additionalOptions={ props.additionalOptions }
 					/>
 				</RequestIdsProvider>
@@ -33,7 +32,6 @@ App.propTypes = {
 	getControlValue: PropTypes.func,
 	setControlValue: PropTypes.func,
 	additionalOptions: PropTypes.object,
-	controlView: PropTypes.object,
 	isRTL: PropTypes.bool,
 };
 

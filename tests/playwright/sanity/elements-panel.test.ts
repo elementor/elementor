@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
 
-test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
+test( 'add widgets from the panel by click', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
 	// Act.
@@ -35,9 +36,9 @@ test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 	expect( orderedWidgets ).toBe( 'heading,icon,button' );
 } );
 
-test( 'block adding from panel an inner section inside an inner section', async ( { page }, testInfo ) => {
+test( 'block adding from panel an inner section inside an inner section', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
 	// Act.

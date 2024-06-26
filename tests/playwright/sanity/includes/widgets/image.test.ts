@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
@@ -23,15 +24,15 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	];
 
 	for ( const i in data ) {
-		test( `${ data[ i ].widgetTitle }: Image size test`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
+		test( `${ data[ i ].widgetTitle }: Image size test`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const contentTab = new Content( page, testInfo );
 			const imageTitle = 'About-Pic-3-1';
 
 			await wpAdmin.openNewPage();
 			await editor.addWidget( data[ i ].widgetTitle );
-			await contentTab.chooseImage( `${ imageTitle }.png` );
+			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 
 			const imageSize = [ 'thumbnail', 'large', 'full' ];
 			for ( const id in imageSize ) {
@@ -76,15 +77,15 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	}
 
 	for ( const i in data ) {
-		test( `${ data[ i ].widgetTitle }: Custom image size test`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo );
+		test( `${ data[ i ].widgetTitle }: Custom image size test`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const contentTab = new Content( page, testInfo );
 			const imageTitle = 'About-Pic-3-1';
 
 			await wpAdmin.openNewPage();
 			await editor.addWidget( data[ i ].widgetTitle );
-			await contentTab.chooseImage( `${ imageTitle }.png` );
+			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 			await contentTab.setCustomImageSize(
 				{
 					selector: data[ i ].image,
@@ -97,19 +98,18 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		} );
 	}
 
-	test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Lightbox image captions aligned center', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
-		const contentTab = new Content( page, testInfo );
 		const image = 'About-Pic-3-1';
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'image' );
-		await contentTab.chooseImage( `${ image }.png` );
-		await contentTab.setCaption( 'attachment' );
-		await contentTab.selectLinkSource( 'file' );
-		await contentTab.setLightBox( 'yes' );
+		await editor.setMediaControlImageValue( 'image', `${ image }.png` );
+		await editor.setSelectControlValue( 'caption_source', 'attachment' );
+		await editor.setSelectControlValue( 'link_to', 'file' );
+		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
 		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
 			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
