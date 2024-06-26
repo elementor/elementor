@@ -82,7 +82,7 @@ class Autoloader {
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 
 		if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
-			require_once ELEMENTOR_PATH . 'vendor/autoload.php' ;
+			require_once ELEMENTOR_PATH . 'vendor/autoload.php';
 		}
 
 	}
