@@ -2,6 +2,7 @@ export type TopBarSelector = {
 	attribute: string;
 	attributeValue: string;
 }
+
 const TopBarSelectors = {
 	elementorLogo: {
 		attribute: 'value',
