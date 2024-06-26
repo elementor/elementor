@@ -1056,36 +1056,6 @@ export default class EditorPage extends BasePage {
 		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
 	}
 
-	/**
-	 * Get the widget element.
-	 *
-	 * @return {string} Elementor widget.
-	 */
-	getWidget() {
-		return this.getPreviewFrame().locator( EditorSelectors.widget );
-	}
-
-	async waitForElementRender( id: string ) {
-		if ( null === id ) {
-			throw new Error( 'Id is null' );
-		}
-
-		const loadingElement = `.elementor-element-${ id }.elementor-loading`;
-		let isLoading: boolean;
-
-		try {
-			await this.getPreviewFrame().waitForSelector( loadingElement, { timeout: 500 } );
-
-			isLoading = true;
-		} catch ( e ) {
-			isLoading = false;
-		}
-
-		if ( isLoading ) {
-			await this.getPreviewFrame().waitForSelector( loadingElement, { state: 'detached' } );
-		}
-	}
-
 	async waitForIframeToLoaded( widgetType: string, isPublished = false ) {
 		const frames = {
 			video: [ EditorSelectors.video.iframe, EditorSelectors.video.playIcon ],
