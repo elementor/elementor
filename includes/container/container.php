@@ -14,8 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 
-class Container extends \DI\Container
-{
+class Container extends \DI\Container {
 
 }
 

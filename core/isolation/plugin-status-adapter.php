@@ -11,7 +11,7 @@ class Plugin_Status_Adapter implements Plugin_Status_Adapter_Interface {
 
 	public function __construct() {
 		$this->container = new Container();
-		$this->wordpress_adapter = $this->container->get(Wordpress_Adapter::class);
+		$this->wordpress_adapter = $this->container->get( Wordpress_Adapter::class );
 	}
 
 	public function is_plugin_installed( $plugin_path ): bool {
