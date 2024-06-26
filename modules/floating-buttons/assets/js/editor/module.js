@@ -30,6 +30,27 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 			}
 			return behaviors;
 		}, 1000 );
+
+		elementor.hooks.addFilter( 'elementor/editor/template-library/template/promotion-link', ( url, templateData ) => {
+			const { type } = templateData;
+			if ( 'floating_button' === type ) {
+				try {
+					const urlPieces = new URL( url );
+					const searchParams = new URLSearchParams();
+					urlPieces.searchParams.forEach( ( value, key ) => {
+						if ( 'utm_source' === key ) {
+							searchParams.set( key, 'template-library-floating-buttons' );
+						} else {
+							searchParams.set( key, value );
+						}
+					} );
+					return `${ urlPieces.origin }${ urlPieces.pathname }?${ searchParams.toString() }`;
+				} catch ( e ) {
+					return url;
+				}
+			}
+			return url;
+		}, 1000 );
 	}
 
 	filterOutUnsupportedActions() {

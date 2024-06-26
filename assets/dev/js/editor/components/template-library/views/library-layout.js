@@ -45,9 +45,15 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const subscriptionPlan = subscriptionPlans[ templateAccessTier ];
 		const promotionText = elementorAppConfig.hasPro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`;
 
+		const promotionLink = elementor.hooks.applyFilters(
+			'elementor/editor/template-library/template/promotion-link',
+			subscriptionPlan.promotion_url,
+			templateData,
+		);
+
 		return Marionette.Renderer.render( template, {
 			promotionText,
-			promotionLink: subscriptionPlan.promotion_url,
+			promotionLink,
 		} );
 	},
 
