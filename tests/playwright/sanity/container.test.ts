@@ -71,7 +71,7 @@ test.describe( 'Container tests @container', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 
 		// Act.
 		await editor.addWidget( widgets.accordion, containerId );
@@ -139,7 +139,7 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
@@ -176,7 +176,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 	} );
 
 	test( 'Test widgets inside the container using position fixed', async ( { page, apiRequests }, testInfo ) => {
@@ -185,7 +185,7 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
@@ -209,7 +209,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 	} );
 
 	test( 'Container full width and position fixed', async ( { page, apiRequests }, testInfo ) => {
@@ -218,7 +218,7 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
@@ -269,7 +269,7 @@ test.describe( 'Container tests @container', () => {
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 
 		await editor.selectElement( container );
 		// Set row direction.
@@ -331,7 +331,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Reset the Default template.
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 	} );
 
 	test( 'Fallback image is not on top of background video AND border radius with background image', async ( { page, apiRequests }, testInfo ) => {
@@ -354,7 +354,7 @@ test.describe( 'Container tests @container', () => {
 			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 
 		await editor.selectElement( containerId );
 		await editor.setSliderControlValue( 'min_height', '200' );
@@ -397,7 +397,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Reset to the Default template.
 		await editor.togglePreviewMode();
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 	} );
 
 	test( 'Spacer alignment with container column setting', async ( { page, apiRequests }, testInfo ) => {
@@ -456,7 +456,7 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setSiteLanguage( 'he_IL' );
 			const editor = await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
-			await editor.useCanvasTemplate();
+			await editor.setPageTemplate( 'canvas' );
 			const container = await addContainerAndHover( editor );
 			expect.soft( await container.screenshot( {
 				type: 'jpeg',
@@ -467,7 +467,7 @@ test.describe( 'Container tests @container', () => {
 		}
 
 		const editor = await wpAdmin.openNewPage();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 		const container = await addContainerAndHover( editor );
 
 		expect.soft( await container.screenshot( {
