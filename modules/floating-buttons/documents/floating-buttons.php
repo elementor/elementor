@@ -17,16 +17,15 @@ class Floating_Buttons extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
+		$properties['support_kit'] = true;
+		$properties['support_site_editor'] = false;
 		$properties['cpt'] = [ Floating_Buttons_Module::CPT_FLOATING_BUTTONS ];
 		$properties['show_navigator'] = false;
 		$properties['allow_adding_widgets'] = false;
 		$properties['support_page_layout'] = false;
-		$properties['support_conditions'] = true;
-		$properties['condition_type'] = 'general';
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
 		$properties['allow_closing_remote_library'] = false;
-		$properties['location'] = 'elementor_body_end';
 
 		return $properties;
 	}

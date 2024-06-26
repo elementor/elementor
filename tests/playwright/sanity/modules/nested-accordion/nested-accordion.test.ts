@@ -59,11 +59,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-			e_nested_atomic_repeaters: 'active',
-		} );
+		await setup( wpAdmin, { e_nested_atomic_repeaters: 'active' } );
 
 		await page.close();
 	} );
@@ -256,7 +252,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -270,14 +265,13 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = frame.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = frame.locator( '.elementor-button >> nth=0' );
 
-			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree, false );
 		} );
 	} );
 
 	test( 'Accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -293,7 +287,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = page.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = page.locator( '.elementor-button >> nth=0' );
 
-			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree, true );
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
@@ -306,29 +300,34 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 	} );
 } );
 
-async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
+async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator, frontend: boolean ) {
 	await accordionTitleOne.focus();
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 
-	await page.keyboard.press( 'Enter' );
+	await accordionTitleOne.press( 'Enter' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 	await expect.soft( button1 ).toBeVisible();
 
-	await page.keyboard.press( 'Tab' );
+	await accordionTitleOne.press( 'Tab' );
 	await expect.soft( button1 ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
-	await page.keyboard.press( 'Shift+Tab' );
+	await button1.press( 'Shift+Tab' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
-	await page.keyboard.press( 'Tab' );
+	await accordionTitleOne.press( 'Tab' );
 	await expect.soft( button1 ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
-	await page.keyboard.press( 'Escape' );
+	if ( frontend ) {
+		await page.keyboard.press( 'Escape' );
+	} else {
+		await page.keyboard.press( 'Shift+Tab' );
+		await page.keyboard.press( 'Space' );
+	}
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 	await expect.soft( button1 ).toBeHidden();
@@ -338,7 +337,11 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 	await expect.soft( button1 ).toBeVisible();
 
-	await page.keyboard.press( 'Escape' );
+	if ( frontend ) {
+		await page.keyboard.press( 'Escape' );
+	} else {
+		await page.keyboard.press( 'Space' );
+	}
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 	await expect.soft( button1 ).toBeHidden();

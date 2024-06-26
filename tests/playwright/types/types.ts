@@ -90,5 +90,3 @@ export type ElementorType = {
 		}
 	}
 }
-
-export type ElementorFrontendConfig = { post: { id: number } }
