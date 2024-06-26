@@ -45,16 +45,24 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const subscriptionPlan = subscriptionPlans[ templateAccessTier ];
 		const promotionText = elementorAppConfig.hasPro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`;
 
-		const promotionLink = elementor.hooks.applyFilters(
-			'elementor/editor/template-library/template/promotion-link',
-			subscriptionPlan.promotion_url,
-			templateData,
-		);
+		try {
+			const promotionUrlPieces = new URL( subscriptionPlan.url );
 
-		return Marionette.Renderer.render( template, {
-			promotionText,
-			promotionLink,
-		} );
+			const queryString = promotionUrlPieces.searchParams.toString();
+
+			const promotionLinkQueryString = elementor.hooks.applyFilters(
+				'elementor/editor/template-library/template/promotion-link-search-params',
+				queryString,
+				templateData,
+			);
+
+			return Marionette.Renderer.render( template, {
+				promotionText,
+				promotionLink: `${ promotionUrlPieces.origin }${ promotionUrlPieces.pathname }?${ promotionLinkQueryString }`,
+			} );
+		} catch ( e ) {
+			return '';
+		}
 	},
 
 	setHeaderDefaultParts() {
