@@ -57,6 +57,8 @@ test.describe( 'AI @ai', () => {
 			await closePromptHistory( page );
 
 			await expect( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeHidden();
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Shows a message when there is a free plan', async () => {
@@ -69,6 +71,8 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageFullTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Shows a message when there are no history items', async () => {
@@ -81,6 +85,8 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.noDataMessageTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Renders items from different periods correctly', async () => {
@@ -95,6 +101,8 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ) ).toHaveCount( 2 );
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Renders upgrade ad if a user has less than 90 items limit', async () => {
@@ -107,6 +115,8 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageSmallTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Renders a fallback icon for an unknown action', async () => {
@@ -119,6 +129,8 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.fallbackIconTestId ) ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Removes item', async () => {
@@ -142,6 +154,8 @@ test.describe( 'AI @ai', () => {
 			await expect( items ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 	} );
 
@@ -218,6 +232,8 @@ test.describe( 'AI @ai', () => {
 			await expect( input ).toBeVisible();
 
 			expect( await input.inputValue() ).toBe( 'Test prompt' );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Edit button edits result', async () => {
@@ -240,6 +256,8 @@ test.describe( 'AI @ai', () => {
 			await expect( textarea ).toBeVisible();
 
 			expect( await textarea.inputValue() ).toBe( 'Test result' );
+
+			await closeAIDialog( page );
 		} );
 	} );
 
