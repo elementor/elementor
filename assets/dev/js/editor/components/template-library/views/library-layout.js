@@ -46,8 +46,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const promotionText = elementorAppConfig.hasPro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`;
 
 		try {
-			const promotionUrlPieces = new URL( subscriptionPlan.url );
-
+			const promotionUrlPieces = new URL( subscriptionPlan.promotion_url );
 			const queryString = promotionUrlPieces.searchParams.toString();
 
 			const promotionLinkQueryString = elementor.hooks.applyFilters(
