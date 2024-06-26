@@ -123,7 +123,7 @@
         },
         {
             "name": "php-di/php-di",
-            "version": "6.4",
+            "version": "6.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/PHP-DI.git",
