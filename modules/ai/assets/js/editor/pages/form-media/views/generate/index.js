@@ -62,6 +62,9 @@ const Generate = ( { textToImageHook, predefinedPrompt = '', initialSettings = {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		setGenerate();
+		if ( ! settings[ IMAGE_STYLE ] ) {
+			settings[ IMAGE_STYLE ] = 'general';
+		}
 		send( { prompt, settings } );
 	};
 
