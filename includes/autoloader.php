@@ -80,7 +80,11 @@ class Autoloader {
 		self::$default_namespace = $default_namespace;
 
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
-		require_once __DIR__ . '/../vendor/autoload.php';
+
+		if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
+			require_once ELEMENTOR_PATH . 'vendor/autoload.php' ;
+		}
+
 	}
 
 	/**
