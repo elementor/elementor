@@ -83,7 +83,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			frame = editor.getPreviewFrame(),
 			accordionWrapper = frame.locator( '.elementor-accordion' ).first(),
 			toggleWidgetInPanel = page.locator( 'i.eicon-toggle' ).first(),
-			widgetPanelButton = page.locator( '#elementor-panel-header-add-button .eicon-apps' ),
 			widgetSearchBar = '#elementor-panel-elements-search-wrapper input#elementor-panel-elements-search-input',
 			nestedAccordionItemTitle = frame.locator( '.e-n-accordion-item' ),
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
