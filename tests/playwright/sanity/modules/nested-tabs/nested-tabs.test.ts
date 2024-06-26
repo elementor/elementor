@@ -1371,7 +1371,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	} );
 
 	test( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
-		// Arrange.
+		// Arrange.//dummy
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		await wpAdmin.setSiteLanguage( 'he_IL' );
