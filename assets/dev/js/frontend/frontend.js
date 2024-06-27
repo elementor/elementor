@@ -195,15 +195,15 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	initOnReadyComponents() {
 		this.utils = {
-			youtube: new YouTubeApiLoader(),
-			vimeo: new VimeoApiLoader(),
-			baseVideoLoader: new BaseVideoLoader(),
-			anchors: new AnchorsModule(),
-			get lightbox() {
-				return LightboxManager.getLightbox();
-			},
-			urlActions: new URLActions(),
-			swiper: Swiper,
+			// youtube: new YouTubeApiLoader(),
+			// vimeo: new VimeoApiLoader(),
+			// baseVideoLoader: new BaseVideoLoader(),
+			// anchors: new AnchorsModule(),
+			// get lightbox() {
+			// 	return LightboxManager.getLightbox();
+			// },
+			// urlActions: new URLActions(),
+			// swiper: Swiper,
 			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
