@@ -393,15 +393,15 @@ class Frontend extends App {
 			true
 		);
 
-//		wp_register_script(
-//			'elementor-waypoints',
-//			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
-//			[
-////				 'jquery',
-//			],
-//			'4.0.2',
-//			true
-//		);
+		wp_register_script(
+			'elementor-waypoints',
+			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
+			[
+ 				'jquery',
+			],
+			'4.0.2',
+			true
+		);
 
 		wp_register_script(
 			'flatpickr',
@@ -468,7 +468,7 @@ class Frontend extends App {
 			$this->get_js_assets_url( 'frontend' ),
 			[
 				'elementor-frontend-modules',
-				'elementor-waypoints',
+//				'elementor-waypoints',
 //				'jquery-ui-position',
 			],
 			ELEMENTOR_VERSION,
