@@ -29,12 +29,11 @@ const Module = function() {
 	};
 
 	const initSettings = function() {
-		settings = self.getDefaultSettings();
+		const settings = self.getDefaultSettings(); // I am not sure if this is correct. let settings had been declared in the outer scope already.
 
 		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
-			// $.extend( true, settings, instanceSettings );
 			Object.assign(settings, instanceSettings);
 		}
 	};

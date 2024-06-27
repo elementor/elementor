@@ -1,5 +1,5 @@
 module.exports = elementorModules.ViewModule.extend( {
-	$element: null,
+	baseElement: null,
 
 	editorListeners: null,
 
@@ -16,9 +16,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		this.$element = settings.$element;
+		this.baseElement = settings.baseElement;
 
-		this.isEdit = this.$element.hasClass( 'elementor-element-edit-mode' );
+		this.isEdit = this.baseElement?.classList?.contains( 'elementor-element-edit-mode' );
 
 		if ( this.isEdit ) {
 			this.addEditorListeners();
@@ -34,28 +34,37 @@ module.exports = elementorModules.ViewModule.extend( {
 			return false;
 		}
 
-		return elementor.documents.currentDocument.id.toString() === this.$element[ 0 ].closest( '.elementor' ).dataset.elementorId;
+		return elementor.documents.currentDocument.id.toString() === this.baseElement?.closest( '.elementor' )?.dataset?.elementorId;
 	},
 
 	findElement( selector ) {
-		var $mainElement = this.$element;
+		const mainElement = this.baseElement;
 
-		return $mainElement.find( selector ).filter( function() {
+		return mainElement.find( selector ).filter( function() {
 			// Start `closest` from parent since self can be `.elementor-element`.
-			return jQuery( this ).parent().closest( '.elementor-element' ).is( $mainElement );
+			const closestElement = this.parentNode?.closest('.elementor-element');
+			return closestElement === mainElement;
 		} );
+
+		const elements = mainElement.querySelectorAll(selector);
+
+		return Array.from(elements).filter(function(element) {
+			// Start `closest` from parent since self can be `.elementor-element`.
+			const closestElement = element.parentNode?.closest('.elementor-element');
+			return closestElement === mainElement;
+		});
 	},
 
-	getUniqueHandlerID( cid, $element ) {
+	getUniqueHandlerID( cid, baseElement ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();
 		}
 
-		if ( ! $element ) {
-			$element = this.$element;
+		if ( ! baseElement ) {
+			baseElement = this.baseElement;
 		}
 
-		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+		return cid + baseElement?.getAttribute( 'data-element_type' ) + this.getConstructorID();
 	},
 
 	initEditorListeners() {
@@ -155,11 +164,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getElementType() {
-		return this.$element.data( 'element_type' );
+		return this.baseElement?.dataset?.element_type;
 	},
 
 	getWidgetType() {
-		const widgetType = this.$element.data( 'widget_type' );
+		const widgetType = this.baseElement?.dataset?.widget_type;
 
 		if ( ! widgetType ) {
 			return;
@@ -169,11 +178,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getID() {
-		return this.$element.data( 'id' );
+		return this.baseElement?.dataset?.id;
 	},
 
 	getModelCID() {
-		return this.$element.data( 'model-cid' );
+		return this.baseElement?.dataset?.modelCid;
 	},
 
 	getElementSettings( setting ) {
@@ -196,26 +205,26 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( ! settingsKeys ) {
 				settingsKeys = elementorFrontend.config.elements.keys[ type ] = [];
 
-				jQuery.each( settings.controls, ( name, control ) => {
-					if ( control.frontend_available || control.editor_available ) {
-						settingsKeys.push( name );
+				Object.entries(settings.controls).forEach(([name, control]) => {
+					if (control.frontend_available || control.editor_available) {
+						settingsKeys.push(name);
 					}
-				} );
+				});
 			}
 
-			jQuery.each( settings.getActiveControls(), function( controlKey ) {
-				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
-					let value = attributes[ controlKey ];
+			settings.getActiveControls().forEach(controlKey => {
+				if (settingsKeys.indexOf(controlKey) !== -1) {
+					let value = attributes[controlKey];
 
-					if ( value.toJSON ) {
+					if (value.toJSON) {
 						value = value.toJSON();
 					}
 
-					elementSettings[ controlKey ] = value;
+					elementSettings[controlKey] = value;
 				}
-			} );
+			});
 		} else {
-			elementSettings = this.$element.data( 'settings' ) || {};
+			elementSettings = this.baseElement?.dataset?.settings || {};
 		}
 
 		return this.getItems( elementSettings, setting );
