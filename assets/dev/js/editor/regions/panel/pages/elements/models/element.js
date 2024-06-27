@@ -8,6 +8,7 @@ PanelElementsElementModel = Backbone.Model.extend( {
 		icon: '',
 		elType: 'widget',
 		widgetType: '',
+		accessibility: '',
 	},
 } );
 
