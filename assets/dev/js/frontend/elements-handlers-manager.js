@@ -10,7 +10,7 @@ import Shapes from './handlers/section/shapes';
 
 /* global elementorFrontendConfig */
 
-module.exports = function( $ ) {
+module.exports = function() {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
@@ -57,15 +57,12 @@ module.exports = function( $ ) {
 
 		this.elementsHandlers.column = columnHandlers;
 
-		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
-			const elementData = elementName.split( '.' );
-
-			elementName = elementData[ 0 ];
-
-			const skin = elementData[ 1 ] || null;
-
-			this.attachHandler( elementName, Handlers, skin );
-		} );
+		Object.entries(this.elementsHandlers).forEach(([elementName, Handlers]) => {
+			const elementData = elementName.split('.');
+			elementName = elementData[0];
+			const skin = elementData[1] || null;
+			this.attachHandler(elementName, Handlers, skin);
+		});
 	};
 
 	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
@@ -75,9 +72,9 @@ module.exports = function( $ ) {
 
 		const elementName = elementBaseName + skin;
 
-		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( $element ) => {
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( baseElement ) => {
 			if ( isClassHandler( Handler ) ) {
-				this.addHandler( Handler, { $element, elementName }, true );
+				this.addHandler( Handler, { baseElement, elementName }, true );
 			} else {
 				const handlerValue = Handler();
 
@@ -87,17 +84,17 @@ module.exports = function( $ ) {
 
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
-						this.addHandler( dynamicHandler, { $element, elementName }, true );
+						this.addHandler( dynamicHandler, { baseElement, elementName }, true );
 					} );
 				} else {
-					this.addHandler( handlerValue, { $element, elementName }, true );
+					this.addHandler( handlerValue, { baseElement, elementName }, true );
 				}
 			}
 		} );
 	};
 
 	this.addHandler = function( HandlerClass, options ) {
-		const elementID = options.$element.data( 'model-cid' );
+		const elementID = options.baseElement.dataset.modelCid;
 
 		let handlerID;
 
@@ -118,7 +115,7 @@ module.exports = function( $ ) {
 
 		const newHandler = new HandlerClass( options );
 
-		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.$element, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.baseElement );
 
 		if ( elementID ) {
 			handlersInstances[ elementID ][ handlerID ] = newHandler;
@@ -169,20 +166,19 @@ module.exports = function( $ ) {
 		}
 
 		// Initializing the `$scope` as frontend jQuery instance
-		const $scope = jQuery( scope ),
-			elementType = $scope.attr( 'data-element_type' );
+		const elementType = scope.setAttribute( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
 		}
 
-		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
+		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', scope );
 
-		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, $scope, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, scope );
 
 		if ( 'widget' === elementType ) {
-			const widgetType = $scope.attr( 'data-widget_type' );
-			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, $scope, $ );
+			const widgetType = scope.setAttribute( 'data-widget_type' );
+			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, scope );
 		}
 	};
 

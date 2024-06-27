@@ -407,7 +407,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.trigger( 'components:init' );
 
-		new LightboxManager();
+		// new LightboxManager();
 	}
 }
 
