@@ -42,20 +42,20 @@ module.exports = function() {
 
 	const addElementsHandlers = () => {
 		this.elementsHandlers.section = [
-			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
-			...backgroundHandlers,
-			HandlesPosition,
-			Shapes,
+			// StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
+			// ...backgroundHandlers,
+			// HandlesPosition,
+			// Shapes,
 		];
 
-		this.elementsHandlers.container = [ ...backgroundHandlers ];
+		// this.elementsHandlers.container = [ ...backgroundHandlers ];
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
 			this.elementsHandlers.container.push( ...containerHandlers );
 		}
 
-		this.elementsHandlers.column = columnHandlers;
+		// this.elementsHandlers.column = columnHandlers;
 
 		Object.entries(this.elementsHandlers).forEach(([elementName, Handlers]) => {
 			const elementData = elementName.split('.');
@@ -95,6 +95,7 @@ module.exports = function() {
 
 	this.addHandler = function( HandlerClass, options ) {
 		const elementID = options?.baseElement?.dataset?.modelCid;
+		// const elementID = options?.baseElement?.dataset?.id;
 
 		let handlerID;
 
@@ -176,7 +177,7 @@ module.exports = function() {
 		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, scope );
 
 		if ( 'widget' === elementType ) {
-			const widgetType = scope?.setAttribute( 'data-widget_type' );
+			const widgetType = scope?.getAttribute( 'data-widget_type' );
 			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, scope );
 		}
 	};

@@ -10,12 +10,20 @@ export default Module.extend( {
 	bindEvents() {},
 
 	onInit() {
-		this.initElements();
+		if( 'function' === typeof this.getDefaultElements ) {
+			console.log( 'not default elements' );
+			this.initElements();
+			this.bindEvents();
+		} else {
+			console.log( 'default elements' );
+		}
 
-		this.bindEvents();
+
 	},
 
 	initElements() {
+		if( 'function' === typeof this.getDefaultElements ) {
 		this.elements = this.getDefaultElements();
+		}
 	},
 } );
