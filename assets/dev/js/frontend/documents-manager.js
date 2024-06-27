@@ -23,7 +23,7 @@ export default class extends elementorModules.ViewModule {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			baseDocuments: [ selectors.document ],
+			baseDocuments: document.querySelectorAll( selectors.document ),
 		};
 	}
 
@@ -40,7 +40,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	attachDocumentsClasses() {
-		this.elements?.baseDocuments.forEach( ( baseDocument) => this.attachDocumentClass.bind( baseDocument ) );
+		Array.from( this.elements?.baseDocuments ).forEach( ( baseDocument) => this.attachDocumentClass( baseDocument ) );
 	}
 
 	attachDocumentClass( baseDocument ) {
