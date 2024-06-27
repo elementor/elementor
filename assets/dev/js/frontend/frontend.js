@@ -64,21 +64,27 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
+		const deviceModeElement = document.createElement('span');
+		deviceModeElement.id = 'elementor-device-mode';
+		deviceModeElement.className = 'elementor-screen-only';
+
 		const defaultElements = {
 			window,
-			$window: jQuery( window ),
-			$document: jQuery( document ),
-			$head: jQuery( document.head ),
-			$body: jQuery( document.body ),
-			$deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
+			document,
+			// $window: jQuery( window ),
+			// $document: jQuery( document ),
+			// $head: jQuery( document.head ),
+			// $body: jQuery( document.body ),
+			// $deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
+			deviceMode: deviceModeElement,
 		};
-		defaultElements.$body.append( defaultElements.$deviceMode );
+		defaultElements.document.body.append( defaultElements.deviceMode );
 
 		return defaultElements;
 	}
 
 	bindEvents() {
-		this.elements.$window.on( 'resize', () => this.setDeviceModeData() );
+		this.elements.window.addEventListener('resize', () => this.setDeviceModeData());
 	}
 
 	/**
@@ -117,7 +123,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
+		return getComputedStyle( this.elements.deviceMode, ':after' ).content.replace( /"/g, '' );
 	}
 
 	getDeviceSetting( deviceMode, settings, settingKey ) {
@@ -221,54 +227,63 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	initOnReadyElements() {
-		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
+		this.elements.wpAdminBar = this.elements.document.querySelectorAll(this.getSettings('selectors.adminBar'));
 	}
 
 	addUserAgentClasses() {
 		for ( const [ key, value ] of Object.entries( environment ) ) {
 			if ( value ) {
-				this.elements.$body.addClass( 'e--ua-' + key );
+				this.elements.document.body.classList.add( 'e--ua-' + key );
 			}
 		}
 	}
 
 	setDeviceModeData() {
-		this.elements.$body.attr( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
+		this.elements.document.body.setAttribute( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
 	}
 
-	addListenerOnce( listenerID, event, callback, to ) {
-		if ( ! to ) {
-			to = this.elements.$window;
+	addListenerOnce(listenerID, event, callback, to) {
+		if (!to) {
+			to = this.elements.window;
 		}
 
-		if ( ! this.isEditMode() ) {
-			to.on( event, callback );
-
+		if (!this.isEditMode()) {
+			to.addEventListener(event, callback);
 			return;
 		}
 
-		this.removeListeners( listenerID, event, to );
+		this.removeListeners(listenerID, event, to);
 
-		if ( to instanceof jQuery ) {
-			const eventNS = event + '.' + listenerID;
-
-			to.on( eventNS, callback );
+		if (to instanceof jQuery) { // It might be safe to keep this reference.
+			const eventNS = `${event}.${listenerID}`;
+			to.on(eventNS, callback);
 		} else {
-			to.on( event, callback, listenerID );
+			if (!to._eventHandlers) {
+				to._eventHandlers = {};
+			}
+
+			const eventHandler = function(e) {
+				callback.call(to, e);
+			};
+
+			to._eventHandlers[listenerID] = eventHandler;
+			to.addEventListener(event, eventHandler);
 		}
 	}
 
-	removeListeners( listenerID, event, callback, from ) {
-		if ( ! from ) {
-			from = this.elements.$window;
+	removeListeners(listenerID, event, from) {
+		if (!from) {
+			from = this.elements.window;
 		}
 
-		if ( from instanceof jQuery ) {
-			const eventNS = event + '.' + listenerID;
-
-			from.off( eventNS, callback );
+		if (from instanceof jQuery) { // It might be safe to keep this reference.
+			const eventNS = `${event}.${listenerID}`;
+			from.off(eventNS);
 		} else {
-			from.off( event, callback, listenerID );
+			if (from._eventHandlers && from._eventHandlers[listenerID]) {
+				from.removeEventListener(event, from._eventHandlers[listenerID]);
+				delete from._eventHandlers[listenerID];
+			}
 		}
 	}
 
@@ -298,17 +313,17 @@ export default class Frontend extends elementorModules.ViewModule {
 		};
 	}
 
-	waypoint( $element, callback, options ) {
+	waypoint( element, callback, options ) {
 		const defaultOptions = {
 			offset: '100%',
 			triggerOnce: true,
 		};
 
-		options = jQuery.extend( defaultOptions, options );
+		options = Object.assign(defaultOptions, options);
 
 		const correctCallback = function() {
-			const element = this.element || this,
-				result = callback.apply( element, arguments );
+			const callbackElement = this.element || this,
+				result = callback.apply( callbackElement, arguments );
 
 			// If is Waypoint new API and is frontend
 			if ( options.triggerOnce && this.destroy ) {
@@ -318,13 +333,13 @@ export default class Frontend extends elementorModules.ViewModule {
 			return result;
 		};
 
-		return $element.elementorWaypoint( correctCallback, options );
+		return element.elementorWaypoint( correctCallback, options );
 	}
 
 	muteMigrationTraces() {
-		jQuery.migrateMute = true;
-
-		jQuery.migrateTrace = false;
+		// jQuery.migrateMute = true;
+		//
+		// jQuery.migrateTrace = false;
 	}
 
 	/**
@@ -363,7 +378,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		this.elementsHandler = new ElementsHandler( jQuery );
+		this.elementsHandler = new ElementsHandler();
 
 		this.modulesHandlers = {};
 
@@ -373,12 +388,12 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.initDialogsManager();
 
-		if ( this.isEditMode() ) {
-			this.muteMigrationTraces();
-		}
+		// if ( this.isEditMode() ) {
+		// 	this.muteMigrationTraces();
+		// }
 
 		// Keep this line before `initOnReadyComponents` call
-		Events.dispatch( this.elements.$window, 'elementor/frontend/init' );
+		Events.dispatch( this.elements.window, 'elementor/frontend/init' );
 
 		this.initModules();
 
@@ -398,6 +413,6 @@ export default class Frontend extends elementorModules.ViewModule {
 
 window.elementorFrontend = new Frontend();
 
-if ( ! elementorFrontend.isEditMode() ) {
-	jQuery( () => elementorFrontend.init() );
+if (!elementorFrontend.isEditMode()) {
+	document.addEventListener('DOMContentLoaded', () => elementorFrontend.init());
 }

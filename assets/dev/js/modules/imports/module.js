@@ -1,23 +1,31 @@
+function customExtend(target, source) {
+	for (const prop in source) {
+		if (source.hasOwnProperty(prop)) {
+			target[prop] = source[prop];
+		}
+	}
+	return target;
+}
+
 const Module = function() {
-	const $ = jQuery,
-		instanceParams = arguments,
+	const instanceParams = arguments,
 		self = this,
 		events = {};
 
 	let settings;
 
 	const ensureClosureMethods = function() {
-		$.each( self, function( methodName ) {
-			const oldMethod = self[ methodName ];
+		Object.keys(self).forEach(function (methodName) {
+			const oldMethod = self[methodName];
 
-			if ( 'function' !== typeof oldMethod ) {
+			if (typeof oldMethod !== 'function') {
 				return;
 			}
 
-			self[ methodName ] = function() {
-				return oldMethod.apply( self, arguments );
+			self[methodName] = function () {
+				return oldMethod.apply(self, arguments);
 			};
-		} );
+		});
 	};
 
 	const initSettings = function() {
@@ -26,7 +34,8 @@ const Module = function() {
 		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
-			$.extend( true, settings, instanceSettings );
+			// $.extend( true, settings, instanceSettings );
+			Object.assign(settings, instanceSettings);
 		}
 	};
 
@@ -69,7 +78,9 @@ const Module = function() {
 		}
 
 		if ( 'object' === typeof settingKey ) {
-			$.extend( settingsContainer, settingKey );
+			// $.extend( settingsContainer, settingKey );
+
+			customExtend(settingsContainer, settingKey);
 
 			return self;
 		}
@@ -111,9 +122,9 @@ const Module = function() {
 
 	this.on = function( eventName, callback ) {
 		if ( 'object' === typeof eventName ) {
-			$.each( eventName, function( singleEventName ) {
-				self.on( singleEventName, this );
-			} );
+			eventName.forEach(function(singleEventName) {
+				self.on(singleEventName, this);
+			});
 
 			return self;
 		}
@@ -168,9 +179,9 @@ const Module = function() {
 			return self;
 		}
 
-		$.each( callbacks, function( index, callback ) {
-			callback.apply( self, params );
-		} );
+		callbacks.forEach(function(callback) {
+			callback.apply(self, params);
+		});
 
 		return self;
 	};
@@ -189,16 +200,16 @@ Module.prototype.getConstructorID = function() {
 };
 
 Module.extend = function( properties ) {
-	const $ = jQuery,
-		parent = this;
+	const parent = this;
 
 	const child = function() {
 		return parent.apply( this, arguments );
 	};
 
-	$.extend( child, parent );
+	customExtend( child, parent );
 
-	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
+	// child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
+	child.prototype = Object.create(Object.assign({}, parent.prototype, properties));
 
 	child.prototype.constructor = child;
 
