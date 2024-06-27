@@ -338,9 +338,9 @@ class Module extends BaseModule {
 			<?php
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
-				esc_html__( 'Floating Buttons', 'elementor' ),
+				esc_html__( 'Floating Button', 'elementor' ),
 				$this->get_add_new_contact_page_url(),
-				esc_html__( 'Add a Contact button so your users can easily get in touch!', 'elementor' )
+				nl2br( esc_html__( "Add a Floating button so your users can easily get in touch!", 'elementor' ) )
 			);
 
 			if ( ! empty( $trashed_posts ) ) : ?>
