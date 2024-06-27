@@ -340,7 +340,7 @@ class Module extends BaseModule {
 			$source_local->print_blank_state_template(
 				esc_html__( 'Floating Button', 'elementor' ),
 				$this->get_add_new_contact_page_url(),
-				nl2br( esc_html__( "Add a Floating button so your users can easily get in touch!", 'elementor' ) )
+				nl2br( esc_html__( 'Add a Floating button so your users can easily get in touch!', 'elementor' ) )
 			);
 
 			if ( ! empty( $trashed_posts ) ) : ?>
