@@ -1,6 +1,6 @@
 function customExtend(target, source) {
 	for (const prop in source) {
-		if (source.hasOwnProperty(prop)) {
+		if (source?.hasOwnProperty(prop)) {
 			target[prop] = source[prop];
 		}
 	}
@@ -54,10 +54,10 @@ const Module = function() {
 				currentKey = keyStack.splice( 0, 1 );
 
 			if ( ! keyStack.length ) {
-				return items[ currentKey ];
+				return items?.hasOwnProperty(currentKey) ? items[ currentKey ] : undefined;
 			}
 
-			if ( ! items[ currentKey ] ) {
+			if ( ! items || ! items[ currentKey ] ) {
 				return;
 			}
 
@@ -77,8 +77,6 @@ const Module = function() {
 		}
 
 		if ( 'object' === typeof settingKey ) {
-			// $.extend( settingsContainer, settingKey );
-
 			customExtend(settingsContainer, settingKey);
 
 			return self;
@@ -207,7 +205,6 @@ Module.extend = function( properties ) {
 
 	customExtend( child, parent );
 
-	// child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
 	child.prototype = Object.create(Object.assign({}, parent.prototype, properties));
 
 	child.prototype.constructor = child;

@@ -23,7 +23,7 @@ export default class extends elementorModules.ViewModule {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			baseDocuments: document.querySelectorAll( selectors.document ),
+			baseDocuments: document.querySelectorAll( selectors?.document ) || [],
 		};
 	}
 
