@@ -387,7 +387,7 @@ class Frontend extends App {
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
 				'elementor-webpack-runtime',
-				'jquery',
+//				'jquery',
 			],
 			ELEMENTOR_VERSION,
 			true
