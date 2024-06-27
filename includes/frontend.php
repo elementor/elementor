@@ -407,7 +407,7 @@ class Frontend extends App {
 			'flatpickr',
 			$this->get_js_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[
-				 'jquery',
+				'jquery',
 			],
 			'4.1.4',
 			true
@@ -417,7 +417,7 @@ class Frontend extends App {
 			'imagesloaded',
 			$this->get_js_assets_url( 'imagesloaded', 'assets/lib/imagesloaded/' ),
 			[
-				 'jquery',
+				'jquery',
 			],
 			'4.1.0',
 			true
@@ -427,7 +427,7 @@ class Frontend extends App {
 			'jquery-numerator',
 			$this->get_js_assets_url( 'jquery-numerator', 'assets/lib/jquery-numerator/' ),
 			[
-				 'jquery',
+				'jquery',
 			],
 			'0.2.1',
 			true
@@ -447,7 +447,7 @@ class Frontend extends App {
 			'elementor-gallery',
 			$this->get_js_assets_url( 'e-gallery', 'assets/lib/e-gallery/js/' ),
 			[
-				 'jquery',
+				'jquery',
 			],
 			'1.2.0',
 			true
@@ -457,7 +457,7 @@ class Frontend extends App {
 			'share-link',
 			$this->get_js_assets_url( 'share-link', 'assets/lib/share-link/' ),
 			[
-				 'jquery',
+				'jquery',
 			],
 			ELEMENTOR_VERSION,
 			true
