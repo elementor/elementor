@@ -29,7 +29,9 @@ const Module = function() {
 	};
 
 	const initSettings = function() {
-		const settings = self.getDefaultSettings(); // I am not sure if this is correct. let settings had been declared in the outer scope already.
+		settings = 'function' === typeof self.getDefaultSettings
+			? self.getDefaultSettings()
+			: {};
 
 		const instanceSettings = instanceParams[ 0 ];
 
