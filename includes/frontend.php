@@ -397,7 +397,7 @@ class Frontend extends App {
 			'elementor-waypoints',
 			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
 			[
- 				'jquery',
+				'jquery',
 			],
 			'4.0.2',
 			true
