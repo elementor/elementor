@@ -94,7 +94,7 @@ module.exports = function() {
 	};
 
 	this.addHandler = function( HandlerClass, options ) {
-		const elementID = options.baseElement.dataset.modelCid;
+		const elementID = options?.baseElement?.dataset?.modelCid;
 
 		let handlerID;
 
@@ -165,7 +165,7 @@ module.exports = function() {
 			return;
 		}
 
-		const elementType = scope.getAttribute( 'data-element_type' );
+		const elementType = scope?.getAttribute( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
@@ -176,7 +176,7 @@ module.exports = function() {
 		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, scope );
 
 		if ( 'widget' === elementType ) {
-			const widgetType = scope.setAttribute( 'data-widget_type' );
+			const widgetType = scope?.setAttribute( 'data-widget_type' );
 			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, scope );
 		}
 	};

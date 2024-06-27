@@ -227,7 +227,9 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	initOnReadyElements() {
-		this.elements.wpAdminBar = this.elements.document.querySelectorAll(this.getSettings('selectors.adminBar'));
+		this.elements.wpAdminBar = !! this.getSettings() && !! this.getSettings('selectors.adminBar')
+			? this.elements.document.querySelectorAll(this.getSettings('selectors.adminBar'))
+			: null;
 	}
 
 	addUserAgentClasses() {
