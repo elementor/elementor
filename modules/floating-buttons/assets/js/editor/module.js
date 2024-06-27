@@ -30,6 +30,13 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 			}
 			return behaviors;
 		}, 1000 );
+
+		elementor.hooks.addFilter( 'elements/widget/controls/commonMerged', ( commonMerged, widget ) => {
+			if ( widget.startsWith( 'contact-button' ) ) {
+				return true;
+			}
+			return commonMerged;
+		} );
 	}
 
 	filterOutUnsupportedActions() {

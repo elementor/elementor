@@ -283,7 +283,9 @@ export default class EditorBase extends Marionette.Application {
 				return false;
 			}
 
-			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
+			const commonMerged = elementor.hooks.applyFilters( 'elements/widget/controls/commonMerged', this.widgetsCache[ widgetType ].commonMerged, widgetType );
+
+			if ( ! commonMerged ) {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
 				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
