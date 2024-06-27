@@ -15,7 +15,7 @@ export default class extends elementorModules.ViewModule {
 		const selectors = this.getSettings( 'selectors' );
 
 		const rawElements = this.baseElement.querySelectorAll( selectors.elements ),
-			filteredElements = Array.from(rawElements).filter(el => !el.matches(selectors.nestedDocumentElements));
+			filteredElements = Array.from(rawElements).filter(el => !el.matches( this.baseElement.querySelector('.elementor')?.querySelectorAll( '.elementor-element' )));
 
 		return {
 			baseElements: filteredElements,
@@ -41,7 +41,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	runElementsHandlers() {
-		this.elements.baseElements.each( ( index, element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
+		Array.from( this.elements?.baseElements )?.forEach( ( element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
 	}
 
 	onInit() {

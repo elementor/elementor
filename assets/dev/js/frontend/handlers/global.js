@@ -4,27 +4,27 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	animate() {
-		const $element = this.$element,
+		const baseElement = this.baseElement,
 			animation = this.getAnimation();
 
 		if ( 'none' === animation ) {
-			$element.removeClass( 'elementor-invisible' );
+			baseElement?.classList?.remove( 'elementor-invisible' );
 			return;
 		}
 
 		const elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
-		$element.removeClass( animation );
+		baseElement?.classList?.remove( animation );
 
 		if ( this.currentAnimation ) {
-			$element.removeClass( this.currentAnimation );
+			baseElement?.classList?.remove( this.currentAnimation );
 		}
 
 		this.currentAnimation = animation;
 
 		setTimeout( () => {
-			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
+			baseElement?.classList?.remove( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, animationDelay );
 	}
 
@@ -40,12 +40,12 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 					if ( event.isInViewport ) {
 						this.animate();
 
-						observer.unobserve( this.$element[ 0 ] );
+						observer.unobserve( this.baseElement );
 					}
 				},
 			} );
 
-			observer.observe( this.$element[ 0 ] );
+			observer.observe( this.baseElement );
 		}
 	}
 
@@ -56,6 +56,6 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 }
 
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { $element: $scope } );
+export default ( scope ) => {
+	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { baseElement: scope } );
 };

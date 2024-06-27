@@ -165,8 +165,7 @@ module.exports = function() {
 			return;
 		}
 
-		// Initializing the `$scope` as frontend jQuery instance
-		const elementType = scope.setAttribute( 'data-element_type' );
+		const elementType = scope.getAttribute( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
