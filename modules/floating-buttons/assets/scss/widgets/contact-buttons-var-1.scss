@@ -44,6 +44,7 @@
 			align-items: center;
 			background-color: var(--e-contact-buttons-contact-button-bg);
 			border-radius: 50px;
+			color: var(--e-contact-buttons-contact-button-icon);
 			display: inline-flex;
 			justify-content: center;
 			transition: $transition-hover;
@@ -55,6 +56,7 @@
 			&:hover,
 			&:focus {
 				background-color: var(--e-contact-buttons-contact-button-bg-hover);
+				color: var(--e-contact-buttons-contact-button-icon-hover);
 				transition: $transition-hover;
 
 				svg {
