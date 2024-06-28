@@ -29,9 +29,7 @@ const Module = function() {
 	};
 
 	const initSettings = function() {
-		settings = 'function' === typeof self.getDefaultSettings
-			? self.getDefaultSettings()
-			: {};
+		settings = self.getDefaultSettings();
 
 		const instanceSettings = instanceParams[ 0 ];
 

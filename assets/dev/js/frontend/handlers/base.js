@@ -1,17 +1,19 @@
-module.exports = elementorModules.ViewModule.extend( {
-	baseElement: null,
+export default class Base extends elementorModules.ViewModule {
+	baseElement = null;
 
-	editorListeners: null,
+	editorListeners = null;
 
-	onElementChange: null,
+	onElementChange = null;
 
-	onEditSettingsChange: null,
+	onEditSettingsChange = null;
 
-	onPageSettingsChange: null,
+	onPageSettingsChange = null;
 
-	isEdit: null,
+	isEdit = null;
 
-	__construct( settings ) {
+	constructor( settings ) {
+		super();
+
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
@@ -23,11 +25,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( this.isEdit ) {
 			this.addEditorListeners();
 		}
-	},
+	}
 
 	isActive() {
 		return true;
-	},
+	}
 
 	isElementInTheCurrentDocument() {
 		if ( ! elementorFrontend.isEditMode() ) {
@@ -35,7 +37,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return elementor.documents.currentDocument.id.toString() === this.baseElement?.closest( '.elementor' )?.dataset?.elementorId;
-	},
+	}
 
 	findElement( selector ) {
 		const mainElement = this.baseElement;
@@ -53,7 +55,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			const closestElement = element.parentNode?.closest('.elementor-element');
 			return closestElement === mainElement;
 		});
-	},
+	}
 
 	getUniqueHandlerID( cid, baseElement ) {
 		if ( ! cid ) {
@@ -65,7 +67,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return cid + baseElement?.getAttribute( 'data-element_type' ) + this.getConstructorID();
-	},
+	}
 
 	initEditorListeners() {
 		var self = this;
@@ -137,7 +139,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				} );
 			}
 		} );
-	},
+	}
 
 	getEditorListeners() {
 		if ( ! this.editorListeners ) {
@@ -145,7 +147,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return this.editorListeners;
-	},
+	}
 
 	addEditorListeners() {
 		var uniqueHandlerID = this.getUniqueHandlerID();
@@ -153,7 +155,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.getEditorListeners().forEach( function( listener ) {
 			elementorFrontend.addListenerOnce( uniqueHandlerID, listener.event, listener.callback, listener.to );
 		} );
-	},
+	}
 
 	removeEditorListeners() {
 		var uniqueHandlerID = this.getUniqueHandlerID();
@@ -161,11 +163,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.getEditorListeners().forEach( function( listener ) {
 			elementorFrontend.removeListeners( uniqueHandlerID, listener.event, null, listener.to );
 		} );
-	},
+	}
 
 	getElementType() {
 		return this.baseElement?.dataset?.element_type;
-	},
+	}
 
 	getWidgetType() {
 		const widgetType = this.baseElement?.dataset?.widget_type;
@@ -175,15 +177,15 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return widgetType.split( '.' )[ 0 ];
-	},
+	}
 
 	getID() {
 		return this.baseElement?.dataset?.id;
-	},
+	}
 
 	getModelCID() {
 		return this.baseElement?.dataset?.modelCid;
-	},
+	}
 
 	getElementSettings( setting ) {
 		let elementSettings = {};
@@ -228,7 +230,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return this.getItems( elementSettings, setting );
-	},
+	}
 
 	getEditSettings( setting ) {
 		var attributes = {};
@@ -238,17 +240,19 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return this.getItems( attributes, setting );
-	},
+	}
 
 	getCurrentDeviceSetting( settingKey ) {
 		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
-	},
+	}
 
-	onInit() {
+	onInit( ...args ) {
+		super.onInit( ...args );
+
 		if ( this.isActive( this.getSettings() ) ) {
 			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 		}
-	},
+	}
 
 	onDestroy() {
 		if ( this.isEdit ) {
@@ -258,5 +262,5 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( this.unbindEvents ) {
 			this.unbindEvents();
 		}
-	},
-} );
+	}
+}

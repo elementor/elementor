@@ -95,7 +95,6 @@ module.exports = function() {
 
 	this.addHandler = function( HandlerClass, options ) {
 		const elementID = options?.baseElement?.dataset?.modelCid;
-		// const elementID = options?.baseElement?.dataset?.id;
 
 		let handlerID;
 
