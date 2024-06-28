@@ -10,20 +10,15 @@ export default Module.extend( {
 	bindEvents() {},
 
 	onInit() {
-		if( 'function' === typeof this.getDefaultElements ) {
-			console.log( 'not default elements' );
-			this.initElements();
-			this.bindEvents();
-		} else {
-			console.log( 'default elements' );
+		if ( 'function' !== typeof this.getDefaultElements ) {
+			return;
 		}
 
-
+		this.initElements();
+		this.bindEvents();
 	},
 
 	initElements() {
-		if( 'function' === typeof this.getDefaultElements ) {
 		this.elements = this.getDefaultElements();
-		}
 	},
 } );
