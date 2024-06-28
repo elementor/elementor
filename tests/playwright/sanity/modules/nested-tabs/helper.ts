@@ -160,8 +160,10 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	// Assert
-	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles - 1 );
-	await expect.soft( nestedItemContent ).toHaveCount( numberOfContents - 1 );
+	await expect( nestedItemTitle ).toHaveCount( numberOfTitles - 1 );
+	await expect( nestedItemContent ).toHaveCount( numberOfContents - 1 );
+
+	await this.page.waitForTimeout( 250 );
 }
 
 export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
@@ -178,8 +180,10 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	// Assert
-	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles + 1 );
-	await expect.soft( nestedItemContent ).toHaveCount( numberOfContents + 1 );
+	await expect( nestedItemTitle ).toHaveCount( numberOfTitles + 1 );
+	await expect( nestedItemContent ).toHaveCount( numberOfContents + 1 );
+
+	await this.page.waitForTimeout( 250 );
 }
 
 export async function cloneItemFromRepeater( editor: EditorPage, widgetID: string, position: number ) {
@@ -219,4 +223,6 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 	expect( currentContainerAriaLabeledBy ).not.toEqual( clonedContainerAriaLabeledBy );
 	expect( currentTitleId ).toEqual( currentContainerAriaLabeledBy );
 	expect( clonedTitleId ).toEqual( clonedContainerAriaLabeledBy );
+
+	await this.page.waitForTimeout( 250 );
 }
