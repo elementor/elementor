@@ -120,10 +120,3 @@ export type ElementorType = {
 		}
 	}
 }
-
-export type ElementorFrontendConfig = { post: { id: number } }
-export type el = {
-	dataset: {
-		widget_type: string
-	}
-};
