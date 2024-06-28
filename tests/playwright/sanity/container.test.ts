@@ -142,7 +142,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setPageTemplate( 'canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = page.locator( 'body' );
+			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act.
 		await editor.addWidget( widgets.heading, container );
@@ -158,10 +158,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect.soft( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
+		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
 		await editor.togglePreviewMode();
 
@@ -175,10 +172,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		expect.soft( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-full-absolute.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -194,7 +188,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setPageTemplate( 'canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = page.locator( 'body' );
+			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act.
 		// Add widget.
@@ -211,10 +205,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect.soft( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-boxed-fixed.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -230,7 +221,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setPageTemplate( 'canvas' );
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
-			pageView = page.locator( 'body' );
+			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act
 		// Set container content full content width.
@@ -253,10 +244,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		expect.soft( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-full-fixed.png' );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page, apiRequests }, testInfo ) => {
