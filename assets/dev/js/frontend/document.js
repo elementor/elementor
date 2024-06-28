@@ -14,8 +14,13 @@ export default class extends elementorModules.ViewModule {
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
 
-		const rawElements = this.baseElement.querySelectorAll( selectors.elements ),
-			filteredElements = Array.from(rawElements).filter(el => !el.matches( this.baseElement.querySelector('.elementor')?.querySelectorAll( '.elementor-element' )));
+		const innerElements = this.baseElement.querySelectorAll( selectors.elements ),
+			documents = this.baseElement.querySelectorAll( '.elementor' ),
+			nestedElements = Array.from( documents ).forEach( ( document ) => document.querySelectorAll( selectors.nestedDocumentElements ) ),
+			arrayOfNestedElements = !! nestedElements
+				? Array.from( nestedElements )
+				: [],
+			filteredElements = Array.from( innerElements ).filter( ( element ) => ! arrayOfNestedElements.includes( element ) );
 
 		return {
 			baseElements: filteredElements,
