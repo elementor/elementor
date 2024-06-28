@@ -598,13 +598,21 @@
 	&__send-button {
 		background-color: var(--e-contact-buttons-chat-box-bg);
 		padding: 12px 20px 20px 20px;
+
+		.e-contact-buttons__send-cta {
+			color: var(--e-contact-buttons-send-button-icon);
+
+			&:hover,
+			&:focus {
+				color: var(--e-contact-buttons-send-button-icon-hover);
+			}
+		}
 	}
 
 	&__send-cta {
 		align-items: center;
 		background-color: var(--e-contact-buttons-send-button-bg);
 		border-radius: 30px;
-		color: var(--e-contact-buttons-send-button-icon);
 		display: flex;
 		font-size: 18px;
 		font-weight: 500;
@@ -624,7 +632,6 @@
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-send-button-bg-hover);
-			color: var(--e-contact-buttons-send-button-icon-hover);
 			transition: $transition-hover;
 
 			svg {
