@@ -62,7 +62,7 @@ test.describe( 'Context menu', () => {
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
 		await editor.openElementsPanel();
-		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Navigator' );
+		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Structure' );
 		await expect( page.locator( '#elementor-navigator' ) ).toBeVisible();
 	} );
 
