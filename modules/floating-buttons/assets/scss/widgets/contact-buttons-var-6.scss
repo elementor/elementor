@@ -37,6 +37,7 @@
 		}
 
 		&__contact-icon-link {
+			color: var(--e-contact-buttons-contact-button-icon);
 			display: flex;
 			padding-block-end: var(--e-contact-buttons-button-bar-padding-block-end);
 			padding-block-start: var(--e-contact-buttons-button-bar-padding-block-start);
@@ -52,6 +53,7 @@
 
 			&:hover,
 			&:focus {
+				color: var(--e-contact-buttons-contact-button-icon-hover);
 
 				svg {
 					fill: var(--e-contact-buttons-contact-button-icon-hover);
