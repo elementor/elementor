@@ -57,7 +57,7 @@
 	gap: 20px;
 	position: fixed;
 	width: var(--e-contact-buttons-chat-box-width);
-	z-index: 99;
+	z-index: $super-layer;
 
 	@media (max-width: $screen-mobile-max) {
 		inset-inline-end: 0;
