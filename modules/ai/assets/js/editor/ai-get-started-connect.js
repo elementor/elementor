@@ -23,6 +23,11 @@ export const AiGetStartedConnect = ( { onClose } ) => {
 			<WizardDialogWrapper onClose={ onClose }>
 				<ConnectAndGetStarted
 					connectUrl={ connectUrl }
+					isConnected={ isConnected }
+					getStartedAction={ async () => {
+						await setGetStarted();
+						fetchData();
+					} }
 					onSuccess={ async ( data ) => {
 						onConnect( data );
 						fetchData();

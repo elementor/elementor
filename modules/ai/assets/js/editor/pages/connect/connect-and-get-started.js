@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { AIIcon } from '@elementor/icons';
 
-const ConnectAndGetStarted = ( { connectUrl, onSuccess } ) => {
+const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedAction } ) => {
 	const approveButtonRef = useRef();
 	const [ isTermsChecked, setIsTermsChecked ] = useState( false );
 
@@ -48,20 +48,35 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess } ) => {
 				</Stack>
 			</Stack>
 
-			<Button
-				ref={ approveButtonRef }
-				disabled={ ! isTermsChecked }
-				href={ connectUrl }
-				variant="contained"
-				sx={ {
-					mt: 1,
-					'&:hover': {
-						color: 'primary.contrastText',
-					},
-				} }
-			>
-				{ __( 'Connect', 'elementor' ) }
-			</Button>
+			{ isConnected
+				?				<Button
+						disabled={ ! isTermsChecked }
+						variant="contained"
+						onClick={ getStartedAction }
+						sx={ {
+						mt: 1,
+						'&:hover': {
+							color: 'primary.contrastText',
+						},
+					} }
+				>
+					{ __( 'Get Started', 'elementor' ) }
+				</Button>
+				:				<Button
+						ref={ approveButtonRef }
+						disabled={ ! isTermsChecked }
+						href={ connectUrl }
+						variant="contained"
+						sx={ {
+						mt: 1,
+						'&:hover': {
+							color: 'primary.contrastText',
+						},
+					} }
+				>
+					{ __( 'Connect', 'elementor' ) }
+				</Button>
+			}
 		</Stack>
 	);
 };
@@ -69,6 +84,8 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess } ) => {
 ConnectAndGetStarted.propTypes = {
 	connectUrl: PropTypes.string.isRequired,
 	onSuccess: PropTypes.func.isRequired,
+	isConnected: PropTypes.bool.isRequired,
+	getStartedAction: PropTypes.func.isRequired,
 };
 
 export default ConnectAndGetStarted;
