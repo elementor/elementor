@@ -6,7 +6,7 @@ import ReactUtils from 'elementor-utils/react';
 import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
 import { AiGetStartedConnect } from './ai-get-started-connect';
 import LayoutAppWrapper from './layout-app-wrapper';
-import { getUiConfig, openPanel } from './utils/editor-integration';
+import { getUiConfig } from './utils/editor-integration';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
