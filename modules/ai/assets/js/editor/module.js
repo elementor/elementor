@@ -4,6 +4,9 @@ import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
 import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 import ReactUtils from 'elementor-utils/react';
 import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
+import { AiGetStartedConnect } from './ai-get-started-connect';
+import LayoutAppWrapper from './layout-app-wrapper';
+import { getUiConfig, openPanel } from './utils/editor-integration';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
@@ -11,6 +14,29 @@ export default class Module extends elementorModules.editor.utils.Module {
 		window.$e.commands.on( 'run:after', ( component, command, args ) => {
 			if ( 'document/elements/create' === command ) {
 				this.onCreateContainer( args );
+			}
+		} );
+
+		window.addEventListener( 'hashchange', function( e ) {
+			if ( e.newURL.includes( 'welcome-ai' ) ) {
+				window.location.hash = '';
+
+				setTimeout( () => {
+					const rootElement = document.createElement( 'div' );
+					document.body.append( rootElement );
+					const { colorScheme, isRTL } = getUiConfig();
+					const { unmount } = ReactUtils.render(
+
+						<LayoutAppWrapper
+							isRTL={ isRTL }
+							colorScheme={ colorScheme }>
+							<AiGetStartedConnect
+								onClose={ () => {
+									unmount();
+									rootElement.remove();
+								} } />
+						</LayoutAppWrapper>, rootElement );
+				}, 1000 );
 			}
 		} );
 	}

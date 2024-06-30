@@ -30,7 +30,7 @@ class Module extends BaseApp {
 	 * Render wrapper for the app to load.
 	 */
 	private function render_app_wrapper() {
-		?>
+		?>`§
 		<div id="e-announcements-root"></div>
 		<?php
 	}
@@ -108,9 +108,11 @@ class Module extends BaseApp {
 				],
 				'cta' => [
 					[
-						'label' => 'Continue',
+						'label' => 'Get Started',
 						'variant' => 'primary',
-						'target' => '_blank',
+						'target' => '_top',
+						'url' => '#welcome-ai',
+
 					],
 					[
 						'label' => 'Learn More',
