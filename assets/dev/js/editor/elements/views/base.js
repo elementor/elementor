@@ -765,7 +765,7 @@ BaseElementView = BaseContainer.extend( {
 	 * @param {Object}              settings
 	 * @param {Array.<DataBinding>} dataBindings
 	 *
-	 * @return {Promise<boolean>|boolean} - false on fail.
+	 * @return {boolean} - false on fail.
 	 */
 	renderDataBindings( settings, dataBindings ) {
 		if ( ! this.dataBindings?.length ) {
@@ -833,16 +833,24 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @param {Object} settings
 	 */
-	async renderOnChange( settings ) {
+	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
 
-		if ( await this.renderDataBindings( settings, this.dataBindings ) ) {
-			return;
+		const result = this.renderDataBindings( settings, this.dataBindings );
+
+		if ( result instanceof Promise ) {
+			result.then( ( result ) => {
+				if ( ! result ) {
+					this.renderChanges( settings );
+				}
+			} );
 		}
 
-		this.renderChanges( settings );
+		if ( ! result ) {
+			this.renderChanges( settings );
+		}
 	},
 
 	getDynamicParsingSettings() {
