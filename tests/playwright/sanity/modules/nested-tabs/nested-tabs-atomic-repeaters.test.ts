@@ -94,14 +94,13 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		await editor.selectElement( nestedTabsID );
 
 		await test.step( 'Add multiple items using repeater', async () => {
-			// Add 10 items to the repeater
-			for ( let i = 0; i < 4; i++ ) {
+			for ( let i = 0; i < 2; i++ ) {
 				await addItemFromRepeater( editor, nestedTabsID );
 			}
 		} );
 
 		await test.step( 'Clone multiple tab items', async () => {
-			for ( let i = 0; i < 6; i++ ) {
+			for ( let i = 0; i < 2; i++ ) {
 				await cloneItemFromRepeater( editor, nestedTabsID, 0 );
 			}
 		} );

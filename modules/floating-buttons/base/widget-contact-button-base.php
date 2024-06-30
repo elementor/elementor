@@ -4,6 +4,7 @@ namespace Elementor\Modules\FloatingButtons\Base;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Providers\Social_Network_Provider;
+use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\FloatingButtons\Classes\Render\Contact_Buttons_Core_Render;
@@ -14,6 +15,8 @@ use Elementor\Widget_Base;
 
 abstract class Widget_Contact_Button_Base extends Widget_Base {
 
+	use Shared_Widget_Controls_Trait;
+
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
 	public function show_in_panel() {
@@ -22,6 +25,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	public function hide_on_search() {
 		return true;
+	}
+
+	protected function get_initial_config(): array {
+		return array_merge( parent::get_initial_config(), [
+			'commonMerged' => true,
+		] );
 	}
 
 	public static function get_configuration() {
@@ -242,10 +251,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	public function get_categories(): array {
 		return [ 'general' ];
-	}
-
-	public function get_stack( $with_common_controls = true ): array {
-		return parent::get_stack( false );
 	}
 
 	protected function register_controls(): void {
@@ -1260,13 +1265,8 @@ JS;
 			);
 
 			if ( 'default' == $config['style']['chat_button_section']['hover_animation_type'] ) {
-				$this->add_control(
+				$this->add_hover_animation_control(
 					'style_button_color_hover_animation',
-					[
-						'label' => esc_html__( 'Hover Animation', 'elementor' ),
-						'type' => Controls_Manager::HOVER_ANIMATION,
-						'frontend_available' => true,
-					]
 				);
 			}
 
@@ -2018,13 +2018,8 @@ JS;
 			}
 
 			if ( $config['style']['contact_section']['has_hover_animation'] ) {
-				$this->add_control(
+				$this->add_hover_animation_control(
 					'style_contact_button_hover_animation',
-					[
-						'label' => esc_html__( 'Hover Animation', 'elementor' ),
-						'type' => Controls_Manager::HOVER_ANIMATION,
-						'frontend_available' => true,
-					]
 				);
 			}
 
@@ -2383,13 +2378,8 @@ JS;
 			]
 		);
 
-		$this->add_control(
+		$this->add_hover_animation_control(
 			'style_resource_links_hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-				'frontend_available' => true,
-			]
 		);
 
 		$this->end_controls_section();
@@ -2759,13 +2749,8 @@ JS;
 			);
 		}
 
-		$this->add_control(
+		$this->add_hover_animation_control(
 			'style_send_hover_animation',
-			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
-				'type' => Controls_Manager::HOVER_ANIMATION,
-				'frontend_available' => true,
-			]
 		);
 
 		$this->end_controls_tab();
@@ -3128,12 +3113,7 @@ JS;
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => sprintf(
-					/* translators: 1: Link open tag, 2: Link close tag. */
-					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
-					'<a href="javascript: $e.run( \'panel/close\' )">',
-					'</a>'
-				),
+				'raw' => __( 'Responsive visibility will take effect only on preview mode or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -3197,5 +3177,4 @@ JS;
 
 		$render_strategy->render();
 	}
-
 }
