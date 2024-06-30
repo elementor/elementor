@@ -130,7 +130,7 @@ module.exports = function( grunt ) {
 
 	// Writing the proxy file as a grunt task, in order to fit in with the tasks queue
 	grunt.registerTask( 'css_templates_proxy', ( mode ) => {
-		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
+		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/values.scss', '@import "' + mode + '";' );
 	} );
 
 	grunt.registerTask( 'build', [
