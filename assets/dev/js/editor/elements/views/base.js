@@ -838,17 +838,17 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		const result = this.renderDataBindings( settings, this.dataBindings );
+		const renderResult = this.renderDataBindings( settings, this.dataBindings );
 
-		if ( result instanceof Promise ) {
-			result.then( ( result ) => {
+		if ( renderResult instanceof Promise ) {
+			renderResult.then( ( result ) => {
 				if ( ! result ) {
 					this.renderChanges( settings );
 				}
 			} );
 		}
 
-		if ( ! result ) {
+		if ( ! renderResult ) {
 			this.renderChanges( settings );
 		}
 	},
