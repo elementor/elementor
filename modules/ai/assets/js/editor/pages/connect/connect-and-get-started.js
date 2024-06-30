@@ -31,7 +31,7 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedA
 
 			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
-			<Typography variant="body2">{ __( 'Create smarter with AI text and code generators built right into the editor.', 'elementor' ) }</Typography>
+			<Typography variant="body2">{ __( 'Create websites faster with AI built right into the Editor.', 'elementor' ) }</Typography>
 
 			<Stack direction="row" gap={ 1.5 } alignItems="flex-start" >
 				<Checkbox id="e-ai-terms-approval" color="secondary" checked={ isTermsChecked } onClick={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
@@ -74,9 +74,10 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedA
 						},
 					} }
 				>
-					{ __( 'Connect', 'elementor' ) }
+					{ __( 'Get Started', 'elementor' ) }
 				</Button>
 			}
+			<Typography variant="body2">{ __( 'Start for free. No credit card required.', 'elementor' ) }</Typography>
 		</Stack>
 	);
 };
