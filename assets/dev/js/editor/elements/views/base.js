@@ -765,7 +765,7 @@ BaseElementView = BaseContainer.extend( {
 	 * @param {Object}              settings
 	 * @param {Array.<DataBinding>} dataBindings
 	 *
-	 * @return {boolean} - false on fail.
+	 * @return {Promise<boolean>|boolean} - false on fail.
 	 */
 	renderDataBindings( settings, dataBindings ) {
 		if ( ! this.dataBindings?.length ) {
@@ -833,12 +833,12 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @param {Object} settings
 	 */
-	renderOnChange( settings ) {
+	async renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
 
-		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
+		if ( await this.renderDataBindings( settings, this.dataBindings ) ) {
 			return;
 		}
 
