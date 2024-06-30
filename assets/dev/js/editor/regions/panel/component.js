@@ -17,7 +17,6 @@ export default class Component extends ComponentBase {
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
 			'global-fonts': () => this.manager.setPage( 'typographyScheme' ),
 			'editor-preferences': () => this.manager.setPage( 'editorPreferences_settings' ).activateTab( 'settings' ),
-			'welcome-ai': () => console.log('welcome ai')
 		};
 	}
 

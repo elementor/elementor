@@ -30,7 +30,7 @@ class Module extends BaseApp {
 	 * Render wrapper for the app to load.
 	 */
 	private function render_app_wrapper() {
-		?>`§
+		?>
 		<div id="e-announcements-root"></div>
 		<?php
 	}
