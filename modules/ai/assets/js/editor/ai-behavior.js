@@ -73,32 +73,46 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		window.elementorAiCurrentContext = this.getOption( 'context' );
 
-		const { unmount } = 'excerpt' === this.getOption( 'type' )
-			? ReactUtils.render( (
+		const { unmount } = ReactUtils.render( this.getElementToRender( rootElement, colorScheme, isRTL ), rootElement );
+		this.unmount = unmount;
+	}
+
+	getElementToRender( rootElement, colorScheme, isRTL ) {
+		const onClose = () => {
+			this.handleClose();
+			rootElement.remove();
+		};
+
+		if ( 'excerpt' === this.getOption( 'type' ) ) {
+			return (
 				<RequestIdsProvider>
-					<AIExcerpt onClose={ () => {
-						unmount();
-						rootElement.remove();
-					} }
+					<AIExcerpt
+						onClose={ onClose }
 						currExcerpt={ this.getOption( 'getControlValue' )() }
 						updateExcerpt={ this.getOption( 'setControlValue' ) }
-						postTextualContent={ this.getTextualContent() } />
-				</RequestIdsProvider> ), rootElement )
-			: ReactUtils.render( (
-				<App
-					type={ this.getOption( 'type' ) }
-					controlType={ this.getOption( 'controlType' ) }
-					getControlValue={ this.getOption( 'getControlValue' ) }
-					setControlValue={ this.getOption( 'setControlValue' ) }
-					additionalOptions={ this.getOption( 'additionalOptions' ) }
-					onClose={ () => {
-						unmount();
-						rootElement.remove();
-					} }
-					colorScheme={ colorScheme }
-					isRTL={ isRTL }
-				/>
-			), rootElement );
+						postTextualContent={ this.getTextualContent() }
+					/>
+				</RequestIdsProvider>
+			);
+		}
+		return (
+			<App
+				type={ this.getOption( 'type' ) }
+				controlType={ this.getOption( 'controlType' ) }
+				getControlValue={ this.getOption( 'getControlValue' ) }
+				setControlValue={ this.getOption( 'setControlValue' ) }
+				additionalOptions={ this.getOption( 'additionalOptions' ) }
+				onClose={ onClose }
+				colorScheme={ colorScheme }
+				isRTL={ isRTL }
+			/>
+		);
+	}
+
+	handleClose() {
+		if ( this.unmount ) {
+			this.unmount();
+		}
 	}
 
 	getAiButtonLabel() {
