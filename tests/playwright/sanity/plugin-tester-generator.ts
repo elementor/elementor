@@ -48,12 +48,12 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
-		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
+		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName;
 			if ( plugin.installByAPI ) {
 				pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
 			} else {
-				wpEnvCli( `wp plugin install ${ plugin } --activate` );
+				wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
 			}
 			try {
 				const editor = new EditorPage( page, testInfo );
@@ -88,7 +88,7 @@ export const generatePluginTests = ( testType: string ) => {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 				} else {
-					wpEnvCli( `wp plugin uninstall ${ plugin } --deactivate` );
+					wpEnvCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
 				}
 			}
 		} );
