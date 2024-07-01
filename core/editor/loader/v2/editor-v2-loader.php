@@ -203,7 +203,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$experiments_manager = Plugin::$instance->experiments;
 
 		$packages = Collection::make( self::PACKAGES_TO_ENQUEUE )
-			->filter( fn ($_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
+			->filter( fn ( $_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
 			->flatten()
 			->push( self::APP_PACKAGE )
 			->unique()
@@ -216,7 +216,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$experiments_manager = Plugin::$instance->experiments;
 
 		return Collection::make( self::STYLES )
-			->filter( fn ($_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
+			->filter( fn ( $_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
 			->flatten()
 			->unique()
 			->all();
