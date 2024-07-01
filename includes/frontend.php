@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\FloatingButtons\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1390,6 +1391,10 @@ class Frontend extends App {
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
 				'assets' => $assets_url,
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			],
+			'nonces' => [
+				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
 			],
 			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
