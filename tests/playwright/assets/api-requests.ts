@@ -116,12 +116,12 @@ export default class ApiRequests {
 	}
 
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
-		const plugins = await this.getPlugins( request );
-		const { plugin } = plugins.filter( ( pluginData ) => {
+		const plugins: Array<any> = await this.getPlugins( request );
+		const filteredPlugins = plugins.filter( ( pluginData ) => {
 			return pluginData.textdomain === slug;
 		} );
 
-		const response = await this._delete( request, 'plugins', `${ plugin }` );
+		const response = await this._delete( request, 'plugins', `${ filteredPlugins[ 0 ] }` );
 
 		if ( ! response.ok() ) {
 			throw new Error( `
