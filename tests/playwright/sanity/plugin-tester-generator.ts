@@ -2,53 +2,59 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
+import { wpEnvCli } from '../assets/wp-env-cli';
 
-const pluginList = [
-	'essential-addons-for-elementor-lite',
-	'jetsticky-for-elementor',
-	'jetgridbuilder',
-	'the-plus-addons-for-elementor-page-builder',
-	'stratum',
-	'bdthemes-prime-slider-lite',
-	'wunderwp',
-	'addon-elements-for-elementor-page-builder',
-	'addons-for-elementor',
-	'anywhere-elementor',
-	'astra-sites',
-	'connect-polylang-elementor',
-	'dynamic-visibility-for-elementor',
-	'ele-custom-skin',
-	'elementskit-lite',
-	'envato-elements',
-	'exclusive-addons-for-elementor',
+const pluginList: { pluginName: string, installByAPI: boolean }[] = [
+	{ pluginName: 'essential-addons-for-elementor-lite', installByAPI: true },
+	{ pluginName: 'jetsticky-for-elementor', installByAPI: true },
+	{ pluginName: 'jetgridbuilder', installByAPI: true },
+	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installByAPI: true },
+	{ pluginName: 'stratum', installByAPI: true },
+	{ pluginName: 'bdthemes-prime-slider-lite', installByAPI: true },
+	{ pluginName: 'wunderwp', installByAPI: true },
+	{ pluginName: 'addon-elements-for-elementor-page-builder', installByAPI: true },
+	{ pluginName: 'addons-for-elementor', installByAPI: true },
+	{ pluginName: 'anywhere-elementor', installByAPI: true },
+	{ pluginName: 'astra-sites', installByAPI: true },
+	{ pluginName: 'connect-polylang-elementor', installByAPI: true },
+	{ pluginName: 'dynamic-visibility-for-elementor', installByAPI: true },
+	{ pluginName: 'ele-custom-skin', installByAPI: true },
+	{ pluginName: 'elementskit-lite', installByAPI: true },
+	{ pluginName: 'envato-elements', installByAPI: true },
+	{ pluginName: 'exclusive-addons-for-elementor', installByAPI: true },
 	// 'header-footer-elementor',
-	'jeg-elementor-kit',
-	'make-column-clickable-elementor',
-	'metform',
-	'music-player-for-elementor',
-	'ooohboi-steroids-for-elementor',
-	'post-grid-elementor-addon',
-	'powerpack-lite-for-elementor',
-	'premium-addons-for-elementor',
-	'rife-elementor-extensions',
-	'royal-elementor-addons',
-	'sb-elementor-contact-form-db',
-	'skyboot-custom-icons-for-elementor',
-	'sticky-header-effects-for-elementor',
-	'timeline-widget-addon-for-elementor',
+	{ pluginName: 'jeg-elementor-kit', installByAPI: false },
+	{ pluginName: 'make-column-clickable-elementor', installByAPI: true },
+	{ pluginName: 'metform', installByAPI: true },
+	{ pluginName: 'music-player-for-elementor', installByAPI: true },
+	{ pluginName: 'ooohboi-steroids-for-elementor', installByAPI: true },
+	{ pluginName: 'post-grid-elementor-addon', installByAPI: true },
+	{ pluginName: 'powerpack-lite-for-elementor', installByAPI: true },
+	{ pluginName: 'premium-addons-for-elementor', installByAPI: true },
+	{ pluginName: 'rife-elementor-extensions', installByAPI: true },
+	{ pluginName: 'royal-elementor-addons', installByAPI: true },
+	{ pluginName: 'sb-elementor-contact-form-db', installByAPI: true },
+	{ pluginName: 'skyboot-custom-icons-for-elementor', installByAPI: true },
+	{ pluginName: 'sticky-header-effects-for-elementor', installByAPI: true },
+	{ pluginName: 'timeline-widget-addon-for-elementor', installByAPI: true },
 	// 'unlimited-elements-for-elementor',
 	// 'visibility-logic-elementor',
-	'ht-mega-for-elementor',
-	'tutor-lms-elementor-addons',
-	'code-block-for-elementor',
-	'jetwidgets-for-elementor',
-	'happy-elementor-addons',
+	{ pluginName: 'ht-mega-for-elementor', installByAPI: true },
+	{ pluginName: 'tutor-lms-elementor-addons', installByAPI: true },
+	{ pluginName: 'code-block-for-elementor', installByAPI: true },
+	{ pluginName: 'jetwidgets-for-elementor', installByAPI: true },
+	{ pluginName: 'happy-elementor-addons', installByAPI: true },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
-			const pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin, true );
+			let pluginTechnicalName;
+			if ( plugin.installByAPI ) {
+				pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
+			} else {
+				wpEnvCli( `wp plugin install ${ plugin } --activate` );
+			}
 			try {
 				const editor = new EditorPage( page, testInfo );
 				const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
@@ -64,11 +70,11 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.scrollPage();
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-				if ( 'astra-sites' === plugin ) {
+				if ( 'astra-sites' === plugin.pluginName ) {
 					await page.goto( '/wp-admin/index.php' );
 				}
 				await page.goto( '/law-firm-about/?elementor' );
-				if ( 'happy-elementor-addons' === plugin ) {
+				if ( 'happy-elementor-addons' === plugin.pluginName ) {
 					await page.goto( '/law-firm-about/?elementor' );
 				}
 
@@ -78,9 +84,11 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			} finally {
-				if ( pluginTechnicalName ) {
+				if ( plugin.installByAPI ) {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
+				} else {
+					wpEnvCli( `wp plugin uninstall ${ plugin } --deactivate` );
 				}
 			}
 		} );
