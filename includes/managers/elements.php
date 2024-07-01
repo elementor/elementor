@@ -280,6 +280,10 @@ class Elements_Manager {
 				'title' => esc_html__( 'Layout', 'elementor' ),
 				'hideIfEmpty' => true,
 			],
+			'charts' => [
+				'title' => esc_html__( 'Charts', 'elementor' ),
+				'icon' => 'eicon-font',
+			],
 			'basic' => [
 				'title' => esc_html__( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
