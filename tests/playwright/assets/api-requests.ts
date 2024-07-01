@@ -96,9 +96,15 @@ export default class ApiRequests {
 	}
 
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
-		const response = await this._delete( request, 'plugins', slug );
+		let response;
+		let error;
+		try {
+			response = await this._delete(request, 'plugins', slug);
+		} catch ( e ) {
+			error = e;
+		}
 
-		if ( ! response.ok() ) {
+		if ( error || ! response.ok() ) {
 			const getPluginResponse = await request.get( `${ this.baseUrl }/index.php`, {
 				params: {
 					rest_route: `/wp/v2/plugins/${ slug }`,
