@@ -121,19 +121,14 @@ export default class ApiRequests {
 			return pluginData.textdomain === slug;
 		} );
 
-		let response;
-		let error;
-		try {
-			response = await this._delete( request, 'plugins', `${ plugin }` );
-		} catch ( e ) {
-			error = e;
-		}
+		const response = await this._delete( request, 'plugins', `${ plugin }` );
 
-		if ( error || ! response.ok() ) {
+		if ( ! response.ok() ) {
 			throw new Error( `
 				Failed to delete a plugin: ${ response ? response.status() : '<no status>' }.
 				${ response ? await response.text() : '<no response>' }
 				${ JSON.stringify( plugins ) }
+				slug: ${ slug }
 			` );
 		}
 		const { id } = await response.json();
@@ -180,7 +175,7 @@ export default class ApiRequests {
 
 		if ( ! response.ok() ) {
 			throw new Error( `
-			Failed to delete a ${ entity }: ${ response.status() }.
+			Failed to delete a ${ entity } with id '${ id }': ${ response.status() }.
 			${ await response.text() }
 		` );
 		}
