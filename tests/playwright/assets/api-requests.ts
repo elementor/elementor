@@ -115,6 +115,30 @@ export default class ApiRequests {
 		return await response.json();
 	}
 
+	public async installPlugin( request: APIRequestContext, slug: string, active: boolean ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins`,
+				slug,
+				status: active ? 'active' : 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to install a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+		const { id } = await response.json();
+
+		return id;
+	}
+
 	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const plugins: Array<any> = await this.getPlugins( request );
