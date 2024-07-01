@@ -81,6 +81,7 @@ export const generatePluginTests = ( testType: string ) => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
+			await apiRequests.deactivatePlugin( page.context().request, plugin );
 			await apiRequests.deletePlugin( page.context().request, plugin );
 			// wpEnvCli( `wp plugin deactivate ${ plugin }` );
 		} );

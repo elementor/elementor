@@ -115,7 +115,38 @@ export default class ApiRequests {
 		return await response.json();
 	}
 
+	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const plugins: Array<any> = await this.getPlugins( request );
+		const filteredPlugins = plugins.filter( ( pluginData ) => {
+			return pluginData.textdomain === slug;
+		} );
+
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins/${ filteredPlugins[ 0 ].plugin }`,
+				status: 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				${ JSON.stringify( plugins ) }
+				slug: ${ slug }
+			` );
+		}
+		const { id } = await response.json();
+
+		return id;
+	}
+
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const plugins: Array<any> = await this.getPlugins( request );
 		const filteredPlugins = plugins.filter( ( pluginData ) => {
 			return pluginData.textdomain === slug;
