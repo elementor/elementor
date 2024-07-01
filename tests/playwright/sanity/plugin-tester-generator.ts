@@ -49,7 +49,7 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
-			let pluginTechnicalName;
+			let pluginTechnicalName: string;
 			if ( plugin.installByAPI ) {
 				pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
 			} else {
