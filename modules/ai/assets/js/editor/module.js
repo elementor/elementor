@@ -121,7 +121,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 					type: aiOptions.type,
 					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: () => {},
+					setControlValue: ( image ) => {
+						view.setSettingsModel( image );
+						view.applySavedValue();
+					},
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
@@ -130,6 +133,27 @@ export default class Module extends elementorModules.editor.utils.Module {
 					context: this.getContextData( view, controlType ),
 				};
 			}
+		}
+
+		if ( 'excerpt' === aiOptions.type ) {
+			behaviors.ai = {
+				behaviorClass: AiBehavior,
+				type: aiOptions.type,
+				getControlValue: view.getControlValue.bind( view ),
+				setControlValue: ( value ) => {
+					if ( 'wysiwyg' === controlType ) {
+						value = value.replaceAll( '\n', '<br>' );
+					}
+
+					view.setSettingsModel( value );
+					view.applySavedValue();
+				},
+				isLabelBlock: view.options.model.get( 'label_block' ),
+				additionalOptions: {
+					defaultValue: view.options.model.get( 'default' ),
+				},
+				context: this.getContextData( view, controlType ),
+			};
 		}
 
 		return behaviors;

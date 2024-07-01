@@ -6,7 +6,7 @@ import ImageForm from '../../components/image-form';
 import GenerateAgainSubmit from '../../components/generate-again-submit';
 import GenerateImagesSubmit from '../../components/generate-images-submit';
 import ImagesDisplay from '../../components/images-display';
-import VariationsPlaceholder from './components/variations-placeholder';
+import ImagesPlaceholder from './components/images-placeholder';
 import useImageToImage from './hooks/use-image-to-image';
 import useImageActions from '../../hooks/use-image-actions';
 import { useEditImage } from '../../context/edit-image-context';
@@ -87,7 +87,7 @@ const Variations = () => {
 							onEditImage={ edit }
 						/>
 					) : (
-						<VariationsPlaceholder />
+						<ImagesPlaceholder />
 					)
 				}
 			</View.Content>

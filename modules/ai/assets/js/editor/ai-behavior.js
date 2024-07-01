@@ -3,6 +3,8 @@ import App from './app';
 import { __ } from '@wordpress/i18n';
 import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
+import AIExcerpt from './ai-excerpt';
+import { RequestIdsProvider } from './context/requests-ids';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -13,7 +15,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
 		this.context = {};
-
 		this.config = window.ElementorAiConfig;
 	}
 
@@ -29,6 +30,37 @@ export default class AiBehavior extends Marionette.Behavior {
 		};
 	}
 
+	getTextualContent() {
+		const pageTextContent = [];
+
+		// Use elementorFrontend to loop through all the elements in the Elementor editor
+		const clonedCurrentLayout = window.elementor.$previewContents[ 0 ]?.cloneNode( true );
+		clonedCurrentLayout.querySelectorAll( '.elementor-editor-element-settings, #elementor-add-new-section, .elementor-add-section-inner, header, footer' )
+			.forEach( ( handle ) => handle.remove() );
+
+		const walkDOM = ( node, ancestorOfElementorElement = false ) => {
+			ancestorOfElementorElement = node.classList?.contains( 'elementor-element' ) || ancestorOfElementorElement;
+			// Check if the node type is TEXT_NODE
+			if ( Node.TEXT_NODE === node.nodeType && ancestorOfElementorElement ) {
+				const cleanText = ( node.textContent ?? '' ).trim()
+					.replace( /\t+/g, '\t' )
+					.replace( /\n+/g, '\n' )
+					.replace( /\s+/g, ' ' );
+				if ( cleanText ) {
+					pageTextContent.push( cleanText );
+				}
+			} else {
+				// If not a text node, iterate over its child nodes
+				node.childNodes.forEach( ( child ) => walkDOM( child, ancestorOfElementorElement ) );
+			}
+		};
+
+		walkDOM( clonedCurrentLayout );
+
+		// Trim any extra whitespace
+		return pageTextContent.join( '\n' );
+	}
+
 	onAiButtonClick( event ) {
 		event.stopPropagation();
 
@@ -41,22 +73,46 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		window.elementorAiCurrentContext = this.getOption( 'context' );
 
-		const { unmount } = ReactUtils.render( (
+		const { unmount } = ReactUtils.render( this.getElementToRender( rootElement, colorScheme, isRTL ), rootElement );
+		this.unmount = unmount;
+	}
+
+	getElementToRender( rootElement, colorScheme, isRTL ) {
+		const onClose = () => {
+			this.handleClose();
+			rootElement.remove();
+		};
+
+		if ( 'excerpt' === this.getOption( 'type' ) ) {
+			return (
+				<RequestIdsProvider>
+					<AIExcerpt
+						onClose={ onClose }
+						currExcerpt={ this.getOption( 'getControlValue' )() }
+						updateExcerpt={ this.getOption( 'setControlValue' ) }
+						postTextualContent={ this.getTextualContent() }
+					/>
+				</RequestIdsProvider>
+			);
+		}
+		return (
 			<App
 				type={ this.getOption( 'type' ) }
 				controlType={ this.getOption( 'controlType' ) }
 				getControlValue={ this.getOption( 'getControlValue' ) }
 				setControlValue={ this.getOption( 'setControlValue' ) }
 				additionalOptions={ this.getOption( 'additionalOptions' ) }
-				controlView={ this.getOption( 'controlView' ) }
-				onClose={ () => {
-					unmount();
-					rootElement.remove();
-				} }
+				onClose={ onClose }
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
 			/>
-		), rootElement );
+		);
+	}
+
+	handleClose() {
+		if ( this.unmount ) {
+			this.unmount();
+		}
 	}
 
 	getAiButtonLabel() {

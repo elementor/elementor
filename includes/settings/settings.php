@@ -404,11 +404,11 @@ class Settings extends Settings_Page {
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="description elementor-css-print-method-description" data-value="external" style="display: none">'
-										. esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' )
-										. '</div><div class="description elementor-css-print-method-description" data-value="internal" style="display: none">'
-										. esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' )
-										. '</div>',
+									'desc' => sprintf(
+										/* translators: %s: <head> tag. */
+										esc_html__( 'Internal Embedding places all CSS in the %s which works great for troubleshooting, while External File uses external CSS file for better performance (recommended).', 'elementor' ),
+										'<code>&lt;head&gt;</code>',
+									),
 								],
 							],
 							'optimized_image_loading' => [

@@ -198,7 +198,11 @@ class Hints {
 	 * @return string
 	 */
 	public static function get_plugin_activate_url( $plugin_slug ): string {
-		return admin_url( 'plugins.php' );
+		$path = "$plugin_slug/$plugin_slug.php";
+		return wp_nonce_url(
+			admin_url( 'plugins.php?action=activate&plugin=' . $path ),
+			'activate-plugin_' . $path
+		);
 	}
 
 	/**
@@ -221,10 +225,6 @@ class Hints {
 	public static function should_display_hint( $hint_key ): bool {
 		$hint = self::get_hints( $hint_key );
 		if ( empty( $hint ) ) {
-			return false;
-		}
-
-		if ( static::is_conflict_plugin_installed() ) {
 			return false;
 		}
 

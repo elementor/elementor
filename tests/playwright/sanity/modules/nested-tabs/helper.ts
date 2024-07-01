@@ -70,7 +70,6 @@ export async function cleanup( wpAdmin, customExperiment: {[ n: string ]: boolea
 }
 
 export async function setTabItemColor(
-	page: Page,
 	editor: EditorPage,
 	panelClass: string,
 	tabState: string,
@@ -79,14 +78,13 @@ export async function setTabItemColor(
 ) {
 	await editor.openPanelTab( 'style' );
 	if ( 'tabs' !== panelClass ) {
-		await page.locator( `.elementor-control-${ panelClass }` ).click();
+		await editor.page.locator( `.elementor-control-${ panelClass }` ).click();
 	}
-	await page.locator( `.elementor-control-${ tabState }` ).click();
+	await editor.page.locator( `.elementor-control-${ tabState }` ).click();
 	await editor.setColorControlValue( colorPickerClass, color );
 }
 
 export async function setTabBorderColor(
-	page: Page,
 	editor: EditorPage,
 	state: string,
 	stateExtended: string,
@@ -96,11 +94,9 @@ export async function setTabBorderColor(
 ) {
 	await editor.openPanelTab( 'style' );
 	await editor.openSection( 'section_tabs_style' );
-	await page.locator( `.elementor-control-tabs_title_${ state }` ).click();
+	await editor.setTabControlValue( 'tabs_title_style', `tabs_title_${ state }` );
 	await editor.setSelectControlValue( `tabs_title_border${ stateExtended }_border`, borderStyle );
-	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` )
-		.first()
-		.fill( borderWidth );
+	await editor.setDimensionsValue( `tabs_title_border${ stateExtended }_width`, borderWidth );
 	await editor.setColorControlValue( `tabs_title_border${ stateExtended }_color`, color );
 }
 
@@ -123,11 +119,11 @@ export async function selectDropdownContainer( editor: EditorPage, widgetId = ''
 	return await editor.getPreviewFrame().locator( activeContainerSelector ).getAttribute( 'data-id' );
 }
 
-export async function setBackgroundVideoUrl( page: Page, editor:EditorPage, elementId: string, videoUrl: string ) {
+export async function setBackgroundVideoUrl( editor:EditorPage, elementId: string, videoUrl: string ) {
 	await editor.selectElement( elementId );
 	await editor.openPanelTab( 'style' );
-	await page.locator( '.eicon-video-camera' ).first().click();
-	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+	await editor.setChooseControlValue( 'background_background', 'eicon-video-camera' );
+	await editor.setTextControlValue( 'background_video_link', videoUrl );
 }
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ) {

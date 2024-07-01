@@ -1,13 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
 import ContextMenu from '../pages/widgets/context-menu';
 import Style from '../pages/elementor-panel-tabs/style';
 
 test.describe( 'Context menu', () => {
-	test( 'Edit widget test', async ( { page }, testInfo ) => {
+	test( 'Edit widget test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
@@ -16,9 +17,9 @@ test.describe( 'Context menu', () => {
 		await expect( page.getByPlaceholder( 'Enter your title' ) ).toBeVisible();
 	} );
 
-	test( 'Duplicate widget test', async ( { page }, testInfo ) => {
+	test( 'Duplicate widget test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
@@ -27,9 +28,9 @@ test.describe( 'Context menu', () => {
 		expect( await contextMenu.editor.getWidgetCount() ).toBe( 2 );
 	} );
 
-	test( 'Copy Paste widget test', async ( { page }, testInfo ) => {
+	test( 'Copy Paste widget test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
@@ -39,9 +40,9 @@ test.describe( 'Context menu', () => {
 		expect( await contextMenu.editor.getWidgetCount() ).toBe( 2 );
 	} );
 
-	test( 'Reset widget style test', async ( { page }, testInfo ) => {
+	test( 'Reset widget style test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		const styleTab = new Style( page, testInfo );
 		const headingSelector = '.elementor-heading-title';
@@ -54,21 +55,21 @@ test.describe( 'Context menu', () => {
 		await expect( editor.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(110, 193, 228)' );
 	} );
 
-	test( 'Open Navigator test', async ( { page }, testInfo ) => {
+	test( 'Open Navigator test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
 		await editor.openElementsPanel();
-		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Navigator' );
+		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Structure' );
 		await expect( page.locator( '#elementor-navigator' ) ).toBeVisible();
 	} );
 
-	test( 'Delete widget test', async ( { page }, testInfo ) => {
+	test( 'Delete widget test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 
 		await wpAdmin.openNewPage();
@@ -78,9 +79,9 @@ test.describe( 'Context menu', () => {
 		expect( await contextMenu.editor.getWidgetCount() ).toBe( 0 );
 	} );
 
-	test( 'Style test', async ( { page }, testInfo ) => {
+	test( 'Style test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 
 		await wpAdmin.openNewPage();

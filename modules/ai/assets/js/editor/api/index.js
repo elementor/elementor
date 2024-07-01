@@ -30,6 +30,8 @@ export const getCompletionText = ( payload ) => request( 'ai_get_completion_text
 
 export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
 
+export const getFeaturedImage = ( payload ) => request( 'ai_get_featured_image', { payload } );
+
 export const getEditText = ( payload ) => request( 'ai_get_edit_text', { payload } );
 
 export const getCustomCode = ( payload ) => request( 'ai_get_custom_code', { payload } );

@@ -1,11 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import ImageCarousel from '../pages/widgets/image-carousel';
 import EditorPage from '../pages/editor-page';
 
-test( 'Basic Gallery', async ( { page }, testInfo ) => {
+test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
@@ -22,9 +23,9 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 		.toMatchSnapshot( 'gallery.jpeg' );
 } );
 
-test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testInfo ) => {
+test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
 	await wpAdmin.setExperiments( {
@@ -44,9 +45,9 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	} );
 } );
 
-test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInfo ) => {
+test( 'Basic Gallery Lightbox test with older Swiper', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
 	await wpAdmin.setExperiments( {

@@ -147,11 +147,7 @@ BaseElementView = BaseContainer.extend( {
 						/* Translators: %s: Element Name. */
 						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
 						isEnabled: () => ! elementor.selection.isMultiple(),
-						callback: () => $e.run( 'panel/editor/open', {
-							model: this.options.model, // Todo: remove on merge router
-							view: this, // Todo: remove on merge router
-							container: this.getContainer(),
-						} ),
+						callback: () => $e.run( 'document/elements/select', { container: this.getContainer() } ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
@@ -659,33 +655,48 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, changedSetting ) {
+	isAtomicDynamic( dataBinding, changedControl ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			this.isAddingDynamicToTitle( dataBinding, changedSetting );
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
-	isAddingDynamicToTitle( dataBinding, changedSetting ) {
-		return (
-			'object' === typeof changedSetting?.__dynamic__ &&
-			Object.keys( changedSetting?.__dynamic__ )[ 0 ]?.length > 0 &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === Object.keys( changedSetting?.__dynamic__ )[ 0 ]
-		);
-	},
-
-	getDynamicValue( settings, bindingSetting ) {
-		const valueToParse = settings.attributes?.__dynamic__?.[ bindingSetting ],
-			dynamicSettings = { active: true };
+	async getDynamicValue( settings, bindingSetting ) {
+		const dynamicSettings = { active: true },
+			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
 			try {
 				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 			} catch {
-				return false;
+				await new Promise( ( resolve ) => {
+					elementor.dynamicTags.refreshCacheFromServer( () => {
+						resolve();
+					} );
+				} );
+
+				return ! _.isEmpty( elementor.dynamicTags.cache )
+					? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+					: false;
 			}
 		}
 
 		return settings.attributes[ bindingSetting ];
+	},
+
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+			return false;
+		}
+
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
+
+		const allKeys = keys1.concat( keys2 );
+
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
 	},
 
 	/**
@@ -759,12 +770,13 @@ BaseElementView = BaseContainer.extend( {
 
 		let changed = false;
 
-		const renderDataBinding = ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset;
+		const renderDataBinding = async ( dataBinding ) => {
+			const { bindingSetting } = dataBinding.dataset,
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, settings.changed ) ) {
-				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
+				const dynamicValue = await this.getDynamicValue( settings, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
@@ -822,11 +834,19 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
-			return;
+		const renderResult = this.renderDataBindings( settings, this.dataBindings );
+
+		if ( renderResult instanceof Promise ) {
+			renderResult.then( ( result ) => {
+				if ( ! result ) {
+					this.renderChanges( settings );
+				}
+			} );
 		}
 
-		this.renderChanges( settings );
+		if ( ! renderResult ) {
+			this.renderChanges( settings );
+		}
 	},
 
 	getDynamicParsingSettings() {
