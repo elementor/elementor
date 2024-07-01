@@ -38,7 +38,6 @@ class Module extends BaseModule {
 
 	private $has_contact_pages = null;
 	private $trashed_contact_pages;
-	private $new_contact_pages_url;
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
@@ -117,15 +116,6 @@ class Module extends BaseModule {
 				$this->render_floating_buttons();
 			} );
 		}
-
-		add_action( 'elementor/common/localize_settings', function ( $settings ) {
-			$settings['floatingButtons'] = [
-				'nonce' => wp_create_nonce( static::CLICK_TRACKING_NONCE ),
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			];
-
-			return $settings;
-		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
 
