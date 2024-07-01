@@ -26,13 +26,13 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 	{ pluginName: 'jeg-elementor-kit', installByAPI: false },
 	{ pluginName: 'make-column-clickable-elementor', installByAPI: true },
 	{ pluginName: 'metform', installByAPI: true },
-	{ pluginName: 'music-player-for-elementor', installByAPI: true },
+	{ pluginName: 'music-player-for-elementor', installByAPI: false },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installByAPI: true },
 	{ pluginName: 'post-grid-elementor-addon', installByAPI: true },
 	{ pluginName: 'powerpack-lite-for-elementor', installByAPI: true },
-	{ pluginName: 'premium-addons-for-elementor', installByAPI: true },
+	{ pluginName: 'premium-addons-for-elementor', installByAPI: false },
 	{ pluginName: 'rife-elementor-extensions', installByAPI: true },
-	{ pluginName: 'royal-elementor-addons', installByAPI: true },
+	{ pluginName: 'royal-elementor-addons', installByAPI: false },
 	{ pluginName: 'sb-elementor-contact-form-db', installByAPI: true },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installByAPI: true },
 	{ pluginName: 'sticky-header-effects-for-elementor', installByAPI: true },
@@ -43,7 +43,7 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 	{ pluginName: 'tutor-lms-elementor-addons', installByAPI: true },
 	{ pluginName: 'code-block-for-elementor', installByAPI: true },
 	{ pluginName: 'jetwidgets-for-elementor', installByAPI: true },
-	{ pluginName: 'happy-elementor-addons', installByAPI: true },
+	{ pluginName: 'happy-elementor-addons', installByAPI: false },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
