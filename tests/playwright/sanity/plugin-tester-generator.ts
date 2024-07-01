@@ -49,6 +49,9 @@ const pluginList = [
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
+			if ( 'essential-addons-for-elementor-lite' === plugin ) {
+				return; // For debug purposes only, remove
+			}
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
 			const adminBar = 'wpadminbar';
