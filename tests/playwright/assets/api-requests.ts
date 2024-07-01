@@ -121,7 +121,7 @@ export default class ApiRequests {
 			return pluginData.textdomain === slug;
 		} );
 
-		const response = await this._delete( request, 'plugins', `${ filteredPlugins[ 0 ] }` );
+		const response = await this._delete( request, 'plugins', `${ filteredPlugins[ 0 ].plugin }` );
 
 		if ( ! response.ok() ) {
 			throw new Error( `
