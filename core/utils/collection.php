@@ -448,6 +448,16 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return $this;
 	}
 
+	public function some( callable $callback ) {
+		foreach ( $this->items as $key => $item ) {
+			if ( $callback( $item, $key ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * @param mixed $offset
 	 *
