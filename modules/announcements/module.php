@@ -108,9 +108,11 @@ class Module extends BaseApp {
 				],
 				'cta' => [
 					[
-						'label' => 'Continue',
+						'label' => 'Get Started',
 						'variant' => 'primary',
-						'target' => '_blank',
+						'target' => '_top',
+						'url' => '#welcome-ai',
+
 					],
 					[
 						'label' => 'Learn More',
