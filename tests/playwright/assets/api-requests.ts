@@ -119,8 +119,8 @@ export default class ApiRequests {
 			}
 
 			throw new Error( `
-				Failed to get a plugin: ${ response ?? response.status() }.
-				${ response ?? await response.text() }
+				Failed to get a plugin: ${ response ? '<no status>' : response.status() }.
+				${ response ? '<no response>' : await response.text() }
 				${ info }
 			` );
 		}
