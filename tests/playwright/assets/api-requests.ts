@@ -99,7 +99,7 @@ export default class ApiRequests {
 		let response;
 		let error;
 		try {
-			response = await this._delete(request, 'plugins', slug);
+			response = await this._delete( request, 'plugins', slug );
 		} catch ( e ) {
 			error = e;
 		}
@@ -119,8 +119,8 @@ export default class ApiRequests {
 			}
 
 			throw new Error( `
-				Failed to get a plugin: ${ response.status() }.
-				${ await response.text() }
+				Failed to get a plugin: ${ response ?? response.status() }.
+				${ response ?? await response.text() }
 				${ info }
 			` );
 		}
