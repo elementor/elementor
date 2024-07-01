@@ -27,6 +27,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return true;
 	}
 
+	protected function get_initial_config(): array {
+		return array_merge( parent::get_initial_config(), [
+			'commonMerged' => true,
+		] );
+	}
+
 	public static function get_configuration() {
 		return [
 			'content' => [
@@ -245,10 +251,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	public function get_categories(): array {
 		return [ 'general' ];
-	}
-
-	public function get_stack( $with_common_controls = true ): array {
-		return parent::get_stack( false );
 	}
 
 	protected function register_controls(): void {
