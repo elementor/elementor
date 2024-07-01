@@ -17,7 +17,6 @@ test.describe( 'Container tests @container', () => {
 		await wpAdmin.setExperiments( {
 			container: true,
 			container_grid: true,
-			e_nested_atomic_repeaters: true,
 		} );
 	} );
 
@@ -28,7 +27,6 @@ test.describe( 'Container tests @container', () => {
 		await wpAdmin.setExperiments( {
 			container_grid: false,
 			container: false,
-			e_nested_atomic_repeaters: false,
 		} );
 	} );
 
