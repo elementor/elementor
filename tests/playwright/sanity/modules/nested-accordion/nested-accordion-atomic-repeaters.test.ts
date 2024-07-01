@@ -5,7 +5,7 @@ import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } fr
 import _path from 'path';
 
 test.describe( 'Nested Accordion performance @nested-atomic-repeaters', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser }, testInfo, apiRequests ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
