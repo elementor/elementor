@@ -147,11 +147,7 @@ BaseElementView = BaseContainer.extend( {
 						/* Translators: %s: Element Name. */
 						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
 						isEnabled: () => ! elementor.selection.isMultiple(),
-						callback: () => $e.run( 'panel/editor/open', {
-							model: this.options.model, // Todo: remove on merge router
-							view: this, // Todo: remove on merge router
-							container: this.getContainer(),
-						} ),
+						callback: () => $e.run( 'document/elements/select', { container: this.getContainer() } ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
