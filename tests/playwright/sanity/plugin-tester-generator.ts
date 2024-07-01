@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
-import { wpEnvCli } from '../assets/wp-env-cli';
 
 const pluginList = [
 	'essential-addons-for-elementor-lite',
@@ -49,42 +48,41 @@ const pluginList = [
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
-			if ( 'jetgridbuilder' !== plugin && 'essential-addons-for-elementor-lite' !== plugin ) {
-				return;
-			}
-			const editor = new EditorPage( page, testInfo );
-			const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
-			const adminBar = 'wpadminbar';
-
 			const pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin, true );
-			wpEnvCli( `wp plugin list --format=csv` );
+			try {
+				const editor = new EditorPage( page, testInfo );
+				const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
+				const adminBar = 'wpadminbar';
 
-			await page.goto( '/law-firm-about/' );
-			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
-			await page.evaluate( ( selector ) => {
-				const admin = document.getElementById( selector );
-				admin.remove();
-			}, adminBar );
-			await editor.removeClasses( 'elementor-motion-effects-element' );
-			await editor.scrollPage();
-			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
+				await page.goto( '/law-firm-about/' );
+				await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+				await page.evaluate( ( selector ) => {
+					const admin = document.getElementById( selector );
+					admin.remove();
+				}, adminBar );
+				await editor.removeClasses( 'elementor-motion-effects-element' );
+				await editor.scrollPage();
+				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-			if ( 'astra-sites' === plugin ) {
-				await page.goto( '/wp-admin/index.php' );
-			}
-			await page.goto( '/law-firm-about/?elementor' );
-			if ( 'happy-elementor-addons' === plugin ) {
+				if ( 'astra-sites' === plugin ) {
+					await page.goto( '/wp-admin/index.php' );
+				}
 				await page.goto( '/law-firm-about/?elementor' );
+				if ( 'happy-elementor-addons' === plugin ) {
+					await page.goto( '/law-firm-about/?elementor' );
+				}
+
+				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+				await wpAdmin.closeAnnouncementsIfVisible();
+				await editor.closeNavigatorIfOpen();
+
+				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
+			} finally {
+				if ( pluginTechnicalName ) {
+					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
+					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
+				}
 			}
-
-			await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
-			await wpAdmin.closeAnnouncementsIfVisible();
-			await editor.closeNavigatorIfOpen();
-
-			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
-			await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
-			wpEnvCli( `wp plugin list --format=csv` );
 		} );
 	}
 };
