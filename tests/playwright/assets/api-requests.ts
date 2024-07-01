@@ -99,7 +99,7 @@ export default class ApiRequests {
 		let response;
 		let error;
 		try {
-			response = await this._delete( request, 'plugins', slug );
+			response = await this._delete( request, 'plugins', `build\\/${ slug }` );
 		} catch ( e ) {
 			error = e;
 		}
