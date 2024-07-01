@@ -1,6 +1,6 @@
 <?php
-namespace Elementor\Core\Editor;
 
+namespace Elementor\Core\Editor;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V2_Experiments {
-	const APP_BAR = 'editor_v2'; // it is `editor_v2` for backward compatibility.
+	const APP_BAR = 'editor_v2'; // Kept as `editor_v2` for backward compatibility.
 	const ELEMENTS = 'editor_v2_elements';
 
 	public static function all() {
