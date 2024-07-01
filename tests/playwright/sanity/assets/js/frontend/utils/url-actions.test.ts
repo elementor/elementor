@@ -124,7 +124,7 @@ test.describe( 'URL Actions', () => {
 		await expect( galleryItems ).toHaveCount( 2 );
 
 		// Open the gallery's slideshow in a lightbox.
-		galleryItems.first().click();
+		await galleryItems.first().click();
 
 		const slideshowLightboxImage = editor.getPreviewFrame().locator( 'img[alt="mountain-image"].elementor-lightbox-image, img[alt="field-image"].elementor-lightbox-image' );
 
