@@ -95,33 +95,45 @@ export default class ApiRequests {
 		}
 	}
 
+	public async getPlugins( request: APIRequestContext ) {
+		const response = await request.get( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins`,
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to get plugins: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		return await response.json();
+	}
+
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
+		const plugins = await this.getPlugins( request );
+		const { plugin } = plugins.filter( ( pluginData ) => {
+			return pluginData.textdomain === slug;
+		} );
+
 		let response;
 		let error;
 		try {
-			response = await this._delete( request, 'plugins', `build\\/${ slug }` );
+			response = await this._delete( request, 'plugins', `${ plugin }` );
 		} catch ( e ) {
 			error = e;
 		}
 
 		if ( error || ! response.ok() ) {
-			const getPluginResponse = await request.get( `${ this.baseUrl }/index.php`, {
-				params: {
-					rest_route: `/wp/v2/plugins`,
-				},
-				headers: {
-					'X-WP-Nonce': this.nonce,
-				},
-			} );
-			let info = 'no getPluginResponse';
-			if ( getPluginResponse.ok() ) {
-				info = await getPluginResponse.text();
-			}
-
 			throw new Error( `
-				Failed to get a plugin: ${ response ? response.status() : '<no status>' }.
+				Failed to delete a plugin: ${ response ? response.status() : '<no status>' }.
 				${ response ? await response.text() : '<no response>' }
-				${ info }
+				${ JSON.stringify( plugins ) }
 			` );
 		}
 		const { id } = await response.json();
