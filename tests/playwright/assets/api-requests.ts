@@ -95,6 +95,34 @@ export default class ApiRequests {
 		}
 	}
 
+	public async deletePlugin( request: APIRequestContext, slug: string ) {
+		const response = await this._delete( request, 'plugins', slug );
+
+		if ( ! response.ok() ) {
+			const getPluginResponse = await request.get( `${ this.baseUrl }/index.php`, {
+				params: {
+					rest_route: `/wp/v2/plugins/${ slug }`,
+				},
+				headers: {
+					'X-WP-Nonce': this.nonce,
+				},
+			} );
+			let info = 'no getPluginResponse';
+			if ( getPluginResponse.ok() ) {
+				info = await getPluginResponse.text();
+			}
+
+			throw new Error( `
+				Failed to get a plugin: ${ response.status() }.
+				${ await response.text() }
+				${ info }
+			` );
+		}
+		const { id } = await response.json();
+
+		return id;
+	}
+
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
 		const response = await request.get( `${ this.baseUrl }/index.php`, {
 			params: {
@@ -138,5 +166,7 @@ export default class ApiRequests {
 			${ await response.text() }
 		` );
 		}
+
+		return response;
 	}
 }
