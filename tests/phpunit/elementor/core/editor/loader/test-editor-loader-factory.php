@@ -2,10 +2,12 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Loader;
 
 use Elementor\Core\Editor\Editor;
+use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
 use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
 use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -14,49 +16,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Editor_Loader_Factory extends Elementor_Test_Base {
-	private $original_experiment_default_state;
+	private $original_experiments_states;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Editor::EDITOR_V2_EXPERIMENT_NAME )['default'];
+		$experiments = Plugin::$instance->experiments;
+
+		$this->original_experiments_states = Collection::make( Editor_V2_Experiments::all() )
+			->map_with_keys( fn ( $name ) => [ $name => $experiments->get_features( $name )['default'] ] )
+			->each( fn ( $state, $name ) => $experiments->set_feature_default_state( $name, Experiments_Manager::STATE_INACTIVE ) );
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 
-		Plugin::$instance->experiments
-			->set_feature_default_state( Editor::EDITOR_V2_EXPERIMENT_NAME, $this->original_experiment_default_state );
+		$experiments = Plugin::$instance->experiments;
+
+		$this->original_experiments_states
+			->each( fn ( $state, $name ) => $experiments->set_feature_default_state( $name, $state ) );
 	}
 
 	/**
 	 * @dataProvider create_data_provider
 	 */
-	public function test_create( $state, $query_params, $expected_class ) {
+	public function test_create( $experiment, $state, $expected_class ) {
 		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Editor::EDITOR_V2_EXPERIMENT_NAME,
-			$state
-		);
-
-		foreach ( $query_params as $key => $value ) {
-			$_GET[ $key ] = $value;
-		}
+		Plugin::$instance->experiments->set_feature_default_state( $experiment, $state );
 
 		// Act
-		$config_provider = Editor_Loader_Factory::create();
+		$loader = Editor_Loader_Factory::create();
 
 		// Assert
-		$this->assertInstanceOf( $expected_class, $config_provider );
+		$this->assertInstanceOf( $expected_class, $loader );
 	}
 
 	public function create_data_provider() {
-		return [
-			[ Experiments_Manager::STATE_INACTIVE, [], Editor_V1_Loader::class ],
-			[ Experiments_Manager::STATE_ACTIVE, [], Editor_V2_Loader::class ],
-			[ Experiments_Manager::STATE_INACTIVE, [ 'v' => '2' ], Editor_V2_Loader::class ],
-			[ Experiments_Manager::STATE_ACTIVE, [ 'v' => '1' ], Editor_V1_Loader::class ],
-		];
+		$cases = [];
+
+		foreach ( Editor_V2_Experiments::all() as $experiment ) {
+			$cases["{$experiment} inactive"] = [
+				$experiment,
+				Experiments_Manager::STATE_INACTIVE,
+				Editor_V1_Loader::class,
+			];
+
+			$cases["{$experiment} active"] = [
+				$experiment,
+				Experiments_Manager::STATE_ACTIVE,
+				Editor_V2_Loader::class,
+			];
+		}
+
+		return $cases;
 	}
 }
