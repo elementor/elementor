@@ -107,7 +107,7 @@ export default class ApiRequests {
 		if ( error || ! response.ok() ) {
 			const getPluginResponse = await request.get( `${ this.baseUrl }/index.php`, {
 				params: {
-					rest_route: `/wp/v2/plugins/${ slug }`,
+					rest_route: `/wp/v2/plugins`,
 				},
 				headers: {
 					'X-WP-Nonce': this.nonce,
