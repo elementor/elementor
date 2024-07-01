@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { type APIRequestContext } from '@playwright/test';
+import { type APIRequestContext, APIResponse } from '@playwright/test';
 import { Image, Post, WpPage } from '../types/types';
 
 export default class ApiRequests {
@@ -146,17 +146,19 @@ export default class ApiRequests {
 			return pluginData.textdomain === slug;
 		} );
 
-		const response = await request.post( `${ this.baseUrl }/index.php`, {
-			params: {
-				rest_route: `/wp/v2/plugins/${ filteredPlugins[ 0 ].plugin }`,
-				status: 'inactive',
-			},
-			headers: {
-				'X-WP-Nonce': this.nonce,
-			},
-		} );
-
-		if ( ! response.ok() ) {
+		let response: APIResponse;
+		if ( filteredPlugins.length > 0 ) {
+			response = await request.post( `${ this.baseUrl }/index.php`, {
+				params: {
+					rest_route: `/wp/v2/plugins/${ filteredPlugins[ 0 ].plugin }`,
+					status: 'inactive',
+				},
+				headers: {
+					'X-WP-Nonce': this.nonce,
+				},
+			} );
+		}
+		if ( 0 === filteredPlugins.length || ! response || ! response.ok() ) {
 			throw new Error( `
 				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
 				${ response ? await response.text() : '<no response>' }
