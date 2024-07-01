@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { type APIRequestContext, APIResponse } from '@playwright/test';
+import { type APIRequestContext } from '@playwright/test';
 import { Image, Post, WpPage } from '../types/types';
 
 export default class ApiRequests {
@@ -95,26 +95,6 @@ export default class ApiRequests {
 		}
 	}
 
-	public async getPlugins( request: APIRequestContext ) {
-		const response = await request.get( `${ this.baseUrl }/index.php`, {
-			params: {
-				rest_route: `/wp/v2/plugins`,
-			},
-			headers: {
-				'X-WP-Nonce': this.nonce,
-			},
-		} );
-
-		if ( ! response.ok() ) {
-			throw new Error( `
-			Failed to get plugins: ${ response.status() }.
-			${ await response.text() }
-		` );
-		}
-
-		return await response.json();
-	}
-
 	public async installPlugin( request: APIRequestContext, slug: string, active: boolean ) {
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 			params: {
@@ -139,37 +119,6 @@ export default class ApiRequests {
 		return plugin;
 	}
 
-	public async _deactivatePlugin( request: APIRequestContext, slug: string ) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const plugins: Array<any> = await this.getPlugins( request );
-		const filteredPlugins = plugins.filter( ( pluginData ) => {
-			return pluginData.textdomain === slug;
-		} );
-
-		let response: APIResponse;
-		if ( filteredPlugins.length > 0 ) {
-			response = await request.post( `${ this.baseUrl }/index.php`, {
-				params: {
-					rest_route: `/wp/v2/plugins/${ filteredPlugins[ 0 ].plugin }`,
-					status: 'inactive',
-				},
-				headers: {
-					'X-WP-Nonce': this.nonce,
-				},
-			} );
-		}
-		if ( 0 === filteredPlugins.length || ! response || ! response.ok() ) {
-			throw new Error( `
-				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
-				${ response ? await response.text() : '<no response>' }
-				${ JSON.stringify( plugins ) }
-				slug: ${ slug }
-			` );
-		}
-		const { id } = await response.json();
-
-		return id;
-	}
 	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 			params: {
@@ -199,28 +148,6 @@ export default class ApiRequests {
 				slug: ${ slug }
 			` );
 		}
-	}
-
-	public async _deletePlugin( request: APIRequestContext, slug: string ) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const plugins: Array<any> = await this.getPlugins( request );
-		const filteredPlugins = plugins.filter( ( pluginData ) => {
-			return pluginData.textdomain === slug;
-		} );
-
-		const response = await this._delete( request, 'plugins', `${ filteredPlugins[ 0 ].plugin }` );
-
-		if ( ! response.ok() ) {
-			throw new Error( `
-				Failed to delete a plugin: ${ response ? response.status() : '<no status>' }.
-				${ response ? await response.text() : '<no response>' }
-				${ JSON.stringify( plugins ) }
-				slug: ${ slug }
-			` );
-		}
-		const { id } = await response.json();
-
-		return id;
 	}
 
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
