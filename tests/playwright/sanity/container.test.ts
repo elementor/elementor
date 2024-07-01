@@ -18,7 +18,9 @@ test.describe( 'Container tests @container', () => {
 			container: true,
 			container_grid: true,
 			e_nested_atomic_repeaters: true,
+			'nested-elements': true,
 		} );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -29,7 +31,9 @@ test.describe( 'Container tests @container', () => {
 			container_grid: false,
 			container: false,
 			e_nested_atomic_repeaters: false,
+			'nested-elements': false,
 		} );
+		await page.close();
 	} );
 
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
@@ -855,14 +859,14 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from desktop to tablet after value change', async () => {
-			desktopGapControlColumnInput.fill( '50' );
+			await desktopGapControlColumnInput.fill( '50' );
 			await editor.changeResponsiveView( 'tablet' );
 			const gapControlPlaceholder = await tabletGapControlColumnInput.getAttribute( 'placeholder' );
 			expect( gapControlPlaceholder ).toBe( '50' );
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from tablet to mobile after value change', async () => {
-			tabletGapControlColumnInput.fill( '40' );
+			await tabletGapControlColumnInput.fill( '40' );
 			await editor.changeResponsiveView( 'mobile' );
 			const gapControlPlaceholder = await mobileGapControlColumnInput.getAttribute( 'placeholder' );
 			expect( gapControlPlaceholder ).toBe( '40' );
@@ -871,10 +875,6 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
 
 		try {
 			await wpAdmin.setSiteLanguage( 'he_IL' );
@@ -949,11 +949,6 @@ test.describe( 'Container tests @container', () => {
 				.locator( '.e-con.e-parent>>nth=0' ) )
 				.toHaveScreenshot( 'container-dimensions-ltr.png' );
 		} );
-
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-		} );
 	} );
 
 	test( 'Test child containers default content widths', async ( { page, apiRequests }, testInfo ) => {
@@ -1001,11 +996,12 @@ async function addContainerAndHover( editor: EditorPage ) {
 	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 	const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
 	const container = editor.getPreviewFrame().locator( containerSelector );
-	editor.getPreviewFrame().hover( containerSelector );
+	await editor.getPreviewFrame().hover( containerSelector );
+
 	return container;
 }
 
-async function toggleResponsiveControl( page: Page, justifyControlsClass: string, breakpoints: string, i: number ) {
+async function toggleResponsiveControl( page: Page, justifyControlsClass: string, breakpoints: string[], i: number ) {
 	await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i ] }` );
 	if ( i < breakpoints.length - 1 ) {
 		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i + 1 ] }` );
@@ -1016,7 +1012,7 @@ async function toggleResponsiveControl( page: Page, justifyControlsClass: string
 
 async function captureJustifySnapShot(
 	editor: EditorPage,
-	breakpoints: string,
+	breakpoints: string[],
 	i: number,
 	direction: string,
 	page: Page,
@@ -1034,7 +1030,7 @@ async function captureJustifySnapShot(
 	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
 }
 
-async function testJustifyDirections( directions, breakpoints, editor, page, snapshotPrefix ) {
+async function testJustifyDirections( directions: string[], breakpoints: string[], editor: EditorPage, page: Page, snapshotPrefix: 'rtl' | 'ltr' ) {
 	for ( const direction of directions ) {
 		for ( let i = 0; i < breakpoints.length; i++ ) {
 			await captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix );
