@@ -134,12 +134,12 @@ export default class ApiRequests {
 				slug: ${ slug }
 			` );
 		}
-		const { id } = await response.json();
+		const { plugin } = await response.json();
 
-		return id;
+		return plugin;
 	}
 
-	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
+	public async _deactivatePlugin( request: APIRequestContext, slug: string ) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const plugins: Array<any> = await this.getPlugins( request );
 		const filteredPlugins = plugins.filter( ( pluginData ) => {
@@ -170,8 +170,38 @@ export default class ApiRequests {
 
 		return id;
 	}
+	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins/${ slug }`,
+				status: 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
 
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
+		const response = await this._delete( request, 'plugins', slug );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to delete a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
+
+	public async _deletePlugin( request: APIRequestContext, slug: string ) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const plugins: Array<any> = await this.getPlugins( request );
 		const filteredPlugins = plugins.filter( ( pluginData ) => {

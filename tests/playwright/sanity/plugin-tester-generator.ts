@@ -49,14 +49,14 @@ const pluginList = [
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
-			if ( 'jetgridbuilder' !== plugin ) {
+			if ( 'jetgridbuilder' !== plugin && 'essential-addons-for-elementor-lite' !== plugin ) {
 				return;
 			}
 			const editor = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
 			const adminBar = 'wpadminbar';
 
-			await apiRequests.installPlugin( page.context().request, plugin, true );
+			const pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin, true );
 			wpEnvCli( `wp plugin list --format=csv` );
 
 			await page.goto( '/law-firm-about/' );
@@ -82,8 +82,8 @@ export const generatePluginTests = ( testType: string ) => {
 			await editor.closeNavigatorIfOpen();
 
 			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			await apiRequests.deactivatePlugin( page.context().request, plugin );
-			await apiRequests.deletePlugin( page.context().request, plugin );
+			await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
+			await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 			wpEnvCli( `wp plugin list --format=csv` );
 		} );
 	}
