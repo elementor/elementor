@@ -8,5 +8,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return [
-	Wordpress_Adapter_Interface::class => DI\autowire( Wordpress_Adapter::class )
+	Wordpress_Adapter_Interface::class => DI\autowire( Wordpress_Adapter::class ),
 ];
