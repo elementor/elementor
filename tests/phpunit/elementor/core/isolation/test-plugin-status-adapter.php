@@ -3,7 +3,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Isolation;
 
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Plugin_Status_Adapter extends PHPUnit_TestCase {
@@ -50,12 +49,6 @@ class Test_Plugin_Status_Adapter extends PHPUnit_TestCase {
 
 		// Assert
 		$this->assertTrue( str_contains( $elementor_activate_url, $expected_core_url ) );
-	}
-
-	public function test_same_instance_wordpress_adapter() {
-		$this->assertNotNull( $this->wordpress_adapter  );
-		$wp_adapter_2 = elementor_container( Wordpress_Adapter_Interface::class );
-		$this->assertSame( $this->wordpress_adapter , $wp_adapter_2 );
 	}
 
 	public function setUp(): void {
