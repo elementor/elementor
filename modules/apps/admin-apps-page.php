@@ -3,6 +3,7 @@ namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,7 +13,7 @@ class Admin_Apps_Page {
 
 	const APPS_URL = 'https://assets.elementor.com/apps/v1/apps.json';
 
-	private static ?Wordpress_Adapter $wordpress_adapter = null;
+	private static ?Wordpress_Adapter_Interface $wordpress_adapter = null;
 
 	private static ?Plugin_Status_Adapter $plugin_status_adapter = null;
 
@@ -46,7 +47,9 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		if ( ! self::$wordpress_adapter ) {
+		if ( elementor_container()->has( Wordpress_Adapter_Interface::class ) ) {
+			self::$wordpress_adapter = elementor_container( Wordpress_Adapter_Interface::class );
+		} else if ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
 
