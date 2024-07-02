@@ -38,20 +38,26 @@ class Container extends ContainerBuilder {
 		return $this->build();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public static function get_instance() {
 		if (is_null(static::$instance)) {
-			static::$instance = new static;
+			$instance = new static;
 
-			static::$instance->init();
+			static::$instance = $instance->init();
 		}
 
 		return static::$instance;
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public static function set_instance() {
-		static::$instance = new static;
+		$instance = new static;
 
-		static::$instance->init();
+		static::$instance = $instance->init();
 
 		return static::$instance;
 	}
