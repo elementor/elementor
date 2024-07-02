@@ -1103,7 +1103,7 @@ JS;
 							'min' => 0,
 							'max' => 100,
 						],
-					], 
+					],
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'selectors' => [
 						'{{WRAPPER}} .e-contact-buttons' => '--e-contact-buttons-chat-button-gap: {{SIZE}}{{UNIT}}',
