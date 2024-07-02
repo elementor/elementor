@@ -5,9 +5,13 @@
 	--e-contact-buttons-svg-size-small: 24px;
 	--e-contact-buttons-svg-size-medium: 28px;
 	--e-contact-buttons-svg-size-large: 32px;
-	--e-contact-buttons-transition-duration: .5s;
+	--e-contact-buttons-transition-duration: .3s;
 	--e-contact-buttons-transition: all var(--e-contact-buttons-transition-duration);
 	--e-contact-buttons-overlap-margin: -10px;
+	--e-contact-buttons-chat-button-padding-block-end: 8px;
+	--e-contact-buttons-chat-button-padding-block-start: 8px;
+	--e-contact-buttons-chat-button-padding-inline-end: 16px;
+	--e-contact-buttons-chat-button-padding-inline-start: 16px;
 
 	width: auto;
 
