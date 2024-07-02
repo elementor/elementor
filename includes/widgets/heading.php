@@ -76,6 +76,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		return [ 'basic' ];
 	}
 
+	public function get_accessibility(): string {
+		return 'AA';
+	}
+
 	/**
 	 * Get widget keywords.
 	 *
