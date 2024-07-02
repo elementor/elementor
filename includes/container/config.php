@@ -1,7 +1,5 @@
 <?php
 
-namespace Elementor\Container;
-
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
