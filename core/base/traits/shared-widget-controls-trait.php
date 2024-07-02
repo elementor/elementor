@@ -113,6 +113,7 @@ trait Shared_Widget_Controls_Trait {
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'default' => $default,
+				'render_type' => 'template',
 				'selectors' => [
 					'{{WRAPPER}} .e-link-in-bio' => $selector_custom_property . ': {{VALUE}};',
 				],
