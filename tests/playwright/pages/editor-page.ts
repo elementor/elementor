@@ -5,8 +5,9 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
+import Breakpoints from '../assets/breakpoints';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -886,27 +887,25 @@ export default class EditorPage extends BasePage {
 		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
+	async openResponsiveViewBar() {
+		const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+	}
+
 	/**
 	 * Select a responsive view.
 	 *
 	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`.
-	 *
-	 * @return {Promise<void>}
 	 */
-	async changeResponsiveView( device: string ) {
+	async changeResponsiveView( device: Device ) {
 		const hasTopBar = await this.hasTopBar();
-
 		if ( hasTopBar ) {
-			const deviceLabel = device.charAt( 0 ).toUpperCase() + device.slice( 1 );
-
-			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
+			await Breakpoints.getDeviceLocator( this.page, device ).click();
 		} else {
-			const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
-
-			if ( ! hasResponsiveViewBar ) {
-				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-			}
-
+			await this.openResponsiveViewBar();
 			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
 		}
 	}

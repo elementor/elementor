@@ -21,10 +21,6 @@ test.describe( 'Document tests', async () => {
 			expect( columns ).toEqual( 1 );
 			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor' ).count();
 			expect( textEditors ).toEqual( 1 );
-
-			await wpAdmin.setExperiments( {
-				container: true,
-			} );
 		} );
 
 	test( 'converting gutenberg page to container',
@@ -43,10 +39,6 @@ test.describe( 'Document tests', async () => {
 			expect( containers ).toEqual( 1 );
 			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor ' ).count();
 			expect( textEditors ).toEqual( 1 );
-
-			await wpAdmin.setExperiments( {
-				container: false,
-			} );
 		} );
 } );
 
