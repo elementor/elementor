@@ -387,7 +387,7 @@ class Frontend extends App {
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
 				'elementor-webpack-runtime',
-				'jquery',
+//				// 'jquery',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -468,8 +468,8 @@ class Frontend extends App {
 			$this->get_js_assets_url( 'frontend' ),
 			[
 				'elementor-frontend-modules',
-				'elementor-waypoints',
-				'jquery-ui-position',
+//				'elementor-waypoints',
+//				'jquery-ui-position',
 			],
 			ELEMENTOR_VERSION,
 			true

@@ -14,8 +14,16 @@ export default class extends elementorModules.ViewModule {
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
 
+		const innerElements = this.baseElement.querySelectorAll( selectors.elements ),
+			documents = this.baseElement.querySelectorAll( '.elementor' ),
+			nestedElements = Array.from( documents ).forEach( ( document ) => document.querySelectorAll( selectors.nestedDocumentElements ) ),
+			arrayOfNestedElements = !! nestedElements
+				? Array.from( nestedElements )
+				: [],
+			filteredElements = Array.from( innerElements ).filter( ( element ) => ! arrayOfNestedElements.includes( element ) );
+
 		return {
-			$elements: this.$element.find( selectors.elements ).not( this.$element.find( selectors.nestedDocumentElements ) ),
+			baseElements: filteredElements,
 		};
 	}
 
@@ -27,30 +35,30 @@ export default class extends elementorModules.ViewModule {
 
 			const settings = elementor.settings.page.model;
 
-			jQuery.each( settings.getActiveControls(), ( controlKey ) => {
-				elementSettings[ controlKey ] = settings.attributes[ controlKey ];
-			} );
+			settings.getActiveControls().forEach(function(controlKey) {
+				elementSettings[controlKey] = settings.attributes[controlKey];
+			});
 		} else {
-			elementSettings = this.$element.data( 'elementor-settings' ) || {};
+			elementSettings = this.baseElement.dataset.elementorSettings || {};
 		}
 
 		return this.getItems( elementSettings, setting );
 	}
 
 	runElementsHandlers() {
-		this.elements.$elements.each( ( index, element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
+		Array.from( this.elements?.baseElements )?.forEach( ( element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
 	}
 
 	onInit() {
-		this.$element = this.getSettings( '$element' );
+		this.baseElement = this.getSettings( 'baseElement' );
 
 		super.onInit();
 
-		this.isEdit = this.$element.hasClass( this.getSettings( 'classes.editMode' ) );
+		this.isEdit = this.baseElement.classList.contains( this.getSettings( 'classes.editMode' ) );
 
 		if ( this.isEdit ) {
 			elementor.on( 'document:loaded', () => {
-				elementor.settings.page.model.on( 'change', this.onSettingsChange.bind( this ) );
+				elementor.settings.page.model.addEventListener('change', this.onSettingsChange.bind(this));
 			} );
 		} else {
 			this.runElementsHandlers();

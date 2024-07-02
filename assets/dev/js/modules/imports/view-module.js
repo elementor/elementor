@@ -10,8 +10,11 @@ export default Module.extend( {
 	bindEvents() {},
 
 	onInit() {
-		this.initElements();
+		if ( 'function' !== typeof this.getDefaultElements ) {
+			return;
+		}
 
+		this.initElements();
 		this.bindEvents();
 	},
 
