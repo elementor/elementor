@@ -26,15 +26,6 @@ export async function setup( wpAdmin: WpAdminPage, customExperiment: {[ n: strin
 	await wpAdmin.setExperiments( experiments );
 }
 
-export async function cleanup( wpAdmin: WpAdminPage, customExperiment: {[ n: string ]: boolean | string } | '' = '' ) {
-	let experiments = {
-		'nested-elements': 'inactive',
-	};
-
-	experiments = { ...experiments, ...customExperiment };
-	await wpAdmin.setExperiments( experiments );
-}
-
 export async function setTabItemColor(
 	editor: EditorPage,
 	panelClass: string,
