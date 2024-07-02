@@ -33,6 +33,8 @@ export const IMAGE_PROMPT_CATEGORIES = {
 			macro: __( 'Macro', 'elementor' ),
 			portrait: __( 'Portrait', 'elementor' ),
 			'long-exposure': __( 'Long Exposure', 'elementor' ),
+			product: __( 'Product', 'elementor' ),
+			photorealistic: __( 'Photorealistic', 'elementor' ),
 		},
 	},
 	background: {

@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { createPage, deletePage } from '../../../utilities/rest-api';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
@@ -15,36 +15,35 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId: string;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
+		await setup( wpAdmin );
 
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
+		await cleanup( wpAdmin );
 
 		await page.close();
 	} );
 
-	test.beforeEach( async () => {
-		pageId = await createPage();
+	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		pageId = await wpAdmin.createNewPostWithAPI();
 	} );
 
-	test.afterEach( async () => {
-		await deletePage( pageId );
-	} );
-
-	test( 'General test', async ( { page }, testInfo ) => {
+	test( 'General test', async ( { page, apiRequests }, testInfo ) => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -59,10 +58,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 
-	test( 'Accessibility inside the Editor', async ( { page }, testInfo ) => {
+	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -114,10 +112,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Accessibility on the Front End', async ( { page }, testInfo ) => {
+	test( 'Accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
@@ -177,10 +174,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Title alignment setting', async ( { page }, testInfo ) => {
+	test( 'Title alignment setting', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -197,14 +193,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert.
 		// Check if title's are aligned on the left.
 		await expect.soft( editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' ) ).toHaveCSS( 'justify-content', 'flex-start' );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Responsive breakpoints for Nested Tabs', async ( { page }, testInfo ) => {
+	test( 'Responsive breakpoints for Nested Tabs', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -226,12 +219,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Check if the correct tabs are displayed on mobile view.
 		await editor.changeResponsiveView( 'mobile' );
 		await expect.soft( desktopTabWrapper ).toHaveCSS( 'display', 'contents' );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 
 		const editor = new EditorPage( page, testInfo );
@@ -254,8 +245,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin, { e_font_icon_svg: 'inactive' } );
 	} );
 
-	test( `Check the icon size on frontend`, async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( `Check the icon size on frontend`, async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		// Set experiments.
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 
@@ -290,10 +281,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin, { e_font_icon_svg: 'inactive' } );
 	} );
 
-	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page }, testInfo ) => {
+	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -320,14 +310,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert.
 		await expect.soft( activeTab ).toHaveCSS( 'margin-bottom', '50px' );
 		await expect.soft( lastTab ).toHaveCSS( 'margin-top', '25px' );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check that the hover affects non-active tab only', async ( { page }, testInfo ) => {
+	test( 'Check that the hover affects non-active tab only', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -352,16 +339,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Verify that the non active tab does take on the hover color.
 		await notActiveTab.hover();
 		await expect.soft( notActiveTab ).toHaveCSS( 'color', rgbColor );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Check that icon color does not affect the tab text color', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await setup( wpAdmin );
-
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -385,14 +366,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await nonActiveTabIcon.hover();
 		await expect.soft( nonActiveTabIcon ).toHaveCSS( 'color', redColor );
 		await expect.soft( nonActiveTabTitle ).toHaveCSS( 'color', whiteColor );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page }, testInfo ) => {
+	test( 'Verify the separation of the parent and child nested tabs styling', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			parentWidgetId = await editor.addWidget( 'nested-tabs', container ),
@@ -423,15 +401,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 		// Check if child widget doesn't have red tabs.
 		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).not.toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Verify that the icons don\'t disappear when the tab title is updated', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -451,14 +424,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert.
 		expect.soft( activeTabSpanCount ).toBe( 2 );
 		expect.soft( activeTabUpdatedSpanCount ).toBe( 2 );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -521,14 +490,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			type: 'jpeg',
 			quality: 70,
 		} ) ).toMatchSnapshot( 'tabs-direction-top-icon-position-top-align-default.jpeg' );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -551,15 +516,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( lastTab ).toHaveAttribute( 'aria-selected', 'true' );
 		// Check if the normal tab width is equal to the active tab width.
 		expect.soft( lastTabWidth ).toEqual( lastTabActiveWidth );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the custom hover color doesn\'t affect the active tab color', async ( { page }, testInfo ) => {
+	test( 'Verify that the custom hover color doesn\'t affect the active tab color', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -596,14 +557,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Check that non-active tab receives the hover background color.
 		await nonActiveTab.hover();
 		await expect.soft( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Check if the icons are visible on mobile display on the front end', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -617,13 +574,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.setViewportSize( viewportSize.mobile );
 		await expect.soft( page.locator( '.e-n-tab-title[aria-selected="true"] .e-n-tab-icon' ) ).toBeVisible();
 		await page.setViewportSize( viewportSize.desktop );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check if the svg icons are visible on mobile display on the front end', async ( { page }, testInfo ) => {
+	test( 'Check if the svg icons are visible on mobile display on the front end', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
@@ -642,11 +597,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin, { e_font_icon_svg: 'inactive' } );
 	} );
 
-	test( 'Check if the hover style changes the normal tab styling', async ( { page }, testInfo ) => {
+	test( 'Check if the hover style changes the normal tab styling', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -682,14 +635,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( nonActiveTab ).toHaveCSS( 'border-style', borderStyle );
 		await expect.soft( nonActiveTab ).toHaveCSS( 'box-shadow', boxShadow );
 		await expect.soft( nonActiveTab ).toHaveCSS( 'border-radius', borderRadius );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Verify the correct relationships between normal, hover and active styling', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -773,14 +722,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( tabActive ).toHaveCSS( 'color', colorBlueRgb );
 		await expect.soft( tabActive ).toHaveCSS( 'border-color', colorBlueRgb );
 		await expect.soft( tabActive.locator( 'i:last-child' ) ).toHaveCSS( 'color', colorBrownRgb );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Verify that the tab sizes don\'t shrink when adding a widget in the content section.', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
@@ -809,14 +754,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		expect.soft( finalTabWidth ).toBe( initialTabWidth );
-
-		await cleanup( wpAdmin );
 	} );
 
 	test( 'Test the hover animation', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -847,7 +788,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const tabHover = await tabNormal.evaluate( ( element ) => {
 			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
 
-			return animationValue.includes( 'matrix(' ) ? true : false;
+			return animationValue.includes( 'matrix(' );
 		} );
 		expect.soft( tabHover ).toBe( true );
 		// Hover over an active tab.
@@ -861,13 +802,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Reset the original state.
 		await page.setViewportSize( viewportSize.desktop );
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test the container width type', async ( { page }, testInfo ) => {
+	test( 'Test the container width type', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -881,14 +820,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			return element.classList.contains( 'e-con-full' );
 		} );
 		expect.soft( containerFullWidthCheck ).toBe( true );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test swiper based carousel works as expected when switching to a new tab', async ( { page }, testInfo ) => {
+	test( 'Test swiper based carousel works as expected when switching to a new tab', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -922,14 +858,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert.
 		// Check the swiper in the second nested tab has initialized.
 		await expect.soft( page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab activation works correctly', async ( { page }, testInfo ) => {
+	test( 'Verify that the tab activation works correctly', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
@@ -960,14 +893,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert.
 		// Verify that after clicking on the tab, the tab is activated correctly.
 		await expect.soft( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test the nested tabs behaviour when using container flex row', async ( { page }, testInfo ) => {
+	test( 'Test the nested tabs behaviour when using container flex row', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -1030,18 +960,15 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Verify that the content width doesn't change after changing the active tab.
 		expect.soft( contentContainerOneWidth === contentContainerTwoWidth && contentContainerOneWidth === contentContainerThreeWidth ).toBeTruthy();
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Tabs and containers are duplicated correctly', async ( { page }, testInfo ) => {
+	test( 'Tabs and containers are duplicated correctly', async ( { page, apiRequests }, testInfo ) => {
 		/**
 		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
 		 * receives the correct index.
 		 */
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		// Add widgets.
@@ -1057,10 +984,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
 	} );
 
-	test( "Check widget content styling doesn't override the content container styling when they are used together", async ( { page }, testInfo ) => {
+	test( "Check widget content styling doesn't override the content container styling when they are used together", async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		// Define Nested Tabs widget instances, and custom settings to apply to one of the dropdown Containers.
@@ -1118,7 +1044,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			},
 		};
 
-		let widgetId, activeContainerId;
+		let widgetId: string, activeContainerId: string;
 
 		// Add first default Nested Tabs widget with no styling.
 		widgetId = await editor.addElement( defaultWidgetInstance );
@@ -1180,14 +1106,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 				}
 			}
 		}
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Nested tabs check flex wrap', async ( { page }, testInfo ) => {
+	test( 'Nested tabs check flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
@@ -1200,10 +1123,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 	} );
 
-	test( 'Check none breakpoint', async ( { page }, testInfo ) => {
+	test( 'Check none breakpoint', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
@@ -1224,10 +1146,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Check that background video is loaded in multiple content containers', async ( { page }, testInfo ) => {
+	test( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -1269,10 +1190,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( contentContainerThree.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
 	} );
 
-	test( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
+	test( 'Nested tabs horizontal scroll', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
@@ -1370,10 +1290,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
+	test( 'Nested tabs horizontal scroll - rtl', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setSiteLanguage( 'he_IL' );
 
 		const editor = await wpAdmin.openNewPage(),
@@ -1441,10 +1360,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
+	test( 'Nested tabs stretch for right direction', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
@@ -1463,10 +1381,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( tabTitle ).toHaveCSS( 'flex-shrink', '1' );
 	} );
 
-	test( 'Nested tabs stretch for top direction', async ( { page }, testInfo ) => {
+	test( 'Nested tabs stretch for top direction', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
@@ -1485,10 +1402,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
 
-	test( 'Check title width inside the accordion mode', async ( { page }, testInfo ) => {
+	test( 'Check title width inside the accordion mode', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		// Load template.
@@ -1507,14 +1423,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect.soft( await page.locator( '.e-con' ).first().screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'tabs-accordion-title-width.png' );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify the correct hover effect with screenshots', async ( { page }, testInfo ) => {
+	test( 'Verify the correct hover effect with screenshots', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Load template', async () => {
@@ -1551,14 +1464,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 				type: 'png',
 			} ) ).toMatchSnapshot( 'tabs-with-hover-mobile.png' );
 		} );
-
-		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check title long title alignment', async ( { page }, testInfo ) => {
+	test( 'Check title long title alignment', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		// Load template.
@@ -1575,7 +1485,5 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect.soft( await page.locator( '.e-con' ).first().screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'tabs-long-titles.png' );
-
-		await cleanup( wpAdmin );
 	} );
 } );

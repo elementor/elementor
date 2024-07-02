@@ -1,5 +1,5 @@
-import { test, Page } from '@playwright/test';
-
+import { Page } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import { closeAIDialog, findPromptHistoryButton } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
@@ -17,8 +17,8 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Prompt History Button', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History Button', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
