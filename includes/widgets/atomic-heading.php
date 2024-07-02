@@ -6,17 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Widget_Heading_V1 extends Widget_Base_V2 {
+class Widget_Atomic_Heading extends Atomic_Widget_Base {
 	public function get_icon() {
 		return 'eicon-t-letter';
 	}
 
 	public function get_title() {
-		return 'Heading V1.5';
+		return 'Atomic Heading';
 	}
 
 	public function get_name() {
-		return 'heading-v1';
+		return 'atomic-heading';
 	}
 
 	protected function render() {
@@ -24,5 +24,9 @@ class Widget_Heading_V1 extends Widget_Base_V2 {
 		$content = $this->get_settings()['content'] ?? 'Hello, World!';
 
 		echo "<$tag>$content</$tag>";
+	}
+
+	public function get_atomic_controls(): array {
+		return [];
 	}
 }

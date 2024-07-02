@@ -100,8 +100,8 @@ class Widgets_Manager {
 			'share-buttons',
 		];
 
-		$v2_build_filenames = [
-			'heading-v1',
+		$atomic_widgets_filenames = [
+			'atomic-heading',
 		];
 
 		$this->_widget_types = [];
@@ -114,10 +114,8 @@ class Widgets_Manager {
             $this->register_widget_by_filename($widget_filename);
 		}
 
-		foreach ( $v2_build_filenames as $widget_filename ) {
-			include ELEMENTOR_PATH . 'includes/widgets/v2/' . $widget_filename . '.php';
-
-			$this->register_widget_by_filename($widget_filename);
+		if ( Plugin::instance()->experiments->is_feature_active( 'editor_v2_elements' ) ) {
+			$this->register_atomic_widgets();
 		}
 
 		$this->register_wp_widgets();
@@ -158,6 +156,19 @@ class Widgets_Manager {
 
         $this->register( new $class_name() );
     }
+
+	private function register_atomic_widgets() {
+		$atomic_widgets_filenames = [
+			'atomic-heading',
+		];
+
+		foreach ( $atomic_widgets_filenames as $widget_filename ) {
+			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
+
+			$this->register_widget_by_filename($widget_filename);
+		}
+
+	}
 
 	/**
 	 * Register WordPress widgets.

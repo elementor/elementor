@@ -2,7 +2,7 @@
 
 namespace Elementor;
 
-abstract class Widget_Base_V2 extends Widget_Base {
+abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $version = '0.0';
 
 	public function __construct( $data = [], $args = null ) {
@@ -11,9 +11,7 @@ abstract class Widget_Base_V2 extends Widget_Base {
 		$this->version = $data['version'] ?? '0.0';
 	}
 
-	public function get_atomic_controls() {
-		return [];
-	}
+	abstract public function get_atomic_controls(): array;
 
 	final public function get_controls( $aaa = null ) {
 		return [];
@@ -32,14 +30,6 @@ abstract class Widget_Base_V2 extends Widget_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-
-		return $data;
-	}
-
-	final public function get_raw_data( $with_html_content = false ) {
-		$data = parent::get_raw_data( $with_html_content );
-
-		$data['styles'] = $this->get_data( 'styles' );
 
 		return $data;
 	}

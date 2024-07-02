@@ -112,6 +112,7 @@ class Autoloader {
 	private static function init_classes_map() {
 		self::$classes_map = [
 			'Api' => 'includes/api.php',
+			'Atomic_Widget_Base' => 'includes/base/atomic-widget-base.php',
 			'Base_Control' => 'includes/controls/base.php',
 			'Base_Data_Control' => 'includes/controls/base-data.php',
 			'Base_UI_Control' => 'includes/controls/base-ui.php',
@@ -154,7 +155,6 @@ class Autoloader {
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',
-			'Widget_Base_V2' => 'includes/widgets/v2/base.php',
 			'Widget_WordPress' => 'includes/widgets/wordpress.php',
 			'Widgets_Manager' => 'includes/managers/widgets.php',
 			'WordPress_Widgets_Manager' => 'includes/managers/wordpress-widgets.php',
