@@ -7,10 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget_Heading_V1 extends Widget_Base_V2 {
-	public function get_controls( $control_id = null ): array {
-		return [];
-	}
-
 	public function get_icon() {
 		return 'eicon-t-letter';
 	}
