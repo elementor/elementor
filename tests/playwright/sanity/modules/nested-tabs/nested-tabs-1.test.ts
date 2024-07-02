@@ -1,13 +1,11 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { testTabIsVisibleInAccordionView } from './tests/accordion';
 import { testIconCount } from './tests/icons';
-import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
-import { testTitlesWithHTML } from './tests/titles-with-html';
-import { clickTab, setup, setTabItemColor } from './helper';
+import { clickTab, setup, setTabItemColor, selectDropdownContainer } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
+import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
@@ -132,7 +130,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tests.
 		await testIconCount( editor );
 		await testTitlesWithHTML( page, editor );
-		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, imageCarousel );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( editor, imageCarousel );
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 
@@ -290,3 +288,80 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( nonActiveTabTitle ).toHaveCSS( 'color', whiteColor );
 	} );
 } );
+
+const testTitlesWithHTML = async ( page: Page, editor: EditorPage ) => {
+	// Act.
+	await clickTab( editor.getPreviewFrame(), 2 );
+	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child' ).click();
+	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( '<div style="display: flex; flex-direction: column;"><strong class="test-class">Tab 3</strong><div> has<br />html <br />elements</div></div>' );
+
+	const activeTab = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' );
+
+	expect.soft( await activeTab.screenshot( {
+		type: 'png',
+	} ) ).toMatchSnapshot( 'tab-title-with-html.png' );
+
+	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( 'Tab #3' );
+};
+
+const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: EditorPage, imageCarousel: ImageCarousel ) => {
+	// Act.
+	const contentContainerId = await selectDropdownContainer( editor, '', 0 ),
+		activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
+		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
+
+	// Add images.
+	await imageCarousel.addImageGallery();
+	await editor.openSection( 'section_additional_options' );
+	await editor.setSwitcherControlValue( 'autoplay', false );
+
+	// Set direction right.
+	await clickTab( editor.getPreviewFrame(), 0 );
+	await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-right' );
+	await editor.togglePreviewMode();
+
+	// Assert
+	expect.soft( await activeContentContainer.screenshot( {
+		type: 'jpeg',
+		quality: 100,
+	} ) ).toMatchSnapshot( 'tabs-direction-right-carousel-visible.jpeg' );
+
+	// Restore original view.
+	await editor.togglePreviewMode();
+	await editor.removeElement( carouselId );
+	await clickTab( editor.getPreviewFrame(), 0 );
+	await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-right' );
+};
+
+const testTabIsVisibleInAccordionView = async ( page: Page, editor: EditorPage ) => {
+	// Act.
+	await selectDropdownContainer( editor, '', 0 );
+	await editor.setSliderControlValue( 'min_height', '1000' );
+	await selectDropdownContainer( editor, '', 1 );
+	await editor.setSliderControlValue( 'min_height', '1000' );
+	await selectDropdownContainer( editor, '', 2 );
+	await editor.setSliderControlValue( 'min_height', '1000' );
+
+	await editor.publishAndViewPage();
+	await page.setViewportSize( viewportSize.mobile );
+
+	const tabContainer1 = page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
+		tabContainer2 = page.locator( '.e-n-tabs-content > div:nth-child( 2 )' ),
+		tabContainer3 = page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
+		activeTabTitleSelector = '.e-n-tab-title[aria-selected="true"]';
+
+	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
+	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, 1 );
+	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
+	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, 2 );
+	await expect.soft( tabContainer3 ).toHaveClass( /e-active/ );
+	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, 1 );
+	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
+	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, 0 );
+	await expect.soft( tabContainer1 ).toHaveClass( /e-active/ );
+	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+};
