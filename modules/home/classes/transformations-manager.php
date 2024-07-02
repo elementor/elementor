@@ -3,6 +3,7 @@ namespace Elementor\Modules\Home\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -24,15 +25,20 @@ class Transformations_Manager {
 
 	protected array $home_screen_data;
 
-	protected Wordpress_Adapter $wordpress_adapter;
+	protected Wordpress_Adapter_Interface $wordpress_adapter;
 
 	protected Plugin_Status_Adapter $plugin_status_adapter;
 
 	protected array $transformation_classes = [];
 
 	public function __construct( $home_screen_data ) {
+		if ( elementor_pro_container()->has( Wordpress_Adapter_Interface::class ) ) {
+			$this->wordpress_adapter = elementor_pro_container( Wordpress_Adapter_Interface::class );
+		} else {
+			$this->wordpress_adapter = new Wordpress_Adapter();
+		}
+
 		$this->home_screen_data = $home_screen_data;
-		$this->wordpress_adapter = new Wordpress_Adapter();
 		$this->plugin_status_adapter = new Plugin_Status_Adapter();
 		$this->transformation_classes = $this->get_transformation_classes();
 	}

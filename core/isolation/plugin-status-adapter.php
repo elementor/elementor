@@ -1,17 +1,12 @@
 <?php
 namespace Elementor\Core\Isolation;
 
-use Elementor\Container;
-
 class Plugin_Status_Adapter implements Plugin_Status_Adapter_Interface {
 
 	public Wordpress_Adapter_Interface $wordpress_adapter;
 
-	private Container $container;
-
-	public function __construct() {
-		$this->container = new Container();
-		$this->wordpress_adapter = $this->container->get( Wordpress_Adapter::class );
+	public function __construct( $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
 	}
 
 	public function is_plugin_installed( $plugin_path ): bool {
