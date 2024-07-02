@@ -22,9 +22,7 @@ class Widget_Heading_V1 extends Widget_Base_V2 {
 	protected function render() {
 		$tag = $this->get_settings()['tag'] ?? 'h2';
 		$content = $this->get_settings()['content'] ?? 'Hello, World!';
-		$style = $this->styles['inline'];
 
-		echo "<$tag style=\"$style\">$content</$tag>";
+		echo "<$tag>$content</$tag>";
 	}
 }
-
