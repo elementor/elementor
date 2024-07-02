@@ -32,8 +32,8 @@ class Transformations_Manager {
 	protected array $transformation_classes = [];
 
 	public function __construct( $home_screen_data ) {
-		if ( elementor_pro_container()->has( Wordpress_Adapter_Interface::class ) ) {
-			$this->wordpress_adapter = elementor_pro_container( Wordpress_Adapter_Interface::class );
+		if ( elementor_container()->has( Wordpress_Adapter_Interface::class ) ) {
+			$this->wordpress_adapter = elementor_container( Wordpress_Adapter_Interface::class );
 		} else {
 			$this->wordpress_adapter = new Wordpress_Adapter();
 		}

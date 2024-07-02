@@ -80,11 +80,6 @@ class Autoloader {
 		self::$default_namespace = $default_namespace;
 
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
-
-		if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
-			require_once ELEMENTOR_PATH . 'vendor/autoload.php';
-		}
-
 	}
 
 	/**
@@ -156,7 +151,7 @@ class Autoloader {
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
 			'TemplateLibrary\Source_Remote' => 'includes/template-library/sources/remote.php',
 			'Tools' => 'includes/settings/tools.php',
-			'Container' => 'includes/container/container.php',
+			'Container\Container' => 'includes/container/container.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Container;
+use Elementor\Container\Container;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
@@ -842,7 +842,7 @@ class Plugin {
 	private function __construct() {
 		$this->register_autoloader();
 
-		Container::setInstance();
+		Container::set_instance();
 
 		$this->logger = Log_Manager::instance();
 		$this->data_manager_v2 = Data_Manager_V2::instance();

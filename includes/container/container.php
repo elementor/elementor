@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor;
+namespace Elementor\Container;
 
 use Exception;
 use DI\ContainerBuilder;
@@ -15,34 +15,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor container handler class is responsible for containerization
  * manager classes and their dependencies.
  *
- * @since 1.0.0
+ * @since 3.24.0
  */
 
 class Container extends ContainerBuilder {
 
 	protected static $instance;
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
-		$this->registerConfiguration();
+		$this->register_configuration();
 	}
 
-	private function registerConfiguration()
-	{
+	private function register_configuration() {
 		$this->addDefinitions( __DIR__ . '/config.php');
 	}
 
 	/**
 	 * @throws Exception
 	 */
-	public function init(): \DI\Container
-	{
+	public function init(): \DI\Container {
 		return $this->build();
 	}
 
-	public static function getInstance()
-	{
+	public static function get_instance() {
 		if (is_null(static::$instance)) {
 			static::$instance = new static;
 
@@ -52,8 +48,7 @@ class Container extends ContainerBuilder {
 		return static::$instance;
 	}
 
-	public static function setInstance()
-	{
+	public static function set_instance() {
 		static::$instance = new static;
 
 		static::$instance->init();

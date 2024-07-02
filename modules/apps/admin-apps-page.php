@@ -47,8 +47,8 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		if ( elementor_pro_container()->has( Wordpress_Adapter_Interface::class ) ) {
-			self::$wordpress_adapter = elementor_pro_container( Wordpress_Adapter_Interface::class );
+		if ( elementor_container()->has( Wordpress_Adapter_Interface::class ) ) {
+			self::$wordpress_adapter = elementor_container( Wordpress_Adapter_Interface::class );
 		} else if ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}

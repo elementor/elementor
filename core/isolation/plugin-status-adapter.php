@@ -5,7 +5,7 @@ class Plugin_Status_Adapter implements Plugin_Status_Adapter_Interface {
 
 	public Wordpress_Adapter_Interface $wordpress_adapter;
 
-	public function __construct( $wordpress_adapter ) {
+	public function __construct( Wordpress_Adapter_Interface $wordpress_adapter ) {
 		$this->wordpress_adapter = $wordpress_adapter;
 	}
 
