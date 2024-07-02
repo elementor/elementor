@@ -21,23 +21,13 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
-	}
+		add_action( 'elementor/editor/before_enqueue_scripts', function () {
+			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
+				'nested-elements',
+			], ELEMENTOR_VERSION, true );
+		} );
 
-	/**
-	 * Enqueue scripts.
-	 *
-	 * @return void
-	 */
-	public function enqueue_scripts() {
-		wp_enqueue_script(
-			$this->get_name(),
-			$this->get_js_assets_url( $this->get_name() ),
-			[ 'nested-elements' ],
-			ELEMENTOR_VERSION,
-			true
-		);
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
 	}
 
 	/**
