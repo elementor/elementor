@@ -28,7 +28,7 @@ class Container extends ContainerBuilder {
 	}
 
 	private function register_configuration() {
-		$this->addDefinitions( __DIR__ . '/config.php');
+		$this->addDefinitions( __DIR__ . '/config.php' );
 	}
 
 	/**
@@ -42,8 +42,8 @@ class Container extends ContainerBuilder {
 	 * @throws Exception
 	 */
 	public static function get_instance() {
-		if (is_null(static::$instance)) {
-			$instance = new static;
+		if ( is_null( static::$instance ) ) {
+			$instance = new static();
 
 			static::$instance = $instance->init();
 		}
@@ -55,7 +55,7 @@ class Container extends ContainerBuilder {
 	 * @throws Exception
 	 */
 	public static function set_instance() {
-		$instance = new static;
+		$instance = new static();
 
 		static::$instance = $instance->init();
 
