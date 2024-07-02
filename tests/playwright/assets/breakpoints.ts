@@ -1,11 +1,28 @@
-import { type Page } from '@playwright/test';
+import { Locator, type Page } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
+import { Device } from '../types/types';
 
 export default class {
 	readonly page: Page;
 	constructor( page: Page ) {
 		this.page = page;
 		// TODO: throw exception if experiment Breakpoints is deactivated.
+	}
+
+	static getDeviceLocator( page: Page, device: Device ): Locator {
+		// TODO: use the new data-testid attribute
+		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
+		const locators = {
+			mobile: baseLocator.locator( 'button[aria-label="Mobile Portrait (up to 767px)"]' ),
+			mobile_extra: baseLocator.locator( 'button[aria-label="Mobile Landscape (up to 880px)"]' ),
+			tablet: baseLocator.locator( 'button[aria-label="Tablet Portrait (up to 1024px)"]' ),
+			tablet_extra: baseLocator.locator( 'button[aria-label="Tablet Landscape (up to 1200px)"]' ),
+			laptop: baseLocator.locator( 'button[aria-label="Laptop (up to 1366px)"]' ),
+			desktop: baseLocator.locator( 'button[aria-label="Desktop"]' ),
+			widescreen: baseLocator.locator( 'button[aria-label="Widescreen (2400px and up)"]' ),
+		};
+
+		return locators[ device ];
 	}
 
 	static getAll() {
