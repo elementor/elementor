@@ -10,7 +10,6 @@ require $composer_autoloader_file;
 
 
 use Elementor\Autoloader;
-use Elementor\Container\Container;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
@@ -58,7 +57,6 @@ require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 require __DIR__ . '/phpunit/elementor/schemas/bootstrap.php';
 
 Autoloader::run();
-Container::set_instance();
 
 remove_action( 'admin_init', '_maybe_update_themes' );
 remove_action( 'admin_init', '_maybe_update_core' );
