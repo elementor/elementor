@@ -126,7 +126,21 @@ class User {
 			return false;
 		}
 
-		return true;
+		$current_user_can_edit = true;
+
+		/**
+		 * Can the current user edit the post/page?
+		 *
+		 * This hook can be used to restrict the ability to edit certain posts/pages,
+		 * by filtering the current user ability to edit posts/pages.
+		 *
+		 * @param bool $current_user_can_edit Whether the current user can edit the post/page.
+		 *                                    Default is true.
+		 * @param int  $post_id               The ID of the current post/page.
+		 */
+		$current_user_can_edit = apply_filters( 'elementor/is_current_user_can_edit', $current_user_can_edit, $post->ID );
+
+		return $current_user_can_edit;
 	}
 
 	/**
