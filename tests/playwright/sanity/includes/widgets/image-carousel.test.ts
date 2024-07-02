@@ -7,14 +7,20 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
-	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
 		} );
+	} );
+
+	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const imageCarousel = new ImageCarousel( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
 
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'canvas' );
@@ -110,9 +116,6 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'default' );
 		await editor.closeNavigatorIfOpen();
@@ -147,10 +150,6 @@ test.describe( 'Image carousel tests', () => {
 		const caption = [ 'Test caption!', 'Test caption!', 'Test caption!' ];
 		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
 		const title = [ 'A', 'B', 'C' ];
-
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'canvas' );

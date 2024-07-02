@@ -90,3 +90,5 @@ export type ElementorType = {
 		}
 	}
 }
+
+export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';
