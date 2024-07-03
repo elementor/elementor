@@ -111,16 +111,87 @@ Create unparalleled websites while saving time, money and resources with [Elemen
 
 **Pro Design Widgets:**
 
+1. **Posts**: Display your blog posts with customizable layouts and styles.
+1. **Share Buttons**: Allow visitors to easily share your content on various social media platforms.
+1. **Portfolio**: Showcase your work or projects with stunning portfolio layouts.
+1. **Slides**: Create dynamic slideshows with custom animations and transitions.
+1. **Form**: Design and customize advanced forms for user interaction and data collection.
+1. **Login**: Add a login form or user registration module to your website.
+1. **Nav Menu**: Customize and style your website's navigation menu for better user experience.
+1. **Animated Headline**: Create attention-grabbing headlines with animated effects.
+1. **Price Table**: Display pricing plans or packages in a structured and visually appealing format.
+1. **Price List**: Showcase a list of prices or services with customizable styling options.
+1. **Gallery**: Create beautiful image galleries with various layout options and lightbox support.
+1. **Flip Box**: Add interactive flip animations to highlight content or features.
+1. **Call to Action**: Encourage user interaction and conversions with compelling call-to-action sections.
+1. **Media Carousel**: Showcase a carousel of media files such as images or videos.
+1. **Testimonial Carousel**: Display client testimonials in a carousel format for social proof.
+1. **Nested Carousel**: Create nested carousels for more complex content organization.
+1. **Loop Carousel**: Display content in a looped carousel for continuous viewing.
+1. **Table Of Content**: Generate a table of contents for longer articles or guides to improve navigation.
+1. **Countdown**: Add countdown timers to create urgency for promotions or events.
+1. **Facebook Page**: Embed your Facebook page feed or content onto your website.
+1. **Blockquote**: Highlight quotes or testimonials with stylish formatting options.
+1. **Template**: Save and reuse design templates for consistent branding and layout.
+1. **Reviews**: Showcase customer reviews and ratings to build trust and credibility.
+1. **Facebook Button**: Add buttons to promote interactions with your Facebook page or content.
+1. **Facebook Embed**: Embed Facebook posts or content onto your website.
+1. **Facebook Comments**: Enable Facebook comments on your website's pages or posts.
+1. **PayPal Button**: Integrate PayPal buttons for easy online payments.
+1. **Stripe Button**: Integrate Stripe payment buttons to facilitate secure online transactions.
+1. **Lottie Widget**: Add Lottie animations to enhance visual appeal and engagement.
+1. **Code Highlight**: Display code snippets with syntax highlighting for better readability.
+1. **Video Playlist**: Create and customize playlists for video content on your website.
+1. **Mega Menu**: Customize advanced mega menus to improve navigation and display complex content structures effectively.
+1. **Off Canvas**: Create off-canvas content areas that slide in and out of view to display additional information or menus without cluttering the main page layout.
+
 **Pro Theme Widgets:**
 Build and customize all the key parts of your website including headers, footers, 404 page, global archives, and more
 
--
+1. **Post Title**: Customize the title of individual blog posts or pages.
+1. **Post Excerpt**: Display a brief summary or teaser of your blog posts.
+1. **Post Content**: Customize the main content area of your blog posts or pages.
+1. **Featured Image**: Set and customize featured images for blog posts or pages.
+1. **Author Box**: Display author information and bios on blog posts.
+1. **Post Comments**: Customize the appearance and functionality of comments sections on your website.
+1. **Post Navigation**: Add navigation links to adjacent posts for easy browsing.
+1. **Post Info**: Display additional information about blog posts, such as author and date.
+1. **Site Logo**: Upload and customize your website's logo for branding purposes.
+1. **Site Title**: Customize the title of your website.
+1. **Page Title**: Customize the title of individual pages.
+1. **Search Bar**: Add a search bar to allow users to search your website's content.
+1. **Breadcrumbs**: Display hierarchical navigation paths for better user navigation.
+1. **Sitemap**: Generate a sitemap for better search engine indexing and user navigation.
+1. **Loop Grid**: Design and customize grid layouts for blog post archives or product listings.
 
 **Pro WooCommerce Widgets:**
 Design and customize a complete online shopping experience across your entire website.
 
--
-
+1. **Product**: Display individual products with customizable layouts and styles.
+1. **Breadcrumbs**: Display hierarchical navigation paths for better user navigation within your store.
+1. **Product Title**: Customize the title of individual products.
+1. **Product Images**: Set and customize images for product listings.
+1. **Product Price**: Display the price of individual products.
+1. **Add To Cart**: Add customizable add to cart buttons for easy purchasing.
+1. **Product Rating**: Display ratings and reviews for products.
+1. **Product Stock**: Display stock availability for products.
+1. **Product Meta**: Display additional information about products, such as SKU and categories.
+1. **Product Content**: Customize the main content area of product descriptions.
+1. **Short Description**: Display brief summaries or teasers of products.
+1. **Product Data Tabs**: Organize product information into tabbed sections for better organization.
+1. **Additional Information**: Display additional details about products, such as dimensions and weight.
+1. **Product Related**: Showcase related products to encourage additional purchases.
+1. **Upsells**: Promote upsell products to increase average order value.
+1. **Products**: Display a grid or list of products with customizable settings.
+1. **Custom Add To Cart**: Customize the add to cart button for specific products.
+1. **WooCommerce Pages**: Design and customize WooCommerce-specific pages, such as the cart and checkout pages.
+1. **Product Categories**: Display product categories for easy navigation within your store.
+1. **Menu Cart**: Display a cart icon in your navigation menu for easy access to the shopping cart.
+1. **Cart**: Customize the appearance and functionality of the shopping cart page.
+1. **Checkout**: Customize the appearance and functionality of the checkout page.
+1. **My Account**: Customize the appearance and functionality of the customer account area.
+1. **Purchase Summary**: Display a summary of purchases during the checkout process.
+1. **WooCommerce Notices**: Customize the appearance and functionality of WooCommerce notices, such as order confirmation messages.
 
 Build professional websites with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro-2/)!
 
@@ -152,15 +223,11 @@ Join a global community that helps each other achieve their goals. Get answers, 
 - [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - Over 150K+ members, constantly offering support, advice, feedback, and tutorials.
 - [Github Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about releases, request features, or report a bug.
 - [Elementor Addons, Themes, and Kits](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) thousands of themes, addons and kits created specifically for Elementor.
-
-- Learn from our tutorials on [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
-- Rate us on [WordPress](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-review/) :)
-
-= RESOURCES AND SUPPORT =
-- Learn how to get started with Elementor, or view tutorials go to the [Elementor Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) or the [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/).
-- If you have questions or need support, visit the [Plugin’s forum](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-forum/). Elementor Pro users can get 24/7 premium support.
+- Learn valuable insights and techniques from our extensive [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
+- Access our [Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) and [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/) - Find comprehensive guides, tutorials, and troubleshooting resources to answer your questions and empower your creativity.
+- Show your support by [rating us on WordPress](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-review/). Your feedback fuels our growth! 🤗
+- If you have questions or need support, visit the Plugin’s forum. Elementor Pro users can get 24/7 premium support.
 - For more information about Elementor visit [Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-elementor-website-builder/).
-
 
 
 
