@@ -21,7 +21,7 @@ class Widget_Atomic_Heading extends Atomic_Widget_Base {
 
 	protected function render() {
 		$tag = $this->get_settings()['tag'] ?? 'h2';
-		$content = $this->get_settings()['content'] ?? 'Hello, World!';
+		$content = $this->get_settings()['title'] ?? 'Hello, World!';
 
 		echo "<$tag>$content</$tag>";
 	}
