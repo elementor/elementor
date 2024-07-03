@@ -112,7 +112,7 @@ class Widgets_Manager {
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
 
-            $this->register_widget_by_filename($widget_filename);
+			$this->register_widget_by_filename( $widget_filename );
 		}
 
 		if ( Plugin::instance()->experiments->is_feature_active( Editor_V2_Experiments::ATOMIC_WIDGETS ) ) {
@@ -150,13 +150,13 @@ class Widgets_Manager {
 		do_action( 'elementor/widgets/register', $this );
 	}
 
-    private function register_widget_by_filename(string $filename) {
-        $class_name = str_replace( '-', '_', $filename );
+	private function register_widget_by_filename( string $filename ) {
+		$class_name = str_replace( '-', '_', $filename );
 
-        $class_name = __NAMESPACE__ . '\Widget_' . $class_name;
+		$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
 
-        $this->register( new $class_name() );
-    }
+		$this->register( new $class_name() );
+	}
 
 	private function register_atomic_widgets() {
 		$atomic_widgets_filenames = [
@@ -166,7 +166,7 @@ class Widgets_Manager {
 		foreach ( $atomic_widgets_filenames as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
 
-			$this->register_widget_by_filename($widget_filename);
+			$this->register_widget_by_filename( $widget_filename );
 		}
 	}
 
