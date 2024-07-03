@@ -7,6 +7,8 @@ import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import _path from 'path';
 
+const templateFilePath = _path.resolve( __dirname, `../../templates/container-dimensions-ltr-rtl.json` );
+
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
@@ -406,8 +408,7 @@ test.describe( 'Container tests @container', () => {
 			let frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
-				const filePath = _path.resolve( __dirname, `../../templates/container-dimensions-ltr-rtl.json` );
-				await editor.loadTemplate( filePath, false );
+				await editor.loadTemplate( templateFilePath, false );
 				await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
 				await editor.closeNavigatorIfOpen();
 			} );
@@ -432,8 +433,7 @@ test.describe( 'Container tests @container', () => {
 			frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
-				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
-				await editor.loadTemplate( filePath, false );
+				await editor.loadTemplate( templateFilePath, false );
 				await frame.waitForSelector( '.e-con.e-parent >> nth=0' );
 				await editor.closeNavigatorIfOpen();
 			} );
@@ -456,8 +456,7 @@ test.describe( 'Container tests @container', () => {
 			frame = editor.getPreviewFrame();
 
 		await test.step( 'Load Template', async () => {
-			const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
-			await editor.loadTemplate( filePath, false );
+			await editor.loadTemplate( templateFilePath, false );
 			await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
 			await editor.closeNavigatorIfOpen();
 		} );
