@@ -5,14 +5,13 @@ import { expect } from '@playwright/test';
 test.describe( 'Atomic Widgets', () => {
 	let editor;
 	let wpAdmin;
-	let context;
 
 	const atomicWidgets = [
 		{ name: 'atomic-heading', title: 'Atomic Heading' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		context = await browser.newContext();
+		const context = await browser.newContext();
 
 		const page = await context.newPage();
 
