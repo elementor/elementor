@@ -51,6 +51,7 @@
 
 			&[aria-expanded="true"] {
 				background-color: var(--e-contact-buttons-active-button-bg);
+				color: var(--e-contact-buttons-active-button-color);
 
 				svg {
 					fill: var(--e-contact-buttons-active-button-color);
@@ -140,6 +141,7 @@
 			padding-block-end: 20px;
 		}
 
+		&__contact-icon-link:not([href]):not([tabindex]), // to override inline styles when the href is not set
 		&__contact-icon-link {
 			color: var(--e-contact-buttons-icon-link-text-color);
 			display: flex;
