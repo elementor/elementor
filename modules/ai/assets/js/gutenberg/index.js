@@ -72,9 +72,7 @@ import { GenerateTextWithAi } from './text-with-ai';
 			const blocks = wp.data.select( 'core/block-editor' )?.getBlocks();
 			for ( const block of blocks ) {
 				if ( block.name === blockName ) {
-					setTimeout( function() {
-						functionAddAi();
-					}, 1 );
+					functionAddAi();
 				}
 			}
 		};
