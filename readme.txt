@@ -22,7 +22,7 @@ Revolutionize the way you build websites with [Elementor AI](https://go.elemento
 
 Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
-= 🌟Create Professional Stunning Websites =
+= 🌟 Create Professional Stunning Websites =
 - **[Intuitive Drag & Drop Builder](https://go.elementor.com/feature-page-editor/)**: Build any website with our no-code, drag-and-drop Editor. Achieve design precision with full control over layout and style.
 - **[Pixel-Perfect Design Tools](https://go.elementor.com/wp-repo-description-tab-pro-features-feature-page/)**: Upload SVGs, apply masks, gradients, box shadows, headline effects, shape dividers, and use built-in CSS controls for advanced customization.
 - **[Template Library](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/)**: Apply complete website kits for instant setups, or choose from a vast library of single pages, blocks, and pop-up templates. Create and export your own templates for reuse.
