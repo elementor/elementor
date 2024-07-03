@@ -118,7 +118,7 @@ class Module extends BaseModule {
 					'wp-blocks',
 					'wp-element',
 					'wp-editor',
-					'wp-data'
+					'wp-data',
 				],
 			ELEMENTOR_VERSION, true );
 
