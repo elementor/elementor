@@ -48,7 +48,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **[Motion Effects](https://go.elementor.com/wp-repo-description-tab-pro-features-motion-effects/) [Pro]**: Add advanced motion effects to elements for a more dynamic and engaging user experience.
 - **Custom Fonts & Icons [Pro]**: Upload and use custom fonts and icons to match your brand's identity.
 
-= 😍Elementor FREE widgets =
+= 😍 Elementor FREE widgets =
 Unlock the potential of Elementor with our comprehensive suite of free widgets and tools, designed to empower your website creation process and elevate your design capabilities:
 
 - **Heading**. Add eye-catching headlines.
@@ -84,9 +84,9 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 - **And counting...**
 
 = 🚀 Enhance Your Website =
-[High-Performing Websites](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/): Website performance impacts your visitor’s experience and search result ranking. Elementor, in partnership with Google Chrome, continuously enhances performance without compromising design.
+**[High-Performing Websites](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/)**: Website performance impacts your visitor’s experience and search result ranking. Elementor, in partnership with Google Chrome, continuously enhances performance without compromising design.
 
-Key features include:
+**Key features include:**
 
 - **Reduced DOM Output**: Streamlined HTML structure for faster rendering.
 - **Improved Media File Loading**: Optimized loading of images, videos, and other media assets.
@@ -195,7 +195,7 @@ Design and customize a complete online shopping experience across your entire we
 
 Build professional websites with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro-2/)!
 
-= 🔒SECURITY AND COMPLIANCE =
+= 🔒 SECURITY AND COMPLIANCE =
 Elementor places a paramount focus on security, evident through our acquisition of industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications underscore our commitment to implementing robust security measures, and highlight our dedication to adhering to recognized industry standards.
 
 To build secure and reliable software, we follow a Secure System Development Lifecycle based on industry best practices. Our development process integrates multiple services that monitor vulnerabilities and configuration mistakes, including those in third-party libraries. Each line of code we release undergoes manual and automated quality assurance to detect and address any potential issues.
