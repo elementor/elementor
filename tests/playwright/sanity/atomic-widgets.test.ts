@@ -45,7 +45,7 @@ test.describe( 'Atomic Widgets', () => {
 
 	async function enableRequiredExperiments() {
 		await wpAdmin.setExperiments( {
-			editor_v2_elements: 'active',
+			atomic_widgets: 'active',
 		} );
 	}
 } );

@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
@@ -114,7 +115,7 @@ class Widgets_Manager {
             $this->register_widget_by_filename($widget_filename);
 		}
 
-		if ( Plugin::instance()->experiments->is_feature_active( 'editor_v2_elements' ) ) {
+		if ( Plugin::instance()->experiments->is_feature_active( Editor_V2_Experiments::ATOMIC_WIDGETS ) ) {
 			$this->register_atomic_widgets();
 		}
 
