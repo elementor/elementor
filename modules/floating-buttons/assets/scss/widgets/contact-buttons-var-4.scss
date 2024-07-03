@@ -78,6 +78,10 @@
 			display: flex;
 			flex-direction: row;
 			gap: 14px;
+			
+			.e-contact-buttons__contact-icon-container {
+				color: var(--e-contact-buttons-contact-button-icon);
+			}
 
 			svg {
 				fill: var(--e-contact-buttons-contact-button-icon);
@@ -88,6 +92,7 @@
 
 				.e-contact-buttons__contact-icon-container {
 					background-color: var(--e-contact-buttons-contact-button-bg-hover);
+					color: var(--e-contact-buttons-contact-button-icon-hover);
 					transition: $transition-hover;
 				}
 

@@ -11,6 +11,7 @@ use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -23,6 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'floating-buttons';
+
+	const ROUTER_VERSION = '1.0.0';
+	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
 
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
 
@@ -55,10 +59,14 @@ class Module extends BaseModule {
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
 			'description' => esc_html__( 'Boost visitor engagement with Floating Buttons. The Floating Button template library offers a variety of interactive one-click contact options, highlighted links, and calls to action to increase your website conversions.', 'elementor' ),
-			'hidden' => true,
 			'default' => Manager::STATE_INACTIVE,
+			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'dependencies' => [
 				'container',
+			],
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.23.0',
 			],
 		];
 	}
@@ -95,8 +103,14 @@ class Module extends BaseModule {
 			} );
 		}
 
+		add_action( 'save_post_' . static::CPT_FLOATING_BUTTONS, [ $this, 'flush_permalinks_on_save' ] );
+
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
+			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
+		});
 
 		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'wp_footer', function () {
@@ -263,6 +277,17 @@ class Module extends BaseModule {
 		}
 	}
 
+	public function flush_permalinks_on_save() {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( get_option( static::ROUTER_OPTION_KEY ) !== static::ROUTER_VERSION ) {
+			flush_rewrite_rules();
+			update_option( static::ROUTER_OPTION_KEY, static::ROUTER_VERSION );
+		}
+	}
+
 	private function get_trashed_contact_posts(): array {
 		if ( $this->trashed_contact_pages ) {
 			return $this->trashed_contact_pages;
@@ -313,9 +338,9 @@ class Module extends BaseModule {
 			<?php
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
-				esc_html__( 'Floating Buttons', 'elementor' ),
+				esc_html__( 'Floating Button', 'elementor' ),
 				$this->get_add_new_contact_page_url(),
-				esc_html__( 'Add a Contact button so your users can easily get in touch!', 'elementor' )
+				nl2br( esc_html__( 'Add a Floating button so your users can easily get in touch!', 'elementor' ) )
 			);
 
 			if ( ! empty( $trashed_posts ) ) : ?>
@@ -463,6 +488,18 @@ class Module extends BaseModule {
 	}
 
 	private function render_floating_buttons(): void {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			$post_id = ElementorUtils::get_super_global_value( $_GET, 'elementor-preview' );
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if (
+				$document instanceof Document &&
+				$document->get_name() === static::FLOATING_BUTTONS_DOCUMENT_TYPE
+			) {
+				return;
+			}
+		}
+
 		$query = new \WP_Query( [
 			'post_type' => static::CPT_FLOATING_BUTTONS,
 			'posts_per_page' => - 1,

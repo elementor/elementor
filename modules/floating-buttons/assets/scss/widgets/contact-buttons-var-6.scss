@@ -5,10 +5,11 @@
 	--e-contact-buttons-button-bar-bg: #324A6D;
 	--e-contact-buttons-links-border-radius: #{$contact-buttons-border-radius-round};
 	--e-contact-buttons-contact-button-icon-hover: #C8D5DC;
-	--e-contact-buttons-button-bar-padding-block-end: 16px;
-	--e-contact-buttons-button-bar-padding-block-start: 16px;
-	--e-contact-buttons-button-bar-padding-inline-end: 16px;
-	--e-contact-buttons-button-bar-padding-inline-start: 16px;
+	--e-contact-buttons-button-bar-padding-block-end: 12px;
+	--e-contact-buttons-button-bar-padding-block-start: 12px;
+	--e-contact-buttons-button-bar-padding-inline-end: 12px;
+	--e-contact-buttons-button-bar-padding-inline-start: 12px;
+	--e-contact-buttons-vertical-offset: 20px;
 
 	width: auto;
 
@@ -37,6 +38,7 @@
 		}
 
 		&__contact-icon-link {
+			color: var(--e-contact-buttons-contact-button-icon);
 			display: flex;
 			padding-block-end: var(--e-contact-buttons-button-bar-padding-block-end);
 			padding-block-start: var(--e-contact-buttons-button-bar-padding-block-start);
@@ -52,6 +54,7 @@
 
 			&:hover,
 			&:focus {
+				color: var(--e-contact-buttons-contact-button-icon-hover);
 
 				svg {
 					fill: var(--e-contact-buttons-contact-button-icon-hover);
