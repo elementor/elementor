@@ -55,9 +55,9 @@ module.exports = function( grunt ) {
 
 		grunt.task.run( 'create_eicons_frontend_js_file' );
 
-		if ( ! isDevMode ) {
-			grunt.task.run( 'webpack:developmentNoWatch' );
-		}
+		// if ( ! isDevMode ) {
+		// 	grunt.task.run( 'webpack:developmentNoWatch' );
+		// }
 
 		grunt.task.run( taskName );
 	} );
