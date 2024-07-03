@@ -406,7 +406,7 @@ test.describe( 'Container tests @container', () => {
 			let frame = editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
-				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
+				const filePath = _path.resolve( __dirname, `../../templates/container-dimensions-ltr-rtl.json` );
 				await editor.loadTemplate( filePath, false );
 				await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
 				await editor.closeNavigatorIfOpen();
