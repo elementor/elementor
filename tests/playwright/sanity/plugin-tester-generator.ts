@@ -13,7 +13,9 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 	{ pluginName: 'bdthemes-prime-slider-lite', installByAPI: true },
 	{ pluginName: 'wunderwp', installByAPI: true },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installByAPI: true },
-	{ pluginName: 'addons-for-elementor', installByAPI: true },
+	// Addons for elementor is closed as of July 2, 2024 and is not available for download. This closure is temporary, pending a full review.
+	// see: https://wordpress.org/plugins/addons-for-elementor/
+	// { pluginName: 'addons-for-elementor', installByAPI: true },
 	{ pluginName: 'anywhere-elementor', installByAPI: true },
 	{ pluginName: 'astra-sites', installByAPI: true },
 	{ pluginName: 'connect-polylang-elementor', installByAPI: true },
