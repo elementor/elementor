@@ -98,7 +98,7 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 
 ***Looking to boost sites performance?** Meet the [Image Optimizer plugin](https://go.elementor.com/wp-repo-description-tab-elementor-io/) by Elementor: an easy-to-use WordPress plugin that effortlessly reduces image sizes without sacrificing quality. Compatible with popular formats like JPEG, PNG, WebP, and GIF, it ensures a visually stunning, high-speed website – [download now](https://wordpress.org/plugins/image-optimization/)!*
 
-= 📈Accelerate your web creation process =
+= 📈 Accelerate your web creation process =
 To speed up your workflow, Elementor offers tools that enhance collaboration and efficiency, such as:
 
 - **Finder** - quickly navigate between different pages and website components, or create new website parts.
@@ -106,7 +106,7 @@ To speed up your workflow, Elementor offers tools that enhance collaboration and
 - **Copy & Paste Between Editors** - copy elements or layouts from the Editor of one website to another.
 
 
-= 🔥Elementor Pro Features =
+= 🔥 Elementor Pro Features =
 Create unparalleled websites while saving time, money and resources with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro/)’s full website builder. Get access to 100+ professional widgets, features, and tools.
 
 **Pro Design Widgets:**
