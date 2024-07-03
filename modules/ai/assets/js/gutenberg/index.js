@@ -1,7 +1,6 @@
 import { createRoot } from '@wordpress/element';
 import GenerateExcerptWithAI from './excerpt';
 import GenerateFeaturedImageWithAI from './featured-image';
-import { Button } from '@elementor/ui';
 import { GenerateTextWithAi } from './text-with-ai';
 
 ( function() {
