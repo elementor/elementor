@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { getInSettingsTab } from './styleguide.helper';
 
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
