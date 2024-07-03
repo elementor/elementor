@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { setup, setTabItemColor, setTabBorderColor } from './helper';
-import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
