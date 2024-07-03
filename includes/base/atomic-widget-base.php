@@ -2,6 +2,10 @@
 
 namespace Elementor;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $version = '0.0';
 
