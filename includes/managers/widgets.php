@@ -280,7 +280,7 @@ class Widgets_Manager {
 		 * @since 3.18.0
 		 *
 		 * @param bool $should_register Should widget be registered. Default is `true`.
-		 * @param \Elementor\$widget_instance Widget instance.
+		 * @param \Elementor\Widget_Base $widget_instance Widget instance.
 		 */
 		$should_register = apply_filters( 'elementor/widgets/is_widget_enabled', true, $widget_instance );
 
