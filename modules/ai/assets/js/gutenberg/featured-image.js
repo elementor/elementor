@@ -43,4 +43,3 @@ const GenerateFeaturedImageWithAI = () => {
 };
 
 export default GenerateFeaturedImageWithAI;
-
