@@ -7,7 +7,7 @@ test.describe( 'Atomic Widgets', () => {
 	let wpAdmin;
 
 	const atomicWidgets = [
-		{ name: 'atomic-heading', title: 'Atomic Heading' },
+		{ name: 'a-heading', title: 'Atomic Heading' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {

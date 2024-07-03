@@ -16,7 +16,7 @@ class Widget_Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_name() {
-		return 'atomic-heading';
+		return 'a-heading';
 	}
 
 	protected function render() {
