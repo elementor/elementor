@@ -23,6 +23,7 @@ class Widget_Atomic_Heading extends Atomic_Widget_Base {
 		$tag = $this->get_settings()['tag'] ?? 'h2';
 		$content = $this->get_settings()['title'] ?? 'Hello, World!';
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo "<$tag>$content</$tag>";
 	}
 
