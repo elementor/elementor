@@ -207,7 +207,7 @@ For more information: [Trust Center](https://go.elementor.com/trust-center/).
 = ♿ Accessibility Best Practices =
 Elementor offers accessibility tools and enhancements to help you provide a better experience for all users. Including HTML 5 semantic, full keyboard navigation menu, ongoing improvement of features, widget, and more.
 
-= TRANSLATED TO 63+ LANGUAGES, INCLUDES RTL SUPPORT =
+= 🌐 Translated to 63+ languages, includes RTL support =
 Elementor supports multiple languages and typographies and is RTL compatible, with Editor translations to [over 63 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/) OOTB. Elementor is also compatible with WPML, Polylang, TranslatePress, Weglot, and more.
 If you would like to contribute, add a new language via [translate.wordpress.org](https://translate.wordpress.org). See our guide on [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-help-center-translate/).
 
@@ -228,8 +228,6 @@ Join a global community that helps each other achieve their goals. Get answers, 
 - Show your support by [rating us on WordPress](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-review/). Your feedback fuels our growth! 🤗
 - If you have questions or need support, visit the Plugin’s forum. Elementor Pro users can get 24/7 premium support.
 - For more information about Elementor visit [Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-elementor-website-builder/).
-
-
 
 == Installation ==
 
