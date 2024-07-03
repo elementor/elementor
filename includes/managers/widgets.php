@@ -167,7 +167,6 @@ class Widgets_Manager {
 
 			$this->register_widget_by_filename($widget_filename);
 		}
-
 	}
 
 	/**
