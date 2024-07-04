@@ -662,14 +662,42 @@ BaseElementView = BaseContainer.extend( {
 	isAtomicDynamic( dataBinding, changedControl ) {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+				'item_link' === changedControl );
 	},
 
-	getDynamicValue( settings, bindingSetting ) {
+	getDynamicValue( settings, dataBinding, changedControl, widget ) {
 		const dynamicSettings = { active: true },
-			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
-			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
-			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
+			changedDataForRemovedItem = settings.attributes?.[ changedControl ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControl ];
+		let valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
+
+		if ( 'item_link' === changedControl ) {
+
+			debugger;
+
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem?.url;
+			changedControl = changedControl.url || changedControl;
+			const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+
+			console.log( 'b' );
+
+			try {
+				elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+					new CustomEvent( 'elementor/dynamic/url_change', {
+						detail: {
+							element: dataBinding.el,
+							name: changedDataForAddedItem && this.getDynamicTagName( changedDataForAddedItem ),
+							value,
+						},
+					} )
+				);
+
+				dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll('.e-n-menu-title-text')[ dataBinding.dataset.bindingIndex - 1 ]
+			} catch {
+				return false;
+			}
+		}
 
 		if ( valueToParse ) {
 			try {
@@ -679,7 +707,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 		}
 
-		return settings.attributes[ bindingSetting ];
+		return settings.attributes[ changedControl ];
 	},
 
 	findUniqueKey( obj1, obj2 ) {
@@ -759,7 +787,7 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @return {boolean} - false on fail.
 	 */
-	renderDataBindings( settings, dataBindings ) {
+	renderDataBindings( settings, dataBindings, widget = [] ) {
 		if ( ! this.dataBindings?.length ) {
 			return false;
 		}
@@ -772,7 +800,11 @@ BaseElementView = BaseContainer.extend( {
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue = this.getDynamicValue( settings, bindingSetting );
+				const dynamicValue = this.getDynamicValue( settings, dataBinding, changedControl, widget );
+
+				if ( 'item_link' === changedControl) {
+					return true;
+				}
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
@@ -825,12 +857,12 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @param {Object} settings
 	 */
-	renderOnChange( settings ) {
+	renderOnChange( settings, widget = [] ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
 
-		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
+		if ( this.renderDataBindings( settings, this.dataBindings, widget ) ) {
 			return;
 		}
 
@@ -1094,6 +1126,50 @@ BaseElementView = BaseContainer.extend( {
 			groups: [ 'elementor-element' ],
 		} );
 	},
+
+	isItemLink( changedControl, dataBinding) {
+		if( 'item_link' === changedControl ) {
+
+			// this.changeMegaMenuTitleContainerTag( dataBinding.el );
+			return true;
+		}
+
+		return false;
+	},
+
+	/**
+	 * Toggle the container tag of the mega menu title.
+	 * Needs to be places in pro Mega Menu frontend handler
+	 * @param existingElement
+	 */
+	changeMegaMenuTitleContainerTag( existingElement ) {
+		 existingElement = existingElement.parentElement;
+		 	const existingParentElement = existingElement.parentNode;
+			let newElement = document.createElement( 'div' );
+
+		 if ( 'DIV' === existingElement.tagName ) {
+			 newElement = document.createElement( 'a' );
+		}
+
+		Array.from( existingElement.attributes ).forEach( attr => {
+			newElement.setAttribute( attr.name, attr.value );
+		});
+
+		newElement.innerHTML = existingElement.innerHTML;
+		existingParentElement.replaceChild( newElement, existingElement )
+	},
+
+	getDynamicTagName( changedDataForAddedItem ) {
+		const regex = /name="([^"]*)"/;
+		const match = changedDataForAddedItem.match(regex);
+		return match ? match[1] : null;
+	},
+
+	updateDataBindings( settings, children ) {
+
+	}
 } );
+
+
 
 module.exports = BaseElementView;
