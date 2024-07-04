@@ -105,6 +105,8 @@ class Module extends BaseModule {
 
 		add_action( 'save_post_' . static::CPT_FLOATING_BUTTONS, [ $this, 'flush_permalinks_on_save' ] );
 
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
+
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
@@ -215,6 +217,15 @@ class Module extends BaseModule {
 
 			$this->override_admin_bar_add_contact( $admin_bar );
 		}, 100 );
+	}
+
+	public function register_style() {
+		wp_register_style(
+			$this->get_name(),
+			$this->get_css_assets_url( 'frontend', 'assets/css/modules/floating-buttons/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function handle_click_tracking() {

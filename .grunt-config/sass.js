@@ -70,6 +70,20 @@ const sass = {
 				dest: 'assets/css/modules/apps',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/floating-buttons/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/floating-buttons',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/link-in-bio/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/link-in-bio',
+				ext: '.css',
+			},
 		]
 	}
 };

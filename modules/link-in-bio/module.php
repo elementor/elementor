@@ -41,4 +41,19 @@ class Module extends BaseModule {
 			],
 		];
 	}
+
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
+	}
+
+	public function register_style() {
+		wp_register_style(
+			$this->get_name(),
+			$this->get_css_assets_url( 'frontend', 'assets/css/modules/link-in-bio/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
 }

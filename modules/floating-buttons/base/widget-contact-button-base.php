@@ -27,6 +27,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return true;
 	}
 
+	public function get_style_depends(): array {
+		return [ 'floating-buttons' ];
+	}
+
 	protected function get_initial_config(): array {
 		return array_merge( parent::get_initial_config(), [
 			'commonMerged' => true,
