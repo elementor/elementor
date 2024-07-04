@@ -60,7 +60,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				promotionLink: `${ promotionUrlPieces.origin }${ promotionUrlPieces.pathname }?${ promotionLinkQueryString }`,
 			} );
 		} catch ( e ) {
-			return '';
+			return Marionette.Renderer.render( template, {
+				promotionText,
+				promotionLink: subscriptionPlan.promotion_url,
+			} );
 		}
 	},
 
