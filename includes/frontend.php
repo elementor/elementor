@@ -570,8 +570,8 @@ class Frontend extends App {
 
 	public function register_inline_styles() {
 		wp_register_style(
-			'elementor-frontend-inline-base',
-			$this->get_css_assets_url( 'elementor-frontend-inline-base' ),
+			'elementor-frontend-inline',
+			$this->get_css_assets_url( 'elementor-frontend-inline' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -645,7 +645,7 @@ class Frontend extends App {
 
 			do_action( 'elementor/frontend/enqueue_widgets' );
 
-			wp_enqueue_style( 'elementor-frontend-inline-base' );
+			wp_enqueue_style( 'elementor-frontend-inline' );
 
 			wp_enqueue_style( 'swiper' );
 

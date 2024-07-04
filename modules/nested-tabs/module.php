@@ -27,7 +27,7 @@ class Module extends \Elementor\Core\Base\Module {
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'register_style' ] );
+		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'register_style' ], 7 );
 	}
 
 	/**

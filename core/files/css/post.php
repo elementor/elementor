@@ -253,7 +253,7 @@ class Post extends Base {
 	 * @return string Name of the stylesheet.
 	 */
 	protected function get_inline_dependency() {
-		return 'elementor-frontend-inline-base';
+		return 'elementor-frontend-inline';
 	}
 
 	/**

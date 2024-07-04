@@ -45,7 +45,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'assets/dev/scss/frontend',
-				src: 'elementor-frontend-inline-base.scss',
+				src: 'elementor-frontend-inline.scss',
 				dest: 'assets/css',
 				ext: '.css'
 			},
@@ -75,6 +75,20 @@ const sass = {
 				cwd: 'modules/apps/assets/scss',
 				src: 'admin.scss',
 				dest: 'assets/css/modules/apps',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/nested-accordion/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/nested-accordion',
+				ext: '.css',
+			},
+			{
+				expand: true,
+					cwd: 'modules/nested-tabs/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/nested-tabs',
 				ext: '.css',
 			},
 		]
