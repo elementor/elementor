@@ -1159,16 +1159,8 @@ class Widget_Common extends Widget_Base {
 
 		$this->register_responsive_section();
 
-		$register_common_controls = apply_filters(
-			'elementor/widget/common/register_css_attributes_control',
-			true,
-			$this
-		);
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 
-		if ( $register_common_controls ) {
-			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
-
-			Plugin::$instance->controls_manager->add_custom_css_controls( $this );
-		}
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
 	}
 }

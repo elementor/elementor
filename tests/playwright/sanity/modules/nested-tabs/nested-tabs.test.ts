@@ -518,7 +518,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect.soft( lastTabWidth ).toEqual( lastTabActiveWidth );
 	} );
 
-	test.only( 'Verify that the custom hover color doesn\'t affect the active tab color', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Verify that the custom hover color doesn\'t affect the active tab color', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -528,8 +528,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
-
-		await page.pause();
 
 		// Act.
 		// Set tab hover color.

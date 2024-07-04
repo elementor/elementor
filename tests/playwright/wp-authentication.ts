@@ -4,12 +4,12 @@ export async function login( apiRequest: APIRequest, user: string, password: str
 	// Important: make sure we authenticate in a clean environment by unsetting storage state.
 	const context = await apiRequest.newContext( { storageState: undefined } );
 
-	await context.post( `http://elementor.local/wp-login.php`, {
+	await context.post( `${ baseUrl }/wp-login.php`, {
 		form: {
 			log: user,
 			pwd: password,
 			'wp-submit': 'Log In',
-			redirect_to: `http://elementor.local/wp-admin/`,
+			redirect_to: `${ baseUrl }/wp-admin/`,
 			testcookie: '1',
 		},
 	} );
@@ -17,7 +17,7 @@ export async function login( apiRequest: APIRequest, user: string, password: str
 }
 
 export async function fetchNonce( context: APIRequestContext, baseUrl: string ) {
-	const response = await context.get( `http://elementor.local/wp-admin/post-new.php` );
+	const response = await context.get( `${ baseUrl }/wp-admin/post-new.php` );
 
 	if ( ! response.ok() ) {
 		throw new Error( `

@@ -35,7 +35,7 @@ export default defineConfig( {
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: 'http://elementor.local',
+		baseURL: process.env.BASE_URL || process.env.DEV_SERVER,
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},

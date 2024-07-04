@@ -568,6 +568,16 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/after_register_styles' );
 	}
 
+	/**
+	 * Registers inline styles.
+	 *
+	 * Registers all the inline frontend styles.
+	 *
+	 * These styles are loaded are the frontend and widgets CSS styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 */
 	public function register_inline_styles() {
 		wp_register_style(
 			'elementor-frontend-inline',
