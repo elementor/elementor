@@ -219,7 +219,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		if ( -1 !== videoLink.indexOf( 'vimeo.com' ) ) {
 			this.videoType = 'vimeo';
 			this.apiProvider = elementorFrontend.utils.vimeo;
-		} else if ( videoLink.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+		} else if ( videoLink.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com|youtube-nocookie\.com)/ ) ) {
 			this.videoType = 'youtube';
 			this.apiProvider = elementorFrontend.utils.youtube;
 		}
