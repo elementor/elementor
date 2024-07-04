@@ -171,6 +171,7 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_inline_styles' ], 7 );
 
 		$this->add_content_filter();
 		$this->init_swiper_settings();
@@ -567,6 +568,15 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/after_register_styles' );
 	}
 
+	public function register_inline_styles() {
+		wp_register_style(
+			'elementor-frontend-inline-base',
+			$this->get_css_assets_url( 'elementor-frontend-inline-base' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
 	/**
 	 * Enqueue scripts.
 	 *
@@ -632,6 +642,10 @@ class Frontend extends App {
 			}
 
 			wp_enqueue_style( 'elementor-frontend' );
+
+			do_action( 'elementor/frontend/enqueue_widgets' );
+
+			wp_enqueue_style( 'elementor-frontend-inline-base' );
 
 			wp_enqueue_style( 'swiper' );
 
