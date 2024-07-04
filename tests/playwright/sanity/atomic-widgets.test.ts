@@ -28,14 +28,14 @@ test.describe( 'Atomic Widgets', () => {
 
 	atomicWidgets.forEach( ( widget ) => {
 		test.describe( widget.name, () => {
-			test( 'Check widget is displayed in panel', async () => {
+			test( 'Widget is displayed in panel', async () => {
 				const layout = editor.page.locator( '#elementor-panel-category-general' );
 				await layout.isVisible();
 				const container = await layout.locator( '.title', { hasText: widget.title } );
 				await expect( container ).toBeVisible();
 			} );
 
-			test( 'Check widget is displayed in editor', async () => {
+			test( 'Widget is displayed in canvas after being added', async () => {
 				const widgetId = await editor.addWidget( widget.name );
 				const widgetSelector = '.elementor-element-' + widgetId;
 				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();

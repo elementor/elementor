@@ -28,28 +28,6 @@ class Widget_Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_atomic_controls(): array {
-		return [
-			Atomic_Control::bind_to( 'tag' )
-				->set_label( __( 'Tag', 'elementor' ) )
-				->set_type( Select_Control::KEY )
-				->set_props( Select_Control::make()
-					->set_options([
-						'h1' => 'H1',
-						'h2' => 'H2',
-						'h3' => 'H3',
-						'h4' => 'H4',
-						'h5' => 'H5',
-						'h6' => 'H6',
-					])
-					->get_props()
-				),
-			Atomic_Control::bind_to( 'title' )
-				->set_label( __( 'Title', 'elementor' ) )
-				->set_type( Text_Control::KEY )
-				->set_props( Text_Control::make()
-					->set_placeholder( __( 'Enter your heading text', 'elementor' ) )
-					->get_props()
-				),
-		];
+		return [];
 	}
 }

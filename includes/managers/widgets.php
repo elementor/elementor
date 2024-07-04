@@ -101,10 +101,6 @@ class Widgets_Manager {
 			'share-buttons',
 		];
 
-		$atomic_widgets_filenames = [
-			'atomic-heading',
-		];
-
 		$this->_widget_types = [];
 
 		$this->register_promoted_widgets();
