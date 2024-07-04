@@ -48,14 +48,21 @@ import { GenerateTextWithAi } from './text-with-ai';
 			}
 		};
 
-		const addTextWithAI = () => {
+		const addTextWithAI = ( blockName ) => {
 			const textPanel = document.querySelector( '.block-editor-block-card__content' );
 			if ( textPanel && ! document.querySelector( '.e-text-ai' ) ) {
 				const rootElement = document.createElement( 'div' );
 				rootElement.classList.add( 'e-text-ai' );
 				textPanel.appendChild( rootElement );
 				const root = createRoot( rootElement );
-				root.render( <GenerateTextWithAi /> );
+				root.render( <GenerateTextWithAi blockName={ blockName } /> );
+			}
+		};
+
+		const removeAiIndicator = ( ) => {
+			const textPanel = document.querySelector( '.e-text-ai' );
+			if ( textPanel ) {
+				textPanel.remove();
 			}
 		};
 
@@ -68,19 +75,19 @@ import { GenerateTextWithAi } from './text-with-ai';
 			}
 		};
 
-		const addAiIndicatorToBlock = ( blockName, functionAddAi ) => {
-			const blocks = wp.data.select( 'core/block-editor' )?.getBlocks();
-			for ( const block of blocks ) {
-				if ( block.name === blockName ) {
-					functionAddAi();
-				}
+		const addAiIndicatorToTextBlock = ( blockNames ) => {
+			const selectedBlock = wp.data.select( 'core/block-editor' )?.getSelectedBlock();
+			if ( selectedBlock && blockNames.some( ( name ) => selectedBlock.name.includes( name ) ) ) {
+				addTextWithAI( selectedBlock.name );
+			} else {
+				removeAiIndicator();
 			}
 		};
 
 		wp.data.subscribe( () => {
 			addAiIndicator( 'post-excerpt', addGenerateExcerptWithAI );
 			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
-			addAiIndicatorToBlock( 'core/paragraph', addTextWithAI );
+			addAiIndicatorToTextBlock( [ 'paragraph', 'heading' ] );
 		} );
 	} );
 } )( jQuery );

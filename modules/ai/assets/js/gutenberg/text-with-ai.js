@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 const { useDispatch, useSelect } = wp.data;
 const { createBlock } = wp.blocks;
 
-const AiText = ( { onClose } ) => {
+const AiText = ( { onClose, blockName } ) => {
 	const { replaceBlocks, insertBlocks } = useDispatch( 'core/block-editor' );
 	const insertTextIntoParagraph = ( text ) => {
 		if ( paragraphBlock ) {
@@ -22,7 +22,7 @@ const AiText = ( { onClose } ) => {
 			};
 			replaceBlocks( paragraphBlock.clientId, updatedBlock );
 		} else {
-			const newBlock = createBlock( 'core/paragraph', { content: text } );
+			const newBlock = createBlock( blockName, { content: text } );
 			insertBlocks( newBlock );
 		}
 	};
@@ -31,17 +31,19 @@ const AiText = ( { onClose } ) => {
 
 	const { paragraphBlock } = useSelect( ( ) => {
 		const currentBlocks = wp.data.select( 'core/block-editor' )?.getBlocks();
-		const foundParagraphBlock = currentBlocks.find( ( block ) => 'core/paragraph' === block.name );
+		const foundParagraphBlock = currentBlocks.find( ( block ) => blockName === block.name );
 		return {
 			blocks: currentBlocks,
 			paragraphBlock: foundParagraphBlock,
 		};
 	}, [] );
 
+	const appType = 'core/paragraph' === blockName ? 'textarea' : 'text';
+
 	return (
 		<>
 			<App
-				type={ 'text' }
+				type={ appType }
 				getControlValue={ () => {} }
 				setControlValue={ ( value ) => {
 					insertTextIntoParagraph( value );
@@ -56,9 +58,10 @@ const AiText = ( { onClose } ) => {
 
 AiText.propTypes = {
 	onClose: PropTypes.func.isRequired,
+	blockName: PropTypes.string.isRequired,
 };
 
-export const GenerateTextWithAi = () => {
+export const GenerateTextWithAi = ( { blockName } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleButtonClick = () => {
@@ -74,7 +77,11 @@ export const GenerateTextWithAi = () => {
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
 				<AiLink onClick={ handleButtonClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</AiLink>
-				{ isOpen && <AiText onClose={ handleClose } /> }
+				{ isOpen && <AiText onClose={ handleClose } blockName={ blockName } /> }
 			</RequestIdsProvider>
 		</div> );
+};
+
+GenerateTextWithAi.propTypes = {
+	blockName: PropTypes.string.isRequired,
 };
