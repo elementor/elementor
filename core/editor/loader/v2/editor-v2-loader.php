@@ -29,7 +29,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			'editor-site-navigation',
 			'editor-v1-adapters',
 		],
-		Editor_V2_Experiments::ELEMENTS => [
+		Editor_V2_Experiments::ATOMIC_WIDGETS => [
 			'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 			'editor-panels',
 			'editor-v1-adapters',
