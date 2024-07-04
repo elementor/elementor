@@ -18,9 +18,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	abstract public function get_atomic_controls(): array;
 
 	final public function get_controls( $control_id = null ) {
-		if(!empty($control_id)) {
+		if ( ! empty( $control_id ) ) {
 			return null;
 		}
+
 		return [];
 	}
 
