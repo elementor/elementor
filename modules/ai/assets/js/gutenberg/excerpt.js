@@ -18,8 +18,9 @@ const AIExcerpt = ( { onClose } ) => {
 		[],
 	);
 	const postTextualContent = useGutenbergPostText();
+	const [ isLoadingCombined, setIsLoadingCombined ] = useState( true );
 	const {
-		isLoading: isLoadingUserInfo,
+		isLoading: isUserLoading,
 		isConnected,
 		isGetStarted,
 		connectUrl,
@@ -28,13 +29,12 @@ const AIExcerpt = ( { onClose } ) => {
 		credits,
 		usagePercentage,
 	} = useUserInfo( true );
-	const { data: newExcerpt, isLoading: isLoadingExcerpt, error, send } = useExcerptPrompt( {
+	const { data: newExcerpt, error, send } = useExcerptPrompt( {
 		result: currExcerpt,
 		credits,
 	} );
-	const isLoading = isLoadingExcerpt || isLoadingUserInfo;
 	const initHook = () => ( {
-		isLoading,
+		isLoading: isLoadingCombined,
 		isConnected,
 		isGetStarted,
 		connectUrl,
@@ -47,14 +47,21 @@ const AIExcerpt = ( { onClose } ) => {
 	const fetchAiExcerpt = useCallback( async () => {
 		if ( send && postTextualContent ) {
 			generateExcerptOnce.current = true;
-			send( { content: postTextualContent } );
+			send( { content: postTextualContent } ).finally( () => {
+				setIsLoadingCombined( false );
+			} );
 		}
 	}, [ postTextualContent, send ] );
 	useEffect( () => {
-		if ( ! generateExcerptOnce.current && isConnected ) {
+		if ( ! generateExcerptOnce.current && isConnected && isGetStarted ) {
 			fetchAiExcerpt();
 		}
-	}, [ fetchAiExcerpt, isConnected ] );
+	}, [ fetchAiExcerpt, isConnected, isGetStarted ] );
+	useEffect( () => {
+		if ( ! isUserLoading && ( ! isConnected || ! isGetStarted ) ) {
+			setIsLoadingCombined( false );
+		}
+	}, [ isUserLoading, isConnected, isGetStarted ] );
 	const isRTL = elementorCommon.config.isRTL;
 
 	return (
