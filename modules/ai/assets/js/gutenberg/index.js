@@ -59,6 +59,13 @@ import { GenerateTextWithAi } from './text-with-ai';
 			}
 		};
 
+		const removeAiIndicator = ( ) => {
+			const textPanel = document.querySelector( '.e-text-ai' );
+			if ( textPanel ) {
+				textPanel.remove();
+			}
+		};
+
 		const addAiIndicator = ( panelName, functionAddAi ) => {
 			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( panelName );
 			if ( isSidebarOpened ) {
@@ -69,11 +76,11 @@ import { GenerateTextWithAi } from './text-with-ai';
 		};
 
 		const addAiIndicatorToBlock = ( blockName, functionAddAi ) => {
-			const blocks = wp.data.select( 'core/block-editor' )?.getBlocks();
-			for ( const block of blocks ) {
-				if ( block.name === blockName ) {
-					functionAddAi();
-				}
+			const selectedBlock = wp.data.select( 'core/block-editor' )?.getSelectedBlock();
+			if ( selectedBlock && selectedBlock.name === blockName ) {
+				functionAddAi();
+			} else {
+				removeAiIndicator();
 			}
 		};
 
