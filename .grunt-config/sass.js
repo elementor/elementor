@@ -86,7 +86,7 @@ const sass = {
 			},
 			{
 				expand: true,
-					cwd: 'modules/nested-tabs/assets/scss',
+				cwd: 'modules/nested-tabs/assets/scss',
 				src: 'frontend.scss',
 				dest: 'assets/css/modules/nested-tabs',
 				ext: '.css',

@@ -4,7 +4,6 @@ namespace Elementor\Modules\NestedAccordion;
 use Elementor\Plugin;
 use Elementor\Core\Base\Module as BaseModule;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -27,5 +26,21 @@ class Module extends BaseModule {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
+	}
+
+	/**
+	 * Register styles.
+	 *
+	 * @return void
+	 */
+	public function register_style() {
+		wp_register_style(
+			$this->get_name(),
+			$this->get_css_assets_url( 'frontend', 'assets/css/modules/nested-accordion/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 }
