@@ -18,6 +18,10 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	use Shared_Widget_Controls_Trait;
 
+	public function get_style_depends(): array {
+		return [ 'link-in-bio' ];
+	}
+
 	public static function get_configuration() {
 		return [
 			'content' => [
