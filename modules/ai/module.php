@@ -115,6 +115,10 @@ class Module extends BaseModule {
 					'jquery',
 					'elementor-v2-ui',
 					'elementor-v2-icons',
+					'wp-blocks',
+					'wp-element',
+					'wp-editor',
+					'wp-data',
 				],
 			ELEMENTOR_VERSION, true );
 
@@ -178,7 +182,7 @@ class Module extends BaseModule {
 			true
 		);
 
-		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
+		$session_id = 'wp-editor-session-' . Utils::generate_random_string();
 
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
