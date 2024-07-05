@@ -36,7 +36,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function enqueue_widget_stylesheet(): void {
-		wp_enqueue_widget_stylesheet(
+		wp_enqueue_style(
 			$this->get_name(),
 			$this->get_css_assets_url( 'frontend', 'assets/css/modules/nested-tabs/' ),
 			[],
