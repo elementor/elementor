@@ -27,16 +27,16 @@ class Module extends \Elementor\Core\Base\Module {
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'enqueue_style' ] );
+		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'enqueue_widget_stylesheet' ] );
 	}
 
 	/**
-	 * Enqueues style for this widget.
+	 * Enqueue the stylesheet for this widget.
 	 *
 	 * @return void
 	 */
-	public function enqueue_style(): void {
-		wp_enqueue_style(
+	public function enqueue_widget_stylesheet(): void {
+		wp_enqueue_widget_stylesheet(
 			$this->get_name(),
 			$this->get_css_assets_url( 'frontend', 'assets/css/modules/nested-tabs/' ),
 			[],
