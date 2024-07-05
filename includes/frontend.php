@@ -569,18 +569,16 @@ class Frontend extends App {
 	}
 
 	/**
-	 * Registers inline styles.
+	 * Registers a reference that can be used to enqueue inline styles.
 	 *
-	 * Registers all the inline frontend styles.
+	 * We don't register a file here. We just register a reference for the `wp_add_inline_style()` function.
 	 *
-	 * These styles are loaded are the frontend and widgets CSS styles.
+	 * The inline styles are loaded after the elementor-frontend.css file and after the `elementor/frontend/enqueue_widgets` hook.
 	 *
 	 * @since 3.24.0
 	 * @access public
 	 */
 	public function register_inline_styles() {
-		// All that we are doing here is providing a reference for the `wp_add_inline_style()` function.
-		// So that we can load the inline styling after this hook `elementor/frontend/enqueue_widgets`.
 		wp_register_style( 'elementor-frontend-inline', false );
 	}
 
