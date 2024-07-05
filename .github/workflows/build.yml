@@ -62,7 +62,6 @@ jobs:
           export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
           composer install
           npx grunt build
-          mv vendor build/vendor
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
