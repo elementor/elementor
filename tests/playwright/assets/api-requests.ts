@@ -95,6 +95,61 @@ export default class ApiRequests {
 		}
 	}
 
+	public async installPlugin( request: APIRequestContext, slug: string, active: boolean ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins`,
+				slug,
+				status: active ? 'active' : 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to install a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+		const { plugin } = await response.json();
+
+		return plugin;
+	}
+
+	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins/${ slug }`,
+				status: 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
+
+	public async deletePlugin( request: APIRequestContext, slug: string ) {
+		const response = await this._delete( request, 'plugins', slug );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to delete a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
+
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
 		const response = await request.get( `${ this.baseUrl }/index.php`, {
 			params: {
@@ -134,9 +189,11 @@ export default class ApiRequests {
 
 		if ( ! response.ok() ) {
 			throw new Error( `
-			Failed to delete a ${ entity }: ${ response.status() }.
+			Failed to delete a ${ entity } with id '${ id }': ${ response.status() }.
 			${ await response.text() }
 		` );
 		}
+
+		return response;
 	}
 }
