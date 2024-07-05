@@ -1,4 +1,4 @@
-export default class extends elementorModules.ViewModule {
+export default class extends elementorModules.ViewModuleFrontend {
 	getDefaultSettings() {
 		return {
 			selectors: {

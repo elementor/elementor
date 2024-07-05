@@ -1,4 +1,4 @@
-export default class BaseLoader extends elementorModules.ViewModule {
+export default class BaseLoader extends elementorModules.ViewModuleFrontend {
 	getDefaultSettings() {
 		return {
 			isInserted: false,

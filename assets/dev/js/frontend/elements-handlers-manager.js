@@ -52,7 +52,7 @@ module.exports = function() {
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
-			this.elementsHandlers.container.push( ...containerHandlers );
+			// this.elementsHandlers.container.push( ...containerHandlers );
 		}
 
 		// this.elementsHandlers.column = columnHandlers;

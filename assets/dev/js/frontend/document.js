@@ -1,4 +1,4 @@
-export default class extends elementorModules.ViewModule {
+export default class extends elementorModules.ViewModuleFrontend {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -11,16 +11,31 @@ export default class extends elementorModules.ViewModule {
 		};
 	}
 
+	selectElements( context, selector ) {
+		return Array.from( context.querySelectorAll( selector ) );
+	}
+
+	selectNestedElements( documents, nestedSelector ) {
+		let nestedElements = [];
+
+		documents.forEach( ( doc ) => {
+			nestedElements = nestedElements.concat( Array.from( doc.querySelectorAll( nestedSelector ) ) );
+		} );
+
+		return nestedElements;
+	}
+
+	filterElements( elements, nestedElements ) {
+		return elements.filter( ( element ) => ! nestedElements.includes( element ) );
+	}
+
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
-
-		const innerElements = this.baseElement.querySelectorAll( selectors.elements ),
-			documents = this.baseElement.querySelectorAll( '.elementor' ),
-			nestedElements = Array.from( documents ).forEach( ( document ) => document.querySelectorAll( selectors.nestedDocumentElements ) ),
-			arrayOfNestedElements = !! nestedElements
-				? Array.from( nestedElements )
-				: [],
-			filteredElements = Array.from( innerElements ).filter( ( element ) => ! arrayOfNestedElements.includes( element ) );
+		const context = this.baseElement;
+		const innerElements = this.selectElements( context, selectors.elements );
+		const documents = this.selectElements( context, '.elementor' );
+		const nestedElements = this.selectNestedElements( documents, selectors.nestedDocumentElements );
+		const filteredElements = this.filterElements( innerElements, nestedElements );
 
 		return {
 			baseElements: filteredElements,

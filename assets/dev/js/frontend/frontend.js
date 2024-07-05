@@ -21,7 +21,7 @@ const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
-export default class Frontend extends elementorModules.ViewModule {
+export default class Frontend extends elementorModules.ViewModuleFrontend {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -78,6 +78,23 @@ export default class Frontend extends elementorModules.ViewModule {
 			// $deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
 			deviceMode: deviceModeElement,
 		};
+
+		const isWpAdmin = window.location.pathname.indexOf( 'wp-admin' ) !== -1 ||
+				document.body.classList.contains( 'wp-admin' ) ||
+				document.body.classList.contains( 'admin-bar' ) ||
+				document.body.classList.contains( 'logged-in' ),
+			isElementorEditor = document.body.classList.contains( 'elementor-editor-active' ),
+			isFrontend = ! isWpAdmin && ! isElementorEditor;
+
+		if ( ! isFrontend ) {
+			defaultElements.$window = jQuery( window );
+			defaultElements.$document = jQuery( document );
+			defaultElements.$head = jQuery( document.head );
+			defaultElements.$body = jQuery( document.body );
+			defaultElements.$deviceMode = jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } );
+			defaultElements.$body.append( defaultElements.$deviceMode );
+		}
+
 		defaultElements.document.body.append( defaultElements.deviceMode );
 
 		return defaultElements;

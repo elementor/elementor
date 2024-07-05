@@ -1,4 +1,4 @@
-export default class Base extends elementorModules.ViewModule {
+export default class Base extends elementorModules.ViewModuleFrontend {
 	baseElement = null;
 
 	editorListeners = null;
@@ -250,7 +250,7 @@ export default class Base extends elementorModules.ViewModule {
 		super.onInit( ...args );
 
 		if ( this.isActive( this.getSettings() ) ) {
-			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
 		}
 	}
 
