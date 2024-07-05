@@ -579,7 +579,12 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_inline_styles() {
-		wp_register_style( 'elementor-frontend-inline', false );
+		wp_register_style(
+			'elementor-frontend-inline',
+			false,
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**
