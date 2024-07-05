@@ -189,7 +189,7 @@ module.exports = elementorModules.Module.extend( {
 
 			if ( isGroupVisible ) {
 				group.actions.forEach( function( action ) {
-					var isActionVisible = self.isActionVisible( action );
+					const isActionVisible = self.isActionVisible( action );
 
 					self.toggleActionVisibility( action, isActionVisible );
 
