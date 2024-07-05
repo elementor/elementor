@@ -44,13 +44,6 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'assets/dev/scss/frontend',
-				src: 'elementor-frontend-inline.scss',
-				dest: 'assets/css',
-				ext: '.css'
-			},
-			{
-				expand: true,
 				cwd: 'modules/announcements/assets/scss',
 				src: 'announcements.scss',
 				dest: 'assets/css/modules/announcements',

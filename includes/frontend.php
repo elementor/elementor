@@ -579,12 +579,9 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_inline_styles() {
-		wp_register_style(
-			'elementor-frontend-inline',
-			$this->get_css_assets_url( 'elementor-frontend-inline' ),
-			[],
-			ELEMENTOR_VERSION
-		);
+		// All that we are doing here is providing a reference for the `wp_add_inline_style()` function.
+		// So that we can load the inline styling after this hook `elementor/frontend/enqueue_widgets`.
+		wp_register_style( 'elementor-frontend-inline', false );
 	}
 
 	/**
