@@ -129,8 +129,20 @@ module.exports = elementorModules.Module.extend( {
 		return action.isEnabled ? action.isEnabled() : true;
 	},
 
+	isActionVisible( action ) {
+		if ( ! action.callback && ! action.groups ) {
+			return false;
+		}
+
+		if ( 'function' === typeof action.isVisible ) {
+			return action.isVisible();
+		}
+
+		return false !== action.isVisible;
+	},
+
 	runAction( action ) {
-		if ( ! this.isActionEnabled( action ) ) {
+		if ( ! this.isActionEnabled( action ) || ! this.isActionVisible( action ) ) {
 			return;
 		}
 
@@ -181,7 +193,7 @@ module.exports = elementorModules.Module.extend( {
 
 			if ( isGroupVisible ) {
 				group.actions.forEach( function( action ) {
-					var isActionVisible = false !== action.isVisible;
+					var isActionVisible = self.isActionVisible( action );
 
 					self.toggleActionVisibility( action, isActionVisible );
 
