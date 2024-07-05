@@ -150,10 +150,10 @@ export default class ContactButtonsHandler extends Base {
 	sendClicks() {
 		const formData = new FormData();
 		formData.append( 'action', 'elementor_send_clicks' );
-		formData.append( '_nonce', elementorCommonConfig.floatingButtons.nonce );
+		formData.append( '_nonce', elementorFrontendConfig?.nonces?.floatingButtonsClickTracking );
 		this.clicks.forEach( ( documentId ) => formData.append( 'clicks[]', documentId ) );
 
-		fetch( elementorCommonConfig.floatingButtons.ajaxurl, {
+		fetch( elementorFrontendConfig?.urls?.ajaxurl, {
 			method: 'POST',
 			body: formData,
 		} )
