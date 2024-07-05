@@ -677,6 +677,13 @@
 	}
 }
 
+.elementor-location-floating_buttons {
+
+	& .e-con-inner {
+		padding: 0;
+	}
+}
+
 @keyframes e-contact-buttons-typing-jump {
 	0% {
 		bottom: 0px;
