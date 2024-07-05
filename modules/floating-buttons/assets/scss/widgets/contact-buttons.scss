@@ -21,6 +21,8 @@
 	--e-contact-buttons-contact-gap: #{$contact-buttons-contact-gap};
 	--e-contact-buttons-horizontal-offset: #{$contact-buttons-offset-preset};
 	--e-contact-buttons-vertical-offset: #{$contact-buttons-offset-preset};
+	--e-contact-buttons-box-shadow: #{$contact-buttons-default-box-shadow};
+	--e-contact-buttons-drop-shadow: #{$contact-buttons-default-drop-shadow};
 
 	// Platform specific colors
 	// Default used for email, sms
@@ -57,10 +59,11 @@
 	gap: 20px;
 	position: fixed;
 	width: var(--e-contact-buttons-chat-box-width);
-	z-index: 99;
+	z-index: $super-layer;
 
 	@media (max-width: $screen-mobile-max) {
 		inset-inline-end: 0;
+		width: 90vw;
 	}
 
 	&.has-h-alignment-start {
@@ -303,6 +306,17 @@
 		}
 	}
 
+	&__chat-button-shadow,
+	&__contact-box-shadow,
+	&__contact-box-shadow:is(a),
+	&__content {
+		box-shadow: var(--e-contact-buttons-box-shadow);
+	}
+
+	&__chat-button-drop-shadow {
+		filter: var(--e-contact-buttons-drop-shadow);
+	}
+
 	&__content {
 		border-radius: var(--e-contact-buttons-border-radius);
 		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
@@ -401,6 +415,7 @@
 		background-color: var(--e-contact-buttons-button-bg);
 		border-radius: 50%;
 		border: 0;
+		color: var(--e-contact-buttons-button-icon);
 		display: flex;
 		justify-content: center;
 		padding: 0;
@@ -414,6 +429,7 @@
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-button-bg-hover);
+			color: var(--e-contact-buttons-button-icon-hover);
 			transition: $transition-hover;
 
 			svg {
@@ -596,16 +612,25 @@
 	&__send-button {
 		background-color: var(--e-contact-buttons-chat-box-bg);
 		padding: 12px 20px 20px 20px;
+
+		.e-contact-buttons__send-cta {
+			color: var(--e-contact-buttons-send-button-icon);
+
+			&:hover,
+			&:focus {
+				color: var(--e-contact-buttons-send-button-icon-hover);
+			}
+		}
 	}
 
 	&__send-cta {
 		align-items: center;
 		background-color: var(--e-contact-buttons-send-button-bg);
 		border-radius: 30px;
-		color: var(--e-contact-buttons-send-button-icon);
 		display: flex;
 		font-size: 18px;
 		font-weight: 500;
+		gap: 8px;
 		justify-content: center;
 		padding: 10px;
 		text-align: center;
@@ -615,14 +640,12 @@
 		svg {
 			fill: var(--e-contact-buttons-send-button-icon);
 			height: 28px;
-			margin-inline-end: 8px;
 			width: 28px;
 		}
 
 		&:hover,
 		&:focus {
 			background-color: var(--e-contact-buttons-send-button-bg-hover);
-			color: var(--e-contact-buttons-send-button-icon-hover);
 			transition: $transition-hover;
 
 			svg {

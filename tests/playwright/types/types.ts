@@ -91,4 +91,4 @@ export type ElementorType = {
 	}
 }
 
-export type ElementorFrontendConfig = { post: { id: number } }
+export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';

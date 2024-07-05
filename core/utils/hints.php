@@ -228,10 +228,6 @@ class Hints {
 			return false;
 		}
 
-		if ( static::is_conflict_plugin_installed() ) {
-			return false;
-		}
-
 		foreach ( $hint as $key => $value ) {
 			switch ( $key ) {
 				case self::DISMISSED:
