@@ -27,15 +27,15 @@ class Module extends \Elementor\Core\Base\Module {
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'register_style' ] );
+		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'enqueue_style' ] );
 	}
 
 	/**
-	 * Register styles.
+	 * Enqueues style for this widget.
 	 *
 	 * @return void
 	 */
-	public function register_style() {
+	public function enqueue_style(): void {
 		wp_enqueue_style(
 			$this->get_name(),
 			$this->get_css_assets_url( 'frontend', 'assets/css/modules/nested-tabs/' ),
