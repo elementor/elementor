@@ -130,10 +130,6 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	isActionVisible( action ) {
-		if ( ! action.callback && ! action.groups ) {
-			return false;
-		}
-
 		if ( 'function' === typeof action.isVisible ) {
 			return action.isVisible();
 		}
