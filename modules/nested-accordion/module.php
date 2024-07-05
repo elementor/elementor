@@ -27,16 +27,16 @@ class Module extends BaseModule {
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
+		add_action( 'elementor/frontend/enqueue_widgets', [ $this, 'enqueue_style' ] );
 	}
 
 	/**
-	 * Register styles.
+	 * Enqueue this stylesheet for this widget.
 	 *
 	 * @return void
 	 */
-	public function register_style() {
-		wp_register_style(
+	public function enqueue_style(): void {
+		wp_enqueue_style(
 			$this->get_name(),
 			$this->get_css_assets_url( 'frontend', 'assets/css/modules/nested-accordion/' ),
 			[],
