@@ -21,6 +21,13 @@ const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
+const isWpAdmin = window.location.pathname.indexOf( 'wp-admin' ) !== -1 ||
+		document.body.classList.contains( 'wp-admin' ) ||
+		document.body.classList.contains( 'admin-bar' ),
+	isElementorEditor = document.body.classList.contains( 'elementor-editor-active' ) ||
+		document.body.classList.contains( 'elementor-page' ), // Maybe check if this is the Elementor Iframe
+	isFrontend = ! isWpAdmin && ! isElementorEditor;
+
 export default class Frontend extends elementorModules.ViewModuleFrontend {
 	constructor( ...args ) {
 		super( ...args );
@@ -78,13 +85,6 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 			// $deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
 			deviceMode: deviceModeElement,
 		};
-
-		const isWpAdmin = window.location.pathname.indexOf( 'wp-admin' ) !== -1 ||
-				document.body.classList.contains( 'wp-admin' ) ||
-				document.body.classList.contains( 'admin-bar' ) ||
-				document.body.classList.contains( 'logged-in' ),
-			isElementorEditor = document.body.classList.contains( 'elementor-editor-active' ),
-			isFrontend = ! isWpAdmin && ! isElementorEditor;
 
 		if ( ! isFrontend ) {
 			defaultElements.$window = jQuery( window );

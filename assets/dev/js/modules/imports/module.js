@@ -1,3 +1,5 @@
+import { isFrontend } from '../../utils/is-frontend-check';
+
 const Module = function() {
 	const $ = jQuery,
 		instanceParams = arguments,
@@ -188,14 +190,8 @@ Module.prototype.getConstructorID = function() {
 	return this.constructor.name;
 };
 
-const isWpAdmin = window.location.pathname.indexOf( 'wp-admin' ) !== -1 ||
-		document.body.classList.contains( 'admin-bar' ) ||
-		document.body.classList.contains( 'logged-in' ),
-	isElementorEditor = document.body.classList.contains( 'elementor-editor-active' ),
-	isFrontend = ! isWpAdmin && ! isElementorEditor;
-
 Module.extend = function( properties ) {
-	if ( isFrontend ) {
+	if ( isFrontend() ) {
 		return null;
 	}
 

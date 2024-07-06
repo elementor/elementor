@@ -1,4 +1,4 @@
-import Module from './module';
+import Module from './module-frontend';
 
 export default Module.extend( {
 	elements: null,
