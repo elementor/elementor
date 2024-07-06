@@ -269,22 +269,13 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 			return;
 		}
 
-		this.removeListeners(listenerID, event, to);
+		this.removeListeners( listenerID, event, to );
 
-		if (to instanceof jQuery) { // It might be safe to keep this reference.
+		if ( !! window.jQuery && to instanceof jQuery) {
 			const eventNS = `${event}.${listenerID}`;
-			to.on(eventNS, callback);
+			to.on( eventNS, callback );
 		} else {
-			if (!to._eventHandlers) {
-				to._eventHandlers = {};
-			}
-
-			const eventHandler = function(e) {
-				callback.call(to, e);
-			};
-
-			to._eventHandlers[listenerID] = eventHandler;
-			to.addEventListener(event, eventHandler);
+			to.on( event, callback, listenerID );
 		}
 	}
 
