@@ -16,17 +16,11 @@ import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
+import { isFrontend } from "../utils/is-frontend-check";
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
-
-const isWpAdmin = window.location.pathname.indexOf( 'wp-admin' ) !== -1 ||
-		document.body.classList.contains( 'wp-admin' ) ||
-		document.body.classList.contains( 'admin-bar' ),
-	isElementorEditor = document.body.classList.contains( 'elementor-editor-active' ) ||
-		document.body.classList.contains( 'elementor-page' ), // Maybe check if this is the Elementor Iframe
-	isFrontend = ! isWpAdmin && ! isElementorEditor;
 
 export default class Frontend extends elementorModules.ViewModuleFrontend {
 	constructor( ...args ) {
@@ -86,7 +80,7 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 			deviceMode: deviceModeElement,
 		};
 
-		if ( ! isFrontend ) {
+		if ( ! isFrontend() ) {
 			defaultElements.$window = jQuery( window );
 			defaultElements.$document = jQuery( document );
 			defaultElements.$head = jQuery( document.head );
