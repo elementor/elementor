@@ -86,6 +86,8 @@ jobs:
           cd test-server
           npm run cli8888 -- port=8888
           npm run cli8889 -- port=8889
+          npm run cli -- command="wp config set ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS true --raw" port=8888
+          npm run cli -- command="wp config set ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS true --raw" port=8889
           cd ..
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
