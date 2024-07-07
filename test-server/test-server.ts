@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
 import { v2 as dockerCompose } from 'docker-compose';
-import { getConfig, getConfigFilePath } from './config.js';
+import { getConfig } from './config.js';
 import {
 	generateCliDockerfileTemplate,
 	generateDockerComposeYmlTemplate,
@@ -40,9 +40,19 @@ const stop = async () => {
 	} );
 };
 
-const commandMap: { [key: string]: () => Promise<void> } = {
+// "docker compose -f backup/docker-compose.yml run --rm cli wp core install --url=\\\\\\\"http://localhost:8888\\\\\\\" --title=\\\\\\\"test\\\\\\\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email"
+const cli = async ( command: string ) => {
+	await dockerCompose.run( 'cli', command, {
+		cwd: runPath,
+		commandOptions: [ '--rm' ],
+		log: true,
+	} );
+};
+
+const commandMap: { [key: string]: ( () => Promise<void> ) | ( ( command: string ) => Promise<void> ) } = {
 	start,
 	stop,
+	cli,
 };
 const command = process.argv[ 2 ];
 if ( ! commandMap[ command ] ) {
@@ -50,9 +60,27 @@ if ( ! commandMap[ command ] ) {
 	console.log( `Valid commands: ${ Object.keys( commandMap ).join( ', ' ) }. You used ${ command }` );
 }
 
+const getArgument = ( argumentKey: string, processArgs: string[] ) => {
+	for ( let i = 3; i < processArgs.length; i++ ) {
+		const argument = processArgs[ i ];
+		if ( argument.startsWith( `${ argumentKey }=` ) ) {
+			return argument.substring( argumentKey.length + 1 );
+		}
+	}
+	return undefined;
+};
+
+const getConfigFilePath = ( processArgs: string[] ) => {
+	return getArgument( 'config', processArgs );
+};
+
+const getCliCommand = ( processArgs: string[] ) => {
+	return getArgument( 'command', processArgs );
+};
+
 const generateFiles = () => {
-	const config = getConfig( process.argv[ 3 ] );
-	const configFilePath = path.resolve( getConfigFilePath( process.argv[ 3 ] ) );
+	const configFilePath = path.resolve( getConfigFilePath( process.argv ) );
+	const config = getConfig( configFilePath );
 	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ) );
 	const wordPressDockerfileTemplate = generateWordPressDockerfileTemplate( config );
 	const cliDockerfileTemplate = generateCliDockerfileTemplate( config );
@@ -67,14 +95,17 @@ const generateFiles = () => {
 	fs.writeFileSync( path.resolve( runPath, 'docker-compose.yml' ), dockerComposeYmlTemplate );
 	fs.writeFileSync( path.resolve( runPath, 'WordPress.Dockerfile' ), wordPressDockerfileTemplate );
 	fs.writeFileSync( path.resolve( runPath, 'CLI.Dockerfile' ), cliDockerfileTemplate );
+
 	return runPath;
 };
 
 const runPath = generateFiles();
 
-await commandMap[ command ]();
+const cliCommand = getCliCommand( process.argv );
+await commandMap[ command ]( cliCommand );
 
 export const commands = {
 	start,
 	stop,
+	cli,
 };

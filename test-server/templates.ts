@@ -17,28 +17,9 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
 		return `      - >-
         ${ path.resolve( basePath, value ) }:/var/www/html/wp-content/themes/${ key }\n`;
 	} );
-	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).join( '' );
-// 	const volumes = `${ mappingsStr.join( '' ) }
-//       - >-
-//         /Users/yotams/PhpstormProjects/elementor/build:/var/www/html/wp-content/plugins/elementor
-//       - >-
-//         /Users/yotams/.wp-env/fdee84940b5ea2ef4346b5d387830a7a/hello-elementor:/var/www/html/wp-content/themes/hello-elementor
-//       - >-
-//         wpcontent:/var/www/html
-// `;
-// 	const volumes = `      - >-
-//         /Users/yotams/PhpstormProjects/elementor/tests/playwright/templates:/var/www/html/elementor-templates
-//       - >-
-//         /Users/yotams/PhpstormProjects/elementor/tests/wp-env/config:/var/www/html/elementor-config
-//       - >-
-//         /Users/yotams/PhpstormProjects/elementor/templates/playwright:/var/www/html/elementor-playwright-templates
-//       - >-
-//         /Users/yotams/PhpstormProjects/elementor/build:/var/www/html/wp-content/plugins/elementor
-//       - >-
-//         /Users/yotams/.wp-env/fdee84940b5ea2ef4346b5d387830a7a/hello-elementor:/var/www/html/wp-content/themes/hello-elementor
-//       - >-
-//         wpcontent:/var/www/html
-// `;
+	const wpContent = `      - >-
+        wpcontent:/var/www/html\n`;
+	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).concat( [ wpContent ] ).join( '' );
 	return `services:
   mysql:
     image: 'mariadb:lts'

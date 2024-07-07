@@ -9,16 +9,8 @@ export type Config = {
 	config?: Record<string, string|boolean>,
 }
 
-export const getConfigFilePath = ( configFileArg?: string ) => {
-	if ( configFileArg?.startsWith( 'config=' ) ) {
-		return configFileArg.substring( 7 );
-	}
-	return undefined;
-};
-
-export const getConfig = ( configFileArg?: string ): Config => {
+export const getConfig = ( configFilePath?: string ): Config => {
 	let configFile: Config = {};
-	const configFilePath = getConfigFilePath( configFileArg );
 	if ( configFilePath ) {
 		configFile = JSON.parse( fs.readFileSync( configFilePath, 'utf8' ) ) as Config;
 	}

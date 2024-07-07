@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"start": "node --enable-source-maps --loader ts-node/esm test-server.js start config=../.test-server.config.json",
+		"cli": "node --enable-source-maps test-server.js cli config=../.test-server.config.json command=\"wp core install --url=\"http://localhost:8888\" --title=\"test\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email\"",
+		"start": "node --enable-source-maps test-server.js start config=../.test-server.config.json",
 		"stop": "node --enable-source-maps test-server.js stop config=../.test-server.config.json",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
