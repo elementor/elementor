@@ -51,12 +51,12 @@ class Pro_Widget_Promotion extends Widget_Base {
 	private function render_promotion() {
 		$promotion = Filtered_Promotions_Manager::get_filtered_promotion_data(
 			[
-				'image_url' => $this->get_promotion_image_url(),
+				'image_url' => esc_url( $this->get_promotion_image_url() ),
 				'text' => sprintf(
 					esc_html__( 'This result includes the Elementor Pro %s widget. Upgrade now to unlock it and grow your web creation toolkit.', 'elementor' ),
 					esc_html( $this->widget_data['widget_title'] )
 				),
-				'upgrade_url' => 'https://go.elementor.com/go-pro-element-pro/',
+				'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-element-pro/' ),
 			],
 			'elementor/pro-widget/promotion',
 			'upgrade_url'
