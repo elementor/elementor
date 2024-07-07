@@ -1,6 +1,6 @@
 import useUserInfo from './hooks/use-user-info';
 import useExcerptPrompt from './hooks/use-excerpt-prompt';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useCallback, useEffect } from '@wordpress/element';
 import App from './app';
 import { __ } from '@wordpress/i18n';
@@ -22,9 +22,9 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 		credits,
 	} );
 	const generateExcerptOnce = useRef( false );
-	const isLoading = isLoadingExcerpt || isLoadingUserInfo;
+	const [isLoadingCombined, setIsLoadingCombined] = useState( true );
 	const initHook = () => ( {
-		isLoading,
+		isLoading: isLoadingCombined,
 		isConnected,
 		isGetStarted,
 		connectUrl,
@@ -36,14 +36,21 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 	const fetchAiExcerpt = useCallback( async () => {
 		if ( send && postTextualContent ) {
 			generateExcerptOnce.current = true;
-			await send( { content: postTextualContent } );
+			await send( { content: postTextualContent } ).then( () => {
+				setIsLoadingCombined( false );
+			} );
 		}
 	}, [ postTextualContent, send ] );
 	useEffect( () => {
-		if ( ! generateExcerptOnce.current && isConnected && ! newExcerpt?.result ) {
+		if ( ! generateExcerptOnce.current && isConnected && isGetStarted ) {
 			fetchAiExcerpt();
 		}
-	}, [ fetchAiExcerpt, isConnected, newExcerpt ] );
+	}, [ fetchAiExcerpt, isConnected, isGetStarted ] );
+	useEffect( () => {
+		if ( ! isLoadingUserInfo && ( ! isConnected || ! isGetStarted ) ) {
+			setIsLoadingCombined( false );
+		}
+	}, [ isConnected, isGetStarted, isLoadingUserInfo ] );
 	const isRTL = elementorCommon.config.isRTL;
 
 	return (
