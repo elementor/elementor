@@ -5,6 +5,7 @@ import { useCallback, useEffect } from '@wordpress/element';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useRequestIds } from './context/requests-ids';
 
 const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } ) => {
 	const {
@@ -15,14 +16,24 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 		fetchData,
 		hasSubscription,
 		credits,
-		usagePercentage,
+		usagePercentage: initialUsagePercentage,
 	} = useUserInfo( true );
 	const { data: newExcerpt, error, send } = useExcerptPrompt( {
 		result: currExcerpt,
 		credits,
 	} );
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+
 	const generateExcerptOnce = useRef( false );
-	const [isLoadingCombined, setIsLoadingCombined ] = useState( true );
+  const [isLoadingCombined, setIsLoadingCombined ] = useState( true );
 	const initHook = () => ( {
 		isLoading: isLoadingCombined,
 		isConnected,
@@ -36,7 +47,7 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 	const fetchAiExcerpt = useCallback( async () => {
 		if ( send && postTextualContent ) {
 			generateExcerptOnce.current = true;
-			await send( { content: postTextualContent } ).then( () => {
+			await send( { content: postTextualContent } ).finally( () => {
 				setIsLoadingCombined( false );
 			} );
 		}
