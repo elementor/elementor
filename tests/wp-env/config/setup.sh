@@ -2,6 +2,7 @@
 set -eox pipefail
 
 wp theme activate hello-elementor
+wp plugin activate elementor
 
 wp --user=admin elementor library import-dir /var/www/html/elementor-templates
 

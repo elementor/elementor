@@ -81,7 +81,6 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          sleep 10
           cd test-server
           npm run cli8888 -- port=8888
           npm run cli8889 -- port=8889
