@@ -662,52 +662,18 @@ BaseElementView = BaseContainer.extend( {
 				'item_link' === changedControl );
 	},
 
-	async getDynamicValue( settings, bindingSetting, changedControl, widget ) {
+	async getDynamicValue( settings, bindingSetting, changedControl, widget, dataBinding ) {
 		const dynamicSettings = { active: true },
 			changedDataForRemovedItem = settings.attributes?.[ changedControl ],
 			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControl ];
-		let valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
-
-		if ( 'item_link' === changedControl ) {
-
-			debugger;
-
-			valueToParse = changedDataForAddedItem || changedDataForRemovedItem?.url;
-			changedControl = changedControl.url || changedControl;
-			const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-
-			console.log( 'b' );
-
-			try {
-				elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-					await new CustomEvent( 'elementor/dynamic/url_change', {
-						detail: {
-							element: dataBinding.el,
-							name: changedDataForAddedItem && this.getDynamicTagName( changedDataForAddedItem ),
-							value,
-						},
-					} )
-				);
-
-				dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll('.e-n-menu-title-text')[ dataBinding.dataset.bindingIndex - 1 ]
-			} catch {
-				return false;
-			}
-		}
+		let valueToParse = changedDataForAddedItem || changedDataForRemovedItem?.url || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
-			try {
-				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-			} catch {
-				await new Promise( ( resolve ) => {
-					elementor.dynamicTags.refreshCacheFromServer( () => {
-						resolve();
-					} );
-				} );
 
-				return ! _.isEmpty( elementor.dynamicTags.cache )
-					? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
-					: false;
+			const data = await this.getDataFromCacheOrBackend( valueToParse.url || valueToParse, dynamicSettings );
+
+			if( data ){
+				this.tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding.el, changedDataForAddedItem, changedDataForRemovedItem, widget, changedControl, dynamicSettings );
 			}
 		}
 
@@ -804,7 +770,8 @@ BaseElementView = BaseContainer.extend( {
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue = this.getDynamicValue( settings, dataBinding, changedControl, widget );
+				debugger;
+				const dynamicValue =  this.getDynamicValue( settings, dataBinding, changedControl, widget, dataBinding );
 
 				if ( 'item_link' === changedControl) {
 					return true;
@@ -1177,8 +1144,52 @@ BaseElementView = BaseContainer.extend( {
 		return match ? match[1] : null;
 	},
 
-	updateDataBindings( settings, children ) {
+	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
+		try {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		} catch ( e ) {
+			console.log({e})
+			await new Promise( ( resolve ) => {
+				 elementor.dynamicTags.refreshCacheFromServer( ( res ) => {
+					resolve( res );
+				} );
+			} );
 
+			return ! _.isEmpty( elementor.dynamicTags.cache )
+				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+				: false;
+		}
+	},
+
+	tryFormatDynamicMegaMenuUrl(valueToParse, dataBinding, changedDataForAddedItem, changedDataForRemovedItem, widget, changedControl, dynamicSettings) {
+		if ( 'item_link' !== changedControl ) {
+			return false;
+		}
+
+		debugger;
+
+		valueToParse = changedDataForAddedItem || changedDataForRemovedItem?.url;
+		changedControl = changedControl.url || changedControl;
+		const value = elementor.dynamicTags.parseTagsText(valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent);
+
+		console.log('b');
+
+		try {
+			elementor.$preview[0].contentWindow.dispatchEvent(
+				new CustomEvent('elementor/dynamic/url_change', {
+					detail: {
+						element: dataBinding,
+						name: changedDataForAddedItem && this.getDynamicTagName( changedDataForAddedItem ),
+						value,
+					},
+				})
+			);
+
+			dataBinding.el = Array.from(widget)[0].querySelectorAll('.e-n-menu-title-text')[dataBinding.dataset.bindingIndex - 1]
+			return true;
+		} catch {
+			return false;
+		}
 	}
 } );
 
