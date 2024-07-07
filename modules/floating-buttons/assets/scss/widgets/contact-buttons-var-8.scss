@@ -1,0 +1,199 @@
+.e-contact-buttons-var-8 {
+	--e-contact-buttons-size-small: 48px;
+	--e-contact-buttons-size-medium: 56px;
+	--e-contact-buttons-size-large: 64px;
+	--e-contact-buttons-svg-size-small: 24px;
+	--e-contact-buttons-svg-size-medium: 28px;
+	--e-contact-buttons-svg-size-large: 32px;
+	--e-contact-buttons-chat-box-width: 280px;
+
+	--e-contact-buttons-button-bg: #324A6D;
+	--e-contact-buttons-button-bg-hover: #1C2448;
+	--e-contact-buttons-active-button-bg: #F3F5F8;
+	--e-contact-buttons-active-button-color: #324A6D;
+	--e-contact-buttons-top-bar-bg: #324A6D;
+	--e-contact-buttons-contact-button-bg: #C8D5DC;
+	--e-contact-buttons-contact-button-icon: #324A6D;
+
+	.has-colors-type-default {
+
+		&.has-platform-email,
+		&.has-platform-sms,
+		&.has-platform-phone,
+		&.has-platform-url {
+			--e-contact-buttons-contact-button-icon: #467FF7;
+		}
+
+		&.has-platform-whatsapp {
+			--e-contact-buttons-contact-button-icon: #25D366;
+		}
+
+		&.has-platform-skype {
+			--e-contact-buttons-contact-button-icon: #00AFF0;
+		}
+
+		&.has-platform-messenger {
+			--e-contact-buttons-contact-button-icon: #168AFF;
+		}
+
+		&.has-platform-viber {
+			--e-contact-buttons-contact-button-icon: #7360F2;
+		}
+
+		&.has-platform-waze {
+			--e-contact-buttons-contact-button-icon: #33CCFF;
+		}
+	}
+
+	.has-size-small.e-contact-buttons__close-button {
+		align-items: center;
+		display: flex;
+		height: var(--e-contact-buttons-size-small);
+		justify-content: center;
+		width: var(--e-contact-buttons-size-small);
+
+		.eicon-close {
+			font-size: 24px;
+		}
+	}
+
+	.has-size-medium.e-contact-buttons__close-button {
+		height: var(--e-contact-buttons-size-medium);
+		width: var(--e-contact-buttons-size-medium);
+
+		.eicon-close {
+			font-size: 28px;
+		}
+	}
+
+	.has-size-large.e-contact-buttons__close-button {
+		height: var(--e-contact-buttons-size-large);
+		width: var(--e-contact-buttons-size-large);
+
+		.eicon-close {
+			font-size: 32px;
+		}
+	}
+
+	.e-contact-buttons {
+
+		&__chat-buttons-container {
+			display: flex;
+		}
+
+		&__close-button {
+			background-color: var(--e-contact-buttons-active-button-bg);
+			border-radius: 50%;
+			color: var(--e-contact-buttons-active-button-color);
+			inset-inline-end: unset;
+			inset-inline-start: unset;
+			position: relative;
+			top: unset;
+
+			&:hover,
+			&:focus {
+				background-color: var(--e-contact-buttons-active-button-bg);
+				color: var(--e-contact-buttons-active-button-color);
+			}
+		}
+
+		&__chat-button,
+		&__chat-button[type="button"] {
+
+			&[aria-expanded="true"] {
+				display: none;
+			}
+		}
+
+		&__close-button {
+
+			&[aria-expanded="false"] {
+				display: none;
+			}
+		}
+
+		&__top-bar-title {
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 600;
+		}
+
+		&__top-bar-subtitle {
+			font-size: 12px;
+			line-height: 16px;
+			font-weight: 500px;
+		}
+
+		&__contact-links {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			padding: 12px;
+		}
+
+		&__contact-icon-link {
+			background-color: var(--e-contact-buttons-contact-button-bg);
+			border-start-end-radius: 15px;
+			border-end-end-radius: 15px;
+			border-end-start-radius: 15px;
+			color: var(--e-contact-buttons-contact-button-icon);
+			display: grid;
+			grid-template-columns: auto 1fr;
+			grid-template-rows: repeat(2, 1fr);
+			grid-column-gap: 12px;
+			grid-row-gap: 0;
+			padding: 10px 20px;
+
+			svg {
+				fill: var(--e-contact-buttons-contact-button-icon);
+			}
+		}
+
+		&__contact-icon-link.has-size-small {
+			svg {
+				height: 22px;
+				width: 22px;
+			}
+		}
+
+		&__contact-icon-link.has-size-medium {
+			svg {
+				height: 28px;
+				width: 28px;
+			}
+		}
+
+		&__contact-icon-link.has-size-large {
+			svg {
+				height: 36px;
+				width: 36px;
+			}
+		}
+
+		&__contact-icon-container {
+			align-items: center;
+			display: flex;
+			grid-area: 1 / 1 / 3 / 2;
+		}
+
+		&__contact-title {
+			color: var(--e-contact-buttons-contact-title-text-color);
+			grid-area: 1 / 2 / 2 / 3;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 24px;
+		}
+
+		&__contact-description {
+			color: var(--e-contact-buttons-contact-description-text-color);
+			grid-area: 2 / 2 / 3 / 3;
+			font-size: 12px;
+			font-weight: 300;
+			line-height: 16px;
+		}
+
+		&__links-container {
+			background-color: var(--e-contact-buttons-chat-box-bg);
+		}
+	}
+}

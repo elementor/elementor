@@ -3,7 +3,7 @@
 namespace Elementor\Core\Settings\EditorPreferences;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Editor\Editor;
+use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Plugin;
 
@@ -112,7 +112,7 @@ class Model extends BaseModel {
 			]
 		);
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME ) ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( Editor_V2_Experiments::APP_BAR ) ) {
 
 			$this->add_control(
 				'default_device_view',

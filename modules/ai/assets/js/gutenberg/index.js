@@ -1,5 +1,7 @@
 import { createRoot } from '@wordpress/element';
 import GenerateExcerptWithAI from './excerpt';
+import GenerateFeaturedImageWithAI from './featured-image';
+import { GenerateTextWithAi } from './text-with-ai';
 
 ( function() {
 	'use strict';
@@ -33,14 +35,59 @@ import GenerateExcerptWithAI from './excerpt';
 			}
 		};
 
-		// Add the custom link to the excerpt panel when the editor sidebar is rendered
-		wp.data.subscribe( () => {
-			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( 'post-excerpt' );
+		const addGenerateFeaturedImageWithAI = () => {
+			const featuredImagePanel = document.querySelector( '.editor-post-featured-image' );
+			if ( featuredImagePanel && ! document.querySelector( '.e-featured-image-ai' ) ) {
+				const rootElement = document.createElement( 'div' );
+				rootElement.classList.add( 'e-featured-image-ai' );
+				featuredImagePanel.appendChild( rootElement );
+				const postId = wp.data.select( 'core/editor' ).getCurrentPostId();
+				elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', postId );
+				const root = createRoot( rootElement );
+				root.render( <GenerateFeaturedImageWithAI /> );
+			}
+		};
+
+		const addTextWithAI = ( blockName ) => {
+			const textPanel = document.querySelector( '.block-editor-block-card__content' );
+			if ( textPanel && ! document.querySelector( '.e-text-ai' ) ) {
+				const rootElement = document.createElement( 'div' );
+				rootElement.classList.add( 'e-text-ai' );
+				textPanel.appendChild( rootElement );
+				const root = createRoot( rootElement );
+				root.render( <GenerateTextWithAi blockName={ blockName } /> );
+			}
+		};
+
+		const removeAiIndicator = ( ) => {
+			const textPanel = document.querySelector( '.e-text-ai' );
+			if ( textPanel ) {
+				textPanel.remove();
+			}
+		};
+
+		const addAiIndicator = ( panelName, functionAddAi ) => {
+			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( panelName );
 			if ( isSidebarOpened ) {
 				setTimeout( function() {
-					addGenerateExcerptWithAI();
+					functionAddAi();
 				}, 1 );
 			}
+		};
+
+		const addAiIndicatorToTextBlock = ( blockNames ) => {
+			const selectedBlock = wp.data.select( 'core/block-editor' )?.getSelectedBlock();
+			if ( selectedBlock && blockNames.some( ( name ) => selectedBlock.name.includes( name ) ) ) {
+				addTextWithAI( selectedBlock.name );
+			} else {
+				removeAiIndicator();
+			}
+		};
+
+		wp.data.subscribe( () => {
+			addAiIndicator( 'post-excerpt', addGenerateExcerptWithAI );
+			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
+			addAiIndicatorToTextBlock( [ 'paragraph', 'heading' ] );
 		} );
 	} );
 } )( jQuery );
