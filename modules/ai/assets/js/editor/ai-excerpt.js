@@ -1,10 +1,11 @@
 import useUserInfo from './hooks/use-user-info';
 import useExcerptPrompt from './hooks/use-excerpt-prompt';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useCallback, useEffect } from '@wordpress/element';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useRequestIds } from './context/requests-ids';
 
 const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } ) => {
 	const {
@@ -15,14 +16,24 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 		fetchData,
 		hasSubscription,
 		credits,
-		usagePercentage,
+		usagePercentage: initialUsagePercentage,
 	} = useUserInfo( true );
 	const { data: newExcerpt, isLoading: isLoadingExcerpt, error, send } = useExcerptPrompt( {
 		result: currExcerpt,
 		credits,
 	} );
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+
 	const generateExcerptOnce = useRef( false );
-	const isLoading = isLoadingExcerpt || isLoadingUserInfo;
+	const isLoading = isLoadingExcerpt || isLoadingUserInfo || ! isInitUsageDone;
 	const initHook = () => ( {
 		isLoading,
 		isConnected,
