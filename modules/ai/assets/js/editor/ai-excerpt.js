@@ -17,12 +17,12 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 		credits,
 		usagePercentage,
 	} = useUserInfo( true );
-	const { data: newExcerpt, isLoading: isLoadingExcerpt, error, send } = useExcerptPrompt( {
+	const { data: newExcerpt, error, send } = useExcerptPrompt( {
 		result: currExcerpt,
 		credits,
 	} );
 	const generateExcerptOnce = useRef( false );
-	const [isLoadingCombined, setIsLoadingCombined] = useState( true );
+	const [isLoadingCombined, setIsLoadingCombined ] = useState( true );
 	const initHook = () => ( {
 		isLoading: isLoadingCombined,
 		isConnected,
