@@ -9,12 +9,23 @@ import LayoutDialog from './pages/form-layout/components/layout-dialog';
 import PropTypes from 'prop-types';
 import { AttachmentPropType } from './types/attachment';
 import { useConfig } from './pages/form-layout/context/config';
+import { useRequestIds } from './context/requests-ids';
+import { useEffect, useState } from 'react';
 
 const LayoutContent = ( props ) => {
-	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, usagePercentage } = useUserInfo();
+	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, usagePercentage: initialUsagePercentage } = useUserInfo();
 	const { onClose, onConnect } = useConfig();
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
 
-	if ( isLoading ) {
+	useEffect( () => {
+		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+
+	if ( isLoading || ! isInitUsageDone ) {
 		return (
 			<LayoutDialog onClose={ onClose }>
 				<LayoutDialog.Header onClose={ onClose } />
