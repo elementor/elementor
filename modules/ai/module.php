@@ -182,9 +182,10 @@ class Module extends BaseModule {
 			true
 		);
 
-		$screen = get_current_screen();
-		if ( $screen->is_block_editor ) {
-			return;
+		if ( function_exists( 'get_current_screen' ) ) {
+			if ( get_current_screen()->is_block_editor ) {
+				return;
+			}
 		}
 
 		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
