@@ -33,7 +33,7 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	const generateExcerptOnce = useRef( false );
-  const [isLoadingCombined, setIsLoadingCombined ] = useState( true );
+	const [ isLoadingCombined, setIsLoadingCombined ] = useState( true );
 	const initHook = () => ( {
 		isLoading: isLoadingCombined,
 		isConnected,
