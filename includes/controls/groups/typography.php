@@ -154,6 +154,8 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 		];
 
+		$fields = $this->add_font_variables_fields( $fields );
+
 		$fields['text_transform'] = [
 			'label' => esc_html_x( 'Transform', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
@@ -268,8 +270,6 @@ class Group_Control_Typography extends Group_Control_Base {
 			'responsive' => true,
 			'selector_value' => 'word-spacing: {{SIZE}}{{UNIT}}',
 		];
-
-		$fields = $this->add_font_variables_fields( $fields );
 
 		return $fields;
 	}
