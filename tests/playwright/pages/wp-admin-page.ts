@@ -271,8 +271,10 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
-	getActiveTheme() {
-		return wpEnvCli( `wp theme list --status=active --field=name --format=csv` ).toString().trim();
+	async getActiveTheme() {
+		const request: APIRequestContext = this.page.context().request;
+		const { name } = await this.apiRequests.getTheme( request, 'active' );
+		return name;
 	}
 
 	activateTheme( theme: string ) {
