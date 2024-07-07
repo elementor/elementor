@@ -273,8 +273,8 @@ export default class WpAdminPage extends BasePage {
 
 	async getActiveTheme() {
 		const request: APIRequestContext = this.page.context().request;
-		const { name } = await this.apiRequests.getTheme( request, 'active' );
-		return name;
+		const themeData = await this.apiRequests.getTheme( request, 'active' );
+		return JSON.stringify( themeData );
 	}
 
 	activateTheme( theme: string ) {
