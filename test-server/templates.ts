@@ -1,7 +1,7 @@
 import { Config } from './config.js';
 import path from 'path';
 
-export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string ) => {
+export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string, port: string ) => {
 	const mappingsStringArray = Object.keys( config.mappings ).map( ( key ) => {
 		const value = config.mappings[ key ];
 		return `      - >-
@@ -52,7 +52,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
         HOST_UID: '502'
         HOST_GID: '20'
     ports:
-      - '\${WP_ENV_PORT:-8888}:80'
+      - '\${WP_ENV_PORT:-${ port }}:80'
     environment:
       APACHE_RUN_USER: '#502'
       APACHE_RUN_GROUP: '#20'

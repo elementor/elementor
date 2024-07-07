@@ -24,32 +24,35 @@ const waitForServer = async ( url: string, timeoutMs: number ) => {
 	return false;
 };
 
-const start = async () => {
+const start = async ( port: string ) => {
 	await dockerCompose.upAll( {
+		composeOptions: [ '-p', `port${ port }` ],
 		cwd: runPath,
 		log: true,
 	} );
-	await waitForServer( 'http://localhost:8888', 10000 );
+	await waitForServer( `http://localhost:${ port }`, 10000 );
 };
 
-const stop = async () => {
+const stop = async ( port: string ) => {
 	await dockerCompose.downAll( {
 		cwd: runPath,
 		commandOptions: [ '--volumes', '--remove-orphans' ],
+		composeOptions: [ '-p', `port${ port }` ],
 		log: true,
 	} );
 };
 
 // "docker compose -f backup/docker-compose.yml run --rm cli wp core install --url=\\\\\\\"http://localhost:8888\\\\\\\" --title=\\\\\\\"test\\\\\\\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email"
-const cli = async ( command: string ) => {
+const cli = async ( port: string, command: string ) => {
 	await dockerCompose.run( 'cli', command, {
 		cwd: runPath,
 		commandOptions: [ '--rm' ],
+		composeOptions: [ '-p', `port${ port }` ],
 		log: true,
 	} );
 };
 
-const commandMap: { [key: string]: ( () => Promise<void> ) | ( ( command: string ) => Promise<void> ) } = {
+const commandMap: { [key: string]: ( ( port: string ) => Promise<void> ) | ( ( port: string, command: string ) => Promise<void> ) } = {
 	start,
 	stop,
 	cli,
@@ -78,10 +81,16 @@ const getCliCommand = ( processArgs: string[] ) => {
 	return getArgument( 'command', processArgs );
 };
 
+const getPort = ( processArgs: string[] ) => {
+	return getArgument( 'port', processArgs ) || '8888';
+};
+
+const port = getPort( process.argv );
+
 const generateFiles = () => {
 	const configFilePath = path.resolve( getConfigFilePath( process.argv ) );
 	const config = getConfig( configFilePath );
-	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ) );
+	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ), port );
 	const wordPressDockerfileTemplate = generateWordPressDockerfileTemplate( config );
 	const cliDockerfileTemplate = generateCliDockerfileTemplate( config );
 	const hash = createHash( 'sha256' );
@@ -102,7 +111,7 @@ const generateFiles = () => {
 const runPath = generateFiles();
 
 const cliCommand = getCliCommand( process.argv );
-await commandMap[ command ]( cliCommand );
+await commandMap[ command ]( port, cliCommand );
 
 export const commands = {
 	start,
