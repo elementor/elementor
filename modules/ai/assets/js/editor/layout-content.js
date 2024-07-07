@@ -21,6 +21,7 @@ const LayoutContent = ( props ) => {
 	useEffect( () => {
 		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
 			updateUsagePercentage( initialUsagePercentage );
+			var x;
 			setIsInitUsageDone( true );
 		}
 	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
