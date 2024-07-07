@@ -183,7 +183,7 @@ class Module extends BaseModule {
 		);
 
 		$screen = get_current_screen();
-		if ( $screen -> is_block_editor ) {
+		if ( $screen->is_block_editor ) {
 			return;
 		}
 
