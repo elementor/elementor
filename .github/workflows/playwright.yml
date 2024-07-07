@@ -81,6 +81,10 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+          cd test-server
+          npm run cli8888 -- port=8888
+          npm run cli8889 -- port=8889
+          cd ..
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
         run: cd test-server && npm run cli command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip" -- port=8888 && npm run cli command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip" -- port=8889 && cd ..
