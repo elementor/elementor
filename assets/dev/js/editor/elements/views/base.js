@@ -773,10 +773,10 @@ BaseElementView = BaseContainer.extend( {
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
 				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
-			let change = settings.changed[ bindingSetting ];
+			let change = settings.changed[ changedControl ]?.[ bindingSetting ] || settings.changed[ changedControl ];
 
-			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, bindingSetting );
+			if ( this.isAtomicDynamic( dataBinding, bindingSetting ) ) {
+				const dynamicValue = await this.getDynamicValue( settings, changedControl );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
@@ -784,7 +784,15 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = change;
+				dataBinding.el.innerHTML = [ 'before', 'after', 'fallback' ].includes( changedControl ) && 'item_title' === bindingSetting
+					? this.getAdvancedDynamicTitleChange(
+						changedControl,
+						settings.attributes,
+						settings._previousAttributes,
+						dataBinding.el,
+					)
+					: change;
+
 				return true;
 			}
 
@@ -803,6 +811,8 @@ BaseElementView = BaseContainer.extend( {
 					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
+						changed = renderDataBinding( dataBinding );
+					} else if ( dataBindings.indexOf( dataBinding ) === this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex - 1 ) {
 						changed = renderDataBinding( dataBinding );
 					}
 				}
@@ -847,6 +857,44 @@ BaseElementView = BaseContainer.extend( {
 		if ( ! renderResult ) {
 			this.renderChanges( settings );
 		}
+	},
+
+	/**
+	 * Function getAdvancedDynamicTitleChange().
+	 *
+	 * Renders before / after / fallback for dynamic item titles.
+	 *
+	 * @param {string} changeKey
+	 * @param {Object} settings
+	 * @param {Object} previousSettings
+	 * @param {Object} el
+	 */
+	getAdvancedDynamicTitleChange( changeKey, settings, previousSettings, el ) {
+		let title = el.innerHTML;
+
+		if ( previousSettings.before ) {
+			title = title.replace( previousSettings.before, '' );
+		}
+
+		if ( previousSettings.after ) {
+			title = title.replace( new RegExp( previousSettings.after + '$' ), '' );
+		}
+
+		if ( ! title ) {
+			return 'fallback' === changeKey
+				? settings.fallback
+				: previousSettings.fallback || '';
+		}
+
+		if ( 'before' === changeKey ) {
+			title = settings.before + title;
+			title += previousSettings.after || '';
+		} else {
+			title += settings.after || '';
+			title = ( previousSettings.before || '' ) + title;
+		}
+
+		return title;
 	},
 
 	getDynamicParsingSettings() {
