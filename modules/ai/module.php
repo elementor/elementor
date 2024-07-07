@@ -183,9 +183,9 @@ class Module extends BaseModule {
 		);
 
 		$screen = get_current_screen();
-			if ( $screen -> is_block_editor ) {
-				return;
-			}
+		if ( $screen -> is_block_editor ) {
+			return;
+		}
 
 		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
 
