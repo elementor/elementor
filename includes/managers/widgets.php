@@ -106,8 +106,6 @@ class Widgets_Manager {
 		$this->register_promoted_widgets();
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
-			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
-
 			$this->register_widget_by_filename( $widget_filename );
 		}
 
@@ -147,6 +145,8 @@ class Widgets_Manager {
 	}
 
 	private function register_widget_by_filename( string $filename ) {
+		require_once ELEMENTOR_PATH . 'includes/widgets/' . $filename . '.php';
+
 		$class_name = str_replace( '-', '_', $filename );
 
 		$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
@@ -160,8 +160,6 @@ class Widgets_Manager {
 		];
 
 		foreach ( $atomic_widgets_filenames as $widget_filename ) {
-			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
-
 			$this->register_widget_by_filename( $widget_filename );
 		}
 	}
