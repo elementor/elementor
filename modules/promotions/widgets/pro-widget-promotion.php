@@ -51,12 +51,12 @@ class Pro_Widget_Promotion extends Widget_Base {
 	private function render_promotion() {
 		$promotion = Filtered_Promotions_Manager::get_filtered_promotion_data(
 			[
-				'image_url' => esc_url( $this->get_promotion_image_url()),
+				'image_url' => $this->get_promotion_image_url(),
 				'text' => sprintf(
 					esc_html__( 'This result includes the Elementor Pro %s widget. Upgrade now to unlock it and grow your web creation toolkit.', 'elementor' ),
 					esc_html( $this->widget_data['widget_title'] )
 				),
-				'upgrade_url' => esc_url('https://go.elementor.com/go-pro-element-pro/'),
+				'upgrade_url' => 'https://go.elementor.com/go-pro-element-pro/',
 			],
 			'elementor/pro-widget/promotion',
 			'upgrade_url'
@@ -65,14 +65,14 @@ class Pro_Widget_Promotion extends Widget_Base {
 		<div class="e-container">
 			<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>
 			<p>
-				<img src="<?php echo $promotion['image_url']; ?>" loading="lazy" alt="Go Pro">
+				<img src="<?php echo esc_url( $promotion['image_url'] ); ?>" loading="lazy" alt="Go Pro">
 				<?php
-					echo $promotion['text'];
+					echo esc_html( $promotion['text'] );
 				?>
 			</p>
 			<div class="e-actions">
 				<a href="#" class="e-btn e-btn-txt e-promotion-delete"><?php echo esc_html__( 'Remove', 'elementor' ); ?></a>
-				<a href="<?php echo $promotion['upgrade_url']; ?>" rel="noreferrer" target="_blank" class="e-btn go-pro elementor-clickable e-promotion-go-pro"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a href="<?php echo esc_url( $promotion['upgrade_url'] ); ?>" rel="noreferrer" target="_blank" class="e-btn go-pro elementor-clickable e-promotion-go-pro"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div>
 		<?php
