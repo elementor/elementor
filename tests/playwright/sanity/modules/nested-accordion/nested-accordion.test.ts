@@ -132,7 +132,8 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 
 		await test.step( 'Duplicate an item to the repeater', async () => {
 			// Arrange
-			const numberOfTitles = await nestedAccordionItemTitle.count(),
+			const
+				numberOfTitles = await nestedAccordionItemTitle.count(),
 				numberOfContents = await nestedAccordionItemContent.count();
 
 			// Act

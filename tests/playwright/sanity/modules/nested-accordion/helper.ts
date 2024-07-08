@@ -117,7 +117,8 @@ export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' )
 
 export async function deleteItemFromRepeater( editor: EditorPage, accordionID: string ) {
 	// Arrange
-	const nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
+	const
+		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
 		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item .e-con` ),
 		numberOfTitles = await nestedAccordionItemTitle.count(),
 		numberOfContents = await nestedAccordionItemContent.count();
@@ -134,7 +135,8 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 
 export async function addItemFromRepeater( editor: EditorPage, accordionID: string ) {
 	// Arrange
-	const nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
+	const
+		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
 		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item .e-con` ),
 		numberOfTitles = await nestedAccordionItemTitle.count(),
 		numberOfContents = await nestedAccordionItemContent.count();

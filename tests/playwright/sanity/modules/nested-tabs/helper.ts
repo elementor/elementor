@@ -101,7 +101,8 @@ export async function isTabTitleVisible( context: Page | Frame, positionIndex: n
 
 export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+	const
+		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
@@ -118,7 +119,8 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 
 export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+	const
+		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
@@ -135,7 +137,8 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 
 export async function cloneItemFromRepeater( editor: EditorPage, widgetID: string, position: number ) {
 	// Arrange
-	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+	const
+		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
