@@ -16,9 +16,14 @@ class Widgets_Css extends Base {
 	protected $assets_category = 'widgets';
 
 	protected function get_asset_content() {
-		$asset_url = $this->get_config_data( 'file_url' );
+		$asset_css_file_size = $this->get_file_data( 'size' );
 
-		$widget_css = $asset_url ? sprintf( '<link rel="stylesheet" href="%s">', $asset_url ) : '';
+		$widget_css = '';
+
+		if ( $asset_css_file_size ) {
+			$asset_url = $this->get_config_data( 'file_url' );
+			$widget_css = sprintf( '<link rel="stylesheet" href="%s">', $asset_url );
+		}
 
 		return $widget_css;
 	}
