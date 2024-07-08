@@ -6,6 +6,7 @@ log/
 vendor/
 local-site/
 tmp/
+.lighthouseci/
 
 # build outputs
 build/
