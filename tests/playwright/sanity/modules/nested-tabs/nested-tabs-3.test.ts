@@ -279,7 +279,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
-		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
+		await editor.duplicateRepeaterItem( 'tabs', 2 );
 
 		await clickTab( editor.getPreviewFrame(), 2 );
 

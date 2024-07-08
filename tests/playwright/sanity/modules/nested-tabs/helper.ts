@@ -124,7 +124,7 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await editor.addRepeaterItem( widgetID );
+	await editor.addRepeaterItem( 'tabs' );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
@@ -138,11 +138,10 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
-		numberOfContents = await nestedItemContent.count(),
-		cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( position );
+		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await cloneItemButton.click();
+	await editor.duplicateRepeaterItem( widgetID, position );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),

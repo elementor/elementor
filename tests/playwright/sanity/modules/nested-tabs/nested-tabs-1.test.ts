@@ -87,7 +87,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"] span' ).count();
 
 		// Update active tab title.
-		await page.locator( '.elementor-repeater-fields:nth-child( 3 )' ).click();
+		await editor.openRepeaterItem( 'tabs', 3 );
 		await page.locator( '.elementor-repeater-fields:nth-child( 3 ) .elementor-control-tab_title input' ).fill( 'Title change' );
 		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"] span' ).count();
 

@@ -140,7 +140,7 @@ export async function addItemFromRepeater( editor: EditorPage, accordionID: stri
 		numberOfContents = await nestedAccordionItemContent.count();
 
 	// Act
-	await editor.addRepeaterItem( accordionID );
+	await editor.addRepeaterItem( 'items' );
 
 	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
 

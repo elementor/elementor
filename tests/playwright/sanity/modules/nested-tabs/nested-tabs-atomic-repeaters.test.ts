@@ -138,8 +138,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 
 		await test.step( 'Clone Last Tab of Inner Nested Tabs', async () => {
 			// Act
-			const cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( 2 );
-			await cloneItemButton.click();
+			await editor.duplicateRepeaterItem( 'tabs', 2 );
 			await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tabs .e-n-tab-title' ).nth( 3 ).waitFor();
 
 			// Assert
@@ -152,8 +151,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 			// Act
 			const outerTabsLastTab = frame.locator( '.e-n-tabs-heading' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 2 );
 			await outerTabsLastTab.click();
-			const cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( 2 );
-			await cloneItemButton.click();
+			await editor.duplicateRepeaterItem( 'tabs', 2 );
 			await editor.getPreviewFrame().locator( '.e-n-tabs' ).nth( 0 ).locator( '.e-n-tab-title' ).nth( 3 ).waitFor();
 
 			// Assert
