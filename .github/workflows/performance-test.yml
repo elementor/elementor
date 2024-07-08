@@ -53,6 +53,6 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
-          run: lhci autorun --collect.url=http://example.com
+          run: lhci autorun --collect.url=http://localhost:8888 --collect.staticDistDir=./build --collect.numberOfRuns=1 --upload.target=lhci
 
 
