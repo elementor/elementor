@@ -108,7 +108,7 @@ test.describe( 'URL Actions', () => {
 
 		// Select the mountain image to add to the gallery.
 		await previousImage.nth( 0 ).click();
-		expect.soft( true ).toBeFalsy();
+
 		// Create the gallery.
 		await page.click( wpMediaAddButtonSelector );
 
