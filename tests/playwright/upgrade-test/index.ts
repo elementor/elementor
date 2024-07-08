@@ -3,10 +3,10 @@
 import { execSync } from 'child_process';
 import { wpEnvCli } from '../assets/wp-env-cli';
 export class UpgradeElementor {
-	cmd( cmd: string ) {
+	cmd( cmd: string, cwd?: string ) {
 		try {
 			console.log( cmd );
-			const text = execSync( cmd ).toString();
+			const text = execSync( cmd, { cwd } ).toString();
 			console.log( text );
 		} catch ( e ) {
 			console.error( e.toString() );
@@ -29,7 +29,7 @@ export class UpgradeElementor {
 	}
 
 	runServer() {
-		this.cmd( 'npx wp-env start' );
+		this.cmd( 'npm start -- port=8888', 'test-server' );
 	}
 
 	installPluginFromWP() {
