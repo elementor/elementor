@@ -34,6 +34,18 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $config;
 	}
 
+	final public function get_raw_data( $with_html_content = false ) {
+		$raw_data = parent::get_raw_data( $with_html_content );
+
+		$data = $this->get_data();
+
+		if ( ! empty( $data['styles'] ) ) {
+			$raw_data['styles'] = $data['styles'];
+		}
+
+		return $raw_data;
+	}
+
 	final public function get_data_for_save() {
 		$data = parent::get_data_for_save();
 
