@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Stack, Button, Typography, Link, Checkbox } from '@elementor/ui';
+import { Stack, Button, Typography, Link, Checkbox, Divider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { AIIcon } from '@elementor/icons';
@@ -33,6 +33,8 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedA
 
 			<Typography variant="body2">{ __( 'Create websites faster with AI built right into the Editor.', 'elementor' ) }</Typography>
 
+			<Divider sx={ { mt: 2, ml: 2, mr: 2, height: '1px', width: '50%' } } />
+
 			<Stack direction="row" gap={ 1.5 } alignItems="flex-start" >
 				<Checkbox id="e-ai-terms-approval" color="secondary" checked={ isTermsChecked } onClick={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
 				<Stack>
@@ -41,8 +43,7 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedA
 						<Link href="https://go.elementor.com/ai-terms/" target="_blank" color="info.main">{ __( 'Terms of Service', 'elementor' ) }</Link>
 						{ ' & ' }
 						<Link href="https://go.elementor.com/ai-privacy-policy/" target="_blank" color="info.main">{ __( 'Privacy Policy', 'elementor' ) }</Link>
-						{ __( ' of the Elementor AI service.', 'elementor' ) }
-						<br />
+						{ __( ' of the Elementor AI service. ', 'elementor' ) }
 						{ __( 'This includes consenting to the collection and use of data to improve user experience.', 'elementor' ) }
 					</Typography>
 				</Stack>
@@ -74,10 +75,9 @@ const ConnectAndGetStarted = ( { connectUrl, onSuccess, isConnected, getStartedA
 						},
 					} }
 				>
-					{ __( 'Get Started', 'elementor' ) }
+					{ __( 'Connect', 'elementor' ) }
 				</Button>
 			}
-			<Typography variant="body2">{ __( 'Start for free. No credit card required.', 'elementor' ) }</Typography>
 		</Stack>
 	);
 };
