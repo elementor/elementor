@@ -11,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_V2_Experiments {
 	const APP_BAR = 'editor_v2'; // Kept as `editor_v2` for backward compatibility.
-	const ELEMENTS = 'editor_v2_elements';
+	const ATOMIC_WIDGETS = 'atomic_widgets';
 
 	public static function all() {
 		return [
 			static::APP_BAR,
-			static::ELEMENTS,
+			static::ATOMIC_WIDGETS,
 		];
 	}
 
@@ -38,9 +38,9 @@ class Editor_V2_Experiments {
 		] );
 
 		Plugin::$instance->experiments->add_feature( [
-			'name' => static::ELEMENTS,
-			'title' => esc_html__( 'Elements', 'elementor' ),
-			'description' => esc_html__( 'Enable the new elements.', 'elementor' ),
+			'name' => static::ATOMIC_WIDGETS,
+			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
+			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
