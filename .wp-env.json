@@ -16,12 +16,5 @@
 		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
 		"SCRIPT_DEBUG": false,
 		"WP_DEBUG": false
-	},
-	"port": 8888,
-	"extra-config": {
-		"wp-config.php": [
-			"define( 'WP_HOME', 'http://localhost:8888' );",
-			"define( 'WP_SITEURL', 'http://localhost:8888' );"
-		]
 	}
 }
