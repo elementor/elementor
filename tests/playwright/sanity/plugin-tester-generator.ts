@@ -71,9 +71,9 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.removeClasses( 'elementor-motion-effects-element' );
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-				if ( 'astra-sites' === plugin.pluginName ) {
+				// if ( 'astra-sites' === plugin.pluginName ) {
 					await page.goto( '/wp-admin/index.php' );
-				}
+				// }
 				await page.goto( '/law-firm-about/?elementor' );
 
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
