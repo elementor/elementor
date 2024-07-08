@@ -1,7 +1,7 @@
 import { Config } from './config.js';
 import path from 'path';
 
-export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string, port: string ) => {
+export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string, port: string, configPath: string ) => {
 	const mappingsStringArray = Object.keys( config.mappings ).map( ( key ) => {
 		const value = config.mappings[ key ];
 		return `      - >-
@@ -19,7 +19,9 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
 	} );
 	const wpContent = `      - >-
         wpcontent:/var/www/html\n`;
-	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).concat( [ wpContent ] ).join( '' );
+	const wpConfig = `      - >-
+        ${ configPath }:/var/www/html/wp-config\n`;
+	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).concat( [ wpContent, wpConfig ] ).join( '' );
 	return `services:
   mysql:
     image: 'mariadb:lts'
@@ -31,16 +33,6 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
       MYSQL_DATABASE: wordpress
     volumes:
       - 'mysql:/var/lib/mysql'
-#  tests-mysql:
-#    image: 'mariadb:lts'
-#    ports:
-#      - '\${WP_ENV_TESTS_MYSQL_PORT:-}:3306'
-#    environment:
-#      MYSQL_ROOT_HOST: '%'
-#      MYSQL_ROOT_PASSWORD: password
-#      MYSQL_DATABASE: tests-wordpress
-#    volumes:
-#      - 'mysql-test:/var/lib/mysql'
   wordpress:
     depends_on:
       - mysql
@@ -64,41 +56,6 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
 ${ volumes }
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-#  tests-wordpress:
-#    depends_on:
-#      - tests-mysql
-#    build:
-#      context: .
-#      dockerfile: Tests-WordPress.Dockerfile
-#      args: *ref_0
-#    ports:
-#      - '\${WP_ENV_TESTS_PORT:-8889}:80'
-#    environment:
-#      APACHE_RUN_USER: '#502'
-#      APACHE_RUN_GROUP: '#20'
-#      WORDPRESS_DB_USER: root
-#      WORDPRESS_DB_PASSWORD: password
-#      WORDPRESS_DB_NAME: tests-wordpress
-#      WORDPRESS_DB_HOST: tests-mysql
-#      WP_TESTS_DIR: /wordpress-phpunit
-#    volumes: &ref_2
-#      - >-
-#        /Users/yotams/.wp-env/fdee84940b5ea2ef4346b5d387830a7a/tests-WordPress:/var/www/html
-#      - >-
-#        /Users/yotams/.wp-env/fdee84940b5ea2ef4346b5d387830a7a/tests-WordPress-PHPUnit/tests/phpunit:/wordpress-phpunit
-#      - 'tests-user-home:/home/yotams'
-#      - >-
-#        /Users/yotams/PhpstormProjects/elementor/tests/playwright/templates:/var/www/html/elementor-templates
-#      - >-
-#        /Users/yotams/PhpstormProjects/elementor/tests/wp-env/config:/var/www/html/elementor-config
-#      - >-
-#        /Users/yotams/PhpstormProjects/elementor/templates/playwright:/var/www/html/elementor-playwright-templates
-#      - >-
-#        /Users/yotams/PhpstormProjects/elementor/build:/var/www/html/wp-content/plugins/build
-#      - >-
-#        /Users/yotams/.wp-env/fdee84940b5ea2ef4346b5d387830a7a/hello-elementor:/var/www/html/wp-content/themes/hello-elementor
-#    extra_hosts:
-#      - 'host.docker.internal:host-gateway'
   cli:
     depends_on:
       - wordpress
@@ -115,28 +72,8 @@ ${ volumes }
       WP_TESTS_DIR: /wordpress-phpunit
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-#  tests-cli:
-#    depends_on:
-#      - tests-wordpress
-#    build:
-#      context: .
-#      dockerfile: Tests-CLI.Dockerfile
-#      args: *ref_0
-#    volumes: *ref_2
-#    user: '502:20'
-#    environment:
-#      WORDPRESS_DB_USER: root
-#      WORDPRESS_DB_PASSWORD: password
-#      WORDPRESS_DB_NAME: tests-wordpress
-#      WORDPRESS_DB_HOST: tests-mysql
-#      WP_TESTS_DIR: /wordpress-phpunit
-#    extra_hosts:
-#      - 'host.docker.internal:host-gateway'
 volumes:
   mysql: {}
-#  mysql-test: {}
-#  user-home: {}
-#  tests-user-home: {}
   wpcontent: {}
 `;
 };
@@ -229,4 +166,17 @@ USER www-data
 # Have the container sleep infinitely to keep it alive for us to run commands on it.
 CMD [ "/bin/sh", "-c", "while true; do sleep 2073600; done" ]
 `;
+};
+
+export const generateConfiguration = ( config: Config, port: string ) => {
+	const header = `#!/bin/bash
+set -eox pipefail
+`;
+	const configStringArray = Object.keys( config.config ).map( ( key ) => {
+		const value = config.config[ key ];
+		return `wp config set ${ key } ${ value } --raw\n`;
+	} );
+	const wpCoreInstall = `wp core install --url="http://localhost:${ port }" --title="test" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email`;
+
+	return [ header, wpCoreInstall ].concat( configStringArray ).join( '\n' );
 };

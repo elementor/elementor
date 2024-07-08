@@ -8,6 +8,7 @@ import {
 	generateCliDockerfileTemplate,
 	generateDockerComposeYmlTemplate,
 	generateWordPressDockerfileTemplate,
+	generateConfiguration,
 } from './templates.js';
 
 const waitForServer = async ( url: string, timeoutMs: number ) => {
@@ -90,11 +91,19 @@ const port = getPort( process.argv );
 const generateFiles = () => {
 	const configFilePath = path.resolve( getConfigFilePath( process.argv ) );
 	const config = getConfig( configFilePath );
-	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ), port );
+
+	const wpConfigPath = path.resolve( os.tmpdir(), port );
+	if ( ! fs.existsSync( wpConfigPath ) ) {
+		fs.mkdirSync( wpConfigPath );
+	}
+	const wpConfig = generateConfiguration( config, port );
+	fs.writeFileSync( path.resolve( wpConfigPath, 'configure-wp.sh' ), wpConfig );
+
+	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ), port, wpConfigPath );
 	const wordPressDockerfileTemplate = generateWordPressDockerfileTemplate( config );
 	const cliDockerfileTemplate = generateCliDockerfileTemplate( config );
 	const hash = createHash( 'sha256' );
-	hash.update( dockerComposeYmlTemplate + wordPressDockerfileTemplate + cliDockerfileTemplate );
+	hash.update( dockerComposeYmlTemplate + wordPressDockerfileTemplate + cliDockerfileTemplate + port );
 	const runPath = path.resolve( os.tmpdir(), `${ hash.digest( 'hex' ) }` );
 	if ( ! fs.existsSync( runPath ) ) {
 		fs.mkdirSync( runPath );

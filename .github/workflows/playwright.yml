@@ -84,14 +84,16 @@ jobs:
           npm run start-local-server
           sleep 10
           cd test-server
-          npm run cli8888 -- port=8888
-          npm run cli8889 -- port=8889
-          npm run cli -- command="wp config set ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS true --raw" port=8888
-          npm run cli -- command="wp config set SCRIPT_DEBUG false --raw" port=8888
-          npm run cli -- command="wp config set WP_DEBUG false --raw" port=8888
-          npm run cli -- command="wp config set ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS true --raw" port=8889
-          npm run cli -- command="wp config set SCRIPT_DEBUG false --raw" port=8889
-          npm run cli -- command="wp config set WP_DEBUG false --raw" port=8889
+#          npm run cli8888 -- port=8888
+#          npm run cli8889 -- port=8889
+#          npm run cli -- command="wp config set ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS true --raw" port=8888
+#          npm run cli -- command="wp config set SCRIPT_DEBUG false --raw" port=8888
+#          npm run cli -- command="wp config set WP_DEBUG false --raw" port=8888
+#          npm run cli -- command="wp config set ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS true --raw" port=8889
+#          npm run cli -- command="wp config set SCRIPT_DEBUG false --raw" port=8889
+#          npm run cli -- command="wp config set WP_DEBUG false --raw" port=8889
+          npm run cli -- command="bash wp-config/configure-wp.sh" port=8888
+          npm run cli -- command="bash wp-config/configure-wp.sh" port=8889
           cd ..
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
