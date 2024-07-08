@@ -28,6 +28,8 @@ jobs:
         run: |
           npm ci
           sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -41,16 +43,15 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-      - name: Update wordpress to nightly build
-        if: ${{ github.event_name == 'schedule' }}
-        run: npx wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
           npx wp-env run cli wp core version
           npx wp-env run cli wp --info
-      - name: run performance test
+      - name: Run Lighthouse CI
         run: | 
-          echo 1
-          
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: lhci autorun --collect.url=http://example.com
+
