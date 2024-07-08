@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:upgrade:elementor": "ts-node index.ts",
-    "test:setup": "cd test-server && npm run cli command=\"bash elementor-config/setup.sh\" -- port=8888 && cd .."
+    "test:setup": "cd test-server && npm run cli command=\"bash wp-config/configure-wp.sh\" -- port=8888 && npm run cli command=\"bash elementor-config/setup.sh\" -- port=8888 && cd .."
   },
   "author": "",
   "license": "ISC",
