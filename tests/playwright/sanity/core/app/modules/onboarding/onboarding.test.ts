@@ -61,7 +61,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		// Check that the popup opens the Elementor Connect screen.
 		await expect( signupForm ).toBeVisible();
 
-		popup.close();
+		await popup.close();
 	} );
 
 	/**
