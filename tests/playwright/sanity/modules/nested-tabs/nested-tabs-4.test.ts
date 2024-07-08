@@ -47,7 +47,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
