@@ -1,12 +1,14 @@
 <?php
+namespace Elementor\Modules\AtomicWidgets\Widgets;
 
-namespace Elementor;
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Widget_Atomic_Heading extends Atomic_Widget_Base {
+class Atomic_Heading extends Atomic_Widget_Base {
 	public function get_icon() {
 		return 'eicon-t-letter';
 	}

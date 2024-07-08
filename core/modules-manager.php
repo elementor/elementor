@@ -120,6 +120,8 @@ class Modules_Manager {
 			'floating-buttons',
 			'content-sanitizer',
 			'editor-events',
+			'atomic-widgets',
+			'app-bar',
 		];
 	}
 
