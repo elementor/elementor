@@ -35,7 +35,7 @@ test.describe( 'URL Actions', () => {
 		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
-		const mountainImageName = 'Picsum ID: 684',
+		const mountainImageName = 'mountain-image',
 			previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
 		if ( await previousImage.nth( 0 ).isVisible() ) {
@@ -108,7 +108,7 @@ test.describe( 'URL Actions', () => {
 
 		// Select the mountain image to add to the gallery.
 		await previousImage.nth( 0 ).click();
-
+		expect.soft( true ).toBeFalsy();
 		// Create the gallery.
 		await page.click( wpMediaAddButtonSelector );
 
