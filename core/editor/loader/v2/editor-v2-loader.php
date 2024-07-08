@@ -3,9 +3,9 @@ namespace Elementor\Core\Editor\Loader\V2;
 
 use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
-use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\Editor\Editor_V2_Packages;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -18,23 +18,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	const ENV_PACKAGE = 'env';
 
 	/**
-	 * Packages (extensions) that should be enqueued based on the active experiments.
-	 */
-	const PACKAGES_TO_ENQUEUE = [
-		Editor_V2_Experiments::APP_BAR => [
-			'editor-app-bar',
-			'editor-documents',
-			'editor-panels',
-			'editor-responsive',
-			'editor-site-navigation',
-		],
-		Editor_V2_Experiments::ATOMIC_WIDGETS => [
-			'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
-			'editor-panels',
-		],
-	];
-
-	/**
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
@@ -45,15 +28,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'query',
 		'store',
 		'ui',
-	];
-
-	/**
-	 * Styles that should be enqueued based on the active experiments.
-	 */
-	const STYLES = [
-		Editor_V2_Experiments::APP_BAR => [
-			'editor-v2-app-bar-overrides',
-		],
 	];
 
 	/**
@@ -198,24 +172,17 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	}
 
 	private function get_packages_to_enqueue() : array {
-		$experiments_manager = Plugin::$instance->experiments;
+		$packages_to_enqueue = Editor_V2_Packages::collect();
 
-		$packages = Collection::make( self::PACKAGES_TO_ENQUEUE )
-			->filter( fn ( $_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
-			->flatten()
+		return $packages_to_enqueue
 			->push( self::APP_PACKAGE )
-			->unique()
 			->all();
-
-		return apply_filters( 'elementor/editor/v2/packages', $packages );
 	}
 
 	private function get_styles() : array {
-		$experiments_manager = Plugin::$instance->experiments;
+		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
 
-		return Collection::make( self::STYLES )
-			->filter( fn ( $_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
-			->flatten()
+		return Collection::make( $styles )
 			->unique()
 			->all();
 	}
