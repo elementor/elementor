@@ -119,8 +119,7 @@ class Module extends BaseModule {
 		} );
 
 		add_filter(
-			'elementor/template_library/sources/local/is_valid_template_type',
-			function ( $is_valid_template_type, $cpt ) {
+			'elementor/template_library/sources/local/is_valid_template_type', function ( $is_valid_template_type, $cpt ) {
 				if ( in_array( static::CPT_FLOATING_BUTTONS, $cpt, true ) ) {
 					return true;
 				}
