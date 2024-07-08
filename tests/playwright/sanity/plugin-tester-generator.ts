@@ -25,16 +25,16 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 	{ pluginName: 'envato-elements', installByAPI: true },
 	{ pluginName: 'exclusive-addons-for-elementor', installByAPI: true },
 	// 'header-footer-elementor',
-	{ pluginName: 'jeg-elementor-kit', installByAPI: false },
+	{ pluginName: 'jeg-elementor-kit', installByAPI: true },
 	{ pluginName: 'make-column-clickable-elementor', installByAPI: true },
 	{ pluginName: 'metform', installByAPI: true },
-	{ pluginName: 'music-player-for-elementor', installByAPI: false },
+	{ pluginName: 'music-player-for-elementor', installByAPI: true },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installByAPI: true },
 	{ pluginName: 'post-grid-elementor-addon', installByAPI: true },
 	{ pluginName: 'powerpack-lite-for-elementor', installByAPI: true },
-	{ pluginName: 'premium-addons-for-elementor', installByAPI: false },
+	{ pluginName: 'premium-addons-for-elementor', installByAPI: true },
 	{ pluginName: 'rife-elementor-extensions', installByAPI: true },
-	{ pluginName: 'royal-elementor-addons', installByAPI: false },
+	{ pluginName: 'royal-elementor-addons', installByAPI: true },
 	{ pluginName: 'sb-elementor-contact-form-db', installByAPI: true },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installByAPI: true },
 	{ pluginName: 'sticky-header-effects-for-elementor', installByAPI: true },
@@ -45,7 +45,7 @@ const pluginList: { pluginName: string, installByAPI: boolean }[] = [
 	{ pluginName: 'tutor-lms-elementor-addons', installByAPI: true },
 	{ pluginName: 'code-block-for-elementor', installByAPI: true },
 	{ pluginName: 'jetwidgets-for-elementor', installByAPI: true },
-	{ pluginName: 'happy-elementor-addons', installByAPI: false },
+	{ pluginName: 'happy-elementor-addons', installByAPI: true },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
@@ -71,9 +71,9 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.removeClasses( 'elementor-motion-effects-element' );
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-				// if ( 'astra-sites' === plugin.pluginName ) {
-					await page.goto( '/wp-admin/index.php' );
-				// }
+				// Navigate to wp-admin to trigger any on-boarding screen a plugin may have
+				await page.goto( '/wp-admin/index.php' );
+				// Navigate to the Elementor editor
 				await page.goto( '/law-firm-about/?elementor' );
 
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
