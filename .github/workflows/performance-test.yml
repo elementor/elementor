@@ -1,4 +1,4 @@
-name: Playwright
+name: Performance-test
 
 on:
   push:
