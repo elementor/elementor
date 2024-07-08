@@ -40,6 +40,7 @@ jobs:
             npm ci
             cd test-server
             npm ci
+            npm run build
             cd ..
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
