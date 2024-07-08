@@ -17,7 +17,8 @@ class Widgets_Css extends Base {
 
 	protected function get_asset_content() {
 		$asset_url = $this->get_config_data( 'file_url' );
-		$widget_css = sprintf( '<link rel="stylesheet" href="%s">', $asset_url );
+
+		$widget_css = $asset_url ? sprintf( '<link rel="stylesheet" href="%s">', $asset_url ) : '';
 
 		return $widget_css;
 	}
