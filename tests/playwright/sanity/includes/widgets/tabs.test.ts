@@ -38,7 +38,8 @@ test.describe( 'Tabs widget tests', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'tabs' );
 		await editor.addRepeaterItem( 'tabs' );
-		await editor.setTextControlValue( 'tab_title', newTabTitle );
+		await page.getByRole( 'textbox', { name: 'Title' } ).click();
+		await page.getByRole( 'textbox', { name: 'Title' } ).fill( newTabTitle );
 
 		const itemCount = await page.locator( '.elementor-repeater-row-item-title' ).count();
 		const textEditor = page.frameLocator( EditorSelectors.tabs.textEditorIframe ).nth( itemCount );
