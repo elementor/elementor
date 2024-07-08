@@ -12,7 +12,7 @@ class Widget_Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return 'Atomic Heading';
+		return esc_html__( 'Atomic Heading', 'elementor' );
 	}
 
 	public function get_name() {
@@ -20,11 +20,14 @@ class Widget_Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function render() {
-		$tag = $this->get_settings()['tag'] ?? 'h2';
-		$content = $this->get_settings()['title'] ?? 'Hello, World!';
+		$tag = $this->get_settings( 'tag' ) ?? 'h2';
+		$title = $this->get_settings( 'title' ) ?? 'Hello, World!';
+
+		$escaped_tag = Utils::validate_html_tag( $tag );
+		$escaped_title = esc_html( $title );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo "<$tag>$content</$tag>";
+		echo "<$escaped_tag>$escaped_title</$escaped_tag>";
 	}
 
 	public function get_atomic_controls(): array {
