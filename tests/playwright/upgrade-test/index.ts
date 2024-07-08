@@ -30,6 +30,9 @@ export class UpgradeElementor {
 
 	runServer() {
 		this.cmd( 'npm start -- port=8888', 'test-server' );
+		this.cmd( 'sleep 10' );
+		this.cmd( 'npm run cli command=\"bash wp-config/configure-wp.sh\" -- port=8888', 'test-server' );
+		this.cmd( 'npm run cli command=\"bash elementor-config/setup.sh\" -- port=8888', 'test-server' );
 	}
 
 	installPluginFromWP() {
