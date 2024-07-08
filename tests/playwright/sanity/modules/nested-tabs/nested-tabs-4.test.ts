@@ -107,7 +107,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 			await editor.openSection( 'section_tabs' );
 			Array.from( { length: 3 }, async () => {
-				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
+				await editor.duplicateRepeaterItem( 'tabs', 2 );
 			} );
 
 			await editor.openPanelTab( 'style' );
@@ -210,7 +210,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 			await editor.openSection( 'section_tabs' );
 			Array.from( { length: 3 }, async () => {
-				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
+				await editor.duplicateRepeaterItem( 'tabs', 2 );
 			} );
 		} );
 

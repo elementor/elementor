@@ -67,7 +67,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 		const contentTab = new Content( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'social-icons' );
-		await page.locator( EditorSelectors.item ).first().click();
+		await editor.openRepeaterItem( 'social_icon_list', 1 );
 		await contentTab.uploadSVG();
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 		await editor.publishAndViewPage();

@@ -101,14 +101,13 @@ export async function isTabTitleVisible( context: Page | Frame, positionIndex: n
 
 export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
-		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await deleteItemButton.last().click();
+	await editor.deleteRepeaterItem( widgetID, numberOfTitles );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
@@ -119,14 +118,13 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 
 export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const addItemButton = editor.page.locator( '.elementor-repeater-add' ),
-		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await addItemButton.click();
+	await editor.addRepeaterItem( widgetID );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
