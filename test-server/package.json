@@ -5,8 +5,6 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"cli8889": "node --enable-source-maps test-server.js cli config=../.test-server.config.json command=\"wp core install --url=\"http://localhost:8889\" --title=\"test\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email\"",
-		"cli8888": "node --enable-source-maps test-server.js cli config=../.test-server.config.json command=\"wp core install --url=\"http://localhost:8888\" --title=\"test\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email\"",
 		"cli": "node --enable-source-maps test-server.js cli config=../.test-server.config.json",
 		"start": "node --enable-source-maps test-server.js start config=../.test-server.config.json",
 		"stop": "node --enable-source-maps test-server.js stop config=../.test-server.config.json",
