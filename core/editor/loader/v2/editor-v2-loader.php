@@ -6,7 +6,6 @@ use Elementor\Core\Editor\Loader\Editor_Base_Loader;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Editor\Editor_V2_Packages;
-use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
