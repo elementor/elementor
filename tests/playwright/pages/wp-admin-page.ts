@@ -358,14 +358,12 @@ export default class WpAdminPage extends BasePage {
 	 * @param {string} promotionContainer - The promotion container selector.
 	 * @param {string} pageUri            - The page URI.
 	 * @param {string} screenshotName     - The screenshot name.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
 		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
 		const promoContainer = this.page.locator( promotionContainer );
 		await promoContainer.waitFor();
-		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
 
 	/**
