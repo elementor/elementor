@@ -1,7 +1,13 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
+import {
+	expectScreenshotToMatchLocator,
+	deleteItemFromRepeater,
+	addItemFromRepeater,
+	setDynamicTag,
+	toggleAccordionContent
+} from './helper';
 import _path from 'path';
 import { setup } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
@@ -296,6 +302,87 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				.analyze();
 
 			expect.soft( accessibilityScanResults.violations ).toEqual( [] );
+		} );
+	} );
+
+	test( 'Nested Accordion dynamic properties in editor with Nested Elements Performance experiment on', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.setExperiments( {
+			'nested-elements': 'active',
+			container: 'active',
+			e_nested_atomic_repeaters: 'active',
+		} );
+
+		const editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame(),
+			pageId = await editor.getPageId();
+
+		const nestedAccordionId = await editor.addWidget( 'nested-accordion' ),
+			renderedAccordionItems = frame.locator( `.elementor-element-${ nestedAccordionId } .e-n-accordion-item` );
+
+		await toggleAccordionContent( frame, nestedAccordionId, 0, false );
+
+		await test.step( 'Set title to be Post Time', async () => {
+			await setDynamicTag( page, editor, nestedAccordionId, 0, 'Post Time' );
+
+			await renderedAccordionItems.nth( 0 )
+				.locator( '.e-n-accordion-item-title', { hasText: /\d?\:\d?/ } ).first()
+				.waitFor();
+
+			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
+			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+		} );
+
+		await test.step( 'Change dynamic value and check that it is set', async () => {
+			await setDynamicTag( page, editor, nestedAccordionId, 0, 'Post Title' );
+
+			await renderedAccordionItems.nth( 0 )
+				.locator( '.e-n-accordion-item-title', { hasText: pageId } ).first()
+				.waitFor();
+
+			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
+			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+		} );
+
+		await test.step( 'Set before and after in the advanced options', async () => {
+			await editor.setDynamicFieldAdvancedSetting( [
+				'.elementor-control-items .elementor-repeater-fields >> nth=0',
+				'.elementor-control-item_title',
+			], {
+				'.elementor-control-before input': 'Before ',
+				'.elementor-control-after input': ' After',
+			} );
+
+			await renderedAccordionItems.nth( 0 )
+				.locator( '.e-n-accordion-item-title', { hasText: `Before ${ pageId } #${ pageId } After` } ).first()
+				.waitFor();
+
+			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
+			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+		} );
+
+		await test.step( 'Change before and after in the advanced options', async () => {
+			await editor.setDynamicFieldAdvancedSetting( [
+				'.elementor-control-items .elementor-repeater-fields >> nth=0',
+				'.elementor-control-item_title',
+			], {
+				'.elementor-control-before input': '123 ',
+				'.elementor-control-after input': ' 456',
+			} );
+
+			await renderedAccordionItems.nth( 0 )
+				.locator( '.e-n-accordion-item-title', { hasText: `123 ${ pageId } #${ pageId } 456` } ).first()
+				.waitFor();
+
+			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
+			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+
+			await wpAdmin.setExperiments( {
+					container: 'inactive',
+					'nested-elements': 'inactive',
+					e_nested_atomic_repeaters: 'active',
+				} );
 		} );
 	} );
 } );

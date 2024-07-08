@@ -661,10 +661,10 @@ BaseElementView = BaseContainer.extend( {
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
-	async getDynamicValue( settings, bindingSetting ) {
+	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
 		const dynamicSettings = { active: true },
-			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
-			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
+			changedDataForRemovedItem = settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ],
 			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
@@ -683,16 +683,16 @@ BaseElementView = BaseContainer.extend( {
 			}
 		}
 
-		return settings.attributes[ bindingSetting ];
+		return settings.attributes[ changedControlKey ];
 	},
 
-	findUniqueKey( obj1, obj2 ) {
-		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+	findUniqueKey( element1, element2, isArray = false ) {
+		if ( isArray && ( 'object' !== typeof element1 || 'object' !== typeof element2 ) ) {
 			return false;
 		}
 
-		const keys1 = Object.keys( obj1 ),
-			keys2 = Object.keys( obj2 );
+		const keys1 = isArray ? element1 : Object.keys( element1 || {} ),
+			keys2 = isArray ? element2 : Object.keys( element2 || {} );
 
 		const allKeys = keys1.concat( keys2 );
 
@@ -776,7 +776,7 @@ BaseElementView = BaseContainer.extend( {
 			let change = settings.changed[ changedControl ]?.[ bindingSetting ] || settings.changed[ changedControl ];
 
 			if ( this.isAtomicDynamic( dataBinding, bindingSetting ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControl );
+				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
@@ -784,14 +784,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = [ 'before', 'after', 'fallback' ].includes( changedControl ) && 'item_title' === bindingSetting
-					? this.getAdvancedDynamicTitleChange(
-						changedControl,
-						settings.attributes,
-						settings._previousAttributes,
-						dataBinding.el,
-					)
-					: change;
+				dataBinding.el.innerHTML = change;
 
 				return true;
 			}
@@ -812,8 +805,8 @@ BaseElementView = BaseContainer.extend( {
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
 						changed = renderDataBinding( dataBinding );
-					} else if ( dataBindings.indexOf( dataBinding ) === this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex - 1 ) {
-						changed = renderDataBinding( dataBinding );
+					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
+						changed = this.tryHandleDynamicTagsAdvancedTools( dataBinding, settings );
 					}
 				}
 					break;
@@ -1153,6 +1146,29 @@ BaseElementView = BaseContainer.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
+	},
+
+	getRepeaterItemActiveIndex() {
+		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex;
+	},
+
+	tryHandleDynamicTagsAdvancedTools( dataBinding, settings ) {
+		const attributeKeys = Object.keys( settings.attributes ),
+			shouldTryHandle = ! this.findUniqueKey( [ 'before', 'after', 'fallback' ], attributeKeys, true ).length,
+			changedControlKey = Object.keys( settings.changed )[ 0 ];
+
+		if ( ! shouldTryHandle || ! changedControlKey ) {
+			return false;
+		}
+
+		dataBinding.el.innerHtml = this.getAdvancedDynamicTitleChange(
+			changedControlKey,
+			settings.attributes,
+			settings._previousAttributes,
+			dataBinding.el,
+		);
+
+		return true;
 	},
 } );
 
