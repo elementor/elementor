@@ -1,10 +1,10 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
-import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 import ReactUtils from 'elementor-utils/react';
 import LayoutAppWrapper from './layout-app-wrapper';
 import { AiGetStartedConnect } from './ai-get-started-connect';
+import { getUiConfig } from './utils/editor-integration';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
