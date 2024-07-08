@@ -38,7 +38,6 @@ class Module extends BaseModule {
 
 	private $has_contact_pages = null;
 	private $trashed_contact_pages;
-	private $new_contact_pages_url;
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
@@ -112,20 +111,18 @@ class Module extends BaseModule {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
 		});
 
+		add_filter( 'elementor/widget/common/register_css_attributes_control', function ( $common_controls ) {
+			if ( $this->is_creating_floating_buttons_page() || $this->is_editing_existing_floating_buttons_page() ) {
+				return false;
+			}
+			return $common_controls;
+		} );
+
 		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'wp_footer', function () {
 				$this->render_floating_buttons();
 			} );
 		}
-
-		add_action( 'elementor/common/localize_settings', function ( $settings ) {
-			$settings['floatingButtons'] = [
-				'nonce' => wp_create_nonce( static::CLICK_TRACKING_NONCE ),
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			];
-
-			return $settings;
-		} );
 
 		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
 
@@ -338,9 +335,9 @@ class Module extends BaseModule {
 			<?php
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
-				esc_html__( 'Floating Buttons', 'elementor' ),
+				esc_html__( 'Floating Button', 'elementor' ),
 				$this->get_add_new_contact_page_url(),
-				esc_html__( 'Add a Contact button so your users can easily get in touch!', 'elementor' )
+				nl2br( esc_html__( 'Add a Floating button so your users can easily get in touch!', 'elementor' ) )
 			);
 
 			if ( ! empty( $trashed_posts ) ) : ?>

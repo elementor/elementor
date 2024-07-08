@@ -1,6 +1,7 @@
 import { createRoot } from '@wordpress/element';
 import GenerateExcerptWithAI from './excerpt';
 import GenerateFeaturedImageWithAI from './featured-image';
+import { GenerateTextWithAi } from './text-with-ai';
 
 ( function() {
 	'use strict';
@@ -47,6 +48,24 @@ import GenerateFeaturedImageWithAI from './featured-image';
 			}
 		};
 
+		const addTextWithAI = ( blockName ) => {
+			const textPanel = document.querySelector( '.block-editor-block-card__content' );
+			if ( textPanel && ! document.querySelector( '.e-text-ai' ) ) {
+				const rootElement = document.createElement( 'div' );
+				rootElement.classList.add( 'e-text-ai' );
+				textPanel.appendChild( rootElement );
+				const root = createRoot( rootElement );
+				root.render( <GenerateTextWithAi blockName={ blockName } /> );
+			}
+		};
+
+		const removeAiIndicator = ( ) => {
+			const textPanel = document.querySelector( '.e-text-ai' );
+			if ( textPanel ) {
+				textPanel.remove();
+			}
+		};
+
 		const addAiIndicator = ( panelName, functionAddAi ) => {
 			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( panelName );
 			if ( isSidebarOpened ) {
@@ -56,9 +75,19 @@ import GenerateFeaturedImageWithAI from './featured-image';
 			}
 		};
 
+		const addAiIndicatorToTextBlock = ( blockNames ) => {
+			const selectedBlock = wp.data.select( 'core/block-editor' )?.getSelectedBlock();
+			if ( selectedBlock && blockNames.some( ( name ) => selectedBlock.name.includes( name ) ) ) {
+				addTextWithAI( selectedBlock.name );
+			} else {
+				removeAiIndicator();
+			}
+		};
+
 		wp.data.subscribe( () => {
 			addAiIndicator( 'post-excerpt', addGenerateExcerptWithAI );
 			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
+			addAiIndicatorToTextBlock( [ 'paragraph', 'heading' ] );
 		} );
 	} );
 } )( jQuery );
