@@ -53,6 +53,6 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
-          lhci autorun --collect.url=http://localhost:8888
+          lhci autorun --config=./.performanceLighthouserc.js
 
 
