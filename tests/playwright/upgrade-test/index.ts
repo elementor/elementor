@@ -36,24 +36,24 @@ export class UpgradeElementor {
 		const version = process.env.ELEMENTOR_PLUGIN_VERSION;
 		console.log( 'version is: ' + version );
 		if ( version !== '' ) {
-			wpEnvCli( `bash -c 'wp plugin install elementor --version=${ version }  --activate --force'` );
+			wpEnvCli( `bash -c 'wp plugin install elementor --version=${ version }  --activate --force'`, '../../../' );
 		} else {
-			wpEnvCli( `wp plugin install elementor --activate` );
+			wpEnvCli( `wp plugin install elementor --activate`, '../../../' );
 		}
-		wpEnvCli( 'wp plugin list' );
+		wpEnvCli( 'wp plugin list', '../../../' );
 	}
 
 	setupTests() {
 		if ( ! process.env.CI ) {
 			this.cmd( 'npm run test:setup' );
-			wpEnvCli( 'wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
+			wpEnvCli( 'wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating', '../../../' );
 			this.cmd( 'cd ../../../ && npx playwright install chromium' );
 		}
 	}
 
 	installCurrentPlugin() {
-		wpEnvCli( `wp plugin install ./plugin/elementor.zip --force` );
-		wpEnvCli( 'wp plugin list' );
+		wpEnvCli( `wp plugin install ./plugin/elementor.zip --force`, '../../../' );
+		wpEnvCli( 'wp plugin list', '../../../' );
 	}
 
 	runSmokeTest() {
