@@ -1,4 +1,4 @@
-import { type APIRequestContext, expect, type Page, Response, type TestInfo } from '@playwright/test';
+import { type APIRequestContext, type Page, Response, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { ElementorType, WindowType } from '../types/types';
@@ -350,20 +350,6 @@ export default class WpAdminPage extends BasePage {
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
-	}
-
-	/**
-	 * Screenshot test for the promotion page.
-	 *
-	 * @param {string} promotionContainer - The promotion container selector.
-	 * @param {string} pageUri            - The page URI.
-	 * @param {string} screenshotName     - The screenshot name.
-	 */
-	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
-		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
-		const promoContainer = this.page.locator( promotionContainer );
-		await promoContainer.waitFor();
-		await expect.soft( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
 
 	/**
