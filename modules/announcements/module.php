@@ -94,8 +94,8 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		$raw_announcements = [
 			[
-                'title' => 'Discover your new superpowers ',
-                'description' => '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>',
+				'title' => 'Discover your new superpowers ',
+				'description' => '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>',
 				'media' => [
 					'type' => 'image',
 					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
@@ -105,11 +105,11 @@ class Module extends BaseApp {
 						'label' => 'Let\'s do it',
 						'variant' => 'primary',
 						'target' => '_top',
-                        'url' => '#welcome-ai',
+						'url' => '#welcome-ai',
 					],
 					[
-                        'label' => 'Skip',
-                        'variant' => 'secondary',
+						'label' => 'Skip',
+						'variant' => 'secondary',
 					],
 				],
 				'triggers' => [
