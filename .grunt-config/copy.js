@@ -42,15 +42,12 @@ const getBuildFiles = [
 	'!tests/**',
 	'!test-results/',
 	'!tmp/**',
-	// '!vendor/**',
 	'!yarn.lock',
 	'!*~',
 	'!commitlint.config.js',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
-	// 'vendor/php-di/**',
-	// 'vendor/laravel/serializable-closure/**',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
