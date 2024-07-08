@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
@@ -12,19 +12,19 @@ test.describe( 'Promotion tests @promotions', () => {
 		await wpAdmin.login();
 
 		await test.step( 'Free to Pro - Submissions', async () => {
-			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
+			await promotionPageScreenshotTest( page, promotionContainer, 'e-form-submissions', 'submissions-menu-item-desktop' );
 		} );
 
 		await test.step( 'Free to Pro - Custom Icons', async () => {
-			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
+			await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'custom-icons-menu-item-desktop' );
 		} );
 
 		await test.step( 'Free to Pro - Custom Fonts', async () => {
-			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
+			await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_fonts', 'custom-fonts-menu-item-desktop' );
 		} );
 
 		await test.step( 'Free to Pro - Custom Code', async () => {
-			await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_code', 'custom-code-menu-item-desktop' );
+			await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_code', 'custom-code-menu-item-desktop' );
 		} );
 	} );
 
@@ -81,13 +81,12 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 
-	test( 'Promotions - Free to Pro - Admin top bar', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			promotionContainer = '.e-admin-top-bar__secondary-area';
+		const promotionContainer = '.e-admin-top-bar__secondary-area';
 
 		// Act.
-		await wpAdmin.promotionPageScreenshotTest( promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
+		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
 	test( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
@@ -176,3 +175,18 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
 } );
+
+/**
+ * Screenshot test for the promotion page.
+ *
+ * @param {Page}   page               - Page to test
+ * @param {string} promotionContainer - The promotion container selector.
+ * @param {string} pageUri            - The page URI.
+ * @param {string} screenshotName     - The screenshot name.
+ */
+const promotionPageScreenshotTest = async ( page: Page, promotionContainer: string, pageUri: string, screenshotName: string ) => {
+	await page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
+	const promoContainer = page.locator( promotionContainer );
+	await promoContainer.waitFor();
+	await expect.soft( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
+};
