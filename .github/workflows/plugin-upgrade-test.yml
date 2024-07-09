@@ -58,14 +58,14 @@ jobs:
             # npm run cli command="bash -c 'wp plugin install elementor --version=$ELEMENTOR_PLUGIN_VERSION --activate --force'" -- port=8888
           # fi
           npm run cli command="wp plugin list" -- port=8888
-      - name: Run upgrade test
+        env:
+          ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
+      - name: Upgrade site
         run: |
           cd test-server
           npm run cli command="wp plugin install ../build/elementor.zip --force" -- port=8888
           npm run cli command="wp plugin list" -- port=8888
           npm run cli command="wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating" -- port=8888
-        env:
-          ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
       - name: Install chromium
         run: npx playwright install chromium
       - name: Run Playwright tests
