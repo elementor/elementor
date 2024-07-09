@@ -535,7 +535,7 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-tag-settings-popup' ).waitFor();
 
 		for ( const inputSelector in values ) {
-			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).click( { force: true });
+			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).click( { force: true } );
 			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).fill( values[ inputSelector ] );
 		}
 	}

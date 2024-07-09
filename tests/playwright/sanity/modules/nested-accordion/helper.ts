@@ -1,6 +1,5 @@
 import { expect, Frame, Page } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
-import { useText } from "@wordpress/components/build-types/text";
 
 /**
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
