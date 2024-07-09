@@ -106,8 +106,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 
 			// Act
 			await editor.getPreviewFrame().locator( '.e-n-accordion-item-title' ).first().click();
-			const cloneItemButton = editor.page.getByRole( 'button', { name: 'Duplicate' } ).first();
-			await cloneItemButton.click();
+			await editor.duplicateRepeaterItem( 'items', 1 );
 
 			// Assert
 			const parentAccordion = editor.getPreviewFrame().locator( '.e-n-accordion:nth-child(1)' ),

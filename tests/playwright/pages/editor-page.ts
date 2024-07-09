@@ -418,7 +418,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTextControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } input:visible` ).fill( value.toString() );
 	}
 
 	/**
@@ -430,7 +430,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTextareaControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } textarea` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } textarea:visible` ).fill( value.toString() );
 	}
 
 	/**
@@ -442,7 +442,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setNumberControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } input:visible >> nth=0` ).fill( value.toString() );
 	}
 
 	/**
@@ -454,7 +454,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input:visible` ).fill( value.toString() );
 	}
 
 	/**
@@ -466,7 +466,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ) {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		await this.page.selectOption( `.elementor-control-${ controlId } select:visible`, value );
 	}
 
 	/**
@@ -500,7 +500,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setDimensionsValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-dimensions li:first-child input` ).fill( value );
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-dimensions li:first-child input:visible` ).fill( value );
 	}
 
 	/**
@@ -529,7 +529,7 @@ export default class EditorPage extends BasePage {
 		const controlSelector = `.elementor-control-${ controlId }`;
 
 		await this.page.locator( `${ controlSelector } .pcr-button` ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result:visible' ).fill( value );
 		await this.page.locator( controlSelector ).click();
 	}
 

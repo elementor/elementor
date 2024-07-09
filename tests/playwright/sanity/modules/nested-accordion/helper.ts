@@ -168,11 +168,9 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 		currentContainerAriaLabeledBy = await currentTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'aria-labelledby' ),
 		currentContainerWidgetTitle = await currentTitle.getByText( 'Add Your' ).textContent();
 
-	const cloneItemButton = editor.page.getByRole( 'button', { name: 'Duplicate' } ).nth( index );
-
 	// Act
 	await nestedAccordionItemTitle.nth( 0 ).locator( 'summary' ).click();
-	await cloneItemButton.click();
+	await editor.duplicateRepeaterItem( 'items', index );
 
 	const clonedTitle = nestedAccordionItemTitle.nth( index + 1 ),
 		clonedTitleId = await clonedTitle.getAttribute( 'id' ),
