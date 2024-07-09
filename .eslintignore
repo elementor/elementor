@@ -7,4 +7,3 @@ build/**
 packages/**/*
 tests/qunit/setup/tinymce.js
 /tmp/**
-vendor_prefixed/

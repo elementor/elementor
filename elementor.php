@@ -104,14 +104,3 @@ function elementor_fail_wp_version() {
 
 	echo wp_kses_post( $html_message );
 }
-
-if ( ! function_exists( 'elementor_container' ) ) {
-
-	function elementor_container( $abstract = null ) {
-		if ( is_null( $abstract ) ) {
-			return Container::get_instance();
-		}
-
-		return Container::get_instance()->make( $abstract );
-	}
-}

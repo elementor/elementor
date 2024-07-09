@@ -7,6 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-return [
-	Wordpress_Adapter_Interface::class => DI\autowire( Wordpress_Adapter::class ),
-];
+
+/**
+ * Elementor Dependency Injection Configuration.
+ *
+ * This file registers definitions for PHP-DI used by Elementor.
+ *
+ * @since 3.24.0
+ */
+
+return [];

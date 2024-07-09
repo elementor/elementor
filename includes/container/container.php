@@ -2,7 +2,6 @@
 
 namespace Elementor\Container;
 
-use Exception;
 use ElementorDep\DI\ContainerBuilder;
 use ElementorDep\DI\Container as DIContainer;
 
@@ -19,46 +18,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.24.0
  */
 
-class Container extends ContainerBuilder {
+class Container {
 
 	protected static $instance;
 
-	public function __construct() {
-		parent::__construct();
-		$this->register_configuration();
+	// Prevent direct instantiation
+	private function __construct() {}
+
+	private static function initialize(): DIContainer {
+		$builder = new ContainerBuilder();
+
+		self::register_configuration( $builder );
+		return $builder->build();
 	}
 
-	private function register_configuration() {
-		$this->addDefinitions( __DIR__ . '/config.php' );
+	private static function register_configuration( ContainerBuilder $builder ) {
+		$builder->addDefinitions( __DIR__ . '/config.php' );
 	}
 
-	/**
-	 * @throws Exception
-	 */
-	public function init(): DIContainer {
-		return $this->build();
+	public static function initialize_instance() {
+		static::$instance = self::initialize();
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public static function get_instance() {
 		if ( is_null( static::$instance ) ) {
-			$instance = new static();
-
-			static::$instance = $instance->init();
+			self::initialize_instance();
 		}
-
-		return static::$instance;
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	public static function set_instance() {
-		$instance = new static();
-
-		static::$instance = $instance->init();
 
 		return static::$instance;
 	}

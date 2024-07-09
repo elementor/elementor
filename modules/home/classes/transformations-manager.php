@@ -4,6 +4,7 @@ namespace Elementor\Modules\Home\Classes;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -32,8 +33,10 @@ class Transformations_Manager {
 	protected array $transformation_classes = [];
 
 	public function __construct( $home_screen_data ) {
-		if ( elementor_container()->has( Wordpress_Adapter_Interface::class ) ) {
-			$this->wordpress_adapter = elementor_container( Wordpress_Adapter_Interface::class );
+		$container = Plugin::$instance->elementor_container();
+
+		if ( $container->has( Wordpress_Adapter_Interface::class ) ) {
+			$this->wordpress_adapter = $container->get( Wordpress_Adapter_Interface::class );
 		} else {
 			$this->wordpress_adapter = new Wordpress_Adapter();
 		}
