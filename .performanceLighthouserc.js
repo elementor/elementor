@@ -1,5 +1,10 @@
 module.exports = {
 	ci: {
+		assert: {
+			performance: 'error',
+			accessibility: 'error',
+			includePassedAssertions: true,
+		},
 		collect: {
 			numberOfRuns: 1,
 			settings: {
