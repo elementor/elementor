@@ -643,7 +643,11 @@ class Frontend extends App {
 			wp_enqueue_style( 'swiper' );
 
 			if ( is_user_logged_in() ) {
-				wp_enqueue_style( 'elementor-wp-admin-bar' );
+				$show_toolbar = get_user_meta( get_current_user_id(), 'show_admin_bar_front', true );
+
+				if ( $show_toolbar === 'true' ) {
+					wp_enqueue_style( 'elementor-wp-admin-bar' );
+				}
 			}
 
 			/**
