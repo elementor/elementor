@@ -45,9 +45,12 @@ jobs:
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Install WP
         run: |
+          mkdir elementor
+          cp -r ./build/* elementor
+          zip -r elementor elementor
+          mv ./elementor.zip ./tests/playwright/upgrade-test/plugin
           mkdir tests/wp-env/config/elementor-from-build
-          mv build tests/wp-env/config/elementor-from-build
-          mkdir build
+          mv ./elementor.zip tests/wp-env/config/elementor-from-build
           cd test-server
           npm start -- port=8888
           sleep 10
