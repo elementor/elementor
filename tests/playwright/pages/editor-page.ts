@@ -646,7 +646,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openRepeaterItem( controlId: string, repeaterItem: number ) {
-		await this.page.locator( `.elementor-control-${ controlId } button.elementor-repeater-row-item-title` ).nth( repeaterItem ).click();
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-repeater-fields:nth-child(${ repeaterItem }) button.elementor-repeater-row-item-title` ).click();
 	}
 
 	/**
@@ -658,7 +658,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async deleteRepeaterItem( controlId: string, repeaterItem: number ) {
-		await this.page.locator( `.elementor-control-${ controlId } button.elementor-repeater-tool-remove` ).nth( repeaterItem ).click();
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-repeater-fields:nth-child(${ repeaterItem }) button.elementor-repeater-tool-remove` ).click();
 	}
 
 	/**
@@ -670,7 +670,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async duplicateRepeaterItem( controlId: string, repeaterItem: number ) {
-		await this.page.locator( `.elementor-control-${ controlId } button.elementor-repeater-tool-duplicate` ).nth( repeaterItem ).click();
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-repeater-fields:nth-child(${ repeaterItem }) button.elementor-repeater-tool-duplicate` ).click();
 	}
 
 	/**

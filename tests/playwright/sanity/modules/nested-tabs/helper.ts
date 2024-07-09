@@ -137,8 +137,7 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 
 export async function cloneItemFromRepeater( editor: EditorPage, widgetID: string, position: number ) {
 	// Arrange
-	const
-		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
+	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
