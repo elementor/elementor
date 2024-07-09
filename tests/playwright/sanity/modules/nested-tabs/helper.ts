@@ -108,7 +108,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await editor.deleteRepeaterItem( widgetID, numberOfTitles );
+	await editor.deleteRepeaterItem( 'tabs', numberOfTitles );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 

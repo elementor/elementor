@@ -124,7 +124,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 		numberOfContents = await nestedAccordionItemContent.count();
 
 	// Act
-	await editor.deleteRepeaterItem( accordionID, 1 );
+	await editor.deleteRepeaterItem( 'items', 1 );
 
 	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
 
