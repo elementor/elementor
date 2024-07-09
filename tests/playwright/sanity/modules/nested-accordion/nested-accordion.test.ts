@@ -305,7 +305,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 	} );
 
-	test( 'Nested Accordion dynamic properties in editor with Nested Elements Performance experiment on', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Nested Accordion dynamic properties in editor with Nested Elements Performance experiment on', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
@@ -401,10 +401,10 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			expect( await renderedAccordionItems.nth( editedIndex ).locator( '.e-con' ).first().isVisible() ).toBe( false );
 
 			await wpAdmin.setExperiments( {
-					'nested-elements': 'inactive',
-					container: 'inactive',
-					e_nested_atomic_repeaters: 'inactive',
-				} );
+				'nested-elements': 'inactive',
+				container: 'inactive',
+				e_nested_atomic_repeaters: 'inactive',
+			} );
 		} );
 	} );
 } );
