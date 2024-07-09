@@ -88,29 +88,25 @@ export default class AiBehavior extends Marionette.Behavior {
 		if ( 'post_featured_image' === this.options.context.controlName ) {
 			const FEATURED_IMAGE_RATIO = '4:3';
 			return (
-				<RequestIdsProvider>
-					<AIMediaGenerateApp
-						onClose={ onClose }
-						predefinedPrompt={ this.getTextualContent() }
-						textToImageHook={ useFeaturedImagePrompt }
-						getControlValue={ this.getOption( 'getControlValue' ) }
-						setControlValue={ this.getOption( 'setControlValue' ) }
-						initialSettings={ { aspectRatio: FEATURED_IMAGE_RATIO } }
-					/>
-				</RequestIdsProvider>
+				<AIMediaGenerateApp
+					onClose={ onClose }
+					predefinedPrompt={ this.getTextualContent() }
+					textToImageHook={ useFeaturedImagePrompt }
+					getControlValue={ this.getOption( 'getControlValue' ) }
+					setControlValue={ this.getOption( 'setControlValue' ) }
+					initialSettings={ { aspectRatio: FEATURED_IMAGE_RATIO } }
+				/>
 			);
 		}
 
 		if ( 'excerpt' === this.getOption( 'type' ) ) {
 			return (
-				<RequestIdsProvider>
-					<AIExcerpt
-						onClose={ onClose }
-						currExcerpt={ this.getOption( 'getControlValue' )() }
-						updateExcerpt={ this.getOption( 'setControlValue' ) }
-						postTextualContent={ this.getTextualContent() }
-					/>
-				</RequestIdsProvider>
+				<AIExcerpt
+					onClose={ onClose }
+					currExcerpt={ this.getOption( 'getControlValue' )() }
+					updateExcerpt={ this.getOption( 'setControlValue' ) }
+					postTextualContent={ this.getTextualContent() }
+				/>
 			);
 		}
 		return (
