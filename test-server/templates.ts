@@ -55,7 +55,7 @@ ${ volumes }
       - wordpress
     image: 'wordpress:cli-php${ config.phpVersion }'
     volumes: *ref_1
-    user: '502:20'
+    user: '33'
     environment:
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: password
