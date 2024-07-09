@@ -33,6 +33,9 @@
 		"coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml",
 		"post-install-cmd": [
 			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force"
+		],
+		"post-update-cmd": [
+			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force"
 		]
 	},
 	"config": {
