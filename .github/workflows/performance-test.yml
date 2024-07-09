@@ -54,5 +54,3 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
           lhci autorun --config=./.performanceLighthouserc.js
-
-
