@@ -30,11 +30,6 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-#      - name: Download build artifact
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: ${{ needs.build-plugin.outputs.artifact_name }}
-#          path: ./build
       - name: Download build artifact (tmp)
         run: |
           curl -L --output elementor-stable.zip "https://downloads.wordpress.org/plugin/elementor.3.22.2.zip"
