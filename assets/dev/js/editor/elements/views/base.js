@@ -661,7 +661,7 @@ BaseElementView = BaseContainer.extend( {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-				this.itemLink === changedControl );
+				this.itemLink === changedControl && this.model?.config?.atomic_item_link );
 	},
 
 	async getDynamicValue( settings, changedControlKey, dataBinding, widget ) {
@@ -1154,8 +1154,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-
-		if ( this.model?.config?.atomic_item_link ) {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
 				new CustomEvent( 'elementor/dynamic/url_change', {
 					detail: {
@@ -1167,9 +1165,6 @@ BaseElementView = BaseContainer.extend( {
 			);
 
 			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
-		} else {
-			return false;
-		}
 	},
 
 	extractValueToParse( valueToParse ) {
