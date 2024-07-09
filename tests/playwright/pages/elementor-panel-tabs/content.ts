@@ -132,6 +132,17 @@ export default class Content {
 			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
+	async addNewTab( tabName: string, text: string ) {
+		const itemCount = await this.page.locator( EditorSelectors.item ).count();
+		await this.page.getByRole( 'button', { name: 'Add Item' } ).click();
+		await this.page.getByRole( 'textbox', { name: 'Title' } ).click();
+		await this.page.getByRole( 'textbox', { name: 'Title' } ).fill( tabName );
+		const textEditor = this.page.frameLocator( EditorSelectors.tabs.textEditorIframe ).nth( itemCount );
+		await textEditor.locator( 'html' ).click();
+		await textEditor.getByText( 'Tab Content' ).click();
+		await textEditor.locator( EditorSelectors.tabs.body ).fill( text );
+	}
+
 	/**
 	 * @description This function parses link ("a" tag) src attribute and gets Query Params and their values.
 	 * The same as you copy src attribute value and put in Postman
