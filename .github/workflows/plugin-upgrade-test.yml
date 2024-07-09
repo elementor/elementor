@@ -18,7 +18,6 @@ jobs:
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest
-    needs: [build-plugin]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -31,6 +30,7 @@ jobs:
         run: |
           curl -L --output elementor-stable.zip "https://downloads.wordpress.org/plugin/elementor.3.22.2.zip"
           mkdir build
+          chmod 777 build
           unzip elementor-stable.zip -d build
       - name: Install dependencies
         run: |
@@ -46,6 +46,7 @@ jobs:
           cp -r ./build/* elementor
           zip -r elementor elementor
           mkdir tests/wp-env/config/elementor-from-build
+          chmod 777 tests/wp-env/config/elementor-from-build
           mv ./elementor.zip tests/wp-env/config/elementor-from-build
           cd test-server
           npm start -- port=8888
