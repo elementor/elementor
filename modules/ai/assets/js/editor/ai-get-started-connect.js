@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useUserInfo from './hooks/use-user-info';
 import Loader from './components/loader';
 import { onConnect } from './utils/editor-integration';
@@ -8,7 +8,6 @@ import ConnectAndGetStarted from './pages/connect/connect-and-get-started';
 import { setGetStarted } from './api';
 import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
 
 function isElementInViewport( el ) {
 	const rect = el.getBoundingClientRect();
@@ -22,7 +21,7 @@ function isElementInViewport( el ) {
 
 export const AiGetStartedConnect = ( { onClose } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData } = useUserInfo();
-	const [ shouldShowPromotion, setShouldShowPromotion ] = React.useState( false );
+	const [ shouldShowPromotion, setShouldShowPromotion ] = useState( false );
 
 	useEffect( () => {
 		if ( isGetStarted && isConnected ) {
@@ -67,7 +66,7 @@ export const AiGetStartedConnect = ( { onClose } ) => {
 	}
 
 	if ( shouldShowPromotion ) {
-		const element = elementorFrontend.elements.$body[ 0 ].querySelector( '.e-ai-layout-button' );
+		const element = window.elementorFrontend.elements.$body[ 0 ].querySelector( '.e-ai-layout-button' );
 		const { x: canvasOffsetX, y: canvasOffsetY } = document.querySelector( '#elementor-preview-iframe' ).getBoundingClientRect();
 
 		return <AiPromotionInfotipWrapper
