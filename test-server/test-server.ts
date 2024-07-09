@@ -92,6 +92,10 @@ const generateFiles = () => {
 	const configFilePath = path.resolve( getConfigFilePath( process.argv ) );
 	const config = getConfig( configFilePath );
 
+	const wpContentPath = path.resolve( os.tmpdir(), `wpcontent${ port }` );
+	if ( ! fs.existsSync( wpContentPath ) ) {
+		fs.mkdirSync( wpContentPath );
+	}
 	const wpConfigPath = path.resolve( os.tmpdir(), port );
 	if ( ! fs.existsSync( wpConfigPath ) ) {
 		fs.mkdirSync( wpConfigPath );
@@ -99,7 +103,7 @@ const generateFiles = () => {
 	const wpConfig = generateConfiguration( config, port );
 	fs.writeFileSync( path.resolve( wpConfigPath, 'configure-wp.sh' ), wpConfig );
 
-	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ), port, wpConfigPath );
+	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.dirname( configFilePath ), port, wpConfigPath, wpContentPath );
 	const wordPressDockerfileTemplate = generateWordPressDockerfileTemplate( config );
 	const cliDockerfileTemplate = generateCliDockerfileTemplate( config );
 	const hash = createHash( 'sha256' );

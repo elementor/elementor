@@ -1,7 +1,7 @@
 import { Config } from './config.js';
 import path from 'path';
 
-export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string, port: string, configPath: string ) => {
+export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string, port: string, configPath: string, wpContentPath: string ) => {
 	const mappingsStringArray = Object.keys( config.mappings ).map( ( key ) => {
 		const value = config.mappings[ key ];
 		return `      - >-
@@ -18,7 +18,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
         ${ path.resolve( basePath, value ) }:/var/www/html/wp-content/themes/${ key }\n`;
 	} );
 	const wpContent = `      - >-
-        wpcontent:/var/www/html\n`;
+        ${ wpContentPath }:/var/www/html\n`;
 	const wpConfig = `      - >-
         ${ configPath }:/var/www/html/wp-config\n`;
 	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).concat( [ wpContent, wpConfig ] ).join( '' );
@@ -66,7 +66,6 @@ ${ volumes }
       - 'host.docker.internal:host-gateway'
 volumes:
   mysql: {}
-  wpcontent: {}
 `;
 };
 
