@@ -557,6 +557,13 @@ class Frontend extends App {
 			$this->e_swiper_version
 		);
 
+		wp_register_style(
+			'elementor-wp-admin-bar',
+			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		/**
 		 * After frontend register styles.
 		 *
@@ -634,6 +641,10 @@ class Frontend extends App {
 			wp_enqueue_style( 'elementor-frontend' );
 
 			wp_enqueue_style( 'swiper' );
+
+			if ( is_user_logged_in() ) {
+				wp_enqueue_style( 'elementor-wp-admin-bar' );
+			}
 
 			/**
 			 * After frontend styles enqueued.
