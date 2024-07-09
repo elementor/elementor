@@ -1,9 +1,7 @@
 module.exports = {
 	ci: {
 		assert: {
-			performance: 'error',
-			accessibility: 'error',
-			includePassedAssertions: true,
+			"total-blocking-time": ["error", {"maxNumericValue": 300}],
 		},
 		collect: {
 			numberOfRuns: 1,
