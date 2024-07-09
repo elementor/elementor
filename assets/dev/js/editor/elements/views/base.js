@@ -1161,12 +1161,12 @@ BaseElementView = BaseContainer.extend( {
 			return false;
 		}
 
-		dataBinding.el.innerHtml = this.getAdvancedDynamicTitleChange(
+		jQuery( dataBinding.el ).html( this.getAdvancedDynamicTitleChange(
 			changedControlKey,
 			settings.attributes,
 			settings._previousAttributes,
 			dataBinding.el,
-		);
+		) );
 
 		return true;
 	},

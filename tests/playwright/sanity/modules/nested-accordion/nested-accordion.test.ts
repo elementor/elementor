@@ -324,64 +324,86 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await toggleAccordionContent( frame, nestedAccordionId, 0, false );
 
 		await test.step( 'Set title to be Post Time', async () => {
-			await setDynamicTag( page, editor, nestedAccordionId, 0, 'Post Time' );
+			const editedIndex = 0;
 
-			await renderedAccordionItems.nth( 0 )
+			await setDynamicTag( page, editor, nestedAccordionId, editedIndex, 'Post Time' );
+
+			await renderedAccordionItems.nth( editedIndex )
 				.locator( '.e-n-accordion-item-title', { hasText: /\d?\:\d?/ } ).first()
 				.waitFor();
 
 			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
-			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+			expect( await renderedAccordionItems.nth( editedIndex ).locator( '.e-con' ).first().isVisible() ).toBe( false );
 		} );
 
 		await test.step( 'Change dynamic value and check that it is set', async () => {
-			await setDynamicTag( page, editor, nestedAccordionId, 0, 'Post Title' );
+			const editedIndex = 0;
 
-			await renderedAccordionItems.nth( 0 )
+			await setDynamicTag( page, editor, nestedAccordionId, editedIndex, 'Post Title' );
+
+			await renderedAccordionItems.nth( editedIndex )
 				.locator( '.e-n-accordion-item-title', { hasText: pageId } ).first()
 				.waitFor();
 
 			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
-			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+			expect( await renderedAccordionItems.nth( editedIndex ).locator( '.e-con' ).first().isVisible() ).toBe( false );
 		} );
 
 		await test.step( 'Set before and after in the advanced options', async () => {
+			const editedIndex = 2;
+
+			await setDynamicTag( page, editor, nestedAccordionId, editedIndex, 'Post ID' );
+
+			await renderedAccordionItems.nth( editedIndex )
+				.locator( '.e-n-accordion-item-title', { hasText: pageId } ).last()
+				.waitFor();
+
 			await editor.setDynamicFieldAdvancedSetting( [
-				'.elementor-control-items .elementor-repeater-fields >> nth=0',
+				`.elementor-control-items .elementor-repeater-fields >> nth=${ editedIndex } `,
 				'.elementor-control-item_title',
 			], {
 				'.elementor-control-before input': 'Before ',
 				'.elementor-control-after input': ' After',
 			} );
 
-			await renderedAccordionItems.nth( 0 )
-				.locator( '.e-n-accordion-item-title', { hasText: `Before ${ pageId } #${ pageId } After` } ).first()
+			await renderedAccordionItems.nth( editedIndex )
+				.locator( '.e-n-accordion-item-title', { hasText: `Before ${ pageId } After` } ).first()
 				.waitFor();
 
 			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
-			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+			expect( await renderedAccordionItems.nth( editedIndex ).locator( '.e-con' ).first().isVisible() ).toBe( false );
 		} );
 
 		await test.step( 'Change before and after in the advanced options', async () => {
+			const editedIndex = 2;
+
+			const repeaterItemControl = editor.getLocatorFromSelectorArray( [
+				`.elementor-control-items .elementor-repeater-fields >> nth=${ editedIndex }`,
+				'.elementor-control-item_title',
+			] );
+
+			await repeaterItemControl.click();
+			await repeaterItemControl.click();
+
 			await editor.setDynamicFieldAdvancedSetting( [
-				'.elementor-control-items .elementor-repeater-fields >> nth=0',
+				`.elementor-control-items .elementor-repeater-fields >> nth=${ editedIndex }`,
 				'.elementor-control-item_title',
 			], {
 				'.elementor-control-before input': '123 ',
 				'.elementor-control-after input': ' 456',
 			} );
 
-			await renderedAccordionItems.nth( 0 )
-				.locator( '.e-n-accordion-item-title', { hasText: `123 ${ pageId } #${ pageId } 456` } ).first()
+			await renderedAccordionItems.nth( editedIndex )
+				.locator( '.e-n-accordion-item-title', { hasText: `123 ${ pageId } 456` } ).first()
 				.waitFor();
 
 			// If the improved performance fails, the widget will be re-rendered and the first accordion item content will be expanded and visible
-			expect( await renderedAccordionItems.nth( 0 ).locator( '.e-con' ).first().isVisible() ).toBe( false );
+			expect( await renderedAccordionItems.nth( editedIndex ).locator( '.e-con' ).first().isVisible() ).toBe( false );
 
 			await wpAdmin.setExperiments( {
-					container: 'inactive',
 					'nested-elements': 'inactive',
-					e_nested_atomic_repeaters: 'active',
+					container: 'inactive',
+					e_nested_atomic_repeaters: 'inactive',
 				} );
 		} );
 	} );
