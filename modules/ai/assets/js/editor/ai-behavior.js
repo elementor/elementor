@@ -2,7 +2,10 @@ import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 import AIExcerpt from './ai-excerpt';
+import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
+import { AIMediaGenerateApp } from '../media-library/componenets';
 import { RequestIdsProvider } from './context/requests-ids';
+import React from 'react';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -80,6 +83,20 @@ export default class AiBehavior extends Marionette.Behavior {
 			this.handleClose();
 			rootElement.remove();
 		};
+
+		if ( 'post_featured_image' === this.options.context.controlName ) {
+			const FEATURED_IMAGE_RATIO = '4:3';
+			return (
+				<AIMediaGenerateApp
+					onClose={ onClose }
+					predefinedPrompt={ this.getTextualContent() }
+					textToImageHook={ useFeaturedImagePrompt }
+					getControlValue={ this.getOption( 'getControlValue' ) }
+					setControlValue={ this.getOption( 'setControlValue' ) }
+					initialSettings={ { aspectRatio: FEATURED_IMAGE_RATIO } }
+				/>
+			);
+		}
 
 		if ( 'excerpt' === this.getOption( 'type' ) ) {
 			return (
