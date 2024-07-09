@@ -42,12 +42,12 @@ jobs:
           unzip elementor-stable.zip -d build
       - name: Install dependencies
         run: |
-            # npm ci
-            cd test-server
-            npm ci
-            npm run build
-            cd ..
-            cd ./tests/playwright/upgrade-test && npm ci
+          npm ci
+          cd test-server
+          npm ci
+          npm run build
+          cd ..
+          cd ./tests/playwright/upgrade-test && npm ci
       - name: Install WP
         run: |
           mkdir elementor
@@ -73,9 +73,6 @@ jobs:
           npm run cli command="wp plugin install ../build/elementor.zip --force" -- port=8888
           npm run cli command="wp plugin list" -- port=8888
           npm run cli command="wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating" -- port=8888
-      - name: Install dependencies (tmp)
-        run: |
-          npm ci
       - name: Install chromium
         run: npx playwright install chromium
       - name: Run Playwright tests
