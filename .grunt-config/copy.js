@@ -43,6 +43,7 @@ const getBuildFiles = [
 	'!test-results/',
 	'!tmp/**',
 	'!vendor/**',
+	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
 	'!commitlint.config.js',
