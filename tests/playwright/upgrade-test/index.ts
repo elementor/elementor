@@ -28,7 +28,7 @@ export class UpgradeElementor {
 		this.cmd( 'cd ../../../ && ls -al ./build/vendor' );
 		this.cmd( 'cd ../../../ && cp -r ./build/* elementor' );
 		this.cmd( 'cd ../../../ && ls -al elementor' );
-		this.cmd( 'cd ../../../ && zip -r elementor elementor' );
+		this.cmd( 'cd ../../../ && zip -r elementor.zip elementor' );
 		this.cmd( 'cd ../../../ && mv ./elementor.zip ./tests/playwright/upgrade-test/plugin' );
 	}
 
