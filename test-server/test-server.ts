@@ -27,7 +27,7 @@ const waitForServer = async ( url: string, timeoutMs: number ) => {
 
 const start = async ( port: string ) => {
 	await dockerCompose.upAll( {
-		composeOptions: [ '-p', `port${ port }`, '--user', os.userInfo().username ],
+		composeOptions: [ '-p', `port${ port }` ],
 		cwd: runPath,
 		log: true,
 	} );
@@ -38,16 +38,17 @@ const stop = async ( port: string ) => {
 	await dockerCompose.downAll( {
 		cwd: runPath,
 		commandOptions: [ '--volumes', '--remove-orphans' ],
-		composeOptions: [ '-p', `port${ port }`, '--user', os.userInfo().username ],
+		composeOptions: [ '-p', `port${ port }` ],
 		log: true,
 	} );
 };
 
+// "docker compose -f backup/docker-compose.yml run --rm cli wp core install --url=\\\\\\\"http://localhost:8888\\\\\\\" --title=\\\\\\\"test\\\\\\\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email"
 const cli = async ( port: string, command: string ) => {
 	await dockerCompose.run( 'cli', command, {
 		cwd: runPath,
 		commandOptions: [ '--rm' ],
-		composeOptions: [ '-p', `port${ port }`, '--user', os.userInfo().username ],
+		composeOptions: [ '-p', `port${ port }` ],
 		log: true,
 	} );
 };
