@@ -42,7 +42,7 @@ const getBuildFiles = [
 	'!tests/**',
 	'!test-results/',
 	'!tmp/**',
-	'!vendor/**',
+	// '!vendor/**',
 	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
