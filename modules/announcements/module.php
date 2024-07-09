@@ -94,21 +94,21 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		$raw_announcements = [
 			[
-				'title' => __('Discover your new superpowers ', 'elementor'),
-				'description' => __('<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor'),
+				'title' => __( 'Discover your new superpowers ', 'elementor' ),
+				'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
 				'media' => [
 					'type' => 'image',
 					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
 				],
 				'cta' => [
 					[
-						'label' => __('Let\'s do it','elementor'),
+						'label' => __( 'Let\'s do it', 'elementor' ),
 						'variant' => 'primary',
 						'target' => '_top',
 						'url' => '#welcome-ai',
 					],
 					[
-						'label' => __('Skip','elementor'),
+						'label' => __( 'Skip', 'elementor' ),
 						'variant' => 'secondary',
 					],
 				],
