@@ -52,7 +52,7 @@ export const UrlDialog = ( props ) => {
 						type: 'url',
 						previewHTML: html,
 						content: html,
-						label: url ? new URL( url ).host : '',
+						label: url ? new URL( url ).href : '',
 						source: USER_URL_SOURCE,
 					} ] );
 					break;
