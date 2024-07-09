@@ -5,6 +5,8 @@ import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper
 import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
 import AIExcerpt from './ai-excerpt';
 import { RequestIdsProvider } from './context/requests-ids';
+import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
+import { AIMediaGenerateApp } from '../media-library/componenets';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -82,6 +84,22 @@ export default class AiBehavior extends Marionette.Behavior {
 			this.handleClose();
 			rootElement.remove();
 		};
+
+		if ( 'post_featured_image' === this.options.context.controlName ) {
+			const FEATURED_IMAGE_RATIO = '4:3';
+			return (
+				<RequestIdsProvider>
+					<AIMediaGenerateApp
+						onClose={ onClose }
+						predefinedPrompt={ this.getTextualContent() }
+						textToImageHook={ useFeaturedImagePrompt }
+						getControlValue={ this.getOption( 'getControlValue' ) }
+						setControlValue={ this.getOption( 'setControlValue' ) }
+						initialSettings={ { aspectRatio: FEATURED_IMAGE_RATIO } }
+					/>
+				</RequestIdsProvider>
+			);
+		}
 
 		if ( 'excerpt' === this.getOption( 'type' ) ) {
 			return (
