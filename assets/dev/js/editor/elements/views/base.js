@@ -27,6 +27,8 @@ BaseElementView = BaseContainer.extend( {
 
 	renderAttributes: {},
 
+	itemLink: 'item_link',
+
 	className() {
 		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 
@@ -659,25 +661,25 @@ BaseElementView = BaseContainer.extend( {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-				'item_link' === changedControl );
+				this.itemLink === changedControl );
 	},
 
-	async getDynamicValue( settings, bindingSetting, changedControl, widget, dataBinding ) {
+	async getDynamicValue( settings, changedControlKey, dataBinding, widget ) {
 		const dynamicSettings = { active: true },
-			changedDataForRemovedItem = settings.attributes?.[ changedControl ],
-			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControl ];
-		let valueToParse = changedDataForAddedItem || changedDataForRemovedItem?.url || changedDataForRemovedItem;
+			changedDataForRemovedItem = settings.attributes?.[ changedControlKey ]?.[ dataBinding ] || settings.attributes?.[ changedControlKey ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ dataBinding ] || settings.attributes?.__dynamic__?.[ changedControlKey ],
+			changedData = changedDataForAddedItem || changedDataForRemovedItem;
+		let valueToParse = this.extractValueToParse( changedData );
 
-		if ( valueToParse ) {
+		if ( undefined !== valueToParse ) {
+			const data = await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 
-			const data = await this.getDataFromCacheOrBackend( valueToParse.url || valueToParse, dynamicSettings );
-
-			if( data ){
-				this.tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding.el, changedDataForAddedItem, changedDataForRemovedItem, widget, changedControl, dynamicSettings );
+			if( undefined !== data ){
+				this.tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControlKey, dynamicSettings );
 			}
 		}
 
-		return settings.attributes[ changedControl ];
+		return settings.attributes[ changedControlKey ];
 	},
 
 	findUniqueKey( obj1, obj2 ) {
@@ -770,10 +772,9 @@ BaseElementView = BaseContainer.extend( {
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				debugger;
-				const dynamicValue =  this.getDynamicValue( settings, dataBinding, changedControl, widget, dataBinding );
+				const dynamicValue =  this.getDynamicValue( settings, changedControl, dataBinding, widget );
 
-				if ( 'item_link' === changedControl) {
+				if ( this.itemLink === changedControl) {
 					return true;
 				}
 
@@ -781,6 +782,7 @@ BaseElementView = BaseContainer.extend( {
 					change = dynamicValue;
 				}
 			}
+
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
@@ -1106,16 +1108,6 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	isItemLink( changedControl, dataBinding) {
-		if( 'item_link' === changedControl ) {
-
-			// this.changeMegaMenuTitleContainerTag( dataBinding.el );
-			return true;
-		}
-
-		return false;
-	},
-
 	/**
 	 * Toggle the container tag of the mega menu title.
 	 * Needs to be places in pro Mega Menu frontend handler
@@ -1138,17 +1130,27 @@ BaseElementView = BaseContainer.extend( {
 		existingParentElement.replaceChild( newElement, existingElement )
 	},
 
+	/**
+	 * Get the dynamic tag name from the changed data.
+	 * @param changedDataForAddedItem
+	 * @returns {*|null}
+	 */
 	getDynamicTagName( changedDataForAddedItem ) {
 		const regex = /name="([^"]*)"/;
 		const match = changedDataForAddedItem.match(regex);
 		return match ? match[1] : null;
 	},
 
+	/**
+	 * Get data from cache or backend.
+	 * @param valueToParse
+	 * @param dynamicSettings
+	 * @returns {Promise<*|boolean>}
+	 */
 	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
 		try {
 			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-		} catch ( e ) {
-			console.log({e})
+		} catch {
 			await new Promise( ( resolve ) => {
 				 elementor.dynamicTags.refreshCacheFromServer( ( res ) => {
 					resolve( res );
@@ -1161,35 +1163,52 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	tryFormatDynamicMegaMenuUrl(valueToParse, dataBinding, changedDataForAddedItem, changedDataForRemovedItem, widget, changedControl, dynamicSettings) {
-		if ( 'item_link' !== changedControl ) {
+	/**
+	 * Try to format the dynamic mega menu url.
+	 * Supouse to support Backward compatibility with the pro Mega Menu frontend handler
+	 * @param valueToParse
+	 * @param dataBinding
+	 * @param widget
+	 * @param changedControl
+	 * @param dynamicSettings
+	 * @returns {boolean}
+	 */
+	tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControl, dynamicSettings ) {
+		if ( this.itemLink !== changedControl ) {
 			return false;
 		}
 
-		debugger;
-
-		valueToParse = changedDataForAddedItem || changedDataForRemovedItem?.url;
-		changedControl = changedControl.url || changedControl;
-		const value = elementor.dynamicTags.parseTagsText(valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent);
-
-		console.log('b');
+		const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 
 		try {
-			elementor.$preview[0].contentWindow.dispatchEvent(
-				new CustomEvent('elementor/dynamic/url_change', {
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/dynamic/url_change', {
 					detail: {
-						element: dataBinding,
-						name: changedDataForAddedItem && this.getDynamicTagName( changedDataForAddedItem ),
+						element: dataBinding.el,
+						actionName: valueToParse && this.getDynamicTagName( valueToParse ),
 						value,
 					},
-				})
+				} )
 			);
 
-			dataBinding.el = Array.from(widget)[0].querySelectorAll('.e-n-menu-title-text')[dataBinding.dataset.bindingIndex - 1]
+			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
 			return true;
 		} catch {
 			return false;
 		}
+	},
+
+	/**
+	 * Extract the value to parse from the changed data.
+	 * @param valueToParse
+	 * @returns {*}
+	 */
+	extractValueToParse( valueToParse ) {
+		if ( 'object' === typeof valueToParse ) {
+			return valueToParse.url;
+		}
+
+		return valueToParse;
 	}
 } );
 
