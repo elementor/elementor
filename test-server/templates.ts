@@ -36,13 +36,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
   wordpress:
     depends_on:
       - mysql
-    build:
-      context: .
-      dockerfile: wordpress:${ config.core }-php${ config.phpVersion }
-      args: &ref_0
-        HOST_USERNAME: yotams
-        HOST_UID: '502'
-        HOST_GID: '20'
+    image: 'wordpress:${ config.core }-php${ config.phpVersion }'
     ports:
       - '\${WP_ENV_PORT:-${ port }}:80'
     environment:
@@ -59,10 +53,7 @@ ${ volumes }
   cli:
     depends_on:
       - wordpress
-    build:
-      context: .
-      dockerfile: wordpress:cli-php${ config.phpVersion }
-      args: *ref_0
+    image: 'wordpress:cli-php${ config.phpVersion }'
     volumes: *ref_1
     user: '502:20'
     environment:
