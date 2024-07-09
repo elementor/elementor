@@ -6,7 +6,7 @@ import {
 	deleteItemFromRepeater,
 	addItemFromRepeater,
 	setDynamicTag,
-	toggleAccordionContent
+	toggleAccordionContent,
 } from './helper';
 import _path from 'path';
 import { setup } from '../nested-tabs/helper';
