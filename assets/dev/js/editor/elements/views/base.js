@@ -1112,9 +1112,11 @@ BaseElementView = BaseContainer.extend( {
 	/**
 	 * Toggle the container tag of the mega menu title.
 	 * Needs to be places in pro Mega Menu frontend handler
+	 *
+	 * @param existingElement {HTMLElement}
 	 */
 	changeMegaMenuTitleContainerTag( existingElement ) {
-		 existingElement = existingElement.parentElement;
+		existingElement = existingElement.parentElement;
 			const existingParentElement = existingElement.parentNode;
 			let newElement = document.createElement( 'div' );
 
@@ -1122,16 +1124,18 @@ BaseElementView = BaseContainer.extend( {
 			newElement = document.createElement( 'a' );
 		}
 
-		Array.from( existingElement.attributes ).forEach( attr => {
+		Array.from( existingElement.attributes ).forEach( ( attr ) => {
 			newElement.setAttribute( attr.name, attr.value );
 		} );
 
 		newElement.innerHTML = existingElement.innerHTML;
-		existingParentElement.replaceChild( newElement, existingElement )
+		existingParentElement.replaceChild( newElement, existingElement );
 	},
 
 	/**
 	 * Get the dynamic action name from the changed data.
+	 *
+	 * @param changedDataForAddedItem {object|string}
 	 */
 	getDynamicTagName( changedDataForAddedItem ) {
 		const regex = /name="([^"]*)"/;
@@ -1144,7 +1148,7 @@ BaseElementView = BaseContainer.extend( {
 			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 		} catch {
 			await new Promise( ( resolve ) => {
-				 elementor.dynamicTags.refreshCacheFromServer( ( res ) => {
+				elementor.dynamicTags.refreshCacheFromServer( ( res ) => {
 					resolve( res );
 				} );
 			} );
@@ -1157,13 +1161,14 @@ BaseElementView = BaseContainer.extend( {
 
 	/**
 	 * Try to format the dynamic mega menu url.
-	 * Supouse to support Backward compatibility with the pro Mega Menu frontend handler
-	 * @param valueToParse
-	 * @param dataBinding
-	 * @param widget
-	 * @param changedControl
-	 * @param dynamicSettings
-	 * @returns {boolean}
+	 * Suppose to support Backward compatibility with the pro Mega Menu frontend handler
+	 *
+	 * @param valueToParse {string|object}
+	 * @param dataBinding {object}
+	 * @param widget{HTMLElement}
+	 * @param changedControl {string}
+	 * @param dynamicSettings {object}
+	 * @return {boolean}
 	 */
 	tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControl, dynamicSettings ) {
 		if ( this.itemLink !== changedControl ) {
@@ -1174,11 +1179,13 @@ BaseElementView = BaseContainer.extend( {
 
 		try {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-				this.triggerCustomEvent( { details: {
-									element: dataBinding.el,
-									actionName: valueToParse && this.getDynamicTagName( valueToParse ),
-									value,
-								} }, widget, dataBinding)
+				this.triggerCustomEvent( {
+					details: {
+						element: dataBinding.el,
+						actionName: valueToParse && this.getDynamicTagName( valueToParse ),
+						value,
+					}
+				}, widget, dataBinding )
 			);
 
 			// elementor.$preview[ 0 ].contentWindow.dispatchEvent(
@@ -1201,8 +1208,8 @@ BaseElementView = BaseContainer.extend( {
 
 	/**
 	 * Extract the value to parse from the changed data.
-	 * @param valueToParse
-	 * @returns {*}
+	 * @param valueToParse {string|object}
+	 * @return {string}
 	 */
 	extractValueToParse( valueToParse ) {
 		if ( 'object' === typeof valueToParse ) {
@@ -1213,19 +1220,20 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	triggerCustomEvent( data, widget, dataBinding ) {
-		const event = new CustomEvent('elementor/dynamic/url_change', {
+		const event = new CustomEvent( 'elementor/dynamic/url_change', {
 			detail: data, // Data you want to pass to Repo B
 			bubbles: true, // Allow event to bubble up
-			cancelable: true // Allow event to be canceled
+			cancelable: true, // Allow event to be canceled
 		});
-	// Dispatch the event and capture the response if the event was not canceled
-	if (document.dispatchEvent(event)) {
-		dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
-		return event.detail.response; // Synchronously get the response from Repo B
-	} else {
+
+		// Dispatch the event and capture the response if the event was not canceled
+		if ( document.dispatchEvent( event ) ) {
+			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ];
+			return event.detail.response;
+		}
+
 		return null; // Handle the case where the event was canceled
 	}
-}
 } );
 
 module.exports = BaseElementView;
