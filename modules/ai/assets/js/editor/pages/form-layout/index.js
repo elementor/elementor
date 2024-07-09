@@ -15,7 +15,6 @@ import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
 import { useConfig } from './context/config';
 import { AttachmentPropType } from '../../types/attachment';
 import { PromptPowerNotice } from './components/attachments/prompt-power-notice';
-import { ProWidgetsNotice } from './components/pro-widgets-notice';
 import { ATTACHMENT_TYPE_URL } from './components/attachments';
 import AttachDialog from './components/attachments/attach-dialog';
 import isURL from 'validator/lib/isURL';
@@ -69,7 +68,7 @@ const FormLayout = ( {
 	DialogContentProps = {},
 	attachments: initialAttachments,
 } ) => {
-	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate, hasPro } = useConfig();
+	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate } = useConfig();
 
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
@@ -109,8 +108,6 @@ const FormLayout = ( {
 	const shouldFallbackToEditPrompt = !! ( error && 0 === screenshots.length );
 
 	const isPromptFormActive = isPromptEditable || shouldFallbackToEditPrompt;
-
-	const mayContainProWidgets = 0 === attachments.length || attachments.some( ( attachment ) => ATTACHMENT_TYPE_URL === attachment.type );
 
 	const abortAndClose = () => {
 		abort();
@@ -252,8 +249,6 @@ const FormLayout = ( {
 							{ dialogContentChildren }
 						</Box>
 					) }
-
-					{ mayContainProWidgets && ! hasPro && <ProWidgetsNotice /> }
 
 					{ attachments.length > 0 && <PromptPowerNotice /> }
 
