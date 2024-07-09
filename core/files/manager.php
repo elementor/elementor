@@ -131,6 +131,10 @@ class Manager {
 	}
 
 	public function clear_custom_image_sizes() {
+		if ( ! defined( 'BFITHUMB_UPLOAD_DIR' ) ) {
+			return;
+		}
+
 		$upload_info = wp_upload_dir();
 		$upload_dir = $upload_info['basedir'] . '/' . BFITHUMB_UPLOAD_DIR;
 

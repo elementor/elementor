@@ -10,7 +10,7 @@ const AiPromotionInfotipWrapper = ( {
 	isRTL, clickAction, placement, offset, mainActionText,
 } ) => {
 	const focusOutListener = useFocusOutListener();
-	const { isViewed, markAsViewed } = useIntroduction( `ai_promotion_introduction_${ controlType }` );
+	const { isViewed, markAsViewed } = useIntroduction( `ai_get_started_introduction_${ controlType }` );
 	if ( isViewed ) {
 		return;
 	}
@@ -20,7 +20,10 @@ const AiPromotionInfotipWrapper = ( {
 			<ThemeProvider colorScheme={ colorScheme }>
 				<FocusOutListener
 					listener={ focusOutListener }
-					onFocusOut={ () => unmountAction() }
+					onFocusOut={ () => {
+						markAsViewed();
+						unmountAction();
+					} }
 				>
 					<AiPromotionInfotip anchor={ anchor }
 						focusOutListener={ focusOutListener }

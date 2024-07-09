@@ -1,29 +1,30 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Container Grid tests @container', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
 			container_grid: true,
 		} );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
 			container_grid: false,
 		} );
 	} );
 
-	test( 'Test grid container', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Test grid container', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
@@ -262,8 +263,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Grid container presets', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Grid container presets', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 
@@ -292,8 +293,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test grid outline', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Test grid outline', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -376,8 +377,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test grid outline multiple controls', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Test grid outline multiple controls', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
 			gridOutline = frame.locator( '.e-grid-outline' );
@@ -408,8 +409,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Check empty view min height', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Check empty view min height', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Arrange.
@@ -480,8 +481,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test grid back arrow', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Test grid back arrow', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const frame = editor.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
@@ -513,8 +514,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Test grid auto flow on different breakpoints', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
@@ -537,8 +538,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test Empty View should show', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Test Empty View should show', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Arrange', async () => {
@@ -559,8 +560,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test Empty View should not distorse preview', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Test Empty View should not distorse preview', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		let containerId;
@@ -600,8 +601,8 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test Empty View should not distorse preview on tablet', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+	test( 'Test Empty View should not distorse preview on tablet', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		let containerId;
@@ -642,9 +643,9 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Need Help url for grid and flex containers', async ( { page }, testInfo ) => {
+	test( 'Need Help url for grid and flex containers', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );

@@ -29,10 +29,11 @@ Thumbs.db
 *.DS_Store
 coverage/
 .zimud.json
+.phpunit.result.cache
 
 # playwright
 test-results/
-**/storageState.json
+**/storageState-*.json
 tests/playwright/config/local.config.js
 playwright-report
 tests/playwright/blob-report

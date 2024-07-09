@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
@@ -6,17 +7,23 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
-	test( 'Image Carousel', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const imageCarousel = new ImageCarousel( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
 		} );
+	} );
+
+	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const imageCarousel = new ImageCarousel( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
 
 		await wpAdmin.openNewPage();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 		await editor.closeNavigatorIfOpen();
 
 		const widgetId = await editor.addWidget( 'image-carousel' );
@@ -62,11 +69,11 @@ test.describe( 'Image carousel tests', () => {
 		} );
 
 		// Reset the Default template.
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 	} );
 
-	test.skip( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test.skip( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.setExperiments( {
@@ -105,15 +112,12 @@ test.describe( 'Image carousel tests', () => {
 		} );
 	} );
 
-	test( 'Accessibility test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Accessibility test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 		await wpAdmin.openNewPage();
-		await editor.useDefaultTemplate();
+		await editor.setPageTemplate( 'default' );
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'heading' );
 		await editor.addWidget( 'image-carousel' );
@@ -138,8 +142,8 @@ test.describe( 'Image carousel tests', () => {
 		} );
 	} );
 
-	test( 'Image caption test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Image caption test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
@@ -147,12 +151,8 @@ test.describe( 'Image carousel tests', () => {
 		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
 		const title = [ 'A', 'B', 'C' ];
 
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
-
 		await wpAdmin.openNewPage();
-		await editor.useCanvasTemplate();
+		await editor.setPageTemplate( 'canvas' );
 		await editor.closeNavigatorIfOpen();
 
 		await editor.addWidget( 'image-carousel' );
