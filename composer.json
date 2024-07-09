@@ -16,15 +16,24 @@
 		"squizlabs/php_codesniffer": "^3.6",
 		"wp-coding-standards/wpcs": "^2.3",
 		"yoast/phpunit-polyfills": "^1.0",
-		"thor-juhasz/phpunit-coverage-check": "^0.3.0"
+		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
+		"humbug/php-scoper": "^0.18.7"
+	},
+	"autoload": {
+		"classmap": [
+			"vendor_prefixed/"
+		]
 	},
 	"scripts": {
-	  "lint": "phpcs --standard=ruleset.xml",
-	  "test": "phpunit",
-	  "test:install": "bash ./bin/install-wp-tests-local.sh",
-	  "coverage": "composer run coverage:test && composer run coverage:check",
-	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
-	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
+		"lint": "phpcs --standard=ruleset.xml",
+		"test": "phpunit",
+		"test:install": "bash ./bin/install-wp-tests-local.sh",
+		"coverage": "composer run coverage:test && composer run coverage:check",
+		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
+		"coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml",
+		"post-install-cmd": [
+			"@php ./vendor/bin/php-scoper add-prefix --config=php-scoper/dependency-injection.inc.php --force"
+		]
 	},
 	"config": {
 		"allow-plugins": {

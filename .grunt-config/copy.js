@@ -42,12 +42,15 @@ const getBuildFiles = [
 	'!tests/**',
 	'!test-results/',
 	'!tmp/**',
+	'!vendor/**',
 	'!yarn.lock',
 	'!*~',
 	'!commitlint.config.js',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
+	'vendor/autoload.php',
+	'vendor/composer/**',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}

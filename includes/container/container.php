@@ -3,7 +3,8 @@
 namespace Elementor\Container;
 
 use Exception;
-use DI\ContainerBuilder;
+use ElementorDep\DI\ContainerBuilder;
+use ElementorDep\DI\Container as DIContainer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,7 +35,7 @@ class Container extends ContainerBuilder {
 	/**
 	 * @throws Exception
 	 */
-	public function init(): \DI\Container {
+	public function init(): DIContainer {
 		return $this->build();
 	}
 
