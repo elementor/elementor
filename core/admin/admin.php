@@ -199,7 +199,6 @@ class Admin extends App {
 	 * @param \WP_Post $post The current post object.
 	 */
 	public function print_switch_mode_button( $post ) {
-
 		// Exit if Gutenberg are active.
 		if ( did_action( 'enqueue_block_editor_assets' ) ) {
 			return;
@@ -837,14 +836,6 @@ class Admin extends App {
 		}
 	}
 
-	public function publishButton()
-	{
-			?>
-		<div>
-			<h1>uygyufyfyufyufuyf</h1>
-		</div>
-			<?php
-	}
 	/**
 	 * Admin constructor.
 	 *
@@ -854,8 +845,6 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function __construct() {
-//		var_dump('NewProductManagementExperience');
-//		exit();
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
@@ -867,7 +856,6 @@ class Admin extends App {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
-		add_action( 'woocommerce_block_template_after_add_block', [ $this, 'publishButton' ] );
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
 		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
