@@ -645,7 +645,7 @@ class Frontend extends App {
 			if ( is_user_logged_in() ) {
 				$show_toolbar = get_user_meta( get_current_user_id(), 'show_admin_bar_front', true );
 
-				if ( $show_toolbar === 'true' ) {
+				if ( 'true' === $show_toolbar ) {
 					wp_enqueue_style( 'elementor-wp-admin-bar' );
 				}
 			}
