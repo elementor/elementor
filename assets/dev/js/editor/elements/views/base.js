@@ -674,7 +674,7 @@ BaseElementView = BaseContainer.extend( {
 		if ( undefined !== valueToParse ) {
 			const data = await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 
-			if( undefined !== data ){
+			if (  undefined !== data ){
 				this.tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControlKey, dynamicSettings );
 			}
 		}
@@ -756,6 +756,7 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @param {Object}              settings
 	 * @param {Array.<DataBinding>} dataBindings
+	 * @param {Array}               widget
 	 *
 	 * @return {boolean} - false on fail.
 	 */
@@ -772,9 +773,9 @@ BaseElementView = BaseContainer.extend( {
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue =  this.getDynamicValue( settings, changedControl, dataBinding, widget );
+				const dynamicValue = this.getDynamicValue( settings, changedControl, dataBinding, widget );
 
-				if ( this.itemLink === changedControl) {
+				if ( this.itemLink === changedControl ) {
 					return true;
 				}
 
@@ -782,7 +783,6 @@ BaseElementView = BaseContainer.extend( {
 					change = dynamicValue;
 				}
 			}
-
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
@@ -829,6 +829,7 @@ BaseElementView = BaseContainer.extend( {
 	 * Render the changes in the settings according to the current situation.
 	 *
 	 * @param {Object} settings
+	 * @param {Array}  widget
 	 */
 	renderOnChange( settings, widget = [] ) {
 		if ( ! this.allowRender ) {
@@ -1111,7 +1112,7 @@ BaseElementView = BaseContainer.extend( {
 	/**
 	 * Toggle the container tag of the mega menu title.
 	 * Needs to be places in pro Mega Menu frontend handler
-	 * @param existingElement
+	 * @param existingElement - The existing element to change
 	 */
 	changeMegaMenuTitleContainerTag( existingElement ) {
 		 existingElement = existingElement.parentElement;
@@ -1182,17 +1183,26 @@ BaseElementView = BaseContainer.extend( {
 
 		try {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-				new CustomEvent( 'elementor/dynamic/url_change', {
-					detail: {
-						element: dataBinding.el,
-						actionName: valueToParse && this.getDynamicTagName( valueToParse ),
-						value,
-					},
-				} )
+				this.triggerCustomEvent( { details: {
+									element: dataBinding.el,
+									actionName: valueToParse && this.getDynamicTagName( valueToParse ),
+									value,
+								} }, widget, dataBinding)
 			);
 
-			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
-			return true;
+			// elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+			// 	new CustomEvent( 'elementor/dynamic/url_change', {
+			// 		detail: {
+			// 			element: dataBinding.el,
+			// 			actionName: valueToParse && this.getDynamicTagName( valueToParse ),
+			// 			value,
+			// 		},
+			// 	} )
+			// );
+			//
+			// debugger;
+			//
+			// dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
 		} catch {
 			return false;
 		}
@@ -1209,7 +1219,22 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return valueToParse;
+	},
+
+	triggerCustomEvent( data, widget, dataBinding ) {
+		const event = new CustomEvent('elementor/dynamic/url_change', {
+			detail: data, // Data you want to pass to Repo B
+			bubbles: true, // Allow event to bubble up
+			cancelable: true // Allow event to be canceled
+		});
+	// Dispatch the event and capture the response if the event was not canceled
+	if (document.dispatchEvent(event)) {
+		dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
+		return event.detail.response; // Synchronously get the response from Repo B
+	} else {
+		return null; // Handle the case where the event was canceled
 	}
+}
 } );
 
 module.exports = BaseElementView;
