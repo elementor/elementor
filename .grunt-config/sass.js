@@ -70,6 +70,13 @@ const sass = {
 				dest: 'assets/css/modules/apps',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: 'admin-bar.scss',
+				dest: 'assets/css',
+				ext: '.css',
+			},
 		]
 	}
 };
