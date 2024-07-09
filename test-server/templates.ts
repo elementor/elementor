@@ -38,7 +38,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
       - mysql
     build:
       context: .
-      dockerfile: WordPress.Dockerfile
+      dockerfile: wordpress:${ config.core }-php${ config.phpVersion }
       args: &ref_0
         HOST_USERNAME: yotams
         HOST_UID: '502'
@@ -61,7 +61,7 @@ ${ volumes }
       - wordpress
     build:
       context: .
-      dockerfile: CLI.Dockerfile
+      dockerfile: wordpress:cli-php${ config.phpVersion }
       args: *ref_0
     volumes: *ref_1
     user: '502:20'
