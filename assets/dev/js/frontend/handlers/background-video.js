@@ -177,6 +177,12 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 					this.player.playVideo();
 				},
 				onStateChange: ( event ) => {
+					console.log( 'onStateChange', event );
+					console.log( 'event.data', event.data );
+					console.log( 'startStateCode', startStateCode );
+					console.log( 'YT.PlayerState.ENDED', YT.PlayerState.ENDED );
+					console.log( 'YT.PlayerState', YT.PlayerState );
+
 					switch ( event.data ) {
 						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
@@ -230,6 +236,8 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			this.apiProvider.onApiReady( ( apiObject ) => {
 				if ( 'youtube' === this.videoType ) {
 					this.prepareYTVideo( apiObject, videoID );
+
+					console.log( 'apiObject:', apiObject );
 				}
 
 				if ( 'vimeo' === this.videoType ) {
