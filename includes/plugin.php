@@ -642,14 +642,14 @@ class Plugin {
 		return self::$instance;
 	}
 
-	public function initializeContainer() {
+	public function initialize_container() {
 		Container::initialize_instance();
 	}
 
 	/**
 	 * Get the Elementor container or resolve a dependency.
 	 */
-	public function elementor_container( $abstract = null) {
+	public function elementor_container( $abstract = null ) {
 		if ( is_null( $abstract ) ) {
 			return $this->container;
 		}
@@ -885,5 +885,5 @@ if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 	// In tests we run the instance manually.
 	$plugin_instance = Plugin::instance();
 
-	$plugin_instance->initializeContainer();
+	$plugin_instance->initialize_container();
 }
