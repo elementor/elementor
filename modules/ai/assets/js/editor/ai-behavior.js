@@ -2,7 +2,6 @@ import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import { __ } from '@wordpress/i18n';
 import AIExcerpt from './ai-excerpt';
-import { RequestIdsProvider } from './context/requests-ids';
 import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
 import { AIMediaGenerateApp } from '../media-library/componenets';
 
