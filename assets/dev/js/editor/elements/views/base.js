@@ -669,12 +669,12 @@ BaseElementView = BaseContainer.extend( {
 			changedDataForRemovedItem = settings.attributes?.[ changedControlKey ]?.[ dataBinding ] || settings.attributes?.[ changedControlKey ],
 			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ dataBinding ] || settings.attributes?.__dynamic__?.[ changedControlKey ],
 			changedData = changedDataForAddedItem || changedDataForRemovedItem;
-		let valueToParse = this.extractValueToParse( changedData );
+		const valueToParse = this.extractValueToParse( changedData );
 
 		if ( undefined !== valueToParse ) {
 			const data = await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 
-			if (  undefined !== data ){
+			if ( undefined !== data ) {
 				this.tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControlKey, dynamicSettings );
 			}
 		}
@@ -1112,42 +1112,33 @@ BaseElementView = BaseContainer.extend( {
 	/**
 	 * Toggle the container tag of the mega menu title.
 	 * Needs to be places in pro Mega Menu frontend handler
-	 * @param existingElement - The existing element to change
 	 */
 	changeMegaMenuTitleContainerTag( existingElement ) {
 		 existingElement = existingElement.parentElement;
-		 	const existingParentElement = existingElement.parentNode;
+			const existingParentElement = existingElement.parentNode;
 			let newElement = document.createElement( 'div' );
 
-		 if ( 'DIV' === existingElement.tagName ) {
-			 newElement = document.createElement( 'a' );
+		if ( 'DIV' === existingElement.tagName ) {
+			newElement = document.createElement( 'a' );
 		}
 
 		Array.from( existingElement.attributes ).forEach( attr => {
 			newElement.setAttribute( attr.name, attr.value );
-		});
+		} );
 
 		newElement.innerHTML = existingElement.innerHTML;
 		existingParentElement.replaceChild( newElement, existingElement )
 	},
 
 	/**
-	 * Get the dynamic tag name from the changed data.
-	 * @param changedDataForAddedItem
-	 * @returns {*|null}
+	 * Get the dynamic action name from the changed data.
 	 */
 	getDynamicTagName( changedDataForAddedItem ) {
 		const regex = /name="([^"]*)"/;
-		const match = changedDataForAddedItem.match(regex);
-		return match ? match[1] : null;
+		const match = changedDataForAddedItem.match( regex );
+		return match ? match[ 1 ] : null;
 	},
 
-	/**
-	 * Get data from cache or backend.
-	 * @param valueToParse
-	 * @param dynamicSettings
-	 * @returns {Promise<*|boolean>}
-	 */
 	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
 		try {
 			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
