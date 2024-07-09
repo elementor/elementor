@@ -1109,12 +1109,6 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	/**
-	 * Toggle the container tag of the mega menu title.
-	 * Needs to be places in pro Mega Menu frontend handler
-	 *
-	 * @param existingElement {HTMLElement}
-	 */
 	changeMegaMenuTitleContainerTag( existingElement ) {
 		existingElement = existingElement.parentElement;
 			const existingParentElement = existingElement.parentNode;
@@ -1132,11 +1126,6 @@ BaseElementView = BaseContainer.extend( {
 		existingParentElement.replaceChild( newElement, existingElement );
 	},
 
-	/**
-	 * Get the dynamic action name from the changed data.
-	 *
-	 * @param changedDataForAddedItem {object|string}
-	 */
 	getDynamicTagName( changedDataForAddedItem ) {
 		const regex = /name="([^"]*)"/;
 		const match = changedDataForAddedItem.match( regex );
@@ -1159,17 +1148,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	/**
-	 * Try to format the dynamic mega menu url.
-	 * Suppose to support Backward compatibility with the pro Mega Menu frontend handler
-	 *
-	 * @param valueToParse {string|object}
-	 * @param dataBinding {object}
-	 * @param widget{HTMLElement}
-	 * @param changedControl {string}
-	 * @param dynamicSettings {object}
-	 * @return {boolean}
-	 */
 	tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControl, dynamicSettings ) {
 		if ( this.itemLink !== changedControl ) {
 			return false;
@@ -1177,40 +1155,23 @@ BaseElementView = BaseContainer.extend( {
 
 		const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 
-		try {
+		if ( this.model?.config?.atomic_item_link ) {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-				this.triggerCustomEvent( {
-					details: {
+				new CustomEvent( 'elementor/dynamic/url_change', {
+					detail: {
 						element: dataBinding.el,
 						actionName: valueToParse && this.getDynamicTagName( valueToParse ),
 						value,
-					}
-				}, widget, dataBinding )
+					},
+				} )
 			);
 
-			// elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-			// 	new CustomEvent( 'elementor/dynamic/url_change', {
-			// 		detail: {
-			// 			element: dataBinding.el,
-			// 			actionName: valueToParse && this.getDynamicTagName( valueToParse ),
-			// 			value,
-			// 		},
-			// 	} )
-			// );
-			//
-			// debugger;
-			//
-			// dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
-		} catch {
+			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
+		} else {
 			return false;
 		}
 	},
 
-	/**
-	 * Extract the value to parse from the changed data.
-	 * @param valueToParse {string|object}
-	 * @return {string}
-	 */
 	extractValueToParse( valueToParse ) {
 		if ( 'object' === typeof valueToParse ) {
 			return valueToParse.url;
@@ -1218,22 +1179,6 @@ BaseElementView = BaseContainer.extend( {
 
 		return valueToParse;
 	},
-
-	triggerCustomEvent( data, widget, dataBinding ) {
-		const event = new CustomEvent( 'elementor/dynamic/url_change', {
-			detail: data, // Data you want to pass to Repo B
-			bubbles: true, // Allow event to bubble up
-			cancelable: true, // Allow event to be canceled
-		});
-
-		// Dispatch the event and capture the response if the event was not canceled
-		if ( document.dispatchEvent( event ) ) {
-			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ];
-			return event.detail.response;
-		}
-
-		return null; // Handle the case where the event was canceled
-	}
 } );
 
 module.exports = BaseElementView;
