@@ -51,7 +51,7 @@ jobs:
           mkdir elementor-from-build
           mv build elementor-from-build
           # zip -r elementor elementor
-          mv ./elementor.zip ./tests/playwright/upgrade-test/plugin
+          # mv ./elementor.zip ./tests/playwright/upgrade-test/plugin
           mkdir build
           cd test-server
           npm start -- port=8888
