@@ -2024,12 +2024,13 @@ abstract class Document extends Controls_Stack {
 
 	private function iterate_elements( $elements, $elements_iteration_actions, $mode ) {
 		$unique_page_elements = [];
+		$header_assets = [];
 
 		foreach ( $elements_iteration_actions as $elements_iteration_action ) {
 			$elements_iteration_action->set_mode( $mode );
 		}
 
-		Plugin::$instance->db->iterate_data( $elements, function( array $element_data ) use ( &$unique_page_elements, $elements_iteration_actions ) {
+		Plugin::$instance->db->iterate_data( $elements, function( array $element_data ) use ( &$unique_page_elements, $elements_iteration_actions, &$header_assets ) {
 			$element_type = 'widget' === $element_data['elType'] ? $element_data['widgetType'] : $element_data['elType'];
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -2046,10 +2047,18 @@ abstract class Document extends Controls_Stack {
 				foreach ( $elements_iteration_actions as $elements_iteration_action ) {
 					$elements_iteration_action->element_action( $element );
 				}
+
+				if ( method_exists( $element, 'get_frontend_header_file' ) && ! empty( $element->get_frontend_header_file() ) ) {
+					$header_assets[ 'styles' ][] = $element->get_frontend_header_file();
+				}
 			}
 
 			return $element_data;
 		} );
+
+		if ( ! empty( $header_assets ) ) {
+			$this->update_meta( '_elementor_page_header_assets', $header_assets );
+		}
 
 		foreach ( $elements_iteration_actions as $elements_iteration_action ) {
 			$elements_iteration_action->after_elements_iteration();

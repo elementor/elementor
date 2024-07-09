@@ -1330,4 +1330,8 @@ class NestedTabs extends Widget_Nested_Base {
 	private function is_active_icon_exist( $item ) {
 		return array_key_exists( 'tab_icon_active', $item ) && ! empty( $item['tab_icon_active'] ) && ! empty( $item['tab_icon_active']['value'] );
 	}
+
+	public function get_frontend_header_file() {
+		return 'nested-tabs';
+	}
 }

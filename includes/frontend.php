@@ -645,6 +645,18 @@ class Frontend extends App {
 			 */
 			do_action( 'elementor/frontend/after_enqueue_styles' );
 
+			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
+
+			if ( $document ) {
+				$header_assets = $document->get_meta( '_elementor_page_header_assets' )['styles'] ?? null;
+
+				if ( $header_assets ) {
+					foreach ( $header_assets as $css_file ) {
+						wp_enqueue_style( $css_file );
+					}
+				}
+			}
+
 			if ( ! Plugin::$instance->preview->is_preview_mode() ) {
 				$this->parse_global_css_code();
 

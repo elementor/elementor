@@ -26,5 +26,21 @@ class Module extends \Elementor\Core\Base\Module {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_style' ] );
+	}
+
+	/**
+	 * Register styles.
+	 *
+	 * @return void
+	 */
+	public function register_style() {
+		wp_register_style(
+			$this->get_name(),
+			$this->get_css_assets_url( 'frontend', 'assets/css/modules/nested-tabs/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 }

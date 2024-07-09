@@ -70,6 +70,13 @@ const sass = {
 				dest: 'assets/css/modules/apps',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/nested-tabs/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/nested-tabs',
+				ext: '.css',
+			},
 		]
 	}
 };

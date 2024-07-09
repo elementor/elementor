@@ -1528,6 +1528,10 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
+	public function get_frontend_header_file() {
+		'';
+	}
+
 	/**
 	 * Element base constructor.
 	 *
