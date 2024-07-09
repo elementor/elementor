@@ -48,6 +48,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
       WP_TESTS_DIR: /wordpress-phpunit
     volumes: &ref_1
 ${ volumes }
+    user: '502:20'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
   cli:
