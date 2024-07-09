@@ -4,6 +4,8 @@ import { __ } from '@wordpress/i18n';
 import AIExcerpt from './ai-excerpt';
 import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
 import { AIMediaGenerateApp } from '../media-library/componenets';
+import { RequestIdsProvider } from './context/requests-ids';
+import React from 'react';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -98,12 +100,14 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		if ( 'excerpt' === this.getOption( 'type' ) ) {
 			return (
-				<AIExcerpt
-					onClose={ onClose }
-					currExcerpt={ this.getOption( 'getControlValue' )() }
-					updateExcerpt={ this.getOption( 'setControlValue' ) }
-					postTextualContent={ this.getTextualContent() }
-				/>
+				<RequestIdsProvider>
+					<AIExcerpt
+						onClose={ onClose }
+						currExcerpt={ this.getOption( 'getControlValue' )() }
+						updateExcerpt={ this.getOption( 'setControlValue' ) }
+						postTextualContent={ this.getTextualContent() }
+					/>
+				</RequestIdsProvider>
 			);
 		}
 		return (
