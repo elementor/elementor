@@ -15,8 +15,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-#  build-plugin:
-#    uses: ./.github/workflows/build.yml
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest
