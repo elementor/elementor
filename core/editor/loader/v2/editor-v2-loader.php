@@ -27,13 +27,25 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			'editor-panels',
 			'editor-responsive',
 			'editor-site-navigation',
-			'editor-v1-adapters',
 		],
-		Editor_V2_Experiments::ELEMENTS => [
+		Editor_V2_Experiments::ATOMIC_WIDGETS => [
 			'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
+			'editor-editing-panel',
 			'editor-panels',
-			'editor-v1-adapters',
 		],
+	];
+
+	/**
+	 * Packages that should only be registered, unless some other asset depends on them.
+	 */
+	const LIBS = [
+		'editor-v1-adapters',
+		self::ENV_PACKAGE,
+		'icons',
+		'locations',
+		'query',
+		'store',
+		'ui',
 	];
 
 	/**
@@ -43,19 +55,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		Editor_V2_Experiments::APP_BAR => [
 			'editor-v2-app-bar-overrides',
 		],
-	];
-
-	/**
-	 * Packages that should only be registered, unless some other asset depends on them.
-	 */
-	const LIBS = [
-		self::ENV_PACKAGE,
-		'editor-app-bar-ui',
-		'icons',
-		'locations',
-		'query',
-		'store',
-		'ui',
 	];
 
 	/**

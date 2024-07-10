@@ -150,6 +150,10 @@ export default class ApiRequests {
 		}
 	}
 
+	public async getTheme( request: APIRequestContext, status?: 'active' | 'inactive' ) {
+		return await this.get( request, 'themes', status );
+	}
+
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
 		const response = await request.get( `${ this.baseUrl }/index.php`, {
 			params: {
