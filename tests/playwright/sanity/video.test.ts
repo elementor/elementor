@@ -172,16 +172,6 @@ test.describe( 'Video tests inside a section', () => {
 		} );
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
-	} );
-
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
