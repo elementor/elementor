@@ -1,5 +1,4 @@
 export class FontVariables {
-
 	constructor() {
 		this.init();
 	}
@@ -35,14 +34,14 @@ export class FontVariables {
 			return;
 		}
 
-		const currentGroupPrefix = mainTypographyControl.get( 'groupPrefix');
+		const currentGroupPrefix = mainTypographyControl.get( 'groupPrefix' );
 
 		const allTypographyControls = currentPageView.collection.filter(
-			( model ) => currentGroupPrefix === model.get( 'groupPrefix' )
+			( model ) => currentGroupPrefix === model.get( 'groupPrefix' ),
 		);
 
 		const fontControlModel = allTypographyControls.find(
-			( model ) => currentGroupPrefix === model.get( 'groupPrefix' ) && 'font' === model.get( 'type' )
+			( model ) => currentGroupPrefix === model.get( 'groupPrefix' ) && 'font' === model.get( 'type' ),
 		);
 
 		const settingName = fontControlModel.get( 'name' );
@@ -95,7 +94,7 @@ export class FontVariables {
 	applyFontVariableRange( controls, controlKey, fieldData ) {
 		const controlView = $e.components.get( 'panel' ).getControlViewByPath(
 			elementor.getPanelView().getCurrentPageView(),
-			controlKey
+			controlKey,
 		);
 
 		const range = controlView.model.get( 'range' );
@@ -150,6 +149,4 @@ export class FontVariables {
 
 		return elementor.config.fontVariableRanges[ fontFamily ];
 	}
-
-
 }
