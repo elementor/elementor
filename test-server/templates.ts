@@ -155,7 +155,7 @@ RUN php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 RUN rm /tmp/composer-setup.php
 USER $HOST_UID:$HOST_GID
 ENV PATH="\${PATH}:/home/$HOST_USERNAME/.composer/vendor/bin"
-$ RUN composer global require --dev phpunit/phpunit:"^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0"
+# RUN composer global require --dev phpunit/phpunit:"^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0"
 USER root
 
 # Switch back to the original user now that we're done.
