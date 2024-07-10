@@ -36,8 +36,8 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
   wordpress:
     depends_on:
       - mysql
-	build:
-	  context: .
+    build:
+      context: .
       dockerfile: WordPress.Dockerfile
       args: &ref_0
         HOST_USERNAME: yotams
