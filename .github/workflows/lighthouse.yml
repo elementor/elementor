@@ -51,7 +51,7 @@ jobs:
         if: matrix.wpCoreVersion != 'master'
         run: |
           npm run start-local-server
-          sleep 10
+          # sleep 10
           cd test-server
           npm run cli -- command="bash wp-config/configure-wp.sh" port=8888
           npm run cli -- command="bash wp-config/configure-wp.sh" port=8889

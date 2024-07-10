@@ -58,7 +58,7 @@ jobs:
           mv ./elementor.zip plugin
           cd test-server
           npm run start:upgrade -- port=8888
-          sleep 10
+          # sleep 10
           npm run cli:upgrade command="bash wp-config/configure-wp.sh" -- port=8888
           if [ -z $ELEMENTOR_PLUGIN_VERSION ]; then
             npm run cli:upgrade command="wp plugin install elementor --activate" -- port=8888
