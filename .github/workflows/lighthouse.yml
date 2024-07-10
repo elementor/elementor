@@ -39,6 +39,11 @@ jobs:
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
           path: ./build
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+          ls -l
       - name: Install node modules
         if: matrix.wpCoreVersion != 'master'
         run: npm ci
@@ -46,6 +51,7 @@ jobs:
         if: matrix.wpCoreVersion != 'master'
         run: |
           npm run start-local-server
+          sleep 10
           npm run test:setup:playwright
       - name: Install lhci
         if: matrix.wpCoreVersion != 'master'
