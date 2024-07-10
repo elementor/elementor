@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Elementor_Test_Module extends Elementor_Test_Base {
+class Test_Module extends Elementor_Test_Base {
 	private $experiment_default_state;
 
 	public function set_up(): void {

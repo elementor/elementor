@@ -21,7 +21,7 @@ class Module extends BaseModule {
 	];
 
 	public function get_name() {
-		return 'atomic_widgets';
+		return 'atomic-widgets';
 	}
 
 	public function __construct() {
