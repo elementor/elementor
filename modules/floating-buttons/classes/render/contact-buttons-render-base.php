@@ -410,9 +410,11 @@ abstract class Contact_Buttons_Render_Base {
 				$this->widget->add_link_attributes( $key, $link['location'] );
 				break;
 			case Social_Network_Provider::URL:
-				if ( ! empty( $link['url']['url'] ) ) {
-					$this->widget->add_link_attributes( $key, $link['url'] );
+				if ( empty( $link['url']['url'] ) ) {
+					$link['url']['url'] = '#';
 				}
+
+				$this->widget->add_link_attributes( $key, $link['url'] );
 				break;
 			default:
 				break;
