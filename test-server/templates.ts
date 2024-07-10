@@ -107,16 +107,11 @@ RUN apt-get -qy install $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
 RUN apt-get -qy install git
 
 # Set up sudo so they can have root access.
-RUN apt-get -qy install sudo
-RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
-RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
-# RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-# RUN export COMPOSER_HASH=\`curl -sS https://composer.github.io/installer.sig\` && php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$COMPOSER_HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('/tmp/composer-setup.php'); } echo PHP_EOL;"
-# RUN php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
-# RUN rm /tmp/composer-setup.php
+# RUN apt-get -qy install sudo
+# RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
+# RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
 USER $HOST_UID:$HOST_GID
-# ENV PATH="\${PATH}:/home/$HOST_USERNAME/.composer/vendor/bin"
 USER root
 `;
 };
@@ -144,16 +139,11 @@ RUN apk update
 RUN apk --no-cache add $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
 
 # Set up sudo so they can have root access.
-RUN apk --no-cache add sudo linux-headers
-RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
-RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
-# RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-# RUN export COMPOSER_HASH=\`curl -sS https://composer.github.io/installer.sig\` && php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$COMPOSER_HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('/tmp/composer-setup.php'); } echo PHP_EOL;"
-# RUN php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
-# RUN rm /tmp/composer-setup.php
+# RUN apk --no-cache add sudo linux-headers
+# RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
+# RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
 USER $HOST_UID:$HOST_GID
-# ENV PATH="\${PATH}:/home/$HOST_USERNAME/.composer/vendor/bin"
 USER root
 
 # Switch back to the original user now that we're done.
