@@ -30,8 +30,7 @@ jobs:
         run: |
           curl -L --output elementor-stable.zip "https://downloads.wordpress.org/plugin/elementor.3.22.2.zip"
           mkdir build
-          chmod --recursive 777 build
-          chown -R www-data:www-data build
+          chmod 777 build
           unzip elementor-stable.zip -d build
       - name: Install dependencies
         run: |
@@ -47,8 +46,7 @@ jobs:
           cp -r ./build/* elementor
           zip -r elementor elementor
           mkdir tests/wp-env/config/elementor-from-build
-          chmod --recursive 777 tests/wp-env/config/elementor-from-build
-          chown -R www-data:www-data tests/wp-env/config/elementor-from-build
+          chmod 777 tests/wp-env/config/elementor-from-build
           mv ./elementor.zip tests/wp-env/config/elementor-from-build
           cd test-server
           npm start -- port=8888
