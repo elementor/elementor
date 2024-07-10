@@ -292,11 +292,11 @@
 	padding: 7.48px 0 0 0;
 	line-height: 1;
 	height: 34px;
-	/*Start Custom Code*/
+	/* Start Custom Elementor Code */
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	/*End Custom Code*/
+	/* End Custom Elementor Code */
 	text-align: center;
 	-webkit-transform: translate3d(0px, 0px, 0px);
 	transform: translate3d(0px, 0px, 0px);
