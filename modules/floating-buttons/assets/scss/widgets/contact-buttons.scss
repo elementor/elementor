@@ -411,7 +411,7 @@
 
 	&__chat-button-container {
 		display: flex;
-		max-width: min-content;
+		max-width: max-content;
 
 		@media (max-width: $screen-mobile-max) {
 			position: relative;
