@@ -79,14 +79,6 @@ volumes:
 export const generateWordPressDockerfileTemplate = ( config: Config ) => {
 	return `FROM wordpress:${ config.core }-php${ config.phpVersion }
 
-# Update apt sources for archived versions of Debian.
-
-# stretch (https://lists.debian.org/debian-devel-announce/2023/03/msg00006.html)
-# RUN touch /etc/apt/sources.list
-# RUN sed -i 's|deb.debian.org/debian stretch|archive.debian.org/debian stretch|g' /etc/apt/sources.list
-# RUN sed -i 's|security.debian.org/debian-security stretch|archive.debian.org/debian-security stretch|g' /etc/apt/sources.list
-# RUN sed -i '/stretch-updates/d' /etc/apt/sources.list
-
 # Create the host's user so that we can match ownership in the container.
 ARG HOST_USERNAME
 ARG HOST_UID
