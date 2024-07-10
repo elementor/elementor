@@ -111,6 +111,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		}
 
 		$packages_with_app = array_merge( $this->get_packages_to_enqueue(), [ self::APP_PACKAGE ] );
+
 		foreach ( $this->assets_config_provider->only( $packages_with_app ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
 		}
