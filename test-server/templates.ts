@@ -46,6 +46,8 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
     ports:
       - '\${WP_ENV_PORT:-${ port }}:80'
     environment:
+      APACHE_RUN_USER: '#502'
+      APACHE_RUN_GROUP: '#20'
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DB_NAME: wordpress
@@ -61,18 +63,13 @@ ${ volumes }
       dockerfile: wordpress:cli-php${ config.phpVersion }
       args: *ref_0
     volumes: *ref_1
-    user: '33'
+    user: '502:20'
     environment:
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DB_NAME: wordpress
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-    command: >
-      /bin/sh -c '
-      chown -R www-data:www-data /var/www/html
-      chmod --recursive 777 /var/www/html
-      '
 volumes:
   mysql: {}
   wpcontent: {}
