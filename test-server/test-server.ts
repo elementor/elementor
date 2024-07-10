@@ -3,13 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
 import { v2 as dockerCompose } from 'docker-compose';
-import { getConfig } from './config.js'; // eslint-disable import/no-unresolved
+import { getConfig } from './config.js'; // eslint-disable-line import/no-unresolved
 import {
 	generateCliDockerfileTemplate,
 	generateDockerComposeYmlTemplate,
 	generateWordPressDockerfileTemplate,
 	generateConfiguration,
-} from './templates.js'; // eslint-disable import/no-unresolved
+} from './templates.js'; // eslint-disable-line import/no-unresolved
 
 const waitForServer = async ( url: string, timeoutMs: number ) => {
 	const startTime = Date.now();
