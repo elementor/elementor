@@ -98,13 +98,13 @@ RUN useradd -mlo -u $HOST_UID -g $HOST_GID $HOST_USERNAME || true
 # Install any dependencies we need in the container.
 
 # Make sure we're working with the latest packages.
-RUN apt-get -qy update
+# RUN apt-get -qy update
 
 # Install some basic PHP dependencies.
-RUN apt-get -qy install $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
+# RUN apt-get -qy install $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
 
 # Install git
-RUN apt-get -qy install git
+# RUN apt-get -qy install git
 
 # Set up sudo so they can have root access.
 # RUN apt-get -qy install sudo
@@ -133,10 +133,10 @@ RUN adduser -h /home/$HOST_USERNAME -G $( getent group $HOST_GID | cut -d: -f1 )
 # Install any dependencies we need in the container.
 
 # Make sure we're working with the latest packages.
-RUN apk update
+# RUN apk update
 
 # Install some basic PHP dependencies.
-RUN apk --no-cache add $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
+# RUN apk --no-cache add $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
 
 # Set up sudo so they can have root access.
 # RUN apk --no-cache add sudo linux-headers
