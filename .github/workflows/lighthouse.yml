@@ -47,11 +47,15 @@ jobs:
       - name: Install node modules
         if: matrix.wpCoreVersion != 'master'
         run: npm ci
-      - name: Run wp-env
+      - name: Install WordPress environment
         if: matrix.wpCoreVersion != 'master'
         run: |
           npm run start-local-server
           sleep 10
+          cd test-server
+          npm run cli -- command="bash wp-config/configure-wp.sh" port=8888
+          npm run cli -- command="bash wp-config/configure-wp.sh" port=8889
+          cd ..
           npm run test:setup:playwright
       - name: Install lhci
         if: matrix.wpCoreVersion != 'master'
@@ -61,8 +65,10 @@ jobs:
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master'
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+          cd test-server
+          npm run cli command="wp core version"
+          npm run cli command="wp --info"
+          cd ..
       - name: Run Lighthouse tests
         if: matrix.wpCoreVersion != 'master'
         run: |
