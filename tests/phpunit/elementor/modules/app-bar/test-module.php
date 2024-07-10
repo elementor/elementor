@@ -11,11 +11,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Elementor_Test_Module extends Elementor_Test_Base {
+	private $experiment_default_state;
+
 	public function set_up(): void {
 		parent::set_up();
 
+		$this->experiment_default_state = Plugin::instance()->experiments->get_features( Module::EXPERIMENT_NAME )[ 'default' ];
+
 		remove_all_filters( 'elementor/editor/v2/packages' );
 		remove_all_filters( 'elementor/editor/v2/styles' );
+	}
+
+	public function tear_down() {
+		parent::tear_down();
+
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, $this->experiment_default_state );
 	}
 
 	public function test__enqueues_packages_and_styles_when_experiment_on() {
@@ -28,6 +38,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		// Assert
 		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
 		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
+
 		$this->assertEquals( Module::PACKAGES, $packages );
 		$this->assertEquals( Module::STYLES, $styles );
 	}

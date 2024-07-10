@@ -179,6 +179,23 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 
 		wp_set_script_translations( 'elementor-editor', 'elementor' );
+
+		wp_register_script(
+			'elementor-responsive-bar',
+			"{$assets_url}js/responsive-bar{$min_suffix}.js",
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
+	}
+
+	/**
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'elementor-responsive-bar' );
 	}
 
 	/**
@@ -238,6 +255,13 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			],
 			ELEMENTOR_VERSION
 		);
+
+		wp_register_style(
+			'elementor-responsive-bar',
+			"{$assets_url}css/responsive-bar{$min_suffix}.css",
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**
@@ -245,6 +269,8 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( 'elementor-editor' );
+
+		wp_enqueue_style( 'elementor-responsive-bar' );
 	}
 
 	/**
@@ -259,6 +285,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'templates',
 			'navigator',
 			'hotkeys',
+			'responsive-bar',
 		];
 
 		foreach ( $templates as $template ) {

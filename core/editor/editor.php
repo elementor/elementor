@@ -14,7 +14,6 @@ use Elementor\Utils;
 use Elementor\Core\Editor\Data;
 use Elementor\Modules\AppBar\Module as App_Bar_Module;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -37,7 +36,7 @@ class Editor {
 	/**
 	 * The const is deprecated, it remains here for backward compatibility.
 	 *
-	 * @deprecated Use Editor_V2_Experiments::APP_BAR instead
+	 * @deprecated Use App_Bar_Module::EXPERIMENT_NAME instead
 	 */
 	const EDITOR_V2_EXPERIMENT_NAME = App_Bar_Module::EXPERIMENT_NAME;
 

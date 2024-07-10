@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'editor_v2'; // Kept as `editor_v2` for backward compatibility.
-	const EXPERIMENT_DEFAULT_STATE = Experiments_Manager::STATE_INACTIVE;
 
 	const PACKAGES = [
 		'editor-app-bar',
@@ -37,6 +36,7 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/v2/styles', fn( $styles ) => $this->add_styles( $styles ) );
+			add_action( 'elementor/editor/v2/scripts/enqueue', fn() => wp_dequeue_script( 'elementor-responsive-bar' ) );
 		}
 	}
 
@@ -49,7 +49,7 @@ class Module extends BaseModule {
 				esc_html__( 'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'default' => self::EXPERIMENT_DEFAULT_STATE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,

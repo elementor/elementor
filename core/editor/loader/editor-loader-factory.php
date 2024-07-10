@@ -2,7 +2,6 @@
 namespace Elementor\Core\Editor\Loader;
 
 use Elementor\Core\Editor\Editor;
-use Elementor\Core\Editor\Editor_V2_Packages;
 use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
 use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
 use Elementor\Core\Utils\Assets_Config_Provider;
@@ -43,6 +42,6 @@ class Editor_Loader_Factory {
 	 * @return bool
 	 */
 	private static function should_use_v2_loader() {
-		return ! Editor_V2_Packages::collect()->is_empty();
+		return ! empty( Editor_V2_Loader::get_packages_to_enqueue() );
 	}
 }

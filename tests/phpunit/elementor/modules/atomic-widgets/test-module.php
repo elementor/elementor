@@ -11,8 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Elementor_Test_Module extends Elementor_Test_Base {
+	private $experiment_default_state;
+
 	public function set_up(): void {
 		parent::set_up();
+
+		$this->experiment_default_state = Plugin::instance()->experiments->get_features( Module::EXPERIMENT_NAME )[ 'default' ];
 
 		remove_all_filters( 'elementor/editor/v2/packages' );
 		remove_all_filters( 'elementor/editor/v2/styles' );
@@ -21,7 +25,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function tear_down() {
 		parent::tear_down();
 
-		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Module::EXPERIMENT_DEFAULT_STATE );
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, $this->experiment_default_state );
 	}
 
 	public function test_it__enqueues_packages_when_experiment_on() {
