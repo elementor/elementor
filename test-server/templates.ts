@@ -18,7 +18,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
         ${ path.resolve( basePath, value ) }:/var/www/html/wp-content/themes/${ key }\n`;
 	} );
 	const wpContent = `      - >-
-        wpcontent:/var/www/html:z\n`;
+        wpcontent:/var/www/html\n`;
 	const wpConfig = `      - >-
         ${ configPath }:/var/www/html/wp-config\n`;
 	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).concat( [ wpContent, wpConfig ] ).join( '' );
@@ -59,6 +59,11 @@ ${ volumes }
       WORDPRESS_DB_NAME: wordpress
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    command: >
+      /bin/sh -c '
+      chown -R www-data:www-data /var/www/html
+      chmod --recursive 777 /var/www/html
+      '
 volumes:
   mysql: {}
   wpcontent: {}
