@@ -133,22 +133,36 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	}
 }
 
-.elementor-shape-rounded {
+.elementor-shape {
 
-	.elementor-icon {
+	&-square {
 
-		&.elementor-social-icon {
-			border-radius: 10%;
+		.elementor-icon {
+
+			&.elementor-social-icon {
+				border-radius: 0;
+			}
 		}
 	}
-}
 
-.elementor-shape-circle {
+	&-rounded {
 
-	.elementor-icon {
+		.elementor-icon {
 
-		&.elementor-social-icon {
-			border-radius: 50%;
+			&.elementor-social-icon {
+				border-radius: 10%;
+			}
 		}
 	}
+
+	&-circle {
+
+		.elementor-icon {
+
+			&.elementor-social-icon {
+				border-radius: 50%;
+			}
+		}
+	}
+
 }
