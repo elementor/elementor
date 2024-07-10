@@ -53,7 +53,7 @@ jobs:
           sleep 10
           npm run cli command="bash wp-config/configure-wp.sh" -- port=8888
           # if [ -z ELEMENTOR_PLUGIN_VERSION ]; then
-            npm run cli command="wp plugin install elementor --activate --force" -- port=8888
+            npm run cli command="wp plugin install elementor --activate" -- port=8888
           # else
             # npm run cli command="bash -c 'wp plugin install elementor --version=$ELEMENTOR_PLUGIN_VERSION --activate --force'" -- port=8888
           # fi
