@@ -58,33 +58,39 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEmpty( $styles );
 	}
 
-	public function test_it__dequeues_responsive_bar_script_and_style_when_experiment_off() {
-		// Arrange
-		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-		wp_enqueue_script( 'elementor-responsive-bar' );
-		wp_enqueue_style( 'elementor-responsive-bar' );
-
-		// Act
-		new Module();
-
-		// Assert
-		$this->assertFalse( wp_script_is( 'elementor-responsive-bar') );
-		$this->assertFalse( wp_style_is( 'elementor-responsive-bar') );
-	}
-
 	public function test_it__dequeues_responsive_bar_script_and_style_when_experiment_on() {
 		// Arrange
 		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		wp_enqueue_script( 'elementor-responsive-bar' );
-		wp_enqueue_style( 'elementor-responsive-bar' );
+
+		add_action( 'elementor/editor/v2/scripts/enqueue', fn() => wp_enqueue_script( 'elementor-responsive-bar', 'http://example.com/responsive-bar.js' ) );
+		add_action( 'elementor/editor/v2/styles/enqueue', fn() => wp_enqueue_style( 'elementor-responsive-bar', 'http://example.com/responsive-bar.css' ) );
 
 		// Act
 		new Module();
+
+		do_action( 'elementor/editor/v2/scripts/enqueue' );
+		do_action( 'elementor/editor/v2/styles/enqueue' );
 
 		// Assert
 		$this->assertFalse( wp_script_is( 'elementor-responsive-bar') );
 		$this->assertFalse( wp_style_is( 'elementor-responsive-bar') );
 	}
 
+	public function test_it__doesnt_dequeue_responsive_bar_script_and_style_when_experiment_off() {
+		// Arrange
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
+		add_action( 'elementor/editor/v2/scripts/enqueue', fn() => wp_enqueue_script( 'elementor-responsive-bar', 'http://example.com/responsive-bar.js' ) );
+		add_action( 'elementor/editor/v2/styles/enqueue', fn() => wp_enqueue_style( 'elementor-responsive-bar', 'http://example.com/responsive-bar.css' ) );
+
+		// Act
+		new Module();
+
+		do_action( 'elementor/editor/v2/scripts/enqueue' );
+		do_action( 'elementor/editor/v2/styles/enqueue' );
+
+		// Assert
+		$this->assertTrue( wp_script_is( 'elementor-responsive-bar') );
+		$this->assertTrue( wp_style_is( 'elementor-responsive-bar') );
+	}
 }
