@@ -18,7 +18,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
         ${ path.resolve( basePath, value ) }:/var/www/html/wp-content/themes/${ key }\n`;
 	} );
 	const wpContent = `      - >-
-        wpcontent:/var/www/html\n`;
+        wpcontent:/var/www/html:z\n`;
 	const wpConfig = `      - >-
         ${ configPath }:/var/www/html/wp-config\n`;
 	const volumes = mappingsStringArray.concat( pluginsStringArray ).concat( themesStringArray ).concat( [ wpContent, wpConfig ] ).join( '' );
