@@ -3,13 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
 import { v2 as dockerCompose } from 'docker-compose';
-import { getConfig } from './config.js';
+import { getConfig } from './config.js'; // eslint-disable import/no-unresolved
 import {
 	generateCliDockerfileTemplate,
 	generateDockerComposeYmlTemplate,
 	generateWordPressDockerfileTemplate,
 	generateConfiguration,
-} from './templates.js';
+} from './templates.js'; // eslint-disable import/no-unresolved
 
 const waitForServer = async ( url: string, timeoutMs: number ) => {
 	const startTime = Date.now();
@@ -43,7 +43,6 @@ const stop = async ( port: string ) => {
 	} );
 };
 
-// "docker compose -f backup/docker-compose.yml run --rm cli wp core install --url=\\\\\\\"http://localhost:8888\\\\\\\" --title=\\\\\\\"test\\\\\\\" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email"
 const cli = async ( port: string, command: string ) => {
 	await dockerCompose.run( 'cli', command, {
 		cwd: runPath,
@@ -99,7 +98,7 @@ const generateFiles = () => {
 	const wpConfig = generateConfiguration( config, port );
 	fs.writeFileSync( path.resolve( wpConfigPath, 'configure-wp.sh' ), wpConfig );
 
-	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.resolve( process.cwd(), '..' )/*path.dirname( configFilePath )*/, port, wpConfigPath );
+	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.resolve( process.cwd(), '..' ), port, wpConfigPath );
 	const wordPressDockerfileTemplate = generateWordPressDockerfileTemplate( config );
 	const cliDockerfileTemplate = generateCliDockerfileTemplate( config );
 	const hash = createHash( 'sha256' );

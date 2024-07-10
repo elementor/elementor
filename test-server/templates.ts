@@ -1,4 +1,4 @@
-import { Config } from './config.js';
+import { Config } from './config.js'; // eslint-disable import/no-unresolved
 import path from 'path';
 
 export const generateDockerComposeYmlTemplate = ( config: Config, basePath: string, port: string, configPath: string ) => {

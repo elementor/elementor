@@ -55,17 +55,16 @@ jobs:
           rm -rf build
           zip -r elementor elementor
           mkdir plugin
-          # chmod 777 plugin
           mv ./elementor.zip plugin
           cd test-server
           npm run start:upgrade -- port=8888
           sleep 10
           npm run cli:upgrade command="bash wp-config/configure-wp.sh" -- port=8888
-          # if [ -z ELEMENTOR_PLUGIN_VERSION ]; then
+          if [ -z ELEMENTOR_PLUGIN_VERSION ]; then
             npm run cli:upgrade command="wp plugin install elementor --activate" -- port=8888
-          # else
-            # npm run cli:upgrade command="bash -c 'wp plugin install elementor --version=$ELEMENTOR_PLUGIN_VERSION --activate --force'" -- port=8888
-          # fi
+          else
+            npm run cli:upgrade command="bash -c 'wp plugin install elementor --version=$ELEMENTOR_PLUGIN_VERSION --activate --force'" -- port=8888
+          fi
           npm run cli:upgrade command="wp plugin list" -- port=8888
         env:
           ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
@@ -73,10 +72,8 @@ jobs:
         run: |
           cd test-server
           npm run cli:upgrade command="wp plugin install ./plugin/elementor.zip --force" -- port=8888
-          # npm run cli:upgrade command="wp plugin install https://downloads.wordpress.org/plugin/elementor.3.22.2.zip --activate --force" -- port=8888
           npm run cli:upgrade command="wp plugin list" -- port=8888
           npm run cli:upgrade command="bash elementor-config/setup.sh" -- port=8888
-          # npm run cli:upgrade command="wp elementor experiments activate rating" -- port=8888
       - name: Install chromium
         run: npx playwright install chromium
       - name: Run Playwright tests
