@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\AtomicControls\Atomic_Control;
+use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Utils;
 
