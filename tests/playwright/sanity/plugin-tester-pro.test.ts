@@ -12,7 +12,7 @@ const pluginList1 = [
 	'bdthemes-prime-slider-lite',
 	'wunderwp',
 	'addon-elements-for-elementor-page-builder',
-	// Addons for elementor is closed as of July 2, 2024 and is not available for download. This closure is temporary, pending a full review.
+	// Addons-for-elementor is closed as of July 2, 2024 and is not available for download. This closure is temporary, pending a full review.
 	// see: https://wordpress.org/plugins/addons-for-elementor/
 	// 'addons-for-elementor',
 	'anywhere-elementor',
