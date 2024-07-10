@@ -57,7 +57,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	final public function get_stack( $with_common_controls = true ) {
 		return [
 			'controls' => [],
-			'tabs' => [ 'content' => 'content' ],
+			'tabs' => [],
 		];
 	}
 }
