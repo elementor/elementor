@@ -96,7 +96,7 @@ export const generateCliDockerfileTemplate = ( config: Config ) => {
 	return `FROM wordpress:cli-php${ config.phpVersion }
 
 # Switch to root so we can create users.
-USER root
+# USER root
 
 # Create the host's user so that we can match ownership in the container.
 ARG HOST_USERNAME
@@ -105,9 +105,6 @@ ARG HOST_GID
 # When the IDs are already in use we can still safely move on.
 RUN addgroup -g $HOST_GID $HOST_USERNAME || true
 RUN adduser -h /home/$HOST_USERNAME -G $( getent group $HOST_GID | cut -d: -f1 ) -u $HOST_UID $HOST_USERNAME || true
-
-# USER $HOST_UID:$HOST_GID
-# USER root
 
 # Switch back to the original user now that we're done.
 USER www-data
