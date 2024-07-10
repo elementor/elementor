@@ -20,7 +20,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
 	public function show_in_panel() {
-		return true;
+		return false;
 	}
 
 	public function get_style_depends(): array {
@@ -31,7 +31,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	public function hide_on_search() {
-		return false;
+		return true;
 	}
 
 	protected function get_initial_config(): array {
