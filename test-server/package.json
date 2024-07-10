@@ -5,9 +5,12 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"cli": "node --enable-source-maps test-server.js cli config=../.test-server.config.json",
-		"start": "node --enable-source-maps test-server.js start config=../.test-server.config.json",
-		"stop": "node --enable-source-maps test-server.js stop config=../.test-server.config.json",
+		"cli": "node --enable-source-maps test-server.js cli config=../tests/.test-server.config.json",
+		"start": "node --enable-source-maps test-server.js start config=../tests/.test-server.config.json",
+		"stop": "node --enable-source-maps test-server.js stop config=../tests/.test-server.config.json",
+		"cli:upgrade": "node --enable-source-maps test-server.js cli config=../tests/playwright/upgrade-test/.test-server.config.json",
+		"start:upgrade": "node --enable-source-maps test-server.js start config=../tests/playwright/upgrade-test/.test-server.config.json",
+		"stop:upgrade": "node --enable-source-maps test-server.js stop config=../tests/playwright/upgrade-test/.test-server.config.json",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "",
