@@ -154,6 +154,10 @@
 				height: 22px;
 				width: 22px;
 			}
+
+			i {
+				font-size: 22px;
+			}
 		}
 
 		&__contact-icon-link.has-size-medium {
@@ -161,12 +165,20 @@
 				height: 28px;
 				width: 28px;
 			}
+
+			i {
+				font-size: 28px;
+			}
 		}
 
 		&__contact-icon-link.has-size-large {
 			svg {
 				height: 36px;
 				width: 36px;
+			}
+
+			i {
+				font-size: 36px;
 			}
 		}
 

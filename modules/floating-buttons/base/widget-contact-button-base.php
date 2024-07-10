@@ -20,11 +20,18 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
 	public function show_in_panel() {
-		return false;
+		return true;
+	}
+
+	public function get_style_depends(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
+			return parent::get_style_depends();
+		}
+		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
 	}
 
 	public function hide_on_search() {
-		return true;
+		return false;
 	}
 
 	protected function get_initial_config(): array {
