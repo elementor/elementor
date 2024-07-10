@@ -47,6 +47,7 @@ jobs:
         run: |
           mkdir elementor
           cp -r ./build/* elementor
+          rm -rf build
           zip -r elementor elementor
           mkdir plugin
           # chmod 777 plugin
