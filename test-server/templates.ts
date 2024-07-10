@@ -49,6 +49,10 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
 ${ volumes }
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    command: >
+      /bin/sh -c '
+      chmod --recursive 777 /var/www/html
+      '
   cli:
     depends_on:
       - wordpress
