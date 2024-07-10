@@ -315,29 +315,6 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 		};
 	}
 
-	waypoint( element, callback, options ) {
-		const defaultOptions = {
-			offset: '100%',
-			triggerOnce: true,
-		};
-
-		options = Object.assign(defaultOptions, options);
-
-		const correctCallback = function() {
-			const callbackElement = this.element || this,
-				result = callback.apply( callbackElement, arguments );
-
-			// If is Waypoint new API and is frontend
-			if ( options.triggerOnce && this.destroy ) {
-				this.destroy();
-			}
-
-			return result;
-		};
-
-		return element.elementorWaypoint( correctCallback, options );
-	}
-
 	muteMigrationTraces() {
 		// jQuery.migrateMute = true;
 		//

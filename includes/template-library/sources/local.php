@@ -578,7 +578,13 @@ class Source_Local extends Source_Base {
 			return false;
 		}
 
-		return in_array( static::CPT, $cpt, true );
+		$is_valid_template_type = in_array( static::CPT, $cpt, true );
+
+		return apply_filters(
+			'elementor/template_library/sources/local/is_valid_template_type',
+			$is_valid_template_type,
+			$cpt,
+		);
 	}
 
 	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
