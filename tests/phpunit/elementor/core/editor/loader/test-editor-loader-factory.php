@@ -38,7 +38,7 @@ class Test_Editor_Loader_Factory extends Elementor_Test_Base {
 public function test_create__returns_an_instance_of_v1_loader_when_no_packages_are_enqueued() {
 		// Arrange
 		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
-			return $packages;
+			return [];
 		} );
 
 		// Act
