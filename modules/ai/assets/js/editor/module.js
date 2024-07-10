@@ -1,64 +1,37 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
-import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 import ReactUtils from 'elementor-utils/react';
-import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
+import LayoutAppWrapper from './layout-app-wrapper';
+import { AiGetStartedConnect } from './ai-get-started-connect';
+import { getUiConfig } from './utils/editor-integration';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
-		window.$e.commands.on( 'run:after', ( component, command, args ) => {
-			if ( 'document/elements/create' === command ) {
-				this.onCreateContainer( args );
+		window.addEventListener( 'hashchange', function( e ) {
+			if ( e.newURL.includes( 'welcome-ai' ) ) {
+				window.location.hash = '';
+
+				setTimeout( () => {
+					const rootElement = document.createElement( 'div' );
+					document.body.append( rootElement );
+					const { colorScheme, isRTL } = getUiConfig();
+					const { unmount } = ReactUtils.render(
+
+						<LayoutAppWrapper
+							isRTL={ isRTL }
+							colorScheme={ colorScheme }>
+							<AiGetStartedConnect
+								onClose={ () => {
+									unmount();
+									rootElement.remove();
+								} } />
+						</LayoutAppWrapper>, rootElement );
+				}, 1000 );
 			}
 		} );
 	}
-
-	onCreateContainer( args ) {
-		if ( args.container?.id !== 'document' || args.model.elType !== 'container' || args.containers ) {
-			return;
-		}
-
-		if ( ! shouldShowPromotionIntroduction( sessionStorage ) ) {
-			return;
-		}
-
-		const element = args.container.view.$el[ 0 ];
-		const rootBox = element.getBoundingClientRect();
-
-		if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
-			return;
-		}
-
-		const { x: canvasOffsetX, y: canvasOffsetY } = document.querySelector( '#elementor-preview-iframe' ).getBoundingClientRect();
-
-		setTimeout( () => {
-			const rootElement = document.createElement( 'div' );
-			document.body.append( rootElement );
-			const isPromotion = ! window.ElementorAiConfig.is_get_started;
-			const mainActionText = isPromotion ? __( 'Try it for free', 'elementor' ) : __( 'Try it now', 'elementor' );
-			const { unmount } = ReactUtils.render( <AiPromotionInfotipWrapper
-				test-id="ai-promotion-infotip-wrapper"
-				anchor={ element }
-				clickAction={ () => {
-					window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
-				} }
-				header={ __( 'Give your workflow a boost.', 'elementor' ) }
-				contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
-				mainActionText={ mainActionText }
-				controlType={ 'container' }
-				unmountAction={ () => {
-					unmount();
-				} }
-				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
-				isRTL={ elementorCommon.config.isRTL }
-				placement={ 'bottom' }
-				offset={ { x: canvasOffsetX, y: canvasOffsetY } }
-			/>, rootElement );
-		}, 1000 );
-	}
-
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
 
