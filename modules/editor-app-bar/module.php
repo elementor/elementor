@@ -36,7 +36,9 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/v2/styles', fn( $styles ) => $this->add_styles( $styles ) );
+
 			add_action( 'elementor/editor/v2/scripts/enqueue', fn() => wp_dequeue_script( 'elementor-responsive-bar' ) );
+			add_action( 'elementor/editor/v2/styles/enqueue', fn() => wp_dequeue_style( 'elementor-responsive-bar' ) );
 		}
 	}
 
