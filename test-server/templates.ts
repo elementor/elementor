@@ -82,10 +82,10 @@ export const generateWordPressDockerfileTemplate = ( config: Config ) => {
 # Update apt sources for archived versions of Debian.
 
 # stretch (https://lists.debian.org/debian-devel-announce/2023/03/msg00006.html)
-RUN touch /etc/apt/sources.list
-RUN sed -i 's|deb.debian.org/debian stretch|archive.debian.org/debian stretch|g' /etc/apt/sources.list
-RUN sed -i 's|security.debian.org/debian-security stretch|archive.debian.org/debian-security stretch|g' /etc/apt/sources.list
-RUN sed -i '/stretch-updates/d' /etc/apt/sources.list
+# RUN touch /etc/apt/sources.list
+# RUN sed -i 's|deb.debian.org/debian stretch|archive.debian.org/debian stretch|g' /etc/apt/sources.list
+# RUN sed -i 's|security.debian.org/debian-security stretch|archive.debian.org/debian-security stretch|g' /etc/apt/sources.list
+# RUN sed -i '/stretch-updates/d' /etc/apt/sources.list
 
 # Create the host's user so that we can match ownership in the container.
 ARG HOST_USERNAME
@@ -95,22 +95,6 @@ ARG HOST_GID
 RUN groupadd -o -g $HOST_GID $HOST_USERNAME || true
 RUN useradd -mlo -u $HOST_UID -g $HOST_GID $HOST_USERNAME || true
 
-# Install any dependencies we need in the container.
-
-# Make sure we're working with the latest packages.
-# RUN apt-get -qy update
-
-# Install some basic PHP dependencies.
-# RUN apt-get -qy install $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
-
-# Install git
-# RUN apt-get -qy install git
-
-# Set up sudo so they can have root access.
-# RUN apt-get -qy install sudo
-# RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-# RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
-# RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
 USER $HOST_UID:$HOST_GID
 USER root
 `;
@@ -130,19 +114,6 @@ ARG HOST_GID
 RUN addgroup -g $HOST_GID $HOST_USERNAME || true
 RUN adduser -h /home/$HOST_USERNAME -G $( getent group $HOST_GID | cut -d: -f1 ) -u $HOST_UID $HOST_USERNAME || true
 
-# Install any dependencies we need in the container.
-
-# Make sure we're working with the latest packages.
-# RUN apk update
-
-# Install some basic PHP dependencies.
-# RUN apk --no-cache add $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
-
-# Set up sudo so they can have root access.
-# RUN apk --no-cache add sudo linux-headers
-# RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-# RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
-# RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
 USER $HOST_UID:$HOST_GID
 USER root
 
