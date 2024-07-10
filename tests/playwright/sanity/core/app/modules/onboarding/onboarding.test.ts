@@ -8,7 +8,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		originalActiveTheme = wpAdmin.getActiveTheme();
+		originalActiveTheme = await wpAdmin.getActiveTheme();
 		wpAdmin.activateTheme( 'twentytwentytwo' );
 	} );
 
@@ -61,7 +61,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		// Check that the popup opens the Elementor Connect screen.
 		await expect( signupForm ).toBeVisible();
 
-		popup.close();
+		await popup.close();
 	} );
 
 	/**
