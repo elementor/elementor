@@ -46,7 +46,7 @@ jobs:
           cp -r ./build/* elementor
           zip -r elementor elementor
           mkdir tests/wp-env/config/elementor-from-build
-          chmod 777 tests/wp-env/config/elementor-from-build
+          # chmod 777 tests/wp-env/config/elementor-from-build
           mv ./elementor.zip tests/wp-env/config/elementor-from-build
           cd test-server
           npm start -- port=8888

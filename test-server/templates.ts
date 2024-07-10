@@ -51,6 +51,7 @@ export const generateDockerComposeYmlTemplate = ( config: Config, basePath: stri
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DB_NAME: wordpress
+      WP_TESTS_DIR: /wordpress-phpunit
     volumes: &ref_1
 ${ volumes }
     extra_hosts:
@@ -60,7 +61,7 @@ ${ volumes }
       - wordpress
     build:
       context: .
-      dockerfile: wordpress:cli-php${ config.phpVersion }
+      dockerfile: CLI.Dockerfile
       args: *ref_0
     volumes: *ref_1
     user: '502:20'
@@ -68,6 +69,7 @@ ${ volumes }
       WORDPRESS_DB_USER: root
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DB_NAME: wordpress
+      WP_TESTS_DIR: /wordpress-phpunit
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 volumes:
