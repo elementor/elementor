@@ -121,7 +121,7 @@ class Modules_Manager {
 			'content-sanitizer',
 			'editor-events',
 			'atomic-widgets',
-			'app-bar',
+			'editor-app-bar',
 		];
 	}
 

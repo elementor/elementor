@@ -12,7 +12,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
-use Elementor\Modules\AppBar\Module as App_Bar_Module;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

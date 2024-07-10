@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AppBar;
+namespace Elementor\Modules\EditorAppBar;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -25,7 +25,7 @@ class Module extends BaseModule {
 	];
 
 	public function get_name() {
-		return 'app-bar';
+		return 'editor-app-bar';
 	}
 
 	public function __construct() {

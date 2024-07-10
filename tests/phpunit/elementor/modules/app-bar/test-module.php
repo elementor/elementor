@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\AppBar;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AppBar\Module;
+use Elementor\Modules\EditorAppBar\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
