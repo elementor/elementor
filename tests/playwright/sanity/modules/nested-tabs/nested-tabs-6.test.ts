@@ -111,7 +111,7 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-n-tabs > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
 			isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
 			proFileArray = proFilePath.split( '?ver=' ),
-			proFileTimestamp = proFileArray[1];
+			proFileTimestamp = proFileArray[ 1 ];
 
 		// Assert
 		expect.soft( isProFilePath ).toBeTruthy();
