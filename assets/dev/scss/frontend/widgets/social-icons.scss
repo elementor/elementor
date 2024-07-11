@@ -132,37 +132,3 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 		&500px			{ background-color: $five-h-px; }
 	}
 }
-
-.elementor-shape {
-
-	&-square {
-
-		.elementor-icon {
-
-			&.elementor-social-icon {
-				border-radius: 0;
-			}
-		}
-	}
-
-	&-rounded {
-
-		.elementor-icon {
-
-			&.elementor-social-icon {
-				border-radius: 10%;
-			}
-		}
-	}
-
-	&-circle {
-
-		.elementor-icon {
-
-			&.elementor-social-icon {
-				border-radius: 50%;
-			}
-		}
-	}
-
-}
