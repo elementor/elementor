@@ -81,7 +81,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$end_logical = is_rtl() ? 'start' : 'end';
 		$heading_selector_non_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
 		$heading_selector_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
-		$heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
+		$heading_selector = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
 		$content_selector = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
 
 		$this->start_controls_section( 'section_tabs', [
