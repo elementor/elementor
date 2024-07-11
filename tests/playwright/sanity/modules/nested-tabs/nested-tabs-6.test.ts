@@ -95,7 +95,7 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		// Arrange.
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdminPage.setExperiments( { e_optimized_css_loading: 'active' } );
+		await wpAdminPage.setExperiments( { e_optimized_css_loading: true } );
 
 		const editorPage = await wpAdminPage.openNewPage(),
 			container = await editorPage.addElement( { elType: 'container' }, 'document' );
@@ -117,6 +117,6 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		expect.soft( isProFilePath ).toBeTruthy();
 		expect.soft( proFileTimestamp ).toBeDefined();
 
-		await wpAdminPage.setExperiments( { e_optimized_css_loading: 'inactive' } );
+		await wpAdminPage.setExperiments( { e_optimized_css_loading: false } );
 	} );
 } );
