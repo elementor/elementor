@@ -91,7 +91,7 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		await page.setViewportSize( viewportSize.desktop );
 	} );
 
-	test.only( 'Check that Nested Tabs css file is loaded from `elementor/assets/css` when `Improved CSS Loading` experiment is active and SCRIPT_DEBUG is false', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check that Nested Tabs css file is loaded from `elementor/assets/css` when `Improved CSS Loading` experiment is active and SCRIPT_DEBUG is false', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -107,9 +107,9 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		// Act
 		await editorPage.publishAndViewPage();
 
-		// When the `Improved CSS Loading` experiment is active, the mega menu css file is loaded from `elementor-pro/assets/css`, so we check that there is a rel tag and that the file path includes `elementor-pro`.
+		// When the `Improved CSS Loading` experiment is active, the Nested Tabs css file is loaded from `elementor/assets/css`, so we check that there is a rel tag and that the file path includes `elementor`.
 		const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-n-tabs > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
-			isProFilePath = proFilePath.includes( 'elementor' ),
+			isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
 			proFileArray = proFilePath.split("?ver="),
 			proFileTimestamp = proFileArray[1];
 
