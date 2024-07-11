@@ -110,7 +110,7 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		// When the `Improved CSS Loading` experiment is active, the Nested Tabs css file is loaded from `elementor/assets/css`.
 		const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-n-tabs > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
 			isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
-			proFileArray = proFilePath.split("?ver="),
+			proFileArray = proFilePath.split( '?ver=' ),
 			proFileTimestamp = proFileArray[1];
 
 		// Assert
