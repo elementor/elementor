@@ -15,12 +15,16 @@ const waitForServer = async ( url: string, timeoutMs: number ) => {
 	const startTime = Date.now();
 	const sleep = ( ms: number ) => new Promise( ( r ) => setTimeout( r, ms ) );
 
-	while ( startTime + timeoutMs < Date.now() ) {
-		const response = await fetch( url );
-		if ( response.ok && ( 200 === response.status || 302 === response.status ) ) {
-			return true;
+	while ( startTime + timeoutMs > Date.now() ) {
+		try {
+			const response = await fetch( url );
+			if ( response.ok && ( 200 === response.status || 302 === response.status ) ) {
+				return true;
+			}
+		} catch ( e ) {
+		} finally {
+			await sleep( 100 );
 		}
-		await sleep( 100 );
 	}
 	return false;
 };
