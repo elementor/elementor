@@ -87,17 +87,12 @@ ARG HOST_GID
 RUN groupadd -o -g $HOST_GID $HOST_USERNAME || true
 RUN useradd -mlo -u $HOST_UID -g $HOST_GID $HOST_USERNAME || true
 
-# USER $HOST_UID:$HOST_GID
-USER root
+# USER root
 `;
 };
 
 export const generateCliDockerfileTemplate = ( config: Config ) => {
 	return `FROM wordpress:cli-php${ config.phpVersion }
-
-# Switch to root so we can create users.
-# USER root
-
 # Create the host's user so that we can match ownership in the container.
 ARG HOST_USERNAME
 ARG HOST_UID
@@ -107,7 +102,7 @@ RUN addgroup -g $HOST_GID $HOST_USERNAME || true
 RUN adduser -h /home/$HOST_USERNAME -G $( getent group $HOST_GID | cut -d: -f1 ) -u $HOST_UID $HOST_USERNAME || true
 
 # Switch back to the original user now that we're done.
-USER www-data
+# USER www-data
 
 # Have the container sleep infinitely to keep it alive for us to run commands on it.
 CMD [ "/bin/sh", "-c", "while true; do sleep 2073600; done" ]
