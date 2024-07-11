@@ -46,7 +46,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
 	grunt.registerTask( 'remove_widgets_unused_style_files', () => widgetsCss.removeWidgetsUnusedStyleFiles() );
 
-	// Modules with Widgtets.
+	// Modules with Widgets.
 	grunt.registerTask( 'create_modules_widgets_temp_scss_files', () => modulesWidgetsCss.createWidgetsTempScssFiles() );
 	grunt.registerTask( 'remove_modules_widgets_unused_style_files', () => modulesWidgetsCss.removeWidgetsUnusedStyleFiles() );
 
