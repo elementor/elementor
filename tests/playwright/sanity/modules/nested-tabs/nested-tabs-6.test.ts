@@ -107,7 +107,7 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		// Act
 		await editorPage.publishAndViewPage();
 
-		// When the `Improved CSS Loading` experiment is active, the Nested Tabs css file is loaded from `elementor/assets/css`, so we check that there is a rel tag and that the file path includes `elementor`.
+		// When the `Improved CSS Loading` experiment is active, the Nested Tabs css file is loaded from `elementor/assets/css`.
 		const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-n-tabs > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
 			isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
 			proFileArray = proFilePath.split("?ver="),
