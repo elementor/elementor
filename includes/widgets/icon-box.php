@@ -130,8 +130,9 @@ class Widget_Icon_Box extends Widget_Base {
 				'label' => esc_html__( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'default' => 'circle',
 				'condition' => [
