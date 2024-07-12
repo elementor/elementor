@@ -2,7 +2,7 @@
 namespace Elementor;
 
 use Elementor\Container\Container;
-use ElementorDep\DI\Container as DIContainer;
+use ElementorDeps\DI\Container as DIContainer;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;

@@ -2,8 +2,8 @@
 
 namespace Elementor\Container;
 
-use ElementorDep\DI\ContainerBuilder;
-use ElementorDep\DI\Container as DIContainer;
+use ElementorDeps\DI\ContainerBuilder;
+use ElementorDeps\DI\Container as DIContainer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
