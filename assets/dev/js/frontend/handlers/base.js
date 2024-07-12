@@ -19,8 +19,8 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
-
-		this.maybeLoadJquery();
+		//
+		// this.maybeLoadJquery();
 
 		this.baseElement = settings.baseElement;
 
@@ -252,6 +252,9 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 
 	onInit( ...args ) {
 		super.onInit( ...args );
+
+
+		this.maybeLoadJquery();
 
 		if ( this.isActive( this.getSettings() ) ) {
 			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );

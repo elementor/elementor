@@ -1,13 +1,14 @@
 export default class ScriptLoader {
 	// Ref: https://stackoverflow.com/questions/1140402/how-to-add-jquery-in-js-file
-	scriptUrl = '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
+	baseUrl = elementorFrontendConfig.urls.ajaxurl.replace( '/wp-admin/admin-ajax.php', '' );
+	scriptUrl = '/wp-includes/js/jquery/jquery.js';
 	startingTime = new Date().getTime();
 
 	loadScript() {
 		return new Promise((resolve, reject) => {
 			// Create a script element
 			let script = document.createElement("script");
-			script.src = this.scriptUrl;
+			script.src = `${ this.baseUrl }${ this.scriptUrl }`;
 			script.type = 'text/javascript';
 
 			// Set up onload and onerror handlers
