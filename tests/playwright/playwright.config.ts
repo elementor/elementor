@@ -7,7 +7,7 @@ process.env.TEST_SERVER = 'http://localhost:8889';
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
 _config( {
-	path: resolve( __dirname, './.env' ),
+	path: resolve( __dirname, '../../.env' ),
 } );
 
 export default defineConfig( {

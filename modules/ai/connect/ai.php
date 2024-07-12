@@ -604,6 +604,7 @@ class Ai extends Library {
 					$html = wp_json_encode( $attachment['content'] );
 
 					$body['html'] = $html;
+					$body['htmlFetchedUrl'] = $attachment['label'];
 
 					break;
 			}
