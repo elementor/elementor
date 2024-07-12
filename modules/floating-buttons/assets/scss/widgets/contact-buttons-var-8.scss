@@ -2,9 +2,9 @@
 	--e-contact-buttons-size-small: 48px;
 	--e-contact-buttons-size-medium: 56px;
 	--e-contact-buttons-size-large: 64px;
-	--e-contact-buttons-svg-size-small: 24px;
+	--e-contact-buttons-svg-size-small: 22px;
 	--e-contact-buttons-svg-size-medium: 28px;
-	--e-contact-buttons-svg-size-large: 32px;
+	--e-contact-buttons-svg-size-large: 36px;
 	--e-contact-buttons-chat-box-width: 280px;
 
 	--e-contact-buttons-button-bg: #324A6D;
@@ -151,22 +151,34 @@
 
 		&__contact-icon-link.has-size-small {
 			svg {
-				height: 22px;
-				width: 22px;
+				height: var(--e-contact-buttons-svg-size-small);
+				width: var(--e-contact-buttons-svg-size-small);
+			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-small);
 			}
 		}
 
 		&__contact-icon-link.has-size-medium {
 			svg {
-				height: 28px;
-				width: 28px;
+				height: var(--e-contact-buttons-svg-size-medium);
+				width: var(--e-contact-buttons-svg-size-medium);
+			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-medium);
 			}
 		}
 
 		&__contact-icon-link.has-size-large {
 			svg {
-				height: 36px;
-				width: 36px;
+				height: var(--e-contact-buttons-svg-size-large);
+				width: var(--e-contact-buttons-svg-size-large);
+			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-large);
 			}
 		}
 
