@@ -37,6 +37,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **Entrance Animations**: Add entrance animations to elements to create engaging and interactive user experiences.
 - **[Revision History](https://elementor.com/features/#SaveBackup)**: Elementor's Revision History feature enables users to track and revert to previous versions of their designs, providing peace of mind and flexibility during the creative process.
 - **[Developer-Friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Equipped with extensive documentation, API, developer tools, and custom code areas at the widget and page level, Elementor offers a conducive environment for developers to extend its capabilities and create custom solutions.
+- **Floating Buttons**: Enhance user interaction with customizable, floating action buttons that stay in view as users scroll.
 - **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Elementor's robust Theme Builder empowers you to design every part of your website, including headers, footers, single post layouts, and archive pages, providing complete control over the site's appearance.
 - **[Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/) [Pro]**: Create eye-catching popups with Elementor's Popup Builder, equipped with advanced targeting and triggering options to optimize user engagement and conversions.
 - **[Forms](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/) [Pro]**: Design and integrate custom forms, utilizing advanced features and integrations to capture and manage submissions effectively.
@@ -56,6 +57,7 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 - **Text Editor**. Just like the WordPress editor.
 - **Video**. Add YouTube, Vimeo, Dailymotion or self-hosted videos.
 - **Button**. Create interactive buttons.
+- **Link in Bio**. Build link in bio components to promote your business / services.
 - **Image Box**. A box with image, headline and text.
 - **Testimonials**. Customer testimonials.
 - **Icon**. Place one or more of 600+ icons available.

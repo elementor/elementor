@@ -52,15 +52,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			true
 		);
 
-		// Hack for waypoint with editor mode.
-		wp_register_script(
-			'elementor-waypoints',
-			"{$assets_url}lib/waypoints/waypoints-for-editor.js",
-			[ 'jquery' ],
-			'4.0.2',
-			true
-		);
-
 		wp_register_script(
 			'perfect-scrollbar',
 			"{$assets_url}lib/perfect-scrollbar/js/perfect-scrollbar{$min_suffix}.js",
@@ -105,7 +96,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'flatpickr',
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.js",
 			[ 'jquery' ],
-			'1.12.0',
+			'4.6.13',
 			true
 		);
 
@@ -145,7 +136,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'pickr',
 			"{$assets_url}lib/pickr/pickr.min.js",
 			[],
-			'1.5.0',
+			'1.8.2',
 			true
 		);
 
@@ -214,14 +205,14 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'flatpickr',
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.css",
 			[],
-			'1.12.0'
+			'4.6.13'
 		);
 
 		wp_register_style(
 			'pickr',
 			"{$assets_url}lib/pickr/themes/monolith.min.css",
 			[],
-			'1.5.0'
+			'1.8.2'
 		);
 
 		wp_register_style(
