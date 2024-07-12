@@ -27,7 +27,10 @@ BaseElementView = BaseContainer.extend( {
 
 	renderAttributes: {},
 
-	itemLink: 'item_link',
+	dynamicControls: {
+		itemTitle: 'item_title',
+		itemLink: 'item_link',
+	},
 
 	className() {
 		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
@@ -661,18 +664,22 @@ BaseElementView = BaseContainer.extend( {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-				this.itemLink === changedControl && this.model?.config?.atomic_item_link );
+				this.dynamicControls.itemLink === changedControl );
 	},
 
 	async getDynamicValue( settings, changedControlKey, dataBinding, widget ) {
 		const dynamicSettings = { active: true },
 			changedDataForRemovedItem = settings.attributes?.[ changedControlKey ]?.[ dataBinding ] || settings.attributes?.[ changedControlKey ],
 			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ dataBinding ] || settings.attributes?.__dynamic__?.[ changedControlKey ],
-			changedData = changedDataForAddedItem || changedDataForRemovedItem;
-		const valueToParse = this.extractValueToParse( changedData );
+			changedData = changedDataForAddedItem || changedDataForRemovedItem,
+			valueToParse = this.extractValueToParse( changedData );
 
 		if ( undefined !== valueToParse ) {
 			const data = await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
+
+			if ( this.dynamicControls.itemTitle === changedControlKey ) {
+				return data;
+			}
 
 			if ( undefined !== data ) {
 				this.tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControlKey, dynamicSettings );
@@ -769,13 +776,13 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
-				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+				changedControl = this.getChangedControl( settings );
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue = this.getDynamicValue( settings, changedControl, dataBinding, widget );
+				const dynamicValue = await this.getDynamicValue( settings, changedControl, dataBinding, widget );
 
-				if ( this.itemLink === changedControl ) {
+				if ( this.dynamicControls.itemLink === changedControl ) {
 					return true;
 				}
 
@@ -1111,8 +1118,8 @@ BaseElementView = BaseContainer.extend( {
 
 	changeMegaMenuTitleContainerTag( existingElement ) {
 		existingElement = existingElement.parentElement;
-			const existingParentElement = existingElement.parentNode;
-			let newElement = document.createElement( 'div' );
+		const existingParentElement = existingElement.parentNode;
+		let newElement = document.createElement( 'div' );
 
 		if ( 'DIV' === existingElement.tagName ) {
 			newElement = document.createElement( 'a' );
@@ -1149,11 +1156,13 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	tryFormatDynamicMegaMenuUrl( valueToParse, dataBinding, widget, changedControl, dynamicSettings ) {
-		if ( this.itemLink !== changedControl ) {
+		if ( this.dynamicControls.itemLink !== changedControl ) {
 			return false;
 		}
 
 		const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		// Check if this condition is needed
+		if ( this.model?.config?.atomic_item_link ) {
 			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
 				new CustomEvent( 'elementor/dynamic/url_change', {
 					detail: {
@@ -1161,10 +1170,13 @@ BaseElementView = BaseContainer.extend( {
 						actionName: valueToParse && this.getDynamicTagName( valueToParse ),
 						value,
 					},
-				} )
+				} ),
 			);
 
-			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ]
+			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ];
+		} else {
+			return false;
+		}
 	},
 
 	extractValueToParse( valueToParse ) {
@@ -1173,6 +1185,17 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return valueToParse;
+	},
+
+	getChangedControl( settings ) {
+		let changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+		if ( ! changedControlKey ) {
+			changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+				? Object.keys( settings.changed )[ 0 ]
+				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+		}
+
+		return changedControlKey;
 	},
 } );
 
