@@ -8,6 +8,7 @@ use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\FloatingButtons\Classes\Render\Contact_Buttons_Core_Render;
+use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -62,6 +63,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 					],
 					'has_notification_dot' => true,
+					'has_aria_label' => true,
 					'has_notification_dot_default_enabled' => true,
 					'has_active_tab' => false,
 					'has_display_text' => false,
@@ -78,6 +80,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 						'default' => Social_Network_Provider::WHATSAPP,
 					],
+					'chat_aria_label' => Floating_Buttons::get_title(),
 					'defaults' => [
 						'mail' => null,
 						'mail_subject' => null,
@@ -438,6 +441,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'chat_aria_label',
+			[
+				'label' => esc_html__( 'Accessible name', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $config['content']['chat_button_section']['chat_aria_label'],
+				'placeholder' => esc_html__( 'Add accessible name', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+			],
+		);
+
 		if ( $config['content']['chat_button_section']['has_platform'] ) {
 
 			$this->add_control(
@@ -677,6 +693,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 				'label' => $config['content']['contact_section']['section_name'],
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
+		);
+
+		$this->add_control(
+			'chat_aria_label',
+			[
+				'label' => esc_html__( 'Accessible name', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $config['content']['chat_button_section']['chat_aria_label'],
+				'placeholder' => esc_html__( 'Add accessible name', 'elementor' ),
+				'dynamic' => [
+					'active' => true,
+				],
+			],
 		);
 
 		if ( $config['content']['contact_section']['has_cta_text'] ) {
