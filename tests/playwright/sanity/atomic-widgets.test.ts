@@ -5,25 +5,30 @@ import { expect } from '@playwright/test';
 test.describe( 'Atomic Widgets', () => {
 	let editor;
 	let wpAdmin;
+	let context;
 
 	const atomicWidgets = [
 		{ name: 'a-heading', title: 'Atomic Heading' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
+		context = await browser.newContext();
 
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await enableRequiredExperiments();
+		await wpAdmin.setExperiments( {
+			atomic_widgets: 'active',
+		} );
 
 		editor = await wpAdmin.openNewPage();
 	} );
 
 	test.afterAll( async () => {
 		await wpAdmin.resetExperiments();
+
+		context.close();
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
@@ -42,11 +47,5 @@ test.describe( 'Atomic Widgets', () => {
 			} );
 		} );
 	} );
-
-	async function enableRequiredExperiments() {
-		await wpAdmin.setExperiments( {
-			atomic_widgets: 'active',
-		} );
-	}
 } );
 
