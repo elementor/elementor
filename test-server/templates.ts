@@ -94,7 +94,8 @@ ARG HOST_UID
 ARG HOST_GID
 # When the IDs are already in use we can still safely move on.
 RUN addgroup -g $HOST_GID $HOST_USERNAME || true
-RUN adduser -h /home/$HOST_USERNAME -G $( getent group $HOST_GID | cut -d: -f1 ) -u $HOST_UID $HOST_USERNAME || true
+RUN useradd -mlo -u $HOST_UID -g $HOST_GID $HOST_USERNAME || true
+# RUN adduser -h /home/$HOST_USERNAME -G $( getent group $HOST_GID | cut -d: -f1 ) -u $HOST_UID $HOST_USERNAME || true
 
 # Have the container sleep infinitely to keep it alive for us to run commands on it.
 CMD [ "/bin/sh", "-c", "while true; do sleep 2073600; done" ]
