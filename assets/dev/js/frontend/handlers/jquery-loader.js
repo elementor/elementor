@@ -11,12 +11,12 @@ export default class ScriptLoader {
 			script.src = `${ this.baseUrl }${ this.scriptUrl }`;
 			script.type = 'text/javascript';
 
-			// Set up onload and onerror handlers
-			script.onload = () => resolve();
-			script.onerror = () => reject(new Error(`Failed to load script: ${this.scriptUrl}`));
-
 			// Append the script to the document head
 			document.getElementsByTagName("head")[0].appendChild(script);
+
+			// Resolve once the script has loaded
+			script.onload = () => resolve();
+			script.onerror = () => reject(new Error(`Failed to load script: ${this.scriptUrl}`));
 		});
 	}
 
@@ -35,19 +35,13 @@ export default class ScriptLoader {
 
 	async execute() {
 		try {
-			// Load jQuery asynchronously
 			await this.loadScript();
-
-			// Wait for jQuery to be ready
 			const $ = await this.checkReady();
-
-			// Now jQuery is loaded and ready to use
 			$(function() {
 				const endingTime = new Date().getTime();
 				const tookTime = endingTime - this.startingTime;
 				window.alert(`jQuery is loaded, after ${tookTime} milliseconds!`);
 			}.bind(this));
-
 		} catch (error) {
 			console.error(error);
 		}
