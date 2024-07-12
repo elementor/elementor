@@ -1193,7 +1193,6 @@ BaseElementView = BaseContainer.extend( {
 				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
 		}
 
-		console.log({changedControlKey});
 		return changedControlKey;
 	},
 } );
