@@ -664,7 +664,8 @@ BaseElementView = BaseContainer.extend( {
 		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-				this.dynamicControls.itemLink === changedControl );
+			this.dynamicControls.itemLink === changedControl ) &&
+			this.model?.config?.atomic_item_link;
 	},
 
 	async getDynamicValue( settings, changedControlKey, dataBinding, widget ) {
@@ -1162,21 +1163,17 @@ BaseElementView = BaseContainer.extend( {
 
 		const value = elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 		// Check if this condition is needed
-		if ( this.model?.config?.atomic_item_link ) {
-			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
-				new CustomEvent( 'elementor/dynamic/url_change', {
-					detail: {
-						element: dataBinding.el,
-						actionName: valueToParse && this.getDynamicTagName( valueToParse ),
-						value,
-					},
-				} ),
-			);
+		elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+			new CustomEvent( 'elementor/dynamic/url_change', {
+				detail: {
+					element: dataBinding.el,
+					actionName: valueToParse && this.getDynamicTagName( valueToParse ),
+					value,
+				},
+			} ),
+		);
 
-			dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ];
-		} else {
-			return false;
-		}
+		dataBinding.el = Array.from( widget )[ 0 ].querySelectorAll( '.e-n-menu-title-text' )[ dataBinding.dataset.bindingIndex - 1 ];
 	},
 
 	extractValueToParse( valueToParse ) {
@@ -1189,12 +1186,14 @@ BaseElementView = BaseContainer.extend( {
 
 	getChangedControl( settings ) {
 		let changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
 		if ( ! changedControlKey ) {
 			changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
 				? Object.keys( settings.changed )[ 0 ]
 				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
 		}
 
+		console.log({changedControlKey});
 		return changedControlKey;
 	},
 } );
