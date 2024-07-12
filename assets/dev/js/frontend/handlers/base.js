@@ -1,3 +1,5 @@
+import ScriptLoader from './jquery-loader';
+
 export default class Base extends elementorModules.ViewModuleFrontend {
 	baseElement = null;
 
@@ -12,11 +14,13 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	isEdit = null;
 
 	constructor( settings ) {
-		super();
+		super( settings );
 
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
+
+		this.maybeLoadJquery();
 
 		this.baseElement = settings.baseElement;
 
@@ -262,5 +266,14 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		if ( this.unbindEvents ) {
 			this.unbindEvents();
 		}
+	}
+
+	maybeLoadJquery() {
+		if ( !! window.jQuery ) {
+			return;
+		}
+
+		const scriptLoader = new ScriptLoader();
+		scriptLoader.execute();
 	}
 }
