@@ -5,8 +5,7 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.4",
-		"php-di/php-di": "^6.4"
+		"php": ">=7.4"
 	},
 	"autoload": {
 		"classmap": [
@@ -22,7 +21,8 @@
 		"wp-coding-standards/wpcs": "^2.3",
 		"yoast/phpunit-polyfills": "^1.0",
 		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
-		"humbug/php-scoper": "0.17.5"
+		"humbug/php-scoper": "0.17.5",
+		"php-di/php-di": "6.4.0"
 	},
 	"scripts": {
 		"lint": "phpcs --standard=ruleset.xml",
