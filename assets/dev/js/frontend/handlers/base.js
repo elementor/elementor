@@ -19,8 +19,6 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
-		//
-		// this.maybeLoadJquery();
 
 		this.baseElement = settings.baseElement;
 
@@ -251,14 +249,29 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	}
 
 	onInit( ...args ) {
-		super.onInit( ...args );
+		(async () => {
+			try {
+				// Instantiate ScriptLoader and execute jQuery loading
+				const scriptLoader = new ScriptLoader();
+				await scriptLoader.execute();
+				console.log('jQuery was loaded');
 
+				// Now jQuery is loaded, initialize this.$element
+				this.$element = jQuery(this.baseElement);
 
-		this.maybeLoadJquery();
+				// Continue with other initialization logic
+				super.onInit(...args);
 
-		if ( this.isActive( this.getSettings() ) ) {
-			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
-		}
+				// Check if active and apply module frontend view
+				if (this.isActive(this.getSettings())) {
+					elementorModules.ViewModuleFrontend.prototype.onInit.apply(this, arguments);
+				}
+
+				console.log('Does this wait as well?');
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		})();
 	}
 
 	onDestroy() {
@@ -271,12 +284,16 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 	}
 
-	maybeLoadJquery() {
-		if ( !! window.jQuery ) {
-			return;
-		}
-
-		const scriptLoader = new ScriptLoader();
-		scriptLoader.execute();
-	}
+	// async maybeLoadJquery() {
+	// 	if ( !! window.jQuery ) {
+	// 		return;
+	// 	}
+	//
+	// 	( async () => {
+	// 		const scriptLoader = new ScriptLoader();
+	// 		scriptLoader.execute();
+	//
+	// 		return true;
+	// 	} )();
+	// }
 }

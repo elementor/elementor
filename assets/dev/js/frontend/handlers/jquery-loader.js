@@ -51,4 +51,6 @@ export default class ScriptLoader {
 // // Usage example
 // const scriptLoader = new ScriptLoader();
 // scriptLoader.execute();
+//
+// console.log( 'jquery was loaded' );
 
