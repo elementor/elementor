@@ -1,0 +1,4 @@
+# This folder must exist for the composer autoload classmap to function.
+# We don't want to commit the prefixed files, thus excluding them from the repository here.
+*
+!.gitignore
