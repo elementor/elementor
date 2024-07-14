@@ -12,6 +12,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -35,9 +36,9 @@ class Editor {
 	/**
 	 * The const is deprecated, it remains here for backward compatibility.
 	 *
-	 * @deprecated Use Editor_V2_Experiments::APP_BAR instead
+	 * @deprecated Use App_Bar_Module::EXPERIMENT_NAME instead
 	 */
-	const EDITOR_V2_EXPERIMENT_NAME = Editor_V2_Experiments::APP_BAR;
+	const EDITOR_V2_EXPERIMENT_NAME = App_Bar_Module::EXPERIMENT_NAME;
 
 	/**
 	 * Post ID.
@@ -542,8 +543,6 @@ class Editor {
 
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
-
-		Editor_V2_Experiments::register();
 
 		// Handle autocomplete feature for URL control.
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
