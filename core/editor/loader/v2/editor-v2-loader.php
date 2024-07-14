@@ -5,7 +5,6 @@ use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Editor\Editor_V2_Packages;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,8 +33,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	public function init() {
 		$packages = array_merge( $this->get_packages_to_enqueue(), self::LIBS );
+		$packages_with_app = array_merge( $packages, [ self::APP_PACKAGE ] );
 
-		foreach ( $packages as $package ) {
+		foreach ( $packages_with_app as $package ) {
 			$this->assets_config_provider->load( $package );
 		}
 
@@ -94,6 +94,8 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function enqueue_scripts() {
 		do_action( 'elementor/editor/v2/scripts/enqueue/before' );
 
+		parent::enqueue_scripts();
+
 		wp_enqueue_script( 'elementor-editor-environment-v2' );
 
 		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
@@ -108,7 +110,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			);
 		}
 
-		foreach ( $this->assets_config_provider->only( $this->get_packages_to_enqueue() ) as $config ) {
+		$packages_with_app = array_merge( $this->get_packages_to_enqueue(), [ self::APP_PACKAGE ] );
+
+		foreach ( $this->assets_config_provider->only( $packages_with_app ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
 		}
 
@@ -170,12 +174,8 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
-	private function get_packages_to_enqueue() : array {
-		$packages_to_enqueue = Editor_V2_Packages::collect();
-
-		return $packages_to_enqueue
-			->push( self::APP_PACKAGE )
-			->all();
+	public static function get_packages_to_enqueue() : array {
+		return apply_filters( 'elementor/editor/v2/packages', [] );
 	}
 
 	private function get_styles() : array {

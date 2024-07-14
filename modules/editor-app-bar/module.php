@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AppBar;
+namespace Elementor\Modules\EditorAppBar;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'editor_v2'; // Kept as `editor_v2` for backward compatibility.
-	const EXPERIMENT_DEFAULT_STATE = Experiments_Manager::STATE_INACTIVE;
 
 	const PACKAGES = [
 		'editor-app-bar',
@@ -26,7 +25,7 @@ class Module extends BaseModule {
 	];
 
 	public function get_name() {
-		return 'app-bar';
+		return 'editor-app-bar';
 	}
 
 	public function __construct() {
@@ -37,6 +36,10 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/v2/styles', fn( $styles ) => $this->add_styles( $styles ) );
+			add_filter( 'elementor/editor/templates', fn( $templates ) => $this->remove_templates( $templates ) );
+
+			add_action( 'elementor/editor/v2/scripts/enqueue', fn() => $this->dequeue_scripts() );
+			add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
 		}
 	}
 
@@ -49,7 +52,7 @@ class Module extends BaseModule {
 				esc_html__( 'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'default' => self::EXPERIMENT_DEFAULT_STATE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
@@ -64,5 +67,17 @@ class Module extends BaseModule {
 
 	private function add_styles( $styles ) {
 		return array_merge( $styles, self::STYLES );
+	}
+
+	private function remove_templates( $templates ) {
+		return array_diff( $templates, [ 'responsive-bar' ] );
+	}
+
+	private function dequeue_scripts() {
+		wp_dequeue_script( 'elementor-responsive-bar' );
+	}
+
+	private function dequeue_styles() {
+		wp_dequeue_style( 'elementor-responsive-bar' );
 	}
 }

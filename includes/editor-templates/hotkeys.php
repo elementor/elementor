@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\AppBar\Module as App_Bar_Module;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {

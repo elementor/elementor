@@ -14,15 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'atomic_widgets';
-	const EXPERIMENT_DEFAULT_STATE = Experiments_Manager::STATE_INACTIVE;
 
 	const PACKAGES = [
 		'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 		'editor-panels',
+		'editor-editing-panel',
 	];
 
 	public function get_name() {
-		return 'atomic_widgets';
+		return 'atomic-widgets';
 	}
 
 	public function __construct() {
@@ -42,7 +42,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
-			'default' => self::EXPERIMENT_DEFAULT_STATE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
 	}
