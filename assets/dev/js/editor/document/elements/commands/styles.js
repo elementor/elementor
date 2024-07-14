@@ -10,7 +10,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		return 'Styles';
+		return __( 'Styles', 'elementor' );
 	}
 
 	/**
