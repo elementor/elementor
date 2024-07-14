@@ -668,19 +668,7 @@ BaseElementView = BaseContainer.extend( {
 			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
 		if ( valueToParse ) {
-			try {
-				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-			} catch {
-				await new Promise( ( resolve ) => {
-					elementor.dynamicTags.refreshCacheFromServer( () => {
-						resolve();
-					} );
-				} );
-
-				return ! _.isEmpty( elementor.dynamicTags.cache )
-					? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
-					: false;
-			}
+			return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 		}
 
 		return settings.attributes[ bindingSetting ];
@@ -828,8 +816,9 @@ BaseElementView = BaseContainer.extend( {
 	 * Render the changes in the settings according to the current situation.
 	 *
 	 * @param {Object} settings
+	 * @param {Array}  widget
 	 */
-	renderOnChange( settings ) {
+	renderOnChange( settings, widget = [] ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
@@ -1106,6 +1095,22 @@ BaseElementView = BaseContainer.extend( {
 			groups: [ 'elementor-element' ],
 		} );
 	},
+
+	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
+		try {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		} catch {
+			await new Promise( ( resolve ) => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
+					resolve();
+				} );
+			} );
+
+			return ! _.isEmpty( elementor.dynamicTags.cache )
+				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+				: false;
+		}
+	}
 } );
 
 module.exports = BaseElementView;
