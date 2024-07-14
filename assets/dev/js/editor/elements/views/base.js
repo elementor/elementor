@@ -656,16 +656,14 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isAtomicDynamic( dataBinding, changedControl ) {
-		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+		return dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
 		const dynamicSettings = { active: true },
-			changedDataForRemovedItem = settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ],
-			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ],
-			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
+			valueToParse = this.getChangedData( settings, changedControlKey, bindingSetting );
 
 		if ( ! valueToParse ) {
 			return settings.attributes[ changedControlKey ];
@@ -780,7 +778,7 @@ BaseElementView = BaseContainer.extend( {
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
 				changedControl = this.getChangedControl( settings );
-			let change = settings.changed[ changedControl ]?.[ bindingSetting ] || settings.changed[ changedControl ];
+			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, bindingSetting ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
@@ -1204,6 +1202,21 @@ BaseElementView = BaseContainer.extend( {
 		) );
 
 		return true;
+	},
+
+	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ];
+	},
+
+	getChangedDataForAddedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ];
+	},
+
+	getChangedData( settings, changedControlKey, bindingSetting ) {
+		const changedDataForRemovedItem = this.getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ),
+			changedDataForAddedItem = this.getChangedDataForAddedItem( settings, changedControlKey, bindingSetting );
+
+		return changedDataForAddedItem || changedDataForRemovedItem;
 	},
 } );
 
