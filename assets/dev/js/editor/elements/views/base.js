@@ -667,11 +667,30 @@ BaseElementView = BaseContainer.extend( {
 			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
 			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
-		if ( valueToParse ) {
+		if ( ! valueToParse ) {
+			return settings.attributes[ bindingSetting ]
+		}
+
+		// TODO: Remove this block in 3.25
+		if ( this.model?.config?.atomic_item_link ) {
 			return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 		}
 
-		return settings.attributes[ bindingSetting ];
+		// B.C for version 3.23
+		// TODO: Remove this block in 3.25
+		try {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		} catch {
+			await new Promise( ( resolve ) => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
+					resolve();
+				} );
+			} );
+
+			return ! _.isEmpty( elementor.dynamicTags.cache )
+				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+				: false;
+		}
 	},
 
 	findUniqueKey( obj1, obj2 ) {
@@ -760,7 +779,7 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
-				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+				changedControl = this.getChangedControl( settings );
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
@@ -1110,6 +1129,18 @@ BaseElementView = BaseContainer.extend( {
 				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
 				: false;
 		}
+	},
+
+	getChangedControl( settings ) {
+		let changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
+		if ( ! changedControlKey ) {
+			changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+				? Object.keys( settings.changed )[ 0 ]
+				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+		}
+
+		return changedControlKey;
 	}
 } );
 
