@@ -65,7 +65,7 @@ remove_action( 'admin_init', '_maybe_update_plugins' );
 // The following action activates all registered experiments in order for them to be able to be tested.
 add_action( 'elementor/experiments/feature-registered', function ( Experiments_Manager $experiments_manager, array $experimental_data ) {
 	$exclude = [
-		Editor::EDITOR_V2_EXPERIMENT_NAME, // For now the tests are not ready for the new editor.
+		Elementor\Modules\EditorAppBar\Module::EXPERIMENT_NAME, // For now the tests are not ready for the new editor.
 		Elementor\Modules\Home\Module::PAGE_ID,
 	];
 
