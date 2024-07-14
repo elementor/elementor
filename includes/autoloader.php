@@ -112,9 +112,6 @@ class Autoloader {
 	private static function init_classes_map() {
 		self::$classes_map = [
 			'Api' => 'includes/api.php',
-			'Atomic_Control' => 'includes/atomic-controls/atomic-control.php',
-			'Atomic_Section' => 'includes/atomic-controls/atomic-section.php',
-			'Atomic_Widget_Base' => 'includes/base/atomic-widget-base.php',
 			'Base_Control' => 'includes/controls/base.php',
 			'Base_Data_Control' => 'includes/controls/base-data.php',
 			'Base_UI_Control' => 'includes/controls/base-ui.php',
@@ -138,7 +135,6 @@ class Autoloader {
 			'Maintenance_Mode' => 'includes/maintenance-mode.php',
 			'Preview' => 'includes/preview.php',
 			'Rollback' => 'includes/rollback.php',
-      'Select_Control' => 'includes/atomic-controls/types/select-control.php',
 			'Settings' => 'includes/settings/settings.php',
 			'Settings_Controls' => 'includes/settings/controls.php',
 			'Settings_Validations' => 'includes/settings/validations.php',
@@ -154,7 +150,6 @@ class Autoloader {
 			'TemplateLibrary\Source_Base' => 'includes/template-library/sources/base.php',
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
 			'TemplateLibrary\Source_Remote' => 'includes/template-library/sources/remote.php',
-      'Text_Control' => 'includes/atomic-controls/types/text-control.php',
 			'Tools' => 'includes/settings/tools.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
