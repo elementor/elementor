@@ -26,11 +26,11 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
 
 	useEffect( () => {
-		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+		if ( ! isInitUsageDone && ! isLoadingUserInfo && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
 			updateUsagePercentage( initialUsagePercentage );
 			setIsInitUsageDone( true );
 		}
-	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+	}, [ isLoadingUserInfo, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	const generateExcerptOnce = useRef( false );
 	const [ isLoadingCombined, setIsLoadingCombined ] = useState( true );
