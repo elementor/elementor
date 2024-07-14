@@ -837,7 +837,7 @@ BaseElementView = BaseContainer.extend( {
 	 * @param {Object} settings
 	 * @param {Array}  widget
 	 */
-	renderOnChange( settings ) {
+	renderOnChange( settings, widget = [] ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
