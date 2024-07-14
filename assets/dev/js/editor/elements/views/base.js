@@ -669,13 +669,13 @@ BaseElementView = BaseContainer.extend( {
 			return settings.attributes[ changedControlKey ];
 		}
 
-		// TODO: Remove this condition in 3.25
+		// TODO: Remove this condition in 3.27
 		if ( this.model?.config?.atomic_item_link ) {
 			return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 		}
 
 		// B.C for version 3.23
-		// TODO: Remove this block in 3.25
+		// TODO: Remove this try catch block in 3.27
 		try {
 			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
 		} catch {
