@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Widgets;
 use Elementor\Modules\AtomicWidgets\AtomicControls\Atomic_Control;
 use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Utils;
 
@@ -40,22 +41,41 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Atomic_Control::bind_to( 'tag' )
 				->set_label( __( 'Tag', 'elementor' ) )
 				->set_type( Select_Control::KEY )
-				->set_props( Select_Control::make()
-					->set_options([
-						'h1' => 'H1',
-						'h2' => 'H2',
-						'h3' => 'H3',
-						'h4' => 'H4',
-						'h5' => 'H5',
-						'h6' => 'H6',
-					])
-					->get_props()
+				->set_props(
+					Select_Control::make()
+						->set_options( [
+							[
+								'value' => 'h1',
+								'label' => 'H1',
+							],
+							[
+								'value' => 'h2',
+								'label' => 'H2',
+							],
+							[
+								'value' => 'h3',
+								'label' => 'H3',
+							],
+							[
+								'value' => 'h4',
+								'label' => 'H4',
+							],
+							[
+								'value' => 'h5',
+								'label' => 'H5',
+							],
+							[
+								'value' => 'h6',
+								'label' => 'H6',
+							],
+						] )
+						->get_props()
 				),
 			Atomic_Control::bind_to( 'title' )
 				->set_label( __( 'Title', 'elementor' ) )
-				->set_type( Text_Control::KEY )
-				->set_props( Text_Control::make()
-					->set_placeholder( __( 'Enter your heading text', 'elementor' ) )
+				->set_type( Textarea_Control::KEY )
+				->set_props( Textarea_Control::make()
+					->set_placeholder( __( 'Enter your title', 'elementor' ) )
 					->get_props()
 				),
 		];

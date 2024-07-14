@@ -1,13 +1,12 @@
 <?php
-
-namespace Elementor;
+namespace Elementor\Modules\AtomicWidgets\AtomicControls\Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Text_Control {
-	const KEY = 'text';
+class Textarea_Control {
+	const KEY = 'textarea';
 	private string $placeholder = '';
 
 	public static function make(): self {

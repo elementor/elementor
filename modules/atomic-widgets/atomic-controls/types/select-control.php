@@ -1,6 +1,5 @@
 <?php
-
-namespace Elementor;
+namespace Elementor\Modules\AtomicWidgets\AtomicControls\Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
