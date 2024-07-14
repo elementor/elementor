@@ -100,11 +100,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 				this.addToHistory( container, newStyles, container.oldValues );
 			}
 
-			$e.internal( 'document/elements/set-styles', {
-				container,
-				options,
-				styles: newStyles,
-			} );
+			container.model.set( 'styles', styles );
 		} );
 	}
 }
