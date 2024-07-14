@@ -7,12 +7,9 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 *
 	 * Get sub title by container.
 	 *
-	 * @param {{}} args
-	 *
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		// TODO - temp title, need to decide on the proper data structure to pass
 		return 'Styles';
 	}
 
