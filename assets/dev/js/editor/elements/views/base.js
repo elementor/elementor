@@ -669,7 +669,7 @@ BaseElementView = BaseContainer.extend( {
 			return settings.attributes[ changedControlKey ];
 		}
 
-		// TODO: Remove this block in 3.25
+		// TODO: Remove this condition in 3.25
 		if ( this.model?.config?.atomic_item_link ) {
 			return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 		}
@@ -837,7 +837,7 @@ BaseElementView = BaseContainer.extend( {
 	 * @param {Object} settings
 	 * @param {Array}  widget
 	 */
-	renderOnChange( settings, widget = [] ) {
+	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
