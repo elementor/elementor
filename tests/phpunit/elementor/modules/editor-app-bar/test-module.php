@@ -20,6 +20,9 @@ class Test_Module extends Elementor_Test_Base {
 
 		remove_all_filters( 'elementor/editor/v2/packages' );
 		remove_all_filters( 'elementor/editor/v2/styles' );
+		remove_all_filters( 'elementor/editor/templates' );
+		remove_all_actions( 'elementor/editor/v2/scripts/enqueue' );
+		remove_all_actions( 'elementor/editor/v2/styles/enqueue' );
 	}
 
 	public function tear_down() {
@@ -92,5 +95,31 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertTrue( wp_script_is( 'elementor-responsive-bar') );
 		$this->assertTrue( wp_style_is( 'elementor-responsive-bar') );
+	}
+
+	public function test_it__removes_responsive_bar_template_when_experiment_on() {
+		// Arrange
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		// Act
+		new Module();
+
+		$templates = apply_filters( 'elementor/editor/templates', [ 'responsive-bar' ] );
+
+		// Assert
+		$this->assertEmpty( $templates );
+	}
+
+	public function test_it__doesnt_remove_responsive_bar_template_when_experiment_off() {
+		// Arrange
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+
+		// Act
+		new Module();
+
+		$templates = apply_filters( 'elementor/editor/templates', [ 'responsive-bar' ] );
+
+		// Assert
+		$this->assertEquals( [ 'responsive-bar' ], $templates );
 	}
 }

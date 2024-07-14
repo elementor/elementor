@@ -18,6 +18,7 @@ class Module extends BaseModule {
 	const PACKAGES = [
 		'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 		'editor-panels',
+		'editor-editing-panel',
 	];
 
 	public function get_name() {

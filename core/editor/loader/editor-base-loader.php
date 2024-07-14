@@ -279,6 +279,8 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'responsive-bar',
 		];
 
+		$templates = apply_filters( 'elementor/editor/templates', $templates );
+
 		foreach ( $templates as $template ) {
 			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/{$template}.php" );
 		}
