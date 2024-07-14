@@ -835,9 +835,9 @@ BaseElementView = BaseContainer.extend( {
 	 * Render the changes in the settings according to the current situation.
 	 *
 	 * @param {Object} settings
-	 * @param {Array}  widget
 	 */
-	renderOnChange( settings, widget = [] ) {
+	// eslint-disable-next-line no-unused-vars
+	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
 		}
