@@ -67,7 +67,6 @@ class Atomic_Control implements JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-
 		return [
 			'type' => 'control',
 			'value' => [
