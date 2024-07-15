@@ -122,6 +122,7 @@ class Modules_Manager {
 			'editor-events',
 			'atomic-widgets',
 			'editor-app-bar',
+			'floating-bars',
 		];
 	}
 
