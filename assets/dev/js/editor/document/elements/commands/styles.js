@@ -76,7 +76,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], styles = {}, options = {} } = args;
+		const { containers = [ args.container ], styles = {} } = args;
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
