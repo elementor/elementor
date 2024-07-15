@@ -5,6 +5,7 @@
         "lib": [
             "es2022"
         ],
+		"outDir": "dist",
         "module": "esnext",
         "target": "ESNext",
         "declaration": true,
