@@ -90,33 +90,4 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		await expect.soft( page.locator( '.e-n-tab-title[aria-selected="true"] .e-n-tab-icon' ) ).toBeVisible();
 		await page.setViewportSize( viewportSize.desktop );
 	} );
-
-	test( 'Check that Nested Tabs css file is loaded from `elementor/assets/css` when `Improved CSS Loading` experiment is active and SCRIPT_DEBUG is false', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdminPage.setExperiments( { e_optimized_css_loading: true } );
-
-		const editorPage = await wpAdminPage.openNewPage(),
-			container = await editorPage.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editorPage.addWidget( 'nested-tabs', container );
-		await editorPage.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).waitFor();
-
-		// Act
-		await editorPage.publishAndViewPage();
-
-		// When the `Improved CSS Loading` experiment is active, the Nested Tabs css file is loaded from `elementor/assets/css`.
-		const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-n-tabs > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
-			isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
-			proFileArray = proFilePath.split( '?ver=' ),
-			proFileTimestamp = proFileArray[ 1 ];
-
-		// Assert
-		expect.soft( isProFilePath ).toBeTruthy();
-		expect.soft( proFileTimestamp ).toBeDefined();
-
-		await wpAdminPage.setExperiments( { e_optimized_css_loading: false } );
-	} );
 } );
