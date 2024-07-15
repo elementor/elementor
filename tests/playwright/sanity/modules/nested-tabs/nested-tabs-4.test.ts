@@ -10,6 +10,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
+		await wpAdmin.setExperiments( {
+			editor_v2: 'inactive',
+		} );
 		await setup( wpAdmin );
 
 		await page.close();
