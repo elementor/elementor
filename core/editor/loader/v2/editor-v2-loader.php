@@ -3,10 +3,8 @@ namespace Elementor\Core\Editor\Loader\V2;
 
 use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
-use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
-use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,24 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_V2_Loader extends Editor_Base_Loader {
 	const APP_PACKAGE = 'editor';
 	const ENV_PACKAGE = 'env';
-
-	/**
-	 * Packages (extensions) that should be enqueued based on the active experiments.
-	 */
-	const PACKAGES_TO_ENQUEUE = [
-		Editor_V2_Experiments::APP_BAR => [
-			'editor-app-bar',
-			'editor-documents',
-			'editor-panels',
-			'editor-responsive',
-			'editor-site-navigation',
-		],
-		Editor_V2_Experiments::ATOMIC_WIDGETS => [
-			'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
-			'editor-editing-panel',
-			'editor-panels',
-		],
-	];
 
 	/**
 	 * Packages that should only be registered, unless some other asset depends on them.
@@ -49,21 +29,13 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	];
 
 	/**
-	 * Styles that should be enqueued based on the active experiments.
-	 */
-	const STYLES = [
-		Editor_V2_Experiments::APP_BAR => [
-			'editor-v2-app-bar-overrides',
-		],
-	];
-
-	/**
 	 * @return void
 	 */
 	public function init() {
 		$packages = array_merge( $this->get_packages_to_enqueue(), self::LIBS );
+		$packages_with_app = array_merge( $packages, [ self::APP_PACKAGE ] );
 
-		foreach ( $packages as $package ) {
+		foreach ( $packages_with_app as $package ) {
 			$this->assets_config_provider->load( $package );
 		}
 
@@ -122,6 +94,8 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function enqueue_scripts() {
 		do_action( 'elementor/editor/v2/scripts/enqueue/before' );
 
+		parent::enqueue_scripts();
+
 		wp_enqueue_script( 'elementor-editor-environment-v2' );
 
 		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
@@ -136,7 +110,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			);
 		}
 
-		foreach ( $this->assets_config_provider->only( $this->get_packages_to_enqueue() ) as $config ) {
+		$packages_with_app = array_merge( $this->get_packages_to_enqueue(), [ self::APP_PACKAGE ] );
+
+		foreach ( $this->assets_config_provider->only( $packages_with_app ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
 		}
 
@@ -198,25 +174,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
-	private function get_packages_to_enqueue() : array {
-		$experiments_manager = Plugin::$instance->experiments;
-
-		$packages = Collection::make( self::PACKAGES_TO_ENQUEUE )
-			->filter( fn ( $_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
-			->flatten()
-			->push( self::APP_PACKAGE )
-			->unique()
-			->all();
-
-		return apply_filters( 'elementor/editor/v2/packages', $packages );
+	public static function get_packages_to_enqueue() : array {
+		return apply_filters( 'elementor/editor/v2/packages', [] );
 	}
 
 	private function get_styles() : array {
-		$experiments_manager = Plugin::$instance->experiments;
+		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
 
-		return Collection::make( self::STYLES )
-			->filter( fn ( $_, $experiment) => $experiments_manager->is_feature_active( $experiment ) )
-			->flatten()
+		return Collection::make( $styles )
 			->unique()
 			->all();
 	}
