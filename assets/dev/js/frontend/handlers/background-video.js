@@ -168,19 +168,23 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			videoId: videoID,
 			events: {
 				onReady: () => {
+					console.log( 'on ready' );
 					this.player.mute();
 
 					this.changeVideoSize();
 
 					this.startVideoLoop( true );
 
+					console.log( 'playVideo' );
 					this.player.playVideo();
 				},
 				onStateChange: ( event ) => {
+					console.log( 'onStateChange', event );
+
 					switch ( event.data ) {
 						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
-// random.
+							// Random.
 							break;
 						case YT.PlayerState.ENDED:
 							if ( 'function' === typeof this.player.seekTo ) {
