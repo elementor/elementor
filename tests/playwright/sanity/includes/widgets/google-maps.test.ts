@@ -58,6 +58,11 @@ test( 'Check that Google Maps widget css file is loaded from `elementor/assets/c
 		proFileArray = proFilePath.split( '?ver=' ),
 		proFileTimestamp = proFileArray[ 1 ];
 
+	console.log( 'proFilePath:', proFilePath );
+	console.log( 'isProFilePath:', isProFilePath );
+	console.log( proFileArray[ 1 ] );
+	console.log( proFileArray[ 0 ] );
+
 	// Assert
 	expect.soft( isProFilePath ).toBeTruthy();
 	expect.soft( proFileTimestamp ).toBeDefined();
