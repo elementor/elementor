@@ -1,24 +1,23 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\AtomicControls;
+
+namespace Elementor\Modules\AtomicWidgets\Base;
 
 use JsonSerializable;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-class Atomic_Control implements JsonSerializable {
+abstract class Atomic_Control_Base implements JsonSerializable {
 	private string $bind;
 	private string $label = '';
 	private string $description = '';
-	private string $type;
-	private array $props = [];
 
-	public static function bind_to( string $prop_name ): self {
+	abstract public function get_type(): string;
+
+	abstract public function get_props(): array;
+
+	public static function bind_to( string $prop_name ) {
 		return new static( $prop_name );
 	}
 
-	private function __construct( string $prop_name ) {
+	protected function __construct( string $prop_name ) {
 		$this->bind = $prop_name;
 	}
 
@@ -34,18 +33,6 @@ class Atomic_Control implements JsonSerializable {
 		return $this;
 	}
 
-	public function set_type( string $type ): self {
-		$this->type = $type;
-
-		return $this;
-	}
-
-	public function set_props( array $props ): self {
-		$this->props = $props;
-
-		return $this;
-	}
-
 	public function get_bind(): string {
 		return $this->bind;
 	}
@@ -56,14 +43,6 @@ class Atomic_Control implements JsonSerializable {
 
 	public function get_description(): string {
 		return $this->description;
-	}
-
-	public function get_type(): string {
-		return $this->type;
-	}
-
-	public function get_props(): array {
-		return $this->props;
 	}
 
 	public function jsonSerialize(): array {

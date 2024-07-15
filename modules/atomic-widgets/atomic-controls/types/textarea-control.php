@@ -1,16 +1,17 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\AtomicControls\Types;
 
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Textarea_Control {
-	const KEY = 'textarea';
+class Textarea_Control extends Atomic_Control_Base {
 	private string $placeholder = '';
 
-	public static function make(): self {
-		return new static();
+	public function get_type(): string {
+		return 'textarea';
 	}
 
 	public function set_placeholder( string $placeholder ): self {

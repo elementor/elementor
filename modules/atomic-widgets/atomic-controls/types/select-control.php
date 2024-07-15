@@ -1,17 +1,18 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\AtomicControls\Types;
+
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Select_Control {
-	const KEY = 'select';
-
+class Select_Control extends Atomic_Control_Base {
 	private array $options = [];
 
-	public static function make(): self {
-		return new static();
+	public function get_type(): string {
+		return 'select';
 	}
 
 	public function set_options( array $options ): self {
