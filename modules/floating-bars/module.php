@@ -5,7 +5,6 @@ namespace Elementor\Modules\FloatingBars;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
-use Eunit\Mocks\Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -27,7 +26,7 @@ class Module extends BaseModule {
 		return [
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Floating Bars', 'elementor' ),
-			'description' => esc_html__( 'TODO - Add desc', 'elementor' ),
+			'description' => esc_html__( 'Boost visitor engagement with Floating Bars.', 'elementor' ),
 			Manager::TYPE_HIDDEN => true,
 			'release_status' => Manager::RELEASE_STATUS_DEV,
 			'default' => Manager::STATE_INACTIVE,
