@@ -27,7 +27,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **[Pixel-Perfect Design Tools](https://go.elementor.com/wp-repo-description-tab-pro-features-feature-page/)**: Upload SVGs, apply masks, gradients, box shadows, headline effects, shape dividers, and use built-in CSS controls for advanced customization.
 - **[Template Library](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/)**: Apply complete website kits for instant setups, or choose from a vast library of single pages, blocks, and pop-up templates. Create and export your own templates for reuse.
 - **[Advanced Widgets](https://go.elementor.com/feature-page-editor/)**: Access over 40 FREE widgets, including heading, image, text editor, video, button, gallery, carousels, and more. Customize and style widgets to fit your design needs perfectly.
-- **[AI Capabilities](https://go.elementor.com/elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
+- **[AI Capabilities](https://go.elementor.com/wp-repo-description-tab-elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
 
 = 🗝️ Key features: =
 - **[Design System](https://go.elementor.com/feature-page-global-settings/)**: Utilize Elementor's Design System to ensure consistency in colors, typography, and other design elements across your entire website, promoting a cohesive and professional look.
