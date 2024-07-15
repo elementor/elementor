@@ -516,17 +516,11 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 		},
 
 		appendEditorToProductHeader() {
-			console.log('aaaaa');
-			setTimeout(() => {
-				const editor = document.querySelector('#elementor-editor');
-				const productHeader = document.querySelector('.woocommerce-product-header__inner');
-
-				console.log('BBBB');
-				console.log(productHeader);
-				console.log(editor);
-				console.log('CCCC');
-				productHeader.append(editor);
-			}, 1000);
+			setTimeout( () => {
+				const editor = document.querySelector( '#elementor-edit-button-new-editor' );
+				const productHeader = document.querySelector( '.woocommerce-product-header__inner' );
+				productHeader.firstChild.append( editor );
+			}, 1000 );
 		},
 
 		roleManager: {

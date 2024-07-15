@@ -247,26 +247,22 @@ class Admin extends App {
 		<?php
 	}
 	
-	public function print_switch_mode_button_new_editor( $post ) {
-		$document = Plugin::$instance->documents->get( '1538' );
+	public function print_switch_mode_button_new_editor() {
+		parse_str($_SERVER['QUERY_STRING'], $query_vars);
+		$path = isset($query_vars['path']) ? $query_vars['path'] : '';
+		$path = urldecode($path);
+		$path_parts = explode('/', $path);
+		$post_id = end($path_parts);
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document || ! $document->is_editable_by_current_user() ) {
+			return;
+		}
 
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
+
 		?>
-		<header>
-			<div id="elementor-switch-mode"></div>
-				<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
-				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
-					<span class="elementor-switch-mode-on">
-						<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
-						<?php echo esc_html__( 'Back to WordPress Editor', 'elementor' ); ?>
-					</span>
-					<span class="elementor-switch-mode-off">
-						<i class="eicon-elementor-square" aria-hidden="true"></i>
-						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
-					</span>
-				</button>
-			</div>
-		<div id="elementor-editor">
+		<div id="elementor-edit-button-new-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
