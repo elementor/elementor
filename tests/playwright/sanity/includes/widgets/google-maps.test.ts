@@ -52,7 +52,7 @@ test( 'Check that Google Maps widget css file is loaded from `elementor/assets/c
 	// Act
 	await editorPage.publishAndViewPage();
 
-	// When the `Improved CSS Loading` experiment is active, the Nested Tabs css file is loaded from `elementor/assets/css`.
+	// When the `Improved CSS Loading` experiment is active, the Google Maps css file is loaded from `elementor/assets/css`.
 	const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-google_maps > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
 		isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
 		proFileArray = proFilePath.split( '?ver=' ),
