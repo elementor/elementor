@@ -188,7 +188,7 @@ class Module extends BaseModule {
 			}
 		}
 
-		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
+		$session_id = 'wp-media-lib-session-' . Utils::generate_random_string();
 
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
