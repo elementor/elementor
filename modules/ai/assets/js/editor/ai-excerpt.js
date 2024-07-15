@@ -18,7 +18,7 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 		credits,
 		usagePercentage: initialUsagePercentage,
 	} = useUserInfo( true );
-	const { data: newExcerpt, isLoading: isLoadingExcerpt, error, send } = useExcerptPrompt( {
+	const { data: newExcerpt, error, send } = useExcerptPrompt( {
 		result: currExcerpt,
 		credits,
 	} );
@@ -26,16 +26,16 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
 
 	useEffect( () => {
-		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+		if ( ! isInitUsageDone && ! isLoadingUserInfo && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
 			updateUsagePercentage( initialUsagePercentage );
 			setIsInitUsageDone( true );
 		}
-	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+	}, [ isLoadingUserInfo, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	const generateExcerptOnce = useRef( false );
-	const isLoading = isLoadingExcerpt || isLoadingUserInfo || ! isInitUsageDone;
+	const [ isLoadingCombined, setIsLoadingCombined ] = useState( true );
 	const initHook = () => ( {
-		isLoading,
+		isLoading: isLoadingCombined,
 		isConnected,
 		isGetStarted,
 		connectUrl,
@@ -47,14 +47,21 @@ const AIExcerpt = ( { onClose, currExcerpt, updateExcerpt, postTextualContent } 
 	const fetchAiExcerpt = useCallback( async () => {
 		if ( send && postTextualContent ) {
 			generateExcerptOnce.current = true;
-			await send( { content: postTextualContent } );
+			await send( { content: postTextualContent } ).finally( () => {
+				setIsLoadingCombined( false );
+			} );
 		}
 	}, [ postTextualContent, send ] );
 	useEffect( () => {
-		if ( ! generateExcerptOnce.current && isConnected && ! newExcerpt?.result ) {
+		if ( ! generateExcerptOnce.current && isConnected && isGetStarted ) {
 			fetchAiExcerpt();
 		}
-	}, [ fetchAiExcerpt, isConnected, newExcerpt ] );
+	}, [ fetchAiExcerpt, isConnected, isGetStarted ] );
+	useEffect( () => {
+		if ( ! isLoadingUserInfo && ( ! isConnected || ! isGetStarted ) ) {
+			setIsLoadingCombined( false );
+		}
+	}, [ isConnected, isGetStarted, isLoadingUserInfo ] );
 	const isRTL = elementorCommon.config.isRTL;
 
 	return (

@@ -1,9 +1,11 @@
+@import "../helpers/mixins";
+
 #wp-admin-bar-elementor_edit_page {
 
 	> .ab-item::before {
 		content: "\e813";
 		font-family: eicons;
-		top: 3px;
+		inset-block-start: 3px;
 		font-size: 18px;
 	}
 
@@ -20,10 +22,10 @@
 	}
 
 	.elementor-edit-link-type {
-		background: $gray-dark;
+		background: #3f444b;
 		font-size: 11px;
 		line-height: 9px;
-		margin-top: 6px;
+		margin-block-start: 6px;
 		padding: 4px 8px;
 		border-radius: 3px;
 	}
@@ -31,7 +33,7 @@
 
 #wp-admin-bar-elementor_inspector > .ab-item::before {
 	content: "\f348";
-	top: 2px;
+	inset-block-start: 2px;
 }
 
 //Reset WP Admin for Theme Style support

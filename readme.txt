@@ -37,6 +37,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **Entrance Animations**: Add entrance animations to elements to create engaging and interactive user experiences.
 - **[Revision History](https://elementor.com/features/#SaveBackup)**: Elementor's Revision History feature enables users to track and revert to previous versions of their designs, providing peace of mind and flexibility during the creative process.
 - **[Developer-Friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Equipped with extensive documentation, API, developer tools, and custom code areas at the widget and page level, Elementor offers a conducive environment for developers to extend its capabilities and create custom solutions.
+- **Floating Buttons**: Enhance user interaction with customizable, floating action buttons that stay in view as users scroll.
 - **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Elementor's robust Theme Builder empowers you to design every part of your website, including headers, footers, single post layouts, and archive pages, providing complete control over the site's appearance.
 - **[Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/) [Pro]**: Create eye-catching popups with Elementor's Popup Builder, equipped with advanced targeting and triggering options to optimize user engagement and conversions.
 - **[Forms](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/) [Pro]**: Design and integrate custom forms, utilizing advanced features and integrations to capture and manage submissions effectively.
@@ -56,6 +57,7 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 - **Text Editor**. Just like the WordPress editor.
 - **Video**. Add YouTube, Vimeo, Dailymotion or self-hosted videos.
 - **Button**. Create interactive buttons.
+- **Link in Bio**. Build link in bio components to promote your business / services.
 - **Image Box**. A box with image, headline and text.
 - **Testimonials**. Customer testimonials.
 - **Icon**. Place one or more of 600+ icons available.
@@ -325,48 +327,27 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.22.3 - 2024-06-26 =
+= 3.23.0 - 2024-07-15 =
 
-* Fix: PHP error appears on the front when using gradient background with the Optimized Control Loading feature activated ([#27733](https://github.com/elementor/elementor/issues/27733))
-
-= 3.22.2 - 2024-06-24 =
-
-* Security Fix: Improved code security enforcement in Shape Divider
-* Fix: Refresh the media library after inserting an AI edited image
-
-= 3.22.1 - 2024-06-17 =
-
-* Fix: Editor not loading due to compatibility issue between Elementor AI and third-party plugins
-
-= 3.22.0 - 2024-06-16 =
-
-* New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
-* New: Introducing the Performance Tab - Centralizing all stable performance features in one accessible location ([#21194](https://github.com/elementor/elementor/issues/21194))
-* New: Generate post excerpts with AI for concise summaries
-* New: Generate and edit images with AI from WordPress media library
-* Tweak: Updated Google Fonts list with 170+ new fonts ([#25095](https://github.com/elementor/elementor/issues/25095))
-* Tweak: Improved Elementor translation functionality with `just-in-time` translation loading (props [@swissspidy](https://github.com/swissspidy), [#27199](https://github.com/elementor/elementor/issues/27199))
-* Tweak: Added View Page link to the Editor Top Bar ([#21925](https://github.com/elementor/elementor/issues/21925))
-* Tweak: Replaced `waypoints.js` library with the native Intersection Observer API
-* Tweak: Changed child containers' Content Width to Full Width as default
-* Tweak: Reorganized User Preferences panel for improved user experience
-* Tweak: Hide icon position & spacing controls if there is an icon but no text in Button widget
-* Tweak: Extended Alignment and Position capabilities in Button widget
-* Tweak: Implemented CSS logical properties to Icon Spacing control in Button widget
-* Tweak: Implemented CSS logical properties to Icon Position control in Button widget
-* Tweak: Promoted Grid Container feature to Stable status
-* Tweak: Activated Optimized Control Loading by default for new sites
-* Tweak: Changed Generative Fill AI image feature to use Clipdrop text-inpainting
-* Tweak: Added functionality to delay the running of the ready triggers on inner elements
-* Tweak: Deactivated Landing Page feature for new sites
-* Fix: "Exit to" functionality is not working with the Editor Top Bar ([#22828](https://github.com/elementor/elementor/issues/22828))
-* Fix: Row-reversed direction is not working on mobile portrait breakpoint in Container ([#23710](https://github.com/elementor/elementor/issues/23710))
-* Fix: The What's' New string in the Editor is not translatable (props [@DAnn2012](https://github.com/DAnn2012))
-* Fix: Fatal error appears when updating a page with Tabs widget
-* Fix: Transparency indicator not visible in UI Light theme for Color Picker
-* Fix: AI Expand Images not working on local and protected websites
-* Fix: `all: unset` assigned to buttons cause focus issues
-* Fix: Links to Elementor Settings are broken in various locations
-* Fix: `RunReadyTrigger` returning incorrectly in various scenarios
+* New: Elevate engagement with Floating Buttons - Convert visitors into leads, making it easier than ever to start a conversation on any platform
+* New: Introducing Link In Bio - allowing you to create a digital business card and share it easily
+* New: Generate Featured Image with AI
+* New: Generate texts using AI within WordPress
+* Tweak: Added support for the `overscroll-behavior` CSS property to improve scrolling experience
+* Tweak: Activated Editor Top Bar feature by default for new sites
+* Tweak: Activated Element Caching feature for new sites and promoted to Beta status
+* Tweak: Promotes "Lazy Load Backgrounds Images" feature to Stable status
+* Tweak: Hide "Default Device View" from User Preferences when the Editor Top Bar is active
+* Tweak: Increased the height of the Globals popover to improve usability
+* Tweak: Improved Image style presets and added two additional ones in AI Images
+* Tweak: Added Excerpt generation option with AI in the editor
+* Fix: Performance issues causing lag and slowness while editing Nested Elements ([#24076](https://github.com/elementor/elementor/issues/24076))
+* Fix: Video autoplay issues in various scenarios (props [@JxxIT](https://github.com/JxxIT), [#24324](https://github.com/elementor/elementor/issues/24324), [#14437](https://github.com/elementor/elementor/issues/14437), [#7964](https://github.com/elementor/elementor/issues/7964))
+* Fix: Writing permissions issues related to WordPress root directory ([#21036](https://github.com/elementor/elementor/issues/21036), [#17255](https://github.com/elementor/elementor/issues/17255))
+* Fix: Restored deprecated Google fonts that were deprecated in the previous update ([#27701](https://github.com/elementor/elementor/issues/27701))
+* Fix: Vimeo link structure with privacy hash is not working correctly with dynamic link action using the lightbox
+* Fix: Validate prompt and canvas changes to allow generation in AI image edit generative fill
+* Fix: Elementor Core versions are being incorrectly added to Elementor Pro versions' history
+* Fix: AI Connect not launching when the user doesn't have prior connect data
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

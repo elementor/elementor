@@ -57,6 +57,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
+	pointer-events: none;
 	position: fixed;
 	width: var(--e-contact-buttons-chat-box-width);
 	z-index: $super-layer;
@@ -87,6 +88,7 @@
 	}
 
 	&.has-h-alignment-end {
+		align-items: flex-end;
 		justify-content: flex-end;
 		inset-inline-end: var(--e-contact-buttons-horizontal-offset);
 
@@ -401,8 +403,15 @@
 		}
 	}
 
+	&__content-wrapper,
+	&__chat-button-container,
+	&__contact-icon-link {
+		pointer-events: auto;
+	}
+
 	&__chat-button-container {
 		display: flex;
+		max-width: max-content;
 
 		@media (max-width: $screen-mobile-max) {
 			position: relative;
@@ -456,6 +465,10 @@
 				height: var(--e-contact-buttons-svg-size-small);
 				width: var(--e-contact-buttons-svg-size-small);
 			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-small);
+			}
 		}
 
 		&.has-size-medium {
@@ -466,6 +479,10 @@
 				height: var(--e-contact-buttons-svg-size-medium);
 				width: var(--e-contact-buttons-svg-size-medium);
 			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-medium);
+			}
 		}
 
 		&.has-size-large {
@@ -475,6 +492,10 @@
 			svg {
 				height: var(--e-contact-buttons-svg-size-large);
 				width: var(--e-contact-buttons-svg-size-large);
+			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-large);
 			}
 		}
 

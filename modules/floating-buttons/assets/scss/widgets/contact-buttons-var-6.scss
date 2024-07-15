@@ -62,19 +62,41 @@
 				}
 			}
 
-			&.has-size-small svg {
-				height: var(--e-contact-buttons-icon-size-small);
-				width: var(--e-contact-buttons-icon-size-small);
+			&.has-size-small {
+
+				svg {
+					height: var(--e-contact-buttons-icon-size-small);
+					width: var(--e-contact-buttons-icon-size-small);
+				}
+
+				i {
+					font-size: var(--e-contact-buttons-icon-size-small);
+				}
 			}
 
-			&.has-size-medium svg {
-				height: var(--e-contact-buttons-icon-size-medium);
-				width: var(--e-contact-buttons-icon-size-medium);
+			&.has-size-medium {
+
+				svg {
+					height: var(--e-contact-buttons-icon-size-medium);
+					width: var(--e-contact-buttons-icon-size-medium);
+				}
+
+				i {
+					font-size: var(--e-contact-buttons-icon-size-medium);
+				}
 			}
 
-			&.has-size-large svg {
-				height: var(--e-contact-buttons-icon-size-large);
-				width: var(--e-contact-buttons-icon-size-large);
+			&.has-size-large {
+
+				svg {
+					height: var(--e-contact-buttons-icon-size-large);
+					width: var(--e-contact-buttons-icon-size-large);
+				}
+
+				i {
+					font-size: var(--e-contact-buttons-icon-size-large);
+				}
+
 			}
 		}
 	}
