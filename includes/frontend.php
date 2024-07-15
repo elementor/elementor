@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\FloatingButtons\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -393,16 +394,6 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
-			'elementor-waypoints',
-			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
-			[
-				'jquery',
-			],
-			'4.0.2',
-			true
-		);
-
-		wp_register_script(
 			'flatpickr',
 			$this->get_js_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[
@@ -467,7 +458,6 @@ class Frontend extends App {
 			$this->get_js_assets_url( 'frontend' ),
 			[
 				'elementor-frontend-modules',
-				'elementor-waypoints',
 				'jquery-ui-position',
 			],
 			ELEMENTOR_VERSION,
@@ -556,6 +546,13 @@ class Frontend extends App {
 			$this->e_swiper_version
 		);
 
+		wp_register_style(
+			'elementor-wp-admin-bar',
+			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		/**
 		 * After frontend register styles.
 		 *
@@ -633,6 +630,10 @@ class Frontend extends App {
 			wp_enqueue_style( 'elementor-frontend' );
 
 			wp_enqueue_style( 'swiper' );
+
+			if ( is_admin_bar_showing() ) {
+				wp_enqueue_style( 'elementor-wp-admin-bar' );
+			}
 
 			/**
 			 * After frontend styles enqueued.
@@ -1389,6 +1390,10 @@ class Frontend extends App {
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
 				'assets' => $assets_url,
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			],
+			'nonces' => [
+				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
 			],
 			'swiperClass' => 'swiper',
 		];

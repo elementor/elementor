@@ -5,8 +5,8 @@ const EditorSelectors = {
 	container: '[data-element_type="container"]',
 	item: '.elementor-repeater-row-item-title',
 	plusIcon: '.eicon-plus-circle',
-	siteTitle: 'h1.site-title',
-	pageTitle: 'h1.entry-title',
+	siteTitle: '.site-title >> nth=0',
+	pageTitle: '.entry-title >> nth=0',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -25,11 +25,9 @@ const EditorSelectors = {
 		},
 		siteSettings: {
 			wrapper: '#elementor-panel-page-menu',
-			menuPanelItem: '.elementor-panel-menu-item-global-settings',
 		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
-			menuPanelItem: '.elementor-panel-menu-item-editor-preferences',
 		},
 		navigator: {
 			wrapper: '#elementor-navigator',

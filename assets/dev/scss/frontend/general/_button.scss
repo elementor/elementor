@@ -69,18 +69,6 @@
 		}
 	}
 
-	// TODO: Delete in Elementor 3.24 when all buttons migrated from `order` to `flex-direction`.
-	// For now, it's here for BC, for sites that upgrade Elementor, but not Elementor Pro.
-	.elementor-align-icon- {
-		&right {
-			order: getValueByDirection( 15, 5 );
-		}
-
-		&left {
-			order: getValueByDirection( 5, 15 );
-		}
-	}
-
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
 	}

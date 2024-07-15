@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import ButtonWidget from '../pages/widgets/button_widget';
@@ -6,9 +7,9 @@ import _path from 'path';
 
 const defaultBtnName = 'Click here';
 
-test( 'Button widget sanity test', async ( { page }, testInfo ) => {
+test( 'Button widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
 	// Act.
@@ -20,9 +21,9 @@ test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	expect( await button.innerText() ).toBe( 'Click here' );
 } );
 
-test( 'Button controls should return to default', async ( { page }, testInfo ) => {
+test( 'Button controls should return to default', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'button' );
@@ -47,9 +48,9 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 	await expect( widget ).not.toHaveClass( alignCenterClassRegex );
 } );
 
-test( 'Verify button Id control', async ( { page }, testInfo ) => {
+test( 'Verify button Id control', async ( { page, apiRequests }, testInfo ) => {
 	const buttonId = 'mySuperId';
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const buttonWidget = new ButtonWidget( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
 	await buttonWidget.addWidget( defaultBtnName );
@@ -58,26 +59,23 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );
 
-test( 'Verify Button Promotions', async ( { page }, testInfo ) => {
+test( 'Verify Button Promotions', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.openNewPage();
-	const buttonWidget = new ButtonWidget( page, testInfo );
-	await buttonWidget.addWidget( defaultBtnName );
-	const promoArea = page.locator( '.elementor-nerd-box--upsale' );
-
-	// Act.
-	await promoArea.scrollIntoViewIfNeeded();
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	const editor = await wpAdmin.openNewPage();
+	await editor.addWidget( 'button' );
+	await editor.closeSection( 'section_button' );
+	const promotion = page.locator( '.elementor-nerd-box--upsale' );
 
 	// Assert
-	expect.soft( await promoArea.screenshot( {
+	expect.soft( await promotion.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( 'button-widget-sidebar-promotion.png' );
 } );
 
-test( 'Verify Button with Icon styling', async ( { page }, testInfo ) => {
+test( 'Verify Button with Icon styling', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
 	const filePath = _path.resolve( __dirname, `./templates/button-icon-styling.json` );

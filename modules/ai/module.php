@@ -49,6 +49,7 @@ class Module extends BaseModule {
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
 				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
+				'ai_get_featured_image' => [ $this, 'ajax_ai_get_featured_image' ],
 				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
 				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
 				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
@@ -103,7 +104,9 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+		if ( is_admin() ) {
+			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+		}
 
 		add_action( 'enqueue_block_editor_assets', function() {
 			wp_enqueue_script( 'elementor-ai-gutenberg',
@@ -112,10 +115,14 @@ class Module extends BaseModule {
 					'jquery',
 					'elementor-v2-ui',
 					'elementor-v2-icons',
+					'wp-blocks',
+					'wp-element',
+					'wp-editor',
+					'wp-data',
 				],
 			ELEMENTOR_VERSION, true );
 
-			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+			$session_id = 'wp-gutenberg-session-' . Utils::generate_random_string();
 
 			$config = [
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
@@ -175,7 +182,13 @@ class Module extends BaseModule {
 			true
 		);
 
-		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
+		if ( function_exists( 'get_current_screen' ) ) {
+			if ( get_current_screen()->is_block_editor ) {
+				return;
+			}
+		}
+
+		$session_id = 'wp-media-lib-session-' . Utils::generate_random_string();
 
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
@@ -438,6 +451,33 @@ class Module extends BaseModule {
 
 		return [
 			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_featured_image( $data ): array {
+		$this->verify_upload_permissions( $data );
+
+		if ( empty( $data['payload']['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_featured_image( $data, $context, $request_ids );
+
+		$this->throw_on_error( $result );
+
+		return [
+			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 		];

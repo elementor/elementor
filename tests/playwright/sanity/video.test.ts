@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';
 import EditorPage from '../pages/editor-page';
@@ -7,54 +8,54 @@ import VideoWidget from '../pages/widgets/video';
 import videos from '../testData/video.json';
 
 test.describe( 'Video tests inside a container @video', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: true,
 		} );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
 	} );
 
-	test( 'Verify Video Promotions', async ( { browser }, testInfo ) => {
+	test( 'Verify Video Promotions', async ( { browser, apiRequests }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promoArea = page.locator( '.elementor-nerd-box--upsale' );
+		const promotion = page.locator( '.elementor-nerd-box--upsale' );
 
 		// Act.
 		await editor.selectElement( videoId );
-		await promoArea.scrollIntoViewIfNeeded();
+		await editor.closeSection( 'section_video' );
 
 		// Assert
-		expect.soft( await promoArea.screenshot( {
+		expect.soft( await promotion.screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'video-widget-sidebar-promotion.png' );
 	} );
 
-	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
+	test( 'Verify that there is no gap between the video widget and the container', async ( { browser, apiRequests }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
@@ -77,9 +78,9 @@ test.describe( 'Video tests inside a container @video', () => {
 	} );
 
 	for ( const video in videos ) {
-		test( `${ video } controls and link test`, async ( { page }, testInfo ) => {
+		test( `${ video } controls and link test`, async ( { page, apiRequests }, testInfo ) => {
 			const player = videos[ video ];
-			const wpAdmin = new WpAdminPage( page, testInfo );
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const videoWidget = new VideoWidget( page, testInfo );
 			const startTime = '10';
@@ -88,12 +89,12 @@ test.describe( 'Video tests inside a container @video', () => {
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 			await editor.addWidget( 'video' );
-			await videoWidget.selectVideoSource( video );
+			await editor.setSelectControlValue( 'video_type', video );
 
-			await videoWidget.setTime( 'Start', startTime );
+			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
-				await videoWidget.setTime( 'End', endTime );
-				await videoWidget.selectSuggestedVideos( 'Any Video' );
+				await editor.setNumberControlValue( 'end', endTime );
+				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 
 			const controls = player.controls.map( ( control ) => {
@@ -110,8 +111,8 @@ test.describe( 'Video tests inside a container @video', () => {
 		} );
 	}
 
-	test( 'Choose image test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Choose image test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const videoWidget = new VideoWidget( page, testInfo );
 		const imageTitle = 'About-Pic-3-1';
@@ -119,8 +120,8 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
-		await videoWidget.chooseImage( `${ imageTitle }.png` );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
 		await videoWidget.selectImageSize(
 			{
@@ -142,8 +143,8 @@ test.describe( 'Video tests inside a container @video', () => {
 			isVideo: true } );
 	} );
 
-	test( 'Lightbox video test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Lightbox video test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const videoWidget = new VideoWidget( page, testInfo );
 
@@ -151,9 +152,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
-		await videoWidget.chooseImage( 'About-Pic-3-1.png' );
-		await videoWidget.toggleControls( [ EditorSelectors.video.lightBoxControlInp ] );
+		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.setMediaControlImageValue( 'image_overlay', 'About-Pic-3-1.png' );
+		await editor.setSwitcherControlValue( 'lightbox', true );
 		await videoWidget.verifyVideoLightBox( false );
 		await editor.publishAndViewPage();
 		await videoWidget.verifyVideoLightBox( true );
@@ -161,29 +162,19 @@ test.describe( 'Video tests inside a container @video', () => {
 } );
 
 test.describe( 'Video tests inside a section', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
-	} );
-
-	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
+	test( 'Verify that there is no gap between the video widget and the section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
 			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),

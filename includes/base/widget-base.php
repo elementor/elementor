@@ -1082,12 +1082,14 @@ abstract class Widget_Base extends Element_Base {
 		// The local path of the widget's CSS file that is being read and saved in the DB when the CSS content should be printed inline.
 		$file_path = Plugin::$instance->frontend->get_frontend_file_path( $file_name, $has_custom_breakpoints );
 
+		$file_timestamp = file_exists( $file_path ) ? filemtime( $file_path ) : ELEMENTOR_VERSION;
+
 		return [
 			'key' => $widget_name,
 			'version' => ELEMENTOR_VERSION,
 			'file_path' => $file_path,
 			'data' => [
-				'file_url' => $file_url,
+				'file_url' => $file_url . '?ver=' . $file_timestamp,
 			],
 		];
 	}

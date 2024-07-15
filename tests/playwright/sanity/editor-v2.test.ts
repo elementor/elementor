@@ -1,25 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Editor v2', () => {
+test.describe( 'Editor top bar', () => {
 	let editor;
 	let wpAdmin;
 	let context;
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 
 		const page = await context.newPage();
 
-		wpAdmin = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.setExperiments( { editor_v2: true } );
+		await wpAdmin.resetExperiments();
 
 		editor = await wpAdmin.openNewPage();
-	} );
-
-	test.afterAll( async () => {
-		await wpAdmin.setExperiments( { editor_v2: false } );
 	} );
 
 	test( 'check that app-bar exists', async () => {
