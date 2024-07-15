@@ -1,14 +1,9 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Loader;
 
-use Elementor\Core\Editor\Editor;
-use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
 use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
 use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Utils\Collection;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,58 +11,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Editor_Loader_Factory extends Elementor_Test_Base {
-	private $original_experiments_states;
+	public function set_up() {
+		parent::set_up();
 
-	public function setUp(): void {
-		parent::setUp();
-
-		$experiments = Plugin::$instance->experiments;
-
-		$this->original_experiments_states = Collection::make( Editor_V2_Experiments::all() )
-			->map_with_keys( fn ( $name ) => [ $name => $experiments->get_features( $name )['default'] ] )
-			->each( fn ( $state, $name ) => $experiments->set_feature_default_state( $name, Experiments_Manager::STATE_INACTIVE ) );
+		remove_all_filters( 'elementor/editor/v2/packages' );
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-
-		$experiments = Plugin::$instance->experiments;
-
-		$this->original_experiments_states
-			->each( fn ( $state, $name ) => $experiments->set_feature_default_state( $name, $state ) );
-	}
-
-	/**
-	 * @dataProvider create_data_provider
-	 */
-	public function test_create( $experiment, $state, $expected_class ) {
+	public function test_create__returns_an_instance_of_v2_loader_when_packages_are_enqueued() {
 		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state( $experiment, $state );
+		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
+			$packages_to_enqueue = [
+				'package1',
+				'package2',
+			];
+
+			return array_merge( $packages, $packages_to_enqueue );
+		} );
 
 		// Act
 		$loader = Editor_Loader_Factory::create();
 
 		// Assert
-		$this->assertInstanceOf( $expected_class, $loader );
+		$this->assertInstanceOf( Editor_V2_Loader::class, $loader );
 	}
 
-	public function create_data_provider() {
-		$cases = [];
+public function test_create__returns_an_instance_of_v1_loader_when_no_packages_are_enqueued() {
+		// Arrange
+		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
+			return [];
+		} );
 
-		foreach ( Editor_V2_Experiments::all() as $experiment ) {
-			$cases["{$experiment} inactive"] = [
-				$experiment,
-				Experiments_Manager::STATE_INACTIVE,
-				Editor_V1_Loader::class,
-			];
+		// Act
+		$loader = Editor_Loader_Factory::create();
 
-			$cases["{$experiment} active"] = [
-				$experiment,
-				Experiments_Manager::STATE_ACTIVE,
-				Editor_V2_Loader::class,
-			];
-		}
-
-		return $cases;
+		// Assert
+		$this->assertInstanceOf( Editor_V1_Loader::class, $loader );
 	}
 }

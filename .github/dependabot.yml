@@ -9,7 +9,7 @@ updates:
       - dependency-name: "@elementor/*"
         dependency-type: "production"
     reviewers:
-      - "elementor/editor-core-team"
+      - "elementor/editor-core"
     commit-message:
       prefix: "Internal: "
     labels:
