@@ -10,9 +10,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( {
-			editor_v2: 'inactive',
-		} );
 		await setup( wpAdmin );
 
 		await page.close();
@@ -53,6 +50,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			editor_v2: false,
+		} );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -64,7 +64,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			contentContainerTwoId = await contentContainerTwo.getAttribute( 'data-id' ),
 			contentContainerThree = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=2` ),
 			contentContainerThreeId = await contentContainerThree.getAttribute( 'data-id' ),
-			videoUrl = 'https://youtu.be/XNoaN8qu4fg',
+			videoUrl = 'https://www.youtube.com/watch?v=XNoaN8qu4fg',
 			videoContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId + ' .elementor-background-video-container iframe' ),
 			firstTabContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
