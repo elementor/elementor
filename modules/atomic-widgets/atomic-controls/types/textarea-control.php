@@ -8,25 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Textarea_Control extends Atomic_Control_Base {
-	private string $placeholder = '';
+	private array $props = [];
 
 	public function get_type(): string {
 		return 'textarea';
 	}
 
 	public function set_placeholder( string $placeholder ): self {
-		$this->placeholder = $placeholder;
+		$this->props['placeholder'] = $placeholder;
 
 		return $this;
 	}
 
-	public function get_placeholder(): string {
-		return $this->placeholder;
-	}
-
 	public function get_props(): array {
-		return [
-			'placeholder' => $this->get_placeholder(),
-		];
+		return $this->props;
 	}
 }
