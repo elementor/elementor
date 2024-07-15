@@ -180,7 +180,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 					switch ( event.data ) {
 						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
-
+// random.
 							break;
 						case YT.PlayerState.ENDED:
 							if ( 'function' === typeof this.player.seekTo ) {
