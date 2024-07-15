@@ -246,6 +246,47 @@ class Admin extends App {
 		</div>
 		<?php
 	}
+	
+	public function print_switch_mode_button_new_editor( $post ) {
+		$document = Plugin::$instance->documents->get( '1538' );
+
+		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
+		?>
+		<header>
+			<div id="elementor-switch-mode"></div>
+				<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
+				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
+					<span class="elementor-switch-mode-on">
+						<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
+						<?php echo esc_html__( 'Back to WordPress Editor', 'elementor' ); ?>
+					</span>
+					<span class="elementor-switch-mode-off">
+						<i class="eicon-elementor-square" aria-hidden="true"></i>
+						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
+					</span>
+				</button>
+			</div>
+		<div id="elementor-editor">
+			<a id="elementor-go-to-edit-page-link" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
+				<div id="elementor-editor-button" class="button button-primary button-hero">
+					<i class="eicon-elementor-square" aria-hidden="true"></i>
+					<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
+				</div>
+				<div class="elementor-loader-wrapper">
+					<div class="elementor-loader">
+						<div class="elementor-loader-boxes">
+							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-box"></div>
+							<div class="elementor-loader-box"></div>
+						</div>
+					</div>
+					<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
+				</div>
+			</a>
+		</div>
+		<?php
+	}
 
 	/**
 	 * Save post.
@@ -850,12 +891,15 @@ class Admin extends App {
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
-		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] ); 
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
+
+		add_action( 'rest_api_init', [ $this, 'print_switch_mode_button_new_editor' ] );
+
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
 		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );

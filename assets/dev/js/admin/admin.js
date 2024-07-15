@@ -334,6 +334,8 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 			this.addUserAgentClasses();
 
+			this.appendEditorToProductHeader();
+
 			this.roleManager.init();
 
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -511,6 +513,20 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 		translate( stringKey, templateArgs ) {
 			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
+		},
+
+		appendEditorToProductHeader() {
+			console.log('aaaaa');
+			setTimeout(() => {
+				const editor = document.querySelector('#elementor-editor');
+				const productHeader = document.querySelector('.woocommerce-product-header__inner');
+
+				console.log('BBBB');
+				console.log(productHeader);
+				console.log(editor);
+				console.log('CCCC');
+				productHeader.append(editor);
+			}, 1000);
 		},
 
 		roleManager: {
