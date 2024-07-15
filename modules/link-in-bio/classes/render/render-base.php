@@ -165,30 +165,21 @@ abstract class Render_Base {
 					$url_attrs['download'] = 'download';
 				}
 
-				if ( $cta['cta_link_url'] ) {
-					$url_combined_attrs = $this->get_link_attributes(
-						$cta['cta_link_url'],
-						$url_attrs
-					);
+				$cta_url = $cta['cta_link_url'];
 
-					foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-						$this->widget->add_render_attribute( 'cta-' . $key, [
-							$attr_key => $attr_value,
-						] );
-					}
+				if ( Social_Network_Provider::WAZE == $cta['cta_link_type'] ) {
+					$cta_url = $cta['cta_link_location'];
 				}
 
-				if ( $cta['cta_link_location'] ) {
-					$waze_combined_attrs = $this->get_link_attributes(
-						$cta['cta_link_location'],
-						$url_attrs
-					);
+				$url_combined_attrs = $this->get_link_attributes(
+					$cta_url,
+					$url_attrs
+				);
 
-					foreach ( $waze_combined_attrs as $attr_key => $attr_value ) {
-						$this->widget->add_render_attribute( 'cta-' . $key, [
-							$attr_key => $attr_value,
-						] );
-					}
+				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
+					$this->widget->add_render_attribute( 'cta-' . $key, [
+						$attr_key => $attr_value,
+					] );
 				}
 				?>
 				<a <?php echo $this->widget->get_render_attribute_string( 'cta-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -256,8 +247,14 @@ abstract class Render_Base {
 					'href' => esc_url( $formatted_link ),
 				];
 
+				$icon_url = $icon['icon_url'];
+
+				if ( Social_Network_Provider::WAZE == $icon['icon_platform'] ) {
+					$icon_url = $icon['icon_location'];
+				}
+
 				$url_combined_attrs = $this->get_link_attributes(
-					$icon['icon_url'],
+					$icon_url,
 					$url_attrs
 				);
 
@@ -471,8 +468,8 @@ abstract class Render_Base {
 				$formatted_link = ! empty( $cta['cta_link_number'] ) ? 'tel:' . $cta['cta_link_number'] : '';
 				break;
 			case Social_Network_Provider::MESSENGER:
-				$formatted_link = ! empty( $icon['cta_link_username'] ) ?
-					'https://www.facebook.com/messages/t/' . $icon['icon_username'] :
+				$formatted_link = ! empty( $cta['cta_link_username'] ) ?
+					'https://www.facebook.com/messages/t/' . $cta['cta_link_username'] :
 					'';
 				break;
 			case Social_Network_Provider::WAZE:

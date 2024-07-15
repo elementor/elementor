@@ -1,6 +1,6 @@
 import { Dialog, DialogContent } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
@@ -8,6 +8,7 @@ import { useTimeout } from '../../../../hooks/use-timeout';
 import { USER_URL_SOURCE } from '../attachments';
 import { CONFIG_KEYS, useRemoteConfig } from '../../context/remote-config';
 import useUserInfo from '../../../../hooks/use-user-info';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 export const UrlDialog = ( props ) => {
 	const iframeRef = useRef( null );
@@ -18,9 +19,19 @@ export const UrlDialog = ( props ) => {
 		isConnected,
 		hasSubscription,
 		credits,
-		usagePercentage,
+		isLoading,
+		usagePercentage: initialUsagePercentage,
 	} = useUserInfo();
 	const { isLoaded, isError, remoteConfig } = useRemoteConfig();
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isInitUsageDone && ! isLoading && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ isLoading, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
@@ -42,7 +53,7 @@ export const UrlDialog = ( props ) => {
 						type: 'url',
 						previewHTML: html,
 						content: html,
-						label: url ? new URL( url ).host : '',
+						label: url ? new URL( url ).href : '',
 						source: USER_URL_SOURCE,
 					} ] );
 					break;

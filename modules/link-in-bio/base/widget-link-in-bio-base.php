@@ -18,6 +18,13 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	use Shared_Widget_Controls_Trait;
 
+	public function get_style_depends(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
+			return parent::get_style_depends();
+		}
+		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+	}
+
 	public static function get_configuration() {
 		return [
 			'content' => [
@@ -611,7 +618,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 								Social_Network_Provider::SPOTIFY,
 								Social_Network_Provider::SOUNDCLOUD,
 								Social_Network_Provider::VIMEO,
-								Social_Network_Provider::WAZE,
 							]
 						),
 					],

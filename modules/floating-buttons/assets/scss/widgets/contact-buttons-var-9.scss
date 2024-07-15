@@ -5,9 +5,13 @@
 	--e-contact-buttons-svg-size-small: 24px;
 	--e-contact-buttons-svg-size-medium: 28px;
 	--e-contact-buttons-svg-size-large: 32px;
-	--e-contact-buttons-transition-duration: .5s;
+	--e-contact-buttons-transition-duration: .3s;
 	--e-contact-buttons-transition: all var(--e-contact-buttons-transition-duration);
 	--e-contact-buttons-overlap-margin: -10px;
+	--e-contact-buttons-chat-button-padding-block-end: 8px;
+	--e-contact-buttons-chat-button-padding-block-start: 8px;
+	--e-contact-buttons-chat-button-padding-inline-end: 16px;
+	--e-contact-buttons-chat-button-padding-inline-start: 16px;
 
 	width: auto;
 
@@ -53,7 +57,7 @@
 			&:hover,
 			&:focus {
 				color: var(--e-contact-buttons-button-icon);
-				
+
 				svg {
 					fill: var(--e-contact-buttons-button-icon);
 				}
@@ -80,6 +84,10 @@
 						height: var(--e-contact-buttons-svg-size-small);
 						width: var(--e-contact-buttons-svg-size-small);
 					}
+
+					i {
+						font-size: var(--e-contact-buttons-svg-size-small);
+					}
 				}
 			}
 
@@ -92,6 +100,10 @@
 					svg {
 						height: var(--e-contact-buttons-svg-size-medium);
 						width: var(--e-contact-buttons-svg-size-medium);
+					}
+
+					i {
+						font-size: var(--e-contact-buttons-svg-size-medium);
 					}
 				}
 			}
@@ -106,6 +118,10 @@
 						height: var(--e-contact-buttons-svg-size-large);
 						width: var(--e-contact-buttons-svg-size-large);
 					}
+
+					i {
+						font-size: var(--e-contact-buttons-svg-size-large);
+					}
 				}
 			}
 		}
@@ -118,33 +134,33 @@
 			&__chat-button-container {
 				padding-inline-end: 0;
 			}
-	
+
 			&__chat-button-icon-container {
-	
+
 				@media (min-width: $screen-desktop-min) {
 					position: absolute;
 					inset-inline-end: -5px;
 					transition: var(--e-contact-buttons-transition);
 				}
 			}
-	
+
 			&__chat-button-text {
 				border-start-start-radius: 0;
 				border-end-start-radius: 0;
 				border-start-end-radius: 50px;
 				border-end-end-radius: 50px;
 				margin-inline-start: var(--e-contact-buttons-overlap-margin);
-	
+
 				@media (min-width: $screen-desktop-min) {
 					clip-path: inset(0 0 0 100%);
 				}
 			}
-	
+
 			&__chat-button {
-	
+
 				&:hover,
 				&:focus {
-	
+
 					@media (min-width: $screen-desktop-min) {
 
 						.e-contact-buttons {
@@ -153,7 +169,7 @@
 								clip-path: inset(0 0 0 0);
 								transition: var(--e-contact-buttons-transition);
 							}
-		
+
 							&__chat-button-icon-container {
 								inset-inline-end: 100%;
 								transition: var(--e-contact-buttons-transition);

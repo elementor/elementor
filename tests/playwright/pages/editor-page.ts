@@ -1,12 +1,13 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
+import Breakpoints from '../assets/breakpoints';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -491,6 +492,55 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set Dynamic Tag as value.
+	 *
+	 * @param {string}  controlSelector - Selector of the control which the dynamic tag toggler is in.
+	 * @param {string}  value           - The value to set.
+	 * @param {boolean} exactMatch      - Select only items that exactly match the provided value.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDynamicFieldValue( controlSelector: string[], value: string, exactMatch: boolean = false ) {
+		const controlContainer = this.getLocatorFromSelectorArray( controlSelector ),
+			dynamicSwitcher = controlContainer.locator( '.elementor-control-dynamic-switcher' );
+
+		if ( ! await dynamicSwitcher.isVisible() ) {
+			await controlContainer.locator( '.elementor-dynamic-cover__remove' ).click();
+			await dynamicSwitcher.waitFor();
+		}
+
+		await dynamicSwitcher.click( { force: true } );
+		await this.page
+			.locator( `.elementor-tags-list .elementor-tags-list__item:${ exactMatch ? 'text-is' : 'has-text' }("${ value }")` )
+			.click();
+	}
+
+	/**
+	 * Set Dynamic Tag as value.
+	 *
+	 * @param {string} controlSelector - Selector of the control which the dynamic tag toggler is in.
+	 * @param {Object} values          - Key => Value where key is the input select and the value is string to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDynamicFieldAdvancedSetting( controlSelector: string[], values: { [ key: string ]: string } ) {
+		const controlContainer = this.getLocatorFromSelectorArray( controlSelector ),
+			settingsAnchor = controlContainer.locator( '.elementor-dynamic-cover__settings' );
+
+		if ( ! await settingsAnchor.count() ) {
+			return;
+		}
+
+		await settingsAnchor.click();
+		await this.page.locator( '.elementor-tag-settings-popup' ).waitFor();
+
+		for ( const inputSelector in values ) {
+			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).click( { force: true } );
+			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).fill( values[ inputSelector ] );
+		}
+	}
+
+	/**
 	 * Set dimensions control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
@@ -886,27 +936,25 @@ export default class EditorPage extends BasePage {
 		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
+	async openResponsiveViewBar() {
+		const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+	}
+
 	/**
 	 * Select a responsive view.
 	 *
 	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`.
-	 *
-	 * @return {Promise<void>}
 	 */
-	async changeResponsiveView( device: string ) {
+	async changeResponsiveView( device: Device ) {
 		const hasTopBar = await this.hasTopBar();
-
 		if ( hasTopBar ) {
-			const deviceLabel = device.charAt( 0 ).toUpperCase() + device.slice( 1 );
-
-			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
+			await Breakpoints.getDeviceLocator( this.page, device ).click();
 		} else {
-			const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
-
-			if ( ! hasResponsiveViewBar ) {
-				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-			}
-
+			await this.openResponsiveViewBar();
 			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
 		}
 	}
@@ -1257,5 +1305,13 @@ export default class EditorPage extends BasePage {
 	 */
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
+	}
+
+	getLocatorFromSelectorArray( selectors: string[] ) {
+		return selectors.reduce( ( currentLocator: null | Locator, selector ) => {
+			return currentLocator
+				? currentLocator.locator( selector )
+				: this.page.locator( selector );
+		}, null );
 	}
 }

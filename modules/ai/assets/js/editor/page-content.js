@@ -16,6 +16,8 @@ import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
 import { Box, Typography } from '@elementor/ui';
 import Loader from './components/loader';
+import { useEffect, useState } from 'react';
+import { useRequestIds } from './context/requests-ids';
 
 const PageContent = (
 	{
@@ -35,8 +37,19 @@ const PageContent = (
 		fetchData,
 		hasSubscription,
 		credits,
-		usagePercentage,
+		usagePercentage: initialUsagePercentage,
 	} = ( () => additionalOptions?.useCustomInit ?? useUserInfo )()();
+
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isInitUsageDone && ! isLoading && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ isLoading, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
@@ -76,7 +89,7 @@ const PageContent = (
 		);
 	};
 
-	if ( isLoading ) {
+	if ( isLoading || ! isInitUsageDone ) {
 		return (
 
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>

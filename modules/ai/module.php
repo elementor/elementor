@@ -115,10 +115,14 @@ class Module extends BaseModule {
 					'jquery',
 					'elementor-v2-ui',
 					'elementor-v2-icons',
+					'wp-blocks',
+					'wp-element',
+					'wp-editor',
+					'wp-data',
 				],
 			ELEMENTOR_VERSION, true );
 
-			$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
+			$session_id = 'wp-gutenberg-session-' . Utils::generate_random_string();
 
 			$config = [
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
@@ -178,7 +182,13 @@ class Module extends BaseModule {
 			true
 		);
 
-		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
+		if ( function_exists( 'get_current_screen' ) ) {
+			if ( get_current_screen()->is_block_editor ) {
+				return;
+			}
+		}
+
+		$session_id = 'wp-media-lib-session-' . Utils::generate_random_string();
 
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
