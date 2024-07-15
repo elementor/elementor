@@ -48,6 +48,7 @@ jobs:
         if: matrix.wpCoreVersion != 'master'
         run: npm ci
       - name: Install wp-test-server
+        if: matrix.wpCoreVersion != 'master'
         run: |
           cd wp-test-server
           npm ci
