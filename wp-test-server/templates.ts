@@ -108,7 +108,7 @@ set -eox pipefail
 `;
 	const configStringArray = Object.keys( config.config ).map( ( key ) => {
 		const value = config.config[ key ];
-		return `wp config set ${ key } ${ value } --raw\n`;
+		return `wp config set ${ key } ${ value } --raw`;
 	} );
 	const wpCoreInstall = `wp core install --url="http://localhost:${ port }" --title="test" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email`;
 

@@ -97,9 +97,11 @@ const generateFiles = () => {
 	const configFilePath = path.resolve( getConfigFilePath( process.argv ) );
 	const config = getConfig( configFilePath );
 
-	const wpConfigPath = path.resolve( os.tmpdir(), port );
+	// TODO use temporary path
+	const wpConfigPath = path.resolve( process.cwd(), port );
+	// const wpConfigPath = path.resolve( os.tmpdir(), port );
 	if ( ! fs.existsSync( wpConfigPath ) ) {
-		fs.mkdirSync( wpConfigPath );
+		fs.mkdirSync( wpConfigPath, { recursive: true } );
 	}
 	const wpConfig = generateConfiguration( config, port );
 	fs.writeFileSync( path.resolve( wpConfigPath, 'configure-wp.sh' ), wpConfig );
