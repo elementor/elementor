@@ -1176,13 +1176,15 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChangedDynamicControlKey( settings ) {
-		if ( ! settings?.changed?.__dynamic__ ) {
-			return Object.keys( settings.changed )[ 0 ];
+		let changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+			? Object.keys( settings.changed )[ 0 ]
+			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+
+		if ( changedControlKey ) {
+			return changedControlKey;
 		}
 
-		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
-
-		return changedControlKey || Object.keys( settings.changed.__dynamic__ )[ 0 ];
+		return this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
 	},
 
 	getRepeaterItemActiveIndex() {
