@@ -177,6 +177,12 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 					this.player.playVideo();
 				},
 				onStateChange: ( event ) => {
+					console.log( 'onStateChange', event );
+					console.log( 'event.data', event.data );
+					console.log( 'startStateCode', startStateCode );
+					console.log( 'YT.PlayerState.ENDED', YT.PlayerState.ENDED );
+					console.log( 'YT.PlayerState', YT.PlayerState );
+
 					switch ( event.data ) {
 						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
@@ -267,14 +273,17 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 	run() {
 		const elementSettings = this.getElementSettings();
+		console.log( 'run', elementSettings );
 
 		if ( ! elementSettings.background_play_on_mobile && 'mobile' === elementorFrontend.getCurrentDeviceMode() ) {
 			return;
 		}
 
 		if ( 'video' === elementSettings.background_background && elementSettings.background_video_link ) {
+			console.log( 'activate' );
 			this.activate();
 		} else {
+			console.log( 'deactivate' );
 			this.deactivate();
 		}
 	}
