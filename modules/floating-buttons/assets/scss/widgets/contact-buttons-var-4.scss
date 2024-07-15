@@ -78,7 +78,7 @@
 			display: flex;
 			flex-direction: row;
 			gap: 14px;
-			
+
 			.e-contact-buttons__contact-icon-container {
 				color: var(--e-contact-buttons-contact-button-icon);
 			}
@@ -131,7 +131,7 @@
 			&__chat-button-container {
 				padding-inline-end: 0;
 			}
-	
+
 			&__contact-links {
 				align-items: flex-end;
 			}
@@ -163,19 +163,19 @@
 			&__chat-button-container {
 				padding-inline-start: 0;
 			}
-	
+
 			&__contact-links {
 				align-items: flex-start;
 			}
-	
+
 			&__contact-tooltip {
 				order: 2;
 			}
-	
+
 			&__contact-icon-container  {
 				order: 1;
 			}
-	
+
 			&__contact-tooltip {
 				&::after {
 					border-inline-start-color: transparent;
@@ -229,6 +229,10 @@
 				height: var(--e-contact-buttons-icon-small);
 				width: var(--e-contact-buttons-icon-small);
 			}
+
+			i {
+				font-size: var(--e-contact-buttons-icon-small);
+			}
 		}
 	}
 
@@ -243,6 +247,10 @@
 				height: var(--e-contact-buttons-icon-medium);
 				width: var(--e-contact-buttons-icon-medium);
 			}
+
+			i {
+				font-size: var(--e-contact-buttons-icon-medium);
+			}
 		}
 	}
 
@@ -256,6 +264,10 @@
 			svg {
 				height: var(--e-contact-buttons-icon-large);
 				width: var(--e-contact-buttons-icon-large);
+			}
+
+			i {
+				font-size: var(--e-contact-buttons-icon-large);
 			}
 		}
 	}
