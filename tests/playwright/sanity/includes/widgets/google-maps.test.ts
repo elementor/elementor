@@ -36,7 +36,7 @@ test( 'Verify Google maps controls', async ( { page, apiRequests }, testInfo ) =
 	expect( String( currentHeight ) ).toEqual( height );
 } );
 
-test( 'Check that Google Maps widget css file is loaded from `elementor/assets/css` when `Improved CSS Loading` experiment is active and SCRIPT_DEBUG is false', async ( { page, apiRequests }, testInfo ) => {
+test( 'Check that Google Maps widget css file is loaded from `assets/css` when `Improved CSS Loading` experiment is active and SCRIPT_DEBUG is false', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -52,16 +52,11 @@ test( 'Check that Google Maps widget css file is loaded from `elementor/assets/c
 	// Act
 	await editorPage.publishAndViewPage();
 
-	// When the `Improved CSS Loading` experiment is active, the Google Maps css file is loaded from `elementor/assets/css`.
+	// When the `Improved CSS Loading` experiment is active, the Google Maps css file is loaded from `assets/css`.
 	const proFilePath = await page.evaluate( () => document.querySelector( '.elementor-widget-google_maps > .elementor-widget-container > link' ).getAttribute( 'href' ) ),
-		isProFilePath = proFilePath.includes( 'elementor/assets/css/widget' ),
+		isProFilePath = proFilePath.includes( 'assets/css/widget' ),
 		proFileArray = proFilePath.split( '?ver=' ),
 		proFileTimestamp = proFileArray[ 1 ];
-
-	console.log( 'proFilePath:', proFilePath );
-	console.log( 'isProFilePath:', isProFilePath );
-	console.log( proFileArray[ 1 ] );
-	console.log( proFileArray[ 0 ] );
 
 	// Assert
 	expect.soft( isProFilePath ).toBeTruthy();
