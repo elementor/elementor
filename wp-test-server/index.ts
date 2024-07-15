@@ -104,7 +104,7 @@ const generateFiles = () => {
 	const wpConfig = generateConfiguration( config, port );
 	fs.writeFileSync( path.resolve( wpConfigPath, 'configure-wp.sh' ), wpConfig );
 
-	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, path.resolve( process.cwd(), '..' ), port, wpConfigPath );
+	const dockerComposeYmlTemplate = generateDockerComposeYmlTemplate( config, process.cwd(), port, wpConfigPath );
 	const wordPressDockerfileTemplate = generateWordPressDockerfileTemplate( config );
 	const cliDockerfileTemplate = generateCliDockerfileTemplate( config );
 	const hash = createHash( 'sha256' );
