@@ -26,7 +26,9 @@ runs:
 
         # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
         # and store them in the 'tags' variable. e.g. "refs/tags/v3.11.1 , refs/tags/v3.11.2"
+        echo "HIHIHI"
         if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+           echo "123123123"
            tags=$(git ls-remote --tags | grep "refs/tags/[0-9]\+\.[0-9]\+\.[0-9]\+$")
         fi
 

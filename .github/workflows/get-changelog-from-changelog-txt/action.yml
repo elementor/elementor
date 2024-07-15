@@ -1,5 +1,5 @@
-name: Get change log From changelog and readme text files
-description: Get change log From changelog.txt and readme.txt text files - publish in wordpress.org.
+name: Get Changelog From Changelog Text File
+description: Get Changelog From Changelog Text File - publish in wordpress.org.
 
 inputs:
   VERSION:
@@ -13,5 +13,6 @@ runs:
       env:
         VERSION: ${{ inputs.VERSION }}
       run: |
+
         npm install --no-package-lock --no-save marked@12.0.2
         node ./.github/scripts/get-changelog-from-change-txt.js
