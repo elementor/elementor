@@ -655,8 +655,9 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, changedControl ) {
-		return dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+		return '__dynamic__' in changedSettings &&
+			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
@@ -700,8 +701,9 @@ BaseElementView = BaseContainer.extend( {
 			keys2 = isArray ? element2 : Object.keys( element2 || {} );
 
 		const allKeys = keys1.concat( keys2 );
+		// return keys1.filter( ( key ) => ! keys2.includes( key ) );
 
-		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) ) ;
 	},
 
 	/**
@@ -776,11 +778,15 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
+			if ( ! settings.changed.__dynamic__ ) {
+				return false;
+			}
+
 			const { bindingSetting } = dataBinding.dataset,
-				changedControl = this.getChangedControl( settings );
+				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, bindingSetting ) ) {
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
 
 				if ( dynamicValue ) {
@@ -1169,16 +1175,14 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	getChangedControl( settings ) {
-		let changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
-
-		if ( ! changedControlKey ) {
-			changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
-				? Object.keys( settings.changed )[ 0 ]
-				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+	getChangedDynamicControlKey( settings ) {
+		if ( ! settings?.changed?.__dynamic__ ) {
+			return Object.keys( settings.changed )[ 0 ];
 		}
 
-		return changedControlKey;
+		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
+		return changedControlKey || Object.keys( settings.changed.__dynamic__ )[ 0 ];
 	},
 
 	getRepeaterItemActiveIndex() {
