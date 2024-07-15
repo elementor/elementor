@@ -177,6 +177,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 					console.log( 'playVideo' );
 					this.player.playVideo();
+					$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
 				},
 				onStateChange: ( event ) => {
 					console.log( 'onStateChange', event );
