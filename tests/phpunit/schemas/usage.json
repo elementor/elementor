@@ -994,6 +994,15 @@
 										"1",
 										"0"
 									]
+								},
+								"lazy_load_background_images": {
+									"$id": "#/usages/settings/performance/lazy_load_background_images",
+									"title": "Lazy Load Background Images",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
 								}
 							},
 							"additionalProperties": false
