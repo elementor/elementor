@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 3.23.1 - 2024-07-15 =
+* Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
+
 = 3.23.0 - 2024-07-15 =
 
 * New: Elevate engagement with Floating Buttons - Convert visitors into leads, making it easier than ever to start a conversation on any platform
