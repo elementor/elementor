@@ -69,10 +69,10 @@ class ModulesWithWidgetsCss {
 	getWidgetScssContent( widgetName, direction, widgetPath ) {
 		return `$direction: ${ direction };
 
-@import "../../../../../elementor/assets/dev/scss/helpers/direction";
-@import "../../../../../elementor/assets/dev/scss/helpers/variables";
-@import "../../../../../elementor/assets/dev/scss/frontend/breakpoints/breakpoints";
-@import "../../../../../elementor/assets/dev/scss/helpers/mixins";
+@import "../../../../assets/dev/scss/helpers/direction";
+@import "../../../../assets/dev/scss/helpers/variables";
+@import "../../../../assets/dev/scss/frontend/breakpoints/breakpoints";
+@import "../../../../assets/dev/scss/helpers/mixins";
 
 @import "../../../../modules/${ widgetPath }";
 		`;
