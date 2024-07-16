@@ -1172,5 +1172,4 @@ BaseElementView = BaseContainer.extend( {
 	},
 } );
 
-
 module.exports = BaseElementView;
