@@ -81,10 +81,6 @@ export async function setBackgroundVideoUrl( editor:EditorPage, elementId: strin
 	await editor.openPanelTab( 'style' );
 	await editor.setChooseControlValue( 'background_background', 'eicon-video-camera' );
 	await editor.setTextControlValue( 'background_video_link', videoUrl );
-	const listenUrl = 'https://jnn-pa.googleapis.com/$rpc/google.internal.waa.v1.Waa/Create';
-	const response = editor.page.waitForResponse( listenUrl );
-	await response;
-	console.log( response );
 }
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ) {

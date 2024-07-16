@@ -50,6 +50,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			'nested-elements': false,
+		} );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
