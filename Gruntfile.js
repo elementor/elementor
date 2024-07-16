@@ -4,11 +4,9 @@ module.exports = function( grunt ) {
 	const fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' ),
 		WidgetsCss = require( './.grunt-config/widgets-css' ),
-		ModulesWithWidgetsCss = require( './.grunt-config/modules-with-widgets-css' ),
 		Eicons = require( './.grunt-config/eicons' );
 
 	const widgetsCss = new WidgetsCss( 'production' ),
-		modulesWidgetsCss = new ModulesWithWidgetsCss( 'production' ),
 		eicons = new Eicons();
 
 	require( 'load-grunt-tasks' )( grunt );
@@ -42,13 +40,9 @@ module.exports = function( grunt ) {
 		'styles',
 	] );
 
-	// Widgets.
 	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
-	grunt.registerTask( 'remove_widgets_unused_style_files', () => widgetsCss.removeWidgetsUnusedStyleFiles() );
 
-	// Modules with Widgets.
-	grunt.registerTask( 'create_modules_widgets_temp_scss_files', () => modulesWidgetsCss.createWidgetsTempScssFiles() );
-	grunt.registerTask( 'remove_modules_widgets_unused_style_files', () => modulesWidgetsCss.removeWidgetsUnusedStyleFiles() );
+	grunt.registerTask( 'remove_widgets_unused_style_files', () => widgetsCss.removeWidgetsUnusedStyleFiles() );
 
 	grunt.registerTask( 'create_eicons_frontend_js_file', () => eicons.createFrontendIconsFile() );
 
@@ -83,7 +77,6 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
 		if ( ! isDevMode ) {
 			grunt.task.run( 'create_widgets_temp_scss_files' );
-			grunt.task.run( 'create_modules_widgets_temp_scss_files' );
 		}
 
 		grunt.task.run( 'sass' );
@@ -93,7 +86,6 @@ module.exports = function( grunt ) {
 			grunt.task.run( 'css_templates' );
 
 			grunt.task.run( 'remove_widgets_unused_style_files' );
-			grunt.task.run( 'remove_modules_widgets_unused_style_files' );
 		}
 	} );
 
@@ -104,8 +96,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'css_templates', () => {
 		grunt.task.run( 'css_templates_proxy:templates' );
 
-		const responsiveWidgetsList = widgetsCss.getResponsiveWidgetsList(),
-			responsiveModulesWidgetsList = modulesWidgetsCss.getResponsiveWidgetsList();
+		const responsiveWidgetsList = widgetsCss.getResponsiveWidgetsList();
 
 		grunt.config( 'sass.dist', {
 			files: [ {
@@ -119,7 +110,6 @@ module.exports = function( grunt ) {
 					'frontend-legacy.scss',
 					'frontend-legacy-rtl.scss',
 					...responsiveWidgetsList,
-					...responsiveModulesWidgetsList,
 				],
 				dest: 'assets/css/templates',
 				ext: '.css',
