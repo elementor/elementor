@@ -79,35 +79,27 @@ class WidgetsCss {
 		} );
 	}
 
-	getCssFileNames( filename ) {
-		return {
-			defaultFilename: this.cssFilePrefix + filename,
-			rtlFilename: this.cssFilePrefix + filename.replace( '.scss', '-rtl.scss' ),
-		};
-	}
-
 	getWidgetsCssFilesList() {
 		if ( Array.isArray( this.widgetsScssFilesList ) ) {
 			return this.widgetsScssFilesList;
 		}
 
-		this.widgetsScssFilesList = this._getStandAloneWidgetsCssFilesList().concat( this._getModulesWidgetsCssFilesList() );
+		this.widgetsScssFilesList = this.getStandAloneWidgetsCssFilesList().concat( this.getModulesWidgetsCssFilesList() );
 
 		return this.widgetsScssFilesList;
 	}
 
-	_getStandAloneWidgetsCssFilesList() {
+	getStandAloneWidgetsCssFilesList() {
 		const standAloneWidgetData = [],
-			standAloneSidgetsList = fs.existsSync( this.sourceScssFolder ) ? fs.readdirSync( this.sourceScssFolder ) : [];
+			standAloneWidgetsList = fs.existsSync( this.sourceScssFolder ) ? fs.readdirSync( this.sourceScssFolder ) : [];
 
-		standAloneSidgetsList.forEach( ( filename ) => {
+		standAloneWidgetsList.forEach( ( filename ) => {
 			const widgetName = filename.replace( '.scss', '' );
 
 			standAloneWidgetData.push( {
-				widgetName: widgetName,
+				widgetName,
 				defaultFilename: this.cssFilePrefix + filename,
 				rtlFilename: this.cssFilePrefix + filename.replace( '.scss', '-rtl.scss' ),
-				sourceFolder: this.sourceScssFolder,
 				importPath: `../frontend/widgets/${ widgetName }`,
 				filePath: this.sourceScssFolder + '/' + filename,
 			} );
@@ -116,7 +108,7 @@ class WidgetsCss {
 		return standAloneWidgetData;
 	}
 
-	_getModulesWidgetsCssFilesList() {
+	getModulesWidgetsCssFilesList() {
 		const moduleWidgetData = [],
 			moduleWidgetsList = this.getModulesFrontendScssFiles( this.sourceModulesScssFolder );
 
@@ -127,9 +119,8 @@ class WidgetsCss {
 				widgetName: widgetData.name,
 				defaultFilename: this.cssFilePrefix + widgetData.name + '.scss',
 				rtlFilename: this.cssFilePrefix + widgetData.name + '-rtl.scss',
-				sourceFolder: this.sourceModulesScssFolder,
 				importPath: `../../../../modules/${  widgetData.path }`,
-				filePath: filePath,
+				filePath,
 			} );
 		} );
 
