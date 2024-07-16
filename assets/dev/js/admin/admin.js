@@ -523,7 +523,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				var element = document.querySelector( '#elementor-go-to-edit-page-link' );
 
 				if ( element ) {
-					element.style.cssText = 'background-color: #FFF !important; border: none !important;';
+					element.style.cssText = 'background-color: #FFF !important; border: none !important; justify-content: left;';
 				}
 			}, 1000 );
 		},

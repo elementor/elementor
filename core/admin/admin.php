@@ -264,7 +264,7 @@ class Admin extends App {
 		?>
 		<div id="elementor-edit-button-new-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
-				<div id="elementor-editor-button" class="button button-primary button-hero">
+				<div id="elementor-editor-button" class="button button-primary button-large">
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
 				</div>
