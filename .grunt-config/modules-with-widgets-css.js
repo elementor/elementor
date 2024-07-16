@@ -163,7 +163,7 @@ class ModulesWithWidgetsCss {
 			}
 		}
 	
-		const newResponsiveWidgets = responsiveWidgets.reduce( ( obj, val ) => {
+		const modulesResponsiveWidgets = responsiveWidgets.reduce( ( obj, val ) => {
 			// No need to save also the -rtl key.
 			if ( val.indexOf( '-rtl' ) > -1 ) {
 				return obj;
@@ -174,7 +174,7 @@ class ModulesWithWidgetsCss {
 		}, {} );
 	
 		// Merge the existing and new responsive widgets
-		const mergedResponsiveWidgets = { ...existingResponsiveWidgets, ...newResponsiveWidgets };
+		const mergedResponsiveWidgets = { ...existingResponsiveWidgets, ...modulesResponsiveWidgets };
 	
 		// Breaking the line for the linter that throws a warning.
 		fs.writeFileSync( responsiveWidgetsJsonPath, JSON.stringify( mergedResponsiveWidgets ) );
