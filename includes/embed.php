@@ -197,9 +197,9 @@ class Embed {
 			$default_frame_attributes['data-lazy-load'] = $video_embed_url;
 		}
 
-		if ( isset( $embed_url_params['autoplay'] ) ) {
-			$default_frame_attributes['allow'] = 'autoplay';
-		}
+//		if ( isset( $embed_url_params['autoplay'] ) ) {
+//			$default_frame_attributes['allow'] = 'autoplay';
+//		}
 
 		$frame_attributes = array_merge( $default_frame_attributes, $frame_attributes );
 

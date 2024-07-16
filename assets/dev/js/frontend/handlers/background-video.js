@@ -234,6 +234,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 			this.apiProvider.onApiReady( ( apiObject ) => {
 				if ( 'youtube' === this.videoType ) {
+					console.log( apiObject, videoID );
 					this.prepareYTVideo( apiObject, videoID );
 				}
 
