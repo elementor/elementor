@@ -9,14 +9,14 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		originalActiveTheme = await wpAdmin.getActiveTheme();
-		await wpAdmin.activateTheme( 'twentytwentytwo' );
+		wpAdmin.activateTheme( 'twentytwentytwo' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.activateTheme( originalActiveTheme );
+		wpAdmin.activateTheme( originalActiveTheme );
 	} );
 
 	/**
