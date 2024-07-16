@@ -4,7 +4,6 @@ namespace Elementor\Core\Editor\Loader;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
 use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
-use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
@@ -38,14 +37,11 @@ class Editor_Loader_Factory {
 	}
 
 	/**
-	 * If any of the V2 experiments is active, we should use the V2 loader.
+	 * If there are v2 packages enqueued, we should use the V2 loader.
 	 *
 	 * @return bool
 	 */
 	private static function should_use_v2_loader() {
-		$experiments_manager = Plugin::$instance->experiments;
-
-		return Collection::make( Editor_V2_Experiments::all() )
-			->some( fn ( $experiment ) => $experiments_manager->is_feature_active( $experiment ) );
+		return ! empty( Editor_V2_Loader::get_packages_to_enqueue() );
 	}
 }

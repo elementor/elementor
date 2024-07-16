@@ -8,6 +8,9 @@
 	--e-contact-buttons-message-bubble-bubble-bg: #C8D5DC;
 	--e-contact-buttons-message-bubble-chat-bg: #FFFFFF;
 	--e-contact-buttons-contact-text: #1C2448;
+	--e-contact-buttons-var-1-size-small: 26px;
+	--e-contact-buttons-var-1-size-medium: 28px;
+	--e-contact-buttons-var-1-size-large: 32px;
 
 	.e-contact-buttons {
 
@@ -69,8 +72,12 @@
 				width: var(--e-contact-buttons-icon-size-small);
 
 				svg {
-					height: 26px;
-					width: 26px;
+					height: var(--e-contact-buttons-var-1-size-small);
+					width: var(--e-contact-buttons-var-1-size-small);
+				}
+
+				i {
+					font-size: var(--e-contact-buttons-var-1-size-small);
 				}
 			}
 
@@ -79,8 +86,12 @@
 				width: var(--e-contact-buttons-icon-size-medium);
 
 				svg {
-					height: 28px;
-					width: 28px;
+					height: var(--e-contact-buttons-var-1-size-medium);
+					width: var(--e-contact-buttons-var-1-size-medium);
+				}
+
+				i {
+					font-size: var(--e-contact-buttons-var-1-size-medium);
 				}
 			}
 
@@ -89,8 +100,12 @@
 				width: var(--e-contact-buttons-icon-size-large);
 
 				svg {
-					height: 32px;
-					width: 32px;
+					height: var(--e-contact-buttons-var-1-size-large);
+					width: var(--e-contact-buttons-var-1-size-large);
+				}
+
+				i {
+					font-size: var(--e-contact-buttons-var-1-size-large);
 				}
 			}
 		}

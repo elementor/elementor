@@ -188,7 +188,7 @@ class Module extends BaseModule {
 			}
 		}
 
-		$session_id = 'wp-media-library-session-' . Utils::generate_random_string();
+		$session_id = 'wp-media-lib-session-' . Utils::generate_random_string();
 
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
@@ -225,20 +225,14 @@ class Module extends BaseModule {
 			true
 		);
 
-		$session_id = 'elementor-editor-session-' . Utils::generate_random_string();
-
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
-			'client_session_id' => $session_id,
 		];
 
 		if ( $this->get_ai_app()->is_connected() ) {
-			$usage = $this->get_ai_app()->get_usage( 'elementor-loader', $session_id );
-
-			if ( ! is_wp_error( $usage ) ) {
-				$config['usage'] = $usage;
-			}
+			// Use a cached version, don't call the API on every editor load.
+			$config['usage'] = $this->get_ai_app()->get_cached_usage();
 		}
 
 		wp_localize_script(
@@ -337,7 +331,7 @@ class Module extends BaseModule {
 			];
 		}
 
-		$user_usage = wp_parse_args( $app->get_usage( 'elementor-editor', $data['editor_session_id'] ), [
+		$user_usage = wp_parse_args( $app->get_usage(), [
 			'hasAiSubscription' => false,
 			'usedQuota' => 0,
 			'quota' => 100,
