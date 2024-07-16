@@ -887,7 +887,7 @@ class Admin extends App {
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
-		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] ); 
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
