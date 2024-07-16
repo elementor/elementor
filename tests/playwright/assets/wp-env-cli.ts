@@ -4,7 +4,7 @@ import path from 'path';
 
 export const wpEnvCli = ( command: string, cwd?: string ) => {
 	const port = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '8889' : '8888';
-	const cli = `npm run cli command=\"${ command }\" port=${ port }`;
+	const cli = `npx wp-test-server cli port=${ port } command=\"${ command }\" config=tests/.test-server.config.json`;
 	const cwdPath = cwd ? path.resolve( cwd, 'wp-test-server' ) : 'wp-test-server';
 	const logs = execSync( `${ cli }`, { cwd: cwdPath, encoding: 'utf-8' } );
 	// Print log for debuggability
