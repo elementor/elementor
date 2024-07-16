@@ -34,6 +34,7 @@ import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/edit
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
+import { FontVariables } from './utils/font-variables';
 
 /**
  * @typedef {import('./container/container')} Container
@@ -284,7 +285,7 @@ export default class EditorBase extends Marionette.Application {
 				return false;
 			}
 
-			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
+			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
 				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
@@ -460,6 +461,8 @@ export default class EditorBase extends Marionette.Application {
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
+
+		new FontVariables();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}

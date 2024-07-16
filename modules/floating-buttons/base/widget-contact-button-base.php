@@ -23,6 +23,13 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return false;
 	}
 
+	public function get_style_depends(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
+			return parent::get_style_depends();
+		}
+		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+	}
+
 	public function hide_on_search() {
 		return true;
 	}
@@ -212,7 +219,8 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'has_icon_color' => true,
 					'has_background_color' => true,
 					'has_text_color' => false,
-					'has_typography' => false,
+					'has_typography' => true,
+					'typography_selector' => '{{WRAPPER}} .e-contact-buttons__send-cta',
 				],
 				'chat_box_section' => [
 					'section_name' => esc_html__( 'Chat Box', 'elementor' ),
@@ -2523,7 +2531,7 @@ JS;
 				Group_Control_Typography::get_type(),
 				[
 					'name' => 'style_send_typography',
-					'selector' => '{{WRAPPER}} .e-contact-buttons__cta-button',
+					'selector' => $config['style']['send_button_section']['typography_selector'],
 				]
 			);
 		}
