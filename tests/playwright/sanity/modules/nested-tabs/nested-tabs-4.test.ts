@@ -73,6 +73,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setBackgroundVideoUrl( editor, contentContainerTwoId, videoUrl );
 		await setBackgroundVideoUrl( editor, contentContainerThreeId, videoUrl );
 
+		console.log( setBackgroundVideoUrl, 'setBackgroundVideoUrl' );
+
 		await expect.soft( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect.soft( videoContainer ).toHaveCount( 1 );
 

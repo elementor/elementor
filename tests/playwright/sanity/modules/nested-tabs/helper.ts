@@ -81,6 +81,7 @@ export async function setBackgroundVideoUrl( editor:EditorPage, elementId: strin
 	await editor.openPanelTab( 'style' );
 	await editor.setChooseControlValue( 'background_background', 'eicon-video-camera' );
 	await editor.setTextControlValue( 'background_video_link', videoUrl );
+	console.log( editor, 'editor' );
 }
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ) {
