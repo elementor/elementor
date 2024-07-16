@@ -520,6 +520,11 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				const editor = document.querySelector( '#elementor-edit-button-new-editor' );
 				const productHeader = document.querySelector( '.woocommerce-product-header__inner' );
 				productHeader.firstChild.append( editor );
+				var element = document.querySelector( '#elementor-go-to-edit-page-link' );
+
+				if ( element ) {
+					element.style.cssText = 'background-color: #FFF !important; border: none !important;';
+				}
 			}, 1000 );
 		},
 
