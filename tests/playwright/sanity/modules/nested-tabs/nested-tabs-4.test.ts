@@ -64,7 +64,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			contentContainerTwoId = await contentContainerTwo.getAttribute( 'data-id' ),
 			contentContainerThree = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=2` ),
 			contentContainerThreeId = await contentContainerThree.getAttribute( 'data-id' ),
-			videoUrl = 'https://www.youtube.com/watch?v=XNoaN8qu4fg',
+			videoUrl = 'https://vimeo.com/235215203',
 			videoContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId + ' .elementor-background-video-container iframe' ),
 			firstTabContainer = editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
