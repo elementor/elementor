@@ -130,7 +130,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		} else if ( this.isActivationKey( event ) ) {
 			event.preventDefault();
 
-			if ( this.handleTitleLinkEnterOrSpaceEvent( event ) ) {
+			if ( this.handeTitleLinkEnterOrSpaceEvent( event ) ) {
 				return;
 			}
 
@@ -142,7 +142,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		}
 	}
 
-	handleTitleLinkEnterOrSpaceEvent( event ) {
+	handeTitleLinkEnterOrSpaceEvent( event ) {
 		const isLinkElement = 'a' === event?.currentTarget?.tagName?.toLowerCase();
 
 		if ( ! elementorFrontend.isEditMode() && isLinkElement ) {

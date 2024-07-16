@@ -344,7 +344,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 	}
 
-	getSwiperWrapperTransformXValue() {
+	getSwiperWrapperTranformXValue() {
 		let transformValue = this.elements.$swiperWrapper[ 0 ]?.style.transform;
 		transformValue = transformValue.replace( 'translate3d(', '' );
 		transformValue = transformValue.split( ',' );
@@ -360,7 +360,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		const swiperWrapperTransformXValue = this.getSwiperWrapperTransformXValue(),
+		const swiperWrapperTransformXValue = this.getSwiperWrapperTranformXValue(),
 			swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
 			$slides = this.elements.$swiperContainer.find( this.getSettings( 'selectors' ).slideContent );
 

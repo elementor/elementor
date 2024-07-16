@@ -27,7 +27,7 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 		};
 	}
 
-	handleTitleLinkEnterOrSpaceEvent( event ) {
+	handeTitleLinkEnterOrSpaceEvent( event ) {
 		this.toggleTitle( event );
 	}
 
