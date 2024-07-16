@@ -53,9 +53,6 @@ jobs:
         include:
         - shardIndex: "elements-regression"
     steps:
-      - name: Skip all but index 9
-        if: ${{ matrix.shardIndex != '9' }}
-        run: exit 0
       - name: Checkout source code
         uses: actions/checkout@v4
       - name: Install Node.js 20.x
