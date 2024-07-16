@@ -49,7 +49,7 @@ const stop = async ( port: string ) => {
 	} );
 };
 
-const cli = async ( port: string, command: string ) => {
+export const cli = async ( port: string, command: string ) => {
 	await dockerCompose.run( 'cli', command, {
 		cwd: runPath,
 		commandOptions: [ '--rm' ],
@@ -128,9 +128,3 @@ const runPath = generateFiles();
 
 const cliCommand = getCliCommand( process.argv );
 await commandMap[ command ]( port, cliCommand );
-
-export const commands = {
-	start,
-	stop,
-	cli,
-};

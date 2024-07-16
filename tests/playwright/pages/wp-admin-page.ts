@@ -277,8 +277,8 @@ export default class WpAdminPage extends BasePage {
 		return themeData[ 0 ].stylesheet;
 	}
 
-	activateTheme( theme: string ) {
-		wpEnvCli( `wp theme activate ${ theme }` );
+	async activateTheme( theme: string ) {
+		await wpEnvCli( `wp theme activate ${ theme }` );
 	}
 
 	/**
