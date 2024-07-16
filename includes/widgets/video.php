@@ -340,12 +340,12 @@ class Widget_Video extends Widget_Base {
 			'autoplay',
 			[
 				'label' => esc_html__( 'Autoplay', 'elementor' ),
-				'description' => sprintf(
-					/* translators: 1: `<a>` opening tag, 2: `</a>` closing tag. */
-					esc_html__( 'Note: Autoplay is affected by %1$s Google’s Autoplay policy %2$s on Chrome browsers.', 'elementor' ),
-					'<a href="https://developers.google.com/web/updates/2017/09/autoplay-policy-changes" target="_blank">',
-					'</a>'
-				),
+//				'description' => sprintf(
+//					/* translators: 1: `<a>` opening tag, 2: `</a>` closing tag. */
+//					esc_html__( 'Note: Autoplay is affected by %1$s Google’s Autoplay policy %2$s on Chrome browsers.', 'elementor' ),
+//					'<a href="https://developers.google.com/web/updates/2017/09/autoplay-policy-changes" target="_blank">',
+//					'</a>'
+//				),
 				'type' => Controls_Manager::SWITCHER,
 				'frontend_available' => true,
 			]
@@ -1065,7 +1065,7 @@ class Widget_Video extends Widget_Base {
 						'type' => 'video',
 						'videoType' => $settings['video_type'],
 						'url' => $lightbox_url,
-						'autoplay' => $settings['autoplay'],
+//						'autoplay' => $settings['autoplay'],
 						'modalOptions' => [
 							'id' => 'elementor-lightbox-' . $this->get_id(),
 							'entranceAnimation' => $settings['lightbox_content_animation'],
