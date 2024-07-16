@@ -1,9 +1,9 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		if ( window.elementorWpAiCurrentContext ) {
-			data.context = window.elementorWpAiCurrentContext;
-		} else {
+		if ( window.elementorAiCurrentContext ) {
 			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
 		}
 	}
 

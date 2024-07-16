@@ -56,7 +56,7 @@ import { EditTextWithAi } from './edit-text-with-ai';
 				removeAiIndicator();
 				const rootElement = document.createElement( 'div' );
 				rootElement.classList.add( 'e-text-ai' );
-				rootElement.setAttribute( 'data-client-id', blockClientId ); // Set blockClientId as a data attribute
+				rootElement.setAttribute( 'data-client-id', blockClientId );
 				textPanel.appendChild( rootElement );
 				const root = createRoot( rootElement );
 				root.render( <GenerateTextWithAi blockName={ blockName } blockClientId={ blockClientId } /> );
