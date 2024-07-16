@@ -146,23 +146,38 @@ class ModulesWithWidgetsCss {
 		return this.responsiveWidgets;
 	}
 
+	// This method will append to the 'responsive-widgets.json' file created in WidgetsCss.createResponsiveWidgetsJson()
 	createResponsiveWidgetsJson( responsiveWidgets ) {
 		const responsiveWidgetsJsonFolder = path.resolve( __dirname, '../assets/data' ),
-			responsiveWidgetsJsonPath = path.join( responsiveWidgetsJsonFolder, 'responsive-widgets.json' ),
-			responsiveWidgetsObject = responsiveWidgets.reduce( ( obj, val ) => {
-				// No need to save also the -rtl key.
-				if ( val.indexOf( '-rtl' ) > -1 ) {
-					return obj;
-				}
-
-				val = val.replace( this.cssFilePrefix, '' ).replace( '.scss', '' );
-
-				return { ...obj, [ val ]: true };
-			}, {} );
-
-		// Breaking the line for the linter that trows a warning.
-		fs.writeFileSync( responsiveWidgetsJsonPath, JSON.stringify( responsiveWidgetsObject ) + `
-` );
+			responsiveWidgetsJsonPath = path.join( responsiveWidgetsJsonFolder, 'responsive-widgets.json' );
+	
+		let existingResponsiveWidgets = {};
+	
+		// Check if the JSON file exists and read its contents
+		if ( fs.existsSync( responsiveWidgetsJsonPath ) ) {
+			const fileContents = fs.readFileSync( responsiveWidgetsJsonPath, 'utf8' );
+			try {
+				existingResponsiveWidgets = JSON.parse( fileContents );
+			} catch ( error ) {
+				console.error( 'Error parsing existing responsive-widgets.json:', error );
+			}
+		}
+	
+		const newResponsiveWidgets = responsiveWidgets.reduce( ( obj, val ) => {
+			// No need to save also the -rtl key.
+			if ( val.indexOf( '-rtl' ) > -1 ) {
+				return obj;
+			}
+	
+			val = val.replace( this.cssFilePrefix, '' ).replace( '.scss', '' );
+			return { ...obj, [val]: true };
+		}, {} );
+	
+		// Merge the existing and new responsive widgets
+		const mergedResponsiveWidgets = { ...existingResponsiveWidgets, ...newResponsiveWidgets };
+	
+		// Breaking the line for the linter that throws a warning.
+		fs.writeFileSync( responsiveWidgetsJsonPath, JSON.stringify( mergedResponsiveWidgets ) );
 	}
 }
 
