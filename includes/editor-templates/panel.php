@@ -1,14 +1,14 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Editor\Editor_V2_Experiments;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
-$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( Editor_V2_Experiments::APP_BAR );
+$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_Module::EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-panel-state-loading">

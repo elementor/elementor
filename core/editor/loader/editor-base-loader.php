@@ -96,7 +96,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'flatpickr',
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.js",
 			[ 'jquery' ],
-			'1.12.0',
+			'4.6.13',
 			true
 		);
 
@@ -136,7 +136,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'pickr',
 			"{$assets_url}lib/pickr/pickr.min.js",
 			[],
-			'1.5.0',
+			'1.8.2',
 			true
 		);
 
@@ -170,6 +170,23 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 
 		wp_set_script_translations( 'elementor-editor', 'elementor' );
+
+		wp_register_script(
+			'elementor-responsive-bar',
+			"{$assets_url}js/responsive-bar{$min_suffix}.js",
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
+	}
+
+	/**
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'elementor-responsive-bar' );
 	}
 
 	/**
@@ -205,14 +222,14 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'flatpickr',
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.css",
 			[],
-			'1.12.0'
+			'4.6.13'
 		);
 
 		wp_register_style(
 			'pickr',
 			"{$assets_url}lib/pickr/themes/monolith.min.css",
 			[],
-			'1.5.0'
+			'1.8.2'
 		);
 
 		wp_register_style(
@@ -229,6 +246,13 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			],
 			ELEMENTOR_VERSION
 		);
+
+		wp_register_style(
+			'elementor-responsive-bar',
+			"{$assets_url}css/responsive-bar{$min_suffix}.css",
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**
@@ -236,6 +260,8 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( 'elementor-editor' );
+
+		wp_enqueue_style( 'elementor-responsive-bar' );
 	}
 
 	/**
@@ -250,7 +276,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'templates',
 			'navigator',
 			'hotkeys',
+			'responsive-bar',
 		];
+
+		$templates = apply_filters( 'elementor/editor/templates', $templates );
 
 		foreach ( $templates as $template ) {
 			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/{$template}.php" );

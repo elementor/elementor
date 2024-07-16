@@ -7,8 +7,6 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 		}
 	}
 
-	data.editor_session_id = window.EDITOR_SESSION_ID;
-
 	return new Promise( ( resolve, reject ) => {
 		const ajaxData = elementorCommon.ajax.addRequest(
 			endpoint,
