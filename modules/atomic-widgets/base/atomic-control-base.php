@@ -5,7 +5,9 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 use JsonSerializable;
 
 abstract class Atomic_Control_Base implements JsonSerializable {
-	private array $props = [];
+	private string $bind;
+	private $label = null;
+	private $description = null;
 
 	abstract public function get_type(): string;
 
@@ -16,27 +18,31 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 	}
 
 	protected function __construct( string $prop_name ) {
-		$this->props['bind'] = $prop_name;
+		$this->bind = $prop_name;
 	}
 
 	public function set_label( string $label ): self {
-		$this->props['label'] = $label;
+		$this->label = $label;
 
 		return $this;
 	}
 
 	public function set_description( string $description ): self {
-		$this->props['description'] = $description;
+		$this->description = $description;
 
 		return $this;
 	}
 
 	public function jsonSerialize(): array {
-		$this->props['props'] = $this->get_props();
-
 		return [
 			'type' => 'control',
-			'props' => $this->props,
+			'value' => [
+				'type' => $this->get_type(),
+				'bind' => $this->bind,
+				'label' => $this->label,
+				'description' => $this->description,
+				'props' => $this->get_props(),
+			],
 		];
 	}
 }

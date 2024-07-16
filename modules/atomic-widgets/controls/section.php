@@ -8,26 +8,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Section implements JsonSerializable {
-	private array $props = [];
+	private $label = null;
+	private $description = null;
+	private array $items = [];
 
 	public static function make(): self {
 		return new static();
 	}
 
 	public function set_label( string $label ): self {
-		$this->props['label'] = $label;
+		$this->label = $label;
 
 		return $this;
 	}
 
 	public function set_description( string $description ): self {
-		$this->props['description'] = $description;
+		$this->description = $description;
 
 		return $this;
 	}
 
 	public function set_items( array $items ): self {
-		$this->props['items'] = $items;
+		$this->items = $items;
 
 		return $this;
 	}
@@ -35,7 +37,11 @@ class Section implements JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'type' => 'section',
-			'props' => $this->props,
+			'value' => [
+				'label' => $this->label,
+				'description' => $this->description,
+				'items' => $this->items,
+			],
 		];
 	}
 }
