@@ -656,39 +656,34 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	isAtomicDynamic( dataBinding, changedControl ) {
-		return dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
+		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+				elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
 		const dynamicSettings = { active: true },
-			valueToParse = this.getChangedData( settings, changedControlKey, bindingSetting );
+			changedDataForRemovedItem = settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ],
+			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ],
+			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
 
-		if ( ! valueToParse ) {
-			return settings.attributes[ changedControlKey ];
-		}
-
-		// TODO: Remove this condition in 3.27
-		if ( this.model?.config?.atomic_item_link ) {
-			return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
-		}
-
-		// B.C for version 3.23
-		// TODO: Remove this try catch block in 3.27
-		try {
-			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-		} catch {
-			await new Promise( ( resolve ) => {
-				elementor.dynamicTags.refreshCacheFromServer( () => {
-					resolve();
+		if ( valueToParse ) {
+			try {
+				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+			} catch {
+				await new Promise( ( resolve ) => {
+					elementor.dynamicTags.refreshCacheFromServer( () => {
+						resolve();
+					} );
 				} );
-			} );
 
-			return ! _.isEmpty( elementor.dynamicTags.cache )
-				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
-				: false;
+				return ! _.isEmpty( elementor.dynamicTags.cache )
+					? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+					: false;
+			}
 		}
+
+		return settings.attributes[ changedControlKey ];
 	},
 
 	findUniqueKey( element1, element2, isArray = false ) {
@@ -777,8 +772,8 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
-				changedControl = this.getChangedControl( settings );
-			let change = settings.changed[ bindingSetting ];
+				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+			let change = settings.changed[ changedControl ]?.[ bindingSetting ] || settings.changed[ changedControl ];
 
 			if ( this.isAtomicDynamic( dataBinding, bindingSetting ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
@@ -790,6 +785,7 @@ BaseElementView = BaseContainer.extend( {
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
+
 				return true;
 			}
 
@@ -836,7 +832,6 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @param {Object} settings
 	 */
-	// eslint-disable-next-line no-unused-vars
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
@@ -1153,34 +1148,6 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
-	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
-		try {
-			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-		} catch {
-			await new Promise( ( resolve ) => {
-				elementor.dynamicTags.refreshCacheFromServer( () => {
-					resolve();
-				} );
-			} );
-
-			return ! _.isEmpty( elementor.dynamicTags.cache )
-				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
-				: false;
-		}
-	},
-
-	getChangedControl( settings ) {
-		let changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
-
-		if ( ! changedControlKey ) {
-			changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
-				? Object.keys( settings.changed )[ 0 ]
-				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
-		}
-
-		return changedControlKey;
-	},
-
 	getRepeaterItemActiveIndex() {
 		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex;
 	},
@@ -1202,21 +1169,6 @@ BaseElementView = BaseContainer.extend( {
 		) );
 
 		return true;
-	},
-
-	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
-		return settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ];
-	},
-
-	getChangedDataForAddedItem( settings, changedControlKey, bindingSetting ) {
-		return settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ];
-	},
-
-	getChangedData( settings, changedControlKey, bindingSetting ) {
-		const changedDataForRemovedItem = this.getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ),
-			changedDataForAddedItem = this.getChangedDataForAddedItem( settings, changedControlKey, bindingSetting );
-
-		return changedDataForAddedItem || changedDataForRemovedItem;
 	},
 } );
 
