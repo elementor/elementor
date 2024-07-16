@@ -1,6 +1,10 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorWpAiCurrentContext ) {
+			data.context = window.elementorWpAiCurrentContext;
+		} else {
+			data.context = window.elementorAiCurrentContext;
+		}
 	}
 
 	data.editor_session_id = window.EDITOR_SESSION_ID;

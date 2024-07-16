@@ -119,6 +119,10 @@ class Module extends BaseModule {
 					'wp-element',
 					'wp-editor',
 					'wp-data',
+					'wp-components',
+					'wp-compose',
+					'wp-i18n',
+					'wp-hooks',
 				],
 			ELEMENTOR_VERSION, true );
 
