@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
-use Elementor\Modules\AtomicWidgets\AtomicControls\Atomic_Control;
-use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\AtomicControls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Utils;
 
@@ -36,6 +36,48 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_atomic_controls(): array {
-		return [];
+		$tag_control = Select_Control::bind_to( 'tag' )
+			->set_label( __( 'Tag', 'elementor' ) )
+			->set_options( [
+				[
+					'value' => 'h1',
+					'label' => 'H1',
+				],
+				[
+					'value' => 'h2',
+					'label' => 'H2',
+				],
+				[
+					'value' => 'h3',
+					'label' => 'H3',
+				],
+				[
+					'value' => 'h4',
+					'label' => 'H4',
+				],
+				[
+					'value' => 'h5',
+					'label' => 'H5',
+				],
+				[
+					'value' => 'h6',
+					'label' => 'H6',
+				],
+			]);
+
+		$title_control = Textarea_Control::bind_to( 'title' )
+			->set_label( __( 'Title', 'elementor' ) )
+			->set_placeholder( __( 'Type your title here', 'elementor' ) );
+
+		$tag_and_title_section = Section::make()
+			->set_label( __( 'Tag and Title', 'elementor' ) )
+			->set_items( [
+				$tag_control,
+				$title_control,
+			]);
+
+		return [
+			$tag_and_title_section,
+		];
 	}
 }
