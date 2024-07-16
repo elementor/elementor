@@ -104,9 +104,7 @@ class Module extends BaseModule {
 			}
 		} );
 
-		if ( is_admin() ) {
-			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
-		}
+		add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
 
 		add_action( 'enqueue_block_editor_assets', function() {
 			wp_enqueue_script( 'elementor-ai-gutenberg',
