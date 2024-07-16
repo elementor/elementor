@@ -91,6 +91,12 @@ class WidgetsCss {
 			return this.widgetsScssFilesList;
 		}
 
+		this.widgetsScssFilesList = this._getStandAloneWidgetsCssFilesList().concat( this._getModulesWidgetsCssFilesList() );
+
+		return this.widgetsScssFilesList;
+	}
+
+	_getStandAloneWidgetsCssFilesList() {
 		const standAloneWidgetData = [],
 			standAloneSidgetsList = fs.existsSync( this.sourceScssFolder ) ? fs.readdirSync( this.sourceScssFolder ) : [];
 
@@ -107,6 +113,10 @@ class WidgetsCss {
 			} );
 		} );
 
+		return standAloneWidgetData;
+	}
+
+	_getModulesWidgetsCssFilesList() {
 		const moduleWidgetData = [],
 			moduleWidgetsList = this.getModulesFrontendScssFiles( this.sourceModulesScssFolder );
 
@@ -123,7 +133,7 @@ class WidgetsCss {
 			} );
 		} );
 
-		return standAloneWidgetData.concat( moduleWidgetData );
+		return moduleWidgetData;
 	}
 
 	getModulesFrontendScssFiles( filePath, frontendScssFiles = [] ) {
@@ -158,8 +168,6 @@ class WidgetsCss {
 		this.responsiveWidgets = [];
 
 		const widgetsCssFilesList = this.getWidgetsCssFilesList();
-
-		//return [];
 
 		widgetsCssFilesList.forEach( ( item ) => {
 			const widgetSourceFilePath = item.filePath,
