@@ -246,13 +246,19 @@ class Admin extends App {
 		</div>
 		<?php
 	}
-	
+
+	private function get_post_id() {
+		$path_query =  $_GET['path'];
+
+		if ( isset( $path_query ) ) {
+		   $query_string = explode( '/', sanitize_text_field( $_GET['path'] ) );
+
+		   return (int) end( $query_string );
+		}
+	}
+
 	public function print_switch_mode_button_new_editor() {
-		parse_str($_SERVER['QUERY_STRING'], $query_vars);
-		$path = isset($query_vars['path']) ? $query_vars['path'] : '';
-		$path = urldecode($path);
-		$path_parts = explode('/', $path);
-		$post_id = end($path_parts);
+		$post_id = $this->get_post_id();
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document || ! $document->is_editable_by_current_user() ) {
@@ -894,7 +900,7 @@ class Admin extends App {
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
 
-		add_action( 'rest_api_init', [ $this, 'print_switch_mode_button_new_editor' ] );
+		add_action( 'admin_footer', [ $this, 'print_switch_mode_button_new_editor' ] );
 
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
