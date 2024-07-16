@@ -37,7 +37,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	public function get_atomic_controls(): array {
 		$tag_control = Select_Control::bind_to( 'tag' )
-			->set_label( 'Tag' )
+			->set_label( __( 'Tag', 'elementor' ) )
 			->set_options( [
 				[
 					'value' => 'h1',
@@ -66,8 +66,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			]);
 
 		$title_control = Textarea_Control::bind_to( 'title' )
-			->set_label( 'Title' )
-			->set_placeholder( 'Hello, World!' );
+			->set_label( __( 'Title', 'elementor' ) )
+			->set_placeholder( __( 'Type your title here', 'elementor' ) );
 
 		$tag_and_title_section = Section::make()
 			->set_label( __( 'Tag and Title', 'elementor' ) )
