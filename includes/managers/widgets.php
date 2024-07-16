@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Editor\Editor_V2_Experiments;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
@@ -106,11 +105,13 @@ class Widgets_Manager {
 		$this->register_promoted_widgets();
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
-			$this->register_widget_by_filename( $widget_filename );
-		}
+			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
 
-		if ( Plugin::instance()->experiments->is_feature_active( Editor_V2_Experiments::ATOMIC_WIDGETS ) ) {
-			$this->register_atomic_widgets();
+			$class_name = str_replace( '-', '_', $widget_filename );
+
+			$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
+
+			$this->register( new $class_name() );
 		}
 
 		$this->register_wp_widgets();
@@ -142,26 +143,6 @@ class Widgets_Manager {
 		 * @param Widgets_Manager $this The widgets manager.
 		 */
 		do_action( 'elementor/widgets/register', $this );
-	}
-
-	private function register_widget_by_filename( string $filename ) {
-		require_once ELEMENTOR_PATH . 'includes/widgets/' . $filename . '.php';
-
-		$class_name = str_replace( '-', '_', $filename );
-
-		$class_name = __NAMESPACE__ . '\Widget_' . $class_name;
-
-		$this->register( new $class_name() );
-	}
-
-	private function register_atomic_widgets() {
-		$atomic_widgets_filenames = [
-			'atomic-heading',
-		];
-
-		foreach ( $atomic_widgets_filenames as $widget_filename ) {
-			$this->register_widget_by_filename( $widget_filename );
-		}
 	}
 
 	/**

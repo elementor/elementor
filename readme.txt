@@ -27,7 +27,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **[Pixel-Perfect Design Tools](https://go.elementor.com/wp-repo-description-tab-pro-features-feature-page/)**: Upload SVGs, apply masks, gradients, box shadows, headline effects, shape dividers, and use built-in CSS controls for advanced customization.
 - **[Template Library](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/)**: Apply complete website kits for instant setups, or choose from a vast library of single pages, blocks, and pop-up templates. Create and export your own templates for reuse.
 - **[Advanced Widgets](https://go.elementor.com/feature-page-editor/)**: Access over 40 FREE widgets, including heading, image, text editor, video, button, gallery, carousels, and more. Customize and style widgets to fit your design needs perfectly.
-- **[AI Capabilities](https://go.elementor.com/elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
+- **[AI Capabilities](https://go.elementor.com/wp-repo-description-tab-elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
 
 = 🗝️ Key features: =
 - **[Design System](https://go.elementor.com/feature-page-global-settings/)**: Utilize Elementor's Design System to ensure consistency in colors, typography, and other design elements across your entire website, promoting a cohesive and professional look.
@@ -327,48 +327,30 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.22.3 - 2024-06-26 =
+= 3.23.1 - 2024-07-15 =
+* Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
 
-* Fix: PHP error appears on the front when using gradient background with the Optimized Control Loading feature activated ([#27733](https://github.com/elementor/elementor/issues/27733))
+= 3.23.0 - 2024-07-15 =
 
-= 3.22.2 - 2024-06-24 =
-
-* Security Fix: Improved code security enforcement in Shape Divider
-* Fix: Refresh the media library after inserting an AI edited image
-
-= 3.22.1 - 2024-06-17 =
-
-* Fix: Editor not loading due to compatibility issue between Elementor AI and third-party plugins
-
-= 3.22.0 - 2024-06-16 =
-
-* New: Introducing Element Caching experiment - Enhance site speed by caching elements for faster rendering
-* New: Introducing the Performance Tab - Centralizing all stable performance features in one accessible location ([#21194](https://github.com/elementor/elementor/issues/21194))
-* New: Generate post excerpts with AI for concise summaries
-* New: Generate and edit images with AI from WordPress media library
-* Tweak: Updated Google Fonts list with 170+ new fonts ([#25095](https://github.com/elementor/elementor/issues/25095))
-* Tweak: Improved Elementor translation functionality with `just-in-time` translation loading (props [@swissspidy](https://github.com/swissspidy), [#27199](https://github.com/elementor/elementor/issues/27199))
-* Tweak: Added View Page link to the Editor Top Bar ([#21925](https://github.com/elementor/elementor/issues/21925))
-* Tweak: Replaced `waypoints.js` library with the native Intersection Observer API
-* Tweak: Changed child containers' Content Width to Full Width as default
-* Tweak: Reorganized User Preferences panel for improved user experience
-* Tweak: Hide icon position & spacing controls if there is an icon but no text in Button widget
-* Tweak: Extended Alignment and Position capabilities in Button widget
-* Tweak: Implemented CSS logical properties to Icon Spacing control in Button widget
-* Tweak: Implemented CSS logical properties to Icon Position control in Button widget
-* Tweak: Promoted Grid Container feature to Stable status
-* Tweak: Activated Optimized Control Loading by default for new sites
-* Tweak: Changed Generative Fill AI image feature to use Clipdrop text-inpainting
-* Tweak: Added functionality to delay the running of the ready triggers on inner elements
-* Tweak: Deactivated Landing Page feature for new sites
-* Fix: "Exit to" functionality is not working with the Editor Top Bar ([#22828](https://github.com/elementor/elementor/issues/22828))
-* Fix: Row-reversed direction is not working on mobile portrait breakpoint in Container ([#23710](https://github.com/elementor/elementor/issues/23710))
-* Fix: The What's' New string in the Editor is not translatable (props [@DAnn2012](https://github.com/DAnn2012))
-* Fix: Fatal error appears when updating a page with Tabs widget
-* Fix: Transparency indicator not visible in UI Light theme for Color Picker
-* Fix: AI Expand Images not working on local and protected websites
-* Fix: `all: unset` assigned to buttons cause focus issues
-* Fix: Links to Elementor Settings are broken in various locations
-* Fix: `RunReadyTrigger` returning incorrectly in various scenarios
+* New: Elevate engagement with Floating Buttons - Convert visitors into leads, making it easier than ever to start a conversation on any platform
+* New: Introducing Link In Bio - allowing you to create a digital business card and share it easily
+* New: Generate Featured Image with AI
+* New: Generate texts using AI within WordPress
+* Tweak: Added support for the `overscroll-behavior` CSS property to improve scrolling experience
+* Tweak: Activated Editor Top Bar feature by default for new sites
+* Tweak: Activated Element Caching feature for new sites and promoted to Beta status
+* Tweak: Promotes "Lazy Load Backgrounds Images" feature to Stable status
+* Tweak: Hide "Default Device View" from User Preferences when the Editor Top Bar is active
+* Tweak: Increased the height of the Globals popover to improve usability
+* Tweak: Improved Image style presets and added two additional ones in AI Images
+* Tweak: Added Excerpt generation option with AI in the editor
+* Fix: Performance issues causing lag and slowness while editing Nested Elements ([#24076](https://github.com/elementor/elementor/issues/24076))
+* Fix: Video autoplay issues in various scenarios (props [@JxxIT](https://github.com/JxxIT), [#24324](https://github.com/elementor/elementor/issues/24324), [#14437](https://github.com/elementor/elementor/issues/14437), [#7964](https://github.com/elementor/elementor/issues/7964))
+* Fix: Writing permissions issues related to WordPress root directory ([#21036](https://github.com/elementor/elementor/issues/21036), [#17255](https://github.com/elementor/elementor/issues/17255))
+* Fix: Restored deprecated Google fonts that were deprecated in the previous update ([#27701](https://github.com/elementor/elementor/issues/27701))
+* Fix: Vimeo link structure with privacy hash is not working correctly with dynamic link action using the lightbox
+* Fix: Validate prompt and canvas changes to allow generation in AI image edit generative fill
+* Fix: Elementor Core versions are being incorrectly added to Elementor Pro versions' history
+* Fix: AI Connect not launching when the user doesn't have prior connect data
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

@@ -403,14 +403,18 @@ abstract class Contact_Buttons_Render_Base {
 	protected function render_link_attributes( array $link, string $key ) {
 		switch ( $link['platform'] ) {
 			case Social_Network_Provider::WAZE:
-				if ( ! empty( $link['location']['url'] ) ) {
-					$this->widget->add_link_attributes( $key, $link['location'] );
+				if ( empty( $link['location']['url'] ) ) {
+					$link['location']['url'] = '#';
 				}
+
+				$this->widget->add_link_attributes( $key, $link['location'] );
 				break;
 			case Social_Network_Provider::URL:
-				if ( ! empty( $link['url']['url'] ) ) {
-					$this->widget->add_link_attributes( $key, $link['url'] );
+				if ( empty( $link['url']['url'] ) ) {
+					$link['url']['url'] = '#';
 				}
+
+				$this->widget->add_link_attributes( $key, $link['url'] );
 				break;
 			default:
 				break;

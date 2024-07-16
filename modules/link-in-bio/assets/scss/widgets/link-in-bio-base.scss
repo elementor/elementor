@@ -310,6 +310,10 @@
 		justify-content: center;
 		margin-block-start: 20px;
 
+		i {
+			font-size: var(--e-link-in-bio-icon-size);
+		}
+
 		&.has-size-medium {
 			--e-link-in-bio-icon-size: #{$link-in-bio-icon-size-medium};
 		}
@@ -347,6 +351,10 @@
 		svg {
 			fill: currentColor;
 			height: var(--e-link-in-bio-icon-size);
+		}
+
+		i {
+			font-size: var(--e-link-in-bio-icon-size);
 		}
 
 		.e-link-in-bio__icon-label {
