@@ -56,7 +56,7 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 			'results' => '',
 		],
 		'javascript_special_characters3' => [
-			'test' => 'jA&#x0A;Vas&#099;&#000000114;&#00105;&#X70;&#000000000000000000000116;:alert()',
+			'test' => 'jA&#x0A;Was&#099;&#000000114;&#00105;&#X70;&#000000000000000000000116;:alert()',
 			'results' => '',
 		],
 		'relative' => [

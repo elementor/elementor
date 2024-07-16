@@ -404,7 +404,7 @@ abstract class Settings_Page {
 						esc_html__( 'Learn more', 'elementor' )
 					),
 				],
-				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
+				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_option' ],
 			],
 		];
 	}

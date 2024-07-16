@@ -274,7 +274,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
-			aspectRatio = this.getRatioDictionry( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
+			aspectRatio = this.getRatioDictionary( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
 			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
 			$videoWrapper = $( '<div>', {
 				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,
@@ -299,7 +299,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getRatioDictionry( ratio ) {
+	getRatioDictionary( ratio ) {
 		const aspectRatiosDictionary = {
 			219: 2.33333, // 21/9
 			169: 1.77777, // 16/9
@@ -910,7 +910,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
-			aspectRatio = this.getRatioDictionry( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
+			aspectRatio = this.getRatioDictionary( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
 			$videoContainer = jQuery( '<div>', { class: classes.videoContainer + ' ' + classes.invisible } ),
 			$videoWrapper = jQuery( '<div>', {
 				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,

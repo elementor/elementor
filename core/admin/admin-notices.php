@@ -214,7 +214,7 @@ class Admin_Notices extends Module {
 		}
 
 		// TODO: Skip for development env.
-		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
+		$option_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
 		$tracker_description_text = esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
@@ -237,7 +237,7 @@ class Admin_Notices extends Module {
 			'description' => $message,
 			'button' => [
 				'text' => esc_html__( 'Sure! I\'d love to help', 'elementor' ),
-				'url' => $optin_url,
+				'url' => $option_url,
 				'type' => 'cta',
 			],
 			'button_secondary' => [
