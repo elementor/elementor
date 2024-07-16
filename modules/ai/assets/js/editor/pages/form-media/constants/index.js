@@ -127,5 +127,5 @@ export const IMAGE_ASPECT_RATIO = {
 };
 
 export const IMAGE_PLACEHOLDERS_HOSTS = {
-	WIREFRAME: 'gene-\\d+.live.strattic.io',
+	WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io',
 };
