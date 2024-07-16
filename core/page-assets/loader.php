@@ -34,7 +34,7 @@ class Loader extends Module {
 					'src' => $this->get_css_assets_url( 'shapes', 'assets/css/', true ),
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
-				]
+				],
 			],
 			'scripts' => [],
 		];
