@@ -88,4 +88,5 @@ export const GenerateTextWithAi = ( { blockName, blockClientId } ) => {
 
 GenerateTextWithAi.propTypes = {
 	blockName: PropTypes.string.isRequired,
+	blockClientId: PropTypes.string.isRequired,
 };
