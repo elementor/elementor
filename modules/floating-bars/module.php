@@ -35,4 +35,10 @@ class Module extends BaseModule {
 			],
 		];
 	}
+
+	public function get_widgets(): array {
+		return [
+			'Floating_Bars_Var_1',
+		];
+	}
 }
