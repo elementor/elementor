@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\AtomicControls\Types;
+namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 
@@ -7,15 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Textarea_Control extends Atomic_Control_Base {
+class Select_Control extends Atomic_Control_Base {
 	private array $props = [];
 
 	public function get_type(): string {
-		return 'textarea';
+		return 'select';
 	}
 
-	public function set_placeholder( string $placeholder ): self {
-		$this->props['placeholder'] = $placeholder;
+	public function set_options( array $options ): self {
+		$this->props['options'] = $options;
 
 		return $this;
 	}

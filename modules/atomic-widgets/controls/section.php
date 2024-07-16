@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\AtomicControls;
+namespace Elementor\Modules\AtomicWidgets\Controls;
 
 use JsonSerializable;
 
@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Atomic_Section implements JsonSerializable {
+class Section implements JsonSerializable {
 	private array $value = [];
 
 	public static function make(): self {
@@ -30,18 +30,6 @@ class Atomic_Section implements JsonSerializable {
 		$this->value['items'] = $items;
 
 		return $this;
-	}
-
-	public function get_label(): string {
-		return $this->value['label'];
-	}
-
-	public function get_description(): string {
-		return $this->value['description'];
-	}
-
-	public function get_items(): array {
-		return $this->value['items'];
 	}
 
 	public function jsonSerialize(): array {
