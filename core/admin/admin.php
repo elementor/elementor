@@ -275,7 +275,7 @@ class Admin extends App {
 		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 		$path = isset( $_GET['path'] ) ? sanitize_text_field( wp_unslash( $_GET['path'] ) ) : '';
 
-		if ( $page === 'wc-admin' && strpos( $path, '/product/' ) === 0 ) {
+		if ( 'wc-admin' === $page && strpos( $path, '/product/' ) === 0 ) {
 			return true;
 		}
 
@@ -284,7 +284,7 @@ class Admin extends App {
 
 	public function print_new_woocommerce_product_editor_button_template() {
 
-		if( ! $this->is_new_woocommerce_product_editor() ) {
+		if ( ! $this->is_new_woocommerce_product_editor() ) {
 			return;
 		}
 
