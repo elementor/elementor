@@ -536,28 +536,46 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			}
 		},
 
+		isWCNewProductEditor() {
+			if ( ! window.location.search ) {
+				return false;
+			}
+
+			const params = new URLSearchParams( window.location.search );
+			const page = params.get( 'page' );
+			const path = params.get( 'path' );
+
+			return !! ( 'wc-admin' === page && path && path.startsWith( '/product/' ) );
+		},
+
 		wcNewProductEditorSwitchButton() {
-			const wcLayout = document.querySelector( '.woocommerce-layout' ),
+			if ( ! this.isWCNewProductEditor() ) {
+				return;
+			}
+
+			const body = document.querySelector( 'body' ),
 				that = this;
 			let isButtonInjected = false;
 
-			const observer = new MutationObserver( function( mutationsList ) {
-				for ( const mutation of mutationsList ) {
-					if ( 'childList' === mutation.type ) {
-						if ( mutation.addedNodes.length > 0 ) {
-							if ( ! that.isWcProductEditorLoading() && ! isButtonInjected ) {
-								isButtonInjected = true;
+			if ( body ) {
+				const observer = new MutationObserver( function( mutationsList ) {
+					for ( const mutation of mutationsList ) {
+						if ( 'childList' === mutation.type ) {
+							if ( mutation.addedNodes.length > 0 ) {
+								if ( ! that.isWcProductEditorLoading() && ! isButtonInjected ) {
+									isButtonInjected = true;
 
-								that.injectElementorButton();
+									that.injectElementorButton();
+								}
 							}
 						}
 					}
-				}
-			} );
+				} );
 
-			observer.observe( wcLayout, {
-				childList: true, subtree: true,
-			} );
+				observer.observe( body, {
+					childList: true, subtree: true,
+				} );
+			}
 		},
 
 		roleManager: {
