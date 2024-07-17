@@ -125,3 +125,7 @@ export const IMAGE_ASPECT_RATIO = {
 		label: __( 'Portrait', 'elementor' ) + ' (9:16)',
 	},
 };
+
+export const IMAGE_PLACEHOLDERS_HOSTS = {
+	WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io',
+};

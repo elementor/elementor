@@ -1,9 +1,11 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorAiCurrentContext ) {
+			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
+		}
 	}
-
-	data.editor_session_id = window.EDITOR_SESSION_ID;
 
 	return new Promise( ( resolve, reject ) => {
 		const ajaxData = elementorCommon.ajax.addRequest(
