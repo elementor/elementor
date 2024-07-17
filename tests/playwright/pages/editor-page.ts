@@ -1,5 +1,5 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type TestInfo, Locator } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
@@ -489,55 +489,6 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.waitForLoadState( 'networkidle' );
-	}
-
-	/**
-	 * Set Dynamic Tag as value.
-	 *
-	 * @param {string}  controlSelector - Selector of the control which the dynamic tag toggler is in.
-	 * @param {string}  value           - The value to set.
-	 * @param {boolean} exactMatch      - Select only items that exactly match the provided value.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setDynamicFieldValue( controlSelector: string[], value: string, exactMatch: boolean = false ) {
-		const controlContainer = this.getLocatorFromSelectorArray( controlSelector ),
-			dynamicSwitcher = controlContainer.locator( '.elementor-control-dynamic-switcher' );
-
-		if ( ! await dynamicSwitcher.isVisible() ) {
-			await controlContainer.locator( '.elementor-dynamic-cover__remove' ).click();
-			await dynamicSwitcher.waitFor();
-		}
-
-		await dynamicSwitcher.click( { force: true } );
-		await this.page
-			.locator( `.elementor-tags-list .elementor-tags-list__item:${ exactMatch ? 'text-is' : 'has-text' }("${ value }")` )
-			.click();
-	}
-
-	/**
-	 * Set Dynamic Tag as value.
-	 *
-	 * @param {string} controlSelector - Selector of the control which the dynamic tag toggler is in.
-	 * @param {Object} values          - Key => Value where key is the input select and the value is string to set.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setDynamicFieldAdvancedSetting( controlSelector: string[], values: { [ key: string ]: string } ) {
-		const controlContainer = this.getLocatorFromSelectorArray( controlSelector ),
-			settingsAnchor = controlContainer.locator( '.elementor-dynamic-cover__settings' );
-
-		if ( ! await settingsAnchor.count() ) {
-			return;
-		}
-
-		await settingsAnchor.click();
-		await this.page.locator( '.elementor-tag-settings-popup' ).waitFor();
-
-		for ( const inputSelector in values ) {
-			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).click( { force: true } );
-			await this.page.locator( `.elementor-tag-settings-popup ${ inputSelector }` ).fill( values[ inputSelector ] );
-		}
 	}
 
 	/**
@@ -1305,13 +1256,5 @@ export default class EditorPage extends BasePage {
 	 */
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
-	}
-
-	getLocatorFromSelectorArray( selectors: string[] ) {
-		return selectors.reduce( ( currentLocator: null | Locator, selector ) => {
-			return currentLocator
-				? currentLocator.locator( selector )
-				: this.page.locator( selector );
-		}, null );
 	}
 }
