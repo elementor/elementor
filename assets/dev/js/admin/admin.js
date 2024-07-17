@@ -334,7 +334,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 			this.addUserAgentClasses();
 
-			this.appendEditorToProductHeader();
+			this.wcNewProductEditorSwitchButton();
 
 			this.roleManager.init();
 
@@ -515,17 +515,49 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
 		},
 
-		appendEditorToProductHeader() {
-			setTimeout( () => {
-				const editor = document.querySelector( '#elementor-edit-button-new-editor' );
-				const productHeader = document.querySelector( '.woocommerce-product-header__inner' );
-				productHeader.firstChild.append( editor );
-				var element = document.querySelector( '#elementor-go-to-edit-page-link' );
+		isWcProductEditorLoading() {
+			return !! document.querySelector( '.woocommerce-product-header.is-loading' );
+		},
 
-				if ( element ) {
-					element.style.cssText = 'background-color: #FFF !important; border: none !important; justify-content: left;';
+		injectElementorButton() {
+			const wcProductHeaderInner = document.querySelector( '.woocommerce-product-header__inner' );
+
+			if ( wcProductHeaderInner ) {
+				const buttonTemplate = document.querySelector( '#elementor-woocommerce-new-editor-button' ),
+					tempDiv = document.createElement( 'div' );
+				tempDiv.innerHTML = buttonTemplate.innerHTML;
+
+				const button = tempDiv.firstElementChild;
+
+				button.style.setProperty( 'height', 'unset' );
+				button.style.setProperty( 'width', 'fit-content' );
+
+				wcProductHeaderInner.firstChild.append( button );
+			}
+		},
+
+		wcNewProductEditorSwitchButton() {
+			const wcLayout = document.querySelector( '.woocommerce-layout' ),
+				that = this;
+			let isButtonInjected = false;
+
+			const observer = new MutationObserver( function( mutationsList ) {
+				for ( const mutation of mutationsList ) {
+					if ( 'childList' === mutation.type ) {
+						if ( mutation.addedNodes.length > 0 ) {
+							if ( ! that.isWcProductEditorLoading() && ! isButtonInjected ) {
+								isButtonInjected = true;
+
+								that.injectElementorButton();
+							}
+						}
+					}
 				}
-			}, 1000 );
+			} );
+
+			observer.observe( wcLayout, {
+				childList: true, subtree: true,
+			} );
 		},
 
 		roleManager: {

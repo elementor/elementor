@@ -211,6 +211,8 @@ class Admin extends App {
 		}
 
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
+
+		$editorButton = $this->render_editor_button_html( $document );
 		?>
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
@@ -225,6 +227,13 @@ class Admin extends App {
 				</span>
 			</button>
 		</div>
+		<?php echo $editorButton; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php
+	}
+
+	public function render_editor_button_html( $document ) {
+		ob_start();
+		?>
 		<div id="elementor-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
@@ -245,6 +254,8 @@ class Admin extends App {
 			</a>
 		</div>
 		<?php
+
+		return ob_get_clean();
 	}
 
 	private function get_post_id() {
@@ -257,37 +268,35 @@ class Admin extends App {
 		}
 	}
 
-	public function print_switch_mode_button_new_editor() {
-		$post_id = $this->get_post_id();
-		$document = Plugin::$instance->documents->get( $post_id );
+	public function is_new_woocommerce_product_editor() {
+		if ( ! is_admin() ) {
+			return false;
+		}
 
-		if ( ! $document || ! $document->is_editable_by_current_user() ) {
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-admin' && isset( $_GET['path'] ) ) {
+			$path = $_GET['path'];
+
+			if ( strpos( $path, '/product/' ) === 0 ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function print_new_woocommerce_product_editor_button_template() {
+
+		if( ! $this->is_new_woocommerce_product_editor() ) {
 			return;
 		}
 
-		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
+		$post_id = $this->get_post_id();
+		$document = Plugin::$instance->documents->get( $post_id );
+		$editorButton = $this->render_editor_button_html( $document );
 
-		?>
-		<div id="elementor-edit-button-new-editor">
-			<a id="elementor-go-to-edit-page-link" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
-				<div id="elementor-editor-button" class="button button-primary button-large">
-					<i class="eicon-elementor-square" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
-				</div>
-				<div class="elementor-loader-wrapper">
-					<div class="elementor-loader">
-						<div class="elementor-loader-boxes">
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-						</div>
-					</div>
-					<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
-				</div>
-			</a>
-		</div>
-		<?php
+		?> <script id="elementor-woocommerce-new-editor-button" type="text/html"> <?php
+			echo $editorButton; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?> </script> <?php
 	}
 
 	/**
@@ -900,7 +909,7 @@ class Admin extends App {
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
 
-		add_action( 'admin_footer', [ $this, 'print_switch_mode_button_new_editor' ] );
+		add_action( 'admin_footer', [ $this, 'print_new_woocommerce_product_editor_button_template' ] );
 
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
