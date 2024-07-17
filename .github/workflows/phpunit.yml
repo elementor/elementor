@@ -62,6 +62,7 @@ jobs:
           coverage: none
       - name: Install Dependencies
         run: |
+          echo "COVERAGE: ${{ env.COVERAGE }}"
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
           composer update --no-interaction
       - name: Run Tests with Coverage (latest PHP & WP)
