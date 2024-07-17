@@ -815,8 +815,6 @@ BaseElementView = BaseContainer.extend( {
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
 						changed = renderDataBinding( dataBinding );
-					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
-						changed = this.tryHandleDynamicTagsAdvancedTools( dataBinding, settings );
 					}
 				}
 					break;
