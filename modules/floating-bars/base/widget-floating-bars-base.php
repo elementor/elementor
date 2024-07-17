@@ -169,6 +169,21 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => null,
+						],
+					],
+				],
 			]
 		);
 
@@ -179,6 +194,21 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-announcement-icon-color: {{VALUE}}',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => null,
+						],
+					],
 				],
 			]
 		);
@@ -200,6 +230,21 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'default' => 'start',
 				'toggle' => true,
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => null,
+						],
+					],
+				],
 			]
 		);
 
@@ -219,6 +264,21 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-announcement-icon-size: {{SIZE}}{{UNIT}}',
 				],
 				'separator' => 'after',
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'announcement_icon[value]',
+							'operator' => '!==',
+							'value' => null,
+						],
+					],
+				],
 			]
 		);
 
@@ -253,7 +313,342 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	}
 
 	protected function add_cta_button_style_section(): void {
+		$this->start_controls_section(
+			'style_cta_button',
+			[
+				'label' => esc_html__( 'CTA Button', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
 
+		$this->add_control(
+			'style_cta_type',
+			[
+				'label' => esc_html__( 'Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'button',
+				'options' => [
+					'button' => esc_html__( 'Button', 'elementor' ),
+					'link' => esc_html__( 'Link', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_cta_icon_position',
+			[
+				'label' => esc_html__( 'Icon Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'default' => 'end',
+				'toggle' => true,
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'cta_icon[value]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'cta_icon[value]',
+							'operator' => '!==',
+							'value' => null,
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_icon_spacing',
+			[
+				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-icon-gap: {{SIZE}}{{UNIT}};',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'cta_icon[value]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'cta_icon[value]',
+							'operator' => '!==',
+							'value' => null,
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'style_cta_typography',
+				'selector' => '{{WRAPPER}} .e-floating-bars__cta-button',
+			]
+		);
+
+		$this->start_controls_tabs(
+			'style_cta_button_tabs'
+		);
+
+		$this->start_controls_tab(
+			'style_cta_button_tabs_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-text-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_bg_color',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-bg-color: {{VALUE}}',
+				],
+				'condition' => [
+					'style_cta_type' => 'button',
+				]
+			]
+		);
+
+		$this->end_controls_tab();
+
+
+		$this->start_controls_tab(
+			'style_cta_button_tabs_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_text_color_hover',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-text-color-hover: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_bg_color_hover',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-bg-color-hover: {{VALUE}}',
+				],
+				'condition' => [
+					'style_cta_type' => 'button',
+				]
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_border_color_hover',
+			[
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-border-color-hover: {{VALUE}}',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_cta_button_show_border',
+							'operator' => '===',
+							'value' => 'yes',
+						],
+						[
+							'name' => 'style_cta_type',
+							'operator' => '===',
+							'value' => 'button',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_hover_animation',
+			[
+				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'type' => Controls_Manager::HOVER_ANIMATION,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'style_cta_button_show_border',
+			[
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+				'separator' => 'before',
+				'condition' => [
+					'style_cta_type' => 'button',
+				]
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_cta_button_border_width',
+			[
+				'label' => esc_html__( 'Border Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-border-width: {{SIZE}}{{UNIT}}',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_cta_button_show_border',
+							'operator' => '===',
+							'value' => 'yes',
+						],
+						[
+							'name' => 'style_cta_type',
+							'operator' => '===',
+							'value' => 'button',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_border_color',
+			[
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-border-color: {{VALUE}}',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_cta_button_show_border',
+							'operator' => '===',
+							'value' => 'yes',
+						],
+						[
+							'name' => 'style_cta_type',
+							'operator' => '===',
+							'value' => 'button',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_corners',
+			[
+				'label' => esc_html__( 'Corners', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'round',
+				'options' => [
+					'round' => esc_html__( 'Round', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'sharp' => esc_html__( 'Sharp', 'elementor' ),
+				],
+				'condition' => [
+					'style_cta_type' => 'button',
+				]
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_cta_button_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-floating-bars-cta-button-padding-block-start: {{TOP}}{{UNIT}}; --e-floating-bars-cta-button-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-floating-bars-cta-button-padding-inline-start: {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+				'condition' => [
+					'style_cta_type' => 'button',
+				]
+			]
+		);
+
+		// TODO: wire this
+		$this->add_responsive_control(
+			'style_cta_button_animation',
+			[
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+				'separator' => 'before',
+			]
+		);
+
+		$this->end_controls_section();
 	}
 
 	protected function add_floating_bar_style_section(): void {
@@ -301,7 +696,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'range' => [
 					'px' => [
 						'min' => 0,
-						'max' => 40,
+						'max' => 50,
 					],
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
@@ -323,7 +718,46 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'floating_bar_close_button_heading',
+			[
+				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
 		// YOU ARE HERE
+		$this->add_control(
+			'floating_bar_close_button_position',
+			[
+				'label' => esc_html__( 'Horizontal position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'default' => 'end',
+				'toggle' => true,
+			]
+		);
+
+		$this->add_control(
+			'floating_bar_close_button_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-close-button-color: {{VALUE}}',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 	}

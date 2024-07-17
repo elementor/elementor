@@ -1,60 +1,155 @@
 .e-floating-bars {
-    --e-floating-bars-announcement-bg-color: #467FF7;
-    --e-floating-bars-announcement-text-color: #FFFFFF;
-    --e-floating-bars-announcement-icon-color: #FFFFFF;
-    --e-floating-bars-announcement-icon-size: 20px;
-    --e-floating-bars-elements-padding-block-end: 12px;
+	--e-floating-bars-announcement-bg-color: #467FF7;
+	--e-floating-bars-announcement-text-color: #FFFFFF;
+	--e-floating-bars-announcement-icon-color: #FFFFFF;
+	--e-floating-bars-cta-button-text-color: #FFFFFF;
+	--e-floating-bars-cta-button-text-color-hover: #467FF7;
+	--e-floating-bars-cta-button-bg-color: #1C2448;
+	--e-floating-bars-cta-button-bg-color-hover: #FFFFFF;
+	--e-floating-bars-cta-button-border-color: #1C2448;
+	--e-floating-bars-cta-button-border-color-hover: #1C2448;
+	--e-floating-bars-close-button-color: #FFFFFF;
+
+	--e-floating-bars-announcement-icon-size: 20px;
+	--e-floating-bars-elements-padding-block-end: 12px;
 	--e-floating-bars-elements-padding-block-start: 12px;
 	--e-floating-bars-elements-padding-inline-end: 16px;
 	--e-floating-bars-elements-padding-inline-start: 16px;
-    --e-floating-bars-elements-gap: 16px;
+	--e-floating-bars-elements-gap: 16px;
+	--e-floating-bars-cta-button-border-width: 2px;
+	--e-floating-bars-cta-corners: #{$floating-bars-border-radius-round};
+	--e-floating-bars-cta-button-padding-block-end: 8px;
+	--e-floating-bars-cta-button-padding-block-start: 8px;
+	--e-floating-bars-cta-button-padding-inline-end: 20px;
+	--e-floating-bars-cta-button-padding-inline-start: 20px;
+	--e-floating-bars-cta-button-icon-gap: 5px;
 
-    align-items: center;
-    background-color: var(--e-floating-bars-announcement-bg-color);
-    color: var(--e-floating-bars-announcement-text-color);
-    display: flex;
-    gap: var(--e-floating-bars-elements-gap);
-    inset-inline-end: 0;
-    inset-inline-start: 0;
-    padding-block-end: var(--e-floating-bars-elements-padding-block-end);
-    padding-block-start: var(--e-floating-bars-elements-padding-block-start);
-    padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
-    padding-inline-start: var(--e-floating-bars-elements-padding-inline-start);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: $element-overlay;
+	align-items: center;
+	background-color: var(--e-floating-bars-announcement-bg-color);
+	color: var(--e-floating-bars-announcement-text-color);
+	display: flex;
+	gap: var(--e-floating-bars-elements-gap);
+	inset-inline-end: 0;
+	inset-inline-start: 0;
+	padding-block-end: var(--e-floating-bars-elements-padding-block-end);
+	padding-block-start: var(--e-floating-bars-elements-padding-block-start);
+	padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
+	padding-inline-start: var(--e-floating-bars-elements-padding-inline-start);
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: $element-overlay;
 
-    &.has-content-alignment-start {
-        justify-content: flex-start;
-    }
+	&.has-content-alignment-start {
+		justify-content: flex-start;
+	}
 
-    &.has-content-alignment-center {
-        justify-content: center;
-    }
+	&.has-content-alignment-center {
+		justify-content: center;
+	}
 
-    &.has-content-alignment-end {
-        justify-content: flex-end;
-    }
+	&.has-content-alignment-end {
+		justify-content: flex-end;
+	}
 
-    &.has-content-alignment-stretch {
-        justify-content: stretch;
-    }
+	&.has-content-alignment-stretch {
+		justify-content: stretch;
+	}
 
-    &__announcement-text {
-        color: var(--e-floating-bars-announcement-text-color);
-        gap: var(--e-floating-bars-elements-gap);
-        margin: 0;
-    }
+	.has-corners-rounded {
+		--e-floating-bars-corners: #{$floating-bars-border-radius-rounded};
+	}
 
-    &__announcement-icon {
-        color: var(--e-floating-bars-announcement-icon-color);
-        display: flex;
+	.has-corners-round {
+		--e-floating-bars-corners: #{$floating-bars-border-radius-round};
+	}
 
-        svg {
-            fill: var(--e-floating-bars-announcement-icon-color);
-            height: var(--e-floating-bars-announcement-icon-size);
-            width: var(--e-floating-bars-announcement-icon-size);
-        }
-    }
+	.has-corners-sharp {
+		--e-floating-bars-corners: #{$floating-bars-border-radius-sharp};
+	}
+
+	&__announcement-text {
+		color: var(--e-floating-bars-announcement-text-color);
+		font-size: 16px;
+		font-weight: 400;
+		gap: var(--e-floating-bars-elements-gap);
+		line-height: 24px;
+		margin: 0;
+	}
+
+	&__announcement-icon {
+		color: var(--e-floating-bars-announcement-icon-color);
+		display: flex;
+
+		svg {
+			fill: var(--e-floating-bars-announcement-icon-color);
+			height: var(--e-floating-bars-announcement-icon-size);
+			width: var(--e-floating-bars-announcement-icon-size);
+		}
+	}
+
+	&__cta-icon {
+		color: var(--e-floating-bars-cta-button-text-color);
+		display: inline-flex;
+		transition: $transition-hover;
+
+		svg {
+			fill: var(--e-floating-bars-cta-button-text-color);
+			height: 1em; // height is relative to the font-size
+			transition: $transition-hover;
+			width: 1em; // width is relative to the font-size
+		}
+	}
+
+	&__cta-button {
+		align-items: center;
+		color: var(--e-floating-bars-cta-button-text-color);
+		display: inline-flex;
+		font-size: 16px;
+		gap: var(--e-floating-bars-cta-button-icon-gap);
+		line-height: 24px;
+		font-weight: 700;
+		transition: $transition-hover;
+		
+		&:hover,
+		&:focus {
+			color: var(--e-floating-bars-cta-button-text-color-hover);
+			transition: $transition-hover;
+
+			.e-floating-bars__cta-icon {
+				color: var(--e-floating-bars-cta-button-text-color-hover);
+				transition: $transition-hover;
+
+				svg {
+					fill: var(--e-floating-bars-cta-button-text-color-hover);
+					transition: $transition-hover;
+				}
+			}
+		}
+
+		&.is-type-button {
+			background-color: var(--e-floating-bars-cta-button-bg-color);
+			border-color: var(--e-floating-bars-cta-button-border-color);
+			border-style: solid;
+			border-width: var(--e-floating-bars-cta-button-border-width);
+			border-radius: var(--e-floating-bars-corners);
+			padding-block-end: var(--e-floating-bars-cta-button-padding-block-end);
+			padding-block-start: var(--e-floating-bars-cta-button-padding-block-start);
+			padding-inline-end: var(--e-floating-bars-cta-button-padding-inline-end);
+			padding-inline-start: var(--e-floating-bars-cta-button-padding-inline-start);
+
+			&:hover,
+			&:focus {
+				background-color: var(--e-floating-bars-cta-button-bg-color-hover);
+				border-color: var(--e-floating-bars-cta-button-border-color-hover);
+			}
+		}
+
+		&.is-type-link {
+			--e-floating-bars-cta-button-text-color: #1C2448;
+			--e-floating-bars-cta-button-text-color-hover: #FFFFFF;
+
+			text-decoration: underline;
+		}
+	}
 }
