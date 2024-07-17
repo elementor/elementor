@@ -77,6 +77,13 @@ const sass = {
 				dest: 'assets/css',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: 'shapes.scss',
+				dest: 'assets/css',
+				ext: '.css',
+			},
 		]
 	}
 };
