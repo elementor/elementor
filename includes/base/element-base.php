@@ -513,6 +513,8 @@ abstract class Element_Base extends Controls_Stack {
 			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$this->after_render();
 
+			// TODO: Remove this in the future
+			// Since v3.24 the scripts/styles depends on using, rendering by `page_assets`
 			$this->enqueue_scripts();
 			$this->enqueue_styles();
 		}
