@@ -1,11 +1,12 @@
 import WpAdminPage from '../pages/wp-admin-page';
 import { parallelTest as test } from '../parallelTest';
-import { expect } from '@playwright/test';
+import { BrowserContext, expect } from '@playwright/test';
+import EditorPage from '../pages/editor-page';
 
 test.describe( 'Atomic Widgets', () => {
-	let editor;
-	let wpAdmin;
-	let context;
+	let editor: EditorPage;
+	let wpAdmin: WpAdminPage;
+	let context: BrowserContext;
 
 	const atomicWidgets = [
 		{ name: 'a-heading', title: 'Atomic Heading' },
@@ -28,7 +29,7 @@ test.describe( 'Atomic Widgets', () => {
 	test.afterAll( async () => {
 		await wpAdmin.resetExperiments();
 
-		context.close();
+		await context.close();
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
@@ -36,7 +37,7 @@ test.describe( 'Atomic Widgets', () => {
 			test( 'Widget is displayed in panel', async () => {
 				const layout = editor.page.locator( '#elementor-panel-category-general' );
 				await layout.isVisible();
-				const container = await layout.locator( '.title', { hasText: widget.title } );
+				const container = layout.locator( '.title', { hasText: widget.title } );
 				await expect( container ).toBeVisible();
 			} );
 
@@ -46,6 +47,13 @@ test.describe( 'Atomic Widgets', () => {
 				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 			} );
 		} );
+	} );
+
+	test( 'Widgets are displayed in front end', async () => {
+		await editor.publishAndViewPage();
+		await editor.page.setViewportSize( { width: 1920, height: 1080 } );
+		await expect.soft( editor.page.locator( '.page-content' ) )
+			.toHaveScreenshot( 'atomic-widgets-frontend.png' );
 	} );
 } );
 
