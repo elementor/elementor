@@ -14,10 +14,6 @@ const Module = function() {
 
 	let settings;
 
-	const isJqueryBased = function() {
-		return true;
-	};
-
 	const ensureClosureMethods = function() {
 		Object.keys(self).forEach(function (methodName) {
 			const oldMethod = self[methodName];

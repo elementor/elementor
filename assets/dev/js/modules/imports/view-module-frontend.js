@@ -10,9 +10,9 @@ export default Module.extend( {
 	bindEvents() {},
 
 	onInit() {
-		if ( 'function' !== typeof this.getDefaultElements ) {
-			return;
-		}
+		// if ( 'function' !== typeof this.getDefaultElements ) {
+		// 	return;
+		// }
 
 		this.initElements();
 		this.bindEvents();

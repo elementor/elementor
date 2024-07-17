@@ -1,5 +1,3 @@
-import ScriptLoader from './jquery-loader';
-
 export default class Base extends elementorModules.ViewModuleFrontend {
 	baseElement = null;
 
@@ -249,29 +247,20 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	}
 
 	onInit( ...args ) {
-		(async () => {
-			try {
-				// Instantiate ScriptLoader and execute jQuery loading
-				const scriptLoader = new ScriptLoader();
-				await scriptLoader.execute();
-				console.log('jQuery was loaded');
+		if ( ! this.baseElement ) {
+			this.baseElement = this.getSettings( 'baseElement' );
+		}
 
-				// Now jQuery is loaded, initialize this.$element
-				this.$element = jQuery(this.baseElement);
+		if ( !! window.jQuery ) {
+			this.$element = jQuery( this.baseElement );
+		}
 
-				// Continue with other initialization logic
-				super.onInit(...args);
+		super.onInit( ...args );
 
-				// Check if active and apply module frontend view
-				if (this.isActive(this.getSettings())) {
-					elementorModules.ViewModuleFrontend.prototype.onInit.apply(this, arguments);
-				}
-
-				console.log('Does this wait as well?');
-			} catch (error) {
-				console.error('Error:', error);
-			}
-		})();
+		// Check if active and apply module frontend view
+		if ( this.isActive( this.getSettings() ) ) {
+			elementorModules.ViewModuleFrontend.prototype.onInit.apply(this, arguments);
+		}
 	}
 
 	onDestroy() {
@@ -283,17 +272,4 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 			this.unbindEvents();
 		}
 	}
-
-	// async maybeLoadJquery() {
-	// 	if ( !! window.jQuery ) {
-	// 		return;
-	// 	}
-	//
-	// 	( async () => {
-	// 		const scriptLoader = new ScriptLoader();
-	// 		scriptLoader.execute();
-	//
-	// 		return true;
-	// 	} )();
-	// }
 }

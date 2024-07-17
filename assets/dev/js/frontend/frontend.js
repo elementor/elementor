@@ -72,11 +72,6 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 		const defaultElements = {
 			window,
 			document,
-			// $window: jQuery( window ),
-			// $document: jQuery( document ),
-			// $head: jQuery( document.head ),
-			// $body: jQuery( document.body ),
-			// $deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
 			deviceMode: deviceModeElement,
 		};
 
@@ -392,6 +387,6 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 
 window.elementorFrontend = new Frontend();
 
-if (!elementorFrontend.isEditMode()) {
+if ( ! elementorFrontend.isEditMode() ) {
 	document.addEventListener('DOMContentLoaded', () => elementorFrontend.init());
 }

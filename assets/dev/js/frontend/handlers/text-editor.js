@@ -2,7 +2,7 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 	getDefaultSettings() {
 		return {
 			selectors: {
-				paragraph: 'p:first',
+				paragraph: 'p:first-child',
 			},
 			classes: {
 				dropCap: 'elementor-drop-cap',
@@ -13,16 +13,19 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' ),
-			classes = this.getSettings( 'classes' ),
-			$dropCap = jQuery( '<span>', { class: classes.dropCap } ),
-			$dropCapLetter = jQuery( '<span>', { class: classes.dropCapLetter } );
+			classes = this.getSettings( 'classes' );
 
-		$dropCap.append( $dropCapLetter );
+		const dropCap = document.createElement( 'span' );
+		dropCap.classList.add( classes.dropCap );
+
+		const dropCapLetter = document.createElement( 'span' );
+		dropCapLetter.classList.add( classes.dropCapLetter );
+		dropCap.appendChild( dropCapLetter );
 
 		return {
-			$paragraph: this.$element.find( selectors.paragraph ),
-			$dropCap,
-			$dropCapLetter,
+			paragraph: this.baseElement?.querySelectorAll( selectors.paragraph ),
+			dropCap,
+			dropCapLetter,
 		};
 	}
 
@@ -77,7 +80,7 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		this.wrapDropCap();
+		// this.wrapDropCap();
 	}
 
 	onElementChange( propertyName ) {
