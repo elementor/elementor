@@ -80,7 +80,7 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		// this.wrapDropCap();
+		this.wrapDropCap();
 	}
 
 	onElementChange( propertyName ) {
