@@ -773,7 +773,7 @@ BaseElementView = BaseContainer.extend( {
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
 				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
-			let change = settings.changed[ changedControl ]?.[ bindingSetting ] || settings.changed[ changedControl ];
+			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, bindingSetting ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
