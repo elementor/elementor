@@ -1,0 +1,3 @@
+*                                  @elementor/editor-core @elementor/editor-qa @elementor/ninja-team @elementor/united-elements
+modules/ai/assets                  @elementor/ai
+tests/playwright/sanity/modules/ai @elementor/ai
