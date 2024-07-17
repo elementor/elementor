@@ -804,6 +804,8 @@ BaseElementView = BaseContainer.extend( {
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
 						changed = renderDataBinding( dataBinding );
+					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
+						changed = this.tryHandleDynamicCoverSettings( dataBinding, settings );
 					}
 				}
 					break;
@@ -1106,6 +1108,49 @@ BaseElementView = BaseContainer.extend( {
 			groups: [ 'elementor-element' ],
 		} );
 	},
+
+	/**
+	 * Function getAdvancedDynamicTitleChange().
+	 *
+	 * Renders before / after / fallback for dynamic item titles.
+	 *
+	 * @param {Object} settings
+	 * @param {Object} previousSettings
+	 * @param {string} text
+	 */
+	getTitleWithAdvancedValues( settings, previousSettings, text ) {
+		if ( previousSettings.before ) {
+			text = text.replace( previousSettings.before, '' );
+		}
+
+		if ( previousSettings.after ) {
+			text = text.replace( new RegExp( previousSettings.after + '$' ), '' );
+		}
+
+		if ( ! text ) {
+			return settings.fallback;
+		}
+
+		text = settings.before + text;
+		text += settings.after;
+
+		return text;
+	},
+
+	getRepeaterItemActiveIndex() {
+		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex;
+	},
+
+	tryHandleDynamicCoverSettings( dataBinding, settings ) {
+		jQuery( dataBinding.el ).text( this.getTitleWithAdvancedValues(
+			settings.attributes,
+			settings._previousAttributes,
+			dataBinding.el.textContent,
+		) );
+
+		return true;
+	},
+
 } );
 
 module.exports = BaseElementView;
