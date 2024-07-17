@@ -1,3 +1,4 @@
+export { default as AtomicWidgetComponent } from '../document/atomic-widgets/component';
 export { default as DynamicComponent } from '../document/dynamic/component';
 export { default as ElementsComponent } from '../document/elements/component';
 export { default as GlobalsComponent } from '../document/globals/component';
