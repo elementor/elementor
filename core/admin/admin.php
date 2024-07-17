@@ -248,12 +248,12 @@ class Admin extends App {
 	}
 
 	private function get_post_id() {
-		$path_query =  $_GET['path'];
+		$path_query = $_GET['path'];
 
 		if ( isset( $path_query ) ) {
-		   $query_string = explode( '/', sanitize_text_field( $_GET['path'] ) );
+			$query_string = isset( $_GET['path'] ) ? explode( '/', wp_unslash( $_GET['path'] ) ) : array();
 
-		   return (int) end( $query_string );
+			return (int) end( $query_string );
 		}
 	}
 
