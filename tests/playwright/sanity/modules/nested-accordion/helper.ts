@@ -1,4 +1,4 @@
-import { expect, Frame, Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
 /**
@@ -203,34 +203,5 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 
 		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( currentTitleIndex ) + 2 );
 		expect( parseInt( nextTitleIndex ) ).toEqual( parseInt( clonedTitleIndex ) + 1 );
-	}
-}
-
-export async function setDynamicTag( page: Page, editor: EditorPage, widgetId: string, itemIndex: number, dynamicTag: string ) {
-	await editor.selectElement( widgetId );
-
-	await editor.closeSection( 'section_items' );
-	await editor.openSection( 'section_items' );
-
-	const repeaterControl = page.locator( `.elementor-control-items` ),
-		repeaterItem = repeaterControl.locator( `.elementor-repeater-fields >> nth=${ itemIndex }` );
-
-	if ( ! await repeaterItem.locator( '.elementor-repeater-row-controls.editable' ).count() ) {
-	}
-	await repeaterItem.locator( '.elementor-repeater-row-item-title' ).click();
-
-	await editor.setDynamicFieldValue( [
-		`.elementor-control-items .elementor-repeater-fields >> nth=${ itemIndex }`,
-		'.elementor-control-item_title',
-	], dynamicTag );
-}
-
-export async function toggleAccordionContent( frame: Page | Frame, widgetId: string, itemIndex: number, shouldOpen: boolean ) {
-	const accordion = frame.locator( `.elementor-element-${ widgetId }` ),
-		accordionItem = accordion.locator( '.e-n-accordion-item' ).nth( itemIndex ),
-		isAccordionItemOpen = await accordionItem.locator( '.e-con' ).nth( 0 ).isVisible();
-
-	if ( shouldOpen !== isAccordionItemOpen ) {
-		await accordionItem.locator( '.e-n-accordion-item-title' ).click();
 	}
 }
