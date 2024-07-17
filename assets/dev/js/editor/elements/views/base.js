@@ -701,7 +701,6 @@ BaseElementView = BaseContainer.extend( {
 			keys2 = isArray ? element2 : Object.keys( element2 || {} );
 
 		const allKeys = keys1.concat( keys2 );
-		// return keys1.filter( ( key ) => ! keys2.includes( key ) );
 
 		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) ) ;
 	},
