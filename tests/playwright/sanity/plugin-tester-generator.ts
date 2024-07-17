@@ -4,59 +4,66 @@ import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
 
-const pluginList: { pluginName: string, installByAPI: boolean }[] = [
-	{ pluginName: 'essential-addons-for-elementor-lite', installByAPI: true },
-	{ pluginName: 'jetsticky-for-elementor', installByAPI: true },
-	{ pluginName: 'jetgridbuilder', installByAPI: true },
-	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installByAPI: true },
-	{ pluginName: 'stratum', installByAPI: true },
-	{ pluginName: 'bdthemes-prime-slider-lite', installByAPI: true },
-	{ pluginName: 'wunderwp', installByAPI: true },
-	{ pluginName: 'addon-elements-for-elementor-page-builder', installByAPI: true },
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[] = [
+	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
+	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
+	{ pluginName: 'jetgridbuilder', installSource: 'api' },
+	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'stratum', installSource: 'api' },
+	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
+	{ pluginName: 'wunderwp', installSource: 'api' },
+	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
 	// Addons for elementor is closed as of July 2, 2024 and is not available for download. This closure is temporary, pending a full review.
 	// see: https://wordpress.org/plugins/addons-for-elementor/
-	// { pluginName: 'addons-for-elementor', installByAPI: true },
-	{ pluginName: 'anywhere-elementor', installByAPI: true },
-	{ pluginName: 'astra-sites', installByAPI: true },
-	{ pluginName: 'connect-polylang-elementor', installByAPI: true },
-	{ pluginName: 'dynamic-visibility-for-elementor', installByAPI: true },
-	{ pluginName: 'ele-custom-skin', installByAPI: true },
-	{ pluginName: 'elementskit-lite', installByAPI: true },
-	{ pluginName: 'envato-elements', installByAPI: true },
-	{ pluginName: 'exclusive-addons-for-elementor', installByAPI: true },
+	// { pluginName: 'addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'anywhere-elementor', installSource: 'api' },
+	{ pluginName: 'astra-sites', installSource: 'api' },
+	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
+	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
+	{ pluginName: 'elementskit-lite', installSource: 'api' },
+	{ pluginName: 'envato-elements', installSource: 'api' },
+	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
 	// 'header-footer-elementor',
-	{ pluginName: 'jeg-elementor-kit', installByAPI: false },
-	{ pluginName: 'make-column-clickable-elementor', installByAPI: true },
-	{ pluginName: 'metform', installByAPI: true },
-	{ pluginName: 'music-player-for-elementor', installByAPI: false },
-	{ pluginName: 'ooohboi-steroids-for-elementor', installByAPI: true },
-	{ pluginName: 'post-grid-elementor-addon', installByAPI: true },
-	{ pluginName: 'powerpack-lite-for-elementor', installByAPI: true },
-	{ pluginName: 'premium-addons-for-elementor', installByAPI: false },
-	{ pluginName: 'rife-elementor-extensions', installByAPI: true },
-	{ pluginName: 'royal-elementor-addons', installByAPI: false },
-	{ pluginName: 'sb-elementor-contact-form-db', installByAPI: true },
-	{ pluginName: 'skyboot-custom-icons-for-elementor', installByAPI: true },
-	{ pluginName: 'sticky-header-effects-for-elementor', installByAPI: true },
-	{ pluginName: 'timeline-widget-addon-for-elementor', installByAPI: true },
+	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
+	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
+	{ pluginName: 'metform', installSource: 'api' },
+	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
+	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
+	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
+	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
+	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
+	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
+	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
+	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
+	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
 	// 'unlimited-elements-for-elementor',
 	// 'visibility-logic-elementor',
-	{ pluginName: 'ht-mega-for-elementor', installByAPI: true },
-	{ pluginName: 'tutor-lms-elementor-addons', installByAPI: true },
-	{ pluginName: 'code-block-for-elementor', installByAPI: true },
-	{ pluginName: 'jetwidgets-for-elementor', installByAPI: true },
-	{ pluginName: 'happy-elementor-addons', installByAPI: false },
+	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
+	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
+	{ pluginName: 'code-block-for-elementor', installSource: 'api' },
+	{ pluginName: 'jetwidgets-for-elementor', installSource: 'api' },
+	{ pluginName: 'happy-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName: string;
-			if ( plugin.installByAPI ) {
-				pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
-			} else {
-				wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
+			switch ( plugin.installSource ) {
+				case 'api':
+					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
+					break;
+				case 'cli':
+					wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
+					break;
+				case 'zip':
+					wpEnvCli( `wp plugin install elementor-playwright/plugin-tester-plugins/${ plugin.pluginName }.zip --activate` );
+					break;
 			}
+
 			try {
 				const editor = new EditorPage( page, testInfo );
 				const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
