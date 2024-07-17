@@ -47,9 +47,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test.skip( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check that background video is loaded in multiple content containers', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			'e_nested_atomic_repeaters': false,
+		} );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -69,6 +72,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setBackgroundVideoUrl( editor, contentContainerOneId, videoUrl );
 		await setBackgroundVideoUrl( editor, contentContainerTwoId, videoUrl );
 		await setBackgroundVideoUrl( editor, contentContainerThreeId, videoUrl );
+
+		console.log( setBackgroundVideoUrl, 'setBackgroundVideoUrl' );
 
 		await expect.soft( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect.soft( videoContainer ).toHaveCount( 1 );
