@@ -649,6 +649,8 @@ abstract class Widget_Base extends Element_Base {
 
 			$this->print_widget_css();
 
+			// get_name
+
 			/**
 			 * Render widget content.
 			 *

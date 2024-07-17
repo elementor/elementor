@@ -8,11 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $version = '0.0';
+	protected $styles = [];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
+        $this->styles = $data['styles'] ?? [];
 	}
 
 	abstract public function get_atomic_controls(): array;
@@ -37,11 +39,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$data = $this->get_data();
-
-		if ( ! empty( $data['styles'] ) ) {
-			$raw_data['styles'] = $data['styles'];
-		}
+        $raw_data['styles'] = $this->styles;
 
 		return $raw_data;
 	}
