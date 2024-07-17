@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Base\Elements_Iteration_Actions\Assets;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -653,6 +654,11 @@ class Frontend extends App {
 				if ( $post_id && is_singular() ) {
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
+
+					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
+					if ( ! empty( $page_assets ) ) {
+						Plugin::$instance->assets_loader->enable_assets( $page_assets );
+					}
 				}
 			}
 		}
