@@ -1122,34 +1122,43 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	/**
-	 * Function getAdvancedDynamicTitleChange().
+	 * Function getTitleWithAdvancedValues().
 	 *
 	 * Renders before / after / fallback for dynamic item titles.
 	 *
 	 * @param {Object} settings
-	 * @param {Object} previousSettings
 	 * @param {string} text
 	 */
-	getTitleWithAdvancedValues( settings, previousSettings, text ) {
-		if ( previousSettings.before && previousSettings.before !== settings.before ) {
-			text = text.replace( previousSettings.before, '' );
+	getTitleWithAdvancedValues( settings, text ) {
+		const { attributes, _previousAttributes: previousAttributes } = settings;
+
+		if ( this.compareSettings( attributes, previousAttributes, 'before' ) ) {
+			text = text.replace( previousAttributes.before, '' );
 		}
 
-		if ( previousSettings.after && previousSettings.after !== settings.after ) {
-			text = text.replace( new RegExp( previousSettings.after + '$' ), '' );
+		if ( this.compareSettings( attributes, previousAttributes, 'after' ) ) {
+			text = text.replace( new RegExp( previousAttributes.after + '$' ), '' );
 		}
 
 		if ( ! text ) {
 			return settings.fallback || '';
 		}
 
-		const newBefore = previousSettings.before !== settings.before ? settings.before : '',
-			newAfter = previousSettings.after !== settings.after ? settings.after : '';
+		const newBefore = this.getNewSettingsValue( attributes, previousAttributes, 'before' ),
+			newAfter = this.getNewSettingsValue( attributes, previousAttributes, 'after' );
 
-		text = ( newBefore || '' ) + text;
-		text += newAfter || '';
+		text = newBefore + text;
+		text += newAfter;
 
 		return text;
+	},
+
+	compareSettings( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] && previousAttributes[ key ] !== attributes[ key ];
+	},
+
+	getNewSettingsValue( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] !== attributes[ key ] ? ( attributes[ key ] || '' ) : '';
 	},
 
 	getRepeaterItemActiveIndex() {
@@ -1163,53 +1172,13 @@ BaseElementView = BaseContainer.extend( {
 
 		this.isRendering = true;
 
-		jQuery( dataBinding.el ).text( this.getTitleWithAdvancedValues(
-			settings.attributes,
-			settings._previousAttributes,
-			dataBinding.el.textContent,
-		) );
+		jQuery( dataBinding.el ).text( this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent ) );
 
 		return true;
 	},
 
 	isAdvancedDynamicSettings( attributes ) {
 		return 'before' in attributes && 'after' in attributes && 'fallback' in attributes;
-	},
-
-	flattenObject( obj, prefix = '' ) {
-		const flatObject = {};
-
-		for ( const key in obj ) {
-			const path = prefix ? `${ prefix }.${ key }` : key;
-
-			if ( 'object' === typeof obj[ key ] ) {
-				Object.assign( flatObject, this.flattenObject( obj[ key ], path ) );
-			} else {
-				flatObject[ path ] = obj[ key ];
-			}
-		}
-
-		return flatObject;
-	},
-
-	compareObjectsDeep( obj1, obj2 ) {
-		const flatObj1 = this.flattenObject( obj1 ),
-			flatObj2 = this.flattenObject( obj2 );
-
-		const keys1 = Object.keys( flatObj1 ),
-			keys2 = Object.keys( flatObj2 );
-
-		if ( keys1.length !== keys2.length ) {
-			return false;
-		}
-
-		for ( const key in flatObj1 ) {
-			if ( ! ( key in flatObj2 ) || flatObj1[ key ] !== flatObj2[ key ] ) {
-				return false;
-			}
-		}
-
-		return true;
 	},
 } );
 
