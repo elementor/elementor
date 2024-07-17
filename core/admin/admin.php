@@ -212,7 +212,7 @@ class Admin extends App {
 
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
 
-		$editorButton = $this->render_editor_button_html( $document );
+		$editor_button = $this->render_editor_button_html( $document );
 		?>
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
@@ -227,7 +227,7 @@ class Admin extends App {
 				</span>
 			</button>
 		</div>
-		<?php echo $editorButton; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php echo $editor_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<?php
 	}
 
@@ -272,12 +272,11 @@ class Admin extends App {
 			return false;
 		}
 
-		if ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-admin' && isset( $_GET['path'] ) ) {
-			$path = $_GET['path'];
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+		$path = isset( $_GET['path'] ) ? sanitize_text_field( wp_unslash( $_GET['path'] ) ) : '';
 
-			if ( strpos( $path, '/product/' ) === 0 ) {
-				return true;
-			}
+		if ( $page === 'wc-admin' && strpos( $path, '/product/' ) === 0 ) {
+			return true;
 		}
 
 		return false;
@@ -291,11 +290,13 @@ class Admin extends App {
 
 		$post_id = $this->get_post_id();
 		$document = Plugin::$instance->documents->get( $post_id );
-		$editorButton = $this->render_editor_button_html( $document );
+		$editor_button = $this->render_editor_button_html( $document );
 
-		?> <script id="elementor-woocommerce-new-editor-button" type="text/html"> <?php
-			echo $editorButton; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		?> </script> <?php
+		?>
+		<script id="elementor-woocommerce-new-editor-button" type="text/html">
+		<?php echo $editor_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</script>
+		<?php
 	}
 
 	/**
