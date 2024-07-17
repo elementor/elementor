@@ -35,11 +35,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['nightly', 'latest', '6.0', '6.1', '6.2']
-        php_versions: ['7.4', '8.0']
+        wordpress_versions: ['nightly', 'latest', '6.0', '6.2', '6.4']
+        php_versions: ['7.4', '8.0', '8.3']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
+      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
     services:
       mysql:
         image: mysql:5.7
@@ -64,11 +65,11 @@ jobs:
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
           composer update --no-interaction
       - name: Run Tests with Coverage (latest PHP & WP)
-        if: ${{ matrix.php_versions >= 8.0 && matrix.wordpress_versions == 'latest' }}
+        if: ${{ env.COVERAGE }}
         run: |
           composer run coverage
       - name: Run Tests without Coverage
-        if: ${{ ! ( matrix.php_versions >= 8.0 && matrix.wordpress_versions == 'latest' ) }}
+        if: ${{ ! ( env.COVERAGE ) }}
         run: |
           composer run test
       - name: Run Test - Multisite
