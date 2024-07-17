@@ -304,6 +304,13 @@ export default class ElementsHelper {
 		} );
 	}
 
+	static styles( eContainer, styles ) {
+		$e.run( 'document/elements/styles', {
+			container: eContainer,
+			styles,
+		} );
+	}
+
 	static move( eContainer, eTarget, options = {} ) {
 		$e.run( 'document/elements/move', {
 			container: eContainer,

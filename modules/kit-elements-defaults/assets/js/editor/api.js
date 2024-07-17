@@ -21,3 +21,8 @@ export async function deleteElementDefaults( type ) {
 	await $e.data.delete( `${ NAMESPACE }/index`, { type } );
 	await loadElementsDefaults();
 }
+
+export async function updateElementStyles( type, styles ) {
+	await $e.data.update( `${ NAMESPACE }/index`, { styles }, { type } );
+	await loadElementsDefaults();
+}
