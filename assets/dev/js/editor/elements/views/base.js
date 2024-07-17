@@ -1185,29 +1185,6 @@ BaseElementView = BaseContainer.extend( {
 		return changedControlKey;
 	},
 
-	getRepeaterItemActiveIndex() {
-		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex;
-	},
-
-	tryHandleDynamicTagsAdvancedTools( dataBinding, settings ) {
-		const attributeKeys = Object.keys( settings.attributes ),
-			shouldTryHandle = ! this.findUniqueKey( [ 'before', 'after', 'fallback' ], attributeKeys, true ).length,
-			changedControlKey = Object.keys( settings.changed )[ 0 ];
-
-		if ( ! shouldTryHandle || ! changedControlKey ) {
-			return false;
-		}
-
-		jQuery( dataBinding.el ).html( this.getAdvancedDynamicTitleChange(
-			changedControlKey,
-			settings.attributes,
-			settings._previousAttributes,
-			dataBinding.el,
-		) );
-
-		return true;
-	},
-
 	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
 		return settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ];
 	},
