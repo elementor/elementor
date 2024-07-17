@@ -24,6 +24,29 @@ class Assets extends Base {
 
 		$element_assets = $this->get_assets( $settings, $controls );
 
+		$element_assets_depend = [
+			'styles' => $element_data->get_style_depends(),
+			'scripts' => $element_data->get_script_depends(),
+		];
+
+		if ( $element_assets_depend ) {
+			foreach ( $element_assets_depend as $assets_type => $assets ) {
+				if ( empty( $assets ) ) {
+					continue;
+				}
+
+				if ( ! isset( $element_assets[ $assets_type ] ) ) {
+					$element_assets[ $assets_type ] = [];
+				}
+
+				foreach ( $assets as $asset_name ) {
+					if ( ! in_array( $asset_name, $element_assets[ $assets_type ], true ) ) {
+						$element_assets[ $assets_type ][] = $asset_name;
+					}
+				}
+			}
+		}
+
 		if ( $element_assets ) {
 			$this->update_page_assets( $element_assets );
 		}

@@ -702,7 +702,7 @@ BaseElementView = BaseContainer.extend( {
 
 		const allKeys = keys1.concat( keys2 );
 
-		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) ) ;
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
 	},
 
 	/**
@@ -839,7 +839,6 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * @param {Object} settings
 	 */
-	// eslint-disable-next-line no-unused-vars
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
@@ -858,44 +857,6 @@ BaseElementView = BaseContainer.extend( {
 		if ( ! renderResult ) {
 			this.renderChanges( settings );
 		}
-	},
-
-	/**
-	 * Function getAdvancedDynamicTitleChange().
-	 *
-	 * Renders before / after / fallback for dynamic item titles.
-	 *
-	 * @param {string} changeKey
-	 * @param {Object} settings
-	 * @param {Object} previousSettings
-	 * @param {Object} el
-	 */
-	getAdvancedDynamicTitleChange( changeKey, settings, previousSettings, el ) {
-		let title = el.innerHTML;
-
-		if ( previousSettings.before ) {
-			title = title.replace( previousSettings.before, '' );
-		}
-
-		if ( previousSettings.after ) {
-			title = title.replace( new RegExp( previousSettings.after + '$' ), '' );
-		}
-
-		if ( ! title ) {
-			return 'fallback' === changeKey
-				? settings.fallback
-				: previousSettings.fallback || '';
-		}
-
-		if ( 'before' === changeKey ) {
-			title = settings.before + title;
-			title += previousSettings.after || '';
-		} else {
-			title += settings.after || '';
-			title = ( previousSettings.before || '' ) + title;
-		}
-
-		return title;
 	},
 
 	getDynamicParsingSettings() {
