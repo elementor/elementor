@@ -61,18 +61,18 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgumentConstructor( 'styles', Object, args );
+		this.requireArgumentConstructor( 'meta', Object, args );
 
-		if ( 0 === Object.keys( args.styles.props ).length ) {
-			throw new Error( 'Style properties are empty' );
+		this.requireArgumentConstructor( 'props', Object, args );
+
+		this.requireArgumentConstructor( 'bind', String, args );
+
+		if ( 0 === Object.keys( args.props ).length ) {
+			throw new Error( 'Props are empty' );
 		}
 
-		if ( ! args.styles.meta || ! ( 'breakpoint' in args.styles.meta && 'state' in args.styles.meta ) ) {
-			throw new Error( 'Style meta is invalid' );
-		}
-
-		if ( ! args.bind ) {
-			throw new Error( 'Style bind is invalid' );
+		if ( ! args.meta || ! ( 'breakpoint' in args.meta && 'state' in args.meta ) ) {
+			throw new Error( 'Meta are invalid' );
 		}
 	}
 
@@ -87,30 +87,17 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		};
 	}
 
-	getVariantByMeta( styles, meta ) {
-		if ( ! styles.variants ) {
-			return;
-		}
-
-		return styles.variants.find( ( variant ) => {
-			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
-		} );
-	}
-
-	createStyleObject( container, styles, bind ) {
+	createNewStyleObject( container, bind ) {
 		const newId = this.randomId( container.id );
 
 		const newStyles = {
 			id: newId,
 			label: '',
 			type: 'class',
-			variants: [
-				{
-					meta: styles.meta,
-					props: styles.props,
-				},
-			],
+			variants: [],
 		};
+
+		const bindValue = container.model.get( 'settings' )?.attributes?.[ bind ]?.value || [];
 
 		$e.internal( 'document/elements/set-settings', {
 			container,
@@ -120,7 +107,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			settings: {
 				[ bind ]: {
 					$$type: 'classes',
-					value: [ newId ],
+					value: [ ...bindValue, newId ],
 				},
 			},
 		} );
@@ -128,35 +115,78 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		return newStyles;
 	}
 
+	getVariantByMeta( style, meta ) {
+		if ( ! style.variants ) {
+			return;
+		}
+
+		return style.variants.find( ( variant ) => {
+			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
+		} );
+	}
+
+	updateExistingVariant( style, existingVariant, props ) {
+		existingVariant.props = {
+			...existingVariant.props,
+			...props,
+		};
+
+		return {
+			...style,
+			variants: style.variants.map( ( variant ) =>
+				variant.meta === existingVariant.meta ? existingVariant : variant,
+			),
+		};
+	}
+
+	addNewVariant( style, meta, props ) {
+		return {
+			...style,
+			variants: [
+				...style.variants,
+				{
+					meta,
+					props,
+				},
+			],
+		};
+	}
+
 	randomId( prefix ) {
 		return `s-${ prefix }-${ Math.random().toString( 16 ).substring( 2 ) }`;
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], bind, styles = {} } = args;
+		const { containers = [ args.container ], styleDefId, bind, meta, props } = args;
 
+		// TODO: support multiple containers?!
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			let newStyles = {};
 			const oldStyles = container.model.get( 'styles' ) || {};
-			const existingVariant = this.getVariantByMeta( oldStyles, styles.meta );
+			let managedStyle = {};
+
+			if ( ! oldStyles?.[ styleDefId ] ) {
+				managedStyle = this.createNewStyleObject( container, bind );
+
+				// Pass the created ID to the args by reference.
+				args.styleDefId = managedStyle.id; // @nevo-lint disable-line
+			} else {
+				managedStyle = oldStyles[ styleDefId ];
+			}
+
+			const existingVariant = this.getVariantByMeta( managedStyle, meta );
 
 			if ( existingVariant ) {
-				existingVariant.props = {
-					...existingVariant.props,
-					...styles.props,
-				};
-
-				newStyles = {
-					...oldStyles,
-					variants: oldStyles.variants.map( ( variant ) =>
-						variant.meta === existingVariant.meta ? existingVariant : variant,
-					),
-				};
+				managedStyle = this.updateExistingVariant( managedStyle, existingVariant, props );
 			} else {
-				newStyles = this.createStyleObject( container, styles, bind );
+				managedStyle = this.addNewVariant( managedStyle, meta, props );
 			}
+
+			const newStyles = {
+				...oldStyles,
+				[ managedStyle.id ]: managedStyle,
+			};
 
 			// If history active, add history transaction with old and new styles.
 			if ( this.isHistoryActive() ) {
