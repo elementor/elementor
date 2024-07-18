@@ -1198,7 +1198,7 @@ BaseElementView = BaseContainer.extend( {
 
 		this.isRendering = true;
 
-		jQuery( dataBinding.el ).text( this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent ) );
+		dataBinding.el.textContent = this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent );
 
 		return true;
 	},
