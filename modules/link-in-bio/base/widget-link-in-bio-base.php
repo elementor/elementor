@@ -18,6 +18,10 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	use Shared_Widget_Controls_Trait;
 
+	public function get_group_name(): string {
+		return 'link-in-bio';
+	}
+
 	public function get_style_depends(): array {
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
 			return parent::get_style_depends();
