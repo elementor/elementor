@@ -339,7 +339,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
-			console.log(elementorCommon.config.experimentalFeatures.container);
+
 			if ( elementorCommon.config.experimentalFeatures.container ) {
 				new FloatingButtonsHandler();
 			}
