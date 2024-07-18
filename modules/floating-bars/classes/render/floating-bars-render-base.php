@@ -27,8 +27,10 @@ abstract class Floating_Bars_Render_Base {
 	protected function build_layout_render_attribute(): void {
 		$layout_classnames = 'e-floating-bars e-' . $this->widget->get_name();
 		$content_alignment = $this->settings['style_floating_bar_elements_align'];
+		$close_button_position = $this->settings['floating_bar_close_button_position'];
 
 		$layout_classnames .= ' has-content-alignment-' . $content_alignment;
+		$layout_classnames .= ' has-close-button-position-' . $close_button_position;
 		
 		$this->add_layout_render_attribute( $layout_classnames );
 	}

@@ -80,22 +80,19 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 	}
 
 	protected function render_close_button(): void {
-		$button_position = $this->settings['floating_bar_close_button_position'];
-		$close_button_classnames = 'e-floating-bars__close-button has-position-' . $button_position;
+		$accessible_name = $this->settings['accessible_name'];
+		$close_button_classnames = 'e-floating-bars__close-button';
 
 		$this->widget->add_render_attribute( 'close-button', [
 			'class' => $close_button_classnames,
-			'aria-label' => __( 'Close', 'elementor' ),
+			'aria-label' => __( 'Close ' . $accessible_name, 'elementor' ),
+			'type' => 'button',
+			'aria-controls' => 'e-floating-bars',
 		] );
 
 		?>
-			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<?php if ( ! empty( $close_button_icon ) ) {
-					Icons_Manager::render_icon( $close_button_icon, [ 'aria-hidden' => 'true' ] );
-				} ?>
-				<?php if ( ! empty( $close_button_text ) ) {
-					echo esc_html( $close_button_text );
-				} ?>
+			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>  aria-controls="e-contact-buttons__content-wrapper">
+				<i class="eicon-close"></i>
 			</button>
 		<?php
 	}
@@ -106,13 +103,15 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<?php if ( 'start' == $icon_position ) {
-				$this->render_announcement_icon();
-			} ?>
-			<?php $this->render_announcement_text(); ?>
-			<?php if ( 'end' == $icon_position ) {
-				$this->render_announcement_icon();
-			} ?>
+			<div class="e-floating-bars__text-container">
+				<?php if ( 'start' == $icon_position ) {
+					$this->render_announcement_icon();
+				} ?>
+				<?php $this->render_announcement_text(); ?>
+				<?php if ( 'end' == $icon_position ) {
+					$this->render_announcement_icon();
+				} ?>
+			</div>
 			<?php $this->render_cta_button(); ?>
 			<?php $this->render_close_button(); ?>
 		</div>
@@ -124,6 +123,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			'class' => $layout_classnames,
 			// 'id' => $this->settings['advanced_custom_css_id'],
 			'data-document-id' => get_the_ID(),
+			'role' => 'alertdialog'
 		] );
 	}
 }

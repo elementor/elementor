@@ -16,8 +16,8 @@
 	--e-floating-bars-elements-padding-inline-end: 16px;
 	--e-floating-bars-elements-padding-inline-start: 16px;
 	--e-floating-bars-elements-gap: 16px;
-	--e-floating-bars-cta-button-border-width: 2px;
 	--e-floating-bars-cta-corners: #{$floating-bars-border-radius-round};
+	--e-floating-bars-cta-button-border-width: 2px;
 	--e-floating-bars-cta-button-padding-block-end: 8px;
 	--e-floating-bars-cta-button-padding-block-start: 8px;
 	--e-floating-bars-cta-button-padding-inline-end: 20px;
@@ -29,6 +29,7 @@
 	color: var(--e-floating-bars-announcement-text-color);
 	display: flex;
 	gap: var(--e-floating-bars-elements-gap);
+	inset-block-start: 0;
 	inset-inline-end: 0;
 	inset-inline-start: 0;
 	padding-block-end: var(--e-floating-bars-elements-padding-block-end);
@@ -36,9 +37,26 @@
 	padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
 	padding-inline-start: var(--e-floating-bars-elements-padding-inline-start);
 	position: fixed;
-	top: 0;
 	width: 100%;
 	z-index: $element-overlay;
+
+	@media (max-width: $screen-mobile-max) {
+		flex-wrap: wrap;
+	}
+
+	&.has-close-button-position-end {
+
+		@media (min-width: $screen-tablet-min) {
+			padding-inline-end: calc(var(--e-floating-bars-elements-padding-inline-end) + $floating-bars-close-button-offset);
+		}
+	}
+
+	&.has-close-button-position-start {
+
+		@media (min-width: $screen-tablet-min) {
+			padding-inline-start: calc(var(--e-floating-bars-elements-padding-inline-start) + $floating-bars-close-button-offset);
+		}
+	}
 
 	&.has-content-alignment-start {
 		justify-content: flex-start;
@@ -75,6 +93,7 @@
 		gap: var(--e-floating-bars-elements-gap);
 		line-height: 24px;
 		margin: 0;
+		text-align: center;
 	}
 
 	&__announcement-icon {
@@ -85,6 +104,26 @@
 			fill: var(--e-floating-bars-announcement-icon-color);
 			height: var(--e-floating-bars-announcement-icon-size);
 			width: var(--e-floating-bars-announcement-icon-size);
+		}
+	}
+
+	&__text-container {
+		align-items: center;
+		display: flex;
+		gap: var(--e-floating-bars-elements-gap);
+
+		.has-close-button-position-end & {
+
+			@media (max-width: $screen-mobile-max) {
+				padding-inline-end: $floating-bars-close-button-offset;
+			}
+		}
+
+		.has-close-button-position-start & {
+
+			@media (max-width: $screen-mobile-max) {
+				padding-inline-start: $floating-bars-close-button-offset;
+			}
 		}
 	}
 
@@ -110,6 +149,7 @@
 		line-height: 24px;
 		font-weight: 700;
 		transition: $transition-hover;
+		white-space: nowrap;
 		
 		&:hover,
 		&:focus {
@@ -150,6 +190,35 @@
 			--e-floating-bars-cta-button-text-color-hover: #FFFFFF;
 
 			text-decoration: underline;
+		}
+	}
+
+	&__close-button {
+		position: absolute;
+
+		.has-close-button-position-end & {
+			inset-inline-end: 16px;
+		}
+
+		.has-close-button-position-start & {
+			inset-inline-start: 16px;
+		}
+
+		@media (max-width: $screen-mobile-max) {
+			top: 16px;
+		}
+
+		&,
+		&:hover,
+		&:focus {
+			background-color: transparent;
+			border: 0;
+			color: var(--e-floating-bars-close-button-color);
+			padding: 0;
+
+			i {
+				color: var(--e-floating-bars-close-button-color);
+			}
 		}
 	}
 }
