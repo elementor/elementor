@@ -553,7 +553,7 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		// Widgets inside `includes/widgets/` folder.
+		// Widgets inside `/includes/widgets/` folder with their own css in `/assets/css/`.
 		$widgets = [
 			'accordion',
 			'alert',
