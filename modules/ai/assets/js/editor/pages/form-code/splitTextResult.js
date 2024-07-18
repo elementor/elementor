@@ -6,7 +6,7 @@ export function splitText( inputText ) {
 	const code = codeMatch ? `\`\`\`${ codeMatch[ 1 ] }\`\`\``.trim() : '';
 
 	const detailsMatch = inputText.match( /```[\s\S]*?```([\s\S]*)/ );
-	const details = detailsMatch ? detailsMatch[ 1 ].trim() : '';
+	const details = detailsMatch?.[ 1 ].trim();
 
 	return {
 		code,

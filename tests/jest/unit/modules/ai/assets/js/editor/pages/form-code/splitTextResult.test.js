@@ -45,4 +45,10 @@ describe( 'Split text according to code and the extra details parts', () => {
 		expect( result.code ).toBeDefined();
 		expect( result.details ).toBe( 'Note: You can customize the width and height as per your requirement.' );
 	} );
+
+	it( 'returns empty object when empty input', () => {
+		const result = splitText( '' );
+
+		expect( result ).toStrictEqual( {} );
+	} );
 } );

@@ -18,7 +18,7 @@ import {
 import PromptLibraryLink from '../../components/prompt-library-link';
 import { useRequestIds } from '../../context/requests-ids';
 import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
-import { decodeHtmlEntities, splitText } from './splitTextResult';
+import { splitText } from './splitTextResult';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
