@@ -562,23 +562,25 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			const body = document.querySelector( 'body' ),
 				that = this;
 
-			if ( body ) {
-				const observer = new MutationObserver( function( mutationsList ) {
-					for ( const mutation of mutationsList ) {
-						if ( 'childList' === mutation.type ) {
-							if ( mutation.addedNodes.length > 0 ) {
-								if ( ! that.isWcProductEditorLoading() && ! that.isElementorButtonInjected() ) {
-									that.injectElementorButton();
-								}
+			if ( ! body ) {
+				return;
+			}
+
+			const observer = new MutationObserver( function( mutationsList ) {
+				for ( const mutation of mutationsList ) {
+					if ( 'childList' === mutation.type ) {
+						if ( mutation.addedNodes.length > 0 ) {
+							if ( ! that.isWcProductEditorLoading() && ! that.isElementorButtonInjected() ) {
+								that.injectElementorButton();
 							}
 						}
 					}
-				} );
+				}
+			} );
 
-				observer.observe( body, {
-					childList: true, subtree: true,
-				} );
-			}
+			observer.observe( body, {
+				childList: true, subtree: true,
+			} );
 		},
 
 		roleManager: {
