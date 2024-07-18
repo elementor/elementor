@@ -777,10 +777,6 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			if ( ! settings.changed.__dynamic__ ) {
-				return false;
-			}
-
 			const { bindingSetting } = dataBinding.dataset,
 				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
