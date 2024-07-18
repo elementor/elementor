@@ -19,8 +19,12 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
-	public function show_in_panel() {
+	public function show_in_panel(): bool {
 		return false;
+	}
+
+	public function get_group_name(): string {
+		return 'floating-buttons';
 	}
 
 	public function get_style_depends(): array {
@@ -30,7 +34,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
 	}
 
-	public function hide_on_search() {
+	public function hide_on_search(): bool {
 		return true;
 	}
 
