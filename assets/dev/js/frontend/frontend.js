@@ -75,7 +75,7 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 			deviceMode: deviceModeElement,
 		};
 
-		if ( ! isFrontend() ) {
+		if ( ! isFrontend() || !! window.jQuery ) {
 			defaultElements.$window = jQuery( window );
 			defaultElements.$document = jQuery( document );
 			defaultElements.$head = jQuery( document.head );
