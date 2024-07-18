@@ -1,6 +1,10 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorAiCurrentContext ) {
+			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
+		}
 	}
 
 	return new Promise( ( resolve, reject ) => {
