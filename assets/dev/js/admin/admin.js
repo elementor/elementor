@@ -531,6 +531,8 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 				button.style.setProperty( 'height', 'unset' );
 				button.style.setProperty( 'width', 'fit-content' );
+				button.querySelector( '#elementor-editor-button' ).classList.remove( 'button-hero' );
+				button.querySelector( '#elementor-editor-button' ).classList.add( 'button-large' );
 
 				wcProductHeaderInner.firstChild.append( button );
 			}
