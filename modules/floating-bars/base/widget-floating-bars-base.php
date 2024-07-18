@@ -3,15 +3,25 @@ namespace Elementor\Modules\FloatingBars\Base;
 
 use Elementor\Modules\FloatingBars\Classes\Render\Floating_Bars_Core_Render;
 
+use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 
+use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
 abstract class Widget_Floating_Bars_Base extends Widget_Base {
 
+	const TAB_ADVANCED = 'advanced-tab-floating-bars';
+
 	public function get_icon(): string {
 		return 'eicon-banner';
+	}
+
+	protected function get_initial_config(): array {
+		return array_merge( parent::get_initial_config(), [
+			'commonMerged' => true,
+		] );
 	}
 
 	protected function register_controls(): void {
@@ -163,7 +173,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		// TODO: this is visible only if Icon is selected
 		$this->add_control(
 			'style_announcement_icon_heading',
 			[
@@ -727,7 +736,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		// YOU ARE HERE
 		$this->add_control(
 			'floating_bar_close_button_position',
 			[
@@ -759,7 +767,197 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'floating_bar_background_heading',
+			[
+				'label' => esc_html__( 'Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'floating_bar_background_type',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-floating-bars',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+					'position' => [
+						'default' => 'center center',
+					],
+					'size' => [
+						'default' => 'cover',
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'floating_bar_background_overlay_heading',
+			[
+				'label' => esc_html__( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'floating_bar_background_overlay_type',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-floating-bars__overlay',
+			]
+		);
+
+		// TODO: wire this
+		$this->add_responsive_control(
+			'style_floating_bar_animation',
+			[
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
+				'type' => Controls_Manager::ANIMATION,
+				'frontend_available' => true,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'style_floating_bar_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'normal',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'normal' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+			]
+		);
+
 		$this->end_controls_section();
+	}
+
+	protected function add_advanced_tab(): void {
+		Controls_Manager::add_tab(
+			static::TAB_ADVANCED,
+			esc_html__( 'Advanced', 'elementor' )
+		);
+		
+		$this->start_controls_section(
+			'advanced_layout_section',
+			[
+				'label' => esc_html__( 'Layout', 'elementor' ),
+				'tab' => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_responsive_control(
+			'advanced_vertical_position',
+			[
+				'label' => esc_html__( 'Vertical Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'default' => 'top',
+				'toggle' => false,
+			]
+		);
+
+		$this->add_control(
+			'advanced_toggle_sticky',
+			[
+				'label' => esc_html__( 'Sticky', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_responsive_section',
+			[
+				'label' => esc_html__( 'Responsive', 'elementor' ),
+				'tab' => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'responsive_description',
+			[
+				'raw' => __( 'Responsive visibility will take effect only on preview mode or live page, and not while editing in Elementor.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-descriptor',
+			]
+		);
+
+		$this->add_hidden_device_controls();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'advanced_custom_controls_section',
+			[
+				'label' => esc_html__( 'CSS', 'elementor' ),
+				'tab' => static::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'advanced_custom_css_id',
+			[
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
+					'active' => true,
+				],
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'style_transfer' => false,
+			]
+		);
+
+		$this->add_control(
+			'advanced_custom_css_classes',
+			[
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
+				'dynamic' => [
+					'active' => true,
+				],
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+			]
+		);
+
+		$this->end_controls_section();
+
+		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
+
+		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
 	}
 
 	protected function add_content_tab(): void {
@@ -776,9 +974,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->add_cta_button_style_section();
 
 		$this->add_floating_bar_style_section();
-	}
-
-	protected function add_advanced_tab(): void {
 	}
 
 	protected function render(): void {

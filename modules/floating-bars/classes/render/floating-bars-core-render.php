@@ -100,6 +100,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 	public function render(): void {
 		$this->build_layout_render_attribute();
 		$icon_position = $this->settings['style_announcement_icon_position'];
+		$has_close_button = $this->settings['floating_bar_close_switch'];
 
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -112,18 +113,15 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 					$this->render_announcement_icon();
 				} ?>
 			</div>
+
 			<?php $this->render_cta_button(); ?>
-			<?php $this->render_close_button(); ?>
+
+			<?php if ( $has_close_button ) {
+				$this->render_close_button();
+			} ?>
+
+			<div class="e-floating-bars__overlay"></div>
 		</div>
 		<?php
-	}
-
-	protected function add_layout_render_attribute( $layout_classnames ) {
-		$this->widget->add_render_attribute( 'layout', [
-			'class' => $layout_classnames,
-			// 'id' => $this->settings['advanced_custom_css_id'],
-			'data-document-id' => get_the_ID(),
-			'role' => 'alertdialog'
-		] );
 	}
 }

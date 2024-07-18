@@ -29,19 +29,30 @@
 	color: var(--e-floating-bars-announcement-text-color);
 	display: flex;
 	gap: var(--e-floating-bars-elements-gap);
-	inset-block-start: 0;
-	inset-inline-end: 0;
-	inset-inline-start: 0;
+
 	padding-block-end: var(--e-floating-bars-elements-padding-block-end);
 	padding-block-start: var(--e-floating-bars-elements-padding-block-start);
 	padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
 	padding-inline-start: var(--e-floating-bars-elements-padding-inline-start);
-	position: fixed;
 	width: 100%;
 	z-index: $element-overlay;
 
 	@media (max-width: $screen-mobile-max) {
 		flex-wrap: wrap;
+	}
+
+	&.has-vertical-position-top {
+		inset-block-start: 0;
+	}
+
+	&.has-vertical-position-bottom {
+		inset-block-end: 0;
+	}
+
+	&.is-sticky {
+		inset-inline-end: 0;
+		inset-inline-start: 0;
+		position: fixed;
 	}
 
 	&.has-close-button-position-end {
@@ -220,5 +231,16 @@
 				color: var(--e-floating-bars-close-button-color);
 			}
 		}
+	}
+
+	&__overlay {
+		height: 100%;
+		inset-block-end: 0;
+		inset-block-start: 0;
+		inset-inline-end: 0;
+		inset-inline-start: 0;
+		position: absolute;
+		width: 100%;
+		z-index: $under-layer;
 	}
 }
