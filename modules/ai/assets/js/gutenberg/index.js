@@ -51,7 +51,7 @@ import { EditTextWithAi } from './edit-text-with-ai';
 		};
 
 		const addTextWithAI = ( blockName, blockClientId ) => {
-			const textPanel = document.querySelector( '.block-editor-block-card__content' );
+			const textPanel = document.querySelector( '.block-editor-block-card__description' );
 			if ( textPanel && ! document.querySelector( `.e-text-ai[data-client-id="${ blockClientId }"]` ) ) {
 				removeAiIndicator();
 				const rootElement = document.createElement( 'div' );
