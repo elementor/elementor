@@ -259,9 +259,9 @@ class Admin extends App {
 	}
 
 	private function get_post_id() {
-		if ( isset( $_GET['path'] ) ) {
-			$path_query = isset( $_GET['path'] ) ? sanitize_text_field( wp_unslash( $_GET['path'] ) ) : '';
-			$query_string = isset( $path_query ) ? explode( '/', $path_query ) : array();
+		if ( Utils::get_super_global_value( $_GET, 'path' ) !== null ) {
+			$path_query = Utils::get_super_global_value( $_GET, 'path' );
+			$query_string = isset( $path_query ) ? explode( '/', $path_query ) : [];
 
 			return (int) end( $query_string );
 		}
@@ -291,7 +291,6 @@ class Admin extends App {
 		$post_id = $this->get_post_id();
 		$document = Plugin::$instance->documents->get( $post_id );
 		$editor_button = $this->render_editor_button_html( $document );
-
 		?>
 		<script id="elementor-woocommerce-new-editor-button" type="text/html">
 		<?php echo $editor_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
