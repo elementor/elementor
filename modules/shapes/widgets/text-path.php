@@ -37,6 +37,10 @@ class TextPath extends Widget_Base {
 		return 'text-path';
 	}
 
+	public function get_group_name() {
+		return 'shapes';
+	}
+
 	/**
 	 * Get widget title.
 	 *
