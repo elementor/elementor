@@ -670,26 +670,7 @@ BaseElementView = BaseContainer.extend( {
 			return settings.attributes[ changedControlKey ];
 		}
 
-		// TODO: Remove this condition in 3.27
-		if ( this.model?.config?.atomic_item_link ) {
-			return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
-		}
-
-		// B.C for version 3.23
-		// TODO: Remove this try catch block in 3.27
-		try {
-			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-		} catch {
-			await new Promise( ( resolve ) => {
-				elementor.dynamicTags.refreshCacheFromServer( () => {
-					resolve();
-				} );
-			} );
-
-			return ! _.isEmpty( elementor.dynamicTags.cache )
-				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
-				: false;
-		}
+		return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 	},
 
 	findUniqueKey( obj1, obj2 ) {
@@ -1130,15 +1111,15 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChangedDynamicControlKey( settings ) {
-		let changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
 
-		if ( ! changedControlKey ) {
-			changedControlKey = Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
-				? Object.keys( settings.changed )[ 0 ]
-				: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+		if ( changedControlKey ) {
+			return changedControlKey;
 		}
 
-		return changedControlKey;
+		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+			? Object.keys( settings.changed )[ 0 ]
+			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
 	},
 
 	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
