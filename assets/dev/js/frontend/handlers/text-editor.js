@@ -78,6 +78,8 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 	}
 
 	onInit( ...args ) {
+		this.isJqueryRequired = false;
+
 		super.onInit( ...args );
 
 		this.wrapDropCap();

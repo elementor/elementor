@@ -11,6 +11,8 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 
 	isEdit = null;
 
+	isJqueryRequired = null;
+
 	constructor( settings ) {
 		super( settings );
 
@@ -247,6 +249,10 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	}
 
 	onInit( ...args ) {
+		if ( null === this.isJqueryRequired ) {
+			this.isJqueryRequired = true;
+		}
+
 		if ( ! this.baseElement ) {
 			this.baseElement = this.getSettings( 'baseElement' );
 		}
