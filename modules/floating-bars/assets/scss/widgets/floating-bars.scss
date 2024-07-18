@@ -29,7 +29,7 @@
 	color: var(--e-floating-bars-announcement-text-color);
 	display: flex;
 	gap: var(--e-floating-bars-elements-gap);
-
+	position: relative;
 	padding-block-end: var(--e-floating-bars-elements-padding-block-end);
 	padding-block-start: var(--e-floating-bars-elements-padding-block-start);
 	padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
@@ -53,6 +53,10 @@
 		inset-inline-end: 0;
 		inset-inline-start: 0;
 		position: fixed;
+	}
+
+	&.is-hidden {
+		display: none;
 	}
 
 	&.has-close-button-position-end {
@@ -205,6 +209,8 @@
 	}
 
 	&__close-button {
+		align-items: center;
+		display: flex;
 		position: absolute;
 
 		.has-close-button-position-end & {
@@ -243,4 +249,8 @@
 		width: 100%;
 		z-index: $under-layer;
 	}
+}
+
+.e-con-inner:has(.e-floating-bars) {
+	padding: 0;
 }

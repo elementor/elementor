@@ -38,6 +38,10 @@ module.exports = function( $ ) {
 		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/frontend/handlers/contact-buttons' );
 	}
 
+	if ( elementorFrontendConfig.experimentalFeatures[ 'floating-bars' ] ) {
+		this.elementsHandlers[ 'floating-bars.default' ] = () => import( /* webpackChunkName: 'floating-bars' */ 'elementor/modules/floating-bars/assets/js/frontend/handlers/floating-bars' );
+	}
+
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {

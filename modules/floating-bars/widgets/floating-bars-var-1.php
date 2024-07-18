@@ -22,7 +22,7 @@ class Floating_Bars_Var_1 extends Widget_Floating_Bars_Base {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'Floating Bars: Text + Link', 'elementor' );
+		return esc_html__( 'Floating Bars CTA', 'elementor' );
 	}
 
     public function get_group_name(): string {
