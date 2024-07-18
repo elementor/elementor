@@ -519,6 +519,10 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			return !! document.querySelector( '.woocommerce-product-header.is-loading' );
 		},
 
+		isElementorButtonInjected() {
+			return !! document.querySelector( '.woocommerce-product-header__inner #elementor-editor-button' );
+		},
+
 		injectElementorButton() {
 			const wcProductHeaderInner = document.querySelector( '.woocommerce-product-header__inner' );
 
@@ -557,16 +561,13 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 			const body = document.querySelector( 'body' ),
 				that = this;
-			let isButtonInjected = false;
 
 			if ( body ) {
 				const observer = new MutationObserver( function( mutationsList ) {
 					for ( const mutation of mutationsList ) {
 						if ( 'childList' === mutation.type ) {
 							if ( mutation.addedNodes.length > 0 ) {
-								if ( ! that.isWcProductEditorLoading() && ! isButtonInjected ) {
-									isButtonInjected = true;
-
+								if ( ! that.isWcProductEditorLoading() && ! that.isElementorButtonInjected() ) {
 									that.injectElementorButton();
 								}
 							}
