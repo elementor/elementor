@@ -8,6 +8,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+	}
+
+	/**
+	 * Register styles.
+	 *
+	 * @return void
+	 */
+	public function register_style() {
+		// At build time, Elementor compiles `/modules/shapes/assets/scss/frontend.scss` to `/assets/css/widget-shapes.css`.
+		wp_register_style(
+			'widget-shapes',
+			$this->get_css_assets_url( 'widget-shapes' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
 	/**
 	 * Return a translated user-friendly list of the available SVG shapes.
 	 *

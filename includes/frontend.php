@@ -528,9 +528,7 @@ class Frontend extends App {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$frontend_base_file_name = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
-
-		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
+		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
 
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
@@ -554,6 +552,42 @@ class Frontend extends App {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		// Widgets inside `includes/widgets/` folder.
+		$widgets = [
+			'accordion',
+			'alert',
+			'counter',
+			'divider',
+			'google_maps',
+			'heading',
+			'icon-box',
+			'icon-list',
+			'image',
+			'image-box',
+			'image-carousel',
+			'image-gallery',
+			'menu-anchor',
+			'progress',
+			'rating',
+			'social-icons',
+			'spacer',
+			'star-rating',
+			'tabs',
+			'testimonial',
+			'text-editor',
+			'toggle',
+			'video',
+		];
+
+		foreach ( $widgets as $widget_name ) {
+			wp_register_style(
+				"widget-{$widget_name}",
+				$this->get_css_assets_url( "widget-{$widget_name}" ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		}
 
 		/**
 		 * After frontend register styles.
@@ -1536,11 +1570,5 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
-	}
-
-	private function is_optimized_css_mode() {
-		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
-
-		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}
 }

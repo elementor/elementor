@@ -24,4 +24,10 @@ class Contact_Buttons extends Widget_Contact_Button_Base {
 	public function get_title(): string {
 		return esc_html__( 'Single Chat', 'elementor' );
 	}
+
+	public function get_style_depends(): array {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' )
+			? [ 'widget-floating-buttons' ]
+			: [];
+	}
 }

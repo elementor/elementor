@@ -27,4 +27,10 @@ class Link_In_Bio extends Widget_Link_In_Bio_Base {
 	public function get_title(): string {
 		return esc_html__( 'Minimalist', 'elementor' );
 	}
+
+	public function get_style_depends(): array {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' )
+			? [ 'widget-link-in-bio' ]
+			: [];
+	}
 }

@@ -34,6 +34,12 @@ class Widget_Rating extends Widget_Base {
 		return false;
 	}
 
+	public function get_style_depends(): array {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' )
+			? [ 'widget-rating' ]
+			: [];
+	}
+
 	/**
 	 * @return void
 	 */

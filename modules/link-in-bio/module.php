@@ -41,4 +41,25 @@ class Module extends BaseModule {
 			],
 		];
 	}
+
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+	}
+
+	/**
+	 * Register styles.
+	 *
+	 * @return void
+	 */
+	public function register_style() {
+		// At build time, Elementor compiles `/modules/link-in-bio/assets/scss/frontend.scss` to `/assets/css/widget-link-in-bio.css`.
+		wp_register_style(
+			'widget-link-in-bio',
+			$this->get_css_assets_url( 'widget-link-in-bio' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
 }

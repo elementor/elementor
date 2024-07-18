@@ -44,6 +44,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return [ 'nested', 'tabs', 'accordion', 'toggle' ];
 	}
 
+	public function get_style_depends(): array {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' )
+			? [ 'widget-nested-accordion' ]
+			: [];
+	}
+
 	public function show_in_panel(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}

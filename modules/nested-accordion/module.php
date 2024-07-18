@@ -27,5 +27,22 @@ class Module extends BaseModule {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+	}
+
+	/**
+	 * Register styles.
+	 *
+	 * @return void
+	 */
+	public function register_style() {
+		// At build time, Elementor compiles `/modules/nested-accordion/assets/scss/frontend.scss` to `/assets/css/widget-nested-accordion.css`.
+		wp_register_style(
+			'widget-nested-accordion',
+			$this->get_css_assets_url( 'widget-nested-accordion' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 }
