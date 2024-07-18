@@ -692,13 +692,13 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	findUniqueKey( element1, element2, isArray = false ) {
-		if ( isArray && ( 'object' !== typeof element1 || 'object' !== typeof element2 ) ) {
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
 			return false;
 		}
 
-		const keys1 = isArray ? element1 : Object.keys( element1 || {} ),
-			keys2 = isArray ? element2 : Object.keys( element2 || {} );
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
 
 		const allKeys = keys1.concat( keys2 );
 
