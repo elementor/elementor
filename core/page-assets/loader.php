@@ -35,6 +35,11 @@ class Loader extends Module {
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				'e-apple-webkit' => [
+					'src' => $this->get_css_assets_url( 'appleWebkit', 'assets/css/', true ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				],
 			],
 			'scripts' => [],
 		];
