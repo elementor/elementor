@@ -57,15 +57,15 @@ module.exports = function() {
 
 		// this.elementsHandlers.column = columnHandlers;
 
-		Object.entries(this.elementsHandlers).forEach(([elementName, Handlers]) => {
-			const elementData = elementName.split('.');
-			elementName = elementData[0];
-			const skin = elementData[1] || null;
-			this.attachHandler(elementName, Handlers, skin);
-		});
+		Object.entries( this.elementsHandlers ).forEach( ( [ elementName, Handlers ] ) => {
+			const elementData = elementName?.split( '.' );
+			elementName = elementData[ 0 ];
+			const skin = elementData[ 1 ] || null;
+			this.attachHandler( elementName, Handlers, skin );
+		} );
 	};
 
-	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
+	const isClassHandler = ( Handler ) => Handler?.prototype?.getUniqueHandlerID;
 
 	const addHandlerWithHook = ( elementBaseName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
@@ -100,7 +100,7 @@ module.exports = function() {
 
 		// If element is in edit mode
 		if ( elementID ) {
-			handlerID = HandlerClass.prototype.getConstructorID();
+			handlerID = HandlerClass?.prototype.getConstructorID();
 
 			if ( ! handlersInstances[ elementID ] ) {
 				handlersInstances[ elementID ] = {};
@@ -127,7 +127,7 @@ module.exports = function() {
 			Handlers = [ Handlers ];
 		}
 
-		Handlers.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
+		Handlers?.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
 	};
 
 	this.getHandler = function( handlerName ) {
