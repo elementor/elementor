@@ -440,7 +440,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'floating-buttons' ] ) {
+		if ( elementorCommon.config.experimentalFeatures.container ) {
 			this.modules.floatingButtonsLibraryModule = new FloatingButtonsLibraryModule();
 		}
 
