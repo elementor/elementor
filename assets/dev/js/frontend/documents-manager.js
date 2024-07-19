@@ -23,7 +23,7 @@ export default class extends elementorModules.ViewModuleFrontend {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			baseDocuments: document.querySelectorAll( selectors.document ),
+			baseDocuments: document?.querySelectorAll( selectors.document ),
 		};
 	}
 
@@ -44,10 +44,10 @@ export default class extends elementorModules.ViewModuleFrontend {
 	}
 
 	attachDocumentClass( baseDocument ) {
-		const documentData = baseDocument.dataset,
-			documentID = documentData.elementorId,
-			documentType = documentData.elementorType,
-			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses.base;
+		const documentData = baseDocument?.dataset,
+			documentID = documentData?.elementorId,
+			documentType = documentData?.elementorType,
+			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses?.base;
 
 		this.documents[ documentID ] = new DocumentClass( {
 			baseElement: baseDocument,
