@@ -1,12 +1,3 @@
-function customExtend(target, source) {
-	for (const prop in source) {
-		if (source.hasOwnProperty(prop)) {
-			target[prop] = source[prop];
-		}
-	}
-	return target;
-}
-
 const Module = function() {
 	const instanceParams = arguments,
 		self = this,
@@ -14,18 +5,18 @@ const Module = function() {
 
 	let settings;
 
-	const ensureClosureMethods = function() {
-		Object.keys(self).forEach(function (methodName) {
-			const oldMethod = self[methodName];
+	const ensureClosureMethods = () => {
+		Object.keys( self ).forEach( ( methodName ) => {
+			const oldMethod = self[ methodName ];
 
-			if (typeof oldMethod !== 'function') {
+			if ( typeof oldMethod !== 'function' ) {
 				return;
 			}
 
-			self[methodName] = function () {
-				return oldMethod.apply(self, arguments);
+			self[ methodName ] = function () {
+				return oldMethod.apply( self, arguments );
 			};
-		});
+		} );
 	};
 
 	const initSettings = function() {
@@ -34,7 +25,7 @@ const Module = function() {
 		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
-			Object.assign(settings, instanceSettings);
+			Object.assign( settings, instanceSettings );
 		}
 	};
 
@@ -77,9 +68,7 @@ const Module = function() {
 		}
 
 		if ( 'object' === typeof settingKey ) {
-			// $.extend( settingsContainer, settingKey );
-
-			customExtend(settingsContainer, settingKey);
+			extendObject( settingsContainer, settingKey );
 
 			return self;
 		}
@@ -121,9 +110,9 @@ const Module = function() {
 
 	this.on = function( eventName, callback ) {
 		if ( 'object' === typeof eventName ) {
-			eventName.forEach(function(singleEventName) {
-				self.on(singleEventName, this);
-			});
+			eventName.forEach( function( singleEventName ) {
+				self.on( singleEventName, this );
+			} );
 
 			return self;
 		}
@@ -178,9 +167,9 @@ const Module = function() {
 			return self;
 		}
 
-		callbacks.forEach(function(callback) {
-			callback.apply(self, params);
-		});
+		callbacks.forEach( function( callback ) {
+			callback.apply( self, params );
+		} );
 
 		return self;
 	};
@@ -205,16 +194,25 @@ Module.extend = function( properties ) {
 		return parent.apply( this, arguments );
 	};
 
-	customExtend( child, parent );
+	extendObject( child, parent );
 
-	// child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
-	child.prototype = Object.create(Object.assign({}, parent.prototype, properties));
+	child.prototype = Object.create( Object.assign( {}, parent.prototype, properties ) );
 
 	child.prototype.constructor = child;
 
 	child.__super__ = parent.prototype;
 
 	return child;
+};
+
+const extendObject = ( target, source ) => {
+	for ( const prop in source ) {
+		if ( source.hasOwnProperty( prop ) ) {
+			target[ prop ] = source[ prop ];
+		}
+	}
+
+	return target;
 };
 
 module.exports = Module;
