@@ -24,7 +24,13 @@ class Module extends BaseModule {
 	public function enqueue_assets() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( 'elementor-wc-product-editor', ELEMENTOR_ASSETS_URL . 'js/wc-product-editor' . $suffix . '.js', [], ELEMENTOR_VERSION, true );
+		wp_enqueue_script(
+			'elementor-wc-product-editor',
+			ELEMENTOR_ASSETS_URL . 'js/wc-product-editor' . $suffix . '.js',
+			[],
+			ELEMENTOR_VERSION,
+			true );
+
 		wp_enqueue_style(
 			'elementor-wc-product-editor',
 			ELEMENTOR_ASSETS_URL . 'css/wc-product-editor' . $suffix . '.css',
@@ -37,24 +43,42 @@ class Module extends BaseModule {
 		return 'wc-product-editor';
 	}
 
-	public static function is_new_woocommerce_product_editor_page() {
-		if ( ! is_admin() ) {
+	protected static function is_product_editor_page() {
+
+		$query_string = wp_parse_url( wp_get_referer(), PHP_URL_QUERY );
+		parse_str( $query_string, $query );
+
+		if ( ! isset( $query['page'] ) || 'wc-admin' !== $query['page'] || ! isset( $query['path'] ) ) {
 			return false;
 		}
 
-		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
-		$path = isset( $_GET['path'] ) ? sanitize_text_field( wp_unslash( $_GET['path'] ) ) : '';
+		$path_pieces = explode( '/', $query['path'] );
+		$route       = $path_pieces[1];
 
-		if ( 'wc-admin' === $page && strpos( $path, '/product/' ) === 0 ) {
-			return true;
+		return 'add-product' === $route || 'product' === $route;
+	}
+
+	public static function is_new_woocommerce_product_editor_page() {
+		$page = Utils::get_super_global_value( $_GET, 'page' );
+		$path = Utils::get_super_global_value( $_GET, 'path' );
+
+		if ( ! isset( $page ) || 'wc-admin' !== $page || ! isset( $path ) ) {
+			return false;
 		}
 
-		return false;
+		$path_pieces = explode( '/', $path );
+		$route       = $path_pieces[1];
+
+		return 'add-product' === $route || 'product' === $route;
 	}
 
 	public function print_button_js_template() {
 		$post_id = $this->get_post_id();
 		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return;
+		}
 		?>
 		<script id="elementor-woocommerce-new-editor-button" type="text/html">
 			<a id="elementor-go-to-edit-page-link" class="elementor-wc-button-wrapper" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
@@ -79,12 +103,13 @@ class Module extends BaseModule {
 	}
 
 	private function get_post_id() {
-		if ( Utils::get_super_global_value( $_GET, 'path' ) !== null ) {
-			$path_query = Utils::get_super_global_value( $_GET, 'path' );
-			$query_string = isset( $path_query ) ? explode( '/', $path_query ) : [];
-
-			return (int) end( $query_string );
+		if ( Utils::get_super_global_value( $_GET, 'path' ) === null ) {
+			return false;
 		}
-	}
 
+		$path_query = Utils::get_super_global_value( $_GET, 'path' );
+		$query_string = isset( $path_query ) ? explode( '/', $path_query ) : [];
+
+		return (int) end( $query_string );
+	}
 }
