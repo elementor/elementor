@@ -79,9 +79,9 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'assets/dev/scss/frontend',
-				src: 'shapes.scss',
-				dest: 'assets/css',
+				cwd: 'assets/dev/scss/frontend/conditionals',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
 				ext: '.css',
 			},
 		]

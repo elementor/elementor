@@ -524,6 +524,13 @@ class Frontend extends App {
 			'1.2.0'
 		);
 
+		wp_register_style(
+			'e-apple-webkit',
+			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
