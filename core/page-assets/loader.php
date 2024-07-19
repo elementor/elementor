@@ -31,7 +31,7 @@ class Loader extends Module {
 					'dependencies' => [],
 				],
 				'e-shapes' => [
-					'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/', true ),
+					'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/', false ),
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
