@@ -43,21 +43,6 @@ class Module extends BaseModule {
 		return 'wc-product-editor';
 	}
 
-	protected static function is_product_editor_page() {
-
-		$query_string = wp_parse_url( wp_get_referer(), PHP_URL_QUERY );
-		parse_str( $query_string, $query );
-
-		if ( ! isset( $query['page'] ) || 'wc-admin' !== $query['page'] || ! isset( $query['path'] ) ) {
-			return false;
-		}
-
-		$path_pieces = explode( '/', $query['path'] );
-		$route       = $path_pieces[1];
-
-		return 'product' === $route;
-	}
-
 	public static function is_new_woocommerce_product_editor_page() {
 		$page = Utils::get_super_global_value( $_GET, 'page' );
 		$path = Utils::get_super_global_value( $_GET, 'path' );
@@ -69,7 +54,7 @@ class Module extends BaseModule {
 		$path_pieces = explode( '/', $path );
 		$route       = $path_pieces[1];
 
-		return 'add-product' === $route || 'product' === $route;
+		return 'product' === $route;
 	}
 
 	public function print_button_js_template() {
