@@ -29,7 +29,8 @@ class Module extends BaseModule {
 			ELEMENTOR_ASSETS_URL . 'js/wc-product-editor' . $suffix . '.js',
 			[],
 			ELEMENTOR_VERSION,
-			true );
+			true
+		);
 
 		wp_enqueue_style(
 			'elementor-wc-product-editor',
