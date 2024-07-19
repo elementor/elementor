@@ -44,19 +44,11 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	findElement( selector ) {
 		const mainElement = this.baseElement;
 
-		return mainElement.find( selector ).filter( function() {
+		return mainElement.find( selector ).filter( ( index, element ) => {
 			// Start `closest` from parent since self can be `.elementor-element`.
-			const closestElement = this.parentNode?.closest('.elementor-element');
+			const closestElement = element.parentNode?.closest( '.elementor-element' );
 			return closestElement === mainElement;
 		} );
-
-		const elements = mainElement.querySelectorAll(selector);
-
-		return Array.from(elements).filter(function(element) {
-			// Start `closest` from parent since self can be `.elementor-element`.
-			const closestElement = element.parentNode?.closest('.elementor-element');
-			return closestElement === mainElement;
-		});
 	}
 
 	getUniqueHandlerID( cid, baseElement ) {
@@ -209,24 +201,24 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 			if ( ! settingsKeys ) {
 				settingsKeys = elementorFrontend.config.elements.keys[ type ] = [];
 
-				Object.entries(settings.controls).forEach(([name, control]) => {
-					if (control.frontend_available || control.editor_available) {
-						settingsKeys.push(name);
+				Object.entries( settings.controls ).forEach( ( [ name, control ] ) => {
+					if ( control.frontend_available || control.editor_available ) {
+						settingsKeys.push( name );
 					}
-				});
+				} );
 			}
 
-			settings.getActiveControls().forEach(controlKey => {
-				if (settingsKeys.indexOf(controlKey) !== -1) {
-					let value = attributes[controlKey];
+			settings.getActiveControls()?.forEach( ( controlKey ) => {
+				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
+					let value = attributes[ controlKey ];
 
-					if (value.toJSON) {
+					if ( value.toJSON ) {
 						value = value.toJSON();
 					}
 
-					elementSettings[controlKey] = value;
+					elementSettings[ controlKey ] = value;
 				}
-			});
+			} );
 		} else {
 			elementSettings = this.baseElement?.dataset?.settings || {};
 		}
@@ -235,7 +227,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	}
 
 	getEditSettings( setting ) {
-		var attributes = {};
+		let attributes = {};
 
 		if ( this.isEdit ) {
 			attributes = elementorFrontend.config.elements.editSettings[ this.getModelCID() ].attributes;
@@ -263,9 +255,8 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 
 		super.onInit( ...args );
 
-		// Check if active and apply module frontend view
 		if ( this.isActive( this.getSettings() ) ) {
-			elementorModules.ViewModuleFrontend.prototype.onInit.apply(this, arguments);
+			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
 		}
 	}
 
