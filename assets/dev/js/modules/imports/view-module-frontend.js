@@ -58,10 +58,10 @@ export default Module.extend( {
 
 				if ( isJqueryRequired && ! window.jQuery ) {
 					// Instantiate JqueryLoader and execute jQuery loading
-					const JqueryLoader = new JqueryLoader();
+					const jqueryLoader = new JqueryLoader();
 					console.log('start loading jQuery...');
 					elementorFrontendConfig.isJQueryLoading = true;
-					await JqueryLoader.execute();
+					await jqueryLoader.execute();
 					console.log('jQuery was loaded');
 					delete elementorFrontendConfig.isJQueryLoading;
 				}
