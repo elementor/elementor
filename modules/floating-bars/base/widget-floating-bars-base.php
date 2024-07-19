@@ -646,7 +646,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		// TODO: wire this
 		$this->add_responsive_control(
 			'style_cta_button_animation',
 			[
@@ -814,7 +813,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		// TODO: wire this
 		$this->add_responsive_control(
 			'style_floating_bar_animation',
 			[
