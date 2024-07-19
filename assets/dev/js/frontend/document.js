@@ -2,6 +2,7 @@ export default class extends elementorModules.ViewModuleFrontend {
 	getDefaultSettings() {
 		return {
 			selectors: {
+				document: '.elementor',
 				elements: '.elementor-element',
 				nestedDocumentElements: '.elementor .elementor-element',
 			},
@@ -11,31 +12,30 @@ export default class extends elementorModules.ViewModuleFrontend {
 		};
 	}
 
-	selectElements( context, selector ) {
-		return Array.from( context.querySelectorAll( selector ) );
+	getSelectedElements( baseElement, selector ) {
+		return Array.from( baseElement?.querySelectorAll( selector ) );
 	}
 
-	selectNestedElements( documents, nestedSelector ) {
+	getSelectedNestedElements( documents, nestedSelector ) {
 		let nestedElements = [];
 
-		documents.forEach( ( doc ) => {
-			nestedElements = nestedElements.concat( Array.from( doc.querySelectorAll( nestedSelector ) ) );
+		documents.forEach( ( document ) => {
+			nestedElements = nestedElements?.concat( Array.from( document?.querySelectorAll( nestedSelector ) ) );
 		} );
 
 		return nestedElements;
 	}
 
-	filterElements( elements, nestedElements ) {
-		return elements.filter( ( element ) => ! nestedElements.includes( element ) );
+	getFilteredElements( elements, nestedElements ) {
+		return elements?.filter( ( element ) => ! nestedElements?.includes( element ) );
 	}
 
 	getDefaultElements() {
-		const selectors = this.getSettings( 'selectors' );
-		const context = this.baseElement;
-		const innerElements = this.selectElements( context, selectors.elements );
-		const documents = this.selectElements( context, '.elementor' );
-		const nestedElements = this.selectNestedElements( documents, selectors.nestedDocumentElements );
-		const filteredElements = this.filterElements( innerElements, nestedElements );
+		const selectors = this.getSettings( 'selectors' ),
+			innerElements = this.getSelectedElements( this.baseElement, selectors.elements ),
+			documents = this.getSelectedElements( this.baseElement, selectors.document ),
+			nestedElements = this.getSelectedNestedElements( documents, selectors.nestedDocumentElements ),
+			filteredElements = this.getFilteredElements( innerElements, nestedElements );
 
 		return {
 			baseElements: filteredElements,
