@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Editor\Editor_V2_Experiments;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 use Elementor\Utils;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( Editor_V2_Experiments::APP_BAR );
+$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_Module::EXPERIMENT_NAME );
 
 $has_pro = Utils::has_pro();
 $elements_list_class = '';

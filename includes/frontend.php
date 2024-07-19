@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Base\Elements_Iteration_Actions\Assets;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -523,6 +524,13 @@ class Frontend extends App {
 			'1.2.0'
 		);
 
+		wp_register_style(
+			'e-apple-webkit',
+			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
@@ -653,6 +661,11 @@ class Frontend extends App {
 				if ( $post_id && is_singular() ) {
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
+
+					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
+					if ( ! empty( $page_assets ) ) {
+						Plugin::$instance->assets_loader->enable_assets( $page_assets );
+					}
 				}
 			}
 		}

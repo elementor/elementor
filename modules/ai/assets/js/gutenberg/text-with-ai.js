@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 const { useDispatch, useSelect } = wp.data;
 const { createBlock } = wp.blocks;
 
-const AiText = ( { onClose, blockName } ) => {
+export const AiText = ( { onClose, blockName, initialValue = '', blockClientId = '' } ) => {
 	const { replaceBlocks, insertBlocks } = useDispatch( 'core/block-editor' );
 	const insertTextIntoParagraph = ( text ) => {
 		if ( paragraphBlock ) {
@@ -31,7 +31,7 @@ const AiText = ( { onClose, blockName } ) => {
 
 	const { paragraphBlock } = useSelect( ( ) => {
 		const currentBlocks = wp.data.select( 'core/block-editor' )?.getBlocks();
-		const foundParagraphBlock = currentBlocks.find( ( block ) => blockName === block.name );
+		const foundParagraphBlock = currentBlocks.find( ( block ) => blockName === block.name && blockClientId === block.clientId );
 		return {
 			blocks: currentBlocks,
 			paragraphBlock: foundParagraphBlock,
@@ -44,7 +44,9 @@ const AiText = ( { onClose, blockName } ) => {
 		<>
 			<App
 				type={ appType }
-				getControlValue={ () => {} }
+				getControlValue={ () => {
+					return initialValue;
+				} }
 				setControlValue={ ( value ) => {
 					insertTextIntoParagraph( value );
 				} }
@@ -59,9 +61,11 @@ const AiText = ( { onClose, blockName } ) => {
 AiText.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	blockName: PropTypes.string.isRequired,
+	initialValue: PropTypes.string,
+	blockClientId: PropTypes.string,
 };
 
-export const GenerateTextWithAi = ( { blockName } ) => {
+export const GenerateTextWithAi = ( { blockName, blockClientId } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleButtonClick = () => {
@@ -77,11 +81,12 @@ export const GenerateTextWithAi = ( { blockName } ) => {
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
 				<AiLink onClick={ handleButtonClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</AiLink>
-				{ isOpen && <AiText onClose={ handleClose } blockName={ blockName } /> }
+				{ isOpen && <AiText onClose={ handleClose } blockName={ blockName } blockClientId={ blockClientId } /> }
 			</RequestIdsProvider>
 		</div> );
 };
 
 GenerateTextWithAi.propTypes = {
 	blockName: PropTypes.string.isRequired,
+	blockClientId: PropTypes.string.isRequired,
 };

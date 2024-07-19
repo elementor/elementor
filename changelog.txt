@@ -1,5 +1,31 @@
 == Changelog ==
 
+= 3.23.1 - 2024-07-15 =
+* Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
+
+= 3.23.0 - 2024-07-15 =
+
+* New: Elevate engagement with Floating Buttons - Convert visitors into leads, making it easier than ever to start a conversation on any platform
+* New: Introducing Link In Bio - allowing you to create a digital business card and share it easily
+* New: Generate Featured Image with AI
+* New: Generate texts using AI within WordPress
+* Tweak: Added support for the `overscroll-behavior` CSS property to improve scrolling experience
+* Tweak: Activated Editor Top Bar feature by default for new sites
+* Tweak: Activated Element Caching feature for new sites and promoted to Beta status
+* Tweak: Promotes "Lazy Load Backgrounds Images" feature to Stable status
+* Tweak: Hide "Default Device View" from User Preferences when the Editor Top Bar is active
+* Tweak: Increased the height of the Globals popover to improve usability
+* Tweak: Improved Image style presets and added two additional ones in AI Images
+* Tweak: Added Excerpt generation option with AI in the editor
+* Fix: Performance issues causing lag and slowness while editing Nested Elements ([#24076](https://github.com/elementor/elementor/issues/24076))
+* Fix: Video autoplay issues in various scenarios (props [@JxxIT](https://github.com/JxxIT), [#24324](https://github.com/elementor/elementor/issues/24324), [#14437](https://github.com/elementor/elementor/issues/14437), [#7964](https://github.com/elementor/elementor/issues/7964))
+* Fix: Writing permissions issues related to WordPress root directory ([#21036](https://github.com/elementor/elementor/issues/21036), [#17255](https://github.com/elementor/elementor/issues/17255))
+* Fix: Restored deprecated Google fonts that were deprecated in the previous update ([#27701](https://github.com/elementor/elementor/issues/27701))
+* Fix: Vimeo link structure with privacy hash is not working correctly with dynamic link action using the lightbox
+* Fix: Validate prompt and canvas changes to allow generation in AI image edit generative fill
+* Fix: Elementor Core versions are being incorrectly added to Elementor Pro versions' history
+* Fix: AI Connect not launching when the user doesn't have prior connect data
+
 = 3.22.3 - 2024-06-26 =
 
 * Fix: PHP error appears on the front when using gradient background with the Optimized Control Loading feature activated ([#27733](https://github.com/elementor/elementor/issues/27733))

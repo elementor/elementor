@@ -112,7 +112,6 @@ class Autoloader {
 	private static function init_classes_map() {
 		self::$classes_map = [
 			'Api' => 'includes/api.php',
-			'Atomic_Widget_Base' => 'includes/base/atomic-widget-base.php',
 			'Base_Control' => 'includes/controls/base.php',
 			'Base_Data_Control' => 'includes/controls/base-data.php',
 			'Base_UI_Control' => 'includes/controls/base-ui.php',
