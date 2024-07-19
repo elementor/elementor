@@ -590,7 +590,7 @@ class Frontend extends App {
 		foreach ( $widgets as $widget_name ) {
 			wp_register_style(
 				"widget-{$widget_name}",
-				$this->get_css_assets_url( "widget-{$widget_name}", null, 'default', true ),
+				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
 				[],
 				ELEMENTOR_VERSION
 			);
