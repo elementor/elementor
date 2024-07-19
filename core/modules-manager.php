@@ -123,6 +123,7 @@ class Modules_Manager {
 			'atomic-widgets',
 			'editor-app-bar',
 			'floating-bars',
+			'wc-product-editor',
 		];
 	}
 
