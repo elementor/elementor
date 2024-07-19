@@ -14,63 +14,55 @@ export default Module.extend( {
 
 	onInit() {
 		// if ( 'function' !== typeof this.getDefaultElements ) {
-		// 	return;
+		//     return;
 		// }
 
 		if ( ! this.isJqueryRequired ) {
-			console.log( this.getSettings() );
 			this.runSecondPart();
 			return;
 		}
 
-		console.log( 'required', this.getSettings() );
-
 		this.loadJQueryIfNeeded( this.isJqueryRequired )
-			.then(() => {
+			.then( () => {
 				this.runSecondPart();
-			})
-			.catch((error) => {
-				console.error('Error loading jQuery:', error);
-			});
+			} )
+			.catch( ( error ) => {
+				console.error( 'Error loading jQuery:', error );
+			} );
 	},
 
 	initElements() {
 		this.elements = this.getDefaultElements();
 	},
 
-	delay(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms));
+	delay( ms ) {
+		return new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 	},
 
-	loadJQueryIfNeeded(isJqueryRequired) {
-		return new Promise(async (resolve, reject) => {
+	loadJQueryIfNeeded( isJqueryRequired ) {
+		return new Promise( async ( resolve, reject ) => {
 			try {
 				if ( ! isJqueryRequired ) {
 					resolve();
 					return;
 				}
 
-				// Pause until elementorFrontendConfig does not have property 'elementorFrontendConfig'
-				while ( elementorFrontendConfig.hasOwnProperty('isJQueryLoading' ) ) {
-					console.log( 'waiting for elementorFrontendConfig...' );
-					await this.delay(100); // Check every 100 milliseconds
+				while ( elementorFrontendConfig.hasOwnProperty( 'isJQueryLoading' ) ) {
+					await this.delay( 10 );
 				}
 
 				if ( isJqueryRequired && ! window.jQuery ) {
-					// Instantiate JqueryLoader and execute jQuery loading
 					const jqueryLoader = new JqueryLoader();
-					console.log('start loading jQuery...');
 					elementorFrontendConfig.isJQueryLoading = true;
 					await jqueryLoader.execute();
-					console.log('jQuery was loaded');
 					delete elementorFrontendConfig.isJQueryLoading;
 				}
 
 				resolve();
-			} catch (error) {
-				reject(error);
+			} catch ( error ) {
+				reject( error );
 			}
-		});
+		} );
 	},
 
 	runSecondPart() {
