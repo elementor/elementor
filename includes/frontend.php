@@ -528,7 +528,7 @@ class Frontend extends App {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
+		$frontend_file_name = "frontend{$direction_suffix}{$min_suffix}.css";
 
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
