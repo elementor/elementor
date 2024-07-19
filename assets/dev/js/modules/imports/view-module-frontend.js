@@ -1,5 +1,5 @@
 import Module from './module-frontend';
-import ScriptLoader from './utils/jquery-loader';
+import JqueryLoader from './utils/jquery-loader';
 
 export default Module.extend( {
 	elements: null,
@@ -57,11 +57,11 @@ export default Module.extend( {
 				}
 
 				if ( isJqueryRequired && ! window.jQuery ) {
-					// Instantiate ScriptLoader and execute jQuery loading
-					const scriptLoader = new ScriptLoader();
+					// Instantiate JqueryLoader and execute jQuery loading
+					const JqueryLoader = new JqueryLoader();
 					console.log('start loading jQuery...');
 					elementorFrontendConfig.isJQueryLoading = true;
-					await scriptLoader.execute();
+					await JqueryLoader.execute();
 					console.log('jQuery was loaded');
 					delete elementorFrontendConfig.isJQueryLoading;
 				}

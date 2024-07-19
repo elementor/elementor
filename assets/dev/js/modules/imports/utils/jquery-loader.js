@@ -1,4 +1,6 @@
-export default class ScriptLoader {
+// Experimental file to load jQuery in a non-blocking way.
+// To be discussed in the context of the general infra.
+export default class JqueryLoader {
 	// Ref: https://stackoverflow.com/questions/1140402/how-to-add-jquery-in-js-file
 	baseUrl = elementorFrontendConfig.urls.ajaxurl.replace( '/wp-admin/admin-ajax.php', '' );
 	scriptUrl = '/wp-includes/js/jquery/jquery.js';
