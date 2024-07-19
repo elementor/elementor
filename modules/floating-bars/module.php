@@ -31,7 +31,7 @@ class Module extends BaseModule {
 			'release_status' => Manager::RELEASE_STATUS_DEV,
 			'default' => Manager::STATE_INACTIVE,
 			'dependencies' => [
-				\Elementor\Modules\FloatingButtons\Module::EXPERIMENT_NAME,
+				'container',
 			],
 		];
 	}
