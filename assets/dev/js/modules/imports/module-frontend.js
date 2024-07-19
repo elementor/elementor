@@ -1,3 +1,5 @@
+// Let's study if we convert this to ES6 class
+// Possible next task for Batsirai.
 const Module = function() {
 	const instanceParams = arguments,
 		self = this,
