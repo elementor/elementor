@@ -704,4 +704,12 @@ module.exports = {
 	sanitize( value, options ) {
 		return DOMPurify.sanitize( value, options );
 	},
+
+	sanitizeUrl( url ) {
+		const IS_ALLOWED_URI = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+			sanitizedUrl = DOMPurify.sanitize( url ),
+			isUrlAllowed = IS_ALLOWED_URI.test( sanitizedUrl );
+
+		return isUrlAllowed ? sanitizedUrl : '';
+	},
 };
