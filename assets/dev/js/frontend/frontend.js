@@ -65,7 +65,7 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 	}
 
 	getDefaultElements() {
-		const deviceModeElement = document.createElement('span');
+		const deviceModeElement = document.createElement( 'span' );
 		deviceModeElement.id = 'elementor-device-mode';
 		deviceModeElement.className = 'elementor-screen-only';
 
@@ -75,7 +75,7 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 			deviceMode: deviceModeElement,
 		};
 
-		if ( ! isFrontend() || !! window.jQuery ) {
+		if ( ! isFrontend() || !! window.jQuery ) { // Update the isFrontend() function, so that we don't need the window.jQuery check.
 			defaultElements.$window = jQuery( window );
 			defaultElements.$document = jQuery( document );
 			defaultElements.$head = jQuery( document.head );
@@ -90,7 +90,7 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 	}
 
 	bindEvents() {
-		this.elements.window.addEventListener('resize', () => this.setDeviceModeData());
+		this.elements.window.addEventListener( 'resize', () => this.setDeviceModeData() );
 	}
 
 	/**
@@ -233,53 +233,53 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 	}
 
 	initOnReadyElements() {
-		this.elements.wpAdminBar = this.elements.document.querySelectorAll( this.getSettings('selectors.adminBar') );
+		this.elements.wpAdminBar = this.elements.document.querySelectorAll( this.getSettings( 'selectors.adminBar' ) );
 	}
 
 	addUserAgentClasses() {
 		for ( const [ key, value ] of Object.entries( environment ) ) {
 			if ( value ) {
-				this.elements.document.body.classList.add( 'e--ua-' + key );
+				this.elements.document.body.classList?.add( 'e--ua-' + key );
 			}
 		}
 	}
 
 	setDeviceModeData() {
-		this.elements.document.body.setAttribute( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
+		this.elements.document.body?.setAttribute( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
 	}
 
-	addListenerOnce(listenerID, event, callback, to) {
-		if (!to) {
+	addListenerOnce( listenerID, event, callback, to ) {
+		if ( ! to ) {
 			to = this.elements.window;
 		}
 
-		if (!this.isEditMode()) {
-			to.addEventListener(event, callback);
+		if ( ! this.isEditMode() ) {
+			to.addEventListener( event, callback );
 			return;
 		}
 
 		this.removeListeners( listenerID, event, to );
 
-		if ( !! window.jQuery && to instanceof jQuery) {
-			const eventNS = `${event}.${listenerID}`;
+		if ( !! window.jQuery && to instanceof jQuery ) {
+			const eventNS = `${ event }.${ listenerID }`;
 			to.on( eventNS, callback );
 		} else {
 			to.on( event, callback, listenerID );
 		}
 	}
 
-	removeListeners(listenerID, event, from) {
-		if (!from) {
+	removeListeners( listenerID, event, from ) {
+		if ( ! from ) {
 			from = this.elements.window;
 		}
 
-		if (from instanceof jQuery) { // It might be safe to keep this reference.
-			const eventNS = `${event}.${listenerID}`;
-			from.off(eventNS);
+		if ( !! window.jQuery && from instanceof jQuery ) {
+			const eventNS = `${ event}.${ listenerID }`;
+			from.off( eventNS );
 		} else {
-			if (from._eventHandlers && from._eventHandlers[listenerID]) {
-				from.removeEventListener(event, from._eventHandlers[listenerID]);
-				delete from._eventHandlers[listenerID];
+			if ( from._eventHandlers && from._eventHandlers[ listenerID ] ) {
+				from.removeEventListener( event, from._eventHandlers[ listenerID ] );
+				delete from._eventHandlers[ listenerID ];
 			}
 		}
 	}
@@ -311,9 +311,9 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 	}
 
 	muteMigrationTraces() {
-		// jQuery.migrateMute = true;
-		//
-		// jQuery.migrateTrace = false;
+		jQuery.migrateMute = true;
+
+		jQuery.migrateTrace = false;
 	}
 
 	/**
@@ -362,9 +362,9 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 
 		this.initDialogsManager();
 
-		// if ( this.isEditMode() ) {
-		// 	this.muteMigrationTraces();
-		// }
+		if ( this.isEditMode() ) {
+			this.muteMigrationTraces();
+		}
 
 		// Keep this line before `initOnReadyComponents` call
 		Events.dispatch( this.elements.window, 'elementor/frontend/init' );
@@ -388,5 +388,5 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 window.elementorFrontend = new Frontend();
 
 if ( ! elementorFrontend.isEditMode() ) {
-	document.addEventListener('DOMContentLoaded', () => elementorFrontend.init());
+	document.addEventListener( 'DOMContentLoaded', () => elementorFrontend.init() );
 }
