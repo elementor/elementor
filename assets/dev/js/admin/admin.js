@@ -334,9 +334,11 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 			this.addUserAgentClasses();
 
-			this.wcNewProductEditorSwitchButton();
-
 			this.roleManager.init();
+
+			if ( this.isWCNewProductEditorPage() ) {
+				this.initWcNewProductEditor();
+			}
 
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
@@ -469,6 +471,24 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			this.maintenanceMode = new MaintenanceMode();
 		},
 
+		isWCNewProductEditorPage() {
+			if ( ! window.location.search ) {
+				return false;
+			}
+
+			const params = new URLSearchParams( window.location.search );
+			const page = params.get( 'page' );
+			const path = params.get( 'path' );
+
+			return !! ( 'wc-admin' === page && path && path.startsWith( '/product/' ) );
+		},
+
+		initWcNewProductEditor() {
+			const WcProductEditor = require( 'elementor-admin/wc-product-editor' );
+
+			new WcProductEditor();
+		},
+
 		isElementorMode() {
 			return ! ! this.elements.$switchModeInput.val();
 		},
@@ -513,74 +533,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 		translate( stringKey, templateArgs ) {
 			return elementorCommon.translate( stringKey, null, templateArgs, this.config.i18n );
-		},
-
-		isWcProductEditorLoading() {
-			return !! document.querySelector( '.woocommerce-product-header.is-loading' );
-		},
-
-		isElementorButtonInjected() {
-			return !! document.querySelector( '.woocommerce-product-header__inner #elementor-editor-button' );
-		},
-
-		injectElementorButton() {
-			const wcProductHeaderInner = document.querySelector( '.woocommerce-product-header__inner' );
-
-			if ( wcProductHeaderInner ) {
-				const buttonTemplate = document.querySelector( '#elementor-woocommerce-new-editor-button' ),
-					tempDiv = document.createElement( 'div' );
-				tempDiv.innerHTML = buttonTemplate.innerHTML;
-
-				const button = tempDiv.firstElementChild;
-
-				button.style.setProperty( 'height', 'unset' );
-				button.style.setProperty( 'width', 'fit-content' );
-				button.querySelector( '#elementor-editor-button' ).classList.remove( 'button-hero' );
-				button.querySelector( '#elementor-editor-button' ).classList.add( 'button-large' );
-
-				wcProductHeaderInner.firstChild.append( button );
-			}
-		},
-
-		isWCNewProductEditor() {
-			if ( ! window.location.search ) {
-				return false;
-			}
-
-			const params = new URLSearchParams( window.location.search );
-			const page = params.get( 'page' );
-			const path = params.get( 'path' );
-
-			return !! ( 'wc-admin' === page && path && path.startsWith( '/product/' ) );
-		},
-
-		wcNewProductEditorSwitchButton() {
-			if ( ! this.isWCNewProductEditor() ) {
-				return;
-			}
-
-			const body = document.querySelector( 'body' ),
-				that = this;
-
-			if ( ! body ) {
-				return;
-			}
-
-			const observer = new MutationObserver( function( mutationsList ) {
-				for ( const mutation of mutationsList ) {
-					if ( 'childList' === mutation.type ) {
-						if ( mutation.addedNodes.length > 0 ) {
-							if ( ! that.isWcProductEditorLoading() && ! that.isElementorButtonInjected() ) {
-								that.injectElementorButton();
-							}
-						}
-					}
-				}
-			} );
-
-			observer.observe( body, {
-				childList: true, subtree: true,
-			} );
 		},
 
 		roleManager: {
