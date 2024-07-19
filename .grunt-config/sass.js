@@ -81,7 +81,7 @@ const sass = {
 				expand: true,
 				cwd: 'assets/dev/scss/frontend/conditionals',
 				src: '*.scss',
-				dest: 'assets/css',
+				dest: 'assets/css/conditionals',
 				ext: '.css',
 			},
 		]

@@ -526,7 +526,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'e-apple-webkit',
-			$this->get_css_assets_url( 'apple-webkit', 'assets/css/' ),
+			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
