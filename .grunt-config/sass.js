@@ -80,14 +80,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'assets/dev/scss/frontend/conditionals',
-				src: 'shapes.scss',
-				dest: 'assets/css',
-				ext: '.css',
-			},
-			{
-				expand: true,
-				cwd: 'assets/dev/scss/frontend/conditionals',
-				src: 'appleWebkit.scss',
+				src: '*.scss',
 				dest: 'assets/css',
 				ext: '.css',
 			},

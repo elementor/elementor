@@ -1,5 +1,5 @@
-@import "../../../../../../elementor/assets/dev/scss/helpers/variables";
-@import "../../../../../../elementor/assets/dev/scss/frontend/breakpoints/breakpoints";
+@import "../../helpers/variables";
+@import "../breakpoints/breakpoints";
 
 .e--ua-appleWebkit {
 	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
