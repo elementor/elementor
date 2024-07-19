@@ -9,7 +9,7 @@
 			this.selectors = {
 				wcProductHeaderInner: '.woocommerce-product-header__inner',
 				buttonTemplate: '#elementor-woocommerce-new-editor-button',
-				wcLoader: '.woocommerce-product-header.is-loading',
+				wcLoader: '.woocommerce-product-header[role="region"]',
 				wcEditButton: '.woocommerce-product-header__inner #elementor-editor-button',
 				body: 'body',
 			};
@@ -27,8 +27,9 @@
 				for ( const mutation of mutationsList ) {
 					if ( 'childList' === mutation.type ) {
 						if ( mutation.addedNodes.length > 0 ) {
-							if ( ! that.isWcProductEditorLoading() && ! that.isElementorButtonInjected() ) {
+							if ( that.isWcProductEditorLoading() && ! that.isElementorButtonInjected() ) {
 								that.injectElementorButton();
+								observer.disconnect();
 							}
 						}
 					}
