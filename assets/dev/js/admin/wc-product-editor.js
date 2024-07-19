@@ -1,11 +1,22 @@
 ( function() {
 	const WcProductEditor = {
 		init() {
+			this.getDefaultSettings();
 			this.wcNewProductEditorSwitchButton();
 		},
 
+		getDefaultSettings() {
+			this.selectors = {
+				wcProductHeaderInner: '.woocommerce-product-header__inner',
+				buttonTemplate: '#elementor-woocommerce-new-editor-button',
+				wcLoader: '.woocommerce-product-header.is-loading',
+				wcEditButton: '.woocommerce-product-header__inner #elementor-editor-button',
+				body: 'body',
+			};
+		},
+
 		wcNewProductEditorSwitchButton() {
-			const body = document.querySelector( 'body' ),
+			const body = document.querySelector( this.selectors.body ),
 				that = this;
 
 			if ( ! body ) {
@@ -30,35 +41,25 @@
 		},
 
 		injectElementorButton() {
-			const wcProductHeaderInner = document.querySelector( '.woocommerce-product-header__inner' );
+			const wcProductHeaderInner = document.querySelector( this.selectors.wcProductHeaderInner );
 
 			if ( wcProductHeaderInner ) {
-				const buttonTemplate = document.querySelector( '#elementor-woocommerce-new-editor-button' ),
+				const buttonTemplate = document.querySelector( this.selectors.buttonTemplate ),
 					tempDiv = document.createElement( 'div' );
 				tempDiv.innerHTML = buttonTemplate.innerHTML;
 
 				const button = tempDiv.firstElementChild;
 
-				this.updateButtonStyle( button );
-
 				wcProductHeaderInner.firstChild.append( button );
 			}
 		},
 
-		updateButtonStyle( button ) {
-			Object.assign( button.style,
-				{ height: 'unset',
-					width: 'fit-content',
-				} );
-			button.querySelector( '#elementor-editor-button' ).classList.replace( 'button-hero', 'button-large' );
-		},
-
 		isWcProductEditorLoading() {
-			return !! document.querySelector( '.woocommerce-product-header.is-loading' );
+			return !! document.querySelector( this.selectors.wcLoader );
 		},
 
 		isElementorButtonInjected() {
-			return !! document.querySelector( '.woocommerce-product-header__inner #elementor-editor-button' );
+			return !! document.querySelector( this.selectors.wcEditButton );
 		},
 	};
 

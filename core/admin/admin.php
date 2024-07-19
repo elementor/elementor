@@ -211,8 +211,6 @@ class Admin extends App {
 		}
 
 		wp_nonce_field( basename( __FILE__ ), '_elementor_edit_mode_nonce' );
-
-		$editor_button = $this->render_editor_button_html( $document );
 		?>
 		<div id="elementor-switch-mode">
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
@@ -227,13 +225,6 @@ class Admin extends App {
 				</span>
 			</button>
 		</div>
-		<?php echo $editor_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		<?php
-	}
-
-	public function render_editor_button_html( $document ) {
-		ob_start();
-		?>
 		<div id="elementor-editor">
 			<a id="elementor-go-to-edit-page-link" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
 				<div id="elementor-editor-button" class="button button-primary button-hero">
@@ -253,48 +244,6 @@ class Admin extends App {
 				</div>
 			</a>
 		</div>
-		<?php
-
-		return ob_get_clean();
-	}
-
-	private function get_post_id() {
-		if ( Utils::get_super_global_value( $_GET, 'path' ) !== null ) {
-			$path_query = Utils::get_super_global_value( $_GET, 'path' );
-			$query_string = isset( $path_query ) ? explode( '/', $path_query ) : [];
-
-			return (int) end( $query_string );
-		}
-	}
-
-	public function is_new_woocommerce_product_editor() {
-		if ( ! is_admin() ) {
-			return false;
-		}
-
-		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
-		$path = isset( $_GET['path'] ) ? sanitize_text_field( wp_unslash( $_GET['path'] ) ) : '';
-
-		if ( 'wc-admin' === $page && strpos( $path, '/product/' ) === 0 ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public function print_new_woocommerce_product_editor_button_template() {
-
-		if ( ! $this->is_new_woocommerce_product_editor() ) {
-			return;
-		}
-
-		$post_id = $this->get_post_id();
-		$document = Plugin::$instance->documents->get( $post_id );
-		$editor_button = $this->render_editor_button_html( $document );
-		?>
-		<script id="elementor-woocommerce-new-editor-button" type="text/html">
-		<?php echo $editor_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		</script>
 		<?php
 	}
 
@@ -907,9 +856,6 @@ class Admin extends App {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
 		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
-
-		add_action( 'admin_footer', [ $this, 'print_new_woocommerce_product_editor_button_template' ] );
-
 		add_action( 'save_post', [ $this, 'save_post' ] );
 
 		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );

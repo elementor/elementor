@@ -336,10 +336,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 			this.roleManager.init();
 
-			if ( this.isWCNewProductEditorPage() ) {
-				this.initWcNewProductEditor();
-			}
-
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
@@ -469,24 +465,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			var MaintenanceMode = require( 'elementor-admin/maintenance-mode' );
 
 			this.maintenanceMode = new MaintenanceMode();
-		},
-
-		isWCNewProductEditorPage() {
-			if ( ! window.location.search ) {
-				return false;
-			}
-
-			const params = new URLSearchParams( window.location.search );
-			const page = params.get( 'page' );
-			const path = params.get( 'path' );
-
-			return !! ( 'wc-admin' === page && path && path.startsWith( '/product/' ) );
-		},
-
-		initWcNewProductEditor() {
-			const WcProductEditor = require( 'elementor-admin/wc-product-editor' );
-
-			new WcProductEditor();
 		},
 
 		isElementorMode() {
