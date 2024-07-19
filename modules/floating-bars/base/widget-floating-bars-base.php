@@ -137,19 +137,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		);
 
 		$this->add_control(
-			'accessible_name',
-			[
-				'label' => esc_html__( 'Accessible Name', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => true,
-				],
-				'placeholder' => esc_html__( 'Enter text', 'elementor' ),
-				'default' => esc_html__( 'Banner', 'elementor' ),
-			],
-		);
-
-		$this->add_control(
 			'floating_bar_close_switch',
 			[
 				'label' => esc_html__( 'Close Button', 'elementor' ),
@@ -159,6 +146,22 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'return_value' => 'yes',
 				'default' => 'yes',
 			]
+		);
+
+		$this->add_control(
+			'accessible_name',
+			[
+				'label' => esc_html__( 'Accessible Name', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'Enter text', 'elementor' ),
+				'default' => esc_html__( 'Banner', 'elementor' ),
+				'condition' => [
+					'floating_bar_close_switch' => 'yes',
+				]
+			],
 		);
 
 		$this->end_controls_section();
