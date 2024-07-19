@@ -56,10 +56,6 @@ class Widget_Social_Icons extends Widget_Base {
 		return 'eicon-social-icons';
 	}
 
-	public function get_style_depends(): array {
-		return [ 'e-apple-webkit' ];
-	}
-
 	/**
 	 * Get widget keywords.
 	 *
@@ -90,8 +86,8 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	public function get_style_depends(): array {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' )
-			? [ 'widget-social-icons' ]
-			: [];
+			? [ 'widget-social-icons', 'e-apple-webkit' ]
+			: [ 'e-apple-webkit' ];
 	}
 
 	/**
