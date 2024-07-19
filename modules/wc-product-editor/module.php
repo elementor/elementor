@@ -55,7 +55,7 @@ class Module extends BaseModule {
 		$path_pieces = explode( '/', $query['path'] );
 		$route       = $path_pieces[1];
 
-		return 'add-product' === $route || 'product' === $route;
+		return 'product' === $route;
 	}
 
 	public static function is_new_woocommerce_product_editor_page() {
