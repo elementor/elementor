@@ -14,7 +14,7 @@ module.exports = {
 		files: [ {
 			src: [
 				'assets/css/*.css',
-				'!assets/css/*.min.css',
+				'!assets/css/*.min.css'
 			]
 		} ]
 	},
