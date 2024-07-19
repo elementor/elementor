@@ -50,11 +50,11 @@ export default class extends elementorModules.ViewModuleFrontend {
 
 			const settings = elementor.settings.page.model;
 
-			settings.getActiveControls().forEach(function(controlKey) {
-				elementSettings[controlKey] = settings.attributes[controlKey];
-			});
+			settings?.getActiveControls()?.forEach( ( controlKey ) => {
+				elementSettings[ controlKey ] = settings?.attributes?.[ controlKey ];
+			} );
 		} else {
-			elementSettings = this.baseElement.dataset.elementorSettings || {};
+			elementSettings = this.baseElement?.dataset.elementorSettings || {};
 		}
 
 		return this.getItems( elementSettings, setting );
@@ -69,11 +69,11 @@ export default class extends elementorModules.ViewModuleFrontend {
 
 		super.onInit();
 
-		this.isEdit = this.baseElement.classList.contains( this.getSettings( 'classes.editMode' ) );
+		this.isEdit = this.baseElement?.classList?.contains( this.getSettings( 'classes.editMode' ) );
 
 		if ( this.isEdit ) {
 			elementor.on( 'document:loaded', () => {
-				elementor.settings.page.model.addEventListener('change', this.onSettingsChange.bind(this));
+				elementor.settings.page.model.on( 'change', this.onSettingsChange.bind( this ) );
 			} );
 		} else {
 			this.runElementsHandlers();
