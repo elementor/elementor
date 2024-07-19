@@ -7,7 +7,7 @@ use Elementor\Icons_Manager;
 /**
  * Class Floating_Bars_Core_Render.
  *
- * This class handles the rendering of the Contact Buttons widget for the core version.
+ * This class handles the rendering of the Floating Bars widget for the core version.
  *
  * @since 3.23.0
  */
@@ -39,11 +39,12 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 	protected function render_cta_button(): void {
 		$link = $this->settings['cta_link'] ?? '';
 		$text = $this->settings['cta_text'] ?? '';
-		$icon_position = $this->settings['style_cta_icon_position'];
 
+		$icon_position = $this->settings['style_cta_icon_position'];
 		$hover_animation = $this->settings['style_cta_button_hover_animation'];
 		$corners = $this->settings['style_cta_button_corners'];
 		$link_type = $this->settings['style_cta_type'];
+		$entrance_animation = $this->settings['style_cta_button_animation'];
 
 		$cta_classnames = 'e-floating-bars__cta-button';
 
@@ -57,6 +58,10 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		if ( ! empty( $link_type ) ) {
 			$cta_classnames .= ' is-type-' . $link_type;
+		}
+
+		if ( ! empty( $entrance_animation ) && 'none' != $entrance_animation ) {
+			$cta_classnames .= ' has-entrance-animation';
 		}
 
 		$this->widget->add_render_attribute( 'cta-button', [
@@ -91,7 +96,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		] );
 
 		?>
-			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>  aria-controls="e-contact-buttons__content-wrapper">
+			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<i class="eicon-close"></i>
 			</button>
 		<?php

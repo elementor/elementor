@@ -6,20 +6,23 @@ export default class FloatingBarsHandler extends Base {
 			selectors: {
 				main: '.e-floating-bars',
 				closeButton: '.e-floating-bars__close-button',
+				ctaButton: '.e-floating-bars__cta-button',
+			},
+			constants: {
+				ctaEntranceAnimation: 'style_cta_button_animation',
+				hasEntranceAnimation: 'has-entrance-animation',
 			},
 		};
 	}
 
 	getDefaultElements() {
-		const selectors = this.getDefaultSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' );
+
 		return {
 			main: this.$element[ 0 ].querySelector( selectors.main ),
 			closeButton: this.$element[ 0 ].querySelector( selectors.closeButton ),
+			ctaButton: this.$element[ 0 ].querySelector( selectors.ctaButton ),
 		};
-	}
-
-	onCloseButtonClick() {
-		this.elements.main.classList.add( 'is-hidden' );
 	}
 
 	bindEvents() {
@@ -28,7 +31,19 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	onCloseButtonClick() {
+		this.elements.main.classList.add( 'is-hidden' );
+	}
+
 	onInit( ...args ) {
+		const { hasEntranceAnimation } = this.getSettings( 'constants' );
+
 		super.onInit( ...args );
+
+		if ( this.elements.ctaButton ) {
+			if ( this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
+				this.initCTAEntranceAnimation();
+			}
+		}
 	}
 }
