@@ -2,8 +2,11 @@
 
 namespace Elementor\Modules\FloatingBars;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Modules\FloatingBars\Base\Widget_Floating_Bars_Base;
+use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,5 +43,16 @@ class Module extends BaseModule {
 		return [
 			'Floating_Bars_Var_1',
 		];
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
+			Controls_Manager::add_tab(
+				Widget_Floating_Bars_Base::TAB_ADVANCED,
+				esc_html__( 'Advanced', 'elementor' )
+			);
+		}
 	}
 }

@@ -2,10 +2,13 @@
 
 namespace Elementor\Modules\FloatingButtons\Documents;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Modules\FloatingButtons\Module;
 use Elementor\Modules\Library\Traits\Library as Library_Trait;
 use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -21,13 +24,31 @@ class Floating_Buttons extends PageBase {
 		$properties['support_site_editor'] = false;
 		$properties['cpt'] = [ Floating_Buttons_Module::CPT_FLOATING_BUTTONS ];
 		$properties['show_navigator'] = false;
-		$properties['allow_adding_widgets'] = false;
+		$properties['allow_adding_widgets'] = true;
 		$properties['support_page_layout'] = false;
 		$properties['library_close_title'] = esc_html__( 'Go To Dashboard', 'elementor' );
 		$properties['publish_button_title'] = esc_html__( 'After publishing this widget, you will be able to set it as visible on the entire site in the Admin Table.', 'elementor' );
-		$properties['allow_closing_remote_library'] = false;
+		$properties['allow_closing_remote_library'] = true;
 
 		return $properties;
+	}
+
+	public static function is_editing_existing_floating_buttons_page() {
+		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
+		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );
+
+		return 'elementor' === $action && static::is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	public static function is_creating_floating_buttons_page() {
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		return 'elementor_ajax' === $action && static::is_floating_buttons_type_meta_key( $post_id );
+	}
+
+	public static function is_floating_buttons_type_meta_key( $post_id ) {
+		return Module::FLOATING_BUTTONS_DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 	}
 
 	public function print_content() {

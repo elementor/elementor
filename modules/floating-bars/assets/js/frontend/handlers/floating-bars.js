@@ -2,6 +2,7 @@ import Base from 'elementor-frontend/handlers/base';
 
 export default class FloatingBarsHandler extends Base {
 	getDefaultSettings() {
+
 		return {
 			selectors: {
 				main: '.e-floating-bars',
@@ -87,5 +88,11 @@ export default class FloatingBarsHandler extends Base {
 		if ( this.elements.main && this.elements.main.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.main, mainEntranceAnimation );
 		}
+
+		jQuery( '[data-widget_type^="floating-bars"]' ).each( ( index, element ) => {
+			if ( jQuery( element ).find( '.e-floating-bars' ).hasClass( 'has-vertical-position-top' ) ) {
+				elementorFrontend.elements.$body.prepend( element );
+			}
+		} );
 	}
 }

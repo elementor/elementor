@@ -84,7 +84,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( $this->is_editing_existing_floating_buttons_page() || $this->is_creating_floating_buttons_page() ) {
+		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
 				Widget_Contact_Button_Base::TAB_ADVANCED,
 				esc_html__( 'Advanced', 'elementor' )
@@ -112,7 +112,7 @@ class Module extends BaseModule {
 		});
 
 		add_filter( 'elementor/widget/common/register_css_attributes_control', function ( $common_controls ) {
-			if ( $this->is_creating_floating_buttons_page() || $this->is_editing_existing_floating_buttons_page() ) {
+			if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 				return false;
 			}
 			return $common_controls;
@@ -395,24 +395,6 @@ class Module extends BaseModule {
 			Floating_Buttons::get_labels(),
 			static::CPT_FLOATING_BUTTONS
 		);
-	}
-
-	private function is_editing_existing_floating_buttons_page() {
-		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
-		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );
-
-		return 'elementor' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
-	}
-
-	private function is_creating_floating_buttons_page() {
-		$action = ElementorUtils::get_super_global_value( $_POST, 'action' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$post_id = ElementorUtils::get_super_global_value( $_POST, 'editor_post_id' ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
-
-		return 'elementor_ajax' === $action && $this->is_floating_buttons_type_meta_key( $post_id );
-	}
-
-	private function is_floating_buttons_type_meta_key( $post_id ) {
-		return static::FLOATING_BUTTONS_DOCUMENT_TYPE === get_post_meta( $post_id, Document::TYPE_META_KEY, true );
 	}
 
 	private function register_post_type( array $labels, string $cpt ) {
