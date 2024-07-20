@@ -11,22 +11,24 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+		add_filter( 'elementor/widgets/additional_widgets_styles', [ $this, 'register_widget_styles' ] );
 	}
 
 	/**
-	 * Register styles.
+	 * Registered widget styles.
+	 * 
+	 * At build time, Elementor compiles `/modules/nested-tabs/assets/scss/frontend.scss`
+	 * to `/assets/css/widget-nested-tabs.min.css`.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function register_style() {
-		// At build time, Elementor compiles `/modules/shapes/assets/scss/frontend.scss` to `/assets/css/widget-shapes.css`.
-		wp_register_style(
-			'widget-shapes',
-			$this->get_css_assets_url( 'widget-shapes' ),
-			[],
-			ELEMENTOR_VERSION
-		);
+	public function register_widget_styles( array $additional_widgets_styles ) : array {
+		$additional_widgets_styles[] = [
+			'handle' => 'widget-shapes',
+			'file_path' => $this->get_css_assets_url( 'widget-shapes', null, true, true ),
+		];
+
+		return $additional_widgets_styles;
 	}
 
 	/**
