@@ -22,27 +22,32 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		add_filter( 'elementor/widgets/additional_widgets_styles', [ $this, 'register_widget_styles' ] );
+
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
 	}
 
 	/**
-	 * Register styles.
+	 * Registered widget styles.
+	 * 
+	 * At build time, Elementor compiles `/modules/nested-accordion/assets/scss/frontend.scss`
+	 * to `/assets/css/widget-nested-accordion.min.css`.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function register_style() {
-		// At build time, Elementor compiles `/modules/nested-accordion/assets/scss/frontend.scss` to `/assets/css/widget-nested-accordion.css`.
-		wp_register_style(
-			'widget-nested-accordion',
-			$this->get_css_assets_url( 'widget-nested-accordion' ),
+	public function register_widget_styles( array $additional_widgets_styles ) : array {
+		$additional_widgets_styles[] = [
+			'handle' => 'widget-nested-accordion',
+			'file_path' => $this->get_css_assets_url( 'widget-nested-accordion', null, true, true ),
 			[],
 			ELEMENTOR_VERSION
-		);
+		];
+
+		return $additional_widgets_styles;
 	}
 }

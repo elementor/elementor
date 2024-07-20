@@ -560,14 +560,49 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		$widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
+		$internal_widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
 
-		foreach ( $widgets_styles as $style_name ) {
+		foreach ( $internal_widgets_styles as $style_name ) {
 			wp_register_style(
 				$style_name,
 				$this->get_css_assets_url( $style_name, null, true, true ),
 				[],
 				ELEMENTOR_VERSION
+			);
+		}
+
+		$additional_widgets_styles = [];
+
+		/**
+		 * Additional widgets styles.
+		 *
+		 * Filters additional widgets styles, to allow external widgets registered by third-party
+		 * plugins to register their styles.
+		 *
+		 * @since 3.24.0
+		 *
+		 * @param array $additional_widgets_styles {
+		 *     Optional. An array of additional widgets styles to register.
+		 *
+		 *     @type string   $handle    Name of the stylesheet. Should be unique.
+		 *     @type string   $file_path Full stylesheet URL, or path relative to WordPress root.
+		 *     @type string[] $deps      Optional. Array of registered stylesheet handles this
+		 *                               stylesheet depends on. Default is an empty array.
+		 *     @type string   $ver       Optional. Stylesheet version. Default is Elementor version.
+		 * }
+		 */
+		$additional_widgets_styles = apply_filters( 'elementor/widgets/additional_widgets_styles', $additional_widgets_styles );
+
+		foreach ( $additional_widgets_styles as $additional_style ) {
+			if ( ! isset( $additional_style['handle'] ) ) {
+				continue;
+			}
+
+			wp_register_style(
+				$additional_style[ 'handle' ],
+				$additional_style[ 'file_path' ],
+				$additional_style[ 'deps' ] || [],
+				$additional_style[ 'ver' ] || ELEMENTOR_VERSION
 			);
 		}
 

@@ -45,21 +45,25 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+		add_filter( 'elementor/widgets/additional_widgets_styles', [ $this, 'register_widget_styles' ] );
 	}
 
 	/**
-	 * Register styles.
+	 * Registered widget styles.
+	 * 
+	 * At build time, Elementor compiles `/modules/link-in-bio/assets/scss/frontend.scss`
+	 * to `/assets/css/widget-link-in-bio.min.css`.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function register_style() {
-		// At build time, Elementor compiles `/modules/link-in-bio/assets/scss/frontend.scss` to `/assets/css/widget-link-in-bio.css`.
-		wp_register_style(
-			'widget-link-in-bio',
-			$this->get_css_assets_url( 'widget-link-in-bio' ),
+	public function register_widget_styles( array $additional_widgets_styles ) : array {
+		$additional_widgets_styles[] = [
+			'handle' => 'widget-link-in-bio',
+			'file_path' => $this->get_css_assets_url( 'widget-link-in-bio', null, true, true ),
 			[],
 			ELEMENTOR_VERSION
-		);
+		];
+
+		return $additional_widgets_styles;
 	}
 }
