@@ -560,37 +560,12 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		// Widgets inside `/includes/widgets/` folder with their own css in `/assets/css/`.
-		$widgets = [
-			'accordion',
-			'alert',
-			'counter',
-			'divider',
-			'google_maps',
-			'heading',
-			'icon-box',
-			'icon-list',
-			'image',
-			'image-box',
-			'image-carousel',
-			'image-gallery',
-			'menu-anchor',
-			'progress',
-			'rating',
-			'social-icons',
-			'spacer',
-			'star-rating',
-			'tabs',
-			'testimonial',
-			'text-editor',
-			'toggle',
-			'video',
-		];
+		$widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
 
-		foreach ( $widgets as $widget_name ) {
+		foreach ( $widgets_styles as $style_name ) {
 			wp_register_style(
-				"widget-{$widget_name}",
-				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
+				$style_name,
+				$this->get_css_assets_url( $style_name, null, true, true ),
 				[],
 				ELEMENTOR_VERSION
 			);

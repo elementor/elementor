@@ -264,6 +264,12 @@ class Preview extends App {
 		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_style( 'wp-mediaelement' );
 
+		$register_widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
+
+		foreach ( $register_widgets_styles as $style_name ) {
+			wp_enqueue_style( $style_name );
+		}
+
 		/**
 		 * Preview enqueue styles.
 		 *
