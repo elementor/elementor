@@ -76,10 +76,20 @@ export default class FloatingBarsHandler extends Base {
 		element.classList.add( visible );
 	}
 
+	moveFloatingBarsBasedOnPosition() {
+		jQuery( '[data-widget_type^="floating-bars"]' ).each( ( index, element ) => {
+			if ( jQuery( element ).find( '.e-floating-bars' ).hasClass( 'has-vertical-position-top' ) ) {
+				elementorFrontend.elements.$body.prepend( element );
+			}
+		} );
+	}
+
 	onInit( ...args ) {
 		const { hasEntranceAnimation, ctaEntranceAnimation, mainEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
+
+		this.moveFloatingBarsBasedOnPosition();
 
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
@@ -88,11 +98,5 @@ export default class FloatingBarsHandler extends Base {
 		if ( this.elements.main && this.elements.main.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.main, mainEntranceAnimation );
 		}
-
-		jQuery( '[data-widget_type^="floating-bars"]' ).each( ( index, element ) => {
-			if ( jQuery( element ).find( '.e-floating-bars' ).hasClass( 'has-vertical-position-top' ) ) {
-				elementorFrontend.elements.$body.prepend( element );
-			}
-		} );
 	}
 }
