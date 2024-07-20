@@ -42,8 +42,6 @@ class Module extends \Elementor\Core\Base\Module {
 		$additional_widgets_styles[] = [
 			'handle' => 'widget-nested-tabs',
 			'file_path' => $this->get_css_assets_url( 'widget-nested-tabs', null, true, true ),
-			[],
-			ELEMENTOR_VERSION
 		];
 
 		return $additional_widgets_styles;

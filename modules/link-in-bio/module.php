@@ -56,12 +56,10 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public function register_widget_styles( array $additional_widgets_styles ) : array {
+	public function register_widget_styles( array $additional_widgets_styles ): array {
 		$additional_widgets_styles[] = [
 			'handle' => 'widget-link-in-bio',
 			'file_path' => $this->get_css_assets_url( 'widget-link-in-bio', null, true, true ),
-			[],
-			ELEMENTOR_VERSION
 		];
 
 		return $additional_widgets_styles;

@@ -533,8 +533,6 @@ class Module extends BaseModule {
 		$additional_widgets_styles[] = [
 			'handle' => 'widget-floating-buttons',
 			'file_path' => $this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
-			[],
-			ELEMENTOR_VERSION
 		];
 
 		return $additional_widgets_styles;

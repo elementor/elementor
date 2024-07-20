@@ -44,8 +44,6 @@ class Module extends BaseModule {
 		$additional_widgets_styles[] = [
 			'handle' => 'widget-nested-accordion',
 			'file_path' => $this->get_css_assets_url( 'widget-nested-accordion', null, true, true ),
-			[],
-			ELEMENTOR_VERSION
 		];
 
 		return $additional_widgets_styles;
