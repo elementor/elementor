@@ -67,96 +67,12 @@ describe( 'styles', () => {
 		};
 
 		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
 		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/elements/set-settings',
+			'document/atomic-widgets/set-styles',
 			{
 				container,
-				options: { render: false },
-				settings: {
-					classes: {
-						$$type: 'classes',
-						value: [ 'new-style-id' ],
-					},
-				},
-			},
-		);
-	} );
-
-	it( 'should create new style object and update the reference in the settings without deleting previous data', () => {
-		const command = new StylesCommand();
-
-		// Mock generateId
-		command.randomId = jest.fn( () => 'new-style-id' );
-
-		const bind = 'classes';
-		const container = createContainer( {
-			widgetType: 'a-heading',
-			elType: 'widget',
-			id: '123',
-			settings: {
-				text: 'Test text',
-				[ bind ]: {
-					$$type: 'classes',
-					value: [ 'existed-style-id' ],
-				},
-			},
-			styles: {
-				'existed-style-id': {
-					id: 'existed-style-id',
-					label: '',
-					type: 'class',
-					variants: [
-						{
-							meta: { breakpoint: null, state: null },
-							props: { width: '20px' },
-						},
-					],
-				},
-			},
-		} );
-
-		// Act
-		command.apply( { container, bind, props: { width: '10px' }, meta: { breakpoint: null, state: null } } );
-
-		const updatedStyles = {
-			'existed-style-id': {
-				id: 'existed-style-id',
-				label: '',
-				type: 'class',
-				variants: [
-					{
-						meta: { breakpoint: null, state: null },
-						props: { width: '20px' },
-					},
-				],
-			},
-			'new-style-id': {
-				id: 'new-style-id',
-				label: '',
-				type: 'class',
-				variants: [
-					{
-						meta: { breakpoint: null, state: null },
-						props: { width: '10px' },
-					},
-				],
-			},
-		};
-
-		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/elements/set-settings',
-			{
-				container,
-				options: { render: false },
-				settings: {
-					classes: {
-						$$type: 'classes',
-						value: [ 'existed-style-id', 'new-style-id' ],
-					},
-				},
+				styles: updatedStyles,
+				bind,
 			},
 		);
 	} );
@@ -215,7 +131,14 @@ describe( 'styles', () => {
 		};
 
 		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/atomic-widgets/set-styles',
+			{
+				container,
+				styles: updatedStyles,
+				bind,
+			},
+		);
 	} );
 
 	it( 'should add props to exits style object and edit existed style variant', () => {
@@ -268,7 +191,14 @@ describe( 'styles', () => {
 		};
 
 		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/atomic-widgets/set-styles',
+			{
+				container,
+				styles: updatedStyles,
+				bind,
+			},
+		);
 	} );
 } );
 

@@ -10,7 +10,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		return 'Styles';
+		return __( 'Styles', 'elementor' );
 	}
 
 	/**
@@ -27,9 +27,10 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		historyItem.get( 'containers' ).forEach( ( /* Container */ container ) => {
 			const changes = data.changes[ container.id ];
 
-			$e.run( 'document/atomic-widgets/styles', {
+			$e.internal( 'document/atomic-widgets/set-styles', {
 				container,
 				styles: isRedo ? changes.new : changes.old,
+				bind: changes.bind,
 			} );
 		} );
 	}
@@ -38,14 +39,16 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
+	 * @param {string}    bind
 	 * @param {{}}        newStyles
 	 * @param {{}}        oldStyles
 	 */
-	addToHistory( container, newStyles, oldStyles ) {
+	addToHistory( container, bind, newStyles, oldStyles ) {
 		const changes = {
 				[ container.id ]: {
 					old: oldStyles,
 					new: newStyles,
+					bind,
 				},
 			},
 			historyItem = {
@@ -87,7 +90,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		};
 	}
 
-	createNewStyleObject( container, bind ) {
+	createNewStyleObject( container ) {
 		const newId = this.randomId( container.id );
 
 		const newStyles = {
@@ -96,21 +99,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			type: 'class',
 			variants: [],
 		};
-
-		const bindValue = container.model.get( 'settings' ).get( bind )?.value || [];
-
-		$e.internal( 'document/elements/set-settings', {
-			container,
-			options: {
-				render: false,
-			},
-			settings: {
-				[ bind ]: {
-					$$type: 'classes',
-					value: [ ...bindValue, newId ],
-				},
-			},
-		} );
 
 		return newStyles;
 	}
@@ -168,7 +156,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 				managedStyle = this.createNewStyleObject( container, bind );
 
 				// Pass the created ID to the args by reference.
-				args.styleDefId = managedStyle.id; // @nevo-lint disable-line
+				args.styleDefId = managedStyle.id;
 			} else {
 				managedStyle = oldStyles[ styleDefId ];
 			}
@@ -188,10 +176,14 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 			// If history active, add history transaction with old and new styles.
 			if ( this.isHistoryActive() ) {
-				this.addToHistory( container, newStyles, oldStyles );
+				this.addToHistory( container, bind, newStyles, oldStyles );
 			}
 
-			container.model.set( 'styles', newStyles );
+			$e.internal( 'document/atomic-widgets/set-styles', {
+				container,
+				styles: newStyles,
+				bind,
+			} );
 		} );
 	}
 }
