@@ -27,6 +27,8 @@ BaseElementView = BaseContainer.extend( {
 
 	renderAttributes: {},
 
+	isRendering: false,
+
 	className() {
 		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 
@@ -772,7 +774,7 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderDataBinding = async ( dataBinding ) => {
 			const { bindingSetting } = dataBinding.dataset,
-				changedControl = ( this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ] || Object.keys( settings.changed )[ 0 ] );
+				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
 
 			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
@@ -781,6 +783,10 @@ BaseElementView = BaseContainer.extend( {
 				if ( dynamicValue ) {
 					change = dynamicValue;
 				}
+			}
+
+			if ( dataBinding.el.textContent === change ) {
+				return true;
 			}
 
 			if ( change !== undefined ) {
@@ -804,6 +810,8 @@ BaseElementView = BaseContainer.extend( {
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
 						changed = renderDataBinding( dataBinding );
+					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
+						changed = this.tryHandleDynamicCoverSettings( dataBinding, settings );
 					}
 				}
 					break;
@@ -822,6 +830,18 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
+	getChangedDynamicControlKey( settings ) {
+		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
+		if ( changedControlKey ) {
+			return changedControlKey;
+		}
+
+		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+			? Object.keys( settings.changed )[ 0 ]
+			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+	},
+
 	/**
 	 * Function renderOnChange().
 	 *
@@ -831,6 +851,12 @@ BaseElementView = BaseContainer.extend( {
 	 */
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
+			return;
+		}
+
+		if ( this.isRendering ) {
+			this.isRendering = false;
+
 			return;
 		}
 
@@ -1105,6 +1131,67 @@ BaseElementView = BaseContainer.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
+	},
+
+	/**
+	 * Function getTitleWithAdvancedValues().
+	 *
+	 * Renders before / after / fallback for dynamic item titles.
+	 *
+	 * @param {Object} settings
+	 * @param {string} text
+	 */
+	getTitleWithAdvancedValues( settings, text ) {
+		const { attributes, _previousAttributes: previousAttributes } = settings;
+
+		if ( this.compareSettings( attributes, previousAttributes, 'before' ) ) {
+			text = text.replace( previousAttributes.before, '' );
+		}
+
+		if ( this.compareSettings( attributes, previousAttributes, 'after' ) ) {
+			text = text.replace( new RegExp( previousAttributes.after + '$' ), '' );
+		}
+
+		if ( ! text ) {
+			return settings.fallback || '';
+		}
+
+		const newBefore = this.getNewSettingsValue( attributes, previousAttributes, 'before' ),
+			newAfter = this.getNewSettingsValue( attributes, previousAttributes, 'after' );
+
+		text = newBefore + text;
+		text += newAfter;
+
+		return text;
+	},
+
+	compareSettings( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] && previousAttributes[ key ] !== attributes[ key ];
+	},
+
+	getNewSettingsValue( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] !== attributes[ key ] ? ( attributes[ key ] || '' ) : '';
+	},
+
+	getRepeaterItemActiveIndex() {
+		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex ||
+			this.getContainer().renderer.view.model.changed.editSettings.attributes.activeItemIndex;
+	},
+
+	tryHandleDynamicCoverSettings( dataBinding, settings ) {
+		if ( ! this.isAdvancedDynamicSettings( settings.attributes ) ) {
+			return false;
+		}
+
+		this.isRendering = true;
+
+		jQuery( dataBinding.el ).text( this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent ) );
+
+		return true;
+	},
+
+	isAdvancedDynamicSettings( attributes ) {
+		return 'before' in attributes && 'after' in attributes && 'fallback' in attributes;
 	},
 } );
 
