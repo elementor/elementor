@@ -90,7 +90,7 @@ class Module extends BaseModule {
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
-		add_filter( 'elementor/widgets/additional_widgets_styles', [ $this, 'register_widget_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
@@ -521,20 +521,21 @@ class Module extends BaseModule {
 			}
 		}
 	}
+
 	/**
-	 * Registered widget styles.
+	 * Register styles.
 	 * 
 	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/frontend.scss`
 	 * to `/assets/css/widget-floating-buttons.min.css`.
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function register_widget_styles( array $additional_widgets_styles ) : array {
-		$additional_widgets_styles[] = [
-			'handle' => 'widget-floating-buttons',
-			'file_path' => $this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
-		];
-
-		return $additional_widgets_styles;
+	public function register_style() {
+		wp_register_style(
+			'widget-floating-buttons',
+			$this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 }

@@ -103,7 +103,7 @@ class Preview extends App {
 		add_action( 'wp_enqueue_scripts', function() {
 			$this->enqueue_styles();
 			$this->enqueue_scripts();
-		} );
+		}, 20 );
 
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
@@ -263,25 +263,6 @@ class Preview extends App {
 
 		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_style( 'wp-mediaelement' );
-
-		$internal_widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
-
-		foreach ( $internal_widgets_styles as $style_name ) {
-			wp_enqueue_style( $style_name );
-		}
-
-		$additional_widgets_styles = [];
-
-		/** This filter is documented in elementor/includes/frontend.php */
-		$additional_widgets_styles = apply_filters( 'elementor/widgets/additional_widgets_styles', $additional_widgets_styles );
-
-		foreach ( $additional_widgets_styles as $additional_style ) {
-			if ( ! isset( $additional_style['handle'] ) ) {
-				continue;
-			}
-
-			wp_enqueue_style( $additional_style[ 'handle' ] );
-		}
 
 		/**
 		 * Preview enqueue styles.
