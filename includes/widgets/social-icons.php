@@ -85,7 +85,7 @@ class Widget_Social_Icons extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' )
+		return ! $this->load_widgets_styles_in_head()
 			? [ 'widget-social-icons', 'e-apple-webkit' ]
 			: [ 'e-apple-webkit' ];
 	}
