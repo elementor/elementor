@@ -94,7 +94,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			variants: [],
 		};
 
-		const bindValue = container.model.get( 'settings' )?.attributes?.[ bind ]?.value || [];
+		const bindValue = container.model.get( 'settings' ).get( bind )?.value || [];
 
 		$e.internal( 'document/elements/set-settings', {
 			container,
@@ -158,8 +158,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 		// TODO: support multiple containers?!
 		containers.forEach( ( container ) => {
-			container = container.lookup();
-
 			const oldStyles = container.model.get( 'styles' ) || {};
 			let managedStyle = {};
 
