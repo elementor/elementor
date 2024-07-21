@@ -199,7 +199,7 @@ class Autoloader {
 	 * Init classes aliases.
 	 *
 	 * When Elementor classes renamed or moved to different folders, developers
-	 * can still use the old names by setting an aliase.
+	 * can still use the old names by setting an alias.
 	 *
 	 * While in deprecation period both classes will work. When the deprecation
 	 * period ends, the alies should be removed from the list of aliases.

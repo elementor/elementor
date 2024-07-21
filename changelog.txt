@@ -196,7 +196,7 @@
 * Tweak: Implemented general improvements to i18n for enhanced global support
 * Tweak: Updated `eicons` library to v5.28.0
 * Tweak: Standardized section names across various Elementor widgets for uniformity and clarity
-* Fix: Compatability issues with various 3rd party plugins when Optimize Image Loading feature is activated ([#24226](https://github.com/elementor/elementor/issues/24226))
+* Fix: Compatibility issues with various 3rd party plugins when Optimize Image Loading feature is activated ([#24226](https://github.com/elementor/elementor/issues/24226))
 * Fix: `install_compare()` in Experiments Manager throw an error in PHP 8.2+ if `get_installs_history()` returned an empty result
 
 = 3.19.4 - 2024-02-28 =
@@ -802,7 +802,7 @@
 * Fix: Experiments - Learn more button does not open the Help center in the notice ([#19448](https://github.com/elementor/elementor/issues/19448))
 * Fix: Widget width is not working as expected on frontend in Container element ([#19398](https://github.com/elementor/elementor/issues/19398))
 * Fix: Horizontal scrolling appears in the edit area when viewing it with different devices ([#19049](https://github.com/elementor/elementor/issues/19049))
-* Fix: Default Flex Grow affects the layout when the Container element is set to direction Colum in Divider widget ([#19325](https://github.com/elementor/elementor/issues/19325))
+* Fix: Default Flex Grow affects the layout when the Container element is set to direction Column in Divider widget ([#19325](https://github.com/elementor/elementor/issues/19325))
 * Fix: Background Fallback image is hiding the background video in Container element ([#19413](https://github.com/elementor/elementor/issues/19413))
 * Fix: Previously edited with Elementor posts were imported with irrelevant content in Export/Import tool
 * Fix: Width and Elements gap values are not working as expected in various responsive devices in Container widget
@@ -1065,7 +1065,7 @@
 * Tweak: `Editor/Documents` moved to `/editor/components` folder
 * Tweak: Added a filter to Context Menu Groups
 * Fix: Hamburger button didn't open on mobile in Nav menu widget ([#16682](https://github.com/elementor/elementor/issues/16682))
-* Fix: Adding multiple repeater controls in one section craetes a onflict ([#13117](https://github.com/elementor/elementor/issues/13117))
+* Fix: Adding multiple repeater controls in one section creates a onflict ([#13117](https://github.com/elementor/elementor/issues/13117))
 * Fix: Finder incorrectly identifies pages created through Finder as a Post type instead of Page type ([#12502](https://github.com/elementor/elementor/issues/12502))
 * Fix: Unexpected behavior if `ctrl` + mouse click was used on mac ([#5228](https://github.com/elementor/elementor/issues/5228))
 * Fix: Edit header handles don't show up if the `z-index` of the header section is over 99 ([#16214](https://github.com/elementor/elementor/issues/16214))
@@ -1317,7 +1317,7 @@
 * Fix: Minimize the Editor window caused to preview to collapse behind the Panel
 
 = 3.2.2 - 2021-04-26 =
-* Fix: Multiple carousels in the same page stoped functioning when Improved Asset Load experiment is active ([#14663](https://github.com/elementor/elementor/issues/14663), [#14675](https://github.com/elementor/elementor/issues/14675))
+* Fix: Multiple carousels in the same page stopped functioning when Improved Asset Load experiment is active ([#14663](https://github.com/elementor/elementor/issues/14663), [#14675](https://github.com/elementor/elementor/issues/14675))
 * Fix: Section Style tab panel is grayed in several site languages ([#14642](https://github.com/elementor/elementor/issues/14642))
 * Fix: Responsive mode UI glitch in WordPress versions under 5.6
 
@@ -2602,7 +2602,7 @@
 * New: Added `copy_all_content` option
 * New: Change mobile & tablet breakpoints ([#78](https://github.com/elementor/elementor/issues/78))
 * New: Introducing Elementor WP-CLI integration ([#2161](https://github.com/elementor/elementor/issues/2161))
-* New: Added collapsable panel categories ([#3805](https://github.com/elementor/elementor/issues/3805))
+* New: Added collapsible panel categories ([#3805](https://github.com/elementor/elementor/issues/3805))
 * New: Added Self hosted videos with HTML5 for Video widget ([#3313](https://github.com/elementor/elementor/issues/3313))
 * New: Added Dailymotion provider for Video widget ([#2285](https://github.com/elementor/elementor/issues/2285))
 * New: Added start/end controls for Video widget ([#3565](https://github.com/elementor/elementor/issues/3565))
