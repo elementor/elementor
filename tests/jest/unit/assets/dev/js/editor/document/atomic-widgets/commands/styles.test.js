@@ -33,7 +33,7 @@ describe( 'styles', () => {
 		const command = new StylesCommand();
 
 		// Mock generateId
-		command.randomId = jest.fn( () => 's-123-style-id' );
+		command.randomId = jest.fn( () => 'new-style-id' );
 
 		const bind = 'classes';
 		const container = createContainer( {
@@ -53,8 +53,8 @@ describe( 'styles', () => {
 		command.apply( { container, bind, props: { width: '10px' }, meta: { breakpoint: null, state: null } } );
 
 		const updatedStyles = {
-			's-123-style-id': {
-				id: 's-123-style-id',
+			'new-style-id': {
+				id: 'new-style-id',
 				label: '',
 				type: 'class',
 				variants: [
@@ -76,7 +76,7 @@ describe( 'styles', () => {
 				settings: {
 					classes: {
 						$$type: 'classes',
-						value: [ 's-123-style-id' ],
+						value: [ 'new-style-id' ],
 					},
 				},
 			},
@@ -164,9 +164,6 @@ describe( 'styles', () => {
 	it( 'should add props to exits style object and create a new style variant', () => {
 		const command = new StylesCommand();
 
-		// Mock generateId
-		command.randomId = jest.fn( () => 's-123-style-id' );
-
 		const bind = 'classes';
 		const container = createContainer( {
 			widgetType: 'a-heading',
@@ -176,8 +173,8 @@ describe( 'styles', () => {
 				text: 'Test text',
 			},
 			styles: {
-				'existing-style-def': {
-					id: 'existing-style-def',
+				'existed-style-ids': {
+					id: 'existed-style-ids',
 					label: '',
 					type: 'class',
 					variants: [
@@ -196,12 +193,12 @@ describe( 'styles', () => {
 			bind,
 			props: { color: 'red' },
 			meta: { breakpoint: null, state: 'active' },
-			styleDefId: 'existing-style-def',
+			styleDefId: 'existed-style-ids',
 		} );
 
 		const updatedStyles = {
-			'existing-style-def': {
-				id: 'existing-style-def',
+			'existed-style-ids': {
+				id: 'existed-style-ids',
 				label: '',
 				type: 'class',
 				variants: [
@@ -224,9 +221,6 @@ describe( 'styles', () => {
 	it( 'should add props to exits style object and edit existed style variant', () => {
 		const command = new StylesCommand();
 
-		// Mock generateId
-		command.randomId = jest.fn( () => 's-123-style-id' );
-
 		const bind = 'classes';
 		const container = createContainer( {
 			widgetType: 'a-heading',
@@ -236,8 +230,8 @@ describe( 'styles', () => {
 				text: 'Test text',
 			},
 			styles: {
-				'existing-style-def': {
-					id: 'existing-style-def',
+				'existed-style-id': {
+					id: 'existed-style-id',
 					label: '',
 					type: 'class',
 					variants: [
@@ -256,12 +250,12 @@ describe( 'styles', () => {
 			bind,
 			props: { color: 'red' },
 			meta: { breakpoint: null, state: null },
-			styleDefId: 'existing-style-def',
+			styleDefId: 'existed-style-id',
 		} );
 
 		const updatedStyles = {
-			'existing-style-def': {
-				id: 'existing-style-def',
+			'existed-style-id': {
+				id: 'existed-style-id',
 				label: '',
 				type: 'class',
 				variants: [
