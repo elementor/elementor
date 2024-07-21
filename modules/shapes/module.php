@@ -16,7 +16,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 	/**
 	 * Register styles.
-	 * 
+	 *
 	 * At build time, Elementor compiles `/modules/shapes/assets/scss/frontend.scss`
 	 * to `/assets/css/widget-shapes.min.css`.
 	 *

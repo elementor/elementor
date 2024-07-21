@@ -50,7 +50,7 @@ class Module extends BaseModule {
 
 	/**
 	 * Register styles.
-	 * 
+	 *
 	 * At build time, Elementor compiles `/modules/link-in-bio/assets/scss/frontend.scss`
 	 * to `/assets/css/widget-link-in-bio.min.css`.
 	 *

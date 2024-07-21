@@ -524,7 +524,7 @@ class Module extends BaseModule {
 
 	/**
 	 * Register styles.
-	 * 
+	 *
 	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/frontend.scss`
 	 * to `/assets/css/widget-floating-buttons.min.css`.
 	 *

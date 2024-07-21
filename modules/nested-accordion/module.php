@@ -34,7 +34,7 @@ class Module extends BaseModule {
 
 	/**
 	 * Register styles.
-	 * 
+	 *
 	 * At build time, Elementor compiles `/modules/nested-accordion/assets/scss/frontend.scss`
 	 * to `/assets/css/widget-nested-accordion.min.css`.
 	 *
