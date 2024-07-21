@@ -1,3 +1,6 @@
+/**
+ * @typedef {import('../../../container/container')} Container
+ */
 export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
