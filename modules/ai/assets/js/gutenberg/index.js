@@ -138,4 +138,3 @@ import { EditTextWithAi } from './edit-text-with-ai';
 
 	window.addEventListener( 'beforeunload', clearElementorAiCurrentContext );
 } )();
-
