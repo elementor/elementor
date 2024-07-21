@@ -30,6 +30,11 @@ class Loader extends Module {
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				'e-shapes' => [
+					'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				],
 			],
 			'scripts' => [],
 		];
