@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
-import { AIMediaGenerateApp } from './componenets';
+import { AIMediaGenerateApp } from './components';
 
 const Icon = styled.i`
 	padding-right: 0.5em;

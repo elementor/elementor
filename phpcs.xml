@@ -7,6 +7,7 @@
 	<config name="text_domain" value="elementor" />
 
 	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>vendor_prefixed/</exclude-pattern>
 	<exclude-pattern>tmp/</exclude-pattern>
 	<exclude-pattern>build/</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>
