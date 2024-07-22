@@ -706,7 +706,7 @@ module.exports = {
 	},
 
 	sanitizeUrl( url ) {
-		const isValidUrl = isValidAttribute( 'a', 'href', url );
+		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
 
 		return isValidUrl ? url : '';
 	},
