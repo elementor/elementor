@@ -21,7 +21,7 @@ class Envato extends Base_Adapter {
 
 		foreach ( $templates as $template ) {
 			// Envato store their global kit styles as a 'global.json' template file.
-			// We need to be able to know the path to this specifc 'global.json' since it functions as the site-settings.json
+			// We need to be able to know the path to this specific 'global.json' since it functions as the site-settings.json
 			$is_global = ! empty( $template['metadata']['template_type'] ) && 'global-styles' === $template['metadata']['template_type'];
 			if ( $is_global ) {
 				// Adding the path of the 'global.json' template to the manifest which will be used in the future.

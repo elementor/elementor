@@ -16,7 +16,6 @@ class Module extends BaseModule {
 		'editor-app-bar',
 		'editor-documents',
 		'editor-panels',
-		'editor-responsive',
 		'editor-site-navigation',
 	];
 
