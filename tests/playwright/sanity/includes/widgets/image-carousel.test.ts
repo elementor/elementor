@@ -7,12 +7,6 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	} );
-
 	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const imageCarousel = new ImageCarousel( page, testInfo );

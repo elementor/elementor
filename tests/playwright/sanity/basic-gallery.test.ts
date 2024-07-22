@@ -6,7 +6,7 @@ import EditorPage from '../pages/editor-page';
 
 test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
