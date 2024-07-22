@@ -2,7 +2,7 @@ import { parallelTest as test } from '../parallelTest';
 import { expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 
-async function validateGettingsStartedPage( wpAdmin: WpAdminPage ) {
+async function validateGettingStartedPage( wpAdmin: WpAdminPage ) {
 	await wpAdmin.page.goto( '/wp-admin/admin.php?page=elementor-getting-started' );
 	expect( await wpAdmin.page.locator( '.e-getting-started' ).count() ).toEqual( 1 );
 }
@@ -19,7 +19,7 @@ test.describe( 'General Settings', () => {
 
 		await wpAdmin.gotoDashboard();
 		await validateGettingStartedLinkCount( wpAdmin, 0 );
-		await validateGettingsStartedPage( wpAdmin );
+		await validateGettingStartedPage( wpAdmin );
 	} );
 
 	test( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
@@ -28,7 +28,7 @@ test.describe( 'General Settings', () => {
 
 		await wpAdmin.setExperiments( { home_screen: false } );
 		// We need to navigate away
-		await validateGettingsStartedPage( wpAdmin );
+		await validateGettingStartedPage( wpAdmin );
 		await validateGettingStartedLinkCount( wpAdmin, 1 );
 		await wpAdmin.setExperiments( { home_screen: true }, true );
 	} );

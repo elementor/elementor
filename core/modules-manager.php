@@ -111,6 +111,7 @@ class Modules_Manager {
 			'image-loading-optimization',
 			'kit-elements-defaults',
 			'announcements',
+			'editor-app-bar',
 			'site-navigation',
 			'styleguide',
 			'element-cache',
@@ -121,7 +122,6 @@ class Modules_Manager {
 			'content-sanitizer',
 			'editor-events',
 			'atomic-widgets',
-			'editor-app-bar',
 			'floating-bars',
 			'wc-product-editor',
 		];
