@@ -167,7 +167,7 @@ module.exports = {
 	 * @param {*}      icon       - icon control data
 	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
 	 * @param {string} tag        - default i - html tag to render
-	 * @param {*}      returnType - default value - retrun type
+	 * @param {*}      returnType - default value - return type
 	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {

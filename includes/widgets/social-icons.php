@@ -56,6 +56,10 @@ class Widget_Social_Icons extends Widget_Base {
 		return 'eicon-social-icons';
 	}
 
+	public function get_style_depends(): array {
+		return [ 'e-apple-webkit' ];
+	}
+
 	/**
 	 * Get widget keywords.
 	 *
