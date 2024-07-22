@@ -3,7 +3,7 @@ import App from './app';
 import { __ } from '@wordpress/i18n';
 import AIExcerpt from './ai-excerpt';
 import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
-import { AIMediaGenerateApp } from '../media-library/componenets';
+import { AIMediaGenerateApp } from '../media-library/components';
 import { RequestIdsProvider } from './context/requests-ids';
 import React from 'react';
 
