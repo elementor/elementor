@@ -118,6 +118,22 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				} );
 			} );
 
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-wp-media-library-install',
+					},
+				} );
+			} );
+
+			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-esetting-addons-install',
+					},
+				} );
+			} );
+
 			$( '#elementor-clear-cache-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );
