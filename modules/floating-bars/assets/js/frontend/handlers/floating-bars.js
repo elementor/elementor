@@ -13,6 +13,9 @@ export default class FloatingBarsHandler extends Base {
 				mainEntranceAnimation: 'style_floating_bar_animation',
 				hasEntranceAnimation: 'has-entrance-animation',
 				visible: 'visible',
+				isSticky: 'is-sticky',
+				hasVerticalPositionTop: 'has-vertical-position-top',
+				isHidden: 'is-hidden',
 			},
 		};
 	}
@@ -50,8 +53,34 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	isStickyTop() {
+		const { isSticky, hasVerticalPositionTop } = this.getSettings( 'constants' );
+
+		return this.elements.main.classList.contains( isSticky ) && this.elements.main.classList.contains( hasVerticalPositionTop );
+	}
+
+	focusOnLoad() {
+		this.elements.main.setAttribute( 'tabindex', '0' );
+		this.elements.main.focus( { focusVisible: true } );
+	}
+
+	applyBodyPadding() {
+		const mainHeight = this.elements.main.offsetHeight;
+		document.body.style.paddingTop = `${ mainHeight }px`;
+	}
+
+	removeBodyPadding() {
+		document.body.style.paddingTop = '0';
+	}
+
 	closeFloatingBar() {
-		this.elements.main.classList.add( 'is-hidden' );
+		const { isHidden } = this.getSettings( 'constants' );
+
+		this.elements.main.classList.add( isHidden );
+
+		if ( this.isStickyTop() ) {
+			this.removeBodyPadding();
+		}
 	}
 
 	initEntranceAnimation( element, animation ) {
@@ -77,20 +106,6 @@ export default class FloatingBarsHandler extends Base {
 		element.classList.add( visible );
 	}
 
-	moveFloatingBarsBasedOnPosition() {
-		// const floatingBars = document.querySelectorAll( '[data-widget_type^="floating-bars"]' );
-
-		// floatingBars.forEach( ( element ) => {
-		// 	const floatingBar = element.querySelector( '.e-floating-bars' );
-
-		// 	if ( floatingBar.classList.contains( 'has-vertical-position-top' ) && ! floatingBar.classList.contains( 'is-sticky' ) ) {
-		// 		const elementToInsert = elementorFrontend.isEditMode() ? element.closest( '[data-element_type="container"]' ) : element;
-
-		// 		document.body.insertBefore( elementToInsert, document.body.querySelector( 'header' ) );
-		// 	}
-		// } );
-	}
-
 	onDocumentKeyup( event ) {
 		// Bail if not ESC key
 		if ( event.keyCode !== 27 || ! this.elements.main ) {
@@ -105,10 +120,12 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	initDefaultState() {
-		// Focus on load
+		if ( this.isStickyTop() ) {
+			this.applyBodyPadding();
+		}
+
 		if ( this.elements.main && ! elementorFrontend.isEditMode() ) {
-			this.elements.main.setAttribute( 'tabindex', '0' );
-			this.elements.main.focus( { focusVisible: true } );
+			this.focusOnLoad();
 		}
 	}
 
@@ -124,8 +141,6 @@ export default class FloatingBarsHandler extends Base {
 		if ( this.elements.main && this.elements.main.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.main, mainEntranceAnimation );
 		}
-
-		this.moveFloatingBarsBasedOnPosition();
 
 		this.initDefaultState();
 	}
