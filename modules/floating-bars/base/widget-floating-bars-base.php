@@ -659,6 +659,66 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'style_cta_button_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'normal',
+				'options' => [
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'normal' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
+				],
+				'prefix_class' => 'animated-',
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_cta_button_animation',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'style_cta_button_animation',
+							'operator' => '!==',
+							'value' => 'none',
+						],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'style_cta_button_animation_delay',
+			[
+				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'step' => 100,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-animation-delay: {{SIZE}}ms;',
+				],
+				'render_type' => 'none',
+				'frontend_available' => true,
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_cta_button_animation',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'style_cta_button_animation',
+							'operator' => '!==',
+							'value' => 'none',
+						],
+					],
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -700,7 +760,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'style_floating_bar_elements_spacing',
+			'style_floating_bar_elements_spacing', // you are here
 			[
 				'label' => esc_html__( 'Element spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -713,6 +773,16 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-elements-gap: {{SIZE}}{{UNIT}}',
+				],
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_floating_bar_elements_align',
+							'operator' => '!==',
+							'value' => 'stretch',
+						],
+					],
 				],
 			]
 		);
@@ -838,6 +908,21 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
+				'conditions' => [
+					'relation' => 'and',
+					'terms' => [
+						[
+							'name' => 'style_floating_bar_animation',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'style_floating_bar_animation',
+							'operator' => '!==',
+							'value' => 'none',
+						],
+					],
+				],
 			]
 		);
 

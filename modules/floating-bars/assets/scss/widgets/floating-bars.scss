@@ -23,6 +23,7 @@
 	--e-floating-bars-cta-button-padding-inline-end: 20px;
 	--e-floating-bars-cta-button-padding-inline-start: 20px;
 	--e-floating-bars-cta-button-icon-gap: 5px;
+	--e-floating-bars-cta-button-animation-delay: 500ms;
 
 	align-items: center;
 	background-color: var(--e-floating-bars-announcement-bg-color);
@@ -38,7 +39,10 @@
 	z-index: $element-overlay;
 
 	@media (max-width: $screen-mobile-max) {
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto auto;
+		gap: var(--e-floating-bars-elements-gap);
 	}
 
 	&.has-vertical-position-top {
@@ -60,17 +64,11 @@
 	}
 
 	&.has-close-button-position-end {
-
-		@media (min-width: $screen-tablet-min) {
-			padding-inline-end: calc(var(--e-floating-bars-elements-padding-inline-end) + $floating-bars-close-button-offset);
-		}
+		padding-inline-end: calc(var(--e-floating-bars-elements-padding-inline-end) + $floating-bars-close-button-offset);
 	}
 
 	&.has-close-button-position-start {
-
-		@media (min-width: $screen-tablet-min) {
-			padding-inline-start: calc(var(--e-floating-bars-elements-padding-inline-start) + $floating-bars-close-button-offset);
-		}
+		padding-inline-start: calc(var(--e-floating-bars-elements-padding-inline-start) + $floating-bars-close-button-offset);
 	}
 
 	&.has-content-alignment-start {
@@ -83,10 +81,22 @@
 
 	&.has-content-alignment-end {
 		justify-content: flex-end;
+
+		& .e-floating-bars__announcement-icon {
+			order: 1;
+		}
+
+		& .e-floating-bars__cta-button-container {
+			order: 2;
+		}
+
+		& .e-floating-bars__announcement-text {
+			order: 3;
+		}
 	}
 
 	&.has-content-alignment-stretch {
-		justify-content: stretch;
+		justify-content: space-between;
 	}
 
 	.has-corners-rounded {
@@ -111,15 +121,18 @@
 		opacity: 1;
 	}
 
-	&.has-entrance-animation-duration-slow {
+	&.has-entrance-animation-duration-slow,
+	& .has-entrance-animation-duration-slow {
 		animation-duration: #{$floating-bars-animation-duration-slow}
 	}
 
-	&.has-entrance-animation-duration-normal {
+	&.has-entrance-animation-duration-normal,
+	& .has-entrance-animation-duration-normal {
 		animation-duration: #{$floating-bars-animation-duration-normal}
 	}
 
-	&.has-entrance-animation-duration-fast {
+	&.has-entrance-animation-duration-fast,
+	& .has-entrance-animation-duration-fast {
 		animation-duration: #{$floating-bars-animation-duration-fast}
 	}
 
@@ -144,25 +157,25 @@
 		}
 	}
 
-	&__text-container {
-		align-items: center;
-		display: flex;
-		gap: var(--e-floating-bars-elements-gap);
+	// &__text-container {
+	// 	align-items: center;
+	// 	display: flex;
+	// 	gap: var(--e-floating-bars-elements-gap);
 
-		.has-close-button-position-end & {
+	// 	.has-close-button-position-end & {
 
-			@media (max-width: $screen-mobile-max) {
-				padding-inline-end: $floating-bars-close-button-offset;
-			}
-		}
+	// 		@media (max-width: $screen-mobile-max) {
+	// 			padding-inline-end: $floating-bars-close-button-offset;
+	// 		}
+	// 	}
 
-		.has-close-button-position-start & {
+	// 	.has-close-button-position-start & {
 
-			@media (max-width: $screen-mobile-max) {
-				padding-inline-start: $floating-bars-close-button-offset;
-			}
-		}
-	}
+	// 		@media (max-width: $screen-mobile-max) {
+	// 			padding-inline-start: $floating-bars-close-button-offset;
+	// 		}
+	// 	}
+	// }
 
 	&__cta-icon {
 		color: var(--e-floating-bars-cta-button-text-color);
@@ -177,6 +190,16 @@
 		}
 	}
 
+	&__cta-button-container {
+
+		@media (max-width: $screen-mobile-max) {
+			display: flex;
+			grid-column: span 2 / span 2;
+			grid-row-start: 2;
+			justify-content: center;
+		}
+	}
+
 	&__cta-button {
 		align-items: center;
 		color: var(--e-floating-bars-cta-button-text-color);
@@ -188,7 +211,11 @@
 		position: relative;
 		transition: $transition-hover;
 		white-space: nowrap;
-		
+
+		&.has-entrance-animation {
+			animation-delay: var(--e-floating-bars-cta-button-animation-delay);
+		}
+
 		&:hover,
 		&:focus {
 			color: var(--e-floating-bars-cta-button-text-color-hover);
@@ -224,14 +251,7 @@
 		}
 
 		&.is-type-link {
-			--e-floating-bars-cta-button-text-color: #1C2448;
-			--e-floating-bars-cta-button-text-color-hover: #FFFFFF;
-
 			text-decoration: underline;
-		}
-
-		&.has-entrance-animation {
-			animation-duration: 1s;
 		}
 	}
 
@@ -239,6 +259,10 @@
 		align-items: center;
 		display: flex;
 		position: absolute;
+
+		i {
+			font-size: 24px;
+		}
 
 		.has-close-button-position-end & {
 			inset-inline-end: 16px;

@@ -2,7 +2,6 @@ import Base from 'elementor-frontend/handlers/base';
 
 export default class FloatingBarsHandler extends Base {
 	getDefaultSettings() {
-
 		return {
 			selectors: {
 				main: '.e-floating-bars',
@@ -23,6 +22,7 @@ export default class FloatingBarsHandler extends Base {
 
 		return {
 			main: this.$element[ 0 ].querySelector( selectors.main ),
+			mainAll: this.$element[ 0 ].querySelectorAll( selectors.main ),
 			closeButton: this.$element[ 0 ].querySelector( selectors.closeButton ),
 			ctaButton: this.$element[ 0 ].querySelector( selectors.ctaButton ),
 		};
@@ -37,7 +37,7 @@ export default class FloatingBarsHandler extends Base {
 		const { ctaEntranceAnimation, mainEntranceAnimation } = this.getSettings( 'constants' );
 
 		if ( this.elements.closeButton ) {
-			this.elements.closeButton.addEventListener( 'click', this.onCloseButtonClick.bind( this ) );
+			this.elements.closeButton.addEventListener( 'click', this.closeFloatingBar.bind( this ) );
 		}
 
 		if ( this.elements.ctaButton ) {
@@ -46,10 +46,11 @@ export default class FloatingBarsHandler extends Base {
 
 		if ( this.elements.main ) {
 			this.elements.main.addEventListener( 'animationend', this.removeEntranceAnimationClasses.bind( this, this.elements.main, mainEntranceAnimation ) );
+			window.addEventListener( 'keyup', this.onDocumentKeyup.bind( this ) );
 		}
 	}
 
-	onCloseButtonClick() {
+	closeFloatingBar() {
 		this.elements.main.classList.add( 'is-hidden' );
 	}
 
@@ -77,19 +78,44 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	moveFloatingBarsBasedOnPosition() {
-		jQuery( '[data-widget_type^="floating-bars"]' ).each( ( index, element ) => {
-			if ( jQuery( element ).find( '.e-floating-bars' ).hasClass( 'has-vertical-position-top' ) ) {
-				elementorFrontend.elements.$body.prepend( element );
-			}
-		} );
+		// const floatingBars = document.querySelectorAll( '[data-widget_type^="floating-bars"]' );
+
+		// floatingBars.forEach( ( element ) => {
+		// 	const floatingBar = element.querySelector( '.e-floating-bars' );
+
+		// 	if ( floatingBar.classList.contains( 'has-vertical-position-top' ) && ! floatingBar.classList.contains( 'is-sticky' ) ) {
+		// 		const elementToInsert = elementorFrontend.isEditMode() ? element.closest( '[data-element_type="container"]' ) : element;
+
+		// 		document.body.insertBefore( elementToInsert, document.body.querySelector( 'header' ) );
+		// 	}
+		// } );
+	}
+
+	onDocumentKeyup( event ) {
+		// Bail if not ESC key
+		if ( event.keyCode !== 27 || ! this.elements.main ) {
+			return;
+		}
+
+		/* eslint-disable @wordpress/no-global-active-element */
+		if ( this.elements.main.contains( document.activeElement ) ) {
+			this.closeFloatingBar();
+		}
+		/* eslint-enable @wordpress/no-global-active-element */
+	}
+
+	initDefaultState() {
+		// Focus on load
+		if ( this.elements.main && ! elementorFrontend.isEditMode() ) {
+			this.elements.main.setAttribute( 'tabindex', '0' );
+			this.elements.main.focus( { focusVisible: true } );
+		}
 	}
 
 	onInit( ...args ) {
 		const { hasEntranceAnimation, ctaEntranceAnimation, mainEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
-
-		this.moveFloatingBarsBasedOnPosition();
 
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
@@ -98,5 +124,9 @@ export default class FloatingBarsHandler extends Base {
 		if ( this.elements.main && this.elements.main.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.main, mainEntranceAnimation );
 		}
+
+		this.moveFloatingBarsBasedOnPosition();
+
+		this.initDefaultState();
 	}
 }

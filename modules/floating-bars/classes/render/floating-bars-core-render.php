@@ -45,6 +45,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		$corners = $this->settings['style_cta_button_corners'];
 		$link_type = $this->settings['style_cta_type'];
 		$entrance_animation = $this->settings['style_cta_button_animation'];
+		$entrance_animation_duration = $this->settings['style_cta_button_animation_duration'];
 
 		$cta_classnames = 'e-floating-bars__cta-button';
 
@@ -64,6 +65,10 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			$cta_classnames .= ' has-entrance-animation';
 		}
 
+		if ( ! empty( $entrance_animation_duration ) ) {
+			$cta_classnames .= ' has-entrance-animation-duration-' . $entrance_animation_duration;
+		}
+
 		$this->widget->add_render_attribute( 'cta-button', [
 			'class' => $cta_classnames,
 		] );
@@ -71,15 +76,17 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		if ( ! empty( $link['url'] ) ) {
 			$this->widget->add_link_attributes( 'cta-button', $link );
 			?>
-				<a <?php echo $this->widget->get_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php if ( 'start' == $icon_position ) {
-						$this->render_cta_icon();
-					} ?>
-					<?php echo esc_html( $text ); ?>
-					<?php if ( 'end' == $icon_position ) {
-						$this->render_cta_icon();
-					} ?>
-				</a>
+				<div class="e-floating-bars__cta-button-container">
+					<a <?php echo $this->widget->get_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php if ( 'start' == $icon_position ) {
+							$this->render_cta_icon();
+						} ?>
+						<?php echo esc_html( $text ); ?>
+						<?php if ( 'end' == $icon_position ) {
+							$this->render_cta_icon();
+						} ?>
+					</a>
+				</div>
 			<?php
 		}
 	}
@@ -97,7 +104,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		?>
 			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<i class="eicon-close"></i>
+				<i class="eicon-editor-close"></i>
 			</button>
 		<?php
 	}
@@ -109,15 +116,13 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<div class="e-floating-bars__text-container">
-				<?php if ( 'start' == $icon_position ) {
-					$this->render_announcement_icon();
-				} ?>
-				<?php $this->render_announcement_text(); ?>
-				<?php if ( 'end' == $icon_position ) {
-					$this->render_announcement_icon();
-				} ?>
-			</div>
+			<?php if ( 'start' == $icon_position ) {
+				$this->render_announcement_icon();
+			} ?>
+			<?php $this->render_announcement_text(); ?>
+			<?php if ( 'end' == $icon_position ) {
+				$this->render_announcement_icon();
+			} ?>
 
 			<?php $this->render_cta_button(); ?>
 
