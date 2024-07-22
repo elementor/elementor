@@ -3,7 +3,7 @@ import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
 import { getImageId } from './utils';
-import { AIMediaEditApp } from './componenets';
+import { AIMediaEditApp } from './components';
 
 const Icon = styled.i`
 	color: var(--e-a-color-primary-bold);

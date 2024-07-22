@@ -403,7 +403,7 @@ class Icons_Manager {
 	 * @param array $element        settings array
 	 * @param string $old_control   old control id
 	 * @param string $new_control   new control id
-	 * @param bool $remove_old      boolean weather to remove old control or not
+	 * @param bool $remove_old      boolean whether to remove old control or not
 	 *
 	 * @return array
 	 */

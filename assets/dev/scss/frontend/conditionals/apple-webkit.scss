@@ -1,25 +1,6 @@
-// Canvas Page template
-.page-template-elementor_canvas {
+@import "../../helpers/variables";
+@import "../breakpoints/breakpoints";
 
-	&.elementor-page {
-
-		&:before {
-			display: none; // Twenty Fifteen Theme
-		}
-	}
-}
-
-.elementor-post__thumbnail__link {
-	transition: none; // Avoid size calculation failures on some themes
-}
-
-#left-area ul.elementor-icon-list-items,
-.elementor .elementor-element ul.elementor-icon-list-items,
-.elementor-edit-area .elementor-element ul.elementor-icon-list-items {
-	padding: 0;
-}
-
-// To be removed in Elementor 3.26.0.
 .e--ua-appleWebkit {
 	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
 	&.rtl { --flex-right: flex-start; }
@@ -27,12 +8,12 @@
 	@mixin social-icons-align-right-safari($device: '') {
 		.elementor-widget-social-icons.e-grid-align#{$device}-right,
 		.elementor-share-buttons#{$device}--align-right {
-		  	--justify-content: var(--flex-right, flex-end);
+			--justify-content: var(--flex-right, flex-end);
 		}
 
 		.elementor-widget-social-icons.e-grid-align#{$device}-center,
 		.elementor-share-buttons#{$device}--align-center {
-		  	--justify-content: center;
+			--justify-content: center;
 		}
 
 		.elementor-grid-0 {
@@ -43,7 +24,7 @@
 			&.elementor-share-buttons--align#{$device}-justify {
 
 				.elementor-grid {
-				  	width: auto;
+					width: auto;
 					display: flex;
 					flex-wrap: wrap;
 					justify-content: var(--justify-content, space-between);
@@ -64,7 +45,7 @@
 				.elementor-grid {
 					display: inline-block;
 
-				  	&,
+					&,
 					&-item {
 						margin-left: 0;
 						margin-right: 0;
@@ -77,10 +58,10 @@
 	@include social-icons-align-right-safari();
 
 	@media (max-width: $screen-tablet-max) {
-	  	@include social-icons-align-right-safari('-tablet');
+		@include social-icons-align-right-safari('-tablet');
 	}
 
 	@media (max-width: $screen-mobile-max) {
-	  	@include social-icons-align-right-safari('-mobile');
+		@include social-icons-align-right-safari('-mobile');
 	}
 }
