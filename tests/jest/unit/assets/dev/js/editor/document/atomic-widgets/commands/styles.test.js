@@ -74,7 +74,107 @@ describe( 'styles', () => {
 			{
 				container,
 				styles: updatedStyles,
-				bind,
+			},
+		);
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/elements/set-settings',
+			{
+				container,
+				options: { render: false },
+				settings: {
+					classes: {
+						$$type: 'classes',
+						value: [ 'new-style-id' ],
+					},
+				},
+			},
+		);
+	} );
+
+	it( 'should create new style object and update the reference in the settings without deleting old reference', () => {
+		const command = new StylesCommand();
+
+		// Mock generateId
+		command.randomId = jest.fn( () => 'new-style-id' );
+
+		const bind = 'classes';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'Test text',
+				[ bind ]: {
+					$$type: 'classes',
+					value: [ 'old-style-id' ],
+				},
+			},
+			styles: {
+				'old-style-id': {
+					id: 'old-style-id',
+					label: '',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: { color: 'red' },
+						},
+					],
+				},
+			},
+			model: {
+				set: jest.fn(),
+			},
+		} );
+
+		// Act
+		command.apply( { container, bind, props: { width: '10px' }, meta: { breakpoint: null, state: null } } );
+
+		const updatedStyles = {
+			'old-style-id': {
+				id: 'old-style-id',
+				label: '',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: null },
+						props: { color: 'red' },
+					},
+				],
+			},
+			'new-style-id': {
+				id: 'new-style-id',
+				label: '',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: null },
+						props: { width: '10px' },
+					},
+				],
+			},
+		};
+
+		// Assert
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/atomic-widgets/set-styles',
+			{
+				container,
+				styles: updatedStyles,
+			},
+		);
+
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/elements/set-settings',
+			{
+				container,
+				options: { render: false },
+				settings: {
+					[ bind ]: {
+						$$type: 'classes',
+						value: [ 'old-style-id', 'new-style-id' ],
+					},
+				},
 			},
 		);
 	} );
@@ -138,7 +238,6 @@ describe( 'styles', () => {
 			{
 				container,
 				styles: updatedStyles,
-				bind,
 			},
 		);
 	} );
@@ -198,7 +297,6 @@ describe( 'styles', () => {
 			{
 				container,
 				styles: updatedStyles,
-				bind,
 			},
 		);
 	} );

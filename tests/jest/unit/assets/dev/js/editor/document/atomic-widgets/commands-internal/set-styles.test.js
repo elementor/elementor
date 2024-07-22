@@ -61,19 +61,6 @@ describe( 'SetStyles - apply', () => {
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( styles );
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/elements/set-settings',
-			{
-				container,
-				options: { render: false },
-				settings: {
-					classes: {
-						$$type: 'classes',
-						value: [ 'new-style-id' ],
-					},
-				},
-			},
-		);
 	} );
 
 	it( 'should update styles and add ref', () => {
@@ -133,19 +120,6 @@ describe( 'SetStyles - apply', () => {
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( styles );
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/elements/set-settings',
-			{
-				container,
-				options: { render: false },
-				settings: {
-					classes: {
-						$$type: 'classes',
-						value: [ 'style-def-1', 'style-def-2' ],
-					},
-				},
-			},
-		);
 	} );
 } );
 

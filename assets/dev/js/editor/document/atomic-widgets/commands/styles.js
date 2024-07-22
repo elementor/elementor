@@ -2,6 +2,8 @@
  * @typedef {import('../../../container/container')} Container
  */
 export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBase {
+	changes = {};
+
 	/**
 	 * Function getSubTitle().
 	 *
@@ -29,8 +31,15 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 			$e.internal( 'document/atomic-widgets/set-styles', {
 				container,
-				styles: isRedo ? changes.new : changes.old,
-				bind: changes.bind,
+				styles: isRedo ? changes.newStyles : changes.oldStyles,
+			} );
+
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				options: {
+					render: false,
+				},
+				settings: isRedo ? changes.newSettings : changes.oldSettings,
 			} );
 		} );
 	}
@@ -39,16 +48,16 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param {string}    bind
 	 * @param {{}}        newStyles
 	 * @param {{}}        oldStyles
 	 */
-	addToHistory( container, bind, newStyles, oldStyles ) {
+	addToHistory( container, newStyles, oldStyles ) {
 		const changes = {
 				[ container.id ]: {
-					old: oldStyles,
-					new: newStyles,
-					bind,
+					oldStyles,
+					newStyles,
+					oldSettings: this.changes.oldSettings ?? {},
+					newSettings: this.changes.newSettings ?? {},
 				},
 			},
 			historyItem = {
@@ -90,7 +99,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		};
 	}
 
-	createNewStyleObject( container ) {
+	createNewStyleObject( container, bind ) {
 		const newId = this.randomId( container.id );
 
 		const newStyles = {
@@ -99,6 +108,27 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			type: 'class',
 			variants: [],
 		};
+
+		const oldSettings = container.model.get( 'settings' ),
+			oldValue = oldSettings?.get( bind )?.value || [];
+
+		const newSettings = {
+			[ bind ]: {
+				$$type: 'classes',
+				value: [ ...oldValue, newId ],
+			},
+		};
+
+		$e.internal( 'document/elements/set-settings', {
+			container,
+			options: {
+				render: false,
+			},
+			settings: newSettings,
+		} );
+
+		this.changes.newSettings = newSettings;
+		this.changes.oldSettings = oldSettings;
 
 		return newStyles;
 	}
@@ -176,13 +206,12 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 			// If history active, add history transaction with old and new styles.
 			if ( this.isHistoryActive() ) {
-				this.addToHistory( container, bind, newStyles, oldStyles );
+				this.addToHistory( container, newStyles, oldStyles );
 			}
 
 			$e.internal( 'document/atomic-widgets/set-styles', {
 				container,
 				styles: newStyles,
-				bind,
 			} );
 		} );
 	}

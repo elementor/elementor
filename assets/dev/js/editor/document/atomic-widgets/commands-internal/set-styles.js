@@ -28,25 +28,10 @@ export class SetStyles extends $e.modules.editor.CommandContainerInternalBase {
 	}
 
 	apply( args = {} ) {
-		const { containers = [ args.container ], styles, bind } = args;
+		const { containers = [ args.container ], styles } = args;
 
 		containers.forEach( ( container ) => {
-			const styleIds = Object.keys( styles );
-
 			container.model.set( 'styles', styles );
-
-			$e.internal( 'document/elements/set-settings', {
-				container,
-				options: {
-					render: false,
-				},
-				settings: {
-					[ bind ]: {
-						$$type: 'classes',
-						value: styleIds,
-					},
-				},
-			} );
 		} );
 	}
 }
