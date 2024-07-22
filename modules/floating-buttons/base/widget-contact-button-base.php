@@ -63,7 +63,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 					],
 					'has_notification_dot' => true,
-					'has_aria_label' => true,
 					'has_notification_dot_default_enabled' => true,
 					'has_active_tab' => false,
 					'has_display_text' => false,
