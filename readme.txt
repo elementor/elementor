@@ -27,7 +27,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **[Pixel-Perfect Design Tools](https://go.elementor.com/wp-repo-description-tab-pro-features-feature-page/)**: Upload SVGs, apply masks, gradients, box shadows, headline effects, shape dividers, and use built-in CSS controls for advanced customization.
 - **[Template Library](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/)**: Apply complete website kits for instant setups, or choose from a vast library of single pages, blocks, and pop-up templates. Create and export your own templates for reuse.
 - **[Advanced Widgets](https://go.elementor.com/feature-page-editor/)**: Access over 40 FREE widgets, including heading, image, text editor, video, button, gallery, carousels, and more. Customize and style widgets to fit your design needs perfectly.
-- **[AI Capabilities](https://go.elementor.com/elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
+- **[AI Capabilities](https://go.elementor.com/wp-repo-description-tab-elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
 
 = 🗝️ Key features: =
 - **[Design System](https://go.elementor.com/feature-page-global-settings/)**: Utilize Elementor's Design System to ensure consistency in colors, typography, and other design elements across your entire website, promoting a cohesive and professional look.
@@ -223,7 +223,7 @@ To improve the user experience, Elementor may use the following 3rd party servic
 Join a global community that helps each other achieve their goals. Get answers, solve problems with other members, share knowledge, and more. Join community discussions, meetups, enjoy hundreds of YouTube videos, articles, and tutorials made by members worldwide.
 
 - [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - Over 150K+ members, constantly offering support, advice, feedback, and tutorials.
-- [Github Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about releases, request features, or report a bug.
+- [GitHub Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about releases, request features, or report a bug.
 - [Elementor Addons, Themes, and Kits](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) thousands of themes, addons and kits created specifically for Elementor.
 - Learn valuable insights and techniques from our extensive [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
 - Access our [Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) and [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/) - Find comprehensive guides, tutorials, and troubleshooting resources to answer your questions and empower your creativity.
@@ -283,11 +283,11 @@ It works with almost all the plugins. If you experience an incompatibility issue
 
 **Do I need to know how to code?**
 
-No! Elementor provides you with all the widgets and features that you need to build a proffesional website without using code.
+No! Elementor provides you with all the widgets and features that you need to build a professional website without using code.
 
 **Do i need to know how to design?**
 
-No, you can choose between professionaly designed kits and templates that fit toevery industry and have all you need to create your own profesional website.
+No, you can choose between professionally designed kits and templates that fit toevery industry and have all you need to create your own professional website.
 
 **Will elementor slow down my website?**
 
@@ -326,6 +326,9 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.23.1 - 2024-07-15 =
+* Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
 
 = 3.23.0 - 2024-07-15 =
 

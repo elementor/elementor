@@ -541,7 +541,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param array|string $element         The link HTML element.
 	 * @param int $id                       The ID of the image
-	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
+	 * @param string $lightbox_setting_key  The setting key that dictates whether to open the image in a lightbox
 	 * @param string $group_id              Unique ID for a group of lightbox images
 	 * @param bool $overwrite               Optional. Whether to overwrite existing
 	 *                                      attribute. Default is false, not to overwrite.

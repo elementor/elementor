@@ -18,6 +18,7 @@ import {
 import PromptLibraryLink from '../../components/prompt-library-link';
 import { useRequestIds } from '../../context/requests-ids';
 import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
+import { splitText } from './splitTextResult';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -36,7 +37,7 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 
 const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, children } ) => {
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
-
+	const { code, details } = splitText( data.result );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
 
@@ -126,8 +127,9 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 							<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
 						),
 					} }>
-						{ data.result }
+						{ code }
 					</ReactMarkdown>
+					{ details }
 					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
