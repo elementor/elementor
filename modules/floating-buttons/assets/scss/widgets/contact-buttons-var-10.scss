@@ -111,6 +111,16 @@
 				&.has-size-small {
 					--e-contact-buttons-margin-offset: 2px;
 				}
+
+				[dir="rtl"] & {
+					--e-contact-buttons-margin-offset: 2px;
+
+					transform: translateX(calc(100% - calc(var(--e-contact-buttons-svg-size) * 2 - var(--e-contact-buttons-margin-offset))));
+
+					&.has-size-large {
+						--e-contact-buttons-margin-offset: 8px;
+					}
+				}
 			}
 
 			&__contact-links {
@@ -154,6 +164,20 @@
 				transform: translateX(calc(100% - calc(var(--e-contact-buttons-svg-size) * 2) + var(--e-contact-buttons-margin-offset)));
 				transition: var(--e-contact-buttons-transition);
 
+				&.has-size-small {
+					--e-contact-buttons-margin-offset: 2px;
+				}
+
+				[dir="rtl"] & {
+					--e-contact-buttons-margin-offset: 2px;
+
+					transform: translateX(calc(-100% + calc(var(--e-contact-buttons-svg-size) * 2 - var(--e-contact-buttons-margin-offset))));
+
+					&.has-size-large {
+						--e-contact-buttons-margin-offset: 8px;
+					}
+				}
+
 				&:hover,
 				&:focus {
 
@@ -166,10 +190,6 @@
 				&.active {
 					transform: none;
 					transition: var(--e-contact-buttons-transition);
-				}
-
-				&.has-size-small {
-					--e-contact-buttons-margin-offset: 2px;
 				}
 			}
 
