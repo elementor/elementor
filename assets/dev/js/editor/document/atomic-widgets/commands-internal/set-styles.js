@@ -2,7 +2,6 @@ export class SetStyles extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'styles', 'object', args );
-		this.requireArgumentType( 'bind', 'string', args );
 
 		this.validateStyles( args.styles );
 	}
