@@ -36,6 +36,8 @@ module.exports = {
 			src: [
 				'assets/css/*.css',
 				'!assets/css/*.min.css',
+				'assets/css/conditionals/*.css',
+				'!assets/css/conditionals/*.min.css',
 				'assets/css/modules/**/*.css',
 				'!assets/css/modules/**/*.min.css',
 				'assets/lib/swiper/css/*.css',

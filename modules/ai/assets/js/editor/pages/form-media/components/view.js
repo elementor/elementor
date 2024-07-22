@@ -6,7 +6,6 @@ import GenerateLoader from './generate-loader';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import BackButton from './back-button';
 import { useLocation } from '../context/location-context';
-import useUpgradeMessage from '../../../hooks/use-upgrade-message';
 import { useGlobalSettings } from '../context/global-settings-context';
 import UsageMessages from '../../../components/usage-messages';
 

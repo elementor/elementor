@@ -1,10 +1,11 @@
+import ReactUtils from 'elementor-utils/react';
 import { createPreviewContainer } from './preview-container';
 import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
 import { startHistoryLog } from './history';
 import { __ } from '@wordpress/i18n';
-import { generateIds, getUniqueId } from './generate-ids';
 import LayoutAppWrapper from '../layout-app-wrapper';
+import { generateIds } from '../context/requests-ids';
 
 export const closePanel = () => {
 	$e.run( 'panel/close' );
@@ -32,7 +33,7 @@ export const getUiConfig = () => {
 	};
 };
 
-const VARIATIONS_PROMPTS = [
+export const VARIATIONS_PROMPTS = [
 	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
 	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
 	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
@@ -44,8 +45,16 @@ const VARIATIONS_PROMPTS = [
 	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
 ];
 
+export const WEB_BASED_PROMPTS = [
+	{ text: __( 'Change the content to be about [topic]', 'elementor' ) },
+	{ text: __( 'Generate lorem ipsum placeholder text for all paragraphs', 'elementor' ) },
+	{ text: __( 'Revise the content to focus on [topic] and then translate it into Spanish', 'elementor' ) },
+	{ text: __( 'Shift the focus of the content to [topic] in order to showcase our company\'s mission and values', 'elementor' ) },
+	{ text: __( 'Alter the content to provide helpful tips related to [topic]', 'elementor' ) },
+	{ text: __( 'Adjust the content to include FAQs and answers for common inquiries about [topic]', 'elementor' ) },
+];
+
 const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
-const EDITOR_SESSION_ID = `editor-session-${ getUniqueId() }`;
 
 export const renderLayoutApp = ( options = {
 	parentContainer: null,
@@ -72,7 +81,7 @@ export const renderLayoutApp = ( options = {
 
 	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
 
-	ReactDOM.render(
+	const { unmount } = ReactUtils.render( (
 		<LayoutAppWrapper
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
@@ -96,7 +105,7 @@ export const renderLayoutApp = ( options = {
 					},
 					url: {
 						promptPlaceholder: PROMPT_PLACEHOLDER,
-						promptSuggestions: VARIATIONS_PROMPTS,
+						promptSuggestions: WEB_BASED_PROMPTS,
 					},
 				} }
 				attachments={ options.attachments || [] }
@@ -104,7 +113,7 @@ export const renderLayoutApp = ( options = {
 					previewContainer.destroy();
 					options.onClose?.();
 
-					ReactDOM.unmountComponentAtNode( rootElement );
+					unmount();
 					rootElement.remove();
 
 					openPanel();
@@ -127,11 +136,9 @@ export const renderLayoutApp = ( options = {
 				} }
 				onInsert={ options.onInsert }
 				hasPro={ elementor.helpers.hasPro() }
-				editorSessionId={ EDITOR_SESSION_ID }
 			/>
-		</LayoutAppWrapper>,
-		rootElement,
-	);
+		</LayoutAppWrapper>
+	), rootElement );
 
 	options.onRenderApp?.( { previewContainer } );
 };
@@ -165,4 +172,3 @@ export const importToEditor = ( {
 
 	endHistoryLog();
 };
-

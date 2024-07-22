@@ -1,70 +1,77 @@
-import { useEffect, useRef } from 'react';
 import { Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 export const THUMBNAIL_SIZE = 64;
 
+const StyledBody = styled.body`
+	html, body {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+
+	body > * {
+		width: 100% !important;
+	}
+
+	body > img {
+		height: 100%;
+		object-fit: cover;
+	}
+
+	body:has(> img) {
+		height: ${ THUMBNAIL_SIZE }px
+	}
+`;
+
 export const Thumbnail = ( props ) => {
-	const previewRef = useRef( null );
+	const dataWidth = props.html.match( 'data-width="(?<width>\\d+)"' )?.groups?.width;
+	const dataHeight = props.html.match( 'data-height="(?<height>\\d+)"' )?.groups?.height;
 
-	useEffect( () => {
-		if ( previewRef.current ) {
-			const previewRoot = previewRef.current.firstElementChild;
+	const width = dataWidth ? parseInt( dataWidth ) : THUMBNAIL_SIZE;
+	const height = dataHeight ? parseInt( dataHeight ) : THUMBNAIL_SIZE;
 
-			const isImage = 'IMG' === previewRoot?.tagName;
+	const scaleFactor = Math.min( height, width );
+	const scale = THUMBNAIL_SIZE / scaleFactor;
 
-			if ( ! isImage ) {
-				const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
-				const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
-
-				// Keep the aspect ratio
-				previewRoot.style.width = `${ width }px`;
-				previewRoot.style.height = `${ height }px`;
-
-				const scaleFactor = Math.min( height, width );
-				const scale = THUMBNAIL_SIZE / scaleFactor;
-
-				previewRef.current.style.transform = `scale(${ scale })`;
-
-				// Center the preview
-				const top = height > width ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( height / width ) ) ) / 2 ) : 0;
-				const left = width > height ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( width / height ) ) ) / 2 ) : 0;
-
-				previewRef.current.style.transformOrigin = `${ left }px ${ top }px`;
-			}
-
-			// Set the preview size only after the transform is applied
-			previewRef.current.style.width = `${ THUMBNAIL_SIZE }px`;
-			previewRef.current.style.height = `${ THUMBNAIL_SIZE }px`;
-		}
-	}, [ previewRef.current ] );
+	// Center the preview
+	const top = height > width ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( height / width ) ) ) / 2 ) : 0;
+	const left = width > height ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( width / height ) ) ) / 2 ) : 0;
 
 	return (
 		<Box
 			dir="ltr"
 			sx={ {
-				border: '1px solid',
-				borderColor: 'grey.300',
 				position: 'relative',
 				cursor: 'default',
 				overflow: 'hidden',
+				border: '1px solid',
+				borderColor: 'grey.300',
 				borderRadius: 1,
+				boxSizing: 'border-box',
+				width: THUMBNAIL_SIZE,
+				height: THUMBNAIL_SIZE,
 				opacity: props.disabled ? 0.5 : 1,
-				'& img': {
-					width: '100%',
-					height: '100%',
-					objectFit: 'cover',
-				},
 			} }
 		>
-			<Box
-				ref={ previewRef }
-				sx={ {
-					pointerEvents: 'none',
-					transformOrigin: 'center',
-				} }
-				dangerouslySetInnerHTML={ {
-					__html: props.html,
+			<iframe
+				title={ __( 'Preview', 'elementor' ) }
+				sandbox=""
+				srcDoc={
+					`<style>` +
+					StyledBody.componentStyle.rules.join( '' ) +
+					`</style>` +
+					props.html
+				}
+				style={ {
+					border: 'none',
+					overflow: 'hidden',
+					width,
+					height,
+					transform: `scale(${ scale })`,
+					transformOrigin: `${ left }px ${ top }px`,
 				} }
 			/>
 		</Box>

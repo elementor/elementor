@@ -4,10 +4,13 @@
 @import "dialog-base";
 @import "dialog-lightbox";
 @import "dialog-confirm";
-@import "flatpicker";
 
 .elementor-hidden {
 	display: none;
+}
+
+.elementor-visibility-hidden {
+	visibility: hidden;
 }
 
 .elementor-screen-only,

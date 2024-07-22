@@ -6,7 +6,8 @@ import { usePageTitle } from './hooks/use-page-title/use-page-title';
 import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar() {
-	const actionButtonsRef = useRef();
+	const actionButtonsRef = useRef(),
+		promotion = window.elementorAdminTopBarConfig.promotion;
 
 	// Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 	useEffect( () => {
@@ -32,6 +33,8 @@ export default function AdminTopBar() {
 	const controlSign = environment.mac ? '\u2318' : '^';
 	const finderTooltipText = __( 'Search or do anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
 
+	const BarButtonNotification = window?.elementorNotificationCenter?.BarButtonNotification;
+
 	return (
 		<div className="e-admin-top-bar">
 			<div className="e-admin-top-bar__main-area">
@@ -41,11 +44,15 @@ export default function AdminTopBar() {
 
 			<div className="e-admin-top-bar__secondary-area">
 				<div className="e-admin-top-bar__secondary-area-buttons">
-					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Apps', 'elementor' ) }</BarButton>
+					{ ! elementorAppConfig.hasPro && <BarButton additionalClasses="accent" href={ promotion.url } target="__blank" icon="eicon-upgrade-crown" iconAdditionalClasses="crown-icon">{ promotion.text }</BarButton> }
+					<BarButton href={ window.elementorAdminTopBarConfig.apps_url } icon="eicon-integration">{ __( 'Add-ons', 'elementor' ) }</BarButton>
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
 					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
+					{ BarButtonNotification
+						? <BarButtonNotification defaultIsRead={ ! elementorNotifications?.is_unread }>{ __( 'What\'s New', 'elementor' ) }</BarButtonNotification>
+						: ''
+					}
 				</div>
-
 				<ConnectionButton />
 			</div>
 		</div>

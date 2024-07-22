@@ -20,7 +20,7 @@ export default class AiPromotionBehavior extends Marionette.Behavior {
 			},
 		} );
 
-		this.$el.find( '.elementor-control-title:eq(0)' ).after(
+		this.$el.find( '.elementor-control-title:first-child' ).after(
 			$button,
 		);
 	}

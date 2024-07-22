@@ -4,7 +4,7 @@ namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
-use Elementor\Modules\System_Info\Reporters\Server;
+use \Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
@@ -80,7 +80,8 @@ class Utils {
 
 		unset(
 			$post_types[ Landing_Pages_Module::CPT ],
-			$post_types[ Source_Local::CPT ]
+			$post_types[ Source_Local::CPT ],
+			$post_types[ Floating_Buttons_Module::CPT_FLOATING_BUTTONS ]
 		);
 
 		return array_keys( $post_types );

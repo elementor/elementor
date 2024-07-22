@@ -78,6 +78,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return '.e-n-accordion';
 	}
 
+	protected function get_default_children_container_placeholder_selector() {
+		return '.e-n-accordion-item';
+	}
+
 	protected function get_html_wrapper_class() {
 		return 'elementor-widget-n-accordion';
 	}
@@ -295,13 +299,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'faq_schema_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
 				'condition' => [
 					'faq_schema[value]' => 'yes',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -509,13 +512,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector  => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$low_specificity_accordion_item_selector => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
-
-		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
-		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 
 		$this->add_responsive_control(
 			'content_padding',
@@ -524,7 +524,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: $logical_dimensions_inline_end; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start;",
+					$low_specificity_accordion_item_selector => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -574,18 +574,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tabs();
 
 		$this->add_control(
-			'header_section_divider',
-			[
-				'type' => Controls_Manager::DIVIDER,
-			]
-		);
-
-		$this->add_control(
 			'heading_icon_style_title',
 			[
 				'type' => Controls_Manager::HEADING,
 				'label' => esc_html__( 'Icon', 'elementor' ),
-
+				'separator' => 'before',
 			]
 		);
 
@@ -896,6 +889,65 @@ class Nested_Accordion extends Widget_Nested_Base {
 		] );
 	}
 
+	protected function get_initial_config(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
+			return array_merge( parent::get_initial_config(), [
+				'support_improved_repeaters' => true,
+				'target_container' => [ '.e-n-accordion' ],
+				'node' => 'details',
+				'is_interlaced' => true,
+			] );
+		}
+
+		return parent::get_initial_config();
+	}
+
+	protected function content_template_single_repeater_item() {
+		?>
+		<#
+		const elementUid = view.getIDInt().toString().substring( 0, 3 ) + view.collection.length;
+
+		const itemWrapperAttributes = {
+			'id': 'e-n-accordion-item-' + elementUid,
+			'class': [ 'e-n-accordion-item', 'e-normal' ],
+		};
+
+		const itemTitleAttributes = {
+			'class': [ 'e-n-accordion-item-title' ],
+			'data-accordion-index': view.collection.length + 1,
+			'tabindex': -1,
+			'aria-expanded': 'false',
+			'aria-controls': 'e-n-accordion-item-' + elementUid,
+		};
+
+		const itemTitleTextAttributes = {
+			'class': [ 'e-n-accordion-item-title-text' ],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'items',
+			'data-binding-setting': ['item_title'],
+			'data-binding-index': view.collection.length + 1,
+			'data-binding-dynamic': 'true',
+		};
+
+		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
+		view.addRenderAttribute( 'summary-container', itemTitleAttributes, null, true );
+		view.addRenderAttribute( 'text-container', itemTitleTextAttributes, null, true );
+		#>
+
+		<details {{{ view.getRenderAttributeString( 'details-container' ) }}}>
+			<summary {{{ view.getRenderAttributeString( 'summary-container' ) }}}>
+				<span class="e-n-accordion-item-title-header">
+					<div {{{ view.getRenderAttributeString( 'text-container' ) }}}>{{{ data.item_title }}}</div>
+				</span>
+				<span class="e-n-accordion-item-title-icon">
+					<span class="e-opened"><i aria-hidden="true" class="fas fa-minus"></i></span>
+					<span class="e-closed"><i aria-hidden="true" class="fas fa-plus"></i></span>
+				</span>
+			</summary>
+		</details>
+		<?php
+	}
+
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
@@ -948,6 +1000,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-repeater-name': 'items',
 						'data-binding-setting': ['item_title'],
 						'data-binding-index': itemCount,
+						'data-binding-dynamic': 'true',
 					});
 				#>
 

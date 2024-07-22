@@ -1,4 +1,4 @@
-import ControlBaseDataView from './base-data';
+import { default as ControlBaseDataView } from './base-data';
 import ColorPicker from '../utils/color-picker';
 
 export default class extends ControlBaseDataView {

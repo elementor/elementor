@@ -78,7 +78,6 @@ $top-bar-height: 50px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-
 	}
 
 	.e-admin-top-bar__heading-title {
@@ -130,6 +129,22 @@ $top-bar-height: 50px;
 		margin: 0 10px;
 		text-decoration: none;
 		color: var(--e-a-color-txt);
+
+		&.accent {
+			color: var(--e-a-color-accent);
+
+
+			&:hover {
+				.e-admin-top-bar__bar-button-title,
+				.e-admin-top-bar__bar-button-icon {
+					color: var(--e-a-color-accent);
+				}
+			}
+		}
+
+		.crown-icon {
+			font-size: 14px;
+		}
 
 		.e-admin-top-bar__bar-button-icon {
 			margin: 0 4px;

@@ -87,6 +87,7 @@ class Modules_Manager {
 			'wp-cli',
 			'safe-mode',
 			'ai',
+			'notifications',
 			'usage',
 			'dev-tools',
 			'landing-pages',
@@ -110,9 +111,19 @@ class Modules_Manager {
 			'image-loading-optimization',
 			'kit-elements-defaults',
 			'announcements',
+			'editor-app-bar',
 			'site-navigation',
 			'styleguide',
+			'element-cache',
 			'apps',
+			'home',
+			'link-in-bio',
+			'floating-buttons',
+			'content-sanitizer',
+			'editor-events',
+			'atomic-widgets',
+			'floating-bars',
+			'wc-product-editor',
 		];
 	}
 

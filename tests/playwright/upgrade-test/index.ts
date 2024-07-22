@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { execSync } from 'child_process';
+import { wpEnvCli } from '../assets/wp-env-cli';
 export class UpgradeElementor {
 	cmd( cmd: string ) {
 		try {
@@ -23,7 +24,8 @@ export class UpgradeElementor {
 		// Don't forget to npx grunt build in root folder for local testing
 		this.cmd( 'mkdir plugin' );
 		this.cmd( 'cd ../../../ && mkdir elementor' );
-		this.cmd( 'cd ../../../ && cp -r ./build/* elementor && zip -r elementor elementor' );
+		this.cmd( 'cd ../../../ && cp -r ./build/* elementor' );
+		this.cmd( 'cd ../../../elementor && zip -r ../elementor.zip .' );
 		this.cmd( 'cd ../../../ && mv ./elementor.zip ./tests/playwright/upgrade-test/plugin' );
 	}
 
@@ -35,24 +37,24 @@ export class UpgradeElementor {
 		const version = process.env.ELEMENTOR_PLUGIN_VERSION;
 		console.log( 'version is: ' + version );
 		if ( version !== '' ) {
-			this.cmd( `npx wp-env run cli bash -c 'wp plugin install elementor --version=${ version }  --activate --force'` );
+			wpEnvCli( `bash -c 'wp plugin install elementor --version=${ version }  --activate --force'` );
 		} else {
-			this.cmd( `npx wp-env run cli wp plugin install elementor --activate` );
+			wpEnvCli( `wp plugin install elementor --activate` );
 		}
-		this.cmd( 'npx wp-env run cli wp plugin list' );
+		wpEnvCli( 'wp plugin list' );
 	}
 
 	setupTests() {
 		if ( ! process.env.CI ) {
 			this.cmd( 'npm run test:setup' );
-			this.cmd( 'npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints,rating,e_image_loading_optimization' );
+			wpEnvCli( 'wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
 			this.cmd( 'cd ../../../ && npx playwright install chromium' );
 		}
 	}
 
 	installCurrentPlugin() {
-		this.cmd( `npx wp-env run cli wp plugin install ./plugin/elementor.zip --force` );
-		this.cmd( 'npx wp-env run cli wp plugin list' );
+		wpEnvCli( `wp plugin install ./plugin/elementor.zip --force` );
+		wpEnvCli( 'wp plugin list' );
 	}
 
 	runSmokeTest() {

@@ -1,17 +1,44 @@
 import { Dialog, DialogContent } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
 import { useTimeout } from '../../../../hooks/use-timeout';
+import { USER_URL_SOURCE } from '../attachments';
+import { CONFIG_KEYS, useRemoteConfig } from '../../context/remote-config';
+import useUserInfo from '../../../../hooks/use-user-info';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 export const UrlDialog = ( props ) => {
+	const iframeRef = useRef( null );
 	const { iframeSource } = useAttachUrlService( { targetUrl: props.url } );
+	const iframeOrigin = iframeSource ? new URL( iframeSource ).origin : '';
 	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
+	const {
+		isConnected,
+		hasSubscription,
+		credits,
+		isLoading,
+		usagePercentage: initialUsagePercentage,
+	} = useUserInfo();
+	const { isLoaded, isError, remoteConfig } = useRemoteConfig();
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isInitUsageDone && ! isLoading && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ isLoading, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
+			if ( event.origin !== iframeOrigin ) {
+				return;
+			}
+
 			const { type, html, url } = event.data;
 
 			switch ( type ) {
@@ -26,7 +53,8 @@ export const UrlDialog = ( props ) => {
 						type: 'url',
 						previewHTML: html,
 						content: html,
-						label: url ? new URL( url ).host : '',
+						label: url ? new URL( url ).href : '',
+						source: USER_URL_SOURCE,
 					} ] );
 					break;
 			}
@@ -37,7 +65,7 @@ export const UrlDialog = ( props ) => {
 		return () => {
 			window.removeEventListener( 'message', onMessage );
 		};
-	}, [ turnOffTimeout ] );
+	}, [ iframeOrigin, iframeSource, props, turnOffTimeout ] );
 
 	if ( ! iframeSource ) {
 		return (
@@ -47,6 +75,11 @@ export const UrlDialog = ( props ) => {
 			/>
 		);
 	}
+
+	if ( ! isLoaded || isError ) {
+		return null;
+	}
+
 	return (
 		<Dialog
 			open={ true }
@@ -74,8 +107,40 @@ export const UrlDialog = ( props ) => {
 				{
 					! isTimeout && (
 						<iframe
+							ref={ iframeRef }
 							title={ __( 'URL as a reference', 'elementor' ) }
 							src={ iframeSource }
+							onLoad={ () => {
+								const { access_level: accessLevel, access_tier: accessTier, is_pro: isPro } = window.elementorAppConfig[ 'kit-library' ];
+								iframeRef.current.contentWindow.postMessage( {
+									type: 'referrer/info',
+									info: {
+										page: {
+											url: window.location.href,
+										},
+										authToken: remoteConfig[ CONFIG_KEYS.AUTH_TOKEN ] || '',
+										products: {
+											core: {
+												version: window.elementor.config.version,
+											},
+											pro: {
+												isPro,
+												accessLevel,
+												accessTier,
+											},
+											ai: {
+												isConnected,
+												hasSubscription,
+												credits,
+												usagePercentage,
+											},
+										},
+										user: {
+											isAdmin: window.elementor.config.user.is_administrator,
+										},
+									},
+								}, iframeOrigin );
+							} }
 							style={ {
 								border: 'none',
 								overflow: 'scroll',

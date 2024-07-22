@@ -73,6 +73,10 @@ class Widget_Star_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'rate', 'review' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Hide widget from panel.
 	 *
@@ -97,7 +101,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->start_controls_section(
 			'section_rating',
 			[
-				'label' => esc_html__( 'Rating', 'elementor' ),
+				'label' => esc_html__( 'Star Rating', 'elementor' ),
 			]
 		);
 

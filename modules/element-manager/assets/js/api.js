@@ -1,20 +1,24 @@
-export const saveDisabledWidgets = async ( widgetsDisabled ) => {
+export const saveDisabledWidgets = async ( widgetsDisabled, elementsRestriction = {} ) => {
 	try {
-		const response = await fetch( eElementManagerConfig.ajaxurl, {
+		const bodyData = {
+			action: 'elementor_element_manager_save_disabled_elements',
+			nonce: eElementManagerConfig.nonce,
+			widgets: JSON.stringify( widgetsDisabled ),
+		};
+
+		if ( null !== elementsRestriction ) {
+			bodyData.elements_restriction = JSON.stringify( elementsRestriction );
+		}
+
+		await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: new URLSearchParams( {
-				action: 'elementor_element_manager_save_disabled_elements',
-				nonce: eElementManagerConfig.nonce,
-				widgets: JSON.stringify( widgetsDisabled ),
-			} ),
+			body: new URLSearchParams( bodyData ),
 		} );
-
-		const data = await response.json();
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
 
@@ -36,7 +40,7 @@ export const getAdminAppData = async () => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
 
@@ -58,7 +62,7 @@ export const getUsageWidgets = async () => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };
 
@@ -80,6 +84,6 @@ export const markNoticeViewed = async ( noticeId ) => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.error( error );
+		console.error( error ); // eslint-disable-line no-console
 	}
 };

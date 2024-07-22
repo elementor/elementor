@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react';
 import PromptLibraryLink from 'elementor/modules/ai/assets/js/editor/components/prompt-library-link';
+import { renderWithTheme } from '../test-utils';
 
 describe( 'PromptLibraryLink', () => {
 	it( 'Should render a link to the library from props', async () => {
-		const { getByRole } = render(
+		const { getByRole } = renderWithTheme(
 			<PromptLibraryLink libraryLink="http://ai-team-rules.ai/" />,
 		);
 

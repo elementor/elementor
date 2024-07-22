@@ -1,12 +1,37 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
+import ReactUtils from 'elementor-utils/react';
+import LayoutAppWrapper from './layout-app-wrapper';
+import { AiGetStartedConnect } from './ai-get-started-connect';
+import { getUiConfig } from './utils/editor-integration';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
-	}
+		window.addEventListener( 'hashchange', function( e ) {
+			if ( e.newURL.includes( 'welcome-ai' ) ) {
+				window.location.hash = '';
 
+				setTimeout( () => {
+					const rootElement = document.createElement( 'div' );
+					document.body.append( rootElement );
+					const { colorScheme, isRTL } = getUiConfig();
+					const { unmount } = ReactUtils.render(
+
+						<LayoutAppWrapper
+							isRTL={ isRTL }
+							colorScheme={ colorScheme }>
+							<AiGetStartedConnect
+								onClose={ () => {
+									unmount();
+									rootElement.remove();
+								} } />
+						</LayoutAppWrapper>, rootElement );
+				}, 1000 );
+			}
+		} );
+	}
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
 
@@ -69,7 +94,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 					type: aiOptions.type,
 					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: ( value ) => {},
+					setControlValue: ( image ) => {
+						view.setSettingsModel( image );
+						view.applySavedValue();
+					},
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
@@ -80,13 +108,36 @@ export default class Module extends elementorModules.editor.utils.Module {
 			}
 		}
 
+		if ( 'excerpt' === aiOptions.type ) {
+			behaviors.ai = {
+				behaviorClass: AiBehavior,
+				type: aiOptions.type,
+				getControlValue: view.getControlValue.bind( view ),
+				setControlValue: ( value ) => {
+					if ( 'wysiwyg' === controlType ) {
+						value = value.replaceAll( '\n', '<br>' );
+					}
+
+					view.setSettingsModel( value );
+					view.applySavedValue();
+				},
+				isLabelBlock: view.options.model.get( 'label_block' ),
+				additionalOptions: {
+					defaultValue: view.options.model.get( 'default' ),
+				},
+				context: this.getContextData( view, controlType ),
+			};
+		}
+
 		return behaviors;
 	}
 
 	getContextData( view, controlType ) {
+		const controlName = view.options.model.get( 'name' );
+
 		if ( ! view.options.container ) {
 			return {
-				controlName: view.options.model.get( 'name' ),
+				controlName,
 				controlType,
 			};
 		}
@@ -96,8 +147,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 			elementType: view.options.container.args.model.get( 'elType' ),
 			elementId: view.options.container.id,
 			widgetType: view.options.container.args.model.get( 'widgetType' ),
-			controlName: view.options.model.get( 'name' ),
+			controlName,
 			controlType,
+			controlValue: view.options.container.settings.get( controlName ),
 		};
 	}
 }

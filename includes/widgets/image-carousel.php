@@ -73,10 +73,28 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'description' => esc_html__( 'Gain complete freedom to design every slide with Elementor"s Pro Carousel.', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-image-carousel-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
 	}
 
@@ -113,7 +131,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			Group_Control_Image_Size::get_type(),
 			[
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
-				'separator' => 'none',
 			]
 		);
 
@@ -360,15 +377,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -391,12 +399,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'autoplay',
 			[
 				'label' => esc_html__( 'Autoplay', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'frontend_available' => true,
 			]
 		);
@@ -405,12 +412,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_hover',
 			[
 				'label' => esc_html__( 'Pause on Hover', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'condition' => [
 					'autoplay' => 'yes',
 				],
@@ -423,12 +429,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'pause_on_interaction',
 			[
 				'label' => esc_html__( 'Pause on Interaction', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'condition' => [
 					'autoplay' => 'yes',
 				],
@@ -455,12 +460,11 @@ class Widget_Image_Carousel extends Widget_Base {
 			'infinite',
 			[
 				'label' => esc_html__( 'Infinite Loop', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
 				'default' => 'yes',
-				'options' => [
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
-				],
 				'frontend_available' => true,
 			]
 		);
@@ -1168,7 +1172,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
-				<?php // PHPCS - $slides contains the slides content, all the relevent content is escaped above. ?>
+				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
 				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
@@ -1243,6 +1247,10 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		if ( 'title' === $caption_type ) {
 			return $attachment_post->post_title;
+		}
+
+		if ( empty( $attachment_post->post_content ) ) {
+			return '';
 		}
 
 		return $attachment_post->post_content;

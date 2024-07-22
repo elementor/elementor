@@ -2,7 +2,7 @@ import { getImageToImageOutPainting } from '../../../../../api';
 import useImagePrompt from '../../../hooks/use-image-prompt';
 
 const useOutPainting = ( initialValue ) => {
-	const fetchAction = ( prompt, promptSettings, image, mask ) => getImageToImageOutPainting( prompt, promptSettings, image, mask );
+	const fetchAction = ( payload ) => getImageToImageOutPainting( payload );
 
 	return useImagePrompt( fetchAction, initialValue );
 };

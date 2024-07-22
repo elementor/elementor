@@ -18,6 +18,7 @@ use Elementor\Utils;
 use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -41,6 +42,8 @@ abstract class Document extends Controls_Stack {
 	const PAGE_META_KEY = '_elementor_page_settings';
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
+
+	const CACHE_META_KEY = '_elementor_element_cache';
 
 	/**
 	 * Document publish status.
@@ -67,7 +70,9 @@ abstract class Document extends Controls_Stack {
 	 */
 	const STATUS_PENDING = 'pending';
 
-
+	/**
+	 * @var int
+	 */
 	private $main_id;
 
 	/**
@@ -158,6 +163,13 @@ abstract class Document extends Controls_Stack {
 			'show_in_finder' => true,
 			'show_on_admin_bar' => true,
 			'support_kit' => false,
+			'show_navigator' => true,
+			'allow_adding_widgets' => true,
+			'support_page_layout' => true,
+			'show_copy_and_share' => false,
+			'library_close_title' => esc_html__( 'Close', 'elementor' ),
+			'publish_button_title' => esc_html__( 'Publish', 'elementor' ),
+			'allow_closing_remote_library' => true,
 		];
 	}
 
@@ -176,15 +188,58 @@ abstract class Document extends Controls_Stack {
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
-			'elements_categories' => static::get_editor_panel_categories(),
+			'elements_categories' => self::get_filtered_editor_panel_categories(),
 			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
-				/* translators: %s: Document title. */
-				'publish_notification' => sprintf( esc_html__( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
+				'publish_notification' => sprintf(
+					/* translators: %s: Document title. */
+					esc_html__( 'Hurray! Your %s is live.', 'elementor' ),
+					static::get_title()
+				),
 			],
+			'show_navigator' => static::get_property( 'show_navigator' ),
+			'allow_adding_widgets' => static::get_property( 'allow_adding_widgets' ),
+			'show_copy_and_share' => static::get_property( 'show_copy_and_share' ),
+			'library_close_title' => static::get_property( 'library_close_title' ),
+			'publish_button_title' => static::get_property( 'publish_button_title' ),
+			'allow_closing_remote_library' => static::get_property( 'allow_closing_remote_library' ),
 		];
+	}
+
+	public static function get_filtered_editor_panel_categories(): array {
+		$categories = static::get_editor_panel_categories();
+		$has_pro = Utils::has_pro();
+
+		foreach ( $categories as $index => $category ) {
+			if ( isset( $category['promotion'] ) ) {
+				$categories = self::get_panel_category_item( $category['promotion'], $index, $categories, $has_pro );
+			}
+		}
+
+		return $categories;
+	}
+
+	/**
+	 * @param $promotion
+	 * @param $index
+	 * @param array $categories
+	 *
+	 * @return array
+	 */
+	private static function get_panel_category_item( $promotion, $index, array $categories, bool $has_pro ): array {
+		if ( ! $has_pro ) {
+			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+				$promotion,
+				'elementor/panel/' . $index . '/custom_promotion',
+				'url'
+			);
+		} else {
+			unset( $categories[ $index ]['promotion'] );
+		}
+
+		return $categories;
 	}
 
 	/**
@@ -207,7 +262,11 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_add_new_title() {
-		return sprintf( esc_html__( 'Add New %s', 'elementor' ), static::get_title() );
+		return sprintf(
+			/* translators: %s: Document title. */
+			esc_html__( 'Add New %s', 'elementor' ),
+			static::get_title()
+		);
 	}
 
 	/**
@@ -806,6 +865,9 @@ abstract class Document extends Controls_Stack {
 
 		$post_css->delete();
 
+		// Remove Document Cache
+		$this->delete_cache();
+
 		/**
 		 * After document save.
 		 *
@@ -1134,18 +1196,9 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-			<?php endif; ?>
 				<?php $this->print_elements( $elements_data ); ?>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-				</div>
-			</div>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -1164,8 +1217,11 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_panel_page_settings() {
 		return [
-			/* translators: %s: Document title. */
-			'title' => sprintf( esc_html__( '%s Settings', 'elementor' ), static::get_title() ),
+			'title' => sprintf(
+				/* translators: %s: Document title. */
+				esc_html__( '%s Settings', 'elementor' ),
+				static::get_title()
+			),
 		];
 	}
 
@@ -1402,7 +1458,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param string $value Meta data value.
+	 * @param mixed $value Meta data value.
 	 *
 	 * @return bool|int
 	 */
@@ -1479,11 +1535,19 @@ abstract class Document extends Controls_Stack {
 		$display_name = get_the_author_meta( 'display_name', $post->post_author );
 
 		if ( $autosave_post || 'revision' === $post->post_type ) {
-			/* translators: 1: Saving date, 2: Author display name. */
-			$last_edited = sprintf( esc_html__( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			$last_edited = sprintf(
+				/* translators: 1: Saving date, 2: Author display name. */
+				esc_html__( 'Draft saved on %1$s by %2$s', 'elementor' ),
+				'<time>' . $date . '</time>',
+				$display_name
+			);
 		} else {
-			/* translators: 1: Editing date, 2: Author display name. */
-			$last_edited = sprintf( esc_html__( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			$last_edited = sprintf(
+				/* translators: 1: Editing date, 2: Author display name. */
+				esc_html__( 'Last edited on %1$s by %2$s', 'elementor' ),
+				'<time>' . $date . '</time>',
+				$display_name
+			);
 		}
 
 		return $last_edited;
@@ -1732,6 +1796,68 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			$this->do_print_elements( $elements_data );
+
+			return;
+		}
+
+		$cached_data = $this->get_document_cache();
+
+		if ( false === $cached_data ) {
+			add_filter( 'elementor/element/should_render_shortcode', '__return_true' );
+
+			$scripts_to_queue = [];
+			$styles_to_queue = [];
+
+			global $wp_scripts, $wp_styles;
+
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles;
+			if ( $should_store_scripts ) {
+				$scripts_ignored = $wp_scripts->queue;
+				$styles_ignored = $wp_styles->queue;
+			}
+
+			ob_start();
+
+			$this->do_print_elements( $elements_data );
+
+			if ( $should_store_scripts ) {
+				$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
+				$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
+			}
+
+			$cached_data = [
+				'content' => ob_get_clean(),
+				'scripts' => $scripts_to_queue,
+				'styles' => $styles_to_queue,
+			];
+
+			if ( $this->should_store_cache_elements() ) {
+				$this->set_document_cache( $cached_data );
+			}
+
+			remove_filter( 'elementor/element/should_render_shortcode', '__return_true' );
+		} else {
+			if ( ! empty( $cached_data['scripts'] ) ) {
+				foreach ( $cached_data['scripts'] as $script_handle ) {
+					wp_enqueue_script( $script_handle );
+				}
+			}
+
+			if ( ! empty( $cached_data['styles'] ) ) {
+				foreach ( $cached_data['styles'] as $style_handle ) {
+					wp_enqueue_style( $style_handle );
+				}
+			}
+		}
+
+		if ( ! empty( $cached_data['content'] ) ) {
+			echo do_shortcode( $cached_data['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+	}
+
+	protected function do_print_elements( $elements_data ) {
 		// Collect all data updaters that should be updated on runtime.
 		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
 
@@ -1748,6 +1874,60 @@ abstract class Document extends Controls_Stack {
 
 			$element->print_element();
 		}
+	}
+
+	public function set_document_cache( $value ) {
+		$expiration_hours = get_option( 'elementor_element_cache_ttl', '' );
+
+		if ( empty( $expiration_hours ) || ! is_numeric( $expiration_hours ) ) {
+			$expiration_hours = '24';
+		}
+
+		$expiration_hours = absint( $expiration_hours );
+
+		$expiration = '+' . $expiration_hours . ' hours';
+
+		$data = [
+			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
+			'value' => $value,
+		];
+
+		$this->update_json_meta( static::CACHE_META_KEY, $data );
+	}
+
+	private function get_document_cache() {
+		$cache = $this->get_json_meta( static::CACHE_META_KEY );
+
+		if ( empty( $cache['timeout'] ) ) {
+			return false;
+		}
+
+		if ( current_time( 'timestamp' ) > $cache['timeout'] ) {
+			return false;
+		}
+
+		if ( ! is_array( $cache['value'] ) ) {
+			return false;
+		}
+
+		return $cache['value'];
+	}
+
+	protected function delete_cache() {
+		$this->delete_meta( static::CACHE_META_KEY );
+	}
+
+	private function should_store_cache_elements() {
+		static $should_store_cache_elements = null;
+
+		if ( null === $should_store_cache_elements ) {
+			$should_store_cache_elements = (
+				! is_admin()
+				&& ! Plugin::$instance->preview->is_preview_mode()
+			);
+		}
+
+		return $should_store_cache_elements;
 	}
 
 	protected function register_document_controls() {

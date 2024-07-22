@@ -92,6 +92,7 @@ class Module extends BaseModule {
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
 				] ),
+				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
 				'signUp' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',
@@ -113,6 +114,7 @@ class Module extends BaseModule {
 				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
+			'experiment' => Plugin::$instance->experiments->is_feature_active( 'e_onboarding' ),
 		] );
 	}
 
@@ -129,7 +131,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'You do not have permissions to perform this action.', 'elementor' ),
+				'error_message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ),
 			],
 		];
 	}
@@ -421,7 +423,7 @@ class Module extends BaseModule {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
 			case 'elementor_update_site_name':
-				// If no value is passed for any reason, no need ot update the site name.
+				// If no value is passed for any reason, no need to update the site name.
 				$result = $this->maybe_update_site_name();
 				break;
 			case 'elementor_update_site_logo':

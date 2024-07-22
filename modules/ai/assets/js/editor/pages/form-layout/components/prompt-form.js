@@ -1,4 +1,4 @@
-import { useState, useRef, forwardRef } from 'react';
+import { useState, useRef, forwardRef, useEffect } from 'react';
 import { Box, Stack, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -13,17 +13,19 @@ import { useConfig } from '../context/config';
 import { AttachmentPropType } from '../../../types/attachment';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
-	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
-	{ text: __( 'An accordion-style FAQ block, with clickable questions revealing detailed answers about', 'elementor' ) },
-	{ text: __( 'A hero section combining an image, heading, subheading, and call-to-action button about', 'elementor' ) },
-	{ text: __( 'A full-width call-to-action with a background image, overlaid text, and a standout button about', 'elementor' ) },
-	{ text: __( 'A carousel testimonial block displaying user images, names, and their feedback on', 'elementor' ) },
-	{ text: __( 'A features block, showcasing the feature title, and brief description about', 'elementor' ) },
-	{ text: __( 'Multi column minimalistic About us section with icons showcasing', 'elementor' ) },
-	{ text: __( 'A section with contact form and social media icons representing alternative contact methods for', 'elementor' ) },
-	{ text: __( 'Statistics display in a 3-column layout, with numbers and icons about', 'elementor' ) },
-	{ text: __( 'Pricing table section with highlighted option for', 'elementor' ) },
-	{ text: __( 'About us section, combining company history and values about', 'elementor' ) },
+	{ text: __( 'Hero section on [topic] with heading, text, buttons on the right, and an image on the left', 'elementor.com' ) },
+	{ text: __( 'About Us section on [topic] with heading, text, and big image below', 'elementor.com' ) },
+	{ text: __( 'Team section with four image boxes showcasing team members', 'elementor.com' ) },
+	{ text: __( 'FAQ section with a toggle widget showcasing FAQs about [topic]', 'elementor.com' ) },
+	{ text: __( 'Gallery section with a carousel displaying three images at once', 'elementor.com' ) },
+	{ text: __( 'Contact section with a form for [topic]', 'elementor.com' ) },
+	{ text: __( 'Client section featuring companies\' logos', 'elementor.com' ) },
+	{ text: __( 'Testimonial section with testimonials, each featuring a star rating and an image', 'elementor.com' ) },
+	{ text: __( 'Service section about [topic], showcasing four services with buttons', 'elementor.com' ) },
+	{ text: __( 'Stats section with counters displaying data about [topic]', 'elementor.com' ) },
+	{ text: __( 'Quote section with colored background, featuring a centered quote', 'elementor.com' ) },
+	{ text: __( 'Pricing section for [topic] with a pricing list', 'elementor.com' ) },
+	{ text: __( 'Subscribe section featuring a simple email form, inviting users to stay informed on [topic]', 'elementor.com' ) },
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
@@ -76,8 +78,14 @@ const PromptForm = forwardRef( ( {
 	onSubmit,
 	onBack,
 	onEdit,
+	shouldResetPrompt = false,
 }, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
+	useEffect( () => {
+		if ( shouldResetPrompt ) {
+			setPrompt( '' );
+		}
+	}, [ shouldResetPrompt ] );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
 	const { attachmentsTypes } = useConfig();
@@ -167,6 +175,7 @@ PromptForm.propTypes = {
 	onBack: PropTypes.func.isRequired,
 	onEdit: PropTypes.func.isRequired,
 	attachments: PropTypes.arrayOf( AttachmentPropType ),
+	shouldResetPrompt: PropTypes.bool,
 };
 
 export default PromptForm;

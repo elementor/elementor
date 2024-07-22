@@ -63,7 +63,7 @@
 
 	.elementor-icon-list-icon + .elementor-icon-list-text {
 		align-self: center;
-		@include padding-start(5px);
+		padding-inline-start: 5px;
 	}
 
 	.elementor-icon-list-icon {

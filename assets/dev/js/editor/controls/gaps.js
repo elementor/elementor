@@ -42,7 +42,7 @@ ControlGapItemView = ControlDimensionsView.extend( {
 		this.setSettingsModel( values );
 	},
 
-	getControlValue( key ) {
+	getControlValue() {
 		const valuesUpdated = ControlDimensionsView.prototype.getControlValue.apply( this, arguments );
 
 		if ( this.shouldUpdateGapsValues( valuesUpdated ) ) {

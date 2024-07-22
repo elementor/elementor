@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Container\Container;
+use ElementorDeps\DI\Container as DIContainer;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
@@ -570,6 +572,14 @@ class Plugin {
 	public $assets_loader;
 
 	/**
+	 * Container instance for managing dependencies.
+	 *
+	 * @since 3.24.0
+	 * @var DIContainer
+	 */
+	private $container;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -630,6 +640,21 @@ class Plugin {
 		}
 
 		return self::$instance;
+	}
+
+	public function initialize_container() {
+		Container::initialize_instance();
+	}
+
+	/**
+	 * Get the Elementor container or resolve a dependency.
+	 */
+	public function elementor_container( $abstract = null ) {
+		if ( is_null( $abstract ) ) {
+			return $this->container;
+		}
+
+		return $this->container->make( $abstract );
 	}
 
 	/**
@@ -768,36 +793,6 @@ class Plugin {
 	}
 
 	/**
-	 * Get Legacy Mode
-	 *
-	 * @since 3.0.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead.
-	 *
-	 * @param string $mode_name Optional. Default is null
-	 *
-	 * @return bool|bool[]
-	 */
-	public function get_legacy_mode( $mode_name = null ) {
-		self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation
-			->deprecated_function( __METHOD__, '3.1.0', 'Plugin::$instance->experiments->is_feature_active()' );
-
-		$legacy_mode = [
-			'elementWrappers' => ! self::$instance->experiments->is_feature_active( 'e_dom_optimization' ),
-		];
-
-		if ( ! $mode_name ) {
-			return $legacy_mode;
-		}
-
-		if ( isset( $legacy_mode[ $mode_name ] ) ) {
-			return $legacy_mode[ $mode_name ];
-		}
-
-		// If there is no legacy mode with the given mode name;
-		return false;
-	}
-
-	/**
 	 * Add custom post type support.
 	 *
 	 * Register Elementor support for all the supported post types defined by
@@ -888,5 +883,7 @@ class Plugin {
 
 if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 	// In tests we run the instance manually.
-	Plugin::instance();
+	$plugin_instance = Plugin::instance();
+
+	$plugin_instance->initialize_container();
 }

@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.9.0
+ * Dialogs Manager v4.9.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -163,7 +163,7 @@
 			var effect = settings.effects[intent],
 				$widget = elements.widget;
 
-			if ($.isFunction(effect)) {
+			if ('function' === typeof effect) {
 				effect.apply($widget, params);
 			} else {
 
@@ -336,10 +336,10 @@
 				classes: {
 					globalPrefix: parentSettings.classPrefix,
 					prefix: parentSettings.classPrefix + '-' + widgetName,
-					preventScroll: parentSettings.classPrefix + '-prevent-scroll'
+					preventScroll: parentSettings.classPrefix + '-prevent-scroll',
 				},
 				selectors: {
-					preventClose: '.' + parentSettings.classPrefix + '-prevent-close'
+					preventClose: '.' + parentSettings.classPrefix + '-prevent-close',
 				},
 				container: 'body',
 				preventScroll: false,
@@ -351,7 +351,7 @@
 						role: 'button',
 						'tabindex': 0,
 						'aria-label': 'Close',
-						href: 'javascript:void(0);',
+						href: '#',
 					},
 					iconElement: '<i>',
 				},
@@ -360,7 +360,7 @@
 					my: 'center',
 					at: 'center',
 					enable: true,
-					autoRefresh: false
+					autoRefresh: false,
 				},
 				hide: {
 					auto: false,
@@ -370,7 +370,7 @@
 					onOutsideContextMenu: false,
 					onBackgroundClick: true,
 					onEscKeyPress: true,
-					ignore: ''
+					ignore: '',
 				},
 			};
 
@@ -711,7 +711,8 @@
 		var self = this;
 
 		if (self.getSettings('closeButton')) {
-			self.getElements('closeButton').on('click', function() {
+			self.getElements('closeButton').on('click', function(event) {
+				event.preventDefault();
 				self.hide();
 			});
 		}
@@ -784,7 +785,7 @@
 					}
 				}
 
-				this.focusedButton = this.buttons[nextButtonIndex].focus();
+				this.focusedButton = this.buttons[nextButtonIndex].trigger('focus');
 			}
 		},
 		addButton: function(options) {
@@ -807,7 +808,7 @@
 					self.hide();
 				}
 
-				if ($.isFunction(options.callback)) {
+				if ('function' === typeof options.callback) {
 					options.callback.call(this, self);
 				}
 			};
@@ -880,7 +881,7 @@
 			}
 
 			if (this.focusedButton) {
-				this.focusedButton.focus();
+				this.focusedButton.trigger('focus');
 			}
 		},
 		unbindHotKeys: function() {

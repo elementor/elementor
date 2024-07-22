@@ -3,6 +3,7 @@
 namespace Elementor\Core\Admin\Menu;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,16 +67,20 @@ class Admin_Menu_Manager {
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
 		$has_page = ( $item instanceof Admin_Menu_Item_With_Page );
+		$has_position = ( $item instanceof Admin_Menu_Item_Has_Position );
 
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
+		$position = $has_position ? $item->get_position() : null;
 
 		return add_menu_page(
 			$page_title,
 			$item->get_label(),
 			$item->get_capability(),
 			$item_slug,
-			$callback
+			$callback,
+			'',
+			$position
 		);
 	}
 

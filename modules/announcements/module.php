@@ -42,10 +42,14 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'announcements-app',
 			$this->get_js_assets_url( 'announcements-app' ),
-			[],
+			[
+				'wp-i18n',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'announcements-app', 'elementor' );
 
 		$this->print_config( 'announcements-app' );
 	}
@@ -90,28 +94,22 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		$raw_announcements = [
 			[
-				'title' => 'Unlock the Power of Elementor AI',
-				'description' => '<p>Design professional websites with natively integrated AI tools.</p>
-				<ul>
-					<li>Boost creativity & productivity with AI-generated containers. Build layouts from scratch or existing Elementor containers. Coming soon: Generate containers from any layout you reference from the web!</li>
-					<li>Let AI write or edit your text, adjust its length and tone of voice. Also generate custom code that seamlessly integrates into your website.</li>
-					<li>Create one-of-a kind images, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
-					<li>Access and repurpose previously-generated text, code or image prompts with Elementor’s AI History Panel to work efficiently and ensure consistency.</li>
-				</ul>',
+				'title' => __( 'Discover your new superpowers ', 'elementor' ),
+				'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
 				'media' => [
 					'type' => 'image',
 					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
 				],
 				'cta' => [
 					[
-						'label' => 'Continue',
+						'label' => __( 'Let\'s do it', 'elementor' ),
 						'variant' => 'primary',
-						'target' => '_blank',
+						'target' => '_top',
+						'url' => '#welcome-ai',
 					],
 					[
-						'label' => 'Learn More',
-						'target' => '_blank',
-						'url' => 'https://go.elementor.com/whats-new-popup-learn-elementor-ai/',
+						'label' => __( 'Skip', 'elementor' ),
+						'variant' => 'secondary',
 					],
 				],
 				'triggers' => [

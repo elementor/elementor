@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Base\Elements_Iteration_Actions\Assets;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -10,6 +11,7 @@ use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\FloatingButtons\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -394,16 +396,6 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
-			'elementor-waypoints',
-			$this->get_js_assets_url( 'waypoints', 'assets/lib/waypoints/' ),
-			[
-				'jquery',
-			],
-			'4.0.2',
-			true
-		);
-
-		wp_register_script(
 			'flatpickr',
 			$this->get_js_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[
@@ -466,7 +458,10 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			$this->get_elementor_frontend_dependencies(),
+			[
+				'elementor-frontend-modules',
+				'jquery-ui-position',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -529,6 +524,13 @@ class Frontend extends App {
 			'1.2.0'
 		);
 
+		wp_register_style(
+			'e-apple-webkit',
+			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
@@ -537,26 +539,12 @@ class Frontend extends App {
 
 		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
-		$frontend_dependencies = [];
-
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			// If The Dom Optimization feature is disabled, register the legacy CSS
-			wp_register_style(
-				'elementor-frontend-legacy',
-				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
-				[],
-				ELEMENTOR_VERSION
-			);
-
-			$frontend_dependencies[] = 'elementor-frontend-legacy';
-		}
 
 		wp_register_style(
 			'elementor-frontend',
 			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			$frontend_dependencies,
+			[],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
@@ -565,6 +553,13 @@ class Frontend extends App {
 			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
 			[],
 			$this->e_swiper_version
+		);
+
+		wp_register_style(
+			'elementor-wp-admin-bar',
+			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			[],
+			ELEMENTOR_VERSION
 		);
 
 		/**
@@ -596,18 +591,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
-
-		if ( ! $this->is_improved_assets_loading() ) {
-			wp_enqueue_script(
-				'preloaded-modules',
-				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
-				[
-					'elementor-frontend',
-				],
-				ELEMENTOR_VERSION,
-				true
-			);
-		}
 
 		$this->print_config();
 
@@ -657,6 +640,10 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'swiper' );
 
+			if ( is_admin_bar_showing() ) {
+				wp_enqueue_style( 'elementor-wp-admin-bar' );
+			}
+
 			/**
 			 * After frontend styles enqueued.
 			 *
@@ -674,6 +661,11 @@ class Frontend extends App {
 				if ( $post_id && is_singular() ) {
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
+
+					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
+					if ( ! empty( $page_assets ) ) {
+						Plugin::$instance->assets_loader->enable_assets( $page_assets );
+					}
 				}
 			}
 		}
@@ -1412,6 +1404,10 @@ class Frontend extends App {
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
 				'assets' => $assets_url,
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			],
+			'nonces' => [
+				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
 			],
 			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
@@ -1547,34 +1543,6 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
-	}
-
-	private function is_improved_assets_loading() {
-		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-	}
-
-	private function get_elementor_frontend_dependencies() {
-		$dependencies = [
-			'elementor-frontend-modules',
-			'elementor-waypoints',
-			'jquery-ui-position',
-		];
-
-		if ( ! $this->is_improved_assets_loading() ) {
-			wp_register_script(
-				'swiper',
-				$this->get_js_assets_url( 'swiper', $this->e_swiper_asset_path ),
-				[],
-				$this->e_swiper_version,
-				true
-			);
-
-			$dependencies[] = 'swiper';
-			$dependencies[] = 'share-link';
-			$dependencies[] = 'elementor-dialog';
-		}
-
-		return $dependencies;
 	}
 
 	private function is_optimized_css_mode() {

@@ -14,7 +14,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { UpgradeIcon, CheckedCircleIcon, AIIcon } from '@elementor/icons';
+import { CheckedCircleIcon, AIIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
@@ -62,9 +62,10 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
-	__( 'Let AI build your container layouts and content with ease and radically transform the way you create websites.', 'elementor' ),
-	__( 'Generate your website\'s text or create custom code without having to write a single line yourself.', 'elementor' ),
+	__( 'Get spot-on suggestions from AI Copilot and AI Context with appropriate designs, layouts, and content for your business.', 'elementor' ),
+	__( 'Generate professional texts about any topic, in any tone.', 'elementor' ),
 	__( 'Effortlessly create or enhance stunning images and bring your ideas to life.', 'elementor' ),
+	__( 'Unleash infinite possibilities with the custom code generator.', 'elementor' ),
 	__( 'Access 30-days of AI History with the AI Starter plan and 90-days with the Power plan.', 'elementor' ),
 ];
 
@@ -106,7 +107,8 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <AIIcon /> } size="small" />
+			<Chip color="promotion" label={ __( 'Upgrade', 'elementor' ) }
+				icon={ <AIIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -124,7 +126,7 @@ const UpgradeChip = ( {
 					<StyledArrow ref={ arrowEl } />
 
 					<Typography variant="h5" color="text.primary">
-						{ __( 'Maximize Your Access to Elementor AI', 'elementor' ) }
+						{ __( 'Unlimited access to Elementor AI', 'elementor' ) }
 					</Typography>
 
 					<List sx={ { mb: 1 } }>
@@ -144,14 +146,14 @@ const UpgradeChip = ( {
 
 					<Button
 						variant="contained"
-						color="accent"
+						color="promotion"
 						size="small"
 						href={ actionUrl }
 						target="_blank"
 						startIcon={ <AIIcon /> }
 						sx={ {
 							'&:hover': {
-								color: 'accent.contrastText',
+								color: 'promotion.contrastText',
 							},
 						} }
 					>

@@ -90,6 +90,10 @@ class Widget_Divider extends Widget_Base {
 		return [ 'divider', 'hr', 'line', 'border' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	private static function get_additional_styles() {
 		static $additional_styles = null;
 
@@ -492,15 +496,6 @@ class Widget_Divider extends Widget_Base {
 				'prefix_class' => 'elementor-widget-divider--view-',
 				'toggle' => false,
 				'render_type' => 'template',
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 

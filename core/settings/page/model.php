@@ -122,8 +122,11 @@ class Model extends CSS_Model {
 		$document = Plugin::$instance->documents->get( $this->post->ID );
 
 		return [
-			/* translators: %s: Document title. */
-			'title' => sprintf( esc_html__( '%s Settings', 'elementor' ), $document::get_title() ),
+			'title' => sprintf(
+				/* translators: %s: Document title. */
+				esc_html__( '%s Settings', 'elementor' ),
+				$document::get_title()
+			),
 		];
 	}
 

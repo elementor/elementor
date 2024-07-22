@@ -30,6 +30,10 @@ class Widget_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'review', 'score', 'scale' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * @return void
 	 */

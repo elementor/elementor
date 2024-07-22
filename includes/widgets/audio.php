@@ -81,6 +81,10 @@ class Widget_Audio extends Widget_Base {
 		return [ 'audio', 'player', 'soundcloud', 'embed' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register audio widget controls.
 	 *
@@ -242,15 +246,6 @@ class Widget_Audio extends Widget_Base {
 			[
 				'label' => esc_html__( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'soundcloud',
 			]
 		);
 

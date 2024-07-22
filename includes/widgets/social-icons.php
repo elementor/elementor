@@ -56,6 +56,10 @@ class Widget_Social_Icons extends Widget_Base {
 		return 'eicon-social-icons';
 	}
 
+	public function get_style_depends(): array {
+		return [ 'e-apple-webkit' ];
+	}
+
 	/**
 	 * Get widget keywords.
 	 *
@@ -68,6 +72,10 @@ class Widget_Social_Icons extends Widget_Base {
 	 */
 	public function get_keywords() {
 		return [ 'social', 'icon', 'link' ];
+	}
+
+	protected function is_dynamic_content(): bool {
+		return false;
 	}
 
 	/**
@@ -139,6 +147,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'steam',
 						'telegram',
 						'thumb-tack',
+						'threads',
 						'tripadvisor',
 						'tumblr',
 						'twitch',
@@ -151,6 +160,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'whatsapp',
 						'wordpress',
 						'xing',
+						'x-twitter',
 						'yelp',
 						'youtube',
 						'500px',
@@ -257,8 +267,8 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'rounded',
 				'options' => [
-					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',
@@ -314,15 +324,6 @@ class Widget_Social_Icons extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 

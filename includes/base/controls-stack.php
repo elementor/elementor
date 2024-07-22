@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Frontend\Performance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -310,7 +311,24 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		return self::get_items( $this->get_stack()['controls'], $control_id );
+		$stack = $this->get_stack();
+
+		if ( null !== $control_id ) {
+			$control_data = self::get_items( $stack['controls'], $control_id );
+			if ( null === $control_data && ! empty( $stack['style_controls'] ) ) {
+				$control_data = self::get_items( $stack['style_controls'], $control_id );
+			}
+
+			return $control_data;
+		}
+
+		$controls = $stack['controls'];
+
+		if ( Performance::is_use_style_controls() && ! empty( $stack['style_controls'] ) ) {
+			$controls += $stack['style_controls'];
+		}
+
+		return self::get_items( $controls, $control_id );
 	}
 
 	/**
@@ -431,39 +449,49 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
-		if ( $this->should_optimize_controls() ) {
+		if ( Performance::should_optimize_controls() ) {
+			$ui_controls = [
+				Controls_Manager::RAW_HTML,
+				Controls_Manager::DIVIDER,
+				Controls_Manager::HEADING,
+				Controls_Manager::BUTTON,
+				Controls_Manager::ALERT,
+				Controls_Manager::NOTICE,
+				Controls_Manager::DEPRECATED_NOTICE,
+			];
+
+			if ( ! empty( $args['type'] ) && ! empty( $args['section'] ) && in_array( $args['type'], $ui_controls ) ) {
+				$args = [
+					'type' => $args['type'],
+					'section' => $args['section'],
+				];
+			}
+
 			unset(
 				$args['label_block'],
 				$args['label'],
+				$args['title'],
 				$args['tab'],
 				$args['options'],
+				$args['placeholder'],
 				$args['separator'],
 				$args['size_units'],
 				$args['range'],
-				$args['render_type'],
 				$args['toggle'],
 				$args['ai'],
+				$args['classes'],
+				$args['style_transfer'],
+				$args['show_label'],
+				$args['description'],
 				$args['label_on'],
 				$args['label_off'],
 				$args['labels'],
-				$args['handles']
+				$args['handles'],
+				$args['editor_available'],
 			);
 		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
-	}
-
-	private function should_optimize_controls() {
-		static $is_frontend = null;
-
-		if ( null === $is_frontend ) {
-			$is_frontend = (
-				! is_admin()
-				&& ! Plugin::$instance->preview->is_preview_mode()
-			);
-		}
-
-		return $is_frontend;
 	}
 
 	/**
@@ -2387,7 +2415,9 @@ abstract class Controls_Stack extends Base_Object {
 				$args = array_replace_recursive( $target_tab, $args );
 			}
 		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
-			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			if ( ! Performance::should_optimize_controls() ) {
+				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
 		}
 
 		return $args;

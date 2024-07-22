@@ -34,6 +34,7 @@ export class NotesContextMenu extends elementorModules.editor.utils.Module {
 					name: 'open_notes',
 					title: __( 'Notes', 'elementor' ),
 					shortcut: '<i class="eicon-pro-icon"></i>',
+					promotionURL: 'https://go.elementor.com/go-pro-notes-context-menu/',
 					isEnabled: () => false,
 					callback: () => {},
 				},

@@ -73,6 +73,10 @@ class Widget_Progress extends Widget_Base {
 		return [ 'progress', 'bar' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register progress widget controls.
 	 *
@@ -184,15 +188,6 @@ class Widget_Progress extends Widget_Base {
 				'placeholder' => esc_html__( 'e.g. Web Designer', 'elementor' ),
 				'default' => esc_html__( 'Web Designer', 'elementor' ),
 				'label_block' => true,
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 
@@ -351,6 +346,11 @@ class Widget_Progress extends Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['title'] ) && empty( $settings['percent']['size'] ) ) {
+			return;
+		}
+
 		$progressbar_id = 'elementor-progress-bar-' . $this->get_id();
 
 		$progress_percentage = is_numeric( $settings['percent']['size'] ) ? $settings['percent']['size'] : '0';
@@ -431,6 +431,10 @@ class Widget_Progress extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		if ( '' === settings.title && '' === settings.percent.size ) {
+			return;
+		}
+
 		const title_tag = elementor.helpers.validateHTMLTag( settings.title_tag );
 		const progressbar_id = 'elementor-progress-bar-<?php echo esc_attr( $this->get_id() ); ?>';
 

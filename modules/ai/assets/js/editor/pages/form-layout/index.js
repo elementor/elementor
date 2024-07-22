@@ -9,16 +9,16 @@ import PromptForm from './components/prompt-form';
 import RefreshIcon from '../../icons/refresh-icon';
 import Screenshot from './components/screenshot';
 import useScreenshots from './hooks/use-screenshots';
-import useSlider from './hooks/use-slider';
+import useSlider, { MAX_PAGES, SCREENSHOTS_PER_PAGE } from './hooks/use-slider';
 import MinimizeDiagonalIcon from '../../icons/minimize-diagonal-icon';
 import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
 import { useConfig } from './context/config';
 import { AttachmentPropType } from '../../types/attachment';
 import { PromptPowerNotice } from './components/attachments/prompt-power-notice';
-import { ProWidgetsNotice } from './components/pro-widgets-notice';
 import { ATTACHMENT_TYPE_URL } from './components/attachments';
 import AttachDialog from './components/attachments/attach-dialog';
 import isURL from 'validator/lib/isURL';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
@@ -55,12 +55,20 @@ const UseLayoutButton = ( props ) => (
 UseLayoutButton.propTypes = {
 	sx: PropTypes.object,
 };
+
+const isRegenerateButtonDisabled = ( screenshots, isLoading, isPromptFormActive ) => {
+	if ( isLoading || isPromptFormActive ) {
+		return true;
+	}
+	return screenshots.length >= SCREENSHOTS_PER_PAGE * MAX_PAGES;
+};
+
 const FormLayout = ( {
 	DialogHeaderProps = {},
 	DialogContentProps = {},
 	attachments: initialAttachments,
 } ) => {
-	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate, hasPro } = useConfig();
+	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate } = useConfig();
 
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
@@ -100,8 +108,6 @@ const FormLayout = ( {
 	const shouldFallbackToEditPrompt = !! ( error && 0 === screenshots.length );
 
 	const isPromptFormActive = isPromptEditable || shouldFallbackToEditPrompt;
-
-	const mayContainProWidgets = 0 === attachments.length || attachments.some( ( attachment ) => ATTACHMENT_TYPE_URL === attachment.type );
 
 	const abortAndClose = () => {
 		abort();
@@ -201,6 +207,7 @@ const FormLayout = ( {
 		} );
 
 		setAttachments( items );
+		setShouldRenderWebApp( false );
 		setIsPromptEditable( true );
 	};
 
@@ -243,8 +250,6 @@ const FormLayout = ( {
 						</Box>
 					) }
 
-					{ mayContainProWidgets && ! hasPro && <ProWidgetsNotice /> }
-
 					{ attachments.length > 0 && <PromptPowerNotice /> }
 
 					{ error && (
@@ -272,6 +277,7 @@ const FormLayout = ( {
 							} } />
 					) }
 					<PromptForm
+						shouldResetPrompt={ shouldRenderWebApp }
 						ref={ promptInputRef }
 						isActive={ isPromptFormActive }
 						isLoading={ isLoading }
@@ -327,6 +333,7 @@ const FormLayout = ( {
 											}
 										</Box>
 									</Box>
+									<VoicePromotionAlert introductionKey="ai-context-layout-promotion" />
 								</Box>
 
 								{
@@ -334,7 +341,7 @@ const FormLayout = ( {
 										<Box sx={ { pt: 0, px: 2, pb: 2 } } display="grid" gridTemplateColumns="repeat(3, 1fr)" justifyItems="center">
 											<RegenerateButton
 												onClick={ handleRegenerate }
-												disabled={ isLoading || isPromptFormActive }
+												disabled={ isRegenerateButtonDisabled( screenshots, isLoading, isPromptFormActive ) }
 												sx={ { justifySelf: 'start' } }
 											/>
 
