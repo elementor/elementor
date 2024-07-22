@@ -1,6 +1,6 @@
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import { __ } from '@wordpress/i18n';
-import { AIMediaGenerateApp } from '../media-library/componenets';
+import { AIMediaGenerateApp } from '../media-library/components';
 import { useGutenbergPostText } from './post-text-utils';
 import { AiLink, Icon } from './styles';
 import { useState } from '@wordpress/element';

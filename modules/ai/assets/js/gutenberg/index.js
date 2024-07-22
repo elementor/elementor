@@ -18,16 +18,7 @@ import { EditTextWithAi } from './edit-text-with-ai';
 			if ( excerptPanel && ! document.querySelector( '.e-excerpt-ai' ) ) {
 				const rootElement = document.createElement( 'div' );
 				rootElement.classList.add( 'e-excerpt-ai' );
-				// Find the existing link with class "components-external-link"
-				const existingExcerptLink = excerptPanel.querySelector( '.components-external-link' );
-				if ( existingExcerptLink ) {
-					existingExcerptLink.classList.add( 'existing-excerpt-link' );
-					// Append the new link before the existing one
-					excerptPanel.insertBefore( rootElement, existingExcerptLink );
-				} else {
-					// Append the new link to the excerpt panel
-					excerptPanel.appendChild( rootElement );
-				}
+				excerptPanel.appendChild( rootElement );
 
 				const urlSearchParams = new URLSearchParams( window.location.search );
 				elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', urlSearchParams?.get( 'post' ) );
@@ -51,7 +42,7 @@ import { EditTextWithAi } from './edit-text-with-ai';
 		};
 
 		const addTextWithAI = ( blockName, blockClientId ) => {
-			const textPanel = document.querySelector( '.block-editor-block-card__description' );
+			const textPanel = document.querySelector( '.block-editor-block-card__description, .block-editor-block-card__content' );
 			if ( textPanel && ! document.querySelector( `.e-text-ai[data-client-id="${ blockClientId }"]` ) ) {
 				removeAiIndicator();
 				const rootElement = document.createElement( 'div' );
@@ -92,6 +83,21 @@ import { EditTextWithAi } from './edit-text-with-ai';
 			addAiIndicator( 'post-excerpt', addGenerateExcerptWithAI );
 			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
 			addAiIndicatorToTextBlock( [ 'paragraph', 'heading' ] );
+		} );
+
+		const observer = new MutationObserver( ( mutationsList ) => {
+			for ( const mutation of mutationsList ) {
+				if ( 'childList' === mutation.type ) {
+					if ( document.querySelector( '.editor-post-excerpt' ) ) {
+						addGenerateExcerptWithAI();
+					}
+				}
+			}
+		} );
+
+		observer.observe( document.body, { childList: true, subtree: true } );
+		window.addEventListener( 'beforeunload', () => {
+			observer.disconnect();
 		} );
 	} );
 } )( jQuery );
