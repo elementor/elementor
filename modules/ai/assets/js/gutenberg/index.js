@@ -88,7 +88,7 @@ import { EditTextWithAi } from './edit-text-with-ai';
 		const observer = new MutationObserver( ( mutationsList ) => {
 			for ( const mutation of mutationsList ) {
 				if ( 'childList' === mutation.type ) {
-					if ( document.querySelector( '.editor-post-excerpt' ) ) { // Replace with the actual class or ID of the popup
+					if ( document.querySelector( '.editor-post-excerpt' ) ) {
 						addGenerateExcerptWithAI();
 					}
 				}
