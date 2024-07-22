@@ -2,6 +2,7 @@ import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import DOMPurify from 'dompurify';
+import { isValidAttribute } from 'dompurify';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -706,10 +707,8 @@ module.exports = {
 	},
 
 	sanitizeUrl( url ) {
-		const IS_ALLOWED_URI = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-			sanitizedUrl = DOMPurify.sanitize( url ),
-			isUrlAllowed = IS_ALLOWED_URI.test( sanitizedUrl );
+		const isValidUrl = isValidAttribute( 'a', 'href', url );
 
-		return isUrlAllowed ? sanitizedUrl : '';
+		return isValidUrl ? url : '';
 	},
 };
