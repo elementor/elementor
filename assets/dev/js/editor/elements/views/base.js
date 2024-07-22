@@ -813,18 +813,6 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	getChangedDynamicControlKey( settings ) {
-		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
-
-		if ( changedControlKey ) {
-			return changedControlKey;
-		}
-
-		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
-			? Object.keys( settings.changed )[ 0 ]
-			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
-	},
-
 	/**
 	 * Function renderOnChange().
 	 *
