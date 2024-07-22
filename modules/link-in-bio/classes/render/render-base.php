@@ -469,7 +469,7 @@ abstract class Render_Base {
 				break;
 			case Social_Network_Provider::MESSENGER:
 				$formatted_link = ! empty( $cta['cta_link_username'] ) ?
-					'https://www.facebook.com/messages/t/' . $cta['cta_link_username'] :
+					Social_Network_Provider::build_messenger_link( $cta['cta_link_username'] ) :
 					'';
 				break;
 			case Social_Network_Provider::WAZE:
@@ -504,7 +504,7 @@ abstract class Render_Base {
 				break;
 			case Social_Network_Provider::MESSENGER:
 				$formatted_link = ! empty( $icon['icon_username'] ) ?
-					'https://www.facebook.com/messages/t/' . $icon['icon_username'] :
+					Social_Network_Provider::build_messenger_link( $icon['icon_username'] ) :
 					'';
 				break;
 			case Social_Network_Provider::WAZE:

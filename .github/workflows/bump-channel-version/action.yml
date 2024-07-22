@@ -44,7 +44,7 @@ runs:
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
         echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
 
-        # An overriden PACKAGE_VERSION value is used in the one click release workflow to set the release and file names
+        # An overridden PACKAGE_VERSION value is used in the one click release workflow to set the release and file names
         # So that they contain their postfix and bump version number.
         # Should be unified with the code in get-new-package-version.
         if [[ ${{ inputs.OVERRIDE_PACKAGE_VERSION }} == "true" ]]; then

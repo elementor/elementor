@@ -112,7 +112,6 @@ class Autoloader {
 	private static function init_classes_map() {
 		self::$classes_map = [
 			'Api' => 'includes/api.php',
-			'Atomic_Widget_Base' => 'includes/base/atomic-widget-base.php',
 			'Base_Control' => 'includes/controls/base.php',
 			'Base_Data_Control' => 'includes/controls/base-data.php',
 			'Base_UI_Control' => 'includes/controls/base-ui.php',
@@ -152,6 +151,7 @@ class Autoloader {
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
 			'TemplateLibrary\Source_Remote' => 'includes/template-library/sources/remote.php',
 			'Tools' => 'includes/settings/tools.php',
+			'Container\Container' => 'includes/container/container.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',
@@ -200,7 +200,7 @@ class Autoloader {
 	 * Init classes aliases.
 	 *
 	 * When Elementor classes renamed or moved to different folders, developers
-	 * can still use the old names by setting an aliase.
+	 * can still use the old names by setting an alias.
 	 *
 	 * While in deprecation period both classes will work. When the deprecation
 	 * period ends, the alies should be removed from the list of aliases.
