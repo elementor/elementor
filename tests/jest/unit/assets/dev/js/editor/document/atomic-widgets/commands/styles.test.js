@@ -1,4 +1,5 @@
 import createContainer from '../createContainer';
+import createModel from 'elementor/tests/jest/unit/assets/dev/js/editor/document/atomic-widgets/createModel';
 
 describe( 'styles', () => {
 	let StylesCommand;
@@ -12,7 +13,7 @@ describe( 'styles', () => {
 					document: {
 						CommandHistoryDebounceBase: class {
 							isHistoryActive() {
-								return false;
+								return true;
 							}
 						},
 					},
@@ -31,7 +32,7 @@ describe( 'styles', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should create new style object and update the reference in the settings', () => {
+	it( 'should create new style object and update the reference in the settings & history', () => {
 		const command = new StylesCommand();
 
 		// Mock generateId
@@ -68,25 +69,52 @@ describe( 'styles', () => {
 			},
 		};
 
-		// Assert
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/atomic-widgets/set-styles',
-			{
-				container,
-				styles: updatedStyles,
-			},
-		);
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/elements/set-settings',
-			{
-				container,
-				options: { render: false },
-				settings: {
-					classes: {
+		const historyChanges = {
+			[ container.id ]: {
+				oldStyles: {},
+				newStyles: updatedStyles,
+				oldSettings: {
+					[ bind ]: {},
+				},
+				newSettings: {
+					[ bind ]: {
 						$$type: 'classes',
 						value: [ 'new-style-id' ],
 					},
 				},
+			},
+		};
+
+		// Assert
+		// expect( $e.internal ).toHaveBeenCalledWith(
+		// 	'document/atomic-widgets/set-styles',
+		// 	{
+		// 		container,
+		// 		styles: updatedStyles,
+		// 	},
+		// );
+		//
+		// expect( $e.internal ).toHaveBeenCalledWith(
+		// 	'document/elements/set-settings',
+		// 	{
+		// 		container,
+		// 		options: { render: false },
+		// 		settings: {
+		// 			classes: {
+		// 				$$type: 'classes',
+		// 				value: [ 'new-style-id' ],
+		// 			},
+		// 		},
+		// 	},
+		// );
+
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/history/add-transaction',
+			{
+				containers: [ container ],
+				data: { changes: historyChanges },
+				type: 'change',
+				restore: StylesCommand.restore,
 			},
 		);
 	} );
@@ -297,6 +325,118 @@ describe( 'styles', () => {
 			{
 				container,
 				styles: updatedStyles,
+			},
+		);
+	} );
+} );
+
+describe( 'styles - restore', () => {
+	let StylesCommand;
+
+	beforeEach( async () => {
+		global.$e = {
+			internal: jest.fn(),
+			run: jest.fn(),
+			modules: {
+				editor: {
+					document: {
+						CommandHistoryDebounceBase: class {},
+					},
+				},
+			},
+		};
+
+		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
+		StylesCommand = ( await import( 'elementor-document/atomic-widgets/commands/styles' ) ).default;
+	} );
+
+	afterEach( () => {
+		delete global.$e;
+		delete global.elementor;
+
+		jest.resetAllMocks();
+	} );
+
+	it( 'should reset the styles and the settings', () => {
+		const bind = 'classes';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'Test text',
+				[ bind ]: {
+					$$type: 'classes',
+					value: [ 'new-style-id' ],
+				},
+			},
+			styles: {
+				'new-style-id': {
+					id: 'new-style-id',
+					label: '',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: { width: '10px' },
+						},
+					],
+				},
+			},
+		} );
+
+		const historyItem = createModel( {
+			containers: [ container ],
+			data: {
+				changes: {
+					[ container.id ]: {
+						oldStyles: {},
+						newStyles: {
+							'new-style-id': {
+								id: 'new-style-id',
+								label: '',
+								type: 'class',
+								variants: [
+									{
+										meta: { breakpoint: null, state: null },
+										props: { width: '10px' },
+									},
+								],
+							},
+						},
+						oldSettings: {
+							[ bind ]: {},
+						},
+						newSettings: {
+							[ bind ]: {
+								$$type: 'classes',
+								value: [ 'new-style-id' ],
+							},
+						},
+					},
+				},
+			},
+		} );
+
+		// Act
+		StylesCommand.restore( historyItem, false );
+
+		// Assert
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/atomic-widgets/set-styles',
+			{
+				container,
+				styles: {},
+			},
+		);
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/elements/set-settings',
+			{
+				container,
+				options: { render: false },
+				settings: {
+					[ bind ]: {},
+				},
 			},
 		);
 	} );

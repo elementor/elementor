@@ -15,6 +15,24 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		return __( 'Styles', 'elementor' );
 	}
 
+	validateArgs( args ) {
+		this.requireContainer( args );
+
+		this.requireArgumentConstructor( 'meta', Object, args );
+
+		this.requireArgumentConstructor( 'props', Object, args );
+
+		this.requireArgumentConstructor( 'bind', String, args );
+
+		if ( 0 === Object.keys( args.props ).length ) {
+			throw new Error( 'Props are empty' );
+		}
+
+		if ( ! args.meta || ! ( 'breakpoint' in args.meta && 'state' in args.meta ) ) {
+			throw new Error( 'Meta are invalid' );
+		}
+	}
+
 	/**
 	 * Function restore().
 	 *
@@ -70,24 +88,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		$e.internal( 'document/history/add-transaction', historyItem );
 	}
 
-	validateArgs( args ) {
-		this.requireContainer( args );
-
-		this.requireArgumentConstructor( 'meta', Object, args );
-
-		this.requireArgumentConstructor( 'props', Object, args );
-
-		this.requireArgumentConstructor( 'bind', String, args );
-
-		if ( 0 === Object.keys( args.props ).length ) {
-			throw new Error( 'Props are empty' );
-		}
-
-		if ( ! args.meta || ! ( 'breakpoint' in args.meta && 'state' in args.meta ) ) {
-			throw new Error( 'Meta are invalid' );
-		}
-	}
-
 	getHistory( args ) {
 		const { containers = [ args.container ] } = args,
 			subTitle = this.constructor.getSubTitle( args );
@@ -129,7 +129,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 		this.changes.newSettings = newSettings;
 		this.changes.oldSettings = {
-			[ bind ]: oldSettings,
+			[ bind ]: oldSettings || {},
 		};
 
 		return newStyles;
