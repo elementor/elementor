@@ -40,7 +40,7 @@ class Module extends BaseModule {
 	private $trashed_contact_pages;
 
 	public static function is_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( 'container' );
 	}
 
 	public function get_name(): string {
@@ -50,23 +50,6 @@ class Module extends BaseModule {
 	public function get_widgets(): array {
 		return [
 			'Contact_Buttons',
-		];
-	}
-
-	public static function get_experimental_data(): array {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
-			'description' => esc_html__( 'Boost visitor engagement with Floating Buttons. The Floating Button template library offers a variety of interactive one-click contact options, highlighted links, and calls to action to increase your website conversions.', 'elementor' ),
-			'default' => Manager::STATE_INACTIVE,
-			'release_status' => Manager::RELEASE_STATUS_BETA,
-			'dependencies' => [
-				'container',
-			],
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.23.0',
-			],
 		];
 	}
 
