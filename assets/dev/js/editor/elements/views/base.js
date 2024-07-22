@@ -1158,6 +1158,14 @@ BaseElementView = BaseContainer.extend( {
 	getTitleWithAdvancedValues( settings, text ) {
 		const { attributes, _previousAttributes: previousAttributes } = settings;
 
+		if ( this.compareSettings( attributes, previousAttributes, 'fallback' ) ) {
+			text = text.replace( new RegExp( previousAttributes.fallback ), '' );
+		}
+
+		if ( ! text || attributes.fallback === text ) {
+			return attributes.fallback || '';
+		}
+
 		if ( this.compareSettings( attributes, previousAttributes, 'before' ) ) {
 			text = text.replace( previousAttributes.before, '' );
 		}
@@ -1167,7 +1175,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( ! text ) {
-			return settings.fallback || '';
+			return attributes.fallback || '';
 		}
 
 		const newBefore = this.getNewSettingsValue( attributes, previousAttributes, 'before' ),
