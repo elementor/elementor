@@ -423,7 +423,7 @@ class Module extends BaseModule {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
 			case 'elementor_update_site_name':
-				// If no value is passed for any reason, no need ot update the site name.
+				// If no value is passed for any reason, no need to update the site name.
 				$result = $this->maybe_update_site_name();
 				break;
 			case 'elementor_update_site_logo':

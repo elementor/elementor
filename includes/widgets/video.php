@@ -1128,7 +1128,7 @@ class Widget_Video extends Widget_Base {
 	/**
 	 * Render video widget as plain content.
 	 *
-	 * Override the default behavior, by printing the video URL insted of rendering it.
+	 * Override the default behavior, by printing the video URL instead of rendering it.
 	 *
 	 * @since 1.4.5
 	 * @access public
