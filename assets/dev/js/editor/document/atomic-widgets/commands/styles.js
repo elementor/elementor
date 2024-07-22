@@ -109,13 +109,12 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			variants: [],
 		};
 
-		const oldSettings = container.model.get( 'settings' ),
-			oldValue = oldSettings?.get( bind )?.value || [];
+		const oldSettings = container.model.get( 'settings' )?.get( bind );
 
 		const newSettings = {
 			[ bind ]: {
 				$$type: 'classes',
-				value: [ ...oldValue, newId ],
+				value: [ ...oldSettings?.value, newId ],
 			},
 		};
 
