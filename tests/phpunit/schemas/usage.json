@@ -373,7 +373,7 @@
 						"version": {
 							"$id": "#/system/wordpress/version",
 							"type": "string",
-							"title": "Wordpress version",
+							"title": "WordPress version",
 							"examples": [
 								"5.6.1"
 							]
