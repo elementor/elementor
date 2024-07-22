@@ -157,26 +157,6 @@
 		}
 	}
 
-	// &__text-container {
-	// 	align-items: center;
-	// 	display: flex;
-	// 	gap: var(--e-floating-bars-elements-gap);
-
-	// 	.has-close-button-position-end & {
-
-	// 		@media (max-width: $screen-mobile-max) {
-	// 			padding-inline-end: $floating-bars-close-button-offset;
-	// 		}
-	// 	}
-
-	// 	.has-close-button-position-start & {
-
-	// 		@media (max-width: $screen-mobile-max) {
-	// 			padding-inline-start: $floating-bars-close-button-offset;
-	// 		}
-	// 	}
-	// }
-
 	&__cta-icon {
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;

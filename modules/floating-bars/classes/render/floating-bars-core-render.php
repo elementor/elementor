@@ -23,7 +23,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 	protected function render_announcement_text(): void {
 		$text = $this->settings['announcement_text'] ?? '';
-		if ( ! empty( $text) ): ?>
+		if ( '' !== $text ): ?>
 			<p class="e-floating-bars__announcement-text"><?php echo esc_html( $text ); ?></p>
 		<?php endif;
 	}
