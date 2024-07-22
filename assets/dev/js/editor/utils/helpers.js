@@ -1,8 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
-import DOMPurify from 'dompurify';
-import { isValidAttribute } from 'dompurify';
+import DOMPurify, { isValidAttribute } from 'dompurify';
 
 const allowedHTMLWrapperTags = [
 	'article',
