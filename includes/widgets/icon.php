@@ -486,7 +486,7 @@ class Widget_Icon extends Widget_Base {
 			return;
 		}
 
-		const link = settings.link.url ? 'href="' + _.escape( settings.link.url ) + '"' : '',
+		const link = settings.link.url ? 'href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 				iconTag = link ? 'a' : 'div';
