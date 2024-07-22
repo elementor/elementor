@@ -446,7 +446,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		if ( $config['content']['chat_button_section']['has_accessible_name']) {
+		if ( $config['content']['chat_button_section']['has_accessible_name'] ) {
 			$this->add_control(
 				'chat_aria_label',
 				[
@@ -702,7 +702,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
-		if ( $config['content']['contact_section']['has_accessible_name']) {
+		if ( $config['content']['contact_section']['has_accessible_name'] ) {
 			$this->add_control(
 				'contact_aria_label',
 				[
