@@ -2486,8 +2486,8 @@
 			"tab": "content",
 			"section": "section_form_options",
 			"label": "Error Message",
-			"default": "An error occured.",
-			"placeholder": "An error occured.",
+			"default": "An error occurred.",
+			"placeholder": "An error occurred.",
 			"label_block": true,
 			"condition": {
 				"custom_messages!": ""
