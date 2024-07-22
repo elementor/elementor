@@ -90,7 +90,7 @@ class Module extends BaseModule {
 		return ! is_admin() && ! Plugin::$instance->preview->is_preview_mode() && ! Plugin::$instance->editor->is_edit_mode();
 	}
 
-	private static function is_lazy_load_background_images_enabled() : bool {
-		return (bool) get_option( 'elementor_lazy_load_background_images', '1' );
+	private static function is_lazy_load_background_images_enabled(): bool {
+		return '1' === get_option( 'elementor_lazy_load_background_images', '1' );
 	}
 }
