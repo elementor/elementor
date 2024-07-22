@@ -657,35 +657,22 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( dataBinding, changedControl ) {
-		return !! ( dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-				elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) &&
+	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+		return '__dynamic__' in changedSettings &&
+			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
 			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
 	},
 
-	async getDynamicValue( settings, bindingSetting ) {
+	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
 		const dynamicSettings = { active: true },
-			changedDataForRemovedItem = settings.attributes?.[ bindingSetting ],
-			changedDataForAddedItem = settings.attributes?.__dynamic__?.[ bindingSetting ],
-			valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
+			valueToParse = this.getChangedData( settings, changedControlKey, bindingSetting );
 
-		if ( valueToParse ) {
-			try {
-				return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
-			} catch {
-				await new Promise( ( resolve ) => {
-					elementor.dynamicTags.refreshCacheFromServer( () => {
-						resolve();
-					} );
-				} );
-
-				return ! _.isEmpty( elementor.dynamicTags.cache )
-					? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
-					: false;
-			}
+		if ( ! valueToParse ) {
+			return settings.attributes[ changedControlKey ];
 		}
 
-		return settings.attributes[ bindingSetting ];
+		return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
 	},
 
 	findUniqueKey( obj1, obj2 ) {
@@ -777,16 +764,12 @@ BaseElementView = BaseContainer.extend( {
 				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( dataBinding, changedControl ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, bindingSetting );
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
+				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
 				}
-			}
-
-			if ( dataBinding.el.textContent === change ) {
-				return true;
 			}
 
 			if ( change !== undefined ) {
@@ -828,18 +811,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return changed;
-	},
-
-	getChangedDynamicControlKey( settings ) {
-		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
-
-		if ( changedControlKey ) {
-			return changedControlKey;
-		}
-
-		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
-			? Object.keys( settings.changed )[ 0 ]
-			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
 	},
 
 	/**
@@ -1133,6 +1104,49 @@ BaseElementView = BaseContainer.extend( {
 		} );
 	},
 
+	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
+		try {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		} catch {
+			await new Promise( ( resolve ) => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
+					resolve();
+				} );
+			} );
+
+			return ! _.isEmpty( elementor.dynamicTags.cache )
+				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+				: false;
+		}
+	},
+
+	getChangedDynamicControlKey( settings ) {
+		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
+		if ( changedControlKey ) {
+			return changedControlKey;
+		}
+
+		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+			? Object.keys( settings.changed )[ 0 ]
+			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+	},
+
+	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ];
+	},
+
+	getChangedDataForAddedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ];
+	},
+
+	getChangedData( settings, changedControlKey, bindingSetting ) {
+		const changedDataForRemovedItem = this.getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ),
+			changedDataForAddedItem = this.getChangedDataForAddedItem( settings, changedControlKey, bindingSetting );
+
+		return changedDataForAddedItem || changedDataForRemovedItem;
+	},
+
 	/**
 	 * Function getTitleWithAdvancedValues().
 	 *
@@ -1144,6 +1158,14 @@ BaseElementView = BaseContainer.extend( {
 	getTitleWithAdvancedValues( settings, text ) {
 		const { attributes, _previousAttributes: previousAttributes } = settings;
 
+		if ( this.compareSettings( attributes, previousAttributes, 'fallback' ) ) {
+			text = text.replace( new RegExp( previousAttributes.fallback ), '' );
+		}
+
+		if ( ! text || attributes.fallback === text ) {
+			return attributes.fallback || '';
+		}
+
 		if ( this.compareSettings( attributes, previousAttributes, 'before' ) ) {
 			text = text.replace( previousAttributes.before, '' );
 		}
@@ -1153,7 +1175,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( ! text ) {
-			return settings.fallback || '';
+			return attributes.fallback || '';
 		}
 
 		const newBefore = this.getNewSettingsValue( attributes, previousAttributes, 'before' ),
@@ -1185,7 +1207,7 @@ BaseElementView = BaseContainer.extend( {
 
 		this.isRendering = true;
 
-		jQuery( dataBinding.el ).text( this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent ) );
+		dataBinding.el.textContent = this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent );
 
 		return true;
 	},

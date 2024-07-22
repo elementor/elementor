@@ -374,7 +374,7 @@ abstract class Contact_Buttons_Render_Base {
 				break;
 			case Social_Network_Provider::MESSENGER:
 				$formatted_link = ! empty( $link['username'] ) ?
-					'https://www.facebook.com/messages/t/' . $link['username'] :
+					Social_Network_Provider::build_messenger_link( $link['username'] ) :
 					'';
 				break;
 			case Social_Network_Provider::WHATSAPP:
