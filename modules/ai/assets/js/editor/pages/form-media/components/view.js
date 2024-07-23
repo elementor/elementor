@@ -103,6 +103,7 @@ const ViewPanel = ( props ) => {
 				hasSubscription={ hasSubscription }
 				usagePercentage={ usagePercentage }
 				sx={ { mb: 4 } }
+				feature={ 'Images' }
 			/>
 
 			{ props.children }

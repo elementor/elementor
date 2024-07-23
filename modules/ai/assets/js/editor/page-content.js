@@ -184,6 +184,7 @@ const PageContent = (
 									hasSubscription={ hasSubscription }
 									usagePercentage={ usagePercentage }
 									sx={ { mb: 2 } }
+									feature={ 'Code' }
 								/>
 							</FormCode>
 						</PromptDialog.Content>
@@ -218,6 +219,7 @@ const PageContent = (
 								hasSubscription={ hasSubscription }
 								usagePercentage={ usagePercentage }
 								sx={ { mb: 2 } }
+								feature={ 'Text' }
 							/>
 						</FormText>
 					</PromptDialog.Content>
