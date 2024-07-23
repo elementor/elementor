@@ -66,7 +66,7 @@ const devConfig = {
 	optimization: {
 		...( common.optimization || {} ),
 		// Intentionally minimizing the dev assets to reduce the bundle size.
-		//minimize: true,
+		minimize: true,
 	},
 	output: {
 		...( common.output || {} ),
@@ -80,7 +80,7 @@ const prodConfig = {
 	devtool: false, // TODO: Need to check what to do with source maps.
 	optimization: {
 		...( common.optimization || {} ),
-		//minimize: true,
+		minimize: true,
 	},
 	plugins: [
 		...( common.plugins || [] ),
