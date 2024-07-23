@@ -440,6 +440,18 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Reduce unnecessary render-blocking loads by dequeuing unused Gutenberg block editor scripts and styles.', 'elementor' ),
 								],
 							],
+							'lazy_load_background_images' => [
+								'label' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Improve initial page load performance by lazy loading all background images except the first one.', 'elementor' ),
+								],
+							],
 						],
 					],
 				],
