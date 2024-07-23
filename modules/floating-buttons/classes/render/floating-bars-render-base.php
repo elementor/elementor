@@ -29,7 +29,7 @@ abstract class Floating_Bars_Render_Base {
 			'class' => $layout_classnames,
 			'id' => $this->settings['advanced_custom_css_id'],
 			'data-document-id' => get_the_ID(),
-			'role' => 'alertdialog'
+			'role' => 'alertdialog',
 		] );
 	}
 

@@ -160,7 +160,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'default' => esc_html__( 'Banner', 'elementor' ),
 				'condition' => [
 					'floating_bar_close_switch' => 'yes',
-				]
+				],
 			],
 		);
 
@@ -363,11 +363,11 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'options' => [
 					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-h-align-left",
+						'icon' => 'eicon-h-align-left',
 					],
 					'row-reverse' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-h-align-right",
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'selectors_dictionary' => [
@@ -377,9 +377,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars__cta-button' => 'flex-direction: {{VALUE}};',
 				],
-				'condition' =>[
+				'condition' => [
 					'cta_icon[value]!' => '',
-				]
+				],
 			]
 		);
 
@@ -461,12 +461,11 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'condition' => [
 					'style_cta_type' => 'button',
-				]
+				],
 			]
 		);
 
 		$this->end_controls_tab();
-
 
 		$this->start_controls_tab(
 			'style_cta_button_tabs_hover',
@@ -496,7 +495,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'condition' => [
 					'style_cta_type' => 'button',
-				]
+				],
 			]
 		);
 
@@ -551,7 +550,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'separator' => 'before',
 				'condition' => [
 					'style_cta_type' => 'button',
-				]
+				],
 			]
 		);
 
@@ -631,7 +630,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'condition' => [
 					'style_cta_type' => 'button',
-				]
+				],
 			]
 		);
 
@@ -647,7 +646,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'separator' => 'before',
 				'condition' => [
 					'style_cta_type' => 'button',
-				]
+				],
 			]
 		);
 
@@ -769,7 +768,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 			]
 		);
-
 
 		$this->add_responsive_control(
 			'style_floating_bar_elements_spacing',
@@ -900,7 +898,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-floating-bars__overlay',
 			]
 		);
-
 
 		$this->add_responsive_control(
 			'floating_bar_background_overlay_opacity',

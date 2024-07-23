@@ -16,14 +16,14 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 	protected function render_announcement_icon(): void {
 		$icon = $this->settings['announcement_icon'] ?? '';
 
-		if ( '' !== $icon ): ?>
+		if ( '' !== $icon ) : ?>
 			<span class="e-floating-bars__announcement-icon"><?php Icons_Manager::render_icon( $icon, [ 'aria-hidden' => 'true' ] ); ?></span>
 		<?php endif;
 	}
 
 	protected function render_announcement_text(): void {
 		$text = $this->settings['announcement_text'] ?? '';
-		if ( '' !== $text ): ?>
+		if ( '' !== $text ) : ?>
 			<p class="e-floating-bars__announcement-text"><?php echo esc_html( $text ); ?></p>
 		<?php endif;
 	}
@@ -36,7 +36,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			'class' => $icon_classnames,
 		] );
 
-		if ( '' !== $icon ): ?>
+		if ( '' !== $icon ) : ?>
 			<span <?php echo $this->widget->get_render_attribute_string( 'cta-icon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php Icons_Manager::render_icon( $icon, [ 'aria-hidden' => 'true' ] ); ?></span>
 		<?php endif;
 	}
@@ -91,7 +91,11 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		$this->widget->add_render_attribute( 'close-button', [
 			'class' => $close_button_classnames,
-			'aria-label' => __( 'Close ' . $accessible_name, 'elementor' ),
+			'aria-label' => sprintf(
+				/* translators: 1: Accessible name. */
+				esc_html__( 'Close %1$s', 'elementor' ),
+				$accessible_name,
+			),
 			'type' => 'button',
 			'aria-controls' => 'e-floating-bars',
 		] );
@@ -111,7 +115,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 				$this->render_announcement_text();
-				
+
 				$this->render_announcement_icon();
 
 				$this->render_cta_button();
