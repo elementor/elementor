@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Modules\FloatingBars\Base;
+namespace Elementor\Modules\FloatingButtons\Base;
 
-use Elementor\Modules\FloatingBars\Classes\Render\Floating_Bars_Core_Render;
+use Elementor\Modules\FloatingButtons\Classes\Render\Floating_Bars_Core_Render;
 
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
@@ -40,7 +40,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
-		
+
 		$this->add_control(
 			'announcement_icon',
 			[
@@ -758,7 +758,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'{{WRAPPER}} .e-floating-bars' => 'justify-content: {{VALUE}};',
 					'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
 					'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
-					
+
 				],
 			]
 		);
@@ -894,7 +894,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		
+
 		$this->add_responsive_control(
 			'floating_bar_background_overlay_opacity',
 			[
@@ -925,7 +925,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			static::TAB_ADVANCED,
 			esc_html__( 'Advanced', 'elementor' )
 		);
-		
+
 		$this->start_controls_section(
 			'advanced_layout_section',
 			[

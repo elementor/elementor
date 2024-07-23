@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\FloatingBars\Classes\Render;
+namespace Elementor\Modules\FloatingButtons\Classes\Render;
 
-use Elementor\Modules\FloatingBars\Base\Widget_Floating_Bars_Base;
+use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 
 /**
  * Class Floating_Bars_Render_Base.
@@ -44,7 +44,7 @@ abstract class Floating_Bars_Render_Base {
 		if ( 'yes' === $has_close_button ) {
 			$layout_classnames .= ' has-close-button';
 		}
-		
+
 		if ( 'yes' === $is_sticky ) {
 			$layout_classnames .= ' is-sticky';
 		}

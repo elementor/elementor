@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\FloatingBars\Classes\Render;
+namespace Elementor\Modules\FloatingButtons\Classes\Render;
 
 use Elementor\Icons_Manager;
 
@@ -31,7 +31,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 	protected function render_cta_icon(): void {
 		$icon = $this->settings['cta_icon'] ?? '';
 		$icon_classnames = 'e-floating-bars__cta-icon';
-		
+
 		$this->widget->add_render_attribute( 'cta-icon', [
 			'class' => $icon_classnames,
 		] );

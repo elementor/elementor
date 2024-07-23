@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\FloatingBars\Widgets;
+namespace Elementor\Modules\FloatingButtons\Widgets;
 
-use Elementor\Modules\FloatingBars\Base\Widget_Floating_Bars_Base;
+use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
