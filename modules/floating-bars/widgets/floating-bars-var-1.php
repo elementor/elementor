@@ -25,7 +25,7 @@ class Floating_Bars_Var_1 extends Widget_Floating_Bars_Base {
 		return esc_html__( 'Floating Bar CTA', 'elementor' );
 	}
 
-    public function get_group_name(): string {
-        return 'floating-bars';
-    }
+	public function get_group_name(): string {
+		return 'floating-bars';
+	}
 }

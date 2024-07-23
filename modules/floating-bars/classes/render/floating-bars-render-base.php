@@ -35,27 +35,18 @@ abstract class Floating_Bars_Render_Base {
 
 	protected function build_layout_render_attribute(): void {
 		$layout_classnames = 'e-floating-bars e-' . $this->widget->get_name();
-		$content_alignment = $this->settings['style_floating_bar_elements_align'];
-		$close_button_position = $this->settings['floating_bar_close_button_position'];
 		$vertical_position = $this->settings['advanced_vertical_position'];
 		$is_sticky = $this->settings['advanced_toggle_sticky'];
-		$entrance_animation = $this->settings['style_floating_bar_animation'];
-		$entrance_animation_duration = $this->settings['style_floating_bar_animation_duration'];
+		$has_close_button = $this->settings['floating_bar_close_switch'];
 
-		$layout_classnames .= ' has-content-alignment-' . $content_alignment;
-		$layout_classnames .= ' has-close-button-position-' . $close_button_position;
 		$layout_classnames .= ' has-vertical-position-' . $vertical_position;
+
+		if ( 'yes' === $has_close_button ) {
+			$layout_classnames .= ' has-close-button';
+		}
 		
 		if ( 'yes' === $is_sticky ) {
 			$layout_classnames .= ' is-sticky';
-		}
-	
-		if ( ! empty( $entrance_animation ) && 'none' != $entrance_animation ) {
-			$layout_classnames .= ' has-entrance-animation';
-		}
-
-		if ( ! empty( $entrance_animation_duration ) ) {
-			$layout_classnames .= ' has-entrance-animation-duration-' . $entrance_animation_duration;
 		}
 
 		$this->add_layout_render_attribute( $layout_classnames );

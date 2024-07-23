@@ -30,9 +30,14 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 	protected function render_cta_icon(): void {
 		$icon = $this->settings['cta_icon'] ?? '';
+		$icon_classnames = 'e-floating-bars__cta-icon';
+		
+		$this->widget->add_render_attribute( 'cta-icon', [
+			'class' => $icon_classnames,
+		] );
 
 		if ( '' !== $icon ): ?>
-			<span class="e-floating-bars__cta-icon"><?php Icons_Manager::render_icon( $icon, [ 'aria-hidden' => 'true' ] ); ?></span>
+			<span <?php echo $this->widget->get_render_attribute_string( 'cta-icon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php Icons_Manager::render_icon( $icon, [ 'aria-hidden' => 'true' ] ); ?></span>
 		<?php endif;
 	}
 
@@ -40,12 +45,10 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		$link = $this->settings['cta_link'] ?? '';
 		$text = $this->settings['cta_text'] ?? '';
 
-		$icon_position = $this->settings['style_cta_icon_position'];
 		$hover_animation = $this->settings['style_cta_button_hover_animation'];
 		$corners = $this->settings['style_cta_button_corners'];
 		$link_type = $this->settings['style_cta_type'];
 		$entrance_animation = $this->settings['style_cta_button_animation'];
-		$entrance_animation_duration = $this->settings['style_cta_button_animation_duration'];
 
 		$cta_classnames = 'e-floating-bars__cta-button';
 
@@ -65,9 +68,6 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			$cta_classnames .= ' has-entrance-animation';
 		}
 
-		if ( ! empty( $entrance_animation_duration ) ) {
-			$cta_classnames .= ' has-entrance-animation-duration-' . $entrance_animation_duration;
-		}
 
 		$this->widget->add_render_attribute( 'cta-button', [
 			'class' => $cta_classnames,
@@ -78,13 +78,8 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			?>
 				<div class="e-floating-bars__cta-button-container">
 					<a <?php echo $this->widget->get_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php if ( 'start' == $icon_position ) {
-							$this->render_cta_icon();
-						} ?>
-						<?php echo esc_html( $text ); ?>
-						<?php if ( 'end' == $icon_position ) {
-							$this->render_cta_icon();
-						} ?>
+						<?php $this->render_cta_icon(); ?>
+						<span class="e-floating-bars__cta-text"><?php echo esc_html( $text ); ?></span>
 					</a>
 				</div>
 			<?php

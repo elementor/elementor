@@ -10,7 +10,6 @@ export default class FloatingBarsHandler extends Base {
 			},
 			constants: {
 				ctaEntranceAnimation: 'style_cta_button_animation',
-				mainEntranceAnimation: 'style_floating_bar_animation',
 				hasEntranceAnimation: 'has-entrance-animation',
 				visible: 'visible',
 				isSticky: 'is-sticky',
@@ -37,7 +36,7 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	bindEvents() {
-		const { ctaEntranceAnimation, mainEntranceAnimation } = this.getSettings( 'constants' );
+		const { ctaEntranceAnimation } = this.getSettings( 'constants' );
 
 		if ( this.elements.closeButton ) {
 			this.elements.closeButton.addEventListener( 'click', this.closeFloatingBar.bind( this ) );
@@ -48,7 +47,6 @@ export default class FloatingBarsHandler extends Base {
 		}
 
 		if ( this.elements.main ) {
-			this.elements.main.addEventListener( 'animationend', this.removeEntranceAnimationClasses.bind( this, this.elements.main, mainEntranceAnimation ) );
 			window.addEventListener( 'keyup', this.onDocumentKeyup.bind( this ) );
 		}
 	}
@@ -130,16 +128,12 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	onInit( ...args ) {
-		const { hasEntranceAnimation, ctaEntranceAnimation, mainEntranceAnimation } = this.getSettings( 'constants' );
+		const { hasEntranceAnimation, ctaEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
 
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
-		}
-
-		if ( this.elements.main && this.elements.main.classList.contains( hasEntranceAnimation ) ) {
-			this.initEntranceAnimation( this.elements.main, mainEntranceAnimation );
 		}
 
 		this.initDefaultState();

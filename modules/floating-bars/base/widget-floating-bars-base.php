@@ -225,7 +225,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'style_announcement_icon_position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
@@ -351,33 +351,28 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'default' => is_rtl() ? 'row-reverse' : 'row',
+				'toggle' => false,
 				'options' => [
-					'start' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+					'row' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-left",
 					],
-					'end' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
-					],
-				],
-				'default' => 'end',
-				'toggle' => true,
-				'conditions' => [
-					'relation' => 'and',
-					'terms' => [
-						[
-							'name' => 'cta_icon[value]',
-							'operator' => '!==',
-							'value' => '',
-						],
-						[
-							'name' => 'cta_icon[value]',
-							'operator' => '!==',
-							'value' => null,
-						],
+					'row-reverse' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-right",
 					],
 				],
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'row-reverse' : 'row',
+					'right' => is_rtl() ? 'row' : 'row-reverse',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars__cta-button' => 'flex-direction: {{VALUE}};',
+				],
+				'condition' =>[
+					'cta_icon[value]!' => '',
+				]
 			]
 		);
 
@@ -664,11 +659,14 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'normal',
+				'default' => '1000',
 				'options' => [
-					'slow' => esc_html__( 'Slow', 'elementor' ),
-					'normal' => esc_html__( 'Normal', 'elementor' ),
-					'fast' => esc_html__( 'Fast', 'elementor' ),
+					'2000' => esc_html__( 'Slow', 'elementor' ),
+					'1000' => esc_html__( 'Normal', 'elementor' ),
+					'800' => esc_html__( 'Fast', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-cta-button-animation-duration: {{VALUE}}ms',
 				],
 				'prefix_class' => 'animated-',
 				'conditions' => [
@@ -736,6 +734,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Align Elements', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'center',
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
@@ -749,18 +749,23 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-align-end-h',
 					],
-					'stretch' => [
+					'space-between' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
 						'icon' => 'eicon-align-stretch-h',
 					],
 				],
-				'default' => 'center',
-				'toggle' => false,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => 'justify-content: {{VALUE}};',
+					'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
+					'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
+					
+				],
 			]
 		);
 
+
 		$this->add_responsive_control(
-			'style_floating_bar_elements_spacing', // you are here
+			'style_floating_bar_elements_spacing',
 			[
 				'label' => esc_html__( 'Element spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -808,7 +813,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'floating_bar_close_button_position',
 			[
 				'label' => esc_html__( 'Horizontal position', 'elementor' ),
@@ -825,6 +830,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'default' => 'end',
 				'toggle' => true,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars__close-button' => 'inset-inline-{{VALUE}}: 10px',
+				],
 			]
 		);
 
@@ -886,42 +894,25 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
+		
 		$this->add_responsive_control(
-			'style_floating_bar_animation',
+			'floating_bar_background_overlay_opacity',
 			[
-				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
-				'type' => Controls_Manager::ANIMATION,
-				'frontend_available' => true,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'style_floating_bar_animation_duration',
-			[
-				'label' => esc_html__( 'Animation Duration', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'normal',
-				'options' => [
-					'slow' => esc_html__( 'Slow', 'elementor' ),
-					'normal' => esc_html__( 'Normal', 'elementor' ),
-					'fast' => esc_html__( 'Fast', 'elementor' ),
-				],
-				'prefix_class' => 'animated-',
-				'conditions' => [
-					'relation' => 'and',
-					'terms' => [
-						[
-							'name' => 'style_floating_bar_animation',
-							'operator' => '!==',
-							'value' => '',
-						],
-						[
-							'name' => 'style_floating_bar_animation',
-							'operator' => '!==',
-							'value' => 'none',
-						],
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'max' => 1,
+						'min' => 0,
+						'step' => 0.01,
 					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0.5,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-background-overlay-opacity: {{SIZE}};',
 				],
 			]
 		);
