@@ -644,8 +644,6 @@ class Plugin {
 
 	public function initialize_container() {
 		Container::initialize_instance();
-
-		$this->container = Container::get_instance();
 	}
 
 	/**
