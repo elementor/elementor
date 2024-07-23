@@ -234,6 +234,10 @@ class Social_Network_Provider {
 		];
 	}
 
+	public static function build_messenger_link( string $username ) {
+		return 'https://m.me/' . $username;
+	}
+
 	public static function build_email_link( array $data, string $prefix ) {
 		$email = $data[ $prefix . '_mail' ] ?? '';
 		$subject = $data[ $prefix . '_mail_subject' ] ?? '';
