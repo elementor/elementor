@@ -806,7 +806,7 @@ class Widget_Icon_List extends Widget_Base {
 
 					<li {{{ view.getRenderAttributeString( 'list_item' ) }}}>
 						<# if ( item.link && item.link.url ) { #>
-							<a href="{{ item.link.url }}">
+							<a href="{{ elementor.helpers.sanitizeUrl( item.link.url ) }}">
 						<# } #>
 						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
