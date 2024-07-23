@@ -68,7 +68,6 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			$cta_classnames .= ' has-entrance-animation';
 		}
 
-
 		$this->widget->add_render_attribute( 'cta-button', [
 			'class' => $cta_classnames,
 		] );
