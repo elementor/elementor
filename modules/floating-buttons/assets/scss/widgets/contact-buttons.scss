@@ -411,7 +411,7 @@
 
 	&__chat-button-container {
 		display: flex;
-		max-width: min-content;
+		max-width: max-content;
 
 		@media (max-width: $screen-mobile-max) {
 			position: relative;
@@ -465,6 +465,10 @@
 				height: var(--e-contact-buttons-svg-size-small);
 				width: var(--e-contact-buttons-svg-size-small);
 			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-small);
+			}
 		}
 
 		&.has-size-medium {
@@ -475,6 +479,10 @@
 				height: var(--e-contact-buttons-svg-size-medium);
 				width: var(--e-contact-buttons-svg-size-medium);
 			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-medium);
+			}
 		}
 
 		&.has-size-large {
@@ -484,6 +492,10 @@
 			svg {
 				height: var(--e-contact-buttons-svg-size-large);
 				width: var(--e-contact-buttons-svg-size-large);
+			}
+
+			i {
+				font-size: var(--e-contact-buttons-svg-size-large);
 			}
 		}
 

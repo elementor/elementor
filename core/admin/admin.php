@@ -878,6 +878,8 @@ class Admin extends App {
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
 		} );
+
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_hints' ] );
 	}
 
 	/**
@@ -986,5 +988,23 @@ class Admin extends App {
 		] );
 
 		wp_enqueue_script( 'media-hints' );
+	}
+
+	public function register_ajax_hints( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
+	}
+
+	public function ajax_set_image_optimization_campaign( $request ) {
+		if ( empty( $request['source'] ) ) {
+			return;
+		}
+
+		$campaign_data = [
+			'source' => sanitize_key( $request['source'] ),
+			'campaign' => 'io-plg',
+			'medium' => 'wp-dash',
+		];
+
+		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 }

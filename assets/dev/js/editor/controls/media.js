@@ -221,6 +221,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( ! eventName ) {
 			eventName = this.getDismissPromotionEventName();
 		}
+
+		elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+			data: {
+				source: 'io-editor-image-install',
+			},
+		} );
+
 		// Prevent opening the same promotion again in current editor session.
 		elementor.config.user.dismissed_editor_notices.push( eventName );
 	},
