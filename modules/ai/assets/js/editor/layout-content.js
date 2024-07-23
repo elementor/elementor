@@ -19,11 +19,11 @@ const LayoutContent = ( props ) => {
 	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
 
 	useEffect( () => {
-		if ( ! isInitUsageDone && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+		if ( ! isInitUsageDone && ! isLoading && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
 			updateUsagePercentage( initialUsagePercentage );
 			setIsInitUsageDone( true );
 		}
-	}, [ initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+	}, [ isLoading, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	if ( isLoading || ! isInitUsageDone ) {
 		return (

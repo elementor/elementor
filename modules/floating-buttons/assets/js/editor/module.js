@@ -48,6 +48,7 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 						return queryString;
 					}
 				}
+
 				return queryString;
 			}, 1000 );
 	}

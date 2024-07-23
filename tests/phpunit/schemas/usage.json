@@ -373,7 +373,7 @@
 						"version": {
 							"$id": "#/system/wordpress/version",
 							"type": "string",
-							"title": "Wordpress version",
+							"title": "WordPress version",
 							"examples": [
 								"5.6.1"
 							]
@@ -989,6 +989,15 @@
 								"optimized_gutenberg_loading": {
 									"$id": "#/usages/settings/performance/optimized_gutenberg_loading",
 									"title": "Optimized Gutenberg Loading",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
+								},
+								"lazy_load_background_images": {
+									"$id": "#/usages/settings/performance/lazy_load_background_images",
+									"title": "Lazy Load Background Images",
 									"default": "1",
 									"enum": [
 										"1",
