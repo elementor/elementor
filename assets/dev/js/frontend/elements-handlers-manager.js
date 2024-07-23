@@ -35,7 +35,11 @@ module.exports = function( $ ) {
 	}
 
 	if ( elementorFrontendConfig.experimentalFeatures.container ) {
-		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/frontend/handlers/contact-buttons' );
+		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons' );
+	}
+
+	if ( elementorFrontendConfig.experimentalFeatures[ 'floating-bars' ] ) {
+		this.elementsHandlers[ 'floating-bars-var-1.default' ] = () => import( /* webpackChunkName: 'floating-bars' */ 'elementor/modules/floating-buttons/assets/js/floating-bars/frontend/handlers/floating-bars' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
