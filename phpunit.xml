@@ -30,7 +30,6 @@
 				<directory>tests</directory>
 				<directory>includes/libraries</directory>
 				<directory>vendor</directory>
-				<directory>vendor_prefixed</directory>
 			</exclude>
 		</whitelist>
 	</filter>
