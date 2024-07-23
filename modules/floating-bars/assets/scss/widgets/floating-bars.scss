@@ -42,8 +42,9 @@
 
 	@media (max-width: $screen-mobile-max) {
 		align-items: flex-start;
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto;
 		gap: var(--e-floating-bars-elements-gap);
 	}
 
@@ -87,10 +88,6 @@
 		font-size: 16px;
 		font-weight: 400;
 		margin: 0;
-
-		@media (max-width: $screen-mobile-max) {
-			flex-grow: 0;
-		}
 	}
 
 	&__announcement-icon {
@@ -118,10 +115,11 @@
 	}
 
 	&__cta-button-container {
-		display: flex;
 
 		@media (max-width: $screen-mobile-max) {
-			flex-basis: 100%;
+			display: flex;
+			grid-column: span 2 / span 2;
+			grid-row-start: 2;
 		}
 	}
 
