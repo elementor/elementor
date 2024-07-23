@@ -25,7 +25,7 @@ class Test_Tracker extends Elementor_Test_Base {
 			],
 			'disable_color_schemes' => true,
 			'disable_typography_schemes' => false,
-			'allow_tracking' => 'yes', // TODO: Probably should be excluded, but settings page should not know about tracker existance.
+			'allow_tracking' => 'yes', // TODO: Probably should be excluded, but settings page should not know about tracker existence.
 		], $actual );
 	}
 
