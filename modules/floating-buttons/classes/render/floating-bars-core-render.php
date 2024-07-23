@@ -120,9 +120,9 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 				$this->render_cta_button();
 
-				if ( $has_close_button ) {
-					$this->render_close_button();
-				}
+			if ( $has_close_button ) {
+				$this->render_close_button();
+			}
 			?>
 			<div class="e-floating-bars__overlay"></div>
 		</div>
