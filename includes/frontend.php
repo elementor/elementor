@@ -33,6 +33,11 @@ class Frontend extends App {
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
 	/**
+	 * The priority of the frontend enqueued styles.
+	 */
+	const ENQUEUED_STYLES_PRIORITY = 20;
+
+	/**
 	 * Post ID.
 	 *
 	 * Holds the ID of the current post.
@@ -238,7 +243,7 @@ class Frontend extends App {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 20 );
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], self::ENQUEUED_STYLES_PRIORITY );
 		}
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
