@@ -240,8 +240,15 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars__announcement-icon' => 'order: {{VALUE}};',
+				],
+				'selectors_dictionary' => [
+					'start' => '-1',
+					'end' => '2',
+				],
 				'default' => 'start',
-				'toggle' => true,
+				'toggle' => false,
 				'conditions' => [
 					'relation' => 'and',
 					'terms' => [

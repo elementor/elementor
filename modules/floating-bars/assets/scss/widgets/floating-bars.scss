@@ -115,6 +115,7 @@
 	}
 
 	&__cta-button-container {
+		order: 3;
 
 		@media (max-width: $screen-mobile-max) {
 			display: flex;
@@ -123,14 +124,14 @@
 		}
 	}
 
-	&__cta-button {
+	&__cta-button,
+	&__cta-button:not([href]):not([tabindex]) {
 		align-items: center;
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;
 		font-size: 16px;
 		font-weight: 700;
 		gap: var(--e-floating-bars-cta-button-icon-gap);
-		line-height: 24px;
 		position: relative;
 		transition: $transition-hover;
 		white-space: nowrap;

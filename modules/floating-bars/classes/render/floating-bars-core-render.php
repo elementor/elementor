@@ -73,11 +73,11 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			'class' => $cta_classnames,
 		] );
 
-		if ( ! empty( $link['url'] ) ) {
+		if ( ! empty( $text ) ) {
 			$this->widget->add_link_attributes( 'cta-button', $link );
 			?>
 				<div class="e-floating-bars__cta-button-container">
-					<a <?php echo $this->widget->get_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<a <?php echo $this->widget->print_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php $this->render_cta_icon(); ?>
 						<span class="e-floating-bars__cta-text"><?php echo esc_html( $text ); ?></span>
 					</a>
@@ -106,25 +106,21 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 	public function render(): void {
 		$this->build_layout_render_attribute();
-		$icon_position = $this->settings['style_announcement_icon_position'];
 		$has_close_button = $this->settings['floating_bar_close_switch'];
 
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<?php if ( 'start' == $icon_position ) {
+			<?php
+				$this->render_announcement_text();
+				
 				$this->render_announcement_icon();
-			} ?>
-			<?php $this->render_announcement_text(); ?>
-			<?php if ( 'end' == $icon_position ) {
-				$this->render_announcement_icon();
-			} ?>
 
-			<?php $this->render_cta_button(); ?>
+				$this->render_cta_button();
 
-			<?php if ( $has_close_button ) {
-				$this->render_close_button();
-			} ?>
-
+				if ( $has_close_button ) {
+					$this->render_close_button();
+				}
+			?>
 			<div class="e-floating-bars__overlay"></div>
 		</div>
 		<?php
