@@ -7,11 +7,6 @@
 	"require": {
 		"php": ">=7.4"
 	},
-	"autoload": {
-		"classmap": [
-			"vendor_prefixed/"
-		]
-	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
 		"elementor/elementor-editor-testing": "0.0.3",
@@ -20,30 +15,15 @@
 		"squizlabs/php_codesniffer": "^3.6",
 		"wp-coding-standards/wpcs": "^2.3",
 		"yoast/phpunit-polyfills": "^1.0",
-		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
-		"humbug/php-scoper": "0.17.5",
-		"php-di/php-di": "6.4.0"
+		"thor-juhasz/phpunit-coverage-check": "^0.3.0"
 	},
 	"scripts": {
-		"lint": "phpcs --standard=ruleset.xml",
-		"test": "phpunit",
-		"test:install": "bash ./bin/install-wp-tests-local.sh",
-		"coverage": "composer run coverage:test && composer run coverage:check",
-		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
-		"coverage:check": "phpunit-coverage-check -t 65 coverage-report/clover.xml",
-		"post-install-cmd": [
-			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
-			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
-			"@php composer dump-autoload"
-		],
-		"pre-autoload-dump": [
-			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\""
-		],
-		"post-update-cmd": [
-			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
-			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
-			"@php composer dump-autoload"
-		]
+	  "lint": "phpcs --standard=ruleset.xml",
+	  "test": "phpunit",
+	  "test:install": "bash ./bin/install-wp-tests-local.sh",
+	  "coverage": "composer run coverage:test && composer run coverage:check",
+	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
+	  "coverage:check": "phpunit-coverage-check -t 65 coverage-report/clover.xml"
 	},
 	"config": {
 		"allow-plugins": {
