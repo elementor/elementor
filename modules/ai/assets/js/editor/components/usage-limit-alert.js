@@ -14,11 +14,11 @@ const CREDITS_80_USAGE_TITLE = getUsageTitle( '80%' );
 const CREDITS_75_USAGE_TITLE = getUsageTitle( '75%' );
 
 const DESCRIPTION_SUBSCRIPTION = __( 'Get maximum access.', 'elementor' );
-const FEATURES = Object.values( FREE_TRIAL_FEATURES_NAMES );
+const FEATURES = Object.keys( FREE_TRIAL_FEATURES_NAMES );
 
 const getDescriptionNoSubscription = ( excludedFeature ) => {
 	const filteredFeatures = FEATURES.filter( ( feature ) => feature !== excludedFeature );
-	const featuresList = filteredFeatures.join( ', ' );
+	const featuresList = filteredFeatures.map( ( feature ) => FREE_TRIAL_FEATURES_NAMES[ feature ] ).join( ', ' );
 	// Translators: %s refers to the list of remaining features
 	return sprintf( __( 'Upgrade now to keep using this feature. You still have credits for other AI features (%s, etc.)',
 		'elementor' ), featuresList );
