@@ -17,7 +17,7 @@ const EnhanceButton = ( { isLoading, ...props } ) => {
 					{
 						isLoading
 							? <CircularProgress color="secondary" size={ 20 } />
-							: <StyledWandIcon />
+							: <StyledWandIcon fontSize="small" />
 					}
 				</IconButton>
 			</Box>

@@ -1,12 +1,22 @@
 import { toggleHistory } from './history';
 
+/**
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
+ */
+
 const PREFIX = 'e-ai-preview-container';
 const CLASS_HIDDEN = PREFIX + '--hidden';
 const CLASS_IDLE = PREFIX + '--idle';
 
-export function createPreviewContainer( options = {} ) {
+/**
+ * @param {Container} parentContainer
+ * @param {{}}        containerOptions
+ * @return {{init, setContent, reset, destroy}}
+ */
+
+export function createPreviewContainer( parentContainer, containerOptions = {} ) {
 	const createdContainers = new Map();
-	const idleContainer = createIdleContainer( options );
+	const idleContainer = createIdleContainer( parentContainer, containerOptions );
 
 	function init() {
 		showContainer( idleContainer );
@@ -31,7 +41,7 @@ export function createPreviewContainer( options = {} ) {
 		hideContainers( getAllContainers() );
 
 		if ( ! createdContainers.has( template ) ) {
-			const newContainer = createContainer( template, options );
+			const newContainer = createContainer( parentContainer, template, containerOptions );
 
 			createdContainers.set( template, newContainer );
 		}
@@ -53,11 +63,17 @@ export function createPreviewContainer( options = {} ) {
 	};
 }
 
-function createContainer( model, options = {} ) {
+/**
+ * @param {Container} parentContainer
+ * @param {{}}        model
+ * @param {{}}        options
+ * @return {*}
+ */
+function createContainer( parentContainer, model, options = {} ) {
 	toggleHistory( false );
 
 	const container = $e.run( 'document/elements/create', {
-		container: elementor.getPreviewContainer(),
+		container: parentContainer,
 		model: {
 			...model,
 			id: `${ PREFIX }-${ elementorCommon.helpers.getUniqueId().toString() }`,
@@ -75,9 +91,14 @@ function createContainer( model, options = {} ) {
 	return container;
 }
 
-function createIdleContainer( options = {} ) {
+/**
+ * @param {Container} parentContainer
+ * @param {{}}        containerOptions
+ * @return {*}
+ */
+function createIdleContainer( parentContainer, containerOptions = {} ) {
 	// Create an empty container that'll be used of UI purposes.
-	const container = createContainer( { elType: 'container' }, options );
+	const container = createContainer( parentContainer, { elType: 'container' }, containerOptions );
 
 	container.view.$el.addClass( CLASS_IDLE );
 
@@ -109,3 +130,4 @@ function deleteContainers( containers ) {
 
 	toggleHistory( true );
 }
+

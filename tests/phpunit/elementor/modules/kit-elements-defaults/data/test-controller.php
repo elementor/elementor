@@ -10,7 +10,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	private $kit;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();

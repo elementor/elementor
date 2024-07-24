@@ -1,5 +1,5 @@
 assets/lib/**/*.js
-assets/js/*.js
+assets/js/
 **/*.min.js
 **/node_modules/**
 **/vendor/**

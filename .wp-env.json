@@ -1,6 +1,6 @@
 {
 	"core": null,
-	"phpVersion": "7.4",
+	"phpVersion": "8.0",
 	"plugins": [
 		"./build"
 	],
@@ -10,7 +10,8 @@
 	"mappings": {
 		"elementor-templates": "./tests/playwright/templates",
 		"elementor-config": "./tests/wp-env/config",
-		"elementor-playwright-templates": "./templates/playwright"
+		"elementor-playwright-templates": "./templates/playwright",
+		"elementor-playwright": "./tests/playwright"
 	},
 	"config": {
 		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,

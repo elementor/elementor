@@ -21,3 +21,21 @@ export const getAspectRatioSizes = ( width, height ) => {
 		...IMAGE_ASPECT_RATIO[ closestRatio ],
 	};
 };
+
+export const fetchImageAsBase64 = async ( url ) => {
+	try {
+		const response = await fetch( url );
+		const blob = await response.blob();
+		const reader = new FileReader();
+
+		return new Promise( ( resolve, reject ) => {
+			reader.onloadend = () => {
+				resolve( reader.result );
+			};
+			reader.onerror = reject;
+			reader.readAsDataURL( blob );
+		} );
+	} catch ( error ) {
+		throw error;
+	}
+};

@@ -5,6 +5,7 @@ import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
+import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -114,6 +115,22 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
 					} );
+				} );
+			} );
+
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-wp-media-library-install',
+					},
+				} );
+			} );
+
+			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-esetting-addons-install',
+					},
 				} );
 			} );
 
@@ -315,13 +332,6 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				} ).show();
 			} );
 
-			$( '.elementor_css_print_method select' ).on( 'change', function() {
-				var $descriptions = $( '.elementor-css-print-method-description' );
-
-				$descriptions.hide();
-				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
-			} ).trigger( 'change' );
-
 			$( '.elementor_google_font select' ).on( 'change', function() {
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
@@ -345,6 +355,11 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+
+			if ( elementorCommon.config.experimentalFeatures.container ) {
+				new FloatingButtonsHandler();
+			}
+
 			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();
@@ -384,7 +399,9 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 		},
 
 		initTemplatesImport() {
-			if ( ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
+			const canImport = elementorAdminConfig.user.is_administrator || ( elementorAdminConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
+
+			if ( ! canImport || ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
 				return;
 			}
 
@@ -405,14 +422,21 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				$( '#elementor-import-template-area' ).toggle();
 			} );
 
-			let messageShown = false;
+			const messages = {
+				jsonUploadWarning: {
+					shown: false,
+				},
+				enableUnfilteredFiles: {
+					shown: false,
+				},
+			};
 			const originalButtonValue = $importNowButton[ 0 ].value;
 
 			$importForm.on( 'submit', async ( event ) => {
 				$importNowButton[ 0 ].disabled = true;
 				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
 
-				if ( ! messageShown ) {
+				if ( ! messages.jsonUploadWarning.shown ) {
 					event.preventDefault();
 
 					try {
@@ -422,7 +446,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 							waitForSetViewed: true,
 						} );
 
-						messageShown = true;
+						messages.jsonUploadWarning.shown = true;
 						$importForm.trigger( 'submit' );
 					} catch ( e ) {
 						$importNowButton[ 0 ].disabled = false;
@@ -432,10 +456,14 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					return;
 				}
 
-				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+				const hasImportedFiles = $importFormFileInput[ 0 ].files.length;
+				const areUnfilteredFilesEnabled = elementorCommon.config.filesUpload.unfilteredFiles;
+
+				if ( hasImportedFiles && ! areUnfilteredFilesEnabled && ! messages.enableUnfilteredFiles.shown ) {
 					event.preventDefault();
 
 					const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => {
+						messages.enableUnfilteredFiles.shown = true;
 						$importForm.trigger( 'submit' );
 					} );
 
@@ -444,7 +472,8 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					return;
 				}
 
-				messageShown = false;
+				messages.jsonUploadWarning.shown = false;
+				messages.enableUnfilteredFiles.shown = false;
 			} );
 		},
 

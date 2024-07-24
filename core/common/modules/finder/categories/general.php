@@ -46,7 +46,7 @@ class General extends Base_Category {
 	public function get_category_items( array $options = [] ) {
 		return [
 			'saved-templates' => [
-				'title' => esc_html_x( 'Saved Templates', 'Template Library', 'elementor' ),
+				'title' => esc_html__( 'Saved Templates', 'elementor' ),
 				'icon' => 'library-save',
 				'url' => Source_Local::get_admin_url(),
 				'keywords' => [ 'template', 'section', 'page', 'library' ],

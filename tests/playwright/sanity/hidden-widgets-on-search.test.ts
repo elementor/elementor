@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
 // When searching for a widget that is not hidden on search, the widget should be shown in search result.
-test( 'Spacer widget should be shown in search result', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.useElementorCleanPost();
+test( 'Spacer widget should be shown in search result', async ( { page, apiRequests }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	await wpAdmin.openNewPage();
 
 	await page.waitForSelector( '.elementor-panel-category-items .eicon-t-letter' );
 
@@ -17,9 +18,9 @@ test( 'Spacer widget should be shown in search result', async ( { page }, testIn
 } );
 
 // When searching for a widget that is hidden on search, the widget should not be shown in search result.
-test( 'Wordpress widget should not be shown in search result', async ( { page }, testInfo ) => {
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.useElementorCleanPost();
+test( 'WordPress widget should not be shown in search result', async ( { page, apiRequests }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	await wpAdmin.openNewPage();
 
 	// Click text=WordPress
 	await page.click( 'text=WordPress' );

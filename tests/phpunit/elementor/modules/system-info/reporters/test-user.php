@@ -10,7 +10,7 @@ class Test_User extends Elementor_Test_Base {
 	 */
 	private $reporter;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->reporter = new User();

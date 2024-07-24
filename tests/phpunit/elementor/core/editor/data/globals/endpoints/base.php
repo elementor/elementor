@@ -5,7 +5,7 @@ use Elementor\Core\Editor\Data;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Data_Test_Base;
 
 abstract class Base extends Data_Test_Base {
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager->kill_server();
@@ -17,7 +17,7 @@ abstract class Base extends Data_Test_Base {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID);
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->manager->kill_server();

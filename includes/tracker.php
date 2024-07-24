@@ -407,6 +407,16 @@ class Tracker {
 	}
 
 	/**
+	 * Get usage of performance settings.
+	 * 'Elementor->Settings->Performance'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_performance_usage() {
+		return self::get_tracking_data_from_settings( 'performance' );
+	}
+
+	/**
 	 * Get usage of experiments settings.
 	 *
 	 * 'Elementor->Settings->Experiments'.

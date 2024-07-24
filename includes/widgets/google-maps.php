@@ -88,6 +88,10 @@ class Widget_Google_Maps extends Widget_Base {
 		return [ 'google', 'map', 'embed', 'location' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register google maps widget controls.
 	 *
@@ -100,7 +104,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map',
 			[
-				'label' => esc_html__( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Google Maps', 'elementor' ),
 			]
 		);
 
@@ -111,15 +115,15 @@ class Widget_Google_Maps extends Widget_Base {
 				$this->add_control(
 					'api_key_notification',
 					[
-						'type' => Controls_Manager::RAW_HTML,
-						'raw' => sprintf(
-						/* translators: 1: Integration settings link open tag, 2: Create API key link open tag, 3: Link close tag. */
+						'type' => Controls_Manager::ALERT,
+						'alert_type' => 'info',
+						'content' => sprintf(
+							/* translators: 1: Integration settings link open tag, 2: Create API key link open tag, 3: Link close tag. */
 							esc_html__( 'Set your Google Maps API Key in Elementor\'s %1$sIntegrations Settings%3$s page. Create your key %2$shere.%3$s', 'elementor' ),
-							'<a href="' . Settings::get_url() . '#tab-integrations" target="_blank">',
+							'<a href="' . Settings::get_settings_tab_url( 'integrations' ) . '" target="_blank">',
 							'<a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">',
 							'</a>'
 						),
-						'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 					]
 				);
 			}
@@ -136,6 +140,9 @@ class Widget_Google_Maps extends Widget_Base {
 					'categories' => [
 						TagsModule::POST_META_CATEGORY,
 					],
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'placeholder' => $default_address,
 				'default' => $default_address,
@@ -171,10 +178,6 @@ class Widget_Google_Maps extends Widget_Base {
 						'min' => 40,
 						'max' => 1440,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
@@ -183,21 +186,12 @@ class Widget_Google_Maps extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_map_style',
 			[
-				'label' => esc_html__( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Google Maps', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -237,10 +231,11 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],

@@ -2,9 +2,7 @@
 namespace Elementor\Modules\LazyLoad;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Element_Base;
-use Elementor\Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -12,191 +10,66 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'e_lazyload';
-
 	public function get_name() {
 		return 'lazyload';
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Lazy loading images that are not in the viewport improves initial page load performance and user experience. By activating this experiment all background images except the first one on your page will be lazy loaded to improve your LCP score', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		];
-	}
-
-	private function enqueue_styles() {
-		wp_enqueue_style(
-			'elementor-lazyload',
-			$this->get_css_assets_url( 'modules/lazyload/frontend' ),
-			[],
-			ELEMENTOR_VERSION
-		);
-	}
-
-	private function update_element_attributes( Element_Base $element ) {
-		$settings = $element->get_settings_for_display();
-		$controls = $element->get_controls();
-		$lazyload_attribute_name = 'data-e-bg-lazyload';
-
-		$controls_with_background_image = array_filter( $controls, function( $control ) {
-			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
-		} );
-
-		foreach ( $controls_with_background_image as $control_name => $control_data ) {
-			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
-			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
-			if ( $background_image_url ) {
-
-				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
-				if ( ! $has_attribute ) {
-					$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-					$element->add_render_attribute( '_wrapper', [
-						$lazyload_attribute_name => $bg_selector,
-					] );
-				}
-			}
-		}
-	}
-
-	private function append_lazyload_selector( $control, $value ) {
-		$is_dominant_color_enabled = $this->is_dominant_color_enabled();
-
-		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
-			foreach ( $control['selectors'] as $selector => $css_property ) {
-				if ( 0 === strpos( $css_property, 'background-image' ) ) {
-					if ( ! empty( $value['url'] ) ) {
-						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
-						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
-
-						if ( $is_dominant_color_enabled ) {
-							$dominant_color = $this->get_dominant_color( $value['id'] );
-							if ( $dominant_color ) {
-								$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
-							}
-						}
-					}
-				}
-			}
-		}
-		return $control;
-	}
-
-	private function is_dominant_color_enabled() {
-		if ( ! function_exists( 'perflab_get_active_modules' ) ) {
-			return false;
-		}
-
-		$active_modules = perflab_get_active_modules();
-
-		return in_array( 'images/dominant-color', $active_modules, true );
-	}
-
-	private function get_dominant_color( $attachment_id ) {
-		$metadata = wp_get_attachment_metadata( $attachment_id );
-
-		// Performance Lab adds these metadata
-		$has_transparency = $metadata['has_transparency'] ?? false;
-		$dominant_color = esc_attr( $metadata['dominant_color'] ?? false );
-
-		if ( $dominant_color && ! $has_transparency ) {
-			return $dominant_color;
-		}
-
-		return false;
-	}
-
-	private function is_document_support_lazyload( $post_id ) {
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
-
-		if ( $document ) {
-			$support_lazyload = $document->get_property( 'support_lazyload' );
-			if ( false === $support_lazyload ) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public function __construct() {
 		parent::__construct();
 
-		// Disable lazyload in admin area (true if inside WordPress administration interface - Editor, Admin, etc.)
-		if ( is_admin() ) {
+		add_action( 'init', [ $this, 'init' ] );
+	}
+
+	public function init() {
+		if ( ! $this->is_lazy_load_background_images_enabled() ) {
 			return;
 		}
 
-		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
-
-			$current_document = \Elementor\Plugin::$instance->documents->get_current();
-
-			if ( ! $current_document ) {
+		add_action( 'wp_head', function() {
+			if ( ! $this->should_lazyload() ) {
 				return;
 			}
-
-			$post_id = $current_document->get_main_id();
-
-			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
-				return;
-			}
-
-			$this->update_element_attributes( $element );
-		} );
-
-		add_filter('elementor/files/css/selectors', function( $control, $value, $css_instance ) {
-
-			$post_id = method_exists( $css_instance, 'get_post_id' ) ? $css_instance->get_post_id() : false;
-
-			if ( ! $post_id ) {
-				return $control;
-			}
-
-			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
-				return $control;
-			}
-
-			return $this->append_lazyload_selector( $control, $value );
-		}, 10, 3);
-
-		add_filter( 'body_class', function( $classes ) {
-			$classes[] = 'e-lazyload';
-			return $classes;
-		} );
-
-		add_action( 'wp_enqueue_scripts', function() {
-			$this->enqueue_styles();
+			?>
+			<style>
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
+					background-image: none !important;
+				}
+				@media screen and (max-height: 1024px) {
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+				@media screen and (max-height: 640px) {
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+			</style>
+			<?php
 		} );
 
 		add_action( 'wp_footer', function() {
+			if ( ! $this->should_lazyload() ) {
+				return;
+			}
 			?>
 			<script type='text/javascript'>
 				const lazyloadRunObserver = () => {
-					const dataAttribute = 'data-e-bg-lazyload';
-					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
-					entries.forEach( ( entry ) => {
-						if ( entry.isIntersecting ) {
-							let lazyloadBackground = entry.target;
-							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
-							if ( lazyloadSelector ) {
-								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
+						entries.forEach( ( entry ) => {
+							if ( entry.isIntersecting ) {
+								let lazyloadBackground = entry.target;
+								if( lazyloadBackground ) {
+									lazyloadBackground.classList.add( 'e-lazyloaded' );
+								}
+								lazyloadBackgroundObserver.unobserve( entry.target );
 							}
-							if( lazyloadBackground ) {
-								lazyloadBackground.classList.add( 'lazyloaded' );
-							}
-							lazyloadBackgroundObserver.unobserve( entry.target );
-						}
-					});
-					}, { rootMargin: '100px 0px 100px 0px' } );
+						});
+					}, { rootMargin: '200px 0px 200px 0px' } );
 					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
@@ -211,6 +84,13 @@ class Module extends BaseModule {
 			</script>
 			<?php
 		} );
+	}
 
+	private function should_lazyload() {
+		return ! is_admin() && ! Plugin::$instance->preview->is_preview_mode() && ! Plugin::$instance->editor->is_edit_mode();
+	}
+
+	private static function is_lazy_load_background_images_enabled(): bool {
+		return '1' === get_option( 'elementor_lazy_load_background_images', '1' );
 	}
 }

@@ -41,6 +41,20 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		super.onInit();
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
+		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
+	}
+
+	onPanelShow( panel, model ) {
+		const settingsModel = model.get( 'settings' ),
+			containerType = settingsModel.get( 'container_type' ),
+			$linkElement = panel.$el.find( '#elementor-panel__editor__help__link' ),
+			href = 'grid' === containerType
+				? 'https://go.elementor.com/widget-container-grid'
+				: 'https://go.elementor.com/widget-container';
+
+		if ( $linkElement ) {
+			$linkElement.attr( 'href', href );
+		}
 	}
 
 	bindEvents() {
@@ -218,7 +232,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	 */
 	getResponsiveControlNames( propsThatTriggerGridLayoutRender ) {
 		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList();
-		let responsiveControlNames = [];
+		const responsiveControlNames = [];
 
 		for ( const prop of propsThatTriggerGridLayoutRender ) {
 			for ( const breakpoint of activeBreakpoints ) {

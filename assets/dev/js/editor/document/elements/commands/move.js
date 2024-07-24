@@ -25,6 +25,7 @@ export class Move extends $e.modules.editor.document.CommandHistoryBase {
 		} );
 
 		let count = 0;
+		const result = [];
 		reCreate.forEach( ( model ) => {
 			// If multiple fix position.
 			if ( Object.prototype.hasOwnProperty.call( options, 'at' ) && reCreate.length > 1 ) {
@@ -33,14 +34,22 @@ export class Move extends $e.modules.editor.document.CommandHistoryBase {
 				}
 			}
 
-			$e.run( 'document/elements/create', {
+			const newContainer = $e.run( 'document/elements/create', {
 				container: target,
 				model,
 				options,
 			} );
 
+			result.push( newContainer );
+
 			count++;
 		} );
+
+		if ( 1 === result.length ) {
+			return result[ 0 ];
+		}
+
+		return result;
 	}
 }
 

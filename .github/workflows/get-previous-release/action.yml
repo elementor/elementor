@@ -27,7 +27,7 @@ runs:
         # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
         # and store them in the 'tags' variable. e.g. "refs/tags/v3.11.1 , refs/tags/v3.11.2"
         if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
-           tags=$(git ls-remote --tags | grep "refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$")
+           tags=$(git ls-remote --tags | grep "refs/tags/[0-9]\+\.[0-9]\+\.[0-9]\+$")
         fi
 
         # Get the last release of a specific channel (ga, cloud, beta) by datetime descending order

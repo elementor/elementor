@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 	public function is_visible() {
-		return true;
+		return ! Plugin::instance()->experiments->is_feature_active( 'home_screen' );
 	}
 
 	public function get_parent_slug() {

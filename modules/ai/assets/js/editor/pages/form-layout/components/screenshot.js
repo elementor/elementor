@@ -2,10 +2,11 @@ import { Box, Skeleton } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import ScreenshotContainer from './screenshot-container';
 import ScreenshotUnavailable from './screenshot-unavailable';
+import TemplateBadge from './template-badge';
 
 const SCREENSHOT_HEIGHT = '138px';
 
-const Screenshot = ( { url, isLoading = false, isSelected = false, isPlaceholder, disabled, onClick, sx = {}, outlineOffset } ) => {
+const Screenshot = ( { url, type, isLoading = false, isSelected = false, isPlaceholder, disabled, onClick, sx = {}, outlineOffset } ) => {
 	if ( isPlaceholder ) {
 		return <Box sx={ { height: SCREENSHOT_HEIGHT, ...sx } } />;
 	}
@@ -43,7 +44,10 @@ const Screenshot = ( { url, isLoading = false, isSelected = false, isPlaceholder
 			onClick={ onClick }
 			height={ SCREENSHOT_HEIGHT }
 			outlineOffset={ outlineOffset }
-		/>
+		>
+			<TemplateBadge type={ type } />
+		</ScreenshotContainer>
+
 	);
 };
 
@@ -54,6 +58,7 @@ Screenshot.propTypes = {
 	disabled: PropTypes.bool,
 	onClick: PropTypes.func.isRequired,
 	url: PropTypes.string,
+	type: PropTypes.string,
 	sx: PropTypes.object,
 	outlineOffset: PropTypes.string,
 };

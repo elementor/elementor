@@ -13,11 +13,11 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	protected static $manager;
 	private $fake_post_id = '123';
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		self::$manager = self::elementor()->templates_manager;
 	}
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 	}

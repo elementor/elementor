@@ -17,6 +17,7 @@ export default class FileReaderBase {
 	constructor( file ) {
 		this.file = file;
 	}
+
 	/**
 	 * Get the file-reader name.
 	 *
@@ -25,6 +26,16 @@ export default class FileReaderBase {
 	 */
 	static getName() {
 		return '';
+	}
+
+	/**
+	 * Check if the reader is currently active.
+	 *
+	 * @abstract
+	 * @return {boolean}
+	 */
+	static isActive() {
+		return true;
 	}
 
 	/**

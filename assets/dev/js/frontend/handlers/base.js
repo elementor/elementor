@@ -197,7 +197,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				settingsKeys = elementorFrontend.config.elements.keys[ type ] = [];
 
 				jQuery.each( settings.controls, ( name, control ) => {
-					if ( control.frontend_available ) {
+					if ( control.frontend_available || control.editor_available ) {
 						settingsKeys.push( name );
 					}
 				} );

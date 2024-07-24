@@ -10,8 +10,15 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
+		const allowClosingModal = window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
+
 		return {
 			id: 'elementor-template-library-modal',
+			hide: {
+				onOutsideClick: allowClosingModal,
+				onBackgroundClick: allowClosingModal,
+				onEscKeyPress: allowClosingModal,
+			},
 		};
 	},
 
@@ -26,20 +33,38 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getTemplateActionButton( templateData ) {
 		const subscriptionPlans = elementor.config.library_connect.subscription_plans,
-			baseAccessLevel = elementor.config.library_connect.base_access_level;
+			baseAccessTier = elementor.config.library_connect.base_access_tier,
+			templateAccessTier = templateData.accessTier,
+			shouldUpgrade = baseAccessTier !== templateAccessTier;
 
-		let viewId = '#tmpl-elementor-template-library-' + ( baseAccessLevel !== templateData.accessLevel ? 'upgrade-plan-button' : 'insert-button' );
+		let viewId = '#tmpl-elementor-template-library-' + ( shouldUpgrade ? 'upgrade-plan-button' : 'insert-button' );
 
 		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
 		const template = Marionette.TemplateCache.get( viewId );
+		const subscriptionPlan = subscriptionPlans[ templateAccessTier ];
+		const promotionText = elementorAppConfig.hasPro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`;
 
-		const subscriptionPlan = subscriptionPlans[ templateData.accessLevel ] ?? subscriptionPlans[ 1 ]; // 1 is Pro plan.
+		try {
+			const promotionUrlPieces = new URL( subscriptionPlan.promotion_url );
+			const queryString = promotionUrlPieces.searchParams.toString();
 
-		return Marionette.Renderer.render( template, {
-			promotionText: `Upgrade`,
-			promotionLink: subscriptionPlan.promotion_url,
-		} );
+			const promotionLinkQueryString = elementor.hooks.applyFilters(
+				'elementor/editor/template-library/template/promotion-link-search-params',
+				queryString,
+				templateData,
+			);
+
+			return Marionette.Renderer.render( template, {
+				promotionText,
+				promotionLink: `${ promotionUrlPieces.origin }${ promotionUrlPieces.pathname }?${ promotionLinkQueryString }`,
+			} );
+		} catch ( e ) {
+			return Marionette.Renderer.render( template, {
+				promotionText,
+				promotionLink: subscriptionPlan.promotion_url,
+			} );
+		}
 	},
 
 	setHeaderDefaultParts() {

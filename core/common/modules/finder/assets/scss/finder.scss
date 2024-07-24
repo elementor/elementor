@@ -22,7 +22,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 			height: initial;
 			min-height: 0;
 			padding: 0;
-			text-align: $start;
+			text-align: start;
 		}
 	}
 
@@ -75,7 +75,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		&__title {
 			padding: 5px 25px;
 			font-size: $font-size-xs;
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 		}
 
 		&--dynamic {

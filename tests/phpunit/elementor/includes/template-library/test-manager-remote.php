@@ -16,7 +16,7 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 
 
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		self::$manager = self::elementor()->templates_manager;
 	}
 

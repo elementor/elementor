@@ -49,8 +49,8 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'new_site' => [
-				'default_active' => false,
-				'minimum_installation_version' => '3.1.0',
+				'default_inactive' => true,
+				'minimum_installation_version' => '3.22.0',
 			],
 		];
 	}
@@ -317,7 +317,7 @@ class Module extends BaseModule {
 		}
 
 		// Any slug prefixes need to be removed from the post link.
-		return get_home_url() . '/' . $post->post_name . '/';
+		return trailingslashit( get_home_url() ) . trailingslashit( $post->post_name );
 	}
 
 	/**
@@ -457,15 +457,9 @@ class Module extends BaseModule {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
-				$this->register_admin_menu( $menu );
-			} );
-		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$this->register_admin_menu_legacy( $admin_menu );
-			}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
-		}
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			$this->register_admin_menu_legacy( $admin_menu );
+		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
 		add_action( 'elementor/admin/localize_settings', function( array $settings ) {

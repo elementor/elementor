@@ -17,13 +17,13 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	protected $manager;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->manager->kill_server();

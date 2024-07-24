@@ -27,6 +27,8 @@ BaseElementView = BaseContainer.extend( {
 
 	renderAttributes: {},
 
+	isRendering: false,
+
 	className() {
 		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
 
@@ -147,11 +149,7 @@ BaseElementView = BaseContainer.extend( {
 						/* Translators: %s: Element Name. */
 						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
 						isEnabled: () => ! elementor.selection.isMultiple(),
-						callback: () => $e.run( 'panel/editor/open', {
-							model: this.options.model, // Todo: remove on merge router
-							view: this, // Todo: remove on merge router
-							container: this.getContainer(),
-						} ),
+						callback: () => $e.run( 'document/elements/select', { container: this.getContainer() } ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
@@ -212,8 +210,8 @@ BaseElementView = BaseContainer.extend( {
 		 *
 		 * This filter allows adding new context menu groups to elements.
 		 *
-		 * @param  array  customGroups - An array of group objects.
-		 * @param  string elementType - The current element type.
+		 * @param array  customGroups - An array of group objects.
+		 * @param string elementType - The current element type.
 		 */
 		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
 
@@ -296,7 +294,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param  array editButtons An array of buttons.
+			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
 
@@ -309,7 +307,7 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param  array editButtons An array of buttons.
+			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons/${ elementType }`, editButtons );
 		}
@@ -659,6 +657,37 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
+	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+		return '__dynamic__' in changedSettings &&
+			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
+			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+	},
+
+	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
+		const dynamicSettings = { active: true },
+			valueToParse = this.getChangedData( settings, changedControlKey, bindingSetting );
+
+		if ( ! valueToParse ) {
+			return settings.attributes[ changedControlKey ];
+		}
+
+		return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
+	},
+
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+			return false;
+		}
+
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
+
+		const allKeys = keys1.concat( keys2 );
+
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
+	},
+
 	/**
 	 * Function linkDataBindings().
 	 *
@@ -677,8 +706,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
+	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
+	 * UPDATE: Support for dynamics has experimentally been added in v3.23
 	 */
 	linkDataBindings() {
 		/**
@@ -728,8 +759,18 @@ BaseElementView = BaseContainer.extend( {
 
 		let changed = false;
 
-		const renderDataBinding = ( dataBinding ) => {
-			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+		const renderDataBinding = async ( dataBinding ) => {
+			const { bindingSetting } = dataBinding.dataset,
+				changedControl = this.getChangedDynamicControlKey( settings );
+			let change = settings.changed[ bindingSetting ];
+
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
+				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
+
+				if ( dynamicValue ) {
+					change = dynamicValue;
+				}
+			}
 
 			if ( change !== undefined ) {
 				dataBinding.el.innerHTML = change;
@@ -752,6 +793,8 @@ BaseElementView = BaseContainer.extend( {
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
 						changed = renderDataBinding( dataBinding );
+					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
+						changed = this.tryHandleDynamicCoverSettings( dataBinding, settings );
 					}
 				}
 					break;
@@ -782,11 +825,25 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
+		if ( this.isRendering ) {
+			this.isRendering = false;
+
 			return;
 		}
 
-		this.renderChanges( settings );
+		const renderResult = this.renderDataBindings( settings, this.dataBindings );
+
+		if ( renderResult instanceof Promise ) {
+			renderResult.then( ( result ) => {
+				if ( ! result ) {
+					this.renderChanges( settings );
+				}
+			} );
+		}
+
+		if ( ! renderResult ) {
+			this.renderChanges( settings );
+		}
 	},
 
 	getDynamicParsingSettings() {
@@ -848,6 +905,7 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
+			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
 	},
 
@@ -1044,6 +1102,118 @@ BaseElementView = BaseContainer.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
+	},
+
+	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
+		try {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		} catch {
+			await new Promise( ( resolve ) => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
+					resolve();
+				} );
+			} );
+
+			return ! _.isEmpty( elementor.dynamicTags.cache )
+				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+				: false;
+		}
+	},
+
+	getChangedDynamicControlKey( settings ) {
+		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
+		if ( changedControlKey ) {
+			return changedControlKey;
+		}
+
+		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+			? Object.keys( settings.changed )[ 0 ]
+			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+	},
+
+	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ];
+	},
+
+	getChangedDataForAddedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ];
+	},
+
+	getChangedData( settings, changedControlKey, bindingSetting ) {
+		const changedDataForRemovedItem = this.getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ),
+			changedDataForAddedItem = this.getChangedDataForAddedItem( settings, changedControlKey, bindingSetting );
+
+		return changedDataForAddedItem || changedDataForRemovedItem;
+	},
+
+	/**
+	 * Function getTitleWithAdvancedValues().
+	 *
+	 * Renders before / after / fallback for dynamic item titles.
+	 *
+	 * @param {Object} settings
+	 * @param {string} text
+	 */
+	getTitleWithAdvancedValues( settings, text ) {
+		const { attributes, _previousAttributes: previousAttributes } = settings;
+
+		if ( this.compareSettings( attributes, previousAttributes, 'fallback' ) ) {
+			text = text.replace( new RegExp( previousAttributes.fallback ), '' );
+		}
+
+		if ( ! text || attributes.fallback === text ) {
+			return attributes.fallback || '';
+		}
+
+		if ( this.compareSettings( attributes, previousAttributes, 'before' ) ) {
+			text = text.replace( previousAttributes.before, '' );
+		}
+
+		if ( this.compareSettings( attributes, previousAttributes, 'after' ) ) {
+			text = text.replace( new RegExp( previousAttributes.after + '$' ), '' );
+		}
+
+		if ( ! text ) {
+			return attributes.fallback || '';
+		}
+
+		const newBefore = this.getNewSettingsValue( attributes, previousAttributes, 'before' ),
+			newAfter = this.getNewSettingsValue( attributes, previousAttributes, 'after' );
+
+		text = newBefore + text;
+		text += newAfter;
+
+		return text;
+	},
+
+	compareSettings( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] && previousAttributes[ key ] !== attributes[ key ];
+	},
+
+	getNewSettingsValue( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] !== attributes[ key ] ? ( attributes[ key ] || '' ) : '';
+	},
+
+	getRepeaterItemActiveIndex() {
+		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex ||
+			this.getContainer().renderer.view.model.changed.editSettings.attributes.activeItemIndex;
+	},
+
+	tryHandleDynamicCoverSettings( dataBinding, settings ) {
+		if ( ! this.isAdvancedDynamicSettings( settings.attributes ) ) {
+			return false;
+		}
+
+		this.isRendering = true;
+
+		dataBinding.el.textContent = this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent );
+
+		return true;
+	},
+
+	isAdvancedDynamicSettings( attributes ) {
+		return 'before' in attributes && 'after' in attributes && 'fallback' in attributes;
 	},
 } );
 

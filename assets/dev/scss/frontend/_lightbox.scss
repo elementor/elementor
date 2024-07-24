@@ -289,8 +289,8 @@
 		display: flex;
 		flex-direction: row-reverse;
 		font-size: var(--lightbox-header-icons-size);
-		@include padding-start( 1em );
-		@include padding-end( 2.6em );
+		padding-inline-start: 1em;
+		padding-inline-end: 2.6em;
 		top: 0;
 		align-items: center;
 		z-index: 10;
@@ -322,7 +322,7 @@
 		}
 
 		.elementor-slideshow__counter {
-			@include margin-end( auto );
+			margin-inline-end: auto;
 		}
 
 		.elementor-icon-share {
@@ -360,7 +360,7 @@
 		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 
 		a {
-			text-align: $start;
+			text-align: start;
 			color: $gray-dark;
 			font-size: 12px;
 			line-height: 2.5;
@@ -374,7 +374,7 @@
 
 			i,
 			svg {
-				@include margin-end(0.75em);
+				margin-inline-end: 0.75em;
 			}
 
 			i {

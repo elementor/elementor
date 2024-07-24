@@ -86,7 +86,7 @@ class Test_Base extends Elementor_Test_Base {
 	 */
 	private $control_with_units_selectors_dictionary_array;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		// The CSS Base class is abstract, so it can't be instantiated. The inheriting Post class is used instead.

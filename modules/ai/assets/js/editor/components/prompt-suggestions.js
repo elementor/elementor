@@ -21,6 +21,7 @@ const PromptSuggestions = ( props ) => {
 					/>
 				) ) }
 			</Stack>
+			{ props.children }
 		</Box>
 	);
 };
@@ -29,6 +30,7 @@ PromptSuggestions.propTypes = {
 	suggestions: PropTypes.arrayOf( PropTypes.string ),
 	onSelect: PropTypes.func.isRequired,
 	suggestionFilter: PropTypes.func,
+	children: PropTypes.node,
 };
 
 export default PromptSuggestions;

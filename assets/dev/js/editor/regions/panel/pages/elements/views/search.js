@@ -6,6 +6,8 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 	localizedValue: '',
 	localizedValueStore: new LocalizedValueStore(),
 
+	tagName: 'search',
+
 	id: 'elementor-panel-elements-search-wrapper',
 
 	ui: {

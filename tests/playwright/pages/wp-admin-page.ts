@@ -1,17 +1,32 @@
-import { execSync } from 'child_process';
+import { type APIRequestContext, type Page, Response, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-
-/**
- * This post is used for any tests that need a post, with empty elements.
- */
-const CLEAN_POST_ID: number = 1;
+import { ElementorType, WindowType } from '../types/types';
+import { wpEnvCli } from '../assets/wp-env-cli';
+import ApiRequests from '../assets/api-requests';
+let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
+	private readonly apiRequests: ApiRequests;
+	constructor( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) {
+		super( page, testInfo );
+		this.apiRequests = apiRequests;
+	}
+
+	/**
+	 * Go to the WordPress dashboard.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
+	/**
+	 * If not logged in, log in to WordPress. Otherwise, go to the WordPress dashboard.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async login() {
 		await this.gotoDashboard();
 
@@ -22,27 +37,97 @@ export default class WpAdminPage extends BasePage {
 		}
 
 		await this.page.waitForSelector( 'text=Log In' );
-		await this.page.fill( 'input[name="log"]', this.config.user.username );
-		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
+		await this.page.fill( 'input[name="log"]', process.env.USERNAME );
+		await this.page.fill( 'input[name="pwd"]', process.env.PASSWORD );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage() {
-		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
-			await this.gotoDashboard();
+	/**
+	 * Open a new Elementor page.
+	 *
+	 * @param {boolean} setWithApi  - Optional. Whether to create the page with the API. Default is true.
+	 * @param {boolean} setPageName - Optional. Whether to set the page name. Default is true.
+	 *
+	 * @return {Promise<EditorPage>}
+	 */
+	async openNewPage( setWithApi: boolean = true, setPageName: boolean = true ): Promise<EditorPage> {
+		if ( setWithApi ) {
+			await this.createNewPostWithAPI();
+		} else {
+			await this.createNewPostFromDashboard( setPageName );
 		}
 
-		await this.page.click( '.e-overview__create > a' );
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
-
 		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
 	}
 
-	async convertFromGutenberg() {
+	/**
+	 * Create a new page with the API and open it in Elementor.
+	 */
+	async createNewPostWithAPI() {
+		const request: APIRequestContext = this.page.context().request,
+			postDataInitial = {
+				title: 'Playwright Test Page - Uninitialized',
+				content: '',
+			},
+			postId = await this.apiRequests.create( request, 'pages', postDataInitial ),
+			postDataUpdated = {
+				title: `Playwright Test Page #${ postId }`,
+			};
+
+		await this.apiRequests.create( request, `pages/${ postId }`, postDataUpdated );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+
+		return postId;
+	}
+
+	/**
+	 * Create a new page from the WordPress dashboard.
+	 *
+	 * @param {boolean} setPageName
+	 *
+	 * @return {Promise<void>}
+	 */
+	async createNewPostFromDashboard( setPageName: boolean ) {
+		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
+			await this.gotoDashboard();
+		}
+
+		await this.page.click( '.e-overview__create > a' );
+
+		if ( ! setPageName ) {
+			return;
+		}
+
+		await this.setPageName();
+	}
+
+	/**
+	 * Set the page name.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setPageName() {
+		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+
+		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
+		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
+
+		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
+		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await this.page.locator( '#elementor-panel-header-add-button' ).click();
+	}
+
+	/**
+	 * Convert the current page from Gutenberg to Elementor.
+	 *
+	 * @return {Promise<EditorPage>}
+	 */
+	async convertFromGutenberg(): Promise<EditorPage> {
 		await Promise.all( [
 			this.page.waitForResponse( async ( response ) => await this.blockUrlResponse( response ) ),
 			this.page.click( '#elementor-switch-mode' ),
@@ -57,54 +142,42 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
-	async blockUrlResponse( response ) {
+	/**
+	 * Get the response status for the API request.
+	 *
+	 * @param {Response} response - The response object.
+	 */
+	async blockUrlResponse( response: Response ): Promise<boolean> {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
 		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
 		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
 	}
 
 	/**
-	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
-	 *
-	 * @return {Promise<EditorPage>}
+	 * Wait for the Elementor editor panel to finish loading.
 	 */
-	async useElementorCleanPost() {
-		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
-
-		await this.waitForPanel();
-
-		await this.closeAnnouncementsIfVisible();
-
-		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
-
-		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-
-		return editor;
-	}
-
-	async skipTutorial() {
-		await this.page.waitForTimeout( 1000 );
-		const next = await this.page.$( "text='Next'" );
-
-		if ( next ) {
-			await this.page.click( '[aria-label="Close dialog"]' );
-		}
-	}
-
 	async waitForPanel() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
-	 * Determine which experiments are active / inactive.
+	 * Activate and deactivate Elementor experiments.
 	 *
 	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
-	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {Object}            experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {(boolean|string)=} oldUrl      - Optional. Whether to use the old URL structure. Default is false.
+	 *
+	 * @return {Promise<void>}
 	 */
-	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+	async setExperiments( experiments: { [ n: string ]: boolean | string }, oldUrl: boolean = false ) {
+		if ( oldUrl ) {
+			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+			await this.page.click( '#elementor-settings-tab-experiments' );
+		} else {
+			await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		}
 
 		const prefix = 'e-experiment';
 
@@ -130,12 +203,62 @@ export default class WpAdminPage extends BasePage {
 		await this.page.click( '#submit' );
 	}
 
-	async setLanguage( language: string ) {
+	/**
+	 * Reset all Elementor experiments to their default settings.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async resetExperiments() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		await this.page.getByRole( 'button', { name: 'default' } ).click();
+	}
+
+	/**
+	 * Set site language.
+	 *
+	 * @param {string}      language     - The site language to set.
+	 * @param {string|null} userLanguage - Optional. The user language to set.
+	 */
+	async setSiteLanguage( language: string, userLanguage: string = null ) {
+		let languageCheck = language;
+
+		if ( 'he_IL' === language ) {
+			languageCheck = 'he-IL';
+		} else if ( '' === language ) {
+			languageCheck = 'en_US';
+		}
+
 		await this.page.goto( '/wp-admin/options-general.php' );
-		await this.page.selectOption( '#WPLANG', language );
+
+		const isLanguageActive = await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible();
+
+		if ( ! isLanguageActive ) {
+			await this.page.selectOption( '#WPLANG', language );
+			await this.page.locator( '#submit' ).click();
+		}
+
+		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
+		await this.setUserLanguage( userProfileLanguage );
+	}
+
+	/**
+	 * Set user language.
+	 *
+	 * @param {string} language - The language to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setUserLanguage( language: string ) {
+		await this.page.goto( 'wp-admin/profile.php' );
+		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
 	}
 
+	/**
+	 * Confirm the Elementor experiment modal if it's open.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async confirmExperimentModalIfOpen() {
 		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
 
@@ -148,47 +271,70 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
-	getActiveTheme() {
-		return execSync( `npx wp-env run cli wp theme list --status=active --field=name --format=csv` ).toString().trim();
+	async getActiveTheme() {
+		const request: APIRequestContext = this.page.context().request;
+		const themeData = await this.apiRequests.getTheme( request, 'active' );
+		return themeData[ 0 ].stylesheet;
 	}
 
 	activateTheme( theme: string ) {
-		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
+		wpEnvCli( `wp theme activate ${ theme }` );
 	}
 
-	async openSiteSettings() {
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( 'text=Site Settings' );
-	}
-
-	/*
-	 * Enable uploading SVG files
+	/**
+	 * Enable uploading SVG files.
+	 *
+	 * @return {Promise<void>}
 	 */
 	async enableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
-	/*
-     *  Disable uploading SVG files
-     */
+	/**
+	 * Disable uploading SVG files.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async disableAdvancedUploads() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
+	/**
+	 * Close the Elementor announcements if they are visible.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async closeAnnouncementsIfVisible() {
 		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
+		let window: WindowType;
+		await this.page.evaluate( () => {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore editor session is on the window object
+			const editorSessionId = window.EDITOR_SESSION_ID;
+			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
+		} );
 	}
 
+	/**
+	 * Edit the page with Elementor.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async editWithElementor() {
 		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
 	}
 
+	/**
+	 * Close the block editor popup if it's visible.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async closeBlockEditorPopupIfVisible() {
 		await this.page.locator( '#elementor-switch-mode-button' ).waitFor();
 		if ( await this.page.getByRole( 'button', { name: 'Close' } ).isVisible() ) {
@@ -196,8 +342,36 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
+	/**
+	 * Open a new WordPress page.
+	 *
+	 * @return {Promise<void>}
+	 */
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
 	}
+
+	/**
+	 * Hide the WordPress admin bar.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async hideAdminBar() {
+		await this.page.goto( '/wp-admin/profile.php' );
+		await this.page.locator( '#admin_bar_front' ).uncheck();
+		await this.page.locator( '#submit' ).click();
+	}
+
+	/**
+	 * Show the WordPress admin bar.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async showAdminBar() {
+		await this.page.goto( '/wp-admin/profile.php' );
+		await this.page.locator( '#admin_bar_front' ).check();
+		await this.page.locator( '#submit' ).click();
+	}
 }
+

@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
 import useImagesPreload from '../../../../../hooks/use-images-preload';
-import useSessionStorage from '../../../../../hooks/use-session-storage';
 
 const shuffleImages = ( images ) => {
 	return images
@@ -11,7 +10,7 @@ const shuffleImages = ( images ) => {
 
 const useSuggestedImages = ( { selectedType } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const { data, setStateAndSessionData } = useSessionStorage( 'ai-image-gallery', { images: [] } );
+	const [ data, setImagesState ] = useState( { images: [] } );
 	const { ready, preloadImages } = useImagesPreload();
 
 	const imagesData = useMemo( () => {
@@ -23,7 +22,7 @@ const useSuggestedImages = ( { selectedType } ) => {
 
 		const categoryImages = shuffledImages.filter( ( { imageType } ) => imageType.includes( selectedType ) );
 
-		// Some categories don't have images, so we TEMPORARLY fallback to the shuffled images.
+		// Some categories don't have images, so we TEMPORARILY fallback to the shuffled images.
 		return categoryImages.length ? categoryImages : shuffledImages;
 	}, [ selectedType, data ] );
 
@@ -32,7 +31,7 @@ const useSuggestedImages = ( { selectedType } ) => {
 
 		fetch( 'https://my.elementor.com/ai/images-prompt-gallery/ai-gallery.json' )
 			.then( ( response ) => response.json() )
-			.then( ( json ) => setStateAndSessionData( json ) )
+			.then( ( json ) => setImagesState( json ) )
 			// eslint-disable-next-line no-console
 			.catch( ( e ) => console.log( e.message ) )
 			.finally( () => setIsLoading( false ) );

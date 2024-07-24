@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
-import { Box, Divider, Button, Pagination, IconButton, Collapse, Tooltip, withDirection } from '@elementor/ui';
+import { Box, Button, Collapse, Divider, IconButton, Pagination, Tooltip, withDirection } from '@elementor/ui';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import LayoutDialog from './components/layout-dialog';
@@ -9,12 +9,27 @@ import PromptForm from './components/prompt-form';
 import RefreshIcon from '../../icons/refresh-icon';
 import Screenshot from './components/screenshot';
 import useScreenshots from './hooks/use-screenshots';
-import useSlider from './hooks/use-slider';
+import useSlider, { MAX_PAGES, SCREENSHOTS_PER_PAGE } from './hooks/use-slider';
 import MinimizeDiagonalIcon from '../../icons/minimize-diagonal-icon';
 import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
+import { useConfig } from './context/config';
+import { AttachmentPropType } from '../../types/attachment';
+import { PromptPowerNotice } from './components/attachments/prompt-power-notice';
+import { ATTACHMENT_TYPE_URL } from './components/attachments';
+import AttachDialog from './components/attachments/attach-dialog';
+import isURL from 'validator/lib/isURL';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
+
+/**
+ * @typedef {Object} Attachment
+ * @property {('json')} type        - The type of the attachment, currently only `json` is supported.
+ * @property {string}   previewHTML - HTML content as a string, representing a preview.
+ * @property {string}   content     - Actual content of the attachment as a string.
+ * @property {string}   label       - Label for the attachment.
+ */
 
 const RegenerateButton = ( props ) => (
 	<Button
@@ -41,7 +56,20 @@ UseLayoutButton.propTypes = {
 	sx: PropTypes.object,
 };
 
-const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
+const isRegenerateButtonDisabled = ( screenshots, isLoading, isPromptFormActive ) => {
+	if ( isLoading || isPromptFormActive ) {
+		return true;
+	}
+	return screenshots.length >= SCREENSHOTS_PER_PAGE * MAX_PAGES;
+};
+
+const FormLayout = ( {
+	DialogHeaderProps = {},
+	DialogContentProps = {},
+	attachments: initialAttachments,
+} ) => {
+	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate } = useConfig();
+
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
 	const screenshotOutlineOffset = '2px';
@@ -61,6 +89,10 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 	const [ showUnsavedChangesAlert, setShowUnsavedChangesAlert ] = useState( false );
 
 	const [ isPromptEditable, setIsPromptEditable ] = useState( true );
+
+	const [ attachments, setAttachments ] = useState( [] );
+
+	const [ shouldRenderWebApp, setShouldRenderWebApp ] = useState( false );
 
 	const [ isMinimized, setIsMinimized ] = useState( false );
 
@@ -95,15 +127,19 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 	const handleGenerate = ( event, prompt ) => {
 		event.preventDefault();
 
-		if ( '' === prompt.trim() ) {
+		if ( '' === prompt.trim() && 0 === attachments.length ) {
 			return;
 		}
 
+		if ( isURL( prompt ) ) {
+			setShouldRenderWebApp( true );
+			return;
+		}
 		onGenerate();
 
 		lastRun.current = () => {
 			setSelectedScreenshotIndex( -1 );
-			generate( prompt );
+			generate( prompt, attachments );
 		};
 
 		lastRun.current();
@@ -114,7 +150,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 
 	const handleRegenerate = () => {
 		lastRun.current = () => {
-			regenerate( promptInputRef.current.value );
+			regenerate( promptInputRef.current.value, attachments );
 			// Changing the current page to the next page number.
 			setCurrentPage( pagesCount + 1 );
 		};
@@ -141,6 +177,40 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 		};
 	};
 
+	/**
+	 * @param {Attachment[]} items
+	 */
+	const onAttach = ( items ) => {
+		items.forEach( ( item ) => {
+			if ( ! attachmentsTypes[ item.type ] ) {
+				throw new Error( `Invalid attachment type: ${ item.type }` );
+			}
+
+			const typeConfig = attachmentsTypes[ item.type ];
+
+			if ( ! item.previewHTML && typeConfig.previewGenerator ) {
+				typeConfig.previewGenerator( item.content ).then( ( html ) => {
+					item.previewHTML = html;
+
+					setAttachments( ( prev ) => {
+						// Replace the attachment with the updated one.
+						return prev.map( ( attachment ) => {
+							if ( attachment.content === item.content ) {
+								return item;
+							}
+
+							return attachment;
+						} );
+					} );
+				} );
+			}
+		} );
+
+		setAttachments( items );
+		setShouldRenderWebApp( false );
+		setIsPromptEditable( true );
+	};
+
 	useEffect( () => {
 		const isFirstTemplateExist = screenshots[ 0 ]?.template;
 
@@ -149,6 +219,12 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 			setSelectedScreenshotIndex( 0 );
 		}
 	}, [ screenshots[ 0 ]?.template ] );
+
+	useEffect( () => {
+		if ( initialAttachments?.length ) {
+			onAttach( initialAttachments );
+		}
+	}, [] );
 
 	return (
 		<LayoutDialog onClose={ onCloseIntent }>
@@ -174,6 +250,8 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 						</Box>
 					) }
 
+					{ attachments.length > 0 && <PromptPowerNotice /> }
+
 					{ error && (
 						<Box sx={ { pt: 2, px: 2, pb: 0 } }>
 							<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
@@ -189,12 +267,34 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 							onCancel={ () => setShowUnsavedChangesAlert( false ) }
 						/>
 					) }
-
+					{ shouldRenderWebApp && (
+						<AttachDialog
+							type={ ATTACHMENT_TYPE_URL }
+							url={ promptInputRef.current.value }
+							onAttach={ onAttach }
+							onClose={ () => {
+								setShouldRenderWebApp( false );
+							} } />
+					) }
 					<PromptForm
+						shouldResetPrompt={ shouldRenderWebApp }
 						ref={ promptInputRef }
 						isActive={ isPromptFormActive }
 						isLoading={ isLoading }
 						showActions={ screenshots.length > 0 || isLoading }
+						attachmentsTypes={ attachmentsTypes }
+						attachments={ attachments }
+						onAttach={ onAttach }
+						onDetach={ ( index ) => {
+							setAttachments( ( prev ) => {
+								const newAttachments = [ ...prev ];
+
+								newAttachments.splice( index, 1 );
+
+								return newAttachments;
+							} );
+							setIsPromptEditable( true );
+						} }
 						onSubmit={ handleGenerate }
 						onBack={ () => setIsPromptEditable( false ) }
 						onEdit={ () => setIsPromptEditable( true ) }
@@ -216,10 +316,11 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 											} }
 										>
 											{
-												screenshots.map( ( { screenshot, template, isError, isPending }, index ) => (
+												screenshots.map( ( { screenshot, type, template, isError, isPending }, index ) => (
 													<Screenshot
 														key={ index }
 														url={ screenshot }
+														type={ type }
 														disabled={ isPromptFormActive }
 														isPlaceholder={ isError }
 														isLoading={ isPending }
@@ -232,6 +333,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 											}
 										</Box>
 									</Box>
+									<VoicePromotionAlert introductionKey="ai-context-layout-promotion" />
 								</Box>
 
 								{
@@ -239,7 +341,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 										<Box sx={ { pt: 0, px: 2, pb: 2 } } display="grid" gridTemplateColumns="repeat(3, 1fr)" justifyItems="center">
 											<RegenerateButton
 												onClick={ handleRegenerate }
-												disabled={ isLoading || isPromptFormActive }
+												disabled={ isRegenerateButtonDisabled( screenshots, isLoading, isPromptFormActive ) }
 												sx={ { justifySelf: 'start' } }
 											/>
 
@@ -274,11 +376,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 FormLayout.propTypes = {
 	DialogHeaderProps: PropTypes.object,
 	DialogContentProps: PropTypes.object,
-	onClose: PropTypes.func.isRequired,
-	onInsert: PropTypes.func.isRequired,
-	onData: PropTypes.func.isRequired,
-	onSelect: PropTypes.func.isRequired,
-	onGenerate: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default FormLayout;

@@ -70,6 +70,14 @@ class Widget_Html extends Widget_Base {
 		return [ 'html', 'code', 'embed', 'script' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	public function show_in_panel() {
+		return User::is_current_user_can_use_custom_html();
+	}
+
 	/**
 	 * Register HTML widget controls.
 	 *
@@ -96,6 +104,7 @@ class Widget_Html extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'is_editable' => User::is_current_user_can_use_custom_html(),
 			]
 		);
 
