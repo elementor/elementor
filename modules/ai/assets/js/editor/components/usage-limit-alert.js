@@ -1,4 +1,5 @@
 import { Alert, AlertTitle, Button } from '@elementor/ui';
+import { FREE_TRIAL_FEATURES_NAMES } from '../helpers/features-enum';
 
 const KEY_SUBSCRIPTION = 'subscription';
 const KEY_NO_SUBSCRIPTION = 'noSubscription';
@@ -13,7 +14,7 @@ const CREDITS_80_USAGE_TITLE = getUsageTitle( '80%' );
 const CREDITS_75_USAGE_TITLE = getUsageTitle( '75%' );
 
 const DESCRIPTION_SUBSCRIPTION = __( 'Get maximum access.', 'elementor' );
-const FEATURES = [ 'Text', 'Images', 'Code', 'Containers' ];
+const FEATURES = Object.values( FREE_TRIAL_FEATURES_NAMES );
 
 const getDescriptionNoSubscription = ( excludedFeature ) => {
 	const filteredFeatures = FEATURES.filter( ( feature ) => feature !== excludedFeature );

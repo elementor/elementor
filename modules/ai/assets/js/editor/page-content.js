@@ -18,6 +18,7 @@ import { Box, Typography } from '@elementor/ui';
 import Loader from './components/loader';
 import { useEffect, useState } from 'react';
 import { useRequestIds } from './context/requests-ids';
+import { FREE_TRIAL_FEATURES_NAMES } from './helpers/features-enum';
 
 const PageContent = (
 	{
@@ -184,7 +185,7 @@ const PageContent = (
 									hasSubscription={ hasSubscription }
 									usagePercentage={ usagePercentage }
 									sx={ { mb: 2 } }
-									feature={ 'Code' }
+									feature={ FREE_TRIAL_FEATURES_NAMES.CODE }
 								/>
 							</FormCode>
 						</PromptDialog.Content>
@@ -219,7 +220,7 @@ const PageContent = (
 								hasSubscription={ hasSubscription }
 								usagePercentage={ usagePercentage }
 								sx={ { mb: 2 } }
-								feature={ 'Text' }
+								feature={ FREE_TRIAL_FEATURES_NAMES.TEXT }
 							/>
 						</FormText>
 					</PromptDialog.Content>
