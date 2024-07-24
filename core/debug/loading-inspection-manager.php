@@ -59,6 +59,7 @@ class Loading_Inspection_Manager {
 				break;
 			}
 		}
+
 		return $debug_data;
 	}
 }
