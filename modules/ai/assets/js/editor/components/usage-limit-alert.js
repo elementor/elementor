@@ -18,7 +18,11 @@ const FEATURES = [ 'Text', 'Images', 'Code', 'Containers' ];
 const getDescriptionNoSubscription = ( excludedFeature ) => {
 	const filteredFeatures = FEATURES.filter( ( feature ) => feature !== excludedFeature );
 	const featuresList = filteredFeatures.join( ', ' );
-	return `Upgrade now to keep using this feature. You still have credits for other AI features (${ featuresList }, etc.)`;
+	return sprintf(
+		__( 'Upgrade now to keep using this feature. You still have credits for other AI features (%s, etc.)',
+			'elementor' ),
+		featuresList,
+	);
 };
 
 const alertConfigs = [
