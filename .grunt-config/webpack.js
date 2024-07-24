@@ -167,7 +167,7 @@ const externals = [
 		}
 
 		callback();
-    },
+	},
 ];
 
 const plugins = [
