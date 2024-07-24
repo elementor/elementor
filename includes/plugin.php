@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Container\Container;
-use ElementorDeps\DI\Container as DIContainer;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
@@ -572,14 +570,6 @@ class Plugin {
 	public $assets_loader;
 
 	/**
-	 * Container instance for managing dependencies.
-	 *
-	 * @since 3.24.0
-	 * @var DIContainer
-	 */
-	private $container;
-
-	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -640,21 +630,6 @@ class Plugin {
 		}
 
 		return self::$instance;
-	}
-
-	public function initialize_container() {
-		Container::initialize_instance();
-	}
-
-	/**
-	 * Get the Elementor container or resolve a dependency.
-	 */
-	public function elementor_container( $abstract = null ) {
-		if ( is_null( $abstract ) ) {
-			return $this->container;
-		}
-
-		return $this->container->make( $abstract );
 	}
 
 	/**
@@ -883,7 +858,5 @@ class Plugin {
 
 if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 	// In tests we run the instance manually.
-	$plugin_instance = Plugin::instance();
-
-	$plugin_instance->initialize_container();
+	Plugin::instance();
 }

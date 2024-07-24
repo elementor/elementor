@@ -113,7 +113,7 @@ const UpgradeChip = ( {
 			<Popper
 				open={ isPopoverOpen }
 				anchorEl={ anchorEl.current }
-				sx={ { zIndex: '9999', maxWidth: 300 } }
+				sx={ { zIndex: '170001', maxWidth: 300 } }
 				modifiers={ [ {
 					name: 'arrow',
 					enabled: true,
