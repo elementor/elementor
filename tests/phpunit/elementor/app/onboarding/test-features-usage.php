@@ -3,7 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\Onboarding;
 
 use Elementor\App\Modules\Onboarding\Features_Usage;
-use ElementorPro\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Features_Usage extends Elementor_Test_Base {
 
