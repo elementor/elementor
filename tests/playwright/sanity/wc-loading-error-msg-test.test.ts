@@ -3,7 +3,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 
 test.describe( 'Woocommerce Shop page Edite with Elementor', () => {
-	test.skip( 'Editing Woocommerce shop page with elementor should show message', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Editing Woocommerce shop page with elementor should show message', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
