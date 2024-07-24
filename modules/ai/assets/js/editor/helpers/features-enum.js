@@ -1,6 +1,6 @@
 export const FREE_TRIAL_FEATURES_NAMES = {
-	TEXT: 'Text',
-	IMAGES: 'Images',
-	CODE: 'Code',
-	CONTAINERS: 'Containers',
+	TEXT: __( 'Text', 'elementor' ),
+	IMAGES: __( 'Images', 'elementor' ),
+	CODE: __( 'Code', 'elementor' ),
+	CONTAINERS: __( 'Containers', 'elementor' ),
 };
