@@ -1,0 +1,46 @@
+.e-floating-bars-var-2 {
+	--e-floating-bars-announcement-bg-color: #ffffff;
+	--e-floating-bars-headline-text-color: #1C2448;
+	--e-floating-bars-headline-text-color-hover: #467FF7;
+	--e-floating-bars-headline-icon-color: #467FF7;
+
+	--e-floating-bars-headline-icon-size: 16px;
+	--e-floating-bars-headlines-gap: 16px;
+	--e-floating-bars-vertical-padding: 16px;
+	--e-floating-bars-headline-icon-position: row;
+
+	padding-block: var(--e-floating-bars-vertical-padding);
+
+	.e-floating-bars {
+
+		&__headlines {
+			display: flex;
+			gap: var(--e-floating-bars-headlines-gap);
+		}
+
+		&__headline,
+		&__headline:not([href]):not([tabindex]) {
+			align-items: center;
+			color: var(--e-floating-bars-headline-text-color);
+			display: flex;
+			flex-direction: var(--e-floating-bars-headline-icon-position);
+			gap: 10px;
+
+			&:hover,
+			&:focus {
+				color: var(--e-floating-bars-headline-text-color-hover);
+			}
+		}
+
+		&__headline-icon {
+			color: var(--e-floating-bars-headline-icon-color);
+			display: flex;
+			
+			svg {
+				fill: var(--e-floating-bars-headline-icon-color);
+				height: var(--e-floating-bars-headline-icon-size);
+				width: var(--e-floating-bars-headline-icon-size);
+			}
+		}
+	}
+}

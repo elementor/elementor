@@ -2,11 +2,13 @@
 namespace Elementor\Modules\FloatingButtons\Base;
 
 use Elementor\Modules\FloatingButtons\Classes\Render\Floating_Bars_Core_Render;
+use Elementor\Core\Base\Providers\Social_Network_Provider;
 
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 
 use Elementor\Plugin;
+use Elementor\Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
@@ -22,6 +24,18 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		return array_merge( parent::get_initial_config(), [
 			'commonMerged' => true,
 		] );
+	}
+
+	public static function get_configuration() {
+		return [
+			'content' => [
+				'floating_bar_section' => [
+					'close_switch_default' => 'yes',
+				],
+			],
+			'style' => [],
+			'advanced' => [],
+		];
 	}
 
 	protected function register_controls(): void {
@@ -128,6 +142,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	}
 
 	protected function add_floating_bar_content_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'floating_bar_content_section',
 			[
@@ -144,7 +160,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'yes',
-				'default' => 'yes',
+				'default' => $config['content']['floating_bar_section']['close_switch_default'],
 			]
 		);
 
@@ -162,6 +178,82 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'floating_bar_close_switch' => 'yes',
 				],
 			],
+		);
+
+		$this->end_controls_section();
+	}
+
+	protected function add_headlines_content_section(): void {
+		$config = static::get_configuration();
+
+		$this->start_controls_section(
+			'headlines_content',
+			[
+				'label' => esc_html__( 'Headlines', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		$repeater = new Repeater();
+
+		$repeater->add_control(
+			'headlines_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'icon_exclude_inline_options' => [],
+			]
+		);
+
+		$repeater->add_control(
+			'headlines_text',
+			[
+				'label' => esc_html__( 'Text', 'elementor' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'placeholder' => esc_html__( 'Enter your text', 'elementor' ),
+				'default' => esc_html__( 'Item Title', 'elementor-pro' ),
+				'dynamic' => [
+					'active' => true,
+				],
+			]
+		);
+
+		$repeater->add_control(
+			'headlines_url',
+			[
+				'label' => esc_html__( 'Link', 'elementor-pro' ),
+				'type' => Controls_Manager::URL,
+				'placeholder' => esc_html__( 'Paste URL or type', 'elementor-pro' ),
+				'dynamic' => [
+					'active' => true,
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'headlines_repeater',
+			[
+				'type' => Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
+				'title_field' => '{{{ headlines_text }}}',
+				'prevent_empty' => true,
+				'button_text' => esc_html__( 'Add Item', 'elementor' ),
+				'default' => [
+					[
+						'headlines_text' => esc_html__( 'Item #1', 'elementor' ),
+					],
+					[
+						'headlines_text' => esc_html__( 'Item #2', 'elementor' ),
+					],
+					[
+						'headlines_text' => esc_html__( 'Item #3', 'elementor' ),
+					]
+				],
+			]
 		);
 
 		$this->end_controls_section();
@@ -726,6 +818,77 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	protected function add_floating_bar_background_controls(): void {
+		$this->add_control(
+			'floating_bar_background_heading',
+			[
+				'label' => esc_html__( 'Background', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'floating_bar_background_type',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-floating-bars',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+					'position' => [
+						'default' => 'center center',
+					],
+					'size' => [
+						'default' => 'cover',
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'floating_bar_background_overlay_heading',
+			[
+				'label' => esc_html__( 'Background Overlay', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'floating_bar_background_overlay_type',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .e-floating-bars__overlay',
+			]
+		);
+
+		$this->add_responsive_control(
+			'floating_bar_background_overlay_opacity',
+			[
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'max' => 1,
+						'min' => 0,
+						'step' => 0.01,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0.5,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-background-overlay-opacity: {{SIZE}};',
+				],
+			]
+		);
+	}
+
 	protected function add_floating_bar_style_section(): void {
 		$this->start_controls_section(
 			'style_floating_bar',
@@ -852,72 +1015,271 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'floating_bar_background_heading',
+		$this->add_floating_bar_background_controls();
+
+		$this->end_controls_section();
+	}
+
+	protected function add_headlines_style_section(): void {
+		$this->start_controls_section(
+			'style_headlines',
 			[
-				'label' => esc_html__( 'Background', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'label' => esc_html__( 'Headline', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
+		$this->add_control(
+			'style_headlines_icon_heading',
 			[
-				'name' => 'floating_bar_background_type',
-				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-floating-bars',
-				'fields_options' => [
-					'background' => [
-						'default' => 'classic',
-					],
-					'position' => [
-						'default' => 'center center',
-					],
-					'size' => [
-						'default' => 'cover',
-					],
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				// 'conditions' => [
+				// 	'relation' => 'and',
+				// 	'terms' => [
+				// 		[
+				// 			'name' => 'headlines_icon[value]',
+				// 			'operator' => '!==',
+				// 			'value' => '',
+				// 		],
+				// 		[
+				// 			'name' => 'headlines_icon[value]',
+				// 			'operator' => '!==',
+				// 			'value' => null,
+				// 		],
+				// 	],
+				// ],
+			]
+		);
+
+		$this->add_control(
+			'style_headlines_icon_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-icon-color: {{VALUE}}',
 				],
-			]
-		);
-
-		$this->add_control(
-			'floating_bar_background_overlay_heading',
-			[
-				'label' => esc_html__( 'Background Overlay', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'floating_bar_background_overlay_type',
-				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-floating-bars__overlay',
+				// 'conditions' => [
+				// 	'relation' => 'and',
+				// 	'terms' => [
+				// 		[
+				// 			'name' => 'headlines_icon[value]',
+				// 			'operator' => '!==',
+				// 			'value' => '',
+				// 		],
+				// 		[
+				// 			'name' => 'headlines_icon[value]',
+				// 			'operator' => '!==',
+				// 			'value' => null,
+				// 		],
+				// 	],
+				// ],
 			]
 		);
 
 		$this->add_responsive_control(
-			'floating_bar_background_overlay_opacity',
+			'style_headlines_icon_position',
 			[
-				'label' => esc_html__( 'Opacity', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'%' => [
-						'max' => 1,
-						'min' => 0,
-						'step' => 0.01,
+				'label' => esc_html__( 'Icon Positionnnn', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'default' => is_rtl() ? 'row-reverse' : 'row',
+				'toggle' => false,
+				'options' => [
+					'row' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'row-reverse' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'default' => [
-					'unit' => '%',
-					'size' => 0.5,
+				// 'selectors_dictionary' => [
+				// 	'left' => is_rtl() ? 'row-reverse' : 'row',
+				// 	'right' => is_rtl() ? 'row' : 'row-reverse',
+				// ],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars__headline' => '--e-floating-bars-headline-icon-position: {{VALUE}};',
+				],
+				// 'condition' => [
+				// 	'cta_icon[value]!' => '',
+				// ],
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_headlines_icon_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 150,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-icon-size: {{SIZE}}{{UNIT}}',
+				],
+				'separator' => 'after',
+				// 'conditions' => [
+				// 	'relation' => 'and',
+				// 	'terms' => [
+				// 		[
+				// 			'name' => 'headlines_icon[value]',
+				// 			'operator' => '!==',
+				// 			'value' => '',
+				// 		],
+				// 		[
+				// 			'name' => 'headlines_icon[value]',
+				// 			'operator' => '!==',
+				// 			'value' => null,
+				// 		],
+				// 	],
+				// ],
+			]
+		);
+
+		$this->add_control(
+			'style_headline_text_heading',
+			[
+				'label' => esc_html__( 'Text', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'style_headline_text_typography',
+				'selector' => '{{WRAPPER}} .e-floating-bars__headline-text',
+			]
+		);
+
+		$this->start_controls_tabs(
+			'style_headline_tabs'
+		);
+
+		$this->start_controls_tab(
+			'style_headline_tabs_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'style_headline_text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-text-color: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'style_headline_tabs_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'style_headline_text_color_hover',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-text-color-hover: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+	}
+
+	protected function add_ticker_style_section(): void {
+		$this->start_controls_section(
+			'style_ticker',
+			[
+				'label' => esc_html__( 'Ticker', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		// TODO: wire this
+		$this->add_responsive_control(
+			'style_ticker_animation_type',
+			[
+				'label' => esc_html__( 'Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'autoplay',
+				'options' => [
+					'autoplay' => esc_html__( 'Autoplay', 'elementor' ),
+					'scroll' => esc_html__( 'On page scroll', 'elementor' ),
+				],
+			]
+		);
+
+		// TODO: wire this
+		$this->add_responsive_control(
+			'style_ticker_scroll_direction',
+			[
+				'label' => esc_html__( 'Scroll Direction', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'default' => 'right',
+				'toggle' => false,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-arrow-left',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-arrow-right',
+					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-background-overlay-opacity: {{SIZE}};',
+					'{{WRAPPER}} .e-floating-bars__headline' => 'flex-direction: {{VALUE}};',
 				],
+			]
+		);
+
+		// TODO: wire this
+		$this->add_control(
+			'style_ticker_scroll_speed',
+			[
+				'label' => esc_html__( 'Scroll speed (s)', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-speed: {{VALUE}}s;',
+				],
+			],
+		);
+
+		// TODO: wire this
+		$this->add_control(
+			'style_ticker_pause_hover',
+			[
+				'label' => esc_html__( 'Pause on Hover', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
 			]
 		);
 
