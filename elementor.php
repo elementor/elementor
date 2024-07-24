@@ -27,8 +27,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Container\Container;
-
 define( 'ELEMENTOR_VERSION', '3.24.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
@@ -44,10 +42,6 @@ if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
 define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modules' );
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
-
-if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
-	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
-}
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );

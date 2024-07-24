@@ -3,7 +3,6 @@ assets/js/
 **/*.min.js
 **/node_modules/**
 **/vendor/**
-**/vendor_prefixed/**
 build/**
 packages/**/*
 tests/qunit/setup/tinymce.js
