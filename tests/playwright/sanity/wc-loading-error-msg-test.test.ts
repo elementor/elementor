@@ -15,5 +15,5 @@ test.describe( 'Woocommerce Shop page Edite with Elementor', () => {
 		const modalTitle = await editor.page.waitForSelector( '.dialog-header.dialog-confirm-header' );
 
 		expect( await modalTitle.innerText() ).toBe( 'Sorry, the content area was not found in your page.' );
-	});
-});
+	} );
+} );
