@@ -203,32 +203,6 @@ export default class WpAdminPage extends BasePage {
 		await this.page.click( '#submit' );
 	}
 
-	async setWCShopPage( postId: string ) {
-		const title = `Playwright Test Page #${ postId }`;
-
-		await this.page.goto( '/wp-admin/admin.php?page=wc-settings&tab=products' );
-
-		await this.page.waitForSelector( '#select2-woocommerce_shop_page_id-container' );
-		await this.page.click( '#select2-woocommerce_shop_page_id-container' );
-		await this.page.click( '.select2-search__field' );
-		await this.page.fill( '.select2-search__field', title );
-		await this.page.locator( '.select2-results__options li' ).first().click();
-
-		await this.page.click( '[name="save"]' );
-
-		await this.page.goto( '/wp-admin/post.php?post=' + postId + '&action=elementor' );
-	}
-
-	/**
-	 * Reset all Elementor experiments to their default settings.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async resetExperiments() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
-		await this.page.getByRole( 'button', { name: 'default' } ).click();
-	}
-
 	/**
 	 * Set site language.
 	 *
