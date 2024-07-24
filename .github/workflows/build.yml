@@ -5,9 +5,9 @@ on:
   pull_request:
   workflow_call:
     outputs:
-      artifact_name: 
+      artifact_name:
         value: ${{ jobs.build-plugin.outputs.artifact_name }}
-      changelog_diff: 
+      changelog_diff:
         value: ${{ jobs.build-plugin.outputs.changelog_diff }}
   push:
     branches:
@@ -60,6 +60,9 @@ jobs:
             | tr -d '[[:space:]]')
           export PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}"
           export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
+          composer install --optimize-autoloader --prefer-dist
+          composer install --no-scripts --no-dev
+          composer dump-autoload
           npx grunt build
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
