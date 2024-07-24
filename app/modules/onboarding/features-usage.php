@@ -20,14 +20,12 @@ class Features_Usage {
 		} );
 	}
 
-	public function save_onboarding_features() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_POST['data'] ) ) {
+	public function save_onboarding_features( $data ) {
+		if ( empty( $data ) ) {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
+		$data = json_decode( $data, true );
 
 		if ( empty( $data['features'] ) ) {
 			return;

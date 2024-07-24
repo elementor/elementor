@@ -442,7 +442,8 @@ class Module extends BaseModule {
 				$result = $this->maybe_update_onboarding_db_option();
 				break;
 			case 'elementor_save_onboarding_features':
-				$result = $this->get_component( 'features_usage' )->save_onboarding_features();
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				$result = $this->get_component( 'features_usage' )->save_onboarding_features( Utils::get_super_global_value( $_POST, 'data' ) ?? [] );
 		}
 
 		if ( ! empty( $result ) ) {
