@@ -10,10 +10,7 @@ class Test_Features_Usage extends Elementor_Test_Base {
 	public function test_save_onboarding_features() {
 		// Arrange
 		$features_usage = new Features_Usage();
-		$features = [
-			'feature_1' => true,
-			'feature_2' => false,
-		];
+		$features = [ 'feature_1', 'feature_2' ];
 		$data = json_encode( [
 			'features' => $features,
 		] );
@@ -33,10 +30,7 @@ class Test_Features_Usage extends Elementor_Test_Base {
 	public function test_register() {
 		// Arrange
 		remove_all_filters( 'elementor/tracker/send_tracking_data_params' );
-		$features = [
-			'feature_1' => true,
-			'feature_2' => false,
-		];
+		$features = [ 'feature_1', 'feature_2' ];
 		$data = json_encode( [
 			'features' => $features,
 		] );
