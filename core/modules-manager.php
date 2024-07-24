@@ -122,7 +122,6 @@ class Modules_Manager {
 			'content-sanitizer',
 			'editor-events',
 			'atomic-widgets',
-			'floating-bars',
 			'wc-product-editor',
 		];
 	}
