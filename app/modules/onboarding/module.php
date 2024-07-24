@@ -440,6 +440,9 @@ class Module extends BaseModule {
 				break;
 			case 'elementor_update_onboarding_option':
 				$result = $this->maybe_update_onboarding_db_option();
+				break;
+			case 'elementor_save_onboarding_features':
+				$result = $this->get_component( 'features_usage' )->save_onboarding_features();
 		}
 
 		if ( ! empty( $result ) ) {
@@ -452,6 +455,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		$this->add_component( 'features_usage', new Features_Usage() );
+
 		add_action( 'elementor/init', function() {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {
@@ -483,5 +488,7 @@ class Module extends BaseModule {
 				$this->maybe_handle_ajax();
 			}
 		} );
+
+		$this->get_component( 'features_usage' )->register();
 	}
 }
