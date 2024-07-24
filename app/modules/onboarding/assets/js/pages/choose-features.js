@@ -44,6 +44,16 @@ export default function ChooseFeatures() {
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
+			action: () => {
+				setAjax( {
+					data: {
+						action: 'elementor_save_onboarding_features',
+						data: JSON.stringify( {
+							features: selectedFeatures,
+						} ),
+					},
+				} );
+			},
 		};
 	}
 
@@ -62,8 +72,6 @@ export default function ChooseFeatures() {
 	function isFeatureSelected( features ) {
 		return !! features.advanced.length || !! features.essential.length;
 	}
-
-	console.log( selectedFeatures );
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
