@@ -211,13 +211,12 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( '#select2-woocommerce_shop_page_id-container' );
 		await this.page.click( '#select2-woocommerce_shop_page_id-container' );
 		await this.page.click( '.select2-search__field' );
-		await this.page.fill( '.select2-search__field', title);
+		await this.page.fill( '.select2-search__field', title );
 		await this.page.locator( '.select2-results__options li' ).first().click();
 
 		await this.page.click( '[name="save"]' );
 
-		await this.page.goto( '/wp-admin/post.php?post='+ postId +'&action=elementor' );
-
+		await this.page.goto( '/wp-admin/post.php?post=' + postId + '&action=elementor' );
 	}
 
 	/**
