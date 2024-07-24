@@ -2,7 +2,7 @@
 
 namespace Elementor\App\Modules\Onboarding;
 
-use Elementor\Utils;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -13,6 +13,10 @@ class Features_Usage {
 	const ONBOARDING_FEATURES_OPTION = '_elementor_onboarding_features';
 
 	public function register() {
+		if ( ! Tracker::is_allow_track() ) {
+			return;
+		}
+
 		add_filter( 'elementor/tracker/send_tracking_data_params', function ( array $params ) {
 			$params['usages']['onboarding_features'] = $this->get_usage_data();
 

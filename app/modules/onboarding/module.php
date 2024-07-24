@@ -7,7 +7,6 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
-use Elementor\Tracker;
 use Elementor\Utils;
 use Plugin_Upgrader;
 
