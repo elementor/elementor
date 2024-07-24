@@ -33,7 +33,7 @@ class Loading_Inspection_Manager {
 	}
 
 	public function run_inspections() {
-		if ( Utils::get_super_global_value( $_GET, 'post' ) === get_option( 'woocommerce_shop_page_id' )) {
+		if ( Utils::get_super_global_value( $_GET, 'post' ) === get_option( 'woocommerce_shop_page_id' ) ) {
 			$debug_data = [
 				'message' => esc_html__( 'You are trying to edit the Shop Page although it is a Product Archive. Use the Theme Builder to create your Shop Archive template instead.', 'elementor' ),
 				'header' => esc_html__( 'Sorry, The content area was not been found on your page', 'elementor' ),
