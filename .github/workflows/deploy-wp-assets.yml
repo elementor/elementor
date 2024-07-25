@@ -21,4 +21,5 @@ jobs:
           cd remote-wp-assets
           svn status | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete;
           svn status | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs -r svn add;
+          svn status
           svn ci -m "Assets updated" --no-auth-cache --non-interactive  --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}"
