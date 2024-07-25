@@ -2,6 +2,7 @@
 namespace Elementor\Core\Debug;
 
 use Elementor\Core\Debug\Classes\Inspection_Base;
+use Elementor\Core\Debug\Classes\Shop_Page_Edit;
 use Elementor\Core\Debug\Classes\Theme_Missing;
 use Elementor\Core\Debug\Classes\Htaccess;
 
@@ -22,6 +23,7 @@ class Loading_Inspection_Manager {
 	public function register_inspections() {
 		$this->inspections['theme-missing'] = new Theme_Missing();
 		$this->inspections['htaccess'] = new Htaccess();
+		$this->inspections['shop-page-edit'] = new Shop_Page_Edit();
 	}
 
 	/**
