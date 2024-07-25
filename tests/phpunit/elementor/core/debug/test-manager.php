@@ -13,8 +13,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 	use Test_Upgrades_Trait;
 
-	public function test_get_message_for_wp_shop_page ()
-	{
+	public function test_get_message_for_wp_shop_page () {
 		// Arrange
 		$shop_page = $this->create_post( 'page' );
 
