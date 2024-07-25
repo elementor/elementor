@@ -10,7 +10,7 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		return __( 'Styles', 'elementor' );
+		return __( 'Style Def', 'elementor' );
 	}
 
 	validateArgs( args ) {
@@ -65,7 +65,7 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 			historyItem = {
 				containers: [ container ],
 				data: { changes },
-				type: 'change',
+				type: 'add',
 				restore: CreateStyle.restore,
 			};
 
@@ -79,7 +79,7 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		return {
 			containers,
 			subTitle,
-			type: 'change',
+			type: 'add',
 		};
 	}
 

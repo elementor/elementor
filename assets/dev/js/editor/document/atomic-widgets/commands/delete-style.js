@@ -10,7 +10,7 @@ export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDeboun
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		return __( 'Styles', 'elementor' );
+		return __( 'Style Def', 'elementor' );
 	}
 
 	validateArgs( args ) {
@@ -54,8 +54,8 @@ export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDeboun
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param             styleDefId
-	 * @param             bind
+	 * @param {string}    styleDefId
+	 * @param {string}    bind
 	 */
 	addToHistory( container, styleDefId, bind ) {
 		const changes = {
@@ -67,7 +67,7 @@ export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDeboun
 			historyItem = {
 				containers: [ container ],
 				data: { changes },
-				type: 'change',
+				type: 'remove',
 				restore: DeleteStyle.restore,
 			};
 
@@ -81,7 +81,7 @@ export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		return {
 			containers,
 			subTitle,
-			type: 'change',
+			type: 'remove',
 		};
 	}
 
@@ -90,7 +90,6 @@ export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDeboun
 
 		const settings = container.settings.toJSON();
 
-		// Remove styleDefId from the array in value in settings object.
 		settings[ bind ].value = settings[ bind ].value.filter( ( styleId ) => styleId !== styleDefId );
 
 		$e.internal( 'document/elements/set-settings', {
@@ -110,11 +109,7 @@ export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		container.model.set( 'styles', styles );
 
 		if ( this.isHistoryActive() ) {
-			this.addToHistory(
-				container,
-				styleDefId,
-				bind,
-			);
+			this.addToHistory( container, styleDefId, bind );
 		}
 	}
 }

@@ -31,7 +31,7 @@ describe( 'CreateVariant - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should create new style variant & add history transaction', () => {
+	it( 'should throw an error if style def not exits', () => {
 		const command = new CreateVariantCommand();
 
 		const bind = 'classes';
@@ -56,6 +56,42 @@ describe( 'CreateVariant - apply', () => {
 			},
 		} );
 
+		// Act & Assert
+		expect( () => {
+			command.apply( { container, styleDefId: 'not-exits-style-id', meta: { breakpoint: null, state: null } } );
+		} ).toThrowError( 'Style Def not found' );
+	} );
+
+	it( 'should create new style variant & add history transaction', () => {
+		const command = new CreateVariantCommand();
+
+		const bind = 'classes';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'Test text',
+				[ bind ]: {
+					$$type: 'classes',
+					value: [ 'style-id' ],
+				},
+			},
+			styles: {
+				'style-id': {
+					id: 'style-id',
+					label: '',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: 'active' },
+							props: {},
+						},
+					],
+				},
+			},
+		} );
+
 		// Act
 		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: null } } );
 
@@ -65,6 +101,10 @@ describe( 'CreateVariant - apply', () => {
 				label: '',
 				type: 'class',
 				variants: [
+					{
+						meta: { breakpoint: null, state: 'active' },
+						props: {},
+					},
 					{
 						meta: { breakpoint: null, state: null },
 						props: {},
@@ -88,7 +128,7 @@ describe( 'CreateVariant - apply', () => {
 			{
 				containers: [ container ],
 				data: { changes: historyChanges },
-				type: 'change',
+				type: 'add',
 				restore: CreateVariantCommand.restore,
 			},
 		);

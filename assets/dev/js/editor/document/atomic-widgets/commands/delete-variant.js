@@ -10,7 +10,7 @@ export class DeleteVariant extends $e.modules.editor.document.CommandHistoryDebo
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		return __( 'Styles', 'elementor' );
+		return __( 'Style Variant', 'elementor' );
 	}
 
 	validateArgs( args ) {
@@ -59,7 +59,7 @@ export class DeleteVariant extends $e.modules.editor.document.CommandHistoryDebo
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param             styleDefId
+	 * @param {string}    styleDefId
 	 * @param {{}}        meta
 	 */
 	addToHistory( container, styleDefId, meta ) {
@@ -72,7 +72,7 @@ export class DeleteVariant extends $e.modules.editor.document.CommandHistoryDebo
 			historyItem = {
 				containers: [ container ],
 				data: { changes },
-				type: 'change',
+				type: 'remove',
 				restore: DeleteVariant.restore,
 			};
 
@@ -86,7 +86,7 @@ export class DeleteVariant extends $e.modules.editor.document.CommandHistoryDebo
 		return {
 			containers,
 			subTitle,
-			type: 'change',
+			type: 'remove',
 		};
 	}
 

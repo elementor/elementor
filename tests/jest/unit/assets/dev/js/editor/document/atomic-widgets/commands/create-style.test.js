@@ -87,7 +87,7 @@ describe( 'CreateStyle - apply', () => {
 			{
 				containers: [ container ],
 				data: { changes: historyChanges },
-				type: 'change',
+				type: 'add',
 				restore: CreateStyleCommand.restore,
 			},
 		);
@@ -168,7 +168,7 @@ describe( 'CreateStyle - apply', () => {
 			{
 				containers: [ container ],
 				data: { changes: historyChanges },
-				type: 'change',
+				type: 'add',
 				restore: CreateStyleCommand.restore,
 			},
 		);

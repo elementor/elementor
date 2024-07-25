@@ -10,7 +10,7 @@ export class UpdateProps extends $e.modules.editor.document.CommandHistoryDeboun
 	 * @return {string} sub title
 	 */
 	static getSubTitle() {
-		return __( 'Styles', 'elementor' );
+		return __( 'Style Props', 'elementor' );
 	}
 
 	validateArgs( args ) {
@@ -116,7 +116,7 @@ export class UpdateProps extends $e.modules.editor.document.CommandHistoryDeboun
 	apply( args ) {
 		const { container, styleDefId, meta, props } = args;
 
-		const propsSnapshot = {};
+		const oldEditedProps = {};
 		const oldStyles = container.model.get( 'styles' ) || {};
 		let style = {};
 
@@ -132,10 +132,9 @@ export class UpdateProps extends $e.modules.editor.document.CommandHistoryDeboun
 			throw new Error( 'Style Variant not found' );
 		}
 
-		// Save the old values of the props
 		if ( this.isHistoryActive() ) {
 			Object.keys( props ).forEach( ( prop ) => {
-				propsSnapshot[ prop ] = variant.props[ prop ] || null;
+				oldEditedProps[ prop ] = variant.props[ prop ] || null;
 			} );
 		}
 
@@ -149,7 +148,7 @@ export class UpdateProps extends $e.modules.editor.document.CommandHistoryDeboun
 		container.model.set( 'styles', newStyles );
 
 		if ( this.isHistoryActive() ) {
-			this.addToHistory( container, styleDefId, meta, props, propsSnapshot );
+			this.addToHistory( container, styleDefId, meta, props, oldEditedProps );
 		}
 	}
 }

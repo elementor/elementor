@@ -88,7 +88,7 @@ describe( 'DeleteStyle - apply', () => {
 			{
 				containers: [ container ],
 				data: { changes: historyChanges },
-				type: 'change',
+				type: 'remove',
 				restore: DeleteStyleCommand.restore,
 			},
 		);
@@ -164,7 +164,7 @@ describe( 'DeleteStyle - apply', () => {
 			{
 				containers: [ container ],
 				data: { changes: historyChanges },
-				type: 'change',
+				type: 'remove',
 				restore: DeleteStyleCommand.restore,
 			},
 		);

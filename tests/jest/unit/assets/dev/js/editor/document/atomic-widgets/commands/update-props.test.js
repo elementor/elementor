@@ -31,7 +31,7 @@ describe( 'UpdateProps - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should throw error when styleDef not exits', () => {
+	it( 'should throw an error when styleDef not exits', () => {
 		const command = new UpdatePropsCommand();
 
 		const bind = 'classes';
@@ -61,7 +61,7 @@ describe( 'UpdateProps - apply', () => {
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
-	it( 'should throw error when style variant not exits', () => {
+	it( 'should throw an error when style variant not exits', () => {
 		const command = new UpdatePropsCommand();
 
 		const bind = 'classes';
