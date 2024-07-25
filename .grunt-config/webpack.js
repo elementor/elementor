@@ -186,7 +186,6 @@ const externals = {
 	'@wordpress/components': 'wp.components',
 };
 
-
 const plugins = [
 	new webpack.ProvidePlugin( {
 		React: 'react',
