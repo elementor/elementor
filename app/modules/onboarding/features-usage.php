@@ -24,18 +24,18 @@ class Features_Usage {
 		} );
 	}
 
-	public function save_onboarding_features( $data ) {
-		if ( empty( $data ) ) {
+	public function save_onboarding_features( $raw_post_data ) {
+		if ( empty( $raw_post_data ) ) {
 			return;
 		}
 
-		$data = json_decode( $data, true );
+		$post_data = json_decode( $raw_post_data, true );
 
-		if ( empty( $data['features'] ) ) {
+		if ( empty( $post_data['features'] ) ) {
 			return;
 		}
 
-		update_option( static::ONBOARDING_FEATURES_OPTION, $data['features'] );
+		update_option( static::ONBOARDING_FEATURES_OPTION, $post_data['features'] );
 
 		return [
 			'status' => 'success',
