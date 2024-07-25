@@ -35,8 +35,9 @@ const common = {
 		new GenerateWordPressAssetFileWebpackPlugin( {
 			handle: ( entryName ) => `elementor-v2-${entryName}`,
 			map: [
-				{ request: /^@elementor\/(ui|icons)(\/.+)?$/, handle: 'elementor-v2-$1' },
-				{ request: /^@elementor\/([^\/]+)(\/.+)?$/, handle: 'elementor-v2-$1' },
+				// { request: /^@elementor\/(ui|icons)(\/.+)?$/, handle: 'elementor-v2-$1' },
+				// { request: /^@elementor\/([^\/]+)(\/.+)?$/, handle: 'elementor-v2-$1' },
+				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
 				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
 				{ request: 'react', handle: 'react' },
 				{ request: 'react-dom', handle: 'react-dom' },
@@ -45,7 +46,7 @@ const common = {
 		new ExternalizeWordPressAssetsWebpackPlugin( {
 			global: ( entryName ) => [ 'elementorV2', entryName ],
 			map: [
-				{ request: /^@elementor\/(ui|icons)\/(.+)$/, global: [ 'elementorV2', '$1', '$2' ] },
+				// { request: /^@elementor\/(ui|icons)\/(.+)$/, global: [ 'elementorV2', '$1', '$2' ] },
 				{ request: /^@elementor\/(.+)$/, global: [ 'elementorV2', '$1' ] },
 				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
 				{ request: 'react', global: 'React' },
@@ -146,10 +147,10 @@ function getLocalRepoPackagesEntries() {
 		path: './node_modules/@elementor/ui/index.js'
 	} );
 
-	packages.push( {
-		name: 'icons',
-		path: './node_modules/@elementor/icons/index.js'
-	} );
+	// packages.push( {
+	// 	name: 'icons',
+	// 	path: './node_modules/@elementor/icons/index.js'
+	// } );
 
 	return packages;
 }
