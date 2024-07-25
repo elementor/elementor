@@ -54,6 +54,6 @@ class Module extends BaseModule {
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
-        $widgets_manager->register( new Atomic_Google_Maps() );
-    }
+		$widgets_manager->register( new Atomic_Google_Maps() );
+	}
 }
