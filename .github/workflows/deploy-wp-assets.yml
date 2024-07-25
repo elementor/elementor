@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  deploy:
+    if: ( github.actor == 'KingYes' || github.actor == 'arielk' ) && startsWith( github.repository, 'elementor/' )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Preparing envs
+        run: |
+          svn co https://plugins.svn.wordpress.org/elementor/assets remote-wp-assets
+          rm -rf remote-wp-assets/*
+          rsync -ah --progress .wp-svn-assets/* remote-wp-assets/
+      - name: Publish to WordPress.org SVN
+        env:
+          PLUGIN_SLUG: ${{ env.PLUGIN_SLUG }}
+          PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          cd remote-wp-assets
+          svn status | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete;
+          svn status | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs -r svn add;
+          #svn ci -m "Assets updated" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
