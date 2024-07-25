@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../../../container/container')} Container
  */
-export class UpdateStyle extends $e.modules.editor.document.CommandHistoryDebounceBase {
+export class UpdateProps extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -45,7 +45,12 @@ export class UpdateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		historyItem.get( 'containers' ).forEach( ( /* Container */ container ) => {
 			const changes = data.changes[ container.id ];
 
-			container.model.set( 'styles', isRedo ? changes.newStyles : changes.oldStyles );
+			$e.run( 'document/atomic-widgets/update-props', {
+				container,
+				styleDefId: changes.styleDefId,
+				meta: changes.meta,
+				props: isRedo ? changes.props : changes.oldProps,
+			} );
 		} );
 	}
 
@@ -53,21 +58,25 @@ export class UpdateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param {{}}        oldStyles
-	 * @param {{}}        newStyles
+	 * @param {string}    styleDefId
+	 * @param {{}}        meta
+	 * @param {{}}        props
+	 * @param {{}}        oldProps
 	 */
-	addToHistory( container, oldStyles, newStyles ) {
+	addToHistory( container, styleDefId, meta, props, oldProps ) {
 		const changes = {
 				[ container.id ]: {
-					oldStyles,
-					newStyles,
+					styleDefId,
+					meta,
+					props,
+					oldProps,
 				},
 			},
 			historyItem = {
 				containers: [ container ],
 				data: { changes },
 				type: 'change',
-				restore: UpdateStyle.restore,
+				restore: UpdateProps.restore,
 			};
 
 		$e.internal( 'document/history/add-transaction', historyItem );
@@ -84,12 +93,8 @@ export class UpdateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		};
 	}
 
-	getVariantByMeta( style, meta ) {
-		if ( ! style.variants ) {
-			return null;
-		}
-
-		return style.variants.find( ( variant ) => {
+	getVariantByMeta( variants, meta ) {
+		return variants.find( ( variant ) => {
 			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
 		} );
 	}
@@ -108,38 +113,33 @@ export class UpdateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		};
 	}
 
-	addNewVariant( style, meta, props ) {
-		return {
-			...style,
-			variants: [
-				...style.variants,
-				{
-					meta,
-					props,
-				},
-			],
-		};
-	}
-
 	apply( args ) {
 		const { container, styleDefId, meta, props } = args;
 
+		const propsSnapshot = {};
 		const oldStyles = container.model.get( 'styles' ) || {};
 		let style = {};
 
 		if ( ! oldStyles[ styleDefId ] ) {
 			throw new Error( 'Style Def not found' );
-		} else {
-			style = { ...oldStyles[ styleDefId ] };
 		}
 
-		const existingVariant = this.getVariantByMeta( style, meta );
+		style = { ...oldStyles[ styleDefId ] };
 
-		if ( existingVariant ) {
-			style = this.updateExistingVariant( style, existingVariant, props );
-		} else {
-			style = this.addNewVariant( style, meta, props );
+		const variant = this.getVariantByMeta( style.variants, meta );
+
+		if ( ! variant ) {
+			throw new Error( 'Style Variant not found' );
 		}
+
+		// Save the old values of the props
+		if ( this.isHistoryActive() ) {
+			Object.keys( props ).forEach( ( prop ) => {
+				propsSnapshot[ prop ] = variant.props[ prop ] || null;
+			} );
+		}
+
+		style = this.updateExistingVariant( style, variant, props );
 
 		const newStyles = {
 			...oldStyles,
@@ -149,9 +149,9 @@ export class UpdateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		container.model.set( 'styles', newStyles );
 
 		if ( this.isHistoryActive() ) {
-			this.addToHistory( container, oldStyles, newStyles );
+			this.addToHistory( container, styleDefId, meta, props, propsSnapshot );
 		}
 	}
 }
 
-export default UpdateStyle;
+export default UpdateProps;

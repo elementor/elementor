@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../../../container/container')} Container
  */
-export class CreateStyle extends $e.modules.editor.document.CommandHistoryDebounceBase {
+export class DeleteStyle extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -15,6 +15,8 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 
 	validateArgs( args ) {
 		this.requireContainer( args );
+
+		this.requireArgumentConstructor( 'styleDefId', String, args );
 
 		this.requireArgumentConstructor( 'bind', String, args );
 	}
@@ -34,13 +36,13 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 			const changes = data.changes[ container.id ];
 
 			if ( isRedo ) {
-				$e.run( 'document/atomic-widgets/create-style', {
+				$e.run( 'document/atomic-widgets/delete-style', {
 					container,
 					styleDefId: changes.styleDefId,
 					bind: changes.bind,
 				} );
 			} else {
-				$e.run( 'document/atomic-widgets/delete-style', {
+				$e.run( 'document/atomic-widgets/create-style', {
 					container,
 					bind: changes.bind,
 				} );
@@ -52,8 +54,8 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param {string}    styleDefId
-	 * @param {string}    bind
+	 * @param             styleDefId
+	 * @param             bind
 	 */
 	addToHistory( container, styleDefId, bind ) {
 		const changes = {
@@ -66,7 +68,7 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 				containers: [ container ],
 				data: { changes },
 				type: 'change',
-				restore: CreateStyle.restore,
+				restore: DeleteStyle.restore,
 			};
 
 		$e.internal( 'document/history/add-transaction', historyItem );
@@ -83,56 +85,38 @@ export class CreateStyle extends $e.modules.editor.document.CommandHistoryDeboun
 		};
 	}
 
-	randomId( containerId ) {
-		return `s-${ containerId }-${ Math.random().toString( 16 ).substring( 2 ) }`;
-	}
-
 	apply( args ) {
-		const { container, bind } = args;
+		const { container, styleDefId, bind } = args;
 
-		const newStyle = {
-			id: this.randomId( container.id ),
-			label: '',
-			type: 'class',
-			variants: [],
-		};
+		const settings = container.settings.toJSON();
 
-		const $$type = 'classes'; // TODO: Style Transformer should be used here.
-
-		const oldSettings = container.settings.toJSON(),
-			oldBindSetting = oldSettings[ bind ] ?? {
-				$$type,
-				value: [],
-			};
-
-		const newSettings = {
-			[ bind ]: {
-				$$type: oldBindSetting.$$type,
-				value: [ ...oldBindSetting.value, newStyle.id ],
-			},
-		};
+		// Remove styleDefId from the array in value in settings object.
+		settings[ bind ].value = settings[ bind ].value.filter( ( styleId ) => styleId !== styleDefId );
 
 		$e.internal( 'document/elements/set-settings', {
 			container,
 			options: {
 				render: false,
 			},
-			settings: newSettings,
+			settings: {
+				[ bind ]: settings[ bind ],
+			},
 		} );
 
-		const oldStyles = container.model.get( 'styles' ) || {};
+		const styles = container.model.get( 'styles' ) || {};
 
-		const newStyles = {
-			...oldStyles,
-			[ newStyle.id ]: newStyle,
-		};
+		delete styles[ styleDefId ];
 
-		container.model.set( 'styles', newStyles );
+		container.model.set( 'styles', styles );
 
 		if ( this.isHistoryActive() ) {
-			this.addToHistory( container, newStyle.id, bind );
+			this.addToHistory(
+				container,
+				styleDefId,
+				bind,
+			);
 		}
 	}
 }
 
-export default CreateStyle;
+export default DeleteStyle;

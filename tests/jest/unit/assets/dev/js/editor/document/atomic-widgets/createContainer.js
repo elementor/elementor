@@ -1,5 +1,3 @@
-import createModel from './createModel';
-
 export default function createContainer( {
 	elType,
 	widgetType,
@@ -18,5 +16,20 @@ export default function createContainer( {
 			styles,
 			settings: settingsModel,
 		} ),
+	};
+}
+
+function createModel( attributes ) {
+	return {
+		attributes,
+		toJSON() {
+			return this.attributes;
+		},
+		get( key ) {
+			return this.attributes[ key ];
+		},
+		set( key, value ) {
+			this.attributes[ key ] = value;
+		},
 	};
 }

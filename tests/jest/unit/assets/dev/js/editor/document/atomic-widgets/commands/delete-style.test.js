@@ -1,7 +1,7 @@
 import createContainer from '../createContainer';
 
-describe( 'CreateStyle - apply', () => {
-	let CreateStyleCommand;
+describe( 'DeleteStyle - apply', () => {
+	let DeleteStyleCommand;
 
 	beforeEach( async () => {
 		global.$e = {
@@ -21,7 +21,7 @@ describe( 'CreateStyle - apply', () => {
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		CreateStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands/create-style' ) ).default;
+		DeleteStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands/delete-style' ) ).default;
 	} );
 
 	afterEach( () => {
@@ -31,73 +31,8 @@ describe( 'CreateStyle - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should create new style object and update the reference in the settings & add history transaction', () => {
-		const command = new CreateStyleCommand();
-
-		// Mock generateId
-		command.randomId = () => 'new-style-id';
-
-		const bind = 'classes';
-		const container = createContainer( {
-			widgetType: 'a-heading',
-			elType: 'widget',
-			id: '123',
-			settings: {},
-			styles: {},
-		} );
-
-		// Act
-		command.apply( { container, bind } );
-
-		const updatedStyles = {
-			'new-style-id': {
-				id: 'new-style-id',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-		};
-
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'new-style-id',
-				bind,
-			},
-		};
-
-		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/elements/set-settings',
-			{
-				container,
-				options: { render: false },
-				settings: {
-					classes: {
-						$$type: 'classes',
-						value: [ 'new-style-id' ],
-					},
-				},
-			},
-		);
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'change',
-				restore: CreateStyleCommand.restore,
-			},
-		);
-	} );
-
-	it( 'should create new style object and update the reference in the settings without deleting old references', () => {
-		const command = new CreateStyleCommand();
-
-		// Mock generateId
-		command.randomId = () => 'new-style-id';
+	it( 'should delete style object and update the reference in the settings & add history transaction', () => {
+		const command = new DeleteStyleCommand();
 
 		const bind = 'classes';
 		const container = createContainer( {
@@ -108,12 +43,12 @@ describe( 'CreateStyle - apply', () => {
 				text: 'Test text',
 				[ bind ]: {
 					$$type: 'classes',
-					value: [ 'old-style-id' ],
+					value: [ 'style-id' ],
 				},
 			},
 			styles: {
-				'old-style-id': {
-					id: 'old-style-id',
+				'style-id': {
+					id: 'style-id',
 					label: '',
 					type: 'class',
 					variants: [],
@@ -122,32 +57,17 @@ describe( 'CreateStyle - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, bind } );
-
-		const updatedStyles = {
-			'old-style-id': {
-				id: 'old-style-id',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-			'new-style-id': {
-				id: 'new-style-id',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-		};
+		command.apply( { container, styleDefId: 'style-id', bind } );
 
 		const historyChanges = {
 			[ container.id ]: {
-				styleDefId: 'new-style-id',
+				styleDefId: 'style-id',
 				bind,
 			},
 		};
 
 		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
+		expect( container.model.get( 'styles' ) ).toEqual( {} );
 
 		expect( $e.internal ).toHaveBeenCalledWith(
 			'document/elements/set-settings',
@@ -155,9 +75,9 @@ describe( 'CreateStyle - apply', () => {
 				container,
 				options: { render: false },
 				settings: {
-					classes: {
+					[ bind ]: {
 						$$type: 'classes',
-						value: [ 'old-style-id', 'new-style-id' ],
+						value: [],
 					},
 				},
 			},
@@ -169,7 +89,83 @@ describe( 'CreateStyle - apply', () => {
 				containers: [ container ],
 				data: { changes: historyChanges },
 				type: 'change',
-				restore: CreateStyleCommand.restore,
+				restore: DeleteStyleCommand.restore,
+			},
+		);
+	} );
+
+	it( 'should delete style object and update the reference in the settings without deleting old ones & add history transaction', () => {
+		const command = new DeleteStyleCommand();
+
+		const bind = 'classes';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'Test text',
+				[ bind ]: {
+					$$type: 'classes',
+					value: [ 'style-id-1', 'style-id-2' ],
+				},
+			},
+			styles: {
+				'style-id-1': {
+					id: 'style-id-1',
+					label: '',
+					type: 'class',
+					variants: [],
+				},
+				'style-id-2': {
+					id: 'style-id-2',
+					label: '',
+					type: 'class',
+					variants: [],
+				},
+			},
+		} );
+
+		// Act
+		command.apply( { container, styleDefId: 'style-id-1', bind } );
+
+		const historyChanges = {
+			[ container.id ]: {
+				styleDefId: 'style-id-1',
+				bind,
+			},
+		};
+
+		// Assert
+		expect( container.model.get( 'styles' ) ).toEqual( {
+			'style-id-2': {
+				id: 'style-id-2',
+				label: '',
+				type: 'class',
+				variants: [],
+			},
+		} );
+
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/elements/set-settings',
+			{
+				container,
+				options: { render: false },
+				settings: {
+					[ bind ]: {
+						$$type: 'classes',
+						value: [ 'style-id-2' ],
+					},
+				},
+			},
+		);
+
+		expect( $e.internal ).toHaveBeenCalledWith(
+			'document/history/add-transaction',
+			{
+				containers: [ container ],
+				data: { changes: historyChanges },
+				type: 'change',
+				restore: DeleteStyleCommand.restore,
 			},
 		);
 	} );
