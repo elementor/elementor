@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.23.3 - 2024-07-25 =
+
+* Fix: UI fixes to improve user experience
+
 = 3.23.2 - 2024-07-23 =
 * Security Fix: Improved code security enforcement in link URL
 * Fix: Facebook Messenger username is not working on mobile devices in Floating Buttons ([#28103](https://github.com/elementor/elementor/issues/28103))
