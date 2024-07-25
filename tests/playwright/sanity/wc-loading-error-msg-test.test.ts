@@ -7,8 +7,8 @@ test.describe( 'Woocommerce Shop page Edite with Elementor', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		const postId = await editor.getPageId();
-		await wpAdmin.setWCShopPage( postId );
+		// const postId = await editor.getPageId();
+		// await wpAdmin.setWCShopPage( postId );
 
 		await expect( editor.page.locator( '.dialog-header.dialog-confirm-header' ) ).toBeVisible();
 
