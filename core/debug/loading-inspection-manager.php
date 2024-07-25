@@ -2,9 +2,9 @@
 namespace Elementor\Core\Debug;
 
 use Elementor\Core\Debug\Classes\Inspection_Base;
+use Elementor\Core\Debug\Classes\Shop_Page_Edit;
 use Elementor\Core\Debug\Classes\Theme_Missing;
 use Elementor\Core\Debug\Classes\Htaccess;
-use Elementor\Utils;
 
 class Loading_Inspection_Manager {
 
@@ -23,6 +23,7 @@ class Loading_Inspection_Manager {
 	public function register_inspections() {
 		$this->inspections['theme-missing'] = new Theme_Missing();
 		$this->inspections['htaccess'] = new Htaccess();
+		$this->inspections['shop-page-edit'] = new Shop_Page_Edit();
 	}
 
 	/**
@@ -33,16 +34,6 @@ class Loading_Inspection_Manager {
 	}
 
 	public function run_inspections() {
-		if ( Utils::get_super_global_value( $_GET, 'post' ) == get_option( 'woocommerce_shop_page_id' ) ) {
-			$debug_data = [
-				'message' => esc_html__( 'You are trying to edit the Shop Page although it is a Product Archive. Use the Theme Builder to create your Shop Archive template instead.', 'elementor' ),
-				'header' => esc_html__( 'Sorry, The content area was not been found on your page', 'elementor' ),
-				'doc_url' => 'https://elementor.com/help/the-content-area-was-not-found-error/#error-appears-on-woocommerce-pages',
-			];
-
-			return $debug_data;
-		}
-
 		$debug_data = [
 			'message' => esc_html__( "We’re sorry, but something went wrong. Click on 'Learn more' and follow each of the steps to quickly solve it.", 'elementor' ),
 			'header' => esc_html__( 'The preview could not be loaded', 'elementor' ),
