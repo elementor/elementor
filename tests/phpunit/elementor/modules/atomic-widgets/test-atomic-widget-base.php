@@ -20,7 +20,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'settings' => [
 				'test_prop' => 'saved-value',
 			],
-		], [] );
+		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
@@ -36,7 +36,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = new Mock_Widget( [
 			'id' => 1,
 			'settings' => [],
-		], [] );
+		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
@@ -55,7 +55,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'test_prop' => 'saved-value',
 				'not_in_schema' => 'not-in-schema',
 			],
-		], [] );
+		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
@@ -67,29 +67,17 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	public function test_get_props_schema__caches_the_schema() {
-		// Arrange.
-		$widget = new Mock_Widget( [
-			'id' => 1,
-			'settings' => [],
-		], [] );
-
 		// Act.
-		$schema_1 = $widget->get_props_schema();
-		$schema_2 = $widget->get_props_schema();
+		$schema_1 = Mock_Widget::get_props_schema();
+		$schema_2 = Mock_Widget::get_props_schema();
 
 		// Assert.
 		$this->assertSame( $schema_1, $schema_2 );
 	}
 
 	public function test_get_props_schema__is_serializable() {
-		// Arrange.
-		$widget = new Mock_Widget( [
-			'id' => 1,
-			'settings' => [],
-		], [] );
-
 		// Act.
-		$serialized = json_encode( $widget->get_props_schema() );
+		$serialized = json_encode( Mock_Widget::get_props_schema() );
 
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{

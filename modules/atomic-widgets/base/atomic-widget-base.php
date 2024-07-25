@@ -54,7 +54,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		$schema = $this->get_props_schema();
+		$schema = static::get_props_schema();
 		$raw_settings = $this->get_settings();
 
 		$transformed_settings = [];
@@ -71,9 +71,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $transformed_settings;
 	}
 
-	public function get_props_schema() {
+	public static function get_props_schema() {
 		if ( null === static::$props_schema ) {
-			static::$props_schema = $this->get_props_schema_definition();
+			static::$props_schema = static::get_props_schema_definition();
 		}
 
 		return static::$props_schema;
@@ -82,5 +82,5 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	/**
 	 * @return array<string, Atomic_Prop>
 	 */
-	abstract protected function get_props_schema_definition(): array;
+	abstract protected static function get_props_schema_definition(): array;
 }
