@@ -17,18 +17,18 @@ class Test_Manager extends Elementor_Test_Base {
 	{
 		// Arrange
 		$shop_page = $this->create_post( 'page' );
-		update_option('woocommerce_shop_page_id', $shop_page->get_id());
+		update_option( 'woocommerce_shop_page_id', $shop_page->get_id() );
 		$_GET['post'] = $shop_page->get_id();
 
 		// Act
 		$result = Loading_Inspection_Manager::instance()->run_inspections();
 
 		// Assert
-		$this->assertEquals($result['message'], esc_html__('You are trying to edit the Shop Page although it is a Product Archive. Use the Theme Builder to create your Shop Archive template instead.', 'elementor'));
-		$this->assertEquals($result['header'], esc_html__('Sorry, The content area was not been found on your page', 'elementor'));
-		$this->assertEquals($result['doc_url'], 'https://elementor.com/help/the-content-area-was-not-found-error/#error-appears-on-woocommerce-pages');
+		$this->assertEquals( $result['message'], esc_html__( 'You are trying to edit the Shop Page although it is a Product Archive. Use the Theme Builder to create your Shop Archive template instead.', 'elementor' ) );
+		$this->assertEquals($result['header'], esc_html__( 'Sorry, The content area was not been found on your page', 'elementor' ) );
+		$this->assertEquals( $result['doc_url'], 'https://elementor.com/help/the-content-area-was-not-found-error/#error-appears-on-woocommerce-pages' );
 
-		unset($_GET['post']);
+		unset( $_GET['post'] );
 
 	}
 }
