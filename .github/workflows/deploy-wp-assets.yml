@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy WordPress Assets
 
 on:
   workflow_dispatch:
