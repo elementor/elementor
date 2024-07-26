@@ -17,7 +17,7 @@ export default Module.extend( {
 		//     return;
 		// }
 
-		if ( ! this.isJqueryRequired ) {
+		if ( ! this.isJqueryRequired || !! window.jQuery ) {
 			this.runSecondPart();
 			return;
 		}
