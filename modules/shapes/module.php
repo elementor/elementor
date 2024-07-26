@@ -11,7 +11,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
 	}
 
 	/**
@@ -22,7 +22,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 *
 	 * @return void
 	 */
-	public function register_style() {
+	public function register_styles() {
 		wp_register_style(
 			'widget-shapes',
 			$this->get_css_assets_url( 'widget-shapes', null, true, true ),

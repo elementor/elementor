@@ -22,7 +22,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_style' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
@@ -40,7 +40,7 @@ class Module extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function register_style() {
+	public function register_styles() {
 		wp_register_style(
 			'widget-nested-accordion',
 			$this->get_css_assets_url( 'widget-nested-accordion', null, true, true ),
