@@ -43,16 +43,16 @@ module.exports = function() {
 	const addElementsHandlers = () => {
 		this.elementsHandlers.section = [
 			// StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
-			// ...backgroundHandlers,
+			...backgroundHandlers,
 			// HandlesPosition,
 			// Shapes,
 		];
 
-		// this.elementsHandlers.container = [ ...backgroundHandlers ];
+		this.elementsHandlers.container = [ ...backgroundHandlers ];
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
-			// this.elementsHandlers.container.push( ...containerHandlers );
+			this.elementsHandlers.container.push( ...containerHandlers );
 		}
 
 		// this.elementsHandlers.column = columnHandlers;

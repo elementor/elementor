@@ -33,6 +33,8 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	onInit( ...args ) {
+		this.isJqueryRequired = false;
+
 		super.onInit( ...args );
 
 		if ( this.getAnimation() ) {
