@@ -38,7 +38,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	onInit() {
-		super.onInit();
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
 		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
@@ -97,7 +96,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	getCorrectContainer() {
-		const container = this.elements.container,
+		const container = this.elements.container, // We need to check this with the original code. This is trowing an error.
 			getDefaultSettings = this.getDefaultSettings(),
 			{ selectors: { boxedContainer } } = getDefaultSettings;
 

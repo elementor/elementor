@@ -42,9 +42,10 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	}
 
 	findElement( selector ) {
-		const mainElement = this.baseElement;
+		const mainElement = this.baseElement,
+			rawElements = mainElement.querySelectorAll( selector );
 
-		return mainElement.querySelector( selector )?.filter( ( index, element ) => {
+		return Array.from( rawElements ).filter( ( element ) => {
 			// Start `closest` from parent since self can be `.elementor-element`.
 			const closestElement = element.parentNode?.closest( '.elementor-element' );
 			return closestElement === mainElement;
