@@ -8,7 +8,7 @@ export default class SwiperHandlerBase extends BaseHandler {
 	}
 
 	getSlidesCount() {
-		return this.elements.$slides.length;
+		return this.elements.slides.length;
 	}
 
 	// This method live-handles the 'Pause On Hover' control's value being changed in the Editor Panel

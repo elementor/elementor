@@ -2,9 +2,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	getDefaultSettings() {
 		return {
 			classes: {
-				swiperContainer: `elementor-background-slideshow ${ elementorFrontend.config.swiperClass }`,
+				swiperContainer: [ `elementor-background-slideshow`, `${ elementorFrontend.config.swiperClass }` ],
 				swiperWrapper: 'swiper-wrapper',
-				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
+				swiperSlide: [ 'elementor-background-slideshow__slide', 'swiper-slide' ],
 				swiperPreloader: 'swiper-lazy-preloader',
 				slideBackground: 'elementor-background-slideshow__slide__image',
 				kenBurns: 'elementor-ken-burns',
@@ -95,7 +95,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slideInnerClass += ' swiper-lazy';
 		}
 
-		this.elements.slides = null;
+		this.elements.slides = [];
 
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
 			const slideElement = document.createElement( 'div' );
@@ -110,7 +110,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				slideBackgroundElement.classList.add( slideInnerClass );
 				slideBackgroundElement.setAttribute( 'data-background', slide.url );
 
-				slideBackgroundElement.appendChild ( slideLoaderElement );
+				slideBackgroundElement.appendChild( slideLoaderElement );
 			} else {
 				slideBackgroundElement.classList.add( slideInnerClass );
 				slideBackgroundElement.style.backgroundImage = `url( ${ slide.url } )`;
@@ -119,7 +119,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slideElement.appendChild( slideBackgroundElement );
 			wrapperElement.appendChild( slideElement );
 
-			this.elements.slides = this.elements.slides.add( slideElement );
+			this.elements.slides.push( slideElement );
 		} );
 
 		containerElement.appendChild( wrapperElement );

@@ -209,7 +209,7 @@ export default class Frontend extends elementorModules.ViewModuleFrontend {
 			// 	return LightboxManager.getLightbox();
 			// },
 			// urlActions: new URLActions(),
-			// swiper: Swiper,
+			swiper: Swiper,
 			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,

@@ -13,8 +13,8 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 
 	isJqueryRequired = null;
 
-	constructor( settings ) {
-		super( settings );
+	__construct( settings ) {
+		super.__construct( settings );
 
 		if ( ! this.isActive( settings ) ) {
 			return;
