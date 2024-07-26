@@ -44,7 +44,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	findElement( selector ) {
 		const mainElement = this.baseElement;
 
-		return mainElement.find( selector ).filter( ( index, element ) => {
+		return mainElement.querySelector( selector )?.filter( ( index, element ) => {
 			// Start `closest` from parent since self can be `.elementor-element`.
 			const closestElement = element.parentNode?.closest( '.elementor-element' );
 			return closestElement === mainElement;
@@ -208,7 +208,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 				} );
 			}
 
-			settings.getActiveControls()?.forEach( ( controlKey ) => {
+			Object.keys( settings.getActiveControls() )?.forEach( ( controlKey ) => {
 				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
 					let value = attributes[ controlKey ];
 
