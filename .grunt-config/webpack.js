@@ -170,22 +170,6 @@ const externals = [
 	},
 ];
 
-// const externals = {
-// 	'@wordpress/i18n': 'wp.i18n',
-// 	react: 'React',
-// 	'react-dom': 'ReactDOM',
-// 	'@elementor/app-ui': 'elementorAppPackages.appUi',
-// 	'@elementor/components': 'elementorAppPackages.components',
-// 	'@elementor/hooks': 'elementorAppPackages.hooks',
-// 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-// 	'@elementor/router': 'elementorAppPackages.router',
-// 	'@elementor/ui': 'elementorV2.ui',
-// 	'@elementor/icons': 'elementorV2.icons',
-// 	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
-// 	'@wordpress/dom-ready': 'wp.domReady',
-// 	'@wordpress/components': 'wp.components',
-// };
-
 const plugins = [
 	new webpack.ProvidePlugin( {
 		React: 'react',
