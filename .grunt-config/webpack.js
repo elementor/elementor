@@ -142,49 +142,49 @@ const frontendEntries = {
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 };
 
-// const externals = [
-// 	{
-// 		'@wordpress/i18n': 'wp.i18n',
-// 		react: 'React',
-// 		'react-dom': 'ReactDOM',
-// 		'@elementor/app-ui': 'elementorAppPackages.appUi',
-// 		'@elementor/components': 'elementorAppPackages.components',
-// 		'@elementor/hooks': 'elementorAppPackages.hooks',
-// 		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-// 		'@elementor/router': 'elementorAppPackages.router',
-// 		'@elementor/ui': 'elementorV2.ui',
-// 		'@elementor/icons': 'elementorV2.icons',
-// 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
-// 		'@wordpress/dom-ready': 'wp.domReady',
-// 		'@wordpress/components': 'wp.components',
-// 	},
-// 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
-// 	function ( { request }, callback ) {
-// 		const matches = request.match( /^@elementor\/(ui|icons)\/(.+)$/ );
+const externals = [
+	{
+		'@wordpress/i18n': 'wp.i18n',
+		react: 'React',
+		'react-dom': 'ReactDOM',
+		'@elementor/app-ui': 'elementorAppPackages.appUi',
+		'@elementor/components': 'elementorAppPackages.components',
+		'@elementor/hooks': 'elementorAppPackages.hooks',
+		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+		'@elementor/router': 'elementorAppPackages.router',
+		'@elementor/ui': 'elementorV2.ui',
+		'@elementor/icons': 'elementorV2.icons',
+		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
+		'@wordpress/dom-ready': 'wp.domReady',
+		'@wordpress/components': 'wp.components',
+	},
+	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
+	function ( { request }, callback ) {
+		const matches = request.match( /^@elementor\/(ui|icons)\/(.+)$/ );
 
-// 		if ( matches?.length ) {
-// 			return callback( null, `elementorV2.${ matches[ 1 ] }['${ matches[ 2 ] }']` );
-// 		}
+		if ( matches?.length ) {
+			return callback( null, `elementorV2.${ matches[ 1 ] }['${ matches[ 2 ] }']` );
+		}
 
-// 		callback();
-// 	},
-// ];
+		callback();
+	},
+];
 
-const externals = {
-	'@wordpress/i18n': 'wp.i18n',
-	react: 'React',
-	'react-dom': 'ReactDOM',
-	'@elementor/app-ui': 'elementorAppPackages.appUi',
-	'@elementor/components': 'elementorAppPackages.components',
-	'@elementor/hooks': 'elementorAppPackages.hooks',
-	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-	'@elementor/router': 'elementorAppPackages.router',
-	'@elementor/ui': 'elementorV2.ui',
-	'@elementor/icons': 'elementorV2.icons',
-	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
-	'@wordpress/dom-ready': 'wp.domReady',
-	'@wordpress/components': 'wp.components',
-};
+// const externals = {
+// 	'@wordpress/i18n': 'wp.i18n',
+// 	react: 'React',
+// 	'react-dom': 'ReactDOM',
+// 	'@elementor/app-ui': 'elementorAppPackages.appUi',
+// 	'@elementor/components': 'elementorAppPackages.components',
+// 	'@elementor/hooks': 'elementorAppPackages.hooks',
+// 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+// 	'@elementor/router': 'elementorAppPackages.router',
+// 	'@elementor/ui': 'elementorV2.ui',
+// 	'@elementor/icons': 'elementorV2.icons',
+// 	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
+// 	'@wordpress/dom-ready': 'wp.domReady',
+// 	'@wordpress/components': 'wp.components',
+// };
 
 const plugins = [
 	new webpack.ProvidePlugin( {
