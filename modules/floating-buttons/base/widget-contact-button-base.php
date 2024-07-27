@@ -19,11 +19,22 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
-	public function show_in_panel() {
+	public function show_in_panel(): bool {
 		return false;
 	}
 
-	public function hide_on_search() {
+	public function get_group_name(): string {
+		return 'floating-buttons';
+	}
+
+	public function get_style_depends(): array {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
+			return parent::get_style_depends();
+		}
+		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+	}
+
+	public function hide_on_search(): bool {
 		return true;
 	}
 

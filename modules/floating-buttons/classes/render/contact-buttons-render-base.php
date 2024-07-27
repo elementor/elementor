@@ -374,7 +374,7 @@ abstract class Contact_Buttons_Render_Base {
 				break;
 			case Social_Network_Provider::MESSENGER:
 				$formatted_link = ! empty( $link['username'] ) ?
-					'https://www.facebook.com/messages/t/' . $link['username'] :
+					Social_Network_Provider::build_messenger_link( $link['username'] ) :
 					'';
 				break;
 			case Social_Network_Provider::WHATSAPP:
@@ -403,14 +403,18 @@ abstract class Contact_Buttons_Render_Base {
 	protected function render_link_attributes( array $link, string $key ) {
 		switch ( $link['platform'] ) {
 			case Social_Network_Provider::WAZE:
-				if ( ! empty( $link['location']['url'] ) ) {
-					$this->widget->add_link_attributes( $key, $link['location'] );
+				if ( empty( $link['location']['url'] ) ) {
+					$link['location']['url'] = '#';
 				}
+
+				$this->widget->add_link_attributes( $key, $link['location'] );
 				break;
 			case Social_Network_Provider::URL:
-				if ( ! empty( $link['url']['url'] ) ) {
-					$this->widget->add_link_attributes( $key, $link['url'] );
+				if ( empty( $link['url']['url'] ) ) {
+					$link['url']['url'] = '#';
 				}
+
+				$this->widget->add_link_attributes( $key, $link['url'] );
 				break;
 			default:
 				break;
