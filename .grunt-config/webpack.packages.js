@@ -147,5 +147,10 @@ function getLocalRepoPackagesEntries() {
 		path: './node_modules/@elementor/ui/index.js'
 	} );
 
+	packages.push( {
+		name: 'icons',
+		path: './node_modules/@elementor/icons/index.js'
+	} );
+
 	return packages;
 }
