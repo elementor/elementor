@@ -2,9 +2,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	getDefaultSettings() {
 		return {
 			classes: {
-				swiperContainer: [ `elementor-background-slideshow`, `${ elementorFrontend.config.swiperClass }` ],
+				swiperContainer: `elementor-background-slideshow ${ elementorFrontend.config.swiperClass }`,
 				swiperWrapper: 'swiper-wrapper',
-				swiperSlide: [ 'elementor-background-slideshow__slide', 'swiper-slide' ],
+				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
 				swiperPreloader: 'swiper-lazy-preloader',
 				slideBackground: 'elementor-background-slideshow__slide__image',
 				kenBurns: 'elementor-ken-burns',
@@ -75,7 +75,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			lazyload = 'yes' === elementSettings.background_slideshow_lazyload;
 
 		const containerElement = document.createElement( 'div' );
-		containerElement.classList.add( classes.swiperContainer );
+		containerElement.classList.add( ...classes.swiperContainer.split( ' ' ) );
 		containerElement.setAttribute( 'dir', direction );
 
 		const wrapperElement = document.createElement( 'div' );
@@ -99,7 +99,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
 			const slideElement = document.createElement( 'div' );
-			slideElement.classList.add( classes.swiperSlide );
+			slideElement.classList.add( ...classes.swiperSlide.split( ' ' ) );
 
 			const slideBackgroundElement = document.createElement( 'div' );
 
