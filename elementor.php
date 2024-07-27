@@ -27,8 +27,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Container\Container;
-
 define( 'ELEMENTOR_VERSION', '3.24.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
@@ -45,13 +43,9 @@ define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modul
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
-if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
-	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
-}
-
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ! version_compare( get_bloginfo( 'version' ), '6.0', '>=' ) ) {
+} elseif ( ! version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
@@ -97,7 +91,7 @@ function elementor_fail_wp_version() {
 		sprintf(
 			/* translators: %s: WordPress version. */
 			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
-			'6.0'
+			'6.3'
 		),
 		esc_html__( 'Show me how', 'elementor' )
 	);

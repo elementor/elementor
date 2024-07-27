@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 3.23.3 - 2024-07-25 =
+
+* Fix: UI fixes to improve user experience
+
+= 3.23.2 - 2024-07-23 =
+* Security Fix: Improved code security enforcement in link URL
+* Fix: Facebook Messenger username is not working on mobile devices in Floating Buttons ([#28103](https://github.com/elementor/elementor/issues/28103))
+* Fix: RTL issues with Floating Buttons templates
+* Fix: WordPress 6.6 does not support certain features
+
 = 3.23.1 - 2024-07-15 =
 * Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
 
