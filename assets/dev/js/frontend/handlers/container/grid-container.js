@@ -75,7 +75,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const selectors = this.getSettings( 'selectors' ),
 			isGridContainer = 'grid' === this.getElementSettings( 'container_type' );
 
-		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
+		this.elements.emptyView = this.findElement( selectors.emptyView );
 
 		if ( isGridContainer && this.elements?.emptyView ) {
 			this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';

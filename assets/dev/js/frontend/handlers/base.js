@@ -43,7 +43,11 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 
 	findElement( selector ) {
 		const mainElement = this.baseElement,
-			rawElements = mainElement.querySelectorAll( selector );
+			rawElements = mainElement?.querySelectorAll( selector );
+
+		if ( ! rawElements ) {
+			return;
+		}
 
 		return Array.from( rawElements ).filter( ( element ) => {
 			// Start `closest` from parent since self can be `.elementor-element`.
@@ -58,10 +62,14 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		if ( ! baseElement ) {
-			baseElement = this.baseElement;
+			baseElement = !! this.baseElement ? this.baseElement : this.getSettings( 'baseElement' );
 		}
 
-		return cid + baseElement?.getAttribute( 'data-element_type' ) + this.getConstructorID();
+		const elementType = !! window.jQuery && !! baseElement.jquery
+			? baseElement.attr( 'data-element_type' )
+			: baseElement.getAttribute( 'data-element_type' );
+
+		return cid + elementType + this.getConstructorID();
 	}
 
 	initEditorListeners() {
