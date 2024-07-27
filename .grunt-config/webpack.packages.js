@@ -37,7 +37,6 @@ const common = {
 			map: [
 				{ request: /^@elementor\/(ui|icons)(\/.+)?$/, handle: 'elementor-v2-$1' },
 				{ request: /^@elementor\/([^\/]+)(\/.+)?$/, handle: 'elementor-v2-$1' },
-				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
 				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
 				{ request: 'react', handle: 'react' },
 				{ request: 'react-dom', handle: 'react-dom' },
