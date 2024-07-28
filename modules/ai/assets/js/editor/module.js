@@ -5,6 +5,40 @@ import ReactUtils from 'elementor-utils/react';
 import LayoutAppWrapper from './layout-app-wrapper';
 import { AiGetStartedConnect } from './ai-get-started-connect';
 import { getUiConfig } from './utils/editor-integration';
+import {getRemoteFrontendConfig} from "./api";
+import {getUniqueId} from "./context/requests-ids";
+
+setTimeout(async () => {
+	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
+		return;
+	}
+
+	window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'elementor-editor-session' );
+
+	try {
+		const config = await getRemoteFrontendConfig({
+				'client_name': 'elementor-editor-loading',
+				'client_version': elementorCommon.config.version,
+				'client_session_id': window.EDITOR_SESSION_ID,
+			},
+			true
+		);
+
+		window.ElementorAIRemoteConfigData = config;
+
+		if (config?.remoteIntegrationUrl) {
+			// add a script tag to the head of the document
+			const script = document.createElement('script');
+			script.type = 'module';
+			script.src = config.remoteIntegrationUrl;
+			document.head.appendChild(script);
+
+			console.log('Elementor AI: Remote integration script added');
+		}
+	} catch (e) {
+		console.error( 'Elementor AI', e);
+	}
+}, 0 );
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
