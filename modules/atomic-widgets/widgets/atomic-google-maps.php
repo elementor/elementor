@@ -32,13 +32,14 @@ class Atomic_Google_Maps extends Atomic_Widget_Base {
 	}
 	protected function render() {
 		$url = 'https://maps.google.com/maps/?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near';
+		$api_key = $this->get_settings( 'api_key' ) ?? false;
 		$params = [
 			$this->get_settings( 'address' ) ?? esc_html__( 'London Eye, London, United Kingdom', 'elementor' ),
 			$this->get_settings( 'zoom' ) ?? 10,
-			$this->get_settings( 'api_key' ) ?? false,
+			$api_key,
 		];
 
-		if ( $params[2] ) {
+		if ( $api_key ) {
 			$url = 'https://www.google.com/maps/embed/v1/place?key=%3$s&q=%1$s&amp;zoom=%2$d';
 		}
 		?>
