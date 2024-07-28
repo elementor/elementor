@@ -5,10 +5,10 @@ import ReactUtils from 'elementor-utils/react';
 import LayoutAppWrapper from './layout-app-wrapper';
 import { AiGetStartedConnect } from './ai-get-started-connect';
 import { getUiConfig } from './utils/editor-integration';
-import {getRemoteFrontendConfig} from "./api";
-import {getUniqueId} from "./context/requests-ids";
+import { getRemoteFrontendConfig } from './api';
+import { getUniqueId } from './context/requests-ids';
 
-setTimeout(async () => {
+setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
 		return;
 	}
@@ -16,25 +16,25 @@ setTimeout(async () => {
 	window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'elementor-editor-session' );
 
 	try {
-		const config = await getRemoteFrontendConfig({
-				'client_name': 'elementor-editor-loading',
-				'client_version': elementorCommon.config.version,
-				'client_session_id': window.EDITOR_SESSION_ID,
-			},
-			true
+		const config = await getRemoteFrontendConfig( {
+			client_name: 'elementor-editor-loading',
+			client_version: elementorCommon.config.version,
+			client_session_id: window.EDITOR_SESSION_ID,
+		},
+		true,
 		);
 
 		window.ElementorAIRemoteConfigData = config;
 
-		if (config?.remoteIntegrationUrl) {
-			// add a script tag to the head of the document
-			const script = document.createElement('script');
+		if ( config?.remoteIntegrationUrl ) {
+			// Add a script tag to the head of the document
+			const script = document.createElement( 'script' );
 			script.type = 'module';
 			script.src = config.remoteIntegrationUrl;
-			document.head.appendChild(script);
+			document.head.appendChild( script );
 		}
-	} catch (e) {
-		console.error( 'Elementor AI Integration Loader', e);
+	} catch ( e ) {
+		console.error( 'Elementor AI Integration Loader', e );
 	}
 }, 0 );
 
