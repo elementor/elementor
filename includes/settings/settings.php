@@ -111,6 +111,10 @@ class Settings extends Settings_Page {
 		echo '<div id="e-home-screen"></div>';
 	}
 
+	public function display_checklist() {
+		echo '<div id="e-checklist"></div>';
+	}
+
 	/**
 	 * Reorder the Elementor menu items in admin.
 	 * Based on WC.
