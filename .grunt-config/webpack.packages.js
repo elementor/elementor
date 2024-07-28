@@ -139,6 +139,7 @@ function getLocalRepoPackagesEntries() {
 				name,
 				path: path.resolve( repoPath, dir, `${name}/src/index.ts` ),
 			} ) )
+			.filter( ( { path } ) => fs.existsSync( path ) )
 	);
 
 	packages.push( {
