@@ -45,7 +45,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
+		add_action( 'elementor/frontend/before_register_styles', [ $this, 'register_styles' ] );
 	}
 
 	/**
