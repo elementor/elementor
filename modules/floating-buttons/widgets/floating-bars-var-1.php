@@ -64,6 +64,36 @@ class Floating_Bars_Var_1 extends Widget_Floating_Bars_Base {
 			}
 		);
 
+		let hoverAnimation = settings['style_cta_button_hover_animation'];
+		let corners = settings['style_cta_button_corners'];
+		let linkType = settings['style_cta_type'];
+		let entranceAnimation = settings['style_cta_button_animation'];
+
+		let ctaClassnames = 'e-floating-bars__cta-button';
+
+		if (hoverAnimation) {
+			ctaClassnames += ' elementor-animation-' + hoverAnimation;
+		}
+
+		if (corners) {
+			ctaClassnames += ' has-corners-' + corners;
+		}
+
+		if (linkType) {
+			ctaClassnames += ' is-type-' + linkType;
+		}
+
+		if (entranceAnimation && entranceAnimation !== 'none') {
+			ctaClassnames += ' has-entrance-animation';
+		}
+
+		view.addRenderAttribute(
+			'cta-button',
+			{
+				'class': ctaClassnames,
+			}
+		);
+
 		view.addRenderAttribute(
 			'announcement_text',
 			{
@@ -86,7 +116,7 @@ class Floating_Bars_Var_1 extends Widget_Floating_Bars_Base {
 			</p>
 			<span class="e-floating-bars__announcement-icon">{{{ announcementIcon.value }}}</span>
 			<div class="e-floating-bars__cta-button-container">
-				<a class="e-floating-bars__cta-button has-corners-round is-type-button" target="_blank">
+				<a {{{ view.getRenderAttributeString( 'cta-button' ) }}}>
 					<span class="e-floating-bars__cta-icon">{{{ ctaIcon.value }}}</span>
 					<span {{{ view.getRenderAttributeString( 'cta_text' ) }}}>
 						{{{ settings.cta_text }}}
