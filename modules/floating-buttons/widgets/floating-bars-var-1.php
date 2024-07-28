@@ -3,7 +3,6 @@
 namespace Elementor\Modules\FloatingButtons\Widgets;
 
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
-use Elementor\Modules\FloatingButtons\Classes\Render\Floating_Bars_Render_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
