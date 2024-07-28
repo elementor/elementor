@@ -43,9 +43,9 @@ class Atomic_Google_Maps extends Atomic_Widget_Base {
 		}
 		?>
 		<iframe loading="lazy"
-				src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
-				title="<?php echo esc_attr( $params[0] ); ?>"
-				aria-label="<?php echo esc_attr( $params[0] ); ?>"
+			src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
+			title="<?php echo esc_attr( $params[0] ); ?>"
+			aria-label="<?php echo esc_attr( $params[0] ); ?>"
 		></iframe>
 		<?php
 	}
