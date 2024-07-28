@@ -1,8 +1,8 @@
 === Elementor Website Builder - More than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.0
-Tested up to: 6.5
+Requires at least: 6.3
+Tested up to: 6.6
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -223,7 +223,7 @@ To improve the user experience, Elementor may use the following 3rd party servic
 Join a global community that helps each other achieve their goals. Get answers, solve problems with other members, share knowledge, and more. Join community discussions, meetups, enjoy hundreds of YouTube videos, articles, and tutorials made by members worldwide.
 
 - [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - Over 150K+ members, constantly offering support, advice, feedback, and tutorials.
-- [Github Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about releases, request features, or report a bug.
+- [GitHub Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about releases, request features, or report a bug.
 - [Elementor Addons, Themes, and Kits](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) thousands of themes, addons and kits created specifically for Elementor.
 - Learn valuable insights and techniques from our extensive [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
 - Access our [Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) and [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/) - Find comprehensive guides, tutorials, and troubleshooting resources to answer your questions and empower your creativity.
@@ -235,7 +235,7 @@ Join a global community that helps each other achieve their goals. Get answers, 
 
 = Minimum Requirements =
 
-* WordPress 6.0 or greater
+* WordPress 6.3 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -283,11 +283,11 @@ It works with almost all the plugins. If you experience an incompatibility issue
 
 **Do I need to know how to code?**
 
-No! Elementor provides you with all the widgets and features that you need to build a proffesional website without using code.
+No! Elementor provides you with all the widgets and features that you need to build a professional website without using code.
 
 **Do i need to know how to design?**
 
-No, you can choose between professionaly designed kits and templates that fit toevery industry and have all you need to create your own profesional website.
+No, you can choose between professionally designed kits and templates that fit toevery industry and have all you need to create your own professional website.
 
 **Will elementor slow down my website?**
 
@@ -326,6 +326,16 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.23.3 - 2024-07-25 =
+
+* Fix: UI fixes to improve user experience
+
+= 3.23.2 - 2024-07-23 =
+* Security Fix: Improved code security enforcement in link URL
+* Fix: Facebook Messenger username is not working on mobile devices in Floating Buttons ([#28103](https://github.com/elementor/elementor/issues/28103))
+* Fix: RTL issues with Floating Buttons templates
+* Fix: WordPress 6.6 does not support certain features
 
 = 3.23.1 - 2024-07-15 =
 * Fix: Slow loading of WordPress admin and Elementor screens due to AI health check

@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Elementor version from Wordpress svn'
+        description: 'Elementor version from WordPress svn'
         required: false
         default: ''
 

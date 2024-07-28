@@ -1,0 +1,66 @@
+//
+// Shape Divider
+//
+
+.elementor-shape {
+	overflow: hidden;
+	position: absolute;
+	left: 0;
+	width: 100%;
+	line-height: 0;
+	direction: ltr; // Fix for RTL pages
+
+	/*
+	 * @TODO: The `z-index: -1` rules below are temporary fixes for Chrome 85 issue.
+	 *   It will be removed in a future version of Chrome.
+	 */
+	&-top {
+		top: -1px;
+
+		&:not([data-negative="false"]) {
+
+			svg {
+				z-index: -1;
+			}
+		}
+	}
+
+	&-bottom {
+		bottom: -1px;
+
+		&:not([data-negative="true"]) {
+
+			svg {
+				z-index: -1;
+			}
+		}
+	}
+
+	&[data-negative="false"] {
+
+		&.elementor-shape-bottom {
+			transform: rotate(180deg);
+		}
+	}
+
+	&[data-negative="true"] {
+
+		&.elementor-shape-top {
+			transform: rotate(180deg);
+		}
+	}
+
+	svg {
+		display: block;
+		width: calc(100% + 1.3px);
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.elementor-shape-fill {
+		fill: #fff;
+		transform-origin: center;
+		transform: rotateY(0deg); // Reset default for safari
+	}
+}
