@@ -47,7 +47,7 @@ class Module extends BaseModule {
 			$handlers = [
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
-				'ai_get_remote_frontend_config' => [ $this, 'ajax_ai_get_remote_frontend_config'],
+				'ai_get_remote_frontend_config' => [ $this, 'ajax_ai_get_remote_frontend_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
 				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
 				'ai_get_featured_image' => [ $this, 'ajax_ai_get_featured_image' ],
@@ -336,7 +336,7 @@ class Module extends BaseModule {
 		return $app->get_remote_config();
 	}
 
-	public function ajax_ai_get_remote_frontend_config($data ) {
+	public function ajax_ai_get_remote_frontend_config( $data ) {
 		$callback = function () use ( $data ) {
 			return $this->get_ai_app()->get_remote_frontend_config( $data );
 		};

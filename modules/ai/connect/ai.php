@@ -64,7 +64,7 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_remote_frontend_config($data ) {
+	public function get_remote_frontend_config( $data ) {
 		return $this->ai_request(
 			'POST',
 			'remote-config/frontend-config',
