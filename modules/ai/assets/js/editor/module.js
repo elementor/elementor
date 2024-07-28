@@ -32,11 +32,9 @@ setTimeout(async () => {
 			script.type = 'module';
 			script.src = config.remoteIntegrationUrl;
 			document.head.appendChild(script);
-
-			console.log('Elementor AI: Remote integration script added');
 		}
 	} catch (e) {
-		console.error( 'Elementor AI', e);
+		console.error( 'Elementor AI Integration Loader', e);
 	}
 }, 0 );
 
