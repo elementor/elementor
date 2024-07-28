@@ -1058,6 +1058,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	}
 
 	protected function render(): void {
+		$this->add_inline_editing_attributes( 'announcement_text', 'none' );
+		$this->add_inline_editing_attributes( 'cta_text', 'none' );
+
 		$render_strategy = new Floating_Bars_Core_Render( $this );
 
 		$render_strategy->render();

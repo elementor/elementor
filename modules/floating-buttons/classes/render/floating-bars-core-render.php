@@ -114,11 +114,11 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
-				$this->render_announcement_text();
+			$this->render_announcement_text();
 
-				$this->render_announcement_icon();
+			$this->render_announcement_icon();
 
-				$this->render_cta_button();
+			$this->render_cta_button();
 
 			if ( $has_close_button ) {
 				$this->render_close_button();
