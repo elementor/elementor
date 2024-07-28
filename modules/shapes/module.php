@@ -11,7 +11,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/frontend/before_register_styles', [ $this, 'register_styles' ] );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 
 	/**
