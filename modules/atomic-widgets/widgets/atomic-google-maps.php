@@ -14,13 +14,16 @@ class Atomic_Google_Maps extends Atomic_Widget_Base {
 		return [
 			Textarea_Control::bind_to(
 				'api_key'
-			)->set_label( __( 'API Key', 'elementor' ) ),
+			)->set_label( __( 'API Key', 'elementor' ) )
+				->set_placeholder( esc_html__( 'Enter your Google Maps API key', 'elementor' ) ),
 			Textarea_Control::bind_to(
 				'address'
-			)->set_label( __( 'Address', 'elementor' ) ),
+			)->set_label( __( 'Address', 'elementor' ) )
+			->set_placeholder( esc_html__( 'London Eye, London, United Kingdom', 'elementor' ) ),
 			Textarea_Control::bind_to(
 				'zoom'
-			)->set_label( __( 'Zoom', 'elementor' ) ),
+			)->set_label( __( 'Zoom', 'elementor' ) )
+			->set_placeholder( 10 ),
 		];
 	}
 
