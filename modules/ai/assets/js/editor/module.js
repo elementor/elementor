@@ -34,6 +34,7 @@ setTimeout( async () => {
 			document.head.appendChild( script );
 		}
 	} catch ( e ) {
+		// eslint-disable-next-line no-console
 		console.error( 'Elementor AI Integration Loader', e );
 	}
 }, 0 );
