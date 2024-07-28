@@ -4,7 +4,6 @@ node_modules/
 .sass-cache/
 log/
 vendor/
-/vendor_prefixed
 local-site/
 tmp/
 
@@ -40,4 +39,3 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
-

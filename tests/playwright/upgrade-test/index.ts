@@ -24,8 +24,7 @@ export class UpgradeElementor {
 		// Don't forget to npx grunt build in root folder for local testing
 		this.cmd( 'mkdir plugin' );
 		this.cmd( 'cd ../../../ && mkdir elementor' );
-		this.cmd( 'cd ../../../ && cp -r ./build/* elementor' );
-		this.cmd( 'cd ../../../elementor && zip -r ../elementor.zip .' );
+		this.cmd( 'cd ../../../ && cp -r ./build/* elementor && zip -r elementor elementor' );
 		this.cmd( 'cd ../../../ && mv ./elementor.zip ./tests/playwright/upgrade-test/plugin' );
 	}
 
@@ -47,7 +46,7 @@ export class UpgradeElementor {
 	setupTests() {
 		if ( ! process.env.CI ) {
 			this.cmd( 'npm run test:setup' );
-			wpEnvCli( 'wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_css_loading,additional_custom_breakpoints,rating' );
+			wpEnvCli( 'wp elementor experiments activate e_font_icon_svg,e_optimized_css_loading,additional_custom_breakpoints,rating' );
 			this.cmd( 'cd ../../../ && npx playwright install chromium' );
 		}
 	}

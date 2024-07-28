@@ -1,8 +1,8 @@
 === Elementor Website Builder - More than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.0
-Tested up to: 6.5
+Requires at least: 6.3
+Tested up to: 6.6
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -100,14 +100,6 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 
 ***Looking to boost sites performance?** Meet the [Image Optimizer plugin](https://go.elementor.com/wp-repo-description-tab-elementor-io/) by Elementor: an easy-to-use WordPress plugin that effortlessly reduces image sizes without sacrificing quality. Compatible with popular formats like JPEG, PNG, WebP, and GIF, it ensures a visually stunning, high-speed website – [download now](https://wordpress.org/plugins/image-optimization/)!*
 
-= 📈 Accelerate your web creation process =
-To speed up your workflow, Elementor offers tools that enhance collaboration and efficiency, such as:
-
-- **Finder** - quickly navigate between different pages and website components, or create new website parts.
-- **Add to Favorites** - pin frequently used widgets to the top of the widget panel.
-- **Copy & Paste Between Editors** - copy elements or layouts from the Editor of one website to another.
-
-
 = 🔥 Elementor Pro Features =
 Create unparalleled websites while saving time, money and resources with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro/)’s full website builder. Get access to 100+ professional widgets, features, and tools.
 
@@ -200,8 +192,6 @@ Build professional websites with [Elementor Pro](https://go.elementor.com/wp-rep
 = 🔒 SECURITY AND COMPLIANCE =
 Elementor places a paramount focus on security, evident through our acquisition of industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications underscore our commitment to implementing robust security measures, and highlight our dedication to adhering to recognized industry standards.
 
-To build secure and reliable software, we follow a Secure System Development Lifecycle based on industry best practices. Our development process integrates multiple services that monitor vulnerabilities and configuration mistakes, including those in third-party libraries. Each line of code we release undergoes manual and automated quality assurance to detect and address any potential issues.
-
 We encourage ethical security research through our [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/). We collaborate with leading bug bounty services to provide opportunities for researchers to report vulnerabilities in our services. Our bounty programs include a triage team available 24/7/365.
 
 For more information: [Trust Center](https://go.elementor.com/trust-center/).
@@ -220,22 +210,21 @@ To improve the user experience, Elementor may use the following 3rd party servic
 - Some Elementor features require loading additional assets from Elementor.com. These assets are not used for tracking purposes unless it’s explicitly mentioned otherwise, in which case you would need to approve it and manually opt-in. Learn more about our [TOS](https://go.elementor.com/wp-repo-description-tab-elementor-plugin-terms/) and [Privacy Policy](https://go.elementor.com/wp-repo-description-tab-elementor-plugin-privacy/).
 
 = 🌍 Join a Global Community =
-Join a global community that helps each other achieve their goals. Get answers, solve problems with other members, share knowledge, and more. Join community discussions, meetups, enjoy hundreds of YouTube videos, articles, and tutorials made by members worldwide.
+Join a global community that helps each other achieve their goals. Get answers, solve problems, share knowledge, and more. Join discussions, meetups, enjoy YouTube videos, articles, and tutorials made by members worldwide.
 
-- [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - Over 150K+ members, constantly offering support, advice, feedback, and tutorials.
+- [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - Over 150K+ members, offering support, advice, feedback, and tutorials.
 - [GitHub Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - get information about releases, request features, or report a bug.
-- [Elementor Addons, Themes, and Kits](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) thousands of themes, addons and kits created specifically for Elementor.
-- Learn valuable insights and techniques from our extensive [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
-- Access our [Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) and [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/) - Find comprehensive guides, tutorials, and troubleshooting resources to answer your questions and empower your creativity.
+- [Elementor Addons, Themes, and Kits](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) Themes and Kits – created specifically for Elementor.
+- Learn valuable insights and techniques from our [YouTube Channel](https://go.elementor.com/wp-repo-description-tab-youtube-channel/).
+- Access our [Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) and [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/) - Find guides, tutorials, and resources to answer your questions and boost creativity.
 - Show your support by [rating us on WordPress](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-review/). Your feedback fuels our growth! 🤗
-- If you have questions or need support, visit the Plugin’s forum. Elementor Pro users can get 24/7 premium support.
-- For more information about Elementor visit [Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-elementor-website-builder/).
+- If you have questions or need support, visit the [Plugin\'s Forum](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-forum/). Elementor Pro users can get 24/7 premium support, or visit [Elementor Website Builder](https://go.elementor.com/wp-repo-description-tab-homepage-elementor-website-builder/).
 
 == Installation ==
 
 = Minimum Requirements =
 
-* WordPress 6.0 or greater
+* WordPress 6.3 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -326,6 +315,16 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.23.3 - 2024-07-25 =
+
+* Fix: UI fixes to improve user experience
+
+= 3.23.2 - 2024-07-23 =
+* Security Fix: Improved code security enforcement in link URL
+* Fix: Facebook Messenger username is not working on mobile devices in Floating Buttons ([#28103](https://github.com/elementor/elementor/issues/28103))
+* Fix: RTL issues with Floating Buttons templates
+* Fix: WordPress 6.6 does not support certain features
 
 = 3.23.1 - 2024-07-15 =
 * Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
