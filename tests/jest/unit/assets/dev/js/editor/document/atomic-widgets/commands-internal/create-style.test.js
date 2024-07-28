@@ -9,19 +9,13 @@ describe( 'CreateStyle - apply', () => {
 			run: jest.fn(),
 			modules: {
 				editor: {
-					document: {
-						CommandHistoryDebounceBase: class {
-							isHistoryActive() {
-								return true;
-							}
-						},
-					},
+					CommandContainerInternalBase: class {},
 				},
 			},
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		CreateStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands/create-style' ) ).default;
+		CreateStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/create-style' ) ).default;
 	} );
 
 	afterEach( () => {
@@ -31,7 +25,7 @@ describe( 'CreateStyle - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should create new style object and update the reference in the settings & add history transaction', () => {
+	it( 'should create new style object and update the reference in the settings', () => {
 		const command = new CreateStyleCommand();
 
 		// Mock generateId
@@ -41,6 +35,7 @@ describe( 'CreateStyle - apply', () => {
 		const container = createContainer( {
 			widgetType: 'a-heading',
 			elType: 'widget',
+			label: 'Heading',
 			id: '123',
 			settings: {},
 			styles: {},
@@ -52,16 +47,9 @@ describe( 'CreateStyle - apply', () => {
 		const updatedStyles = {
 			'new-style-id': {
 				id: 'new-style-id',
-				label: '',
+				label: 'Heading Style 1',
 				type: 'class',
 				variants: [],
-			},
-		};
-
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'new-style-id',
-				bind,
 			},
 		};
 
@@ -81,16 +69,6 @@ describe( 'CreateStyle - apply', () => {
 				},
 			},
 		);
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'add',
-				restore: CreateStyleCommand.restore,
-			},
-		);
 	} );
 
 	it( 'should create new style object and update the reference in the settings without deleting old references', () => {
@@ -103,6 +81,7 @@ describe( 'CreateStyle - apply', () => {
 		const container = createContainer( {
 			widgetType: 'a-heading',
 			elType: 'widget',
+			label: 'Heading',
 			id: '123',
 			settings: {
 				text: 'Test text',
@@ -114,7 +93,7 @@ describe( 'CreateStyle - apply', () => {
 			styles: {
 				'old-style-id': {
 					id: 'old-style-id',
-					label: '',
+					label: 'Heading Style 1',
 					type: 'class',
 					variants: [],
 				},
@@ -127,22 +106,15 @@ describe( 'CreateStyle - apply', () => {
 		const updatedStyles = {
 			'old-style-id': {
 				id: 'old-style-id',
-				label: '',
+				label: 'Heading Style 1',
 				type: 'class',
 				variants: [],
 			},
 			'new-style-id': {
 				id: 'new-style-id',
-				label: '',
+				label: 'Heading Style 2',
 				type: 'class',
 				variants: [],
-			},
-		};
-
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'new-style-id',
-				bind,
 			},
 		};
 
@@ -160,16 +132,6 @@ describe( 'CreateStyle - apply', () => {
 						value: [ 'old-style-id', 'new-style-id' ],
 					},
 				},
-			},
-		);
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'add',
-				restore: CreateStyleCommand.restore,
 			},
 		);
 	} );

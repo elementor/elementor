@@ -9,19 +9,13 @@ describe( 'DeleteVariant - apply', () => {
 			run: jest.fn(),
 			modules: {
 				editor: {
-					document: {
-						CommandHistoryDebounceBase: class {
-							isHistoryActive() {
-								return true;
-							}
-						},
-					},
+					CommandContainerInternalBase: class {},
 				},
 			},
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		DeleteVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands/delete-variant' ) ).default;
+		DeleteVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/delete-variant' ) ).default;
 	} );
 
 	afterEach( () => {
@@ -62,7 +56,7 @@ describe( 'DeleteVariant - apply', () => {
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
-	it( 'should delete style variant & add history transaction', () => {
+	it( 'should delete style variant', () => {
 		const command = new DeleteVariantCommand();
 
 		const bind = 'classes';
@@ -99,28 +93,11 @@ describe( 'DeleteVariant - apply', () => {
 			},
 		};
 
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'style-id',
-				meta: { breakpoint: null, state: null },
-			},
-		};
-
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'remove',
-				restore: DeleteVariantCommand.restore,
-			},
-		);
 	} );
 
-	it( 'should delete style variant without deleting other variants & add history transaction', () => {
+	it( 'should delete style variant without deleting other variants', () => {
 		const command = new DeleteVariantCommand();
 
 		const bind = 'classes';
@@ -171,24 +148,7 @@ describe( 'DeleteVariant - apply', () => {
 			},
 		};
 
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'style-id',
-				meta: { breakpoint: 'sm', state: null },
-			},
-		};
-
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'remove',
-				restore: DeleteVariantCommand.restore,
-			},
-		);
 	} );
 } );

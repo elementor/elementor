@@ -9,19 +9,13 @@ describe( 'CreateVariant - apply', () => {
 			run: jest.fn(),
 			modules: {
 				editor: {
-					document: {
-						CommandHistoryDebounceBase: class {
-							isHistoryActive() {
-								return true;
-							}
-						},
-					},
+					CommandContainerInternalBase: class {},
 				},
 			},
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		CreateVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands/create-variant' ) ).default;
+		CreateVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/create-variant' ) ).default;
 	} );
 
 	afterEach( () => {
@@ -62,7 +56,7 @@ describe( 'CreateVariant - apply', () => {
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
-	it( 'should create new style variant & add history transaction', () => {
+	it( 'should create new style variant', () => {
 		const command = new CreateVariantCommand();
 
 		const bind = 'classes';
@@ -113,24 +107,7 @@ describe( 'CreateVariant - apply', () => {
 			},
 		};
 
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'style-id',
-				meta: { breakpoint: null, state: null },
-			},
-		};
-
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'add',
-				restore: CreateVariantCommand.restore,
-			},
-		);
 	} );
 } );

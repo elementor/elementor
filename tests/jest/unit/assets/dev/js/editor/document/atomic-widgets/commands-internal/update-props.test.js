@@ -9,19 +9,13 @@ describe( 'UpdateProps - apply', () => {
 			run: jest.fn(),
 			modules: {
 				editor: {
-					document: {
-						CommandHistoryDebounceBase: class {
-							isHistoryActive() {
-								return true;
-							}
-						},
-					},
+					CommandContainerInternalBase: class {},
 				},
 			},
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		UpdatePropsCommand = ( await import( 'elementor-document/atomic-widgets/commands/update-props' ) ).UpdateProps;
+		UpdatePropsCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/update-props' ) ).UpdateProps;
 	} );
 
 	afterEach( () => {
@@ -91,7 +85,7 @@ describe( 'UpdateProps - apply', () => {
 		} ).toThrowError( 'Style Variant not found' );
 	} );
 
-	it( 'should update exited variant with new props and update old ones', () => {
+	it( 'should update exited variant with new props, update old ones and delete null or undefined props', () => {
 		const command = new UpdatePropsCommand();
 
 		const bind = 'classes';
@@ -113,7 +107,7 @@ describe( 'UpdateProps - apply', () => {
 					variants: [
 						{
 							meta: { breakpoint: null, state: null },
-							props: { color: 'black' },
+							props: { nullToDelete: 'something', undefinedToDelete: 'something', color: 'black' },
 						},
 						{
 							meta: { breakpoint: null, state: 'active' },
@@ -125,7 +119,17 @@ describe( 'UpdateProps - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: null }, props: { color: 'blue', width: '10px' } } );
+		command.apply( {
+			container,
+			styleDefId: 'style-id',
+			meta: { breakpoint: null, state: null },
+			props: {
+				nullToDelete: null,
+				undefinedToDelete: undefined,
+				color: 'blue',
+				width: '10px',
+			},
+		} );
 
 		const updatedStyles = {
 			'style-id': {
@@ -145,26 +149,7 @@ describe( 'UpdateProps - apply', () => {
 			},
 		};
 
-		const historyChanges = {
-			[ container.id ]: {
-				styleDefId: 'style-id',
-				meta: { breakpoint: null, state: null },
-				props: { color: 'blue', width: '10px' },
-				oldProps: { color: 'black', width: null },
-			},
-		};
-
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
-
-		expect( $e.internal ).toHaveBeenCalledWith(
-			'document/history/add-transaction',
-			{
-				containers: [ container ],
-				data: { changes: historyChanges },
-				type: 'change',
-				restore: UpdatePropsCommand.restore,
-			},
-		);
 	} );
 } );
