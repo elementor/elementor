@@ -1,5 +1,3 @@
-import { __ } from '@wordpress/i18n';
-
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
