@@ -64,8 +64,8 @@ class Module extends BaseModule {
 	 */
 	private function enqueue_scripts() {
 		wp_enqueue_script(
-			'atomic-widgets',
-			$this->get_js_assets_url( 'atomic-widgets' ),
+			'elementor-atomic-widgets-editor',
+			$this->get_js_assets_url( 'atomic-widgets-editor' ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true

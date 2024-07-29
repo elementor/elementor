@@ -50,13 +50,11 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 		const { container, styleDefId, meta, props } = args;
 
 		const oldStyles = container.model.get( 'styles' ) || {};
-		let style = {};
+		let style = oldStyles[ styleDefId ];
 
-		if ( ! oldStyles[ styleDefId ] ) {
+		if ( ! style ) {
 			throw new Error( 'Style Def not found' );
 		}
-
-		style = oldStyles[ styleDefId ];
 
 		const variant = this.getVariantByMeta( style.variants, meta );
 

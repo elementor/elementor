@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
+const PROP_TYPE_CLASSES = 'classes';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -28,24 +30,18 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 			variants: [],
 		};
 
-		const $$type = 'classes'; // TODO: Style Transformer should be used here.
-
 		const oldBindSetting = container.settings.get( bind ) ?? {
-			$$type,
+			$$type: PROP_TYPE_CLASSES,
 			value: [],
 		};
 
-		if ( oldBindSetting.$$type !== $$type ) {
-			throw new Error( 'Invalid bind prop type' );
-		}
-
-		if ( ! Array.isArray( oldBindSetting.value ) ) {
-			throw new Error( 'Invalid bind prop type' );
+		if ( oldBindSetting.$$type !== PROP_TYPE_CLASSES || ! Array.isArray( oldBindSetting.value ) ) {
+			throw new Error( 'Invalid bind setting prop type' );
 		}
 
 		const newBindSetting = {
 			[ bind ]: {
-				$$type,
+				$$type: PROP_TYPE_CLASSES,
 				value: [ ...oldBindSetting.value, newStyle.id ],
 			},
 		};

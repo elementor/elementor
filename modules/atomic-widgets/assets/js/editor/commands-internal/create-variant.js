@@ -14,8 +14,8 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 		}
 	}
 
-	getVariantByMeta( variants, meta ) {
-		return variants.find( ( variant ) => {
+	variantExists( style, meta ) {
+		return !! style.variants.find( ( variant ) => {
 			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
 		} );
 	}
@@ -31,7 +31,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 
 		const style = oldStyles[ styleDefId ];
 
-		if ( this.getVariantByMeta( style.variants, meta ) ) {
+		if ( this.variantExists( style, meta ) ) {
 			throw new Error( 'Style Variant already exits' );
 		}
 

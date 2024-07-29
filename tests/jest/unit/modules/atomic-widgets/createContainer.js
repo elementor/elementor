@@ -32,13 +32,9 @@ function createModel( attributes ) {
 		},
 		set( key, value ) {
 			// Support setting multiple attributes as object at once.
-			if ( 'object' === typeof key ) {
-				Object.entries( key ).forEach( ( [ k, v ] ) => {
-					this.set( k, v );
-				} );
-				return;
-			}
-			this.attributes[ key ] = value;
+			const valueToMerge = 'object' === typeof key ? key : { [ key ]: value };
+
+			this.attributes = { ...this.attributes, ...valueToMerge };
 		},
 	};
 }

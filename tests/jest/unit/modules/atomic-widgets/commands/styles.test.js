@@ -94,12 +94,12 @@ describe( 'Styles - apply', () => {
 					text: 'Test text',
 					classes: {
 						$$type: 'classes',
-						value: [ 'exits-style-id' ],
+						value: [ 'existing-style-id' ],
 					},
 				},
 				styles: {
-					'exits-style-id': {
-						id: 'exits-style-id',
+					'existing-style-id': {
+						id: 'existing-style-id',
 						label: 'Container Style 1',
 						type: 'class',
 						variants: [
@@ -115,12 +115,12 @@ describe( 'Styles - apply', () => {
 				text: 'Test text',
 				classes: {
 					$$type: 'classes',
-					value: [ 'exits-style-id', 'new-style-id' ],
+					value: [ 'existing-style-id', 'new-style-id' ],
 				},
 			},
 			{
-				'exits-style-id': {
-					id: 'exits-style-id',
+				'existing-style-id': {
+					id: 'existing-style-id',
 					label: 'Container Style 1',
 					type: 'class',
 					variants: [
@@ -144,20 +144,20 @@ describe( 'Styles - apply', () => {
 			},
 		],
 		[
-			'add a new variant to exits style definition and update props',
-			{ styleDefId: 'exits-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
+			'add a new variant to existing style definition and update props',
+			{ styleDefId: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
 			{
 				label: 'Container',
 				settings: {
 					text: 'Test text',
 					classes: {
 						$$type: 'classes',
-						value: [ 'exits-style-id' ],
+						value: [ 'existing-style-id' ],
 					},
 				},
 				styles: {
-					'exits-style-id': {
-						id: 'exits-style-id',
+					'existing-style-id': {
+						id: 'existing-style-id',
 						label: 'Container Style 1',
 						type: 'class',
 						variants: [
@@ -173,12 +173,12 @@ describe( 'Styles - apply', () => {
 				text: 'Test text',
 				classes: {
 					$$type: 'classes',
-					value: [ 'exits-style-id' ],
+					value: [ 'existing-style-id' ],
 				},
 			},
 			{
-				'exits-style-id': {
-					id: 'exits-style-id',
+				'existing-style-id': {
+					id: 'existing-style-id',
 					label: 'Container Style 1',
 					type: 'class',
 					variants: [
@@ -196,19 +196,19 @@ describe( 'Styles - apply', () => {
 		],
 		[
 			'update props without deleting old props',
-			{ styleDefId: 'exits-style-id', bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
+			{ styleDefId: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
 			{
 				label: 'Container',
 				settings: {
 					text: 'Test text',
 					classes: {
 						$$type: 'classes',
-						value: [ 'exits-style-id' ],
+						value: [ 'existing-style-id' ],
 					},
 				},
 				styles: {
-					'exits-style-id': {
-						id: 'exits-style-id',
+					'existing-style-id': {
+						id: 'existing-style-id',
 						label: 'Container Style 1',
 						type: 'class',
 						variants: [
@@ -224,12 +224,12 @@ describe( 'Styles - apply', () => {
 				text: 'Test text',
 				classes: {
 					$$type: 'classes',
-					value: [ 'exits-style-id' ],
+					value: [ 'existing-style-id' ],
 				},
 			},
 			{
-				'exits-style-id': {
-					id: 'exits-style-id',
+				'existing-style-id': {
+					id: 'existing-style-id',
 					label: 'Container Style 1',
 					type: 'class',
 					variants: [

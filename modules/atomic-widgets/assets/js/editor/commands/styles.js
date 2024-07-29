@@ -85,8 +85,8 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		};
 	}
 
-	getVariantByMeta( variants, meta ) {
-		return variants.find( ( variant ) => {
+	variantExists( style, meta ) {
+		return !! style.variants.find( ( variant ) => {
 			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
 		} );
 	}
@@ -114,9 +114,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			style = oldStyles[ styleDefId ];
 		}
 
-		const variant = this.getVariantByMeta( style.variants, meta );
-
-		if ( ! variant ) {
+		if ( ! this.variantExists( style, meta ) ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
 				styleDefId,

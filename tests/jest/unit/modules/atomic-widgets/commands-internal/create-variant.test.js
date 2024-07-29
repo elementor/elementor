@@ -25,7 +25,7 @@ describe( 'CreateVariant - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should throw an error if style def not exits', () => {
+	it( 'should throw an error if style def not exist', () => {
 		const command = new CreateVariantCommand();
 
 		const bind = 'classes';

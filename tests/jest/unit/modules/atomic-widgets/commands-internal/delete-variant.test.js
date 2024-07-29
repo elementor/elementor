@@ -25,7 +25,7 @@ describe( 'DeleteVariant - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should throw an error if style def not exits', () => {
+	it( 'should throw an error if style def not exist', () => {
 		const command = new DeleteVariantCommand();
 
 		const bind = 'classes';
@@ -132,6 +132,58 @@ describe( 'DeleteVariant - apply', () => {
 		} );
 
 		// Act
+		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: 'sm', state: null } } );
+
+		const updatedStyles = {
+			'style-id': {
+				id: 'style-id',
+				label: '',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: null },
+						props: {},
+					},
+				],
+			},
+		};
+
+		// Assert
+		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
+	} );
+
+	it( 'should not delete style variant if variant not exist (state or breakpoint)', () => {
+		const command = new DeleteVariantCommand();
+
+		const bind = 'classes';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'Test text',
+				[ bind ]: {
+					$$type: 'classes',
+					value: [ 'style-id' ],
+				},
+			},
+			styles: {
+				'style-id': {
+					id: 'style-id',
+					label: '',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: {},
+						},
+					],
+				},
+			},
+		} );
+
+		// Act
+		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: 'active' } } );
 		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: 'sm', state: null } } );
 
 		const updatedStyles = {
