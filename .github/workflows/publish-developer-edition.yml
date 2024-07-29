@@ -103,7 +103,7 @@ jobs:
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_dev_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-          npm ci
+          bash "${GITHUB_WORKSPACE}/.github/scripts/install-dependencies.sh"
       - name: Get beta tag
         run: |
           npm install --no-package-lock --no-save semver@7.3.4

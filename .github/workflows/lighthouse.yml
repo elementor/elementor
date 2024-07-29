@@ -41,7 +41,7 @@ jobs:
           path: ./build
       - name: Install node modules
         if: matrix.wpCoreVersion != 'master'
-        run: npm ci
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/install-dependencies.sh" --npm-only
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
         run: |
@@ -50,7 +50,7 @@ jobs:
       - name: Install lhci
         if: matrix.wpCoreVersion != 'master'
         run: |
-          npm ci
+          bash "${GITHUB_WORKSPACE}/.github/scripts/install-dependencies.sh" --npm-only
           npm install --no-package-lock --no-save @lhci/cli@0.11.1
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master'

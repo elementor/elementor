@@ -96,7 +96,7 @@ jobs:
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').last_cloud_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-          npm ci
+          bash "${GITHUB_WORKSPACE}/.github/scripts/install-dependencies.sh"
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
