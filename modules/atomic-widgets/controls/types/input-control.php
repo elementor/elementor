@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Input_Control extends Atomic_Control_Base {
-	private string $placeholder;
-	private string $type = 'text';
+	private ?string $placeholder = null;
+	private ?string $type = 'text';
 
 	public function get_type(): string {
 		return 'input';
