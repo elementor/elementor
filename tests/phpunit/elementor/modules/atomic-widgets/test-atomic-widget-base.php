@@ -2,23 +2,25 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
-use Elementor\Testing\Modules\AtomicWidgets\Mocks\Mock_Widget;
+use Elementor\Testing\Modules\AtomicWidgets\Mocks\Mock_Widget_A;
+use Elementor\Testing\Modules\AtomicWidgets\Mocks\Mock_Widget_B;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-require_once __DIR__ . '/mocks/mock-widget.php';
+require_once __DIR__ . '/mocks/mock-widget-a.php';
+require_once __DIR__ . '/mocks/mock-widget-b.php';
 
 class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_atomic_settings__returns_the_saved_value() {
 		// Arrange.
-		$widget = new Mock_Widget( [
+		$widget = new Mock_Widget_A( [
 			'id' => 1,
 			'settings' => [
-				'test_prop' => 'saved-value',
+				'test_prop_a' => 'saved-value',
 			],
 		] );
 
@@ -27,13 +29,13 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( [
-			'test_prop' => 'saved-value',
+			'test_prop_a' => 'saved-value',
 		], $settings );
 	}
 
 	public function test_get_atomic_settings__returns_the_default_value() {
 		// Arrange.
-		$widget = new Mock_Widget( [
+		$widget = new Mock_Widget_A( [
 			'id' => 1,
 			'settings' => [],
 		] );
@@ -43,16 +45,16 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( [
-			'test_prop' => 'default-value',
+			'test_prop_a' => 'default-value-a',
 		], $settings );
 	}
 
 	public function test_get_atomic_settings__returns_only_settings_that_are_defined_in_the_schema() {
 		// Arrange.
-		$widget = new Mock_Widget( [
+		$widget = new Mock_Widget_A( [
 			'id' => 1,
 			'settings' => [
-				'test_prop' => 'saved-value',
+				'test_prop_a' => 'saved-value',
 				'not_in_schema' => 'not-in-schema',
 			],
 		] );
@@ -62,27 +64,31 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( [
-			'test_prop' => 'saved-value',
+			'test_prop_a' => 'saved-value',
 		], $settings );
 	}
 
 	public function test_get_props_schema__caches_the_schema() {
-		// Act.
-		$schema_1 = Mock_Widget::get_props_schema();
-		$schema_2 = Mock_Widget::get_props_schema();
+		// Act & Assert.
+		$this->assertSame(
+			Mock_Widget_A::get_props_schema(),
+			Mock_Widget_A::get_props_schema()
+		);
 
-		// Assert.
-		$this->assertSame( $schema_1, $schema_2 );
+		$this->assertNotSame(
+			Mock_Widget_A::get_props_schema(),
+			Mock_Widget_B::get_props_schema()
+		);
 	}
 
 	public function test_get_props_schema__is_serializable() {
 		// Act.
-		$serialized = json_encode( Mock_Widget::get_props_schema() );
+		$serialized = json_encode( Mock_Widget_A::get_props_schema() );
 
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
-			"test_prop": {
-				"default": "default-value"
+			"test_prop_a": {
+				"default": "default-value-a"
 			}
 		}', $serialized );
 	}
