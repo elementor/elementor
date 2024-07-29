@@ -84,7 +84,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	}
 
 	variantExists( style, meta ) {
-		return !! style.variants.find( ( variant ) => {
+		return style.variants.some( ( variant ) => {
 			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
 		} );
 	}

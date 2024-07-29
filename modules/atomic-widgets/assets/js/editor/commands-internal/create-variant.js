@@ -15,7 +15,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 	}
 
 	variantExists( style, meta ) {
-		return !! style.variants.find( ( variant ) => {
+		return style.variants.some( ( variant ) => {
 			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
 		} );
 	}

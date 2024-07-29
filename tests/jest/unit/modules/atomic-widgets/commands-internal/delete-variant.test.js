@@ -25,7 +25,7 @@ describe( 'DeleteVariant - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should throw an error if style def not exist', () => {
+	it( 'should throw an error if style def does not exist', () => {
 		const command = new DeleteVariantCommand();
 
 		const bind = 'classes';
@@ -152,7 +152,7 @@ describe( 'DeleteVariant - apply', () => {
 		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
 	} );
 
-	it( 'should not delete style variant if variant not exist (state or breakpoint)', () => {
+	it( 'should not delete style variant if variant does not exist (state or breakpoint)', () => {
 		const command = new DeleteVariantCommand();
 
 		const bind = 'classes';
