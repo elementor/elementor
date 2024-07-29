@@ -15,7 +15,7 @@ describe( 'DeleteStyle - apply', () => {
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		DeleteStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/delete-style' ) ).default;
+		DeleteStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/delete-style' ) ).default;
 	} );
 
 	afterEach( () => {

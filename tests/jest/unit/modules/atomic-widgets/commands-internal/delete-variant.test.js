@@ -15,7 +15,7 @@ describe( 'DeleteVariant - apply', () => {
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		DeleteVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/delete-variant' ) ).default;
+		DeleteVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/delete-variant' ) ).default;
 	} );
 
 	afterEach( () => {

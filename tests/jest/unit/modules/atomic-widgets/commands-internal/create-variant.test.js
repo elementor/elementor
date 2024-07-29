@@ -15,7 +15,7 @@ describe( 'CreateVariant - apply', () => {
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		CreateVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/create-variant' ) ).default;
+		CreateVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-variant' ) ).default;
 	} );
 
 	afterEach( () => {

@@ -15,7 +15,7 @@ describe( 'CreateStyle - apply', () => {
 		};
 
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		CreateStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/create-style' ) ).default;
+		CreateStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-style' ) ).default;
 	} );
 
 	afterEach( () => {

@@ -23,11 +23,11 @@ describe( 'Styles - apply', () => {
 
 		const SetSettingsCommand = ( await import( 'elementor-document/elements/commands-internal/set-settings' ) ).default;
 
-		const CreateStyleCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/create-style' ) ).default;
+		const CreateStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-style' ) ).default;
 
-		const CreateVariantCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/create-variant' ) ).default;
+		const CreateVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-variant' ) ).default;
 
-		const UpdatePropsCommand = ( await import( 'elementor-document/atomic-widgets/commands-internal/update-props' ) ).default;
+		const UpdatePropsCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/update-props' ) ).default;
 
 		setSettingsCommand = new SetSettingsCommand();
 		createStyleCommand = new CreateStyleCommand();
@@ -245,7 +245,7 @@ describe( 'Styles - apply', () => {
 		],
 	] )( 'should %s', async ( description, applyArgs, containerArgs, expectedSettings, expectedStyles ) => {
 		// Need to import dynamically since the command extends a global variable which isn't available in regular import.
-		const StylesCommand = ( await import( 'elementor-document/atomic-widgets/commands/styles' ) ).default;
+		const StylesCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands/styles' ) ).default;
 
 		// Mock generateId
 		createStyleCommand.randomId = () => 'new-style-id';
