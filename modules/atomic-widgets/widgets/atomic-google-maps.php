@@ -31,22 +31,21 @@ class Atomic_Google_Maps extends Atomic_Widget_Base {
 		return 'a-google-maps';
 	}
 	protected function render() {
-		$url = 'https://maps.google.com/maps/?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near';
+		$google_maps_url_with_no_api_key = 'https://maps.google.com/maps/?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near';
+		$google_maps_url_with_api_key = 'https://www.google.com/maps/embed/v1/place?key=%3$s&q=%1$s&amp;zoom=%2$d';
 		$api_key = $this->get_settings( 'api_key' ) ?? false;
+		$address = $this->get_settings( 'address' ) ?? esc_html__( 'London Eye, London, United Kingdom', 'elementor' );
 		$params = [
-			$this->get_settings( 'address' ) ?? esc_html__( 'London Eye, London, United Kingdom', 'elementor' ),
+			$address,
 			$this->get_settings( 'zoom' ) ?? 10,
 			$api_key,
 		];
-
-		if ( $api_key ) {
-			$url = 'https://www.google.com/maps/embed/v1/place?key=%3$s&q=%1$s&amp;zoom=%2$d';
-		}
+		$url = $api_key ? $google_maps_url_with_api_key : $google_maps_url_with_no_api_key;
 		?>
 		<iframe loading="lazy"
 			src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
-			title="<?php echo esc_attr( $params[0] ); ?>"
-			aria-label="<?php echo esc_attr( $params[0] ); ?>"
+			title="<?php echo esc_attr( $address ); ?>"
+			aria-label="<?php echo esc_attr( $address ); ?>"
 		></iframe>
 		<?php
 	}
