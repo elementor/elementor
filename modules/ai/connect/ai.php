@@ -64,6 +64,24 @@ class Ai extends Library {
 		);
 	}
 
+	public function get_remote_frontend_config( $data ) {
+		return $this->ai_request(
+			'POST',
+			'remote-config/frontend-config',
+			[
+				'client_name' => $data['payload']['client_name'],
+				'client_version' => $data['payload']['client_version'],
+				'client_session_id' => $data['payload']['client_session_id'],
+
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
 	/**
 	 * get_file_payload
 	 * @param $filename
