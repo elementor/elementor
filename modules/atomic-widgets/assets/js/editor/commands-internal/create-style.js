@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 /**
- * @typedef {import('../../../container/container')} Container
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
 export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args ) {
@@ -43,7 +43,7 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 			throw new Error( 'Invalid bind prop type' );
 		}
 
-		const newSetting = {
+		const newBindSetting = {
 			[ bind ]: {
 				$$type,
 				value: [ ...oldBindSetting.value, newStyle.id ],
@@ -55,7 +55,7 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 			options: {
 				render: false,
 			},
-			settings: newSetting,
+			settings: newBindSetting,
 		} );
 
 		const newStyles = {

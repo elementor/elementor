@@ -25,7 +25,7 @@ describe( 'DeleteStyle - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should delete style object and update the reference in the settings', () => {
+	it( 'should delete style definition and update the reference in the settings', () => {
 		const command = new DeleteStyleCommand();
 
 		const bind = 'classes';
@@ -71,7 +71,7 @@ describe( 'DeleteStyle - apply', () => {
 		);
 	} );
 
-	it( 'should delete style object and update the reference in the settings without deleting old ones', () => {
+	it( 'should delete style definition and update the reference in the settings without deleting old ones', () => {
 		const command = new DeleteStyleCommand();
 
 		const bind = 'classes';

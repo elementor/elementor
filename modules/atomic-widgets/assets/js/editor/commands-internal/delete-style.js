@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../container/container')} Container
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
 export class DeleteStyle extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args ) {
@@ -13,20 +13,16 @@ export class DeleteStyle extends $e.modules.editor.CommandContainerInternalBase 
 	apply( args ) {
 		const { container, styleDefId, bind } = args;
 
-		const setting = container.settings.get( bind );
+		const oldBindSetting = container.settings.get( bind );
 
-		if ( ! setting ) {
+		if ( ! oldBindSetting ) {
 			throw new Error( 'Setting not found' );
 		}
 
-		if ( ! setting.value.includes( styleDefId ) ) {
-			throw new Error( 'Style Def not found in setting' );
-		}
-
-		const settings = {
+		const newBindSetting = {
 			[ bind ]: {
 				$$type: 'classes',
-				value: setting.value.filter( ( id ) => id !== styleDefId ),
+				value: oldBindSetting.value.filter( ( id ) => id !== styleDefId ),
 			},
 		};
 
@@ -35,7 +31,7 @@ export class DeleteStyle extends $e.modules.editor.CommandContainerInternalBase 
 			options: {
 				render: false,
 			},
-			settings,
+			settings: newBindSetting,
 		} );
 
 		const styles = container.model.get( 'styles' ) || {};

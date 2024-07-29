@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../container/container')} Container
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
 export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args ) {
@@ -12,7 +12,7 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 		this.requireArgumentConstructor( 'props', Object, args );
 
 		if ( ! ( 'breakpoint' in args.meta && 'state' in args.meta ) ) {
-			throw new Error( 'Meta is invalid' );
+			throw new Error( 'Invalid meta arg' );
 		}
 
 		if ( 0 === Object.keys( args.props ).length ) {

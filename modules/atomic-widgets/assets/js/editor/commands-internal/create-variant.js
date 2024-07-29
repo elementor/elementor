@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../container/container')} Container
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
 export class CreateVariant extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args ) {
@@ -10,7 +10,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 		this.requireArgumentConstructor( 'meta', Object, args );
 
 		if ( ! ( 'breakpoint' in args.meta && 'state' in args.meta ) ) {
-			throw new Error( 'Meta is invalid' );
+			throw new Error( 'Invalid meta arg' );
 		}
 	}
 
@@ -31,9 +31,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 
 		const style = oldStyles[ styleDefId ];
 
-		const existingVariant = this.getVariantByMeta( style.variants, meta );
-
-		if ( existingVariant ) {
+		if ( this.getVariantByMeta( style.variants, meta ) ) {
 			throw new Error( 'Style Variant already exits' );
 		}
 

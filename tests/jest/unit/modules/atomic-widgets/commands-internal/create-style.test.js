@@ -25,7 +25,7 @@ describe( 'CreateStyle - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should create new style object and update the reference in the settings', () => {
+	it( 'should create a new style definition and update the reference in the settings', () => {
 		const command = new CreateStyleCommand();
 
 		// Mock generateId
@@ -71,7 +71,7 @@ describe( 'CreateStyle - apply', () => {
 		);
 	} );
 
-	it( 'should create new style object and update the reference in the settings without deleting old references', () => {
+	it( 'should create a new style definition and update the reference in the settings without deleting old references', () => {
 		const command = new CreateStyleCommand();
 
 		// Mock generateId

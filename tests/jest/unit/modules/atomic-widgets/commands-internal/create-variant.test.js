@@ -56,7 +56,43 @@ describe( 'CreateVariant - apply', () => {
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
-	it( 'should create new style variant', () => {
+	it( 'should throw an error if style variant already exits', () => {
+		const command = new CreateVariantCommand();
+
+		const bind = 'classes';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			settings: {
+				text: 'Test text',
+				[ bind ]: {
+					$$type: 'classes',
+					value: [ 'style-id' ],
+				},
+			},
+			styles: {
+				'style-id': {
+					id: 'style-id',
+					label: '',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: {},
+						},
+					],
+				},
+			},
+		} );
+
+		// Act & Assert
+		expect( () => {
+			command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: null } } );
+		} ).toThrowError( 'Style Variant already exits' );
+	} );
+
+	it( 'should create a new style variant', () => {
 		const command = new CreateVariantCommand();
 
 		const bind = 'classes';

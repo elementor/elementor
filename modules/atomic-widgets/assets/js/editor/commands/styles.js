@@ -1,16 +1,9 @@
 import { __ } from '@wordpress/i18n';
 
 /**
- * @typedef {import('../../../container/container')} Container
+ * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
 export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBase {
-	/**
-	 * Function getSubTitle().
-	 *
-	 * Get sub title by container.
-	 *
-	 * @return {string} sub title
-	 */
 	static getSubTitle() {
 		return __( 'Style', 'elementor' );
 	}
@@ -18,8 +11,17 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		// Bind or StyleDefId
-		// this.requireArgumentConstructor( 'bind', String, args );
+		if ( ! args.bind && ! args.styleDefId ) {
+			throw new Error( 'Missing bind or styleDefId' );
+		}
+
+		if ( args.bind && 'string' !== typeof args.bind ) {
+			throw new Error( 'Invalid bind arg' );
+		}
+
+		if ( args.styleDefId && 'string' !== typeof args.styleDefId ) {
+			throw new Error( 'Invalid styleDefId arg' );
+		}
 	}
 
 	/**
@@ -89,20 +91,21 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		} );
 	}
 
-	async apply( args ) {
-		const { container, styleDefId, bind, meta, props } = args;
+	apply( args ) {
+		const { container, bind, meta, props } = args;
+		let styleDefId = args.styleDefId ?? null;
+
 		const oldStyles = container.model.get( 'styles' ) ?? {};
 		const oldBindSetting = container.settings.get( bind );
-		let currentStyleDefId = styleDefId;
 		let style = {};
 
 		if ( ! styleDefId ) {
-			style = await $e.internal( 'document/atomic-widgets/create-style', {
+			style = $e.internal( 'document/atomic-widgets/create-style', {
 				container,
 				bind,
 			} );
 
-			currentStyleDefId = style.id;
+			styleDefId = style.id;
 		} else {
 			if ( ! oldStyles[ styleDefId ] ) {
 				throw new Error( 'Style Def not found' );
@@ -116,14 +119,14 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		if ( ! variant ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
-				styleDefId: currentStyleDefId,
+				styleDefId,
 				meta,
 			} );
 		}
 
 		$e.internal( 'document/atomic-widgets/update-props', {
 			container,
-			styleDefId: currentStyleDefId,
+			styleDefId,
 			bind,
 			meta,
 			props,

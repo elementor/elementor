@@ -1,7 +1,7 @@
 import createContainer from '../createContainer';
 
 describe( 'Styles - apply', () => {
-	let setSettingsCommand, createStyleCommand, createVariantCommand, updatePropsCommand;
+	let createStyleCommand;
 
 	beforeAll( async () => {
 		global.$e = {
@@ -21,29 +21,27 @@ describe( 'Styles - apply', () => {
 			run: jest.fn(),
 		};
 
+		const CreateStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-style' ) ).default;
+		const CreateVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-variant' ) ).default;
+		const UpdatePropsCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/update-props' ) ).default;
 		const SetSettingsCommand = ( await import( 'elementor-document/elements/commands-internal/set-settings' ) ).default;
 
-		const CreateStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-style' ) ).default;
-
-		const CreateVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-variant' ) ).default;
-
-		const UpdatePropsCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/update-props' ) ).default;
-
-		setSettingsCommand = new SetSettingsCommand();
+		// For mocking the randomId method
 		createStyleCommand = new CreateStyleCommand();
-		createVariantCommand = new CreateVariantCommand();
-		updatePropsCommand = new UpdatePropsCommand();
 
 		global.$e.internal = ( command, args ) => {
 			switch ( command ) {
-				case 'document/elements/set-settings':
-					return setSettingsCommand.apply( args );
 				case 'document/atomic-widgets/create-style':
 					return createStyleCommand.apply( args );
+
 				case 'document/atomic-widgets/create-variant':
-					return createVariantCommand.apply( args );
+					return new CreateVariantCommand().apply( args );
+
 				case 'document/atomic-widgets/update-props':
-					return updatePropsCommand.apply( args );
+					return new UpdatePropsCommand().apply( args );
+
+				case 'document/elements/set-settings':
+					return new SetSettingsCommand().apply( args );
 			}
 		};
 	} );
@@ -57,7 +55,7 @@ describe( 'Styles - apply', () => {
 
 	it.each( [
 		[
-			'create new style object, new variant, update props and update the reference in the settings',
+			'create a new style definition, a new variant, update props and update the reference in the settings',
 			{ bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'red' } },
 			{
 				label: 'Container',
@@ -88,7 +86,7 @@ describe( 'Styles - apply', () => {
 			},
 		],
 		[
-			'create new style object, new variant, update props and update the reference in the settings without deleting old references',
+			'create a new style definition, a new variant, update props and update the reference in the settings without deleting old references',
 			{ bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
 			{
 				label: 'Container',
@@ -146,7 +144,7 @@ describe( 'Styles - apply', () => {
 			},
 		],
 		[
-			'create add new variant to exits and update props',
+			'add a new variant to exits style definition and update props',
 			{ styleDefId: 'exits-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
 			{
 				label: 'Container',
@@ -258,7 +256,7 @@ describe( 'Styles - apply', () => {
 		} );
 
 		// Act
-		await new StylesCommand().apply( { container, ...applyArgs } );
+		new StylesCommand().apply( { container, ...applyArgs } );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
