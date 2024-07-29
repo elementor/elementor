@@ -229,7 +229,10 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 				}
 			} );
 		} else {
-			elementSettings = this.baseElement?.dataset?.settings || {};
+			const rawSettings = this.baseElement?.dataset?.settings;
+			elementSettings = !! rawSettings
+				? JSON.parse( rawSettings )
+				: {};
 		}
 
 		return this.getItems( elementSettings, setting );

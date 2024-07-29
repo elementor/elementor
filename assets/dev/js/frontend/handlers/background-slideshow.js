@@ -141,11 +141,24 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		this.swiper = await new Swiper( this.elements.backgroundSlideShowContainer, this.getSwiperOptions() );
 
 		// Expose the swiper instance in the frontend
-		this.elements.backgroundSlideShowContainer.dataset.swiper = this.swiper;
+		this.elements.backgroundSlideShowContainer.dataset.swiper = JSON.stringify( this.swiper, this.getCircularReplacer() );
 
 		if ( elementSettings.background_slideshow_ken_burns ) {
 			this.handleKenBurns();
 		}
+	}
+
+	getCircularReplacer() {
+		const seen = new WeakSet();
+		return ( key, value ) => {
+			if ( typeof value === "object" && value !== null ) {
+				if ( seen.has( value ) ) {
+					return; // Remove circular reference
+				}
+				seen.add( value );
+			}
+			return value;
+		};
 	}
 
 	activate() {
@@ -174,8 +187,6 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		this.isJqueryRequired = false;
 
 		super.onInit();
-
-		const testt = this.getElementSettings();
 
 		if ( this.getElementSettings( 'background_slideshow_gallery' ) ) {
 			this.run();
