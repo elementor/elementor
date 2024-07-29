@@ -23,7 +23,7 @@ class Atomic_Google_Maps extends Atomic_Widget_Base {
 			Textarea_Control::bind_to(
 				'zoom'
 			)->set_label( __( 'Zoom', 'elementor' ) )
-			->set_placeholder( 10 ),
+			->set_placeholder( '10' ),
 		];
 	}
 
