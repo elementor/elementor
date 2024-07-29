@@ -471,7 +471,7 @@ abstract class Base_App {
 			$args
 		);
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) && empty( $options['with_error_data'] ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
 			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
