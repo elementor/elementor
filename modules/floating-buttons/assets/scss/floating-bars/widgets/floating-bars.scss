@@ -213,6 +213,8 @@
 	}
 
 	&__overlay {
+		background-position: center center;
+		background-size: cover;
 		height: 100%;
 		inset-block-end: 0;
 		inset-block-start: 0;

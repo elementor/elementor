@@ -31,9 +31,17 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			'content' => [
 				'floating_bar_section' => [
 					'close_switch_default' => 'yes',
+					'has_pause_switch' => false,
 				],
 			],
-			'style' => [],
+			'style' => [
+				'floating_bar_section' => [
+					'has_close_bg' => false,
+					'close_position_selector' => 'inset-inline-{{VALUE}}: 10px',
+					'has_close_position_control' => true,
+					'background_selector' => '{{WRAPPER}} .e-floating-bars',
+				]
+			],
 			'advanced' => [],
 		];
 	}
@@ -141,29 +149,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	protected function add_floating_bar_content_section(): void {
-		$config = static::get_configuration();
-
-		$this->start_controls_section(
-			'floating_bar_content_section',
-			[
-				'label' => __( 'Floating Bar', 'elementor' ),
-				'tab' => Controls_Manager::TAB_CONTENT,
-			]
-		);
-
-		$this->add_control(
-			'floating_bar_close_switch',
-			[
-				'label' => esc_html__( 'Close Button', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Show', 'elementor' ),
-				'label_off' => esc_html__( 'Hide', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => $config['content']['floating_bar_section']['close_switch_default'],
-			]
-		);
-
+	protected function add_accessible_name_control(): void {
 		$this->add_control(
 			'accessible_name',
 			[
@@ -179,6 +165,100 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 			],
 		);
+	}
+
+	protected function add_floating_bar_content_section(): void {
+		$config = static::get_configuration();
+
+		$this->start_controls_section(
+			'floating_bar_content_section',
+			[
+				'label' => __( 'Floating Bar', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		if ( $config['content']['floating_bar_section']['has_pause_switch'] ) {
+			$this->add_control(
+				'floating_bar_pause_switch',
+				[
+					'label' => esc_html__( 'Pause and Play', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'Show', 'elementor' ),
+					'label_off' => esc_html__( 'Hide', 'elementor' ),
+					'return_value' => 'yes',
+					'default' => 'no',
+				]
+			);
+
+			$this->add_control(
+				'floating_bar_pause_icon',
+				[
+					'label' => esc_html__( 'Pause Icon', 'elementor' ),
+					'type' => Controls_Manager::ICONS,
+					'fa4compatibility' => 'icon',
+					'default' => [
+						'value' => 'fas fa-pause',
+						'library' => 'fa-solid',
+					],
+					'skin' => 'inline',
+					'label_block' => false,
+					'icon_exclude_inline_options' => [],
+					'recommended' => [
+						'fa-regular' => [
+							'pause-circle',
+						],
+						'fa-solid' => [
+							'pause-circle',
+						],
+					],
+					'condition' => [
+						'floating_bar_pause_switch' => 'yes',
+					]
+				]
+			);
+
+			$this->add_control(
+				'floating_bar_play_icon',
+				[
+					'label' => esc_html__( 'Play Icon', 'elementor' ),
+					'type' => Controls_Manager::ICONS,
+					'fa4compatibility' => 'icon',
+					'default' => [
+						'value' => 'fas fa-play',
+						'library' => 'fa-solid',
+					],
+					'skin' => 'inline',
+					'label_block' => false,
+					'icon_exclude_inline_options' => [],
+					'recommended' => [
+						'fa-regular' => [
+							'play-circle',
+						],
+						'fa-solid' => [
+							'play-circle',
+						],
+					],
+					'condition' => [
+						'floating_bar_pause_switch' => 'yes',
+					]
+				]
+			);
+		}
+
+		$this->add_control(
+			'floating_bar_close_switch',
+			[
+				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'return_value' => 'yes',
+				'default' => $config['content']['floating_bar_section']['close_switch_default'],
+			]
+		);
+
+		$this->add_accessible_name_control();
 
 		$this->end_controls_section();
 	}
@@ -818,7 +898,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	protected function add_floating_bar_background_controls(): void {
+	protected function add_floating_bar_background_style_controls(): void {
+		$config = static::get_configuration();
+
 		$this->add_control(
 			'floating_bar_background_heading',
 			[
@@ -833,7 +915,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'name' => 'floating_bar_background_type',
 				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .e-floating-bars',
+				'selector' => $config['style']['floating_bar_section']['background_selector'],
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -889,7 +971,126 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		);
 	}
 
+	protected function add_floating_bar_close_button_style_controls(): void {
+		$config = static::get_configuration();
+
+		$this->add_control(
+			'floating_bar_close_button_heading',
+			[
+				'label' => esc_html__( 'Close Button', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+				'condition' => [
+					'floating_bar_close_switch' => 'yes',
+				],
+			]
+		);
+
+		if ( $config['style']['floating_bar_section']['has_close_position_control'] ) {
+			$this->add_responsive_control(
+				'floating_bar_close_button_position',
+				[
+					'label' => esc_html__( 'Horizontal position', 'elementor' ),
+					'type' => Controls_Manager::CHOOSE,
+					'options' => [
+						'start' => [
+							'title' => esc_html__( 'Left', 'elementor' ),
+							'icon' => 'eicon-h-align-left',
+						],
+						'end' => [
+							'title' => esc_html__( 'Right', 'elementor' ),
+							'icon' => 'eicon-h-align-right',
+						],
+					],
+					'default' => 'end',
+					'toggle' => true,
+					'selectors' => [
+						'{{WRAPPER}} .e-floating-bars__close-button' => $config['style']['floating_bar_section']['close_position_selector'],
+					],
+					'condition' => [
+						'floating_bar_close_switch' => 'yes',
+					],
+				]
+			);
+		}
+
+		$this->add_control(
+			'floating_bar_close_button_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-close-button-color: {{VALUE}}',
+				],
+				'condition' => [
+					'floating_bar_close_switch' => 'yes',
+				],
+			]
+		);
+
+		if ( $config['style']['floating_bar_section']['has_close_bg'] ) {
+			$this->add_control(
+				'floating_bar_close_bg_color',
+				[
+					'label' => esc_html__( 'Background Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'selectors' => [
+						'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-close-button-bg-color: {{VALUE}}',
+					],
+					'condition' => [
+						'floating_bar_close_switch' => 'yes',
+					],
+				]
+			);
+		}
+	}
+
+	protected function add_floating_bar_pause_style_controls(): void {
+		$config = static::get_configuration();
+
+		$this->add_control(
+			'floating_bar_pause_button_heading',
+			[
+				'label' => esc_html__( 'Pause and Play', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'condition' => [
+					'floating_bar_pause_switch' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
+			'floating_bar_pause_button_color',
+			[
+				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-pause-play-icon-color: {{VALUE}}',
+				],
+				'condition' => [
+					'floating_bar_pause_switch' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
+			'floating_bar_pause_bg_color',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-pause-play-bg-color: {{VALUE}}',
+				],
+				'condition' => [
+					'floating_bar_pause_switch' => 'yes',
+				],
+			]
+		);
+	}
+
 	protected function add_floating_bar_style_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'style_floating_bar',
 			[
@@ -972,50 +1173,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'floating_bar_close_button_heading',
-			[
-				'label' => esc_html__( 'Close Button', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
+		$this->add_floating_bar_close_button_style_controls();
 
-		$this->add_responsive_control(
-			'floating_bar_close_button_position',
-			[
-				'label' => esc_html__( 'Horizontal position', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'start' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
-					],
-					'end' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
-					],
-				],
-				'default' => 'end',
-				'toggle' => true,
-				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars__close-button' => 'inset-inline-{{VALUE}}: 10px',
-				],
-			]
-		);
-
-		$this->add_control(
-			'floating_bar_close_button_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-close-button-color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_floating_bar_background_controls();
+		$this->add_floating_bar_background_style_controls();
 
 		$this->end_controls_section();
 	}
@@ -1034,21 +1194,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				// 'conditions' => [
-				// 	'relation' => 'and',
-				// 	'terms' => [
-				// 		[
-				// 			'name' => 'headlines_icon[value]',
-				// 			'operator' => '!==',
-				// 			'value' => '',
-				// 		],
-				// 		[
-				// 			'name' => 'headlines_icon[value]',
-				// 			'operator' => '!==',
-				// 			'value' => null,
-				// 		],
-				// 	],
-				// ],
 			]
 		);
 
@@ -1060,21 +1205,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-icon-color: {{VALUE}}',
 				],
-				// 'conditions' => [
-				// 	'relation' => 'and',
-				// 	'terms' => [
-				// 		[
-				// 			'name' => 'headlines_icon[value]',
-				// 			'operator' => '!==',
-				// 			'value' => '',
-				// 		],
-				// 		[
-				// 			'name' => 'headlines_icon[value]',
-				// 			'operator' => '!==',
-				// 			'value' => null,
-				// 		],
-				// 	],
-				// ],
 			]
 		);
 
@@ -1095,16 +1225,13 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				// 'selectors_dictionary' => [
-				// 	'left' => is_rtl() ? 'row-reverse' : 'row',
-				// 	'right' => is_rtl() ? 'row' : 'row-reverse',
-				// ],
+				'selectors_dictionary' => [
+					'row' => is_rtl() ? 'row-reverse' : 'row',
+					'row-reverse' => is_rtl() ? 'row' : 'row-reverse',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars__headline' => '--e-floating-bars-headline-icon-position: {{VALUE}};',
 				],
-				// 'condition' => [
-				// 	'cta_icon[value]!' => '',
-				// ],
 			]
 		);
 
@@ -1124,21 +1251,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-icon-size: {{SIZE}}{{UNIT}}',
 				],
 				'separator' => 'after',
-				// 'conditions' => [
-				// 	'relation' => 'and',
-				// 	'terms' => [
-				// 		[
-				// 			'name' => 'headlines_icon[value]',
-				// 			'operator' => '!==',
-				// 			'value' => '',
-				// 		],
-				// 		[
-				// 			'name' => 'headlines_icon[value]',
-				// 			'operator' => '!==',
-				// 			'value' => null,
-				// 		],
-				// 	],
-				// ],
 			]
 		);
 
