@@ -12,25 +12,25 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' ),
 			elements = {
-				$backgroundVideoContainer: this.$element.find( selectors.backgroundVideoContainer ),
+				backgroundVideoContainer: this.baseElement?.querySelector( selectors.backgroundVideoContainer ),
 			};
 
-		elements.$backgroundVideoEmbed = elements.$backgroundVideoContainer.children( selectors.backgroundVideoEmbed );
+		elements.backgroundVideoEmbed = elements.backgroundVideoContainer?.querySelectorAll( selectors.backgroundVideoEmbed );
 
-		elements.$backgroundVideoHosted = elements.$backgroundVideoContainer.children( selectors.backgroundVideoHosted );
+		elements.backgroundVideoHosted = elements.backgroundVideoContainer?.querySelectorAll( selectors.backgroundVideoHosted );
 
 		return elements;
 	}
 
-	calcVideosSize( $video ) {
+	calcVideosSize( videoElement ) {
 		let aspectRatioSetting = '16:9';
 
 		if ( 'vimeo' === this.videoType ) {
-			aspectRatioSetting = $video[ 0 ].width + ':' + $video[ 0 ].height;
+			aspectRatioSetting = videoElement.width + ':' + videoElement.height;
 		}
 
-		const containerWidth = this.elements.$backgroundVideoContainer.outerWidth(),
-			containerHeight = this.elements.$backgroundVideoContainer.outerHeight(),
+		const containerWidth = this.elements.backgroundVideoContainer.offsetWidth,
+			containerHeight = this.elements.backgroundVideoContainer.offsetHeight,
 			aspectRatioArray = aspectRatioSetting.split( ':' ),
 			aspectRatio = aspectRatioArray[ 0 ] / aspectRatioArray[ 1 ],
 			ratioWidth = containerWidth / aspectRatio,
@@ -48,23 +48,24 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		let $video;
+		let videoElement;
 
 		if ( 'youtube' === this.videoType ) {
-			$video = jQuery( this.player.getIframe() );
+			videoElement = this.player.getIframe();
 		} else if ( 'vimeo' === this.videoType ) {
-			$video = jQuery( this.player.element );
+			videoElement = this.player.element;
 		} else if ( 'hosted' === this.videoType ) {
-			$video = this.elements.$backgroundVideoHosted;
+			videoElement = this.elements.backgroundVideoHosted;
 		}
 
-		if ( ! $video ) {
+		if ( ! videoElement ) {
 			return;
 		}
 
-		const size = this.calcVideosSize( $video );
+		const size = this.calcVideosSize( videoElement );
 
-		$video.width( size.width ).height( size.height );
+		videoElement.style.width = size.width + 'px';
+		videoElement.style.height = size.height + 'px';
 	}
 
 	startVideoLoop( firstTime ) {
@@ -95,7 +96,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 	prepareVimeoVideo( Vimeo, videoLink ) {
 		const elementSettings = this.getElementSettings(),
-			videoSize = this.elements.$backgroundVideoContainer.outerWidth(),
+			videoSize = this.elements.backgroundVideoContainer.offsetWidth,
 			vimeoOptions = {
 				url: videoLink,
 				width: videoSize.width,
@@ -110,13 +111,13 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			vimeoOptions.dnt = true;
 		}
 
-		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
+		this.player = new Vimeo.Player( this.elements.backgroundVideoContainer, vimeoOptions );
 
 		// Handle user-defined start/end times
 		this.handleVimeoStartEndTimes( elementSettings );
 
 		this.player.ready().then( () => {
-			jQuery( this.player.element ).addClass( 'elementor-background-video-embed' );
+			this.player.element.classList.add( 'elementor-background-video-embed' );
 			this.changeVideoSize();
 		} );
 	}
@@ -155,7 +156,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	}
 
 	prepareYTVideo( YT, videoID ) {
-		const $backgroundVideoContainer = this.elements.$backgroundVideoContainer,
+		const backgroundVideoContainer = this.elements.backgroundVideoContainer,
 			elementSettings = this.getElementSettings();
 		let startStateCode = YT.PlayerState.PLAYING;
 
@@ -179,7 +180,8 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				onStateChange: ( event ) => {
 					switch ( event.data ) {
 						case startStateCode:
-							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
+							backgroundVideoContainer.classList.remove( 'elementor-invisible' );
+							backgroundVideoContainer.classList.remove( 'elementor-loading' );
 
 							break;
 						case YT.PlayerState.ENDED:
@@ -205,9 +207,10 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			playerOptions.origin = window.location.hostname;
 		}
 
-		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
+		backgroundVideoContainer.classList.add( 'elementor-loading' )
+		backgroundVideoContainer.classList.add( 'elementor-invisible' )
 
-		this.player = new YT.Player( this.elements.$backgroundVideoEmbed[ 0 ], playerOptions );
+		this.player = new YT.Player( this.elements.backgroundVideoEmbed, playerOptions );
 	}
 
 	activate() {
@@ -244,25 +247,27 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			if ( startTime || endTime ) {
 				videoLink += '#t=' + ( startTime || 0 ) + ( endTime ? ',' + endTime : '' );
 			}
-			this.elements.$backgroundVideoHosted.attr( 'src', videoLink ).one( 'canplay', this.changeVideoSize.bind( this ) );
+			this.elements.backgroundVideoHosted?.setAttribute( 'src', videoLink ).addEventListener( 'canplay', this.changeVideoSize.bind( this ), { once: true } );
 			if ( playOnce ) {
-				this.elements.$backgroundVideoHosted.on( 'ended', () => {
-					this.elements.$backgroundVideoHosted.hide();
+				this.elements.backgroundVideoHosted.addEventListener( 'ended', () => {
+					this.elements.backgroundVideoHosted.hide();
 				} );
 			}
 		}
 
-		elementorFrontend.elements.$window.on( 'resize elementor/bg-video/recalc', this.changeVideoSize );
+		elementorFrontend.elements.window.addEventListener( 'resize', this.changeVideoSize );
+		elementorFrontend.elements.window.addEventListener( 'elementor/bg-video/recalc', this.changeVideoSize );
+
 	}
 
 	deactivate() {
 		if ( ( 'youtube' === this.videoType && this.player.getIframe() ) || 'vimeo' === this.videoType ) {
 			this.player.destroy();
 		} else {
-			this.elements.$backgroundVideoHosted.removeAttr( 'src' ).off( 'ended' );
+			this.elements.backgroundVideoHosted?.removeAttribute( 'src' ).removeEventListener( 'ended' );
 		}
 
-		elementorFrontend.elements.$window.off( 'resize', this.changeVideoSize );
+		elementorFrontend.elements.window.removeEventListener( 'resize', this.changeVideoSize );
 	}
 
 	run() {
@@ -280,6 +285,8 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	}
 
 	onInit( ...args ) {
+		this.isJqueryRequired = false;
+
 		super.onInit( ...args );
 
 		this.changeVideoSize = this.changeVideoSize.bind( this );

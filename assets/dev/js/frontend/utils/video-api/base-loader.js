@@ -10,12 +10,14 @@ export default class BaseLoader extends elementorModules.ViewModuleFrontend {
 
 	getDefaultElements() {
 		return {
-			$firstScript: jQuery( this.getSettings( 'selectors.firstScript' ) ),
+			firstScript: this.getSettings( 'selectors.firstScript' ),
 		};
 	}
 
 	insertAPI() {
-		this.elements.$firstScript.before( jQuery( '<script>', { src: this.getApiURL() } ) );
+		const newScript = document.createElement( 'script' );
+		newScript.src = this.getApiURL();
+		this.elements.firstScript.parentNode?.insertBefore( newScript, this.elements.firstScript );
 
 		this.setSettings( 'isInserted', true );
 	}
