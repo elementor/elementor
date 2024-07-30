@@ -12,25 +12,6 @@ export default Module.extend( {
 
 	bindEvents() {},
 
-	onInit() {
-		// if ( 'function' !== typeof this.getDefaultElements ) {
-		//     return;
-		// }
-
-		if ( ! this.isJqueryRequired || !! window.jQuery ) {
-			this.runSecondPart();
-			return;
-		}
-
-		this.loadJQueryIfNeeded( this.isJqueryRequired )
-			.then( () => {
-				this.runSecondPart();
-			} )
-			.catch( ( error ) => {
-				console.error( 'Error loading jQuery:', error );
-			} );
-	},
-
 	initElements() {
 		this.elements = this.getDefaultElements();
 	},
@@ -68,5 +49,24 @@ export default Module.extend( {
 	runSecondPart() {
 		this.initElements();
 		this.bindEvents();
+	},
+
+	onInit() {
+		// if ( 'function' !== typeof this.getDefaultElements ) {
+		//     return;
+		// }
+
+		if ( ! this.isJqueryRequired || !! window.jQuery ) {
+			this.runSecondPart();
+			return;
+		}
+
+		this.loadJQueryIfNeeded( this.isJqueryRequired )
+			.then( () => {
+				this.runSecondPart();
+			} )
+			.catch( ( error ) => {
+				console.error( 'Error loading jQuery:', error );
+			} );
 	},
 } );

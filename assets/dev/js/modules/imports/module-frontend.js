@@ -1,5 +1,3 @@
-// Let's study if we convert this to ES6 class
-// Possible next task for Batsirai.
 const Module = function() {
 	const instanceParams = arguments,
 		self = this,
@@ -7,7 +5,7 @@ const Module = function() {
 
 	let settings;
 
-	const ensureClosureMethods = () => {
+	const ensureClosureMethods = function() {
 		Object.keys( self ).forEach( ( methodName ) => {
 			const oldMethod = self[ methodName ];
 

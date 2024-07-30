@@ -1,20 +1,20 @@
-export default class Base extends elementorModules.ViewModuleFrontend {
-	baseElement = null;
+module.exports = elementorModules.ViewModuleFrontend.extend( {
+	baseElement : null,
 
-	editorListeners = null;
+	editorListeners : null,
 
-	onElementChange = null;
+	onElementChange : null,
 
-	onEditSettingsChange = null;
+	onEditSettingsChange : null,
 
-	onPageSettingsChange = null;
+	onPageSettingsChange : null,
 
-	isEdit = null;
+	isEdit : null,
 
-	isJqueryRequired = null;
+	isJqueryRequired : null,
 
 	__construct( settings ) {
-		super.__construct( settings );
+		// super.__construct( settings );
 
 		if ( ! this.isActive( settings ) ) {
 			return;
@@ -27,11 +27,21 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		if ( this.isEdit ) {
 			this.addEditorListeners();
 		}
-	}
+	},
+
+	// Not sure why the module frontend version isn't working.
+	getDefaultSettings() {
+		return {};
+	},
+
+	// Not sure why the module frontend version isn't working.
+	getConstructorID() {
+		return this.constructor.name;
+	},
 
 	isActive() {
 		return true;
-	}
+	},
 
 	isElementInTheCurrentDocument() {
 		if ( ! elementorFrontend.isEditMode() ) {
@@ -39,7 +49,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		return elementor.documents.currentDocument.id.toString() === this.baseElement?.closest( '.elementor' )?.dataset?.elementorId;
-	}
+	},
 
 	findElement( selector ) {
 		const mainElement = this.baseElement,
@@ -54,7 +64,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 			const closestElement = element.parentNode?.closest( '.elementor-element' );
 			return closestElement === mainElement;
 		} );
-	}
+	},
 
 	getUniqueHandlerID( cid, baseElement ) {
 		if ( ! cid ) {
@@ -70,7 +80,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 			: baseElement.getAttribute( 'data-element_type' );
 
 		return cid + elementType + this.getConstructorID();
-	}
+	},
 
 	initEditorListeners() {
 		var self = this;
@@ -108,6 +118,10 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 						return;
 					}
 
+					if ( typeof self.onElementChange !== 'function' ) {
+						return;
+					}
+
 					self.onElementChange( controlView.model.get( 'name' ), controlView, elementView );
 				},
 			} );
@@ -142,7 +156,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 				} );
 			}
 		} );
-	}
+	},
 
 	getEditorListeners() {
 		if ( ! this.editorListeners ) {
@@ -150,7 +164,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		return this.editorListeners;
-	}
+	},
 
 	addEditorListeners() {
 		var uniqueHandlerID = this.getUniqueHandlerID();
@@ -158,7 +172,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		this.getEditorListeners().forEach( function( listener ) {
 			elementorFrontend.addListenerOnce( uniqueHandlerID, listener.event, listener.callback, listener.to );
 		} );
-	}
+	},
 
 	removeEditorListeners() {
 		var uniqueHandlerID = this.getUniqueHandlerID();
@@ -166,11 +180,11 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		this.getEditorListeners().forEach( function( listener ) {
 			elementorFrontend.removeListeners( uniqueHandlerID, listener.event, null, listener.to );
 		} );
-	}
+	},
 
 	getElementType() {
 		return this.baseElement?.dataset?.element_type;
-	}
+	},
 
 	getWidgetType() {
 		const widgetType = this.baseElement?.dataset?.widget_type;
@@ -180,11 +194,11 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		return widgetType.split( '.' )[ 0 ];
-	}
+	},
 
 	getID() {
 		return this.baseElement?.dataset?.id;
-	}
+	},
 
 	getModelCID() {
 		if ( !! this.baseElement ) {
@@ -192,7 +206,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		return this.$element.data( 'model-cid' );
-	}
+	},
 
 	getElementSettings( setting ) {
 		let elementSettings = {};
@@ -240,7 +254,7 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		return this.getItems( elementSettings, setting );
-	}
+	},
 
 	getEditSettings( setting ) {
 		let attributes = {};
@@ -250,13 +264,13 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		}
 
 		return this.getItems( attributes, setting );
-	}
+	},
 
 	getCurrentDeviceSetting( settingKey ) {
 		return elementorFrontend.getCurrentDeviceSetting( this.getElementSettings(), settingKey );
-	}
+	},
 
-	onInit( ...args ) {
+	onInit() {
 		if ( null === this.isJqueryRequired ) {
 			this.isJqueryRequired = true;
 		}
@@ -269,12 +283,10 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 			this.$element = jQuery( this.baseElement );
 		}
 
-		super.onInit( ...args );
-
 		if ( this.isActive( this.getSettings() ) ) {
 			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
 		}
-	}
+	},
 
 	onDestroy() {
 		if ( this.isEdit ) {
@@ -284,5 +296,5 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 		if ( this.unbindEvents ) {
 			this.unbindEvents();
 		}
-	}
-}
+	},
+} );

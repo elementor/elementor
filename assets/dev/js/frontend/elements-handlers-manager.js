@@ -104,7 +104,8 @@ module.exports = function() {
 
 		// If element is in edit mode
 		if ( elementID ) {
-			handlerID = HandlerClass?.prototype.getConstructorID();
+			// handlerID = HandlerClass.prototype.getConstructorID();
+			handlerID = HandlerClass.name;
 
 			if ( ! handlersInstances[ elementID ] ) {
 				handlersInstances[ elementID ] = {};
