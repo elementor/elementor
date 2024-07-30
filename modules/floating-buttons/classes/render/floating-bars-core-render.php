@@ -23,8 +23,15 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 	protected function render_announcement_text(): void {
 		$text = $this->settings['announcement_text'] ?? '';
+
+		$this->widget->add_render_attribute( 'announcement_text', [
+			'class' => 'e-floating-bars__announcement-text',
+		] );
+
 		if ( '' !== $text ) : ?>
-			<p class="e-floating-bars__announcement-text"><?php echo esc_html( $text ); ?></p>
+			<p <?php $this->widget->print_render_attribute_string( 'announcement_text' ); ?>>
+				<?php echo esc_html( $text ); ?>
+			</p>
 		<?php endif;
 	}
 
@@ -72,13 +79,17 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			'class' => $cta_classnames,
 		] );
 
+		$this->widget->add_render_attribute( 'cta-text-editable', [
+			'class' => 'e-floating-bars__cta-text',
+		] );
+
 		if ( ! empty( $text ) ) {
 			$this->widget->add_link_attributes( 'cta-button', $link );
 			?>
 				<div class="e-floating-bars__cta-button-container">
-					<a <?php echo $this->widget->print_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<a <?php echo $this->widget->get_render_attribute_string( 'cta-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 						<?php $this->render_cta_icon(); ?>
-						<span class="e-floating-bars__cta-text"><?php echo esc_html( $text ); ?></span>
+						<span <?php $this->widget->print_render_attribute_string( 'cta_text' ); ?>><?php echo esc_html( $text ); ?></span>
 					</a>
 				</div>
 			<?php
