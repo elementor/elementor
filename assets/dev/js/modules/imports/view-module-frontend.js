@@ -56,8 +56,12 @@ export default Module.extend( {
 		//     return;
 		// }
 
-		if ( ! this.isJqueryRequired || !! window.jQuery ) {
-			this.runSecondPart();
+		if ( ! this.isJqueryRequired || !! window.jQuery || this.isEdit ) {
+			if ( typeof this.runSecondPart === 'function' ) {
+				this.runSecondPart();
+			} else {
+				this.elements = {};
+			}
 			return;
 		}
 

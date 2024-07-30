@@ -101,7 +101,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			getDefaultSettings = this.getDefaultSettings(),
 			{ selectors: { boxedContainer } } = getDefaultSettings;
 
-		this.elements.outlineParentContainer = container.querySelector( boxedContainer ) || container;
+		this.elements.outlineParentContainer = container?.querySelector( boxedContainer ) || container;
 	}
 
 	removeExistingOverlay() {
@@ -287,7 +287,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	shouldUpdateEmptyViewHeight() {
-		return !! this.elements.container.querySelector( '.elementor-empty-view' );
+		return !! this.elements.container?.querySelector( '.elementor-empty-view' );
 	}
 
 	hasCustomUnit( gridRows ) {
