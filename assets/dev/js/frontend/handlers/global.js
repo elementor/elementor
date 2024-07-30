@@ -33,9 +33,9 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	onInit( ...args ) {
-		super.onInit( ...args );
-
 		this.isJqueryRequired = false;
+
+		super.onInit( ...args );
 
 		if ( this.getAnimation() ) {
 			const observer = elementorModules.utils.Scroll.scrollObserver( {
