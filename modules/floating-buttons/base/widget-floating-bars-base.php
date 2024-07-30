@@ -1146,7 +1146,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-elements-gap: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headlines-gap: {{SIZE}}{{UNIT}}',
 				],
 				'conditions' => [
 					'relation' => 'and',
@@ -1211,7 +1211,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->add_responsive_control(
 			'style_headlines_icon_position',
 			[
-				'label' => esc_html__( 'Icon Positionnnn', 'elementor' ),
+				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => is_rtl() ? 'row-reverse' : 'row',
 				'toggle' => false,
@@ -1349,7 +1349,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Scroll Direction', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'right',
+				'default' => 'left',
 				'toggle' => false,
 				'options' => [
 					'left' => [
@@ -1361,13 +1361,16 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'icon' => 'eicon-arrow-right',
 					],
 				],
+				'selectors_dictionary' => [
+					'right' => 'reverse',
+					'left' => 'forwards',
+				],
 				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars__headline' => 'flex-direction: {{VALUE}};',
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-direction: {{VALUE}};',
 				],
 			]
 		);
 
-		// TODO: wire this
 		$this->add_control(
 			'style_ticker_scroll_speed',
 			[
@@ -1377,12 +1380,11 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'active' => false,
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-speed: {{VALUE}}s;',
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-duration: {{VALUE}}s;',
 				],
 			],
 		);
 
-		// TODO: wire this
 		$this->add_control(
 			'style_ticker_pause_hover',
 			[
