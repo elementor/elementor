@@ -2,7 +2,6 @@ import { List } from '@elementor/ui';
 import CheckListItem from './checklist-item';
 import { steps } from '../data/steps';
 function CheckList() {
-	console.log({steps});
 	return (
 		<List>
 			{

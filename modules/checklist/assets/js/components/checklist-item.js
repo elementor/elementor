@@ -1,8 +1,11 @@
+import React, { useState } from 'react';
 import {
 	styled,
+	Button,
 	Card,
 	CardHeader,
 	CardContent,
+	CardActions,
 	Typography,
 	Checkbox,
 	IconButton,
@@ -15,12 +18,12 @@ import {
 } from '@elementor/ui';
 
 // Check why elementor/icons is not installed
-// import { CheckedCircleIcon, ChevronDownIcon } from '@elementor/icons';
+import { ChevronDownIcon, CheckedCircleIcon } from '@elementor/icons';
 import Chevron from '../icons/chevron';
 import CardMedia from '@elementor/ui/CardMedia';
 
 function CheckListItem( props ) {
-	const { id, title, imagePath, description, link } = props.step,
+	const { id, title, imagePath, description, link, CTA } = props.step,
 		[ expanded, setExpanded ] = React.useState( false ),
 		[ checked, setChecked ] = React.useState( [ 0 ] );
 
@@ -44,23 +47,23 @@ function CheckListItem( props ) {
 	return (
 		<>
 			<ListItem
-				sx={{ margin: 0 }}
+				sx={ { margin: 0 } }
 				divider={ true }
 				key={ id }
 				secondaryAction={
-				<Stack>
-					<IconButton onClick={ handleExpandClick } edge="end" aria-label="comments">
-						<Chevron />
-					</IconButton>
-				</Stack>
+					<Stack>
+						<IconButton onClick={ () => handleExpandClick( id ) } edge="end" aria-label="comments">
+							{ expanded ? <Chevron sx={ { transform: 'rotate(180deg)' } } /> : <Chevron /> }
+						</IconButton>
+					</Stack>
 				}
 				disablePadding
 			>
 				<ListItemButton role={ 'checkbox' } onClick={ handleToggle( id ) }>
 					<ListItemIcon>
 						<Checkbox
-							// icon={<CircleUnchecked />}
-							// checkedIcon={<CircleCheckedFilled />}
+							// icon={ <CheckedCircleIcon /> }
+							// checkedIcon={ <CheckedCircleIcon color='primary' /> }
 							edge="start"
 							checked={ checked.indexOf( id ) !== -1 }
 							tabIndex={ -1 }
@@ -83,16 +86,26 @@ function CheckListItem( props ) {
 						component="img"
 						height="194"
 						image={ imagePath }
-						alt="Paella dish"
+						alt={ title }
 					/>
 					<CardContent
 
 					>
 						<Typography variant="body2" color="text.secondary" component="p">
 							{ description + ' ' }
-							<a href={ link } target="_blank" rel="noreferrer">Learn more </a>
+							<a href={ link } target="_blank" rel="noreferrer">Learn more</a>
 						</Typography>
 					</CardContent>
+					<CardActions >
+						<Stack>
+							<Button size="small">
+								Mark as completed
+							</Button>
+							<Button size="small" color="primary">
+								{ CTA }
+							</Button>
+						</Stack>
+					</CardActions>
 				</Card>
 			</Collapse>
 		</>
