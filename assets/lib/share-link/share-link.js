@@ -1,10 +1,10 @@
 /**
  * By Elementor Team
  */
-( function( $ ) {
-	window.ShareLink = function( element, userSettings ) {
-		var $element,
-			settings = {};
+( function() {
+	window.ShareLink = function( eElement, userSettings ) {
+		var element,
+			setting = {};
 
 		var getNetworkNameFromClass = function( className ) {
 			var classNamePrefix = className.substr( 0, settings.classPrefixLength );
@@ -13,13 +13,13 @@
 		};
 
 		var bindShareClick = function( networkName ) {
-			$element.on( 'click', function() {
+			element.addEventListener( 'click', function() {
 				openShareLink( networkName );
 			} );
 
 			// Add "Enter" and "Space" event only if the element has role=button attribute.
-			if ( 'button' === $element.attr( 'role' ) ) {
-				$element.on( 'keyup', ( event ) => {
+			if ( 'button' === element.getAttribute( 'role' ) ) {
+				element.addEventListener( 'keyup', ( event ) => {
 					if ( 13 === event.keyCode || 32 === event.keyCode ) {
 						event.preventDefault();
 
@@ -47,7 +47,7 @@
 		};
 
 		var run = function() {
-			$.each( element.classList, function() {
+			element.classList.forEach( function() {
 				var networkName = getNetworkNameFromClass( this );
 
 				if ( networkName ) {
@@ -59,7 +59,7 @@
 		};
 
 		var initSettings = function() {
-			$.extend( settings, ShareLink.defaultSettings, userSettings );
+			settings = { ...ShareLink.defaultSettings, ...userSettings };
 
 			[ 'title', 'text' ].forEach( function( propertyName ) {
 				settings[ propertyName ] = settings[ propertyName ].replace( '#', '' );
@@ -68,14 +68,8 @@
 			settings.classPrefixLength = settings.classPrefix.length;
 		};
 
-		var initElements = function() {
-			$element = $( element );
-		};
-
 		var init = function() {
 			initSettings();
-
-			initElements();
 
 			run();
 		};
@@ -83,7 +77,7 @@
 		init();
 	};
 
-	ShareLink.networkTemplates = {
+	window.ShareLink.networkTemplates = {
 		twitter: 'https://twitter.com/intent/tweet?text={text}\x20{url}',
 		'x-twitter': 'https://x.com/intent/tweet?text={text}\x20{url}',
 		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}&media={image}',
@@ -106,7 +100,7 @@
 		skype: 'https://web.skype.com/share?url={url}',
 	};
 
-	ShareLink.defaultSettings = {
+	window.ShareLink.defaultSettings = {
 		title: '',
 		text: '',
 		image: '',
@@ -116,7 +110,7 @@
 		height: 480,
 	};
 
-	ShareLink.getNetworkLink = function( networkName, settings ) {
+	window.ShareLink.getNetworkLink = function( networkName, settings ) {
 		var link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
 			return settings[ pureMatch ] || '';
 		} );
@@ -144,9 +138,15 @@
 		return link;
 	};
 
-	$.fn.shareLink = function( settings ) {
-		return this.each( function() {
-			$( this ).data( 'shareLink', new ShareLink( this, settings ) );
-		} );
+	Element.prototype.shareLink = function( settings ) {
+		new ShareLink( this, settings );
+		return this;
 	};
-} )( jQuery );
+
+	NodeList.prototype.shareLink = function( settings ) {
+		this.forEach(function( element) {
+			new ShareLink( element, settings );
+		});
+		return this;
+	};
+} )();
