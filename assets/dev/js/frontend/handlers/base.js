@@ -271,6 +271,12 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 	},
 
 	onInit() {
+
+
+		if ( this.isActive( this.getSettings() ) ) {
+			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
+		}
+
 		if ( null === this.isJqueryRequired ) {
 			this.isJqueryRequired = true;
 		}
@@ -281,10 +287,6 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 
 		if ( !! window.jQuery ) {
 			this.$element = jQuery( this.baseElement );
-		}
-
-		if ( this.isActive( this.getSettings() ) ) {
-			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
 		}
 	},
 
