@@ -15,9 +15,11 @@ export default class BaseLoader extends elementorModules.ViewModuleFrontend {
 	}
 
 	insertAPI() {
-		const newScript = document.createElement( 'script' );
+		const firstScript = this.elements.firstScript,
+			newScript = document.createElement( 'script' );
+
 		newScript.src = this.getApiURL();
-		this.elements.firstScript.parentNode?.insertBefore( newScript, this.elements.firstScript );
+		firstScript.parentNode?.insertBefore( newScript, firstScript );
 
 		this.setSettings( 'isInserted', true );
 	}
