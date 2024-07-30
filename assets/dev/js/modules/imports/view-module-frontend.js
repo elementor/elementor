@@ -17,6 +17,11 @@ export default Module.extend( {
 	},
 
 	runInitFunctions() {
+		// Call the parent class's onInit if needed
+		if ( typeof Module.prototype.onInit === 'function' ) {
+			Module.prototype.onInit.apply( this, arguments );
+		}
+
 		this.initElements();
 		this.bindEvents();
 	},
