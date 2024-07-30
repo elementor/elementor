@@ -187,7 +187,11 @@ export default class Base extends elementorModules.ViewModuleFrontend {
 	}
 
 	getModelCID() {
-		return this.baseElement?.dataset?.modelCid;
+		if ( !! this.baseElement ) {
+			return this.baseElement.dataset?.modelCid;
+		}
+
+		return this.$element.data( 'model-cid' );
 	}
 
 	getElementSettings( setting ) {
