@@ -60,7 +60,7 @@ export default Module.extend( {
 			if ( typeof this.runSecondPart === 'function' ) {
 				this.runSecondPart();
 			} else {
-				this.elements = {};
+				this.elements = this.getDefaultElements();
 			}
 			return;
 		}

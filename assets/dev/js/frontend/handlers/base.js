@@ -35,6 +35,11 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 	},
 
 	// Not sure why the module frontend version isn't working.
+	getDefaultElements() {
+		return {};
+	},
+
+	// Not sure why the module frontend version isn't working.
 	getConstructorID() {
 		return this.constructor.name;
 	},
