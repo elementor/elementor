@@ -12,8 +12,32 @@ export default Module.extend( {
 
 	bindEvents() {},
 
+	onInit() {
+		this.maybeLoadJQuery();
+	},
+
+	runInitFunctions() {
+		this.initElements();
+		this.bindEvents();
+	},
+
 	initElements() {
 		this.elements = this.getDefaultElements();
+	},
+
+	maybeLoadJQuery() {
+		if ( ! this.isJqueryRequired || !! window.jQuery || this.isEdit ) {
+			this.runInitFunctions();
+			return;
+		}
+
+		this.loadJQueryIfNeeded( this.isJqueryRequired )
+			.then( () => {
+				this.runInitFunctions();
+			} )
+			.catch( ( error ) => {
+				console.error( 'Error loading jQuery:', error );
+			} );
 	},
 
 	delay( ms ) {
@@ -44,33 +68,5 @@ export default Module.extend( {
 				reject( error );
 			}
 		} );
-	},
-
-	runSecondPart() {
-		this.initElements();
-		this.bindEvents();
-	},
-
-	onInit() {
-		// if ( 'function' !== typeof this.getDefaultElements ) {
-		//     return;
-		// }
-
-		if ( ! this.isJqueryRequired || !! window.jQuery || this.isEdit ) {
-			if ( typeof this.runSecondPart === 'function' ) {
-				this.runSecondPart();
-			} else {
-				this.elements = this.getDefaultElements();
-			}
-			return;
-		}
-
-		this.loadJQueryIfNeeded( this.isJqueryRequired )
-			.then( () => {
-				this.runSecondPart();
-			} )
-			.catch( ( error ) => {
-				console.error( 'Error loading jQuery:', error );
-			} );
 	},
 } );

@@ -14,8 +14,6 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 	isJqueryRequired : null,
 
 	__construct( settings ) {
-		// super.__construct( settings );
-
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
@@ -27,21 +25,6 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 		if ( this.isEdit ) {
 			this.addEditorListeners();
 		}
-	},
-
-	// Not sure why the module frontend version isn't working.
-	getDefaultSettings() {
-		return {};
-	},
-
-	// Not sure why the module frontend version isn't working.
-	getDefaultElements() {
-		return {};
-	},
-
-	// Not sure why the module frontend version isn't working.
-	getConstructorID() {
-		return this.constructor.name;
 	},
 
 	isActive() {

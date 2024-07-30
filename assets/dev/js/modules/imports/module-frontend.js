@@ -5,20 +5,6 @@ const Module = function() {
 
 	let settings;
 
-	const ensureClosureMethods = function() {
-		Object.keys( self ).forEach( ( methodName ) => {
-			const oldMethod = self[ methodName ];
-
-			if ( typeof oldMethod !== 'function' ) {
-				return;
-			}
-
-			self[ methodName ] = function () {
-				return oldMethod.apply( self, arguments );
-			};
-		} );
-	};
-
 	const initSettings = function() {
 		settings = self.getDefaultSettings();
 
@@ -31,8 +17,6 @@ const Module = function() {
 
 	const init = function() {
 		self.__construct.apply( self, instanceParams );
-
-		ensureClosureMethods();
 
 		initSettings();
 
@@ -191,20 +175,19 @@ Module.extend = function( properties ) {
 	const parent = this;
 
 	const child = function() {
-		return parent.apply( this, arguments );
+		parent.apply( this, arguments );
 	};
 
 	extendObject( child, parent );
 
-	child.prototype = Object.create( Object.assign( {}, parent.prototype, properties ) );
-
+	child.prototype = Object.create( parent.prototype );
+	Object.assign( child.prototype, properties );
 	child.prototype.constructor = child;
 
 	child.__super__ = parent.prototype;
 
 	return child;
 };
-
 const extendObject = ( target, source ) => {
 	for ( const prop in source ) {
 		if ( source.hasOwnProperty( prop ) ) {
