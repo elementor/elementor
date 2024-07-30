@@ -79,7 +79,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			'class' => $cta_classnames,
 		] );
 
-		$this->widget->add_render_attribute( 'cta-text-editable', [
+		$this->widget->add_render_attribute( 'cta_text', [
 			'class' => 'e-floating-bars__cta-text',
 		] );
 
