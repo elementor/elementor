@@ -256,7 +256,7 @@ class Settings extends Settings_Page {
 						'callback' => function() {
 							printf(
 								'<p>%s</p><br><hr><br>',
-								esc_html__( 'Tailor how Elementor enhances your site.', 'elementor' )
+								esc_html__( 'Tailor how Elementor enhances your site, from post types to other functions.', 'elementor' )
 							);
 						},
 						'fields' => [
