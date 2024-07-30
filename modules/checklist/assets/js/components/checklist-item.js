@@ -19,7 +19,6 @@ import {
 
 // Check why elementor/icons is not installed
 import { ChevronDownIcon, CheckedCircleIcon } from '@elementor/icons';
-import Chevron from '../icons/chevron';
 import CardMedia from '@elementor/ui/CardMedia';
 
 function CheckListItem( props ) {
@@ -53,7 +52,7 @@ function CheckListItem( props ) {
 				secondaryAction={
 					<Stack>
 						<IconButton onClick={ () => handleExpandClick( id ) } edge="end" aria-label="comments">
-							{ expanded ? <Chevron sx={ { transform: 'rotate(180deg)' } } /> : <Chevron /> }
+							{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
 						</IconButton>
 					</Stack>
 				}
@@ -62,8 +61,8 @@ function CheckListItem( props ) {
 				<ListItemButton role={ 'checkbox' } onClick={ handleToggle( id ) }>
 					<ListItemIcon>
 						<Checkbox
-							// icon={ <CheckedCircleIcon /> }
-							// checkedIcon={ <CheckedCircleIcon color='primary' /> }
+							icon={ <CheckedCircleIcon /> }
+							checkedIcon={ <CheckedCircleIcon color="primary" /> }
 							edge="start"
 							checked={ checked.indexOf( id ) !== -1 }
 							tabIndex={ -1 }

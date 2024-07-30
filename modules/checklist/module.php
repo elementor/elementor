@@ -45,6 +45,7 @@ class Module extends BaseApp {
 				'react-dom',
 				'elementor-common',
 				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true
