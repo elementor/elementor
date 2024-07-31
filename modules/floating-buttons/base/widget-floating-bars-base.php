@@ -1146,7 +1146,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headlines-gap: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-elements-gap: {{SIZE}}{{UNIT}}',
 				],
 				'conditions' => [
 					'relation' => 'and',

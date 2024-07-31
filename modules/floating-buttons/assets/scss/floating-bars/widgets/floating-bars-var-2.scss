@@ -123,15 +123,15 @@
 
 		&__close-button {
 			align-items: center;
-			align-self: stretch !important;
+			align-self: stretch !important; // to override the core variation
 			background-color: var(--e-floating-bars-close-button-bg-color);
 			border-radius: 0;
 			font-size: 28px;
-			inset-inline-end: unset !important;
-			inset-inline-start: unset !important;
+			inset-inline-end: unset !important; // to override the core variation
+			inset-inline-start: unset !important; // to override the core variation
 			padding-inline: 12px;
 			position: relative;
-			top: unset !important;
+			top: unset !important; // to override the core variation
 			z-index: $first-layer;
 		}
 
