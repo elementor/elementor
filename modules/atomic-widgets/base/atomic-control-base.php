@@ -21,6 +21,10 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 		$this->bind = $prop_name;
 	}
 
+	public function get_bind() {
+		return $this->bind;
+	}
+
 	public function set_label( string $label ): self {
 		$this->label = $label;
 

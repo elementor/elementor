@@ -36,7 +36,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		echo "<$escaped_tag>$escaped_title</$escaped_tag>";
 	}
 
-	public function get_atomic_controls(): array {
+	protected function get_atomic_controls_definition(): array {
 		$tag_control = Select_Control::bind_to( 'tag' )
 			->set_label( __( 'Tag', 'elementor' ) )
 			->set_options( [

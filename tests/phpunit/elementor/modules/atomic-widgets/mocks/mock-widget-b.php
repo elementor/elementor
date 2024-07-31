@@ -21,7 +21,7 @@ class Mock_Widget_B extends Atomic_Widget_Base {
 		];
 	}
 
-	public function get_atomic_controls(): array {
+	protected function get_atomic_controls_definition(): array {
 		return [];
 	}
 };
