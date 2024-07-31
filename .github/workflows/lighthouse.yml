@@ -39,7 +39,6 @@ jobs:
         uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
         with:
           php: '7.4'
-          wp: 'latest'
           active-theme: 'hello-elementor'
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
