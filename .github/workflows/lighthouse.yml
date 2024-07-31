@@ -50,7 +50,7 @@ jobs:
       - name: DEBUG
         run: |
           ls -la
-          ls -la ./build
+          ls -la ./elementor
           npx wp-env run tests-cli bash -c "ls -la /var/www/html/wp-content/plugins"
           npx wp-env run tests-cli bash -c "wp plugin list"
 
