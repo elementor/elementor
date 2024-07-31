@@ -413,6 +413,7 @@ class Module extends BaseModule {
 			'labels' => $labels,
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
+			'show_in_nav_menus' => false,
 			'capability_type' => 'page',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'supports' => [
