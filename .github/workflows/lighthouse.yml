@@ -40,6 +40,8 @@ jobs:
         with:
           php: '7.4'
           active-theme: 'hello-elementor'
+          plugins: |-
+            ./build
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
           mappings: |-
