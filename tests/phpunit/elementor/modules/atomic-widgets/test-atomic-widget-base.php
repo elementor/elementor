@@ -68,19 +68,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
-	public function test_get_props_schema__caches_the_schema() {
-		// Act & Assert.
-		$this->assertSame(
-			Mock_Widget_A::get_props_schema(),
-			Mock_Widget_A::get_props_schema()
-		);
-
-		$this->assertNotSame(
-			Mock_Widget_A::get_props_schema(),
-			Mock_Widget_B::get_props_schema()
-		);
-	}
-
 	public function test_get_props_schema__is_serializable() {
 		// Act.
 		$serialized = json_encode( Mock_Widget_A::get_props_schema() );

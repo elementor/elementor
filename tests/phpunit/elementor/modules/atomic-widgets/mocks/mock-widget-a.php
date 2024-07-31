@@ -14,7 +14,7 @@ class Mock_Widget_A extends Atomic_Widget_Base {
 		return 'mock-widget-a';
 	}
 
-	protected static function get_props_schema_definition(): array {
+	public static function get_props_schema(): array {
 		return [
 			'test_prop_a' => Atomic_Prop::make()
 				->default( 'default-value-a' ),

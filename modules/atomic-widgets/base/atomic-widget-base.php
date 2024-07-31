@@ -11,11 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $version = '0.0';
 
-	/**
-	 * @var array<string, array<string, Atomic_Prop>>
-	 */
-	protected static array $props_schema_cache = [];
-
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
@@ -74,18 +69,5 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $transformed_settings;
 	}
 
-	public static function get_props_schema(): array {
-		$cache_key = static::class;
-
-		if ( empty( static::$props_schema_cache[ $cache_key ] ) ) {
-			static::$props_schema_cache[ $cache_key ] = static::get_props_schema_definition();
-		}
-
-		return static::$props_schema_cache[ $cache_key ];
-	}
-
-	/**
-	 * @return array<string, Atomic_Prop>
-	 */
-	abstract protected static function get_props_schema_definition(): array;
+	abstract public static function get_props_schema(): array;
 }
