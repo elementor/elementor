@@ -1,6 +1,6 @@
-var NewTemplateLayout = require( 'elementor-admin/floating-elements/layout' );
+var NewFloatingelementsLayout = require( 'elementor-admin/floating-elements/layout' );
 
-var NewTemplateModule = elementorModules.ViewModule.extend( {
+var NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 
 	getDefaultSettings() {
 		return {
@@ -35,7 +35,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
-		this.layout = new NewTemplateLayout();
+		this.layout = new NewFloatingelementsLayout();
 
 		this.showModalByHash();
 	},
@@ -48,5 +48,5 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 } );
 
 jQuery( function() {
-	window.elementorNewFloatingElements = new NewTemplateModule();
+	window.elementorNewFloatingElements = new NewFloatingElementsModule();
 } );

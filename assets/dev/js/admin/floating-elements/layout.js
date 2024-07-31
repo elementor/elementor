@@ -1,4 +1,4 @@
-var NewTemplateView = require( 'elementor-admin/floating-elements/view' );
+var NewFloatingElementsView = require( 'elementor-admin/floating-elements/view' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 
@@ -23,6 +23,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showContentView() {
-		this.modalContent.show( new NewTemplateView() );
+		this.modalContent.show( new NewFloatingElementsView() );
 	},
 } );

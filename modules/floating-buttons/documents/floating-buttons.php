@@ -99,7 +99,15 @@ class Floating_Buttons extends PageBase {
 		return $built_with_elementor + $actions;
 	}
 
-	public static function get_set_as_entire_site_post_id( $floating_element_type ) {
+	/**
+	 * Tries to find the post id of the floating element that is set as entire site.
+	 * If found, returns the post id, otherwise returns 0.
+	 *
+	 * @param string $floating_element_type
+	 *
+	 * @return int
+	 */
+	public static function get_set_as_entire_site_post_id( string $floating_element_type ): int {
 		static $types = [];
 
 		if ( isset( $types[ $floating_element_type ] ) ) {
@@ -127,9 +135,11 @@ class Floating_Buttons extends PageBase {
 
 		foreach ( $query->posts as $post_id ) {
 			$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
+
 			if ( ! $conditions ) {
 				continue;
 			}
+			
 			if ( in_array( 'include/general', $conditions ) ) {
 				$types[ $floating_element_type ] = $post_id;
 				return $post_id;

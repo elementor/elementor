@@ -1,9 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Base\Document;
 use Elementor\Modules\FloatingButtons\Module;
-use Elementor\TemplateLibrary\Forms\New_Template_Form;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
