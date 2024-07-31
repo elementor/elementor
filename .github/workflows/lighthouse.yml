@@ -36,20 +36,22 @@ jobs:
           path: ./build
 
       - name: Setup wp-env
-        uses: elementor/elementor-editor-github-actions/.github/actions/setup-wp-env@master
+        uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
         with:
           php: '7.4'
           wp: 'latest'
           active-theme: 'hello-elementor'
-          debug: false
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
           mappings: |-
             elementor-templates:./tests/playwright/templates
-            elementor-config:./tests/wp-env/config
 
       - name: Import Templates
-        run: npm run test:setup:playwright
+        run: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
+        with:
+          env: 'testing'
+          templates: |-
+            elementor-templates
 
       - name: WordPress debug information
         run: |
