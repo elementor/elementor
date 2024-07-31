@@ -28,6 +28,8 @@ export const getUserInformation = ( immediately ) => request( 'ai_get_user_infor
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 
+export const getRemoteFrontendConfig = ( payload, immediately ) => request( 'ai_get_remote_frontend_config', { payload }, immediately );
+
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
 
 export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
