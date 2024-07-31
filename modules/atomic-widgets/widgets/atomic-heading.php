@@ -70,7 +70,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			->set_placeholder( __( 'Type your title here', 'elementor' ) );
 
 		$tag_and_title_section = Section::make()
-			->set_label( __( 'Tag and Title', 'elementor' ) )
+			->set_label( __( 'Content', 'elementor' ) )
 			->set_items( [
 				$tag_control,
 				$title_control,
