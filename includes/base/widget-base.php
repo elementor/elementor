@@ -1223,6 +1223,24 @@ abstract class Widget_Base extends Element_Base {
 
 	}
 
+	/**
+	 * Widgets styles loading strategy.
+	 *
+	 * Which loading strategy to apply, either loading the widgets styles
+	 * in the `<head>` or in the `<body>`.
+	 *
+	 * Currently, it's based on the optimized CSS loading experiment. In
+	 * the future, will be replaced with a setting in the performance tab.
+	 *
+	 * @since 3.23.4
+	 * @access public
+	 *
+	 * @return bool Whether to load widgets styles in the `<head>`.
+	 */
+	public function load_widgets_styles_in_head(): bool {
+		return ! $this->is_inline_css_mode();
+	}
+
 	private function is_inline_css_mode() {
 		static $is_active;
 
