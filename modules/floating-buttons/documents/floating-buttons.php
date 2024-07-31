@@ -129,7 +129,7 @@ class Floating_Buttons extends PageBase {
 				[
 					'key' => '_elementor_conditions',
 					'compare' => 'EXISTS',
-				]
+				],
 			],
 		] );
 
@@ -139,7 +139,7 @@ class Floating_Buttons extends PageBase {
 			if ( ! $conditions ) {
 				continue;
 			}
-			
+
 			if ( in_array( 'include/general', $conditions ) ) {
 				$types[ $floating_element_type ] = $post_id;
 				return $post_id;
@@ -196,7 +196,7 @@ class Floating_Buttons extends PageBase {
 		if ( 'elementor_library_type' === $column_name ) {
 			$admin_filter_url = admin_url( Source_Local::ADMIN_MENU_SLUG . '&elementor_library_type=' . $this->get_name() );
 			$meta = get_post_meta( $this->get_main_id(), Module::FLOATING_ELEMENTS_TYPE_META_KEY, true );
-			printf( '<a href="%s">%s</a>', $admin_filter_url, Module::get_floating_elements_types()[$meta] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			printf( '<a href="%s">%s</a>', $admin_filter_url, Module::get_floating_elements_types()[ $meta ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
