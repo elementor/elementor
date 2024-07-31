@@ -28,4 +28,11 @@ class Floating_Bars_Var_1 extends Widget_Floating_Bars_Base {
 	public function get_group_name(): string {
 		return 'floating-bars';
 	}
+
+	public function render(): void {
+		$this->add_inline_editing_attributes( 'announcement_text', 'none' );
+		$this->add_inline_editing_attributes( 'cta_text', 'none' );
+
+		parent::render();
+	}
 }
