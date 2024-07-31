@@ -47,13 +47,6 @@ jobs:
           mappings: |-
             elementor-templates:./tests/playwright/templates
 
-      - name: DEBUG
-        run: |
-          ls -la
-          ls -la ./elementor
-          npx wp-env run tests-cli bash -c "ls -la /var/www/html/wp-content/plugins"
-          npx wp-env run tests-cli bash -c "wp plugin list"
-
       - name: Import Templates
         uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
         with:
