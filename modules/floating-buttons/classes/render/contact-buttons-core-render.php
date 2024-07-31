@@ -48,6 +48,7 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 			'class' => $layout_classnames,
 			'id' => $this->settings['advanced_custom_css_id'],
 			'data-document-id' => get_the_ID(),
+			'aria-role' => 'dialog',
 		] );
 	}
 
