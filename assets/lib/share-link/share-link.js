@@ -3,19 +3,17 @@
  */
 ( function() {
 	window.ShareLink = function( eElement, userSettings ) {
-		var element,
-			setting = {};
+		let element = {};
+		let setting = {};
 
-		var getNetworkNameFromClass = function( className ) {
-			var classNamePrefix = className.substr( 0, settings.classPrefixLength );
+		const getNetworkNameFromClass = function( className ) {
+			const classNamePrefix = className.substr( 0, settings.classPrefixLength );
 
 			return classNamePrefix === settings.classPrefix ? className.substr( settings.classPrefixLength ) : null;
 		};
 
-		var bindShareClick = function( networkName ) {
-			element.addEventListener( 'click', function() {
-				openShareLink( networkName );
-			} );
+		const bindShareClick = function( networkName ) {
+			element.addEventListener( 'click', () => openShareLink( networkName ) );
 
 			// Add "Enter" and "Space" event only if the element has role=button attribute.
 			if ( 'button' === element.getAttribute( 'role' ) ) {
@@ -29,26 +27,26 @@
 			}
 		};
 
-		var openShareLink = function( networkName ) {
-			var shareWindowParams = '';
+		const openShareLink = function( networkName ) {
+			let shareWindowParams = '';
 
 			if ( settings.width && settings.height ) {
-				var shareWindowLeft = ( screen.width / 2 ) - ( settings.width / 2 ),
-					shareWindowTop = ( screen.height / 2 ) - ( settings.height / 2 );
+				const shareWindowLeft = ( screen.width / 2 ) - ( settings.width / 2 );
+				const shareWindowTop = ( screen.height / 2 ) - ( settings.height / 2 );
 
 				shareWindowParams = 'toolbar=0,status=0,width=' + settings.width + ',height=' + settings.height + ',top=' + shareWindowTop + ',left=' + shareWindowLeft;
 			}
 
-			var link = ShareLink.getNetworkLink( networkName, settings ),
+			const link = ShareLink.getNetworkLink( networkName, settings ),
 				isPlainLink = /^https?:\/\//.test( link ),
 				windowName = isPlainLink ? '' : '_self';
 
 			open( link, windowName, shareWindowParams );
 		};
 
-		var run = function() {
-			element.classList.forEach( function() {
-				var networkName = getNetworkNameFromClass( this );
+		const run = function() {
+			element.classList.forEach( () => {
+				const networkName = getNetworkNameFromClass( this );
 
 				if ( networkName ) {
 					bindShareClick( networkName );
@@ -58,17 +56,15 @@
 			} );
 		};
 
-		var initSettings = function() {
+		const initSettings = function() {
 			settings = { ...ShareLink.defaultSettings, ...userSettings };
 
-			[ 'title', 'text' ].forEach( function( propertyName ) {
-				settings[ propertyName ] = settings[ propertyName ].replace( '#', '' );
-			} );
+			[ 'title', 'text' ].forEach( ( propertyName ) => settings[ propertyName ] = settings[ propertyName ].replace( '#', '' ) );
 
 			settings.classPrefixLength = settings.classPrefix.length;
 		};
 
-		var init = function() {
+		const init = function() {
 			initSettings();
 
 			run();
@@ -111,21 +107,19 @@
 	};
 
 	window.ShareLink.getNetworkLink = function( networkName, settings ) {
-		var link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
+		let link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, ( fullMatch, pureMatch ) => {
 			return settings[ pureMatch ] || '';
 		} );
 
 		if ( 'email' === networkName ) {
 			if ( -1 < settings['title'].indexOf( '&' ) ||  -1 < settings['text'].indexOf( '&' ) ) {
-				var emailSafeSettings = {
+				const emailSafeSettings = {
 					text: settings['text'].replace( new RegExp('&', 'g'), '%26' ),
 					title: settings['title'].replace( new RegExp('&', 'g'), '%26' ),
 					url: settings['url'],
 				};
 
-				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
-					return emailSafeSettings[ pureMatch ];
-				} );
+				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, ( fullMatch, pureMatch ) => emailSafeSettings[ pureMatch ] );
 			}
 
 			if ( link.indexOf( '?subject=&body') ) {
@@ -138,15 +132,15 @@
 		return link;
 	};
 
-	Element.prototype.shareLink = function( settings ) {
+	Element.prototype.shareLink = function ( settings ) {
 		new ShareLink( this, settings );
 		return this;
 	};
 
-	NodeList.prototype.shareLink = function( settings ) {
-		this.forEach(function( element) {
+	NodeList.prototype.shareLink = function ( settings ) {
+		this.forEach( ( element ) => {
 			new ShareLink( element, settings );
-		});
+		} );
 		return this;
 	};
 } )();
