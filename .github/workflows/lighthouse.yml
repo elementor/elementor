@@ -47,7 +47,7 @@ jobs:
             elementor-templates:./tests/playwright/templates
 
       - name: Import Templates
-        run: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
+        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
         with:
           env: 'testing'
           templates: |-
