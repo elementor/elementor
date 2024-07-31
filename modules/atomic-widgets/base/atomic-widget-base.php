@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Base;
 
+use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -59,4 +60,24 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			'tabs' => [],
 		];
 	}
+
+	final public function get_atomic_settings(): array {
+		$schema = static::get_props_schema();
+		$raw_settings = $this->get_settings();
+
+		$transformed_settings = [];
+
+		foreach ( $schema as $key => $prop ) {
+			if ( array_key_exists( $key, $raw_settings ) ) {
+				$transformed_settings[ $key ] = $raw_settings[ $key ];
+			} else {
+				$transformed_settings[ $key ] = $prop->get_default();
+			}
+		}
+
+		// TODO: Run through the transformers.
+		return $transformed_settings;
+	}
+
+	abstract public static function get_props_schema(): array;
 }
