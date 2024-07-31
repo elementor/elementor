@@ -37,17 +37,13 @@
 		&__headlines-inner {
 			display: flex;
 			gap: var(--e-floating-bars-headlines-gap);
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
+			width: max-content;
 			z-index: $first-layer;
 		}
 
 		&__headlines[data-animated="true"] {
 			overflow: hidden;
-
-			.e-floating-bars__headlines-inner {
-				flex-wrap: nowrap;
-				width: max-content;
-			}
 
 			&.is-playing {
 
