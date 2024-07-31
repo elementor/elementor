@@ -33,7 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
-          path: ./build
+          path: ./elementor
 
       - name: Setup wp-env
         uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
@@ -41,7 +41,7 @@ jobs:
           php: '7.4'
           active-theme: 'hello-elementor'
           plugins: |-
-            ./build
+            ./elementor
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
           mappings: |-
