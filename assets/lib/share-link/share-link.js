@@ -4,7 +4,7 @@
 ( function() {
 	window.ShareLink = function( eElement, userSettings ) {
 		let element = {};
-		let setting = {};
+		let settings = {};
 
 		const getNetworkNameFromClass = function( className ) {
 			const classNamePrefix = className.substr( 0, settings.classPrefixLength );
