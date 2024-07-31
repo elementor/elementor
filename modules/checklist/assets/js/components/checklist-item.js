@@ -17,6 +17,8 @@ import {
 	ListItemText, Collapse, Stack,
 } from '@elementor/ui';
 
+import { doAjaxRequest } from '@elementor/utils';
+
 // Check why elementor/icons is not installed
 import { ChevronDownIcon, CheckedCircleIcon } from '@elementor/icons';
 import CardMedia from '@elementor/ui/CardMedia';
