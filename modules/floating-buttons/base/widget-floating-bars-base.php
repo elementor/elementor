@@ -294,7 +294,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => esc_html__( 'Enter your text', 'elementor' ),
-				'default' => esc_html__( 'Item Title', 'elementor-pro' ),
+				'default' => esc_html__( 'Item Title', 'elementor' ),
 				'dynamic' => [
 					'active' => true,
 				],
@@ -304,9 +304,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$repeater->add_control(
 			'headlines_url',
 			[
-				'label' => esc_html__( 'Link', 'elementor-pro' ),
+				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => esc_html__( 'Paste URL or type', 'elementor-pro' ),
+				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1329,7 +1329,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		// TODO: wire this
 		$this->add_responsive_control(
 			'style_ticker_animation_type',
 			[
@@ -1340,33 +1339,33 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'autoplay' => esc_html__( 'Autoplay', 'elementor' ),
 					'scroll' => esc_html__( 'On page scroll', 'elementor' ),
 				],
+				'frontend_available' => true,
 			]
 		);
 
-		// TODO: wire this
 		$this->add_responsive_control(
 			'style_ticker_scroll_direction',
 			[
 				'label' => esc_html__( 'Scroll Direction', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'left',
+				'default' => 'forwards',
 				'toggle' => false,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'End', 'elementor' ),
+					'reverse' => [
+						'title' => esc_html__( 'Reverse', 'elementor' ),
 						'icon' => 'eicon-arrow-left',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'forwards' => [
+						'title' => esc_html__( 'Forwards', 'elementor' ),
 						'icon' => 'eicon-arrow-right',
 					],
 				],
-				'selectors_dictionary' => [
-					'right' => 'reverse',
-					'left' => 'forwards',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-direction: {{VALUE}};',
+				],
+				'frontend_available' => true,
+				'condition' => [
+					'style_ticker_animation_type' => 'autoplay',
 				],
 			]
 		);
@@ -1382,6 +1381,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-duration: {{VALUE}}s;',
 				],
+				'condition' => [
+					'style_ticker_animation_type' => 'autoplay',
+				],
 			],
 		);
 
@@ -1394,6 +1396,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default' => 'yes',
+				'condition' => [
+					'style_ticker_animation_type' => 'autoplay',
+				],
 			]
 		);
 
