@@ -71,6 +71,14 @@ export default class FloatingBarsHandler extends Base {
 		document.body.style.paddingTop = '0';
 	}
 
+	handleWPAdminBar() {
+		const wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+
+		if ( wpAdminBar.length ) {
+			this.elements.main.style.top = `${ wpAdminBar.height() }px`;
+		}
+	}
+
 	closeFloatingBar() {
 		const { isHidden } = this.getSettings( 'constants' );
 
@@ -120,6 +128,7 @@ export default class FloatingBarsHandler extends Base {
 	initDefaultState() {
 		if ( this.isStickyTop() ) {
 			this.applyBodyPadding();
+			this.handleWPAdminBar();
 		}
 
 		if ( this.elements.main && ! elementorFrontend.isEditMode() ) {
