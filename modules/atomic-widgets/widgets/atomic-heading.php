@@ -5,6 +5,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,11 +26,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function render() {
-		$tag = $this->get_settings( 'tag' ) ?? 'h2';
-		$title = $this->get_settings( 'title' ) ?? 'Hello, World!';
+		$settings = $this->get_atomic_settings();
 
-		$escaped_tag = Utils::validate_html_tag( $tag );
-		$escaped_title = esc_html( $title );
+		// TODO: Move the validation/sanitization to the props schema constraints.
+		$escaped_tag = Utils::validate_html_tag( $settings['tag'] );
+		$escaped_title = esc_html( $settings['title'] );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo "<$escaped_tag>$escaped_title</$escaped_tag>";
@@ -78,6 +79,16 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		return [
 			$tag_and_title_section,
+		];
+	}
+
+	public static function get_props_schema(): array {
+		return [
+			'tag' => Atomic_Prop::make()
+				->default( 'h2' ),
+
+			'title' => Atomic_Prop::make()
+				->default( __( 'Your Title Here', 'elementor' ) ),
 		];
 	}
 }
