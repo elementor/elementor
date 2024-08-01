@@ -87,11 +87,31 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
+				this.maybeInsertLightboxStyle();
 				LightboxManager.getLightbox();
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;
 			}
 		} );
+	}
+
+	maybeInsertLightboxStyle() {
+		const stylesheetId = 'e-lightbox-css',
+			hasLightboxStylesheet = !! document.getElementById( stylesheetId );
+
+		if ( hasLightboxStylesheet ) {
+			return;
+		}
+
+		const linkElement = document.createElement( 'link' );
+
+		linkElement.id = stylesheetId;
+		linkElement.rel = 'stylesheet';
+		linkElement.type = 'text/css';
+		// linkElement.href = elementorFrontend.config.urls.assets + 'css/frontend-lightbox.min.css';
+		linkElement.href = elementorFrontend.config.urls.assets + `css/conditionals/shapes.css?ver=${ elementorFrontend.config.version }`;
+
+		document.head.appendChild(linkElement);
 	}
 }
