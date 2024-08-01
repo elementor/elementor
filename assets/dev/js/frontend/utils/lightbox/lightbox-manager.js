@@ -16,6 +16,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		return {
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
+				lightBox: '[data-elementor-lightbox]',
 			},
 		};
 	}
@@ -23,6 +24,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	getDefaultElements() {
 		return {
 			$links: jQuery( this.getSettings( 'selectors.links' ) ),
+			$lightBoxes: jQuery( this.getSettings( 'selectors.lightbox' ) ),
 		};
 	}
 
@@ -84,6 +86,11 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
+		this.maybeActivateLightbox();
+		this.maybeLoadSlideShowStyles();
+	}
+
+	maybeActivateLightbox() {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
@@ -97,21 +104,36 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	}
 
 	maybeInsertLightboxStyle() {
-		const stylesheetId = 'e-lightbox-css',
-			hasLightboxStylesheet = !! document.getElementById( stylesheetId );
+		this.maybeLoadStyle( 'e-lightbox-css', 'css/conditionals/lightbox.min.css' );
+	}
 
-		if ( hasLightboxStylesheet ) {
+	maybeLoadSlideShowStyles() {
+		if ( 0 === this.elements.$lightBoxes.length ) {
+			return;
+		}
+
+		this.maybeLoadStyle( 'e-lightbox-slideshow-css', 'css/conditionals/lightbox-slideshow.min.css' );
+		// To check:
+		// Swiper version 5 and 8??
+		// Swiper CSS file path??
+		// Swiper JS file??
+		this.maybeLoadStyle( 'e-swiper-css', 'css/conditionals/swiper.min.css' );
+	}
+
+	maybeLoadStyle( styleSheetId, cssFilePath ) {
+		const hasStylesheet = !! document.getElementById( styleSheetId );
+
+		if ( hasStylesheet ) {
 			return;
 		}
 
 		const linkElement = document.createElement( 'link' );
 
-		linkElement.id = stylesheetId;
+		linkElement.id = styleSheetId;
 		linkElement.rel = 'stylesheet';
 		linkElement.type = 'text/css';
-		// linkElement.href = elementorFrontend.config.urls.assets + 'css/frontend-lightbox.min.css';
-		linkElement.href = elementorFrontend.config.urls.assets + `css/conditionals/shapes.css?ver=${ elementorFrontend.config.version }`;
+		linkElement.href = `${ elementorFrontend.config.urls.assets }${ cssFilePath }?ver=${ elementorFrontend.config.version }`;
 
-		document.head.appendChild(linkElement);
+		document.head.appendChild( linkElement );
 	}
 }
