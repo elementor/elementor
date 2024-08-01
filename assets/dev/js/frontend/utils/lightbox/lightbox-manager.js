@@ -104,7 +104,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	}
 
 	maybeInsertLightboxStyle() {
-		this.maybeLoadStyle( 'e-lightbox-css', 'css/conditionals/lightbox.min.css' );
+		this.maybeLoadStyle( 'e-lightbox', 'css/conditionals/lightbox.min.css' );
 	}
 
 	maybeLoadSlideShowStyles() {
@@ -112,12 +112,12 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		this.maybeLoadStyle( 'e-lightbox-slideshow-css', 'css/conditionals/lightbox-slideshow.min.css' );
+		this.maybeLoadStyle( 'e-lightbox-slideshow', 'css/conditionals/lightbox-slideshow.min.css' );
 		// To check:
 		// Swiper version 5 and 8??
 		// Swiper CSS file path??
 		// Swiper JS file??
-		this.maybeLoadStyle( 'e-swiper-css', 'css/conditionals/swiper.min.css' );
+		// this.maybeLoadStyle( 'e-swiper', 'css/conditionals/swiper.min.css' );
 	}
 
 	maybeLoadStyle( styleSheetId, cssFilePath ) {
