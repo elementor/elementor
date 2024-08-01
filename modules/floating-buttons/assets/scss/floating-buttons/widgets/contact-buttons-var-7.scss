@@ -1,0 +1,81 @@
+.e-contact-buttons-var-7 {
+	--e-contact-buttons-chat-button-padding-block-end: 16px;
+	--e-contact-buttons-chat-button-padding-block-start: 16px;
+	--e-contact-buttons-chat-button-padding-inline-end: 20px;
+	--e-contact-buttons-chat-button-padding-inline-start: 20px;
+	--e-contact-buttons-chat-button-gap: 8px;
+	--e-contact-buttons-horizontal-offset: 0;
+	--e-contact-buttons-vertical-offset: 0;
+
+	&.has-h-alignment-end,
+	&.has-h-alignment-start {
+
+		.e-contact-buttons__chat-button-container {
+			padding-inline: 0;
+		}
+	}
+
+	&.has-mobile-full-width {
+		@media (max-width: $screen-mobile-max) {
+			width: 100%;
+
+			.e-contact-buttons__chat-button {
+				width: 100%;
+			}
+		}
+	}
+
+	.e-contact-buttons {
+
+		&__chat-button,
+		&__chat-button:not([href]):not([tabindex]), // to override inline styles when the href is not set
+		&__chat-button[type="button"] {
+			border-radius: 0;
+			color: var(--e-contact-buttons-button-icon);
+			display: inline-flex;
+			font-size: 18px;
+			font-weight: 500;
+			gap: var(--e-contact-buttons-chat-button-gap);
+			height: fit-content;
+			line-height: 28px;
+			padding-block-end: var(--e-contact-buttons-chat-button-padding-block-end);
+			padding-block-start: var(--e-contact-buttons-chat-button-padding-block-start);
+			padding-inline-end: var(--e-contact-buttons-chat-button-padding-inline-end);
+			padding-inline-start: var(--e-contact-buttons-chat-button-padding-inline-start);
+			width: fit-content;
+
+			// SVG width and height are relative to the font size
+			svg {
+				height: 1em;
+				width: 1em;
+			}
+
+			&:hover,
+			&:focus {
+				color: var(--e-contact-buttons-button-icon-hover);
+			}
+
+			&.has-icon-position-start {
+
+				.e-contact-buttons__chat-button-text {
+					order: 2;
+				}
+
+				svg {
+					order: 1;
+				}
+			}
+
+			&.has-icon-position-end {
+
+				.e-contact-buttons__chat-button-text {
+					order: 1;
+				}
+
+				svg {
+					order: 2;
+				}
+			}
+		}
+	}
+}

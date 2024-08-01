@@ -1,9 +1,11 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorAiCurrentContext ) {
+			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
+		}
 	}
-
-	data.editor_session_id = window.EDITOR_SESSION_ID;
 
 	return new Promise( ( resolve, reject ) => {
 		const ajaxData = elementorCommon.ajax.addRequest(
@@ -25,6 +27,8 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 export const getUserInformation = ( immediately ) => request( 'ai_get_user_information', undefined, immediately );
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
+
+export const getRemoteFrontendConfig = ( payload, immediately ) => request( 'ai_get_remote_frontend_config', { payload }, immediately );
 
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
 

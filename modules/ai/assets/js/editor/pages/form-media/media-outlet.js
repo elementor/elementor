@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import View from './components/view';
 import Loader from '../../components/loader';
-import { LOCATIONS } from './constants';
+import { LOCATIONS, IMAGE_PLACEHOLDERS_HOSTS } from './constants';
 import Generate from './views/generate';
 import ImageTools from './views/image-tools';
 import Resize from './views/resize';
@@ -25,12 +25,14 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 	const { current, navigate } = useLocation( { current: additionalOptions?.location || LOCATIONS.GENERATE } );
 
 	useEffect( () => {
-		const isNotPlaceholderImage = editImage.id;
+		const placeholderHostRegex = new RegExp( IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME );
+		const isNotWireframePlaceholder = editImage.url && ! placeholderHostRegex.test( new URL( editImage.url ).host );
+		const isNotPlaceholderImage = editImage.id && isNotWireframePlaceholder;
 
 		if ( isNotPlaceholderImage ) {
 			navigate( LOCATIONS.IMAGE_TOOLS );
 		}
-	}, [ editImage.id ] );
+	}, [ editImage.id, editImage.url ] );
 
 	useSubscribeOnPromptHistoryAction( [
 		{

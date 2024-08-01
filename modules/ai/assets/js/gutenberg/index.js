@@ -2,10 +2,13 @@ import { createRoot } from '@wordpress/element';
 import GenerateExcerptWithAI from './excerpt';
 import GenerateFeaturedImageWithAI from './featured-image';
 import { GenerateTextWithAi } from './text-with-ai';
+import React from 'react';
+import { EditTextWithAi } from './edit-text-with-ai';
+import { getUniqueId } from '../editor/context/requests-ids';
 
 ( function() {
 	'use strict';
-
+	window.EDITOR_SESSION_ID = getUniqueId( 'wp-gutenberg-session' );
 	// Wait for the Gutenberg editor to initialize
 	wp.domReady( () => {
 		// Define a function to add the custom link to the excerpt panel
@@ -16,16 +19,7 @@ import { GenerateTextWithAi } from './text-with-ai';
 			if ( excerptPanel && ! document.querySelector( '.e-excerpt-ai' ) ) {
 				const rootElement = document.createElement( 'div' );
 				rootElement.classList.add( 'e-excerpt-ai' );
-				// Find the existing link with class "components-external-link"
-				const existingExcerptLink = excerptPanel.querySelector( '.components-external-link' );
-				if ( existingExcerptLink ) {
-					existingExcerptLink.classList.add( 'existing-excerpt-link' );
-					// Append the new link before the existing one
-					excerptPanel.insertBefore( rootElement, existingExcerptLink );
-				} else {
-					// Append the new link to the excerpt panel
-					excerptPanel.appendChild( rootElement );
-				}
+				excerptPanel.appendChild( rootElement );
 
 				const urlSearchParams = new URLSearchParams( window.location.search );
 				elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', urlSearchParams?.get( 'post' ) );
@@ -48,14 +42,16 @@ import { GenerateTextWithAi } from './text-with-ai';
 			}
 		};
 
-		const addTextWithAI = ( blockName ) => {
-			const textPanel = document.querySelector( '.block-editor-block-card__content' );
-			if ( textPanel && ! document.querySelector( '.e-text-ai' ) ) {
+		const addTextWithAI = ( blockName, blockClientId ) => {
+			const textPanel = document.querySelector( '.block-editor-block-card__description, .block-editor-block-card__content' );
+			if ( textPanel && ! document.querySelector( `.e-text-ai[data-client-id="${ blockClientId }"]` ) ) {
+				removeAiIndicator();
 				const rootElement = document.createElement( 'div' );
 				rootElement.classList.add( 'e-text-ai' );
+				rootElement.setAttribute( 'data-client-id', blockClientId );
 				textPanel.appendChild( rootElement );
 				const root = createRoot( rootElement );
-				root.render( <GenerateTextWithAi blockName={ blockName } /> );
+				root.render( <GenerateTextWithAi blockName={ blockName } blockClientId={ blockClientId } /> );
 			}
 		};
 
@@ -78,7 +74,7 @@ import { GenerateTextWithAi } from './text-with-ai';
 		const addAiIndicatorToTextBlock = ( blockNames ) => {
 			const selectedBlock = wp.data.select( 'core/block-editor' )?.getSelectedBlock();
 			if ( selectedBlock && blockNames.some( ( name ) => selectedBlock.name.includes( name ) ) ) {
-				addTextWithAI( selectedBlock.name );
+				addTextWithAI( selectedBlock.name, selectedBlock.clientId );
 			} else {
 				removeAiIndicator();
 			}
@@ -89,5 +85,57 @@ import { GenerateTextWithAi } from './text-with-ai';
 			addAiIndicator( 'featured-image', addGenerateFeaturedImageWithAI );
 			addAiIndicatorToTextBlock( [ 'paragraph', 'heading' ] );
 		} );
+
+		const observer = new MutationObserver( ( mutationsList ) => {
+			for ( const mutation of mutationsList ) {
+				if ( 'childList' === mutation.type ) {
+					if ( document.querySelector( '.editor-post-excerpt' ) ) {
+						addGenerateExcerptWithAI();
+					}
+				}
+			}
+		} );
+
+		observer.observe( document.body, { childList: true, subtree: true } );
+		window.addEventListener( 'beforeunload', () => {
+			observer.disconnect();
+		} );
 	} );
 } )( jQuery );
+
+( function( wp ) {
+	const { addFilter } = wp.hooks;
+
+	const addAiButtonToToolbar = ( BlockEdit ) => {
+		return ( props ) => {
+			return <EditTextWithAi { ...props } blockEdit={ BlockEdit } />;
+		};
+	};
+
+	addFilter( 'editor.BlockEdit', 'elementor-ai-toolbar-button', addAiButtonToToolbar );
+} )( window.wp );
+
+( function() {
+	'use strict';
+
+	const setElementorWpAiCurrentContext = () => {
+		const selectedBlock = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+		if ( selectedBlock ) {
+			const blockName = 'core/heading' === selectedBlock.name ? 'heading' : selectedBlock.name;
+			window.elementorWpAiCurrentContext = {
+				widgetType: blockName,
+				controlName: blockName,
+			};
+		} else {
+			window.elementorWpAiCurrentContext = null;
+		}
+	};
+
+	wp.data.subscribe( setElementorWpAiCurrentContext );
+
+	const clearElementorAiCurrentContext = () => {
+		window.elementorWpAiCurrentContext = null;
+	};
+
+	window.addEventListener( 'beforeunload', clearElementorAiCurrentContext );
+} )();

@@ -77,6 +77,20 @@ const sass = {
 				dest: 'assets/css',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/admin',
+				src: 'wc-product-editor.scss',
+				dest: 'assets/css',
+				ext: '.css',
+			},
 		]
 	}
 };

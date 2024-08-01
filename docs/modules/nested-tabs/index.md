@@ -320,11 +320,11 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 * More advance example of register the widget and manipulate the views.
     ```javascript
     import View from './views/view';            // Custom view for handling the clicks.
-    import EmptyView from './views/empty';      // Customn empty view for handling empty in the widget.
+    import EmptyView from './views/empty';      // Custom empty view for handling empty in the widget.
 	
     export class NestedTabs extends elementor.modules.elements.types.Base {
         getType() {
-              return 'nested-tabs'; // Widget type from the backend registeration.
+              return 'nested-tabs'; // Widget type from the backend registration.
         }
 	
         getView() {
@@ -339,7 +339,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 	
         getModel() {
             // Should extend `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedRepeaterModel`.
-            // In this senario, custom model is not required so default is returned.
+            // In this scenario, custom model is not required so default is returned.
             return $e.components.get( 'nested-elements/nested-repeater' ).exports.NestedModelBase;
         }
     }
@@ -349,7 +349,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
     ```
 ## `assets/js/editor/views/view.js` - Custom view for the widget.
 * **Link to the actual file** - [view.js](../../../modules/nested-tabs/assets/js/editor/views/view.js)
-* The view should extend `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`, let use __NestedTabs__ view as exmaple:
+* The view should extend `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`, let use __NestedTabs__ view as example:
 	```javascript
 	/**
 	 * @extends {NestedViewBase}

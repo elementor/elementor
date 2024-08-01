@@ -26,7 +26,7 @@ const GenerateExcerptWithAI = () => {
 	};
 
 	return (
-		<div style={ { paddingBottom: '0.6em' } }>
+		<div style={ { paddingTop: '0.6em' } }>
 			<RequestIdsProvider>
 				<Icon className={ 'eicon-ai' } />
 				<AiLink onClick={ handleButtonClick }>{ __( 'Generate with Elementor AI', 'elementor' ) }</AiLink>

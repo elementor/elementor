@@ -1,0 +1,230 @@
+.e-floating-bars {
+	--e-floating-bars-announcement-bg-color: #467FF7;
+	--e-floating-bars-announcement-text-color: #FFFFFF;
+	--e-floating-bars-announcement-icon-color: #FFFFFF;
+	--e-floating-bars-cta-button-text-color: #FFFFFF;
+	--e-floating-bars-cta-button-text-color-hover: #467FF7;
+	--e-floating-bars-cta-button-bg-color: #1C2448;
+	--e-floating-bars-cta-button-bg-color-hover: #FFFFFF;
+	--e-floating-bars-cta-button-border-color: #1C2448;
+	--e-floating-bars-cta-button-border-color-hover: #1C2448;
+	--e-floating-bars-close-button-color: #FFFFFF;
+
+	--e-floating-bars-announcement-icon-size: 20px;
+	--e-floating-bars-elements-padding-block-end: 12px;
+	--e-floating-bars-elements-padding-block-start: 12px;
+	--e-floating-bars-elements-padding-inline-end: 16px;
+	--e-floating-bars-elements-padding-inline-start: 16px;
+	--e-floating-bars-elements-gap: 16px;
+	--e-floating-bars-cta-corners: #{$floating-bars-border-radius-round};
+	--e-floating-bars-cta-button-border-width: 2px;
+	--e-floating-bars-cta-button-padding-block-end: 8px;
+	--e-floating-bars-cta-button-padding-block-start: 8px;
+	--e-floating-bars-cta-button-padding-inline-end: 20px;
+	--e-floating-bars-cta-button-padding-inline-start: 20px;
+	--e-floating-bars-cta-button-icon-gap: 5px;
+	--e-floating-bars-cta-button-animation-delay: 500ms;
+	--e-floating-bars-cta-button-animation-duration: 1000ms;
+	--e-floating-bars-background-overlay-opacity: 0.5;
+
+	align-items: center;
+	background-color: var(--e-floating-bars-announcement-bg-color);
+	color: var(--e-floating-bars-announcement-text-color);
+	display: flex;
+	gap: var(--e-floating-bars-elements-gap);
+	position: relative;
+	padding-block-end: var(--e-floating-bars-elements-padding-block-end);
+	padding-block-start: var(--e-floating-bars-elements-padding-block-start);
+	padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
+	padding-inline-start: var(--e-floating-bars-elements-padding-inline-start);
+	width: 100%;
+	z-index: $element-overlay;
+
+	@media (max-width: $screen-mobile-max) {
+		align-items: flex-start;
+		display: grid;
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto;
+		gap: var(--e-floating-bars-elements-gap);
+	}
+
+	&.has-vertical-position-top {
+		inset-block-start: 0;
+	}
+
+	&.has-vertical-position-bottom {
+		inset-block-end: 0;
+	}
+
+	&.is-sticky {
+		inset-inline-end: 0;
+		inset-inline-start: 0;
+		position: fixed;
+	}
+
+	&.is-hidden {
+		display: none;
+	}
+
+	&.has-close-button {
+		padding-inline-end: calc(var(--e-floating-bars-elements-padding-inline-end) + $floating-bars-close-button-offset);
+		padding-inline-start: calc(var(--e-floating-bars-elements-padding-inline-start) + $floating-bars-close-button-offset);
+	}
+
+	.has-corners-rounded {
+		--e-floating-bars-corners: #{$floating-bars-border-radius-rounded};
+	}
+
+	.has-corners-round {
+		--e-floating-bars-corners: #{$floating-bars-border-radius-round};
+	}
+
+	.has-corners-sharp {
+		--e-floating-bars-corners: #{$floating-bars-border-radius-sharp};
+	}
+
+	&__announcement-text {
+		color: var(--e-floating-bars-announcement-text-color);
+		font-size: 16px;
+		font-weight: 400;
+		margin: 0;
+	}
+
+	&__announcement-icon {
+		color: var(--e-floating-bars-announcement-icon-color);
+		display: flex;
+
+		svg {
+			fill: var(--e-floating-bars-announcement-icon-color);
+			height: var(--e-floating-bars-announcement-icon-size);
+			width: var(--e-floating-bars-announcement-icon-size);
+		}
+	}
+
+	&__cta-icon {
+		color: var(--e-floating-bars-cta-button-text-color);
+		display: inline-flex;
+		transition: $transition-hover;
+
+		svg {
+			fill: var(--e-floating-bars-cta-button-text-color);
+			height: 1em; // height is relative to the font-size
+			transition: $transition-hover;
+			width: 1em; // width is relative to the font-size
+		}
+	}
+
+	&__cta-button-container {
+		order: 3;
+
+		@media (max-width: $screen-mobile-max) {
+			display: flex;
+			grid-column: span 2 / span 2;
+			grid-row-start: 2;
+		}
+	}
+
+	&__cta-button,
+	&__cta-button:not([href]):not([tabindex]) {
+		align-items: center;
+		color: var(--e-floating-bars-cta-button-text-color);
+		display: inline-flex;
+		font-size: 16px;
+		font-weight: 700;
+		gap: var(--e-floating-bars-cta-button-icon-gap);
+		position: relative;
+		transition: $transition-hover;
+		white-space: nowrap;
+
+		&.has-entrance-animation {
+			animation-delay: var(--e-floating-bars-cta-button-animation-delay);
+			animation-duration: var(--e-floating-bars-cta-button-animation-duration);
+			opacity: 0;
+		}
+	
+		&.visible {
+			opacity: 1;
+		}
+
+		&:hover,
+		&:focus {
+			color: var(--e-floating-bars-cta-button-text-color-hover);
+			transition: $transition-hover;
+
+			.e-floating-bars__cta-icon {
+				color: var(--e-floating-bars-cta-button-text-color-hover);
+				transition: $transition-hover;
+
+				svg {
+					fill: var(--e-floating-bars-cta-button-text-color-hover);
+					transition: $transition-hover;
+				}
+			}
+		}
+
+		&.is-type-button {
+			background-color: var(--e-floating-bars-cta-button-bg-color);
+			border-color: var(--e-floating-bars-cta-button-border-color);
+			border-style: solid;
+			border-width: var(--e-floating-bars-cta-button-border-width);
+			border-radius: var(--e-floating-bars-corners);
+			padding-block-end: var(--e-floating-bars-cta-button-padding-block-end);
+			padding-block-start: var(--e-floating-bars-cta-button-padding-block-start);
+			padding-inline-end: var(--e-floating-bars-cta-button-padding-inline-end);
+			padding-inline-start: var(--e-floating-bars-cta-button-padding-inline-start);
+
+			&:hover,
+			&:focus {
+				background-color: var(--e-floating-bars-cta-button-bg-color-hover);
+				border-color: var(--e-floating-bars-cta-button-border-color-hover);
+			}
+		}
+
+		&.is-type-link {
+			text-decoration: underline;
+		}
+	}
+
+	&__close-button {
+		align-items: center;
+		display: flex;
+		position: absolute;
+
+		i {
+			font-size: 24px;
+		}
+
+		@media (max-width: $screen-mobile-max) {
+			top: 10px;
+		}
+
+		&,
+		&:hover,
+		&:focus {
+			background-color: transparent;
+			border: 0;
+			color: var(--e-floating-bars-close-button-color);
+			padding: 0;
+
+			i {
+				color: var(--e-floating-bars-close-button-color);
+			}
+		}
+	}
+
+	&__overlay {
+		height: 100%;
+		inset-block-end: 0;
+		inset-block-start: 0;
+		inset-inline-end: 0;
+		inset-inline-start: 0;
+		opacity: var(--e-floating-bars-background-overlay-opacity);
+		position: absolute;
+		width: 100%;
+		z-index: $under-layer;
+	}
+}
+
+.e-con-inner:has(.e-floating-bars) {
+	padding: 0;
+}
