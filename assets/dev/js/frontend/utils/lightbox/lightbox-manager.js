@@ -88,6 +88,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 
 		this.maybeActivateLightbox();
 		this.maybeLoadSlideShowStyles();
+		this.maybeLoadSwiperJs();
 	}
 
 	maybeActivateLightbox() {
@@ -135,5 +136,22 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		linkElement.href = `${ elementorFrontend.config.urls.assets }${ cssFilePath }?ver=${ elementorFrontend.config.version }`;
 
 		document.head.appendChild( linkElement );
+	}
+
+	maybeLoadSwiperJs() {
+		if ( 0 === this.elements.$lightBoxes.length ) {
+			return;
+		}
+		//
+		// const lightboxPromise = new Promise( ( resolveLightbox ) => {
+		// 		import(
+		// 			/* webpackChunkName: 'lightbox' */
+		// 			`elementor-frontend/utils/lightbox/lightbox`
+		// 			).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
+		// 	} ),
+		// 	dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
+		// 	shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' );
+		//
+		// return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise ] ).then( () => lightboxPromise );
 	}
 }
