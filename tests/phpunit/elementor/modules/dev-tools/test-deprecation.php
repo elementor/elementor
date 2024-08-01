@@ -217,7 +217,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 	public function test_do_deprecated_action__soft() {
 		$this->setExpectedDeprecated( 'elementor/test/deprecated_action_soft' );
-		
+
 		add_action( 'elementor/test/deprecated_action_soft', function() {
 			echo 'Testing Do Deprecated Action';
 		} );

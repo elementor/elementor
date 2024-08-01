@@ -85,6 +85,23 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		}', $serialized );
 	}
 
+	public function test_get_atomic_controls__throws_when_control_is_invalid() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [],
+			'controls' => [
+				new \stdClass(),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Control must be an instance of `Atomic_Control_Base`.' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
 	public function test_get_atomic_controls__throws_when_control_inside_a_section_is_not_in_schema() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -121,57 +138,12 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_controls__throws_when_plain_object_control_is_not_in_schema() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
-			'controls' => [
-				[
-					'type' => 'control',
-					'value' => [
-						'bind' => 'not-in-schema',
-					],
-				]
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`. Did you forget to define it?' );
-
-		// Act.
-		$widget->get_atomic_controls();
-	}
-
 	public function test_get_atomic_controls__throws_when_control_has_empty_bind() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [],
 			'controls' => [
 				Textarea_Control::bind_to( '' ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Control is missing a bound prop from the schema.' );
-
-		// Act.
-		$widget->get_atomic_controls();
-	}
-
-	public function test_get_atomic_controls__throws_when_plain_object_control_has_empty_bind() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
-			'controls' => [
-				[
-					'type' => 'control',
-					'value' => [
-						'type' => 'textarea',
-						'bind' => null,
-					],
-				]
 			],
 		] );
 
@@ -191,23 +163,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 			// Control in section
 			Section::make()->set_items( [
-				Select_Control::bind_to( 'select' )
-			] ),
+				Select_Control::bind_to( 'select' ),
 
-			// Plain object control
-			[
-				'type' => 'control',
-				'value' => [
-					'type' => 'textarea',
-					'bind' => 'text',
-				],
-			]
+				// Nested section
+				Section::make()->set_items( [
+					Textarea_Control::bind_to( 'nested-text' ),
+				] ),
+			] ),
 		];
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'text' => Atomic_Prop::make(),
 				'select' => Atomic_Prop::make(),
+				'nested-text' => Atomic_Prop::make(),
 			],
 			'controls' => $controls_definitions,
 		] );
@@ -236,11 +205,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				return 'test-widget';
 			}
 
-			protected function get_atomic_controls_definition(): array {
+			protected function define_atomic_controls(): array {
 				return static::$options['controls'];
 			}
 
-			public static function get_props_schema(): array {
+			protected static function define_props_schema(): array {
 				return static::$options['props_schema'];
 			}
 		};

@@ -42,7 +42,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 			'type' => 'control',
 			'value' => [
 				'type' => $this->get_type(),
-				'bind' => $this->bind,
+				'bind' => $this->get_bind(),
 				'label' => $this->label,
 				'description' => $this->description,
 				'props' => $this->get_props(),
