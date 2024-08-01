@@ -123,29 +123,17 @@ class Module extends BaseModule {
 					'wp-compose',
 					'wp-i18n',
 					'wp-hooks',
+					'elementor-ai-media-library',
 				],
 			ELEMENTOR_VERSION, true );
-
-			$session_id = 'wp-gutenberg-session-' . Utils::generate_random_string();
-
-			$config = [
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-				'client_session_id' => $session_id,
-			];
-
-			if ( $this->get_ai_app()->is_connected() ) {
-				$usage = $this->get_ai_app()->get_usage( 'gutenberg-loader', $session_id );
-
-				if ( ! is_wp_error( $usage ) ) {
-					$config['usage'] = $usage;
-				}
-			}
 
 			wp_localize_script(
 				'elementor-ai-gutenberg',
 				'ElementorAiConfig',
-				$config
+				[
+					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+					'connect_url' => $this->get_ai_connect_url(),
+				]
 			);
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
@@ -186,24 +174,13 @@ class Module extends BaseModule {
 			true
 		);
 
-		if ( function_exists( 'get_current_screen' ) ) {
-			if ( get_current_screen()->is_block_editor ) {
-				return;
-			}
-		}
-
-		$session_id = 'wp-media-lib-session-' . Utils::generate_random_string();
-
-		$config = [
-			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-			'connect_url' => $this->get_ai_connect_url(),
-			'client_session_id' => $session_id,
-		];
-
 		wp_localize_script(
 			'elementor-ai-media-library',
 			'ElementorAiConfig',
-			$config
+			[
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+			]
 		);
 
 		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
