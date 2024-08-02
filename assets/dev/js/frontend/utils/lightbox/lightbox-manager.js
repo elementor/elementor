@@ -29,7 +29,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		return {
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
-				lightbox: '[data-elementor-lightbox]',
+				lightboxSlideshow: '[data-elementor-lightbox-slideshow]',
 			},
 		};
 	}
@@ -37,7 +37,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	getDefaultElements() {
 		return {
 			$links: jQuery( this.getSettings( 'selectors.links' ) ),
-			$lightboxes: jQuery( this.getSettings( 'selectors.lightbox' ) ),
+			$lightboxSlideshows: jQuery( this.getSettings( 'selectors.lightboxSlideshow' ) ),
 		};
 	}
 
@@ -115,6 +115,6 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	}
 
 	isLightboxSlideshow() {
-		return 0 !== this.elements.$lightboxes.length;
+		return 0 !== this.elements.$lightboxSlideshows.length;
 	}
 }
