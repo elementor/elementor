@@ -1,5 +1,4 @@
 @import "../../helpers/variables";
-@import "../../helpers/direction";
 @import "../breakpoints/breakpoints";
 
 .elementor-lightbox {
@@ -43,7 +42,7 @@
 			cursor: pointer;
 			position: absolute;
 			font-size: var(--lightbox-header-icons-size);
-			#{$end}: 0.75em;
+			inset-inline-end: 0.75em;
 			margin-top: 13px;
 			padding: .25em;
 			z-index: 2;

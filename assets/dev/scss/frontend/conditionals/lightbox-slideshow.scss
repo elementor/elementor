@@ -1,5 +1,4 @@
 @import "../../helpers/variables";
-@import "../../helpers/direction";
 
 .elementor-slideshow {
 	&__counter {
@@ -84,7 +83,7 @@
 		display: block;
 		position: absolute;
 		min-width: 200px;
-		@include end(2.8em);
+		inset-inline-end: 2.8em;
 		top: 3em;
 		background-color: #fff;
 		border-radius: 3px;
@@ -128,7 +127,7 @@
 			display: block;
 			position: absolute;
 			top: 1px;
-			@include end(0.5em);
+			inset-inline-end: 0.5em;
 			border: .45em solid;
 			border-color: transparent transparent #fff transparent;
 			transform: translateY(-100%) scaleX(0.7);
