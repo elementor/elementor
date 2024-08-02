@@ -105,7 +105,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
-		await editor.addWidget( 'image' );
+		const widgetId = await editor.addWidget( 'image' );
 		await editor.setMediaControlImageValue( 'image', `${ image }.png` );
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
@@ -120,9 +120,14 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await expect( title ).toHaveCSS( 'text-align', 'center' );
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 
+		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
+		await editor.removeElement( widgetId );
+		await editor.addWidget( 'heading' );
+		await editor.setTextControlValue( 'link', imageSrc );
+
 		await editor.publishAndViewPage();
 
-		await page.locator( EditorSelectors.image.image ).click( );
+		await page.locator( EditorSelectors.widget ).locator( 'a' ).click( );
 		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png' );
 	} );
 } );
