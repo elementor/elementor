@@ -9,11 +9,12 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
 			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
-			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
+			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' ),
+			lightboxSlideshowStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' );
 
-		const lightboxSlideshowStylePromise = hasSlideshow
-			? elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' )
-			: Promise.resolve( true );
+		// const lightboxSlideshowStylePromise = hasSlideshow
+		// 	? elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' )
+		// 	: Promise.resolve( true );
 
 		return Promise.all( [
 			lightboxPromise,
