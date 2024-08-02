@@ -652,7 +652,7 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			wp_enqueue_style( 'swiper' );
+//			wp_enqueue_style( 'swiper' );
 
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );

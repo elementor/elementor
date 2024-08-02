@@ -7,9 +7,10 @@ export default class LightboxManager extends elementorModules.ViewModule {
 				).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
 			} ),
 			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
-			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' );
+			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
+			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' );
 
-		return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise ] ).then( () => lightboxPromise );
+		return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise, swiperStylePromise ] ).then( () => lightboxPromise );
 	}
 
 	getDefaultSettings() {
