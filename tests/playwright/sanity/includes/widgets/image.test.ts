@@ -119,5 +119,10 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		const description = editor.getPreviewFrame().locator( '.elementor-slideshow__description' );
 		await expect( title ).toHaveCSS( 'text-align', 'center' );
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
+
+		await editor.publishAndViewPage();
+
+		await page.locator( EditorSelectors.image.image ).click( );
+		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png' );
 	} );
 } );
