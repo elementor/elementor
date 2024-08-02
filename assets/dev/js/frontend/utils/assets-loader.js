@@ -19,7 +19,7 @@ export default class AssetsLoader {
 	load( type, key ) {
 		const assetData = AssetsLoader.assets[ type ][ key ];
 
-		if ( this.isAssetLoaded( assetData ) ) {
+		if ( this.isAssetLoaded( assetData, type ) ) {
 			return Promise.resolve( true );
 		}
 
@@ -38,10 +38,12 @@ export default class AssetsLoader {
 		return assetData.loader;
 	}
 
-	isAssetLoaded( assetData ) {
-		const tag = 'script' === assetData.type ? 'script' : 'link';
+	isAssetLoaded( assetData, assetType ) {
+		const tag = 'script' === assetType ? 'script' : 'link',
+			filePath = `${ tag }[src="${ assetData.src }"]`,
+			assetElements = document.querySelectorAll( filePath );
 
-		return 0 < document.querySelectorAll( `${ tag }[src="${ assetData.src }"]` ).length;
+		return !! assetElements?.length;
 	}
 }
 
