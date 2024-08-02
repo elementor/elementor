@@ -1,5 +1,4 @@
 @import "../../helpers/variables";
-@import "../../helpers/direction";
 @import "../breakpoints/breakpoints";
 
 .elementor-lightbox {
@@ -115,7 +114,10 @@
 
 	.elementor-video-container {
 		width: 100%;
-		@include absolute-center;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 
 		.elementor-video-square,
 		.elementor-video-landscape,
