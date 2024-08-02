@@ -19,6 +19,10 @@ export default class AssetsLoader {
 	load( type, key ) {
 		const assetData = AssetsLoader.assets[ type ][ key ];
 
+		if ( this.isAssetLoaded( assetData ) ) {
+			return Promise.resolve( true );
+		}
+
 		if ( ! assetData.loader ) {
 			assetData.loader = new Promise( ( resolve ) => {
 				const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
@@ -32,6 +36,12 @@ export default class AssetsLoader {
 		}
 
 		return assetData.loader;
+	}
+
+	isAssetLoaded( assetData ) {
+		const tag = 'script' === assetData.type ? 'script' : 'link';
+
+		return 0 < document.querySelectorAll( `${ tag }[src="${ assetData.src }"]` ).length;
 	}
 }
 
@@ -61,5 +71,12 @@ AssetsLoader.assets = {
 		swiper: {
 			src: swiperCssSource,
 		},
+		'e-lightbox': {
+			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
+		},
+		'e-lightbox-slideshow': {
+			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox-slideshow${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
+		},
+
 	},
 };

@@ -1,5 +1,7 @@
+import AssetsLoader from "../assets-loader";
+
 export default class LightboxManager extends elementorModules.ViewModule {
-	static getLightbox() {
+	static getLightbox( hasSlideshow = false ) {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(
 					/* webpackChunkName: 'lightbox' */
@@ -8,16 +10,28 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			} ),
 			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
-			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' );
+			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
+			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
 
-		return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise, swiperStylePromise ] ).then( () => lightboxPromise );
+		const lightboxSlideshowStylePromise = hasSlideshow
+			? elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' )
+			: Promise.resolve( true );
+
+		return Promise.all( [
+			lightboxPromise,
+			dialogPromise,
+			shareLinkPromise,
+			swiperStylePromise,
+			lightboxStylePromise,
+			lightboxSlideshowStylePromise
+		] ).then( () => lightboxPromise );
 	}
 
 	getDefaultSettings() {
 		return {
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
-				lightBox: '[data-elementor-lightbox]',
+				lightbox: '[data-elementor-lightbox]',
 			},
 		};
 	}
@@ -25,7 +39,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	getDefaultElements() {
 		return {
 			$links: jQuery( this.getSettings( 'selectors.links' ) ),
-			$lightBoxes: jQuery( this.getSettings( 'selectors.lightbox' ) ),
+			$lightboxes: jQuery( this.getSettings( 'selectors.lightbox' ) ),
 		};
 	}
 
@@ -67,7 +81,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = await LightboxManager.getLightbox();
+		const lightbox = await LightboxManager.getLightbox( this.isLightboxSlideshow() );
 
 		lightbox.createLightbox( element );
 	}
@@ -87,17 +101,14 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		this.maybeActivateLightbox();
-		this.maybeLoadSlideShowStyles();
-		this.maybeLoadSwiperJs();
+		this.maybeActivateLightboxOnLink();
 	}
 
-	maybeActivateLightbox() {
+	maybeActivateLightboxOnLink() {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
-				this.maybeInsertLightboxStyle();
-				LightboxManager.getLightbox();
+				LightboxManager.getLightbox(  this.isLightboxSlideshow() );
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;
@@ -105,54 +116,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		} );
 	}
 
-	maybeInsertLightboxStyle() {
-		this.maybeLoadStyle( 'e-lightbox', 'css/conditionals/lightbox.min.css' );
-	}
-
-	maybeLoadSlideShowStyles() {
-		if ( 0 === this.elements.$lightBoxes.length ) {
-			return;
-		}
-
-		this.maybeLoadStyle( 'e-lightbox-slideshow', 'css/conditionals/lightbox-slideshow.min.css' );
-		// To check:
-		// Swiper version 5 and 8??
-		// Swiper CSS file path??
-		// Swiper JS file??
-		// this.maybeLoadStyle( 'e-swiper', 'css/conditionals/swiper.min.css' );
-	}
-
-	maybeLoadStyle( styleSheetId, cssFilePath ) {
-		const hasStylesheet = !! document.getElementById( styleSheetId );
-
-		if ( hasStylesheet ) {
-			return;
-		}
-
-		const linkElement = document.createElement( 'link' );
-
-		linkElement.id = styleSheetId;
-		linkElement.rel = 'stylesheet';
-		linkElement.type = 'text/css';
-		linkElement.href = `${ elementorFrontend.config.urls.assets }${ cssFilePath }?ver=${ elementorFrontend.config.version }`;
-
-		document.head.appendChild( linkElement );
-	}
-
-	maybeLoadSwiperJs() {
-		if ( 0 === this.elements.$lightBoxes.length ) {
-			return;
-		}
-		//
-		// const lightboxPromise = new Promise( ( resolveLightbox ) => {
-		// 		import(
-		// 			/* webpackChunkName: 'lightbox' */
-		// 			`elementor-frontend/utils/lightbox/lightbox`
-		// 			).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
-		// 	} ),
-		// 	dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
-		// 	shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' );
-		//
-		// return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise ] ).then( () => lightboxPromise );
+	isLightboxSlideshow() {
+		return 0 !== this.elements.$lightboxes.length;
 	}
 }
