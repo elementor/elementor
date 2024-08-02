@@ -79,6 +79,5 @@ AssetsLoader.assets = {
 		'e-lightbox-slideshow': {
 			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox-slideshow${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
 		},
-
 	},
 };
