@@ -1,5 +1,3 @@
-import AssetsLoader from "../assets-loader";
-
 export default class LightboxManager extends elementorModules.ViewModule {
 	static getLightbox( hasSlideshow = false ) {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
@@ -23,7 +21,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			shareLinkPromise,
 			swiperStylePromise,
 			lightboxStylePromise,
-			lightboxSlideshowStylePromise
+			lightboxSlideshowStylePromise,
 		] ).then( () => lightboxPromise );
 	}
 
@@ -108,7 +106,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
-				LightboxManager.getLightbox(  this.isLightboxSlideshow() );
+				LightboxManager.getLightbox( this.isLightboxSlideshow() );
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;
