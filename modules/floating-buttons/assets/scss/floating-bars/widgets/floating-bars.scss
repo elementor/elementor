@@ -46,6 +46,7 @@
 		grid-template-columns: auto auto;
 		grid-template-rows: auto auto;
 		gap: var(--e-floating-bars-elements-gap);
+		row-gap: 16px;
 	}
 
 	&.has-vertical-position-top {

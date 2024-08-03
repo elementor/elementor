@@ -49,6 +49,11 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'close_position_selector' => 'inset-inline-{{VALUE}}: 10px',
 					'has_close_position_control' => true,
 					'background_selector' => '{{WRAPPER}} .e-floating-bars',
+					'align_elements_selector' => [
+						'{{WRAPPER}} .e-floating-bars' => 'justify-content: {{VALUE}};',
+						'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
+						'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
+					],
 				]
 			],
 			'advanced' => [],
@@ -1138,12 +1143,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'icon' => 'eicon-align-stretch-h',
 					],
 				],
-				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => 'justify-content: {{VALUE}};',
-					'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
-					'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
-
-				],
+				'selectors' => $config['style']['floating_bar_section']['align_elements_selector'],
 				'separator' => 'before',
 			]
 		);

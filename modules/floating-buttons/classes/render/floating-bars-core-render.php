@@ -113,7 +113,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		?>
 			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<i class="eicon-editor-close"></i>
+				<i class="eicon-close"></i>
 			</button>
 		<?php
 	}

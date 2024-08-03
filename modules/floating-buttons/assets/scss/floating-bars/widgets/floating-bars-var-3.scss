@@ -96,6 +96,13 @@
 					stroke: var(--e-floating-bars-coupon-border-color);
 				}
 			}
+
+			@media (max-width: $screen-mobile-max) {
+				display: flex;
+				grid-column: span 2 / span 2;
+				grid-row-start: 2;
+				justify-content: center;
+			}
 		}
 		
 
