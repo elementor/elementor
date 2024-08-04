@@ -23,7 +23,7 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 		dropCap.appendChild( dropCapLetter );
 
 		return {
-			paragraph: this.baseElement?.querySelectorAll( selectors.paragraph ),
+			paragraph: this.eElement?.querySelectorAll( selectors.paragraph ),
 			dropCap,
 			dropCapLetter,
 		};

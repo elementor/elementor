@@ -1,5 +1,5 @@
 module.exports = elementorModules.ViewModuleFrontend.extend( {
-	baseElement : null,
+	eElement : null,
 
 	editorListeners : null,
 
@@ -18,9 +18,9 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 			return;
 		}
 
-		this.baseElement = settings.baseElement;
+		this.eElement = settings.eElement;
 
-		this.isEdit = this.baseElement?.classList?.contains( 'elementor-element-edit-mode' );
+		this.isEdit = this.eElement?.classList?.contains( 'elementor-element-edit-mode' );
 
 		if ( this.isEdit ) {
 			this.addEditorListeners();
@@ -36,11 +36,11 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 			return false;
 		}
 
-		return elementor.documents.currentDocument.id.toString() === this.baseElement?.closest( '.elementor' )?.dataset?.elementorId;
+		return elementor.documents.currentDocument.id.toString() === this.eElement?.closest( '.elementor' )?.dataset?.elementorId;
 	},
 
 	findElement( selector ) {
-		const mainElement = this.baseElement,
+		const mainElement = this.eElement,
 			rawElements = mainElement?.querySelectorAll( selector );
 
 		if ( ! rawElements ) {
@@ -54,18 +54,18 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 		} );
 	},
 
-	getUniqueHandlerID( cid, baseElement ) {
+	getUniqueHandlerID( cid, eElement ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();
 		}
 
-		if ( ! baseElement ) {
-			baseElement = !! this.baseElement ? this.baseElement : this.getSettings( 'baseElement' );
+		if ( ! eElement ) {
+			eElement = !! this.eElement ? this.eElement : this.getSettings( 'eElement' );
 		}
 
-		const elementType = !! window.jQuery && !! baseElement.jquery
-			? baseElement.attr( 'data-element_type' )
-			: baseElement.getAttribute( 'data-element_type' );
+		const elementType = !! window.jQuery && !! eElement.jquery
+			? eElement.attr( 'data-element_type' )
+			: eElement.getAttribute( 'data-element_type' );
 
 		return cid + elementType + this.getConstructorID();
 	},
@@ -171,11 +171,11 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 	},
 
 	getElementType() {
-		return this.baseElement?.dataset?.element_type;
+		return this.eElement?.dataset?.element_type;
 	},
 
 	getWidgetType() {
-		const widgetType = this.baseElement?.dataset?.widget_type;
+		const widgetType = this.eElement?.dataset?.widget_type;
 
 		if ( ! widgetType ) {
 			return;
@@ -185,12 +185,12 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 	},
 
 	getID() {
-		return this.baseElement?.dataset?.id;
+		return this.eElement?.dataset?.id;
 	},
 
 	getModelCID() {
-		if ( !! this.baseElement ) {
-			return this.baseElement.dataset?.modelCid;
+		if ( !! this.eElement ) {
+			return this.eElement.dataset?.modelCid;
 		}
 
 		return this.$element.data( 'model-cid' );
@@ -235,7 +235,7 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 				}
 			} );
 		} else {
-			const rawSettings = this.baseElement?.dataset?.settings;
+			const rawSettings = this.eElement?.dataset?.settings;
 			elementSettings = !! rawSettings
 				? JSON.parse( rawSettings )
 				: {};
@@ -263,12 +263,12 @@ module.exports = elementorModules.ViewModuleFrontend.extend( {
 			this.isJqueryRequired = true;
 		}
 
-		if ( ! this.baseElement ) {
-			this.baseElement = this.getSettings( 'baseElement' );
+		if ( ! this.eElement ) {
+			this.eElement = this.getSettings( 'eElement' );
 		}
 
 		if ( !! window.jQuery ) {
-			this.$element = jQuery( this.baseElement );
+			this.$element = jQuery( this.eElement );
 		}
 
 		if ( this.isActive( this.getSettings() ) ) {

@@ -50,7 +50,7 @@ export default class extends elementorModules.ViewModuleFrontend {
 			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses?.base;
 
 		this.documents[ documentID ] = new DocumentClass( {
-			baseElement: baseDocument,
+			eElement: baseDocument,
 			id: documentID,
 		} );
 	}

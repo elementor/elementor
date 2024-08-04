@@ -76,9 +76,9 @@ module.exports = function() {
 
 		const elementName = elementBaseName + skin;
 
-		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( baseElement ) => {
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( eElement ) => {
 			if ( isClassHandler( Handler ) ) {
-				this.addHandler( Handler, { baseElement, elementName }, true );
+				this.addHandler( Handler, { eElement, elementName }, true );
 			} else {
 				const handlerValue = Handler();
 
@@ -88,17 +88,17 @@ module.exports = function() {
 
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
-						this.addHandler( dynamicHandler, { baseElement, elementName }, true );
+						this.addHandler( dynamicHandler, { eElement, elementName }, true );
 					} );
 				} else {
-					this.addHandler( handlerValue, { baseElement, elementName }, true );
+					this.addHandler( handlerValue, { eElement, elementName }, true );
 				}
 			}
 		} );
 	};
 
 	this.addHandler = function( HandlerClass, options ) {
-		const elementID = options?.baseElement?.dataset?.modelCid;
+		const elementID = options?.eElement?.dataset?.modelCid;
 
 		let handlerID;
 
@@ -120,7 +120,7 @@ module.exports = function() {
 
 		const newHandler = new HandlerClass( options );
 
-		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.baseElement );
+		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.eElement );
 
 		if ( elementID ) {
 			handlersInstances[ elementID ][ handlerID ] = newHandler;

@@ -124,7 +124,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 
 		containerElement.appendChild( wrapperElement );
 
-		this.baseElement.insertBefore( containerElement, this.baseElement.firstChild );
+		this.eElement.insertBefore( containerElement, this.eElement.firstChild );
 
 		this.elements.backgroundSlideShowContainer = containerElement;
 	}
