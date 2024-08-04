@@ -19,6 +19,11 @@
 		@media (max-width: $screen-mobile-max) {
 			width: 100%;
 
+			.e-contact-buttons__chat-button-container {
+				width: 100%;
+				max-width: 100%;
+			}
+
 			.e-contact-buttons__chat-button {
 				width: 100%;
 			}
