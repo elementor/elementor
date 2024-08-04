@@ -76,12 +76,12 @@ class Module extends BaseApp {
 			return;
 		}
 
-//		add_action( 'elementor/admin/menu/after_register', function( Admin_Menu_Manager $admin_menu, array $hooks ) {
-//			$hook_suffix = 'toplevel_page_elementor';
-//			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_checklist_scripts' ] );
-//		}, 10, 2 );
+		add_action( 'elementor/admin/menu/after_register', function( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			$hook_suffix = 'toplevel_page_elementor';
+			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_checklist_scripts' ] );
+		}, 10, 2 );
 
-		$this->enqueue_checklist_scripts();
+//		$this->enqueue_checklist_scripts();
 
 		add_action( 'current_screen', function () {
 			$this->render_checklist();

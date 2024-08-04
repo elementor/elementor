@@ -11,7 +11,7 @@ const LaunchpadCont = styled( Box )( {
 	backgroundColor: 'white',
 } );
 
-function Launchpad() {
+const Launchpad = () => {
 	return (
 		<LaunchpadCont>
 			<Header />
