@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Base;
 
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,60 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 	}
 
-	abstract public function get_atomic_controls(): array;
+	public function get_atomic_controls() {
+		$controls = $this->define_atomic_controls();
+
+		return $this->get_valid_controls( $controls );
+	}
+
+	private function get_valid_controls( array $controls ): array {
+		$valid_controls = [];
+		$schema = static::get_props_schema();
+
+		foreach ( $controls as $control ) {
+			if ( $control instanceof Section ) {
+				$cloned_section = clone $control;
+
+				$cloned_section->set_items(
+					$this->get_valid_controls( $control->get_items() )
+				);
+
+				$valid_controls[] = $cloned_section;
+				continue;
+			}
+
+			if ( ! ( $control instanceof Atomic_Control_Base ) ) {
+				$this->safe_throw( 'Control must be an instance of `Atomic_Control_Base`.' );
+				continue;
+			}
+
+			$prop_name = $control->get_bind();
+
+			if ( ! $prop_name ) {
+				$this->safe_throw( 'Control is missing a bound prop from the schema.' );
+				continue;
+			}
+
+			if ( ! array_key_exists( $prop_name, $schema ) ) {
+				$this->safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`. Did you forget to define it?" );
+				continue;
+			}
+
+			$valid_controls[] = $control;
+		}
+
+		return $valid_controls;
+	}
+
+	private function safe_throw( string $message ) {
+		if ( ! defined( 'ELEMENTOR_DEBUG' ) || ! ELEMENTOR_DEBUG ) {
+			return;
+		}
+
+		throw new \Exception( $message );
+	}
+
+	abstract protected function define_atomic_controls(): array;
 
 	final public function get_controls( $control_id = null ) {
 		if ( ! empty( $control_id ) ) {
@@ -79,5 +132,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $transformed_settings;
 	}
 
-	abstract public static function get_props_schema(): array;
+	public static function get_props_schema() {
+		return static::define_props_schema();
+	}
+
+	abstract protected static function define_props_schema(): array;
 }
