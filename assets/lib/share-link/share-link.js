@@ -37,9 +37,9 @@
 				shareWindowParams = 'toolbar=0,status=0,width=' + settings.width + ',height=' + settings.height + ',top=' + shareWindowTop + ',left=' + shareWindowLeft;
 			}
 
-			const link = ShareLink.getNetworkLink( networkName, settings ),
-				isPlainLink = /^https?:\/\//.test( link ),
-				windowName = isPlainLink ? '' : '_self';
+			const link = ShareLink.getNetworkLink( networkName, settings );
+			const isPlainLink = /^https?:\/\//.test( link );
+			const windowName = isPlainLink ? '' : '_self';
 
 			open( link, windowName, shareWindowParams );
 		};
