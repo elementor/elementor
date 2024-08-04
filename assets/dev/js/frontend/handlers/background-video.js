@@ -15,9 +15,9 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				backgroundVideoContainer: this.baseElement?.querySelector( selectors.backgroundVideoContainer ),
 			};
 
-		elements.backgroundVideoEmbed = elements.backgroundVideoContainer?.querySelectorAll( selectors.backgroundVideoEmbed );
+		elements.backgroundVideoEmbed = elements.backgroundVideoContainer?.querySelector( selectors.backgroundVideoEmbed );
 
-		elements.backgroundVideoHosted = elements.backgroundVideoContainer?.querySelectorAll( selectors.backgroundVideoHosted );
+		elements.backgroundVideoHosted = elements.backgroundVideoContainer?.querySelector( selectors.backgroundVideoHosted );
 
 		return elements;
 	}

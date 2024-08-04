@@ -3,14 +3,14 @@ export default class BaseLoader extends elementorModules.ViewModuleFrontend {
 		return {
 			isInserted: false,
 			selectors: {
-				firstScript: 'script:first',
+				firstScript: 'script:first-of-type',
 			},
 		};
 	}
 
 	getDefaultElements() {
 		return {
-			firstScript: this.getSettings( 'selectors.firstScript' ),
+			firstScript: document.querySelector( this.getSettings( 'selectors.firstScript' ) ),
 		};
 	}
 
