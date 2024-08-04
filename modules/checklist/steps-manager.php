@@ -55,7 +55,7 @@ class Steps_Manager {
 	private function register_steps() : void {
 		$steps = $this->steps_config;
 
-		foreach( $steps as $step ) {
+		foreach ( $steps as $step ) {
 			$step_instance = $this->get_step_instance( $step );
 
 			if ( ! $step_instance ) {

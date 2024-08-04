@@ -88,7 +88,7 @@ class Module extends BaseModule {
 
 			wp_enqueue_script(
 				$this->get_name(),
-				ELEMENTOR_ASSETS_URL . 'js/e-checklist' . $min_suffix . '.js',
+				ELEMENTOR_ASSETS_URL . 'js/checklist' . $min_suffix . '.js',
 				[
 					'react',
 					'react-dom',
