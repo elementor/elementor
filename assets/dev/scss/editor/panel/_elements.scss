@@ -76,6 +76,17 @@
 
 .elementor-panel {
 
+	.accessibility-indicator {
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		padding: 2px;
+		color: lightgreen;
+		background-color: darkgreen;
+		border-radius: 10%;
+		font-size: 10px;
+	}
+
 	.elementor-element {
 		font-family: var(--e-a-font-family);
 		color: var(--e-a-color-txt);
