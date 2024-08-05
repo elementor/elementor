@@ -19,25 +19,24 @@ export default class AssetsLoader {
 	load( type, key ) {
 		const assetData = AssetsLoader.assets[ type ][ key ];
 
-		if ( ! assetData.loader ) {
-			if ( this.isAssetLoaded( assetData, type ) ) {
-				assetData.loader = new Promise( ( resolve ) => {
-					resolve( true );
-				} );
-
-				return assetData.loader;
-			}
-
-			assetData.loader = new Promise( ( resolve ) => {
-				const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
-
-				element.onload = () => resolve( true );
-
-				const parent = 'head' === assetData.parent ? assetData.parent : 'body';
-
-				document[ parent ].appendChild( element );
-			} );
+		if ( !! assetData.loader ) {
+			return assetData.loader;
 		}
+
+		if ( this.isAssetLoaded( assetData, type ) ) {
+			assetData.loader = Promise.resolve( true );
+			return assetData.loader;
+		}
+
+		assetData.loader = new Promise( ( resolve ) => {
+			const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
+
+			element.onload = () => resolve( true );
+
+			const parent = 'head' === assetData.parent ? assetData.parent : 'body';
+
+			document[ parent ].appendChild( element );
+		} );
 
 		return assetData.loader;
 	}
