@@ -5,7 +5,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgumentConstructor( 'styleDefId', String, args );
+		this.requireArgumentConstructor( 'styleDefID', String, args );
 
 		this.requireArgumentConstructor( 'meta', Object, args );
 
@@ -21,15 +21,15 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 	}
 
 	apply( args ) {
-		const { container, styleDefId, meta } = args;
+		const { container, styleDefID, meta } = args;
 
 		const oldStyles = container.model.get( 'styles' ) || {};
 
-		if ( ! oldStyles[ styleDefId ] ) {
+		if ( ! oldStyles[ styleDefID ] ) {
 			throw new Error( 'Style Def not found' );
 		}
 
-		const style = oldStyles[ styleDefId ];
+		const style = oldStyles[ styleDefID ];
 
 		if ( this.variantExists( style, meta ) ) {
 			throw new Error( 'Style Variant already exits' );
@@ -42,7 +42,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 
 		const newStyles = {
 			...oldStyles,
-			[ styleDefId ]: style,
+			[ styleDefID ]: style,
 		};
 
 		container.model.set( 'styles', newStyles );
