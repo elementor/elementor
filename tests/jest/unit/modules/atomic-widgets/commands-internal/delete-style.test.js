@@ -51,7 +51,7 @@ describe( 'DeleteStyle - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, styleDefId: 'style-id', bind } );
+		command.apply( { container, styleDefID: 'style-id', bind } );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( {} );
@@ -103,7 +103,7 @@ describe( 'DeleteStyle - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, styleDefId: 'style-id-1', bind } );
+		command.apply( { container, styleDefID: 'style-id-1', bind } );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( {
