@@ -20,7 +20,7 @@ export default class AssetsLoader {
 		const assetData = AssetsLoader.assets[ type ][ key ];
 
 		if ( this.isAssetLoaded( assetData, type ) ) {
-			return true;
+			assetData.loader = true;
 		}
 
 		if ( ! assetData.loader ) {
