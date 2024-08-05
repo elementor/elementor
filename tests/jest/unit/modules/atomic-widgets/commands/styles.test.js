@@ -145,7 +145,7 @@ describe( 'Styles - apply', () => {
 		],
 		[
 			'add a new variant to existing style definition and update props',
-			{ styleDefId: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
+			{ styleDefID: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
 			{
 				label: 'Container',
 				settings: {
@@ -196,7 +196,7 @@ describe( 'Styles - apply', () => {
 		],
 		[
 			'update props without deleting old props',
-			{ styleDefId: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
+			{ styleDefID: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
 			{
 				label: 'Container',
 				settings: {
