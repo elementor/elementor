@@ -19,11 +19,15 @@ export default class AssetsLoader {
 	load( type, key ) {
 		const assetData = AssetsLoader.assets[ type ][ key ];
 
-		if ( this.isAssetLoaded( assetData, type ) ) {
-			assetData.loader = true;
-		}
-
 		if ( ! assetData.loader ) {
+			if ( this.isAssetLoaded( assetData, type ) ) {
+				assetData.loader = new Promise( ( resolve ) => {
+					resolve( true );
+				} );
+
+				return assetData.loader;
+			}
+
 			assetData.loader = new Promise( ( resolve ) => {
 				const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
 
