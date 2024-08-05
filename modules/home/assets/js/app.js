@@ -1,5 +1,5 @@
 import { DirectionProvider, LocalizationProvider } from '@elementor/ui';
-import { ThemeProvider } from '@elementor/ui/styles';
+import { ThemeProvider } from '@elementor/ui';
 import ReactUtils from 'elementor-utils/react';
 
 import HomeScreen from './components/home-screen';
