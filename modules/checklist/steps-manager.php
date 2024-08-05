@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Checklist;
 
+use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,50 +23,102 @@ class Steps_Manager {
 		$this->register_steps();
 	}
 
-	public function get_progress_for_frontend() : array {
+	/**
+	 * Gets formatted and ordered array of step ( step data, is_marked_done and is_completed )
+	 *
+	 * @return array
+	 */
+	public function get_steps_for_frontend() : array {
 		$formatted_steps = [];
 
 		foreach ( $this->step_instances as $step ) {
-			$formatted_steps[] = $this->module->get_step_progress( $step->get_id() );
+			$formatted_steps[] = $step->get_step_data();
 		}
 
 		return $formatted_steps;
 	}
 
-	public function mark_step_as_done( $step_id ) : void {
+	/**
+	 * Marks a step as done, returns true if the step was found and marked or false otherwise
+	 *
+	 * @param string $step_id
+	 *
+	 * @return bool
+	 */
+	public function mark_step_as_done( $step_id ) : bool {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
 				$step->mark_as_done();
 
-				return;
+				return true;
 			}
 		}
+
+		return false;
 	}
 
-	public function unmark_step_as_done( $step_id ) : void {
+	/**
+	 * Unmarks a step as done, returns true if the step was found and unmarked or false otherwise
+	 *
+	 * @param string $step_id
+	 *
+	 * @return bool
+	 */
+	public function unmark_step_as_done( $step_id ) : bool {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
 				$step->unmark_as_done();
 
-				return;
+				return true;
 			}
 		}
+
+		return false;
 	}
 
+	/**
+	 * Maybe marks a step as completed (depending on if source allows it), returns true if the step was found and marked or false otherwise
+	 *
+	 * @param $step_id
+	 *
+	 * @return bool
+	 */
+	public function maybe_mark_step_as_complete( $step_id ) : bool {
+		foreach ( $this->step_instances as $step ) {
+			if ( $step->get_id() === $step_id ) {
+				$step->maybe_mark_as_completed();
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Getting the step instances array based on source's order
+	 *
+	 * @return void
+	 */
 	private function register_steps() : void {
 		$steps = $this->steps_config;
 
 		foreach ( $steps as $step ) {
 			$step_instance = $this->get_step_instance( $step );
 
-			if ( ! $step_instance ) {
-				continue;
+			if ( $step_instance ) {
+				$this->step_instances[] = $step_instance;
 			}
-
-			$this->step_instances[] = $step_instance;
 		}
 	}
 
+	/**
+	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
+	 *
+	 * @param $step_data
+	 *
+	 * @return Step_Base|null
+	 */
 	private function get_step_instance( $step_data ) : ?Step_Base {
 		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_data['id'];
 
@@ -77,6 +130,11 @@ class Steps_Manager {
 		return new $class_name( $step_data, $this->module );
 	}
 
+	/**
+	 * Returns the steps config from source
+	 *
+	 * @return array
+	 */
 	private static function get_steps_config_from_source() : array {
 		return [
 			[

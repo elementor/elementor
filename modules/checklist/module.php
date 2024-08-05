@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -18,10 +19,17 @@ class Module extends BaseModule {
 
 	private $user_progress = null;
 
-	/** @var Steps_Manager $steps_manager */
-	private $steps_manager;
+	private Steps_Manager $steps_manager;
 
-	public function __construct() {
+	private Wordpress_Adapter $wordpress_adapter;
+
+	/**
+	 * @param Wordpress_Adapter|null $wordpress_adapter
+	 *
+	 * @return void
+	 */
+	public function __construct( $wordpress_adapter = null ) {
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		parent::__construct();
 
 		$this->register_experiment();
@@ -30,59 +38,97 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->init_default_steps_data();
-		$this->enqueue_editor_scripts();
-		$this->validate_user_progress_property();
-		$this->steps_manager = new Steps_Manager( $this );
+		$this->setup();
 	}
 
+	/**
+	 * Get the module name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'e-checklist';
 	}
 
+	/**
+	 * Checks if the experiment is active
+	 *
+	 * @return bool
+	 */
 	public function is_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID );
 	}
 
-	public function get_user_progress() {
+	/**
+	 * Gets user's progress from db
+	 *
+	 * @return array {
+	 *      @type bool $is_hidden
+	 *      @type int $last_opened_timestamp
+	 *      @type array $steps {
+	 *          @type string $step_id => {
+	 *              @type bool $is_marked_done
+	 *              @type bool $is_completed
+	 *          }
+	 *      }
+	 *  }
+	 */
+	public function get_user_progress_from_db() {
 		return json_decode( get_option( self::DB_OPTION_KEY ), true );
 	}
 
+	/**
+	 * Using the step's ID, get the progress of the step should it exist
+	 *
+	 * @param $step_id
+	 *
+	 * @return null|array {
+	 *      @type bool $is_marked_done
+	 *      @type bool $is_completed
+	 *  }
+	 */
 	public function get_step_progress( $step_id ) {
-		$this->validate_user_progress_property();
-
 		foreach ( $this->user_progress['steps'] as $id ) {
 			if ( $id === $step_id ) {
-				return $this->user_progress['steps'][ $step_id ];
+				return $this->user_progress['steps'][ $step_id ] ?? null;
 			}
 		}
 
-		$this->user_progress['steps'][ $step_id ] = $this->get_step_initial_progress( $step_id );
-
-		return $this->user_progress['steps'][ $step_id ];
+		return null;
 	}
 
-	public function update_step_progress( $step_id, $setting_key, $value, $should_update_db = false  ) {
-		$step = $this->get_step_progress( $step_id );
-		$step[ $setting_key ] = $value;
-		$this->user_progress['steps'][ $step_id ] = $step;
+	/**
+	 * Update the progress of a step
+	 *
+	 * @param $step_id
+	 * @param $step_progress
+	 * @param bool $should_update_db
+	 *
+	 * @return void
+	 */
+	public function set_step_progress( $step_id, $step_progress, $should_update_db = false ) {
+		$this->user_progress['steps'][ $step_id ] = $step_progress;
 
 		if ( $should_update_db ) {
 			$this->update_user_progress_in_db();
 		}
 	}
 
-	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_ID,
-			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
-			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_ALPHA,
-			'hidden' => true,
-		] );
+	/**
+	 * @return Steps_Manager
+	 */
+	public function get_steps_manager() {
+		return $this->steps_manager;
 	}
 
-	private function enqueue_editor_scripts() {
+	/**
+	 * @return Wordpress_Adapter
+	 */
+	public function get_wordpress_adapter() {
+		return $this->wordpress_adapter;
+	}
+
+	public function enqueue_editor_scripts() {
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -103,10 +149,27 @@ class Module extends BaseModule {
 		} );
 	}
 
-	private function init_default_steps_data() {
+	private function setup() {
+		$this->init_user_progress();
+		$this->user_progress = $this->get_user_progress_from_db();
+		$this->steps_manager = new Steps_Manager( $this );
+		$this->enqueue_editor_scripts();
+	}
+
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ID,
+			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
+			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
+			'release_status' => Manager::RELEASE_STATUS_ALPHA,
+			'hidden' => true,
+		] );
+	}
+
+	private function init_user_progress() {
 		$default_settings = [
 			'is_hidden' => false,
-			'last_opened_timestamp' => null,
+			'last_opened_timestamp' => time(),
 			'steps' => [],
 		];
 
@@ -115,19 +178,5 @@ class Module extends BaseModule {
 
 	private function update_user_progress_in_db() {
 		update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
-	}
-
-	private function validate_user_progress_property() {
-		if ( ! $this->user_progress ) {
-			$this->user_progress = $this->get_user_progress();
-		}
-	}
-
-	private function get_step_initial_progress( $id ) {
-		return [
-			'id' => $id,
-			Step_Base::MARKED_AS_DONE_KEY => false,
-			Step_Base::COMPLETED_KEY => false,
-		];
 	}
 }

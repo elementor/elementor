@@ -7,12 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Create_Pages extends Step_Base {
-	public function is_completed() : bool {
-		$pages = get_pages( [
+	protected function get_completion_absolute_status() : bool {
+		$pages = $this->wordpress_adapter->get_pages( [
 			'meta_key' => '_elementor_version',
 			'number' => 3,
 		] );
 
-		return parent::is_completed() || count( $pages ) >= 3;
+		return count( $pages ) >= 3;
 	}
 }

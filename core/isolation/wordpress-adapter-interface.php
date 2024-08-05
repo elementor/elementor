@@ -10,4 +10,6 @@ interface Wordpress_Adapter_Interface {
 	public function wp_nonce_url( $url, $action );
 
 	public function self_admin_url( $path );
+
+	public function get_pages( $args );
 }
