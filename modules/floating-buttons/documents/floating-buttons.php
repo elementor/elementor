@@ -36,7 +36,8 @@ class Floating_Buttons extends PageBase {
 	}
 
 	public static function get_floating_element_type( $post_id ) {
-		return get_post_meta( $post_id, Module::FLOATING_ELEMENTS_TYPE_META_KEY, true ) ?: 'floating-buttons';
+		$meta = get_post_meta( $post_id, Floating_Buttons_Module::FLOATING_ELEMENTS_TYPE_META_KEY, true );
+		return $meta ? $meta : 'floating-buttons';
 	}
 
 	public static function is_editing_existing_floating_buttons_page() {
