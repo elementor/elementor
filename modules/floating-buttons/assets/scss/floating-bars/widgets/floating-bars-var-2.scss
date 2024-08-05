@@ -12,8 +12,9 @@
 	--e-floating-bars-vertical-padding: 16px;
 	--e-floating-bars-headline-icon-position: row;
 	--e-floating-bars-pause-play-icon-size: 16px;
-	--e-floating-bars-scroll-duration: 30s;
+	--e-floating-bars-scroll-duration: 100s;
 	--e-floating-bars-scroll-direction: forwards;
+	--e-floating-bars-ticker-controls-order: 1;
 
 	align-items: stretch;
 	background-color: unset;
@@ -30,6 +31,7 @@
 			background-color: var(--e-floating-bars-announcement-bg-color);
 			display: flex;
 			flex-grow: 1;
+			gap: var(--e-floating-bars-headlines-gap);
 			max-width: 100vw;
 			padding-block: var(--e-floating-bars-vertical-padding);
 		}
@@ -45,17 +47,15 @@
 		&__headlines[data-animated="true"] {
 			overflow: hidden;
 
-			&.is-playing {
-
-				.e-floating-bars__headlines-inner {
-					animation: scroll var(--e-floating-bars-scroll-duration) var(--e-floating-bars-scroll-direction) linear infinite;
-				}
+			.e-floating-bars__headlines-inner {
+				animation: scroll var(--e-floating-bars-scroll-duration) var(--e-floating-bars-scroll-direction) linear infinite;
 			}
 
+			&.is-paused,
 			&.has-pause-hover:hover {
 
 				.e-floating-bars__headlines-inner {
-					animation: none;
+					animation-play-state: paused;
 				}
 			}
 		}
@@ -125,6 +125,7 @@
 			font-size: 28px;
 			inset-inline-end: unset !important; // to override the core variation
 			inset-inline-start: unset !important; // to override the core variation
+			order: var(--e-floating-bars-ticker-controls-order);
 			padding-inline: 12px;
 			position: relative;
 			top: unset !important; // to override the core variation
@@ -140,11 +141,15 @@
 		&__overlay {
 			z-index: $ground-layer;
 		}
+
+		&__ticker-controls {
+			order: var(--e-floating-bars-ticker-controls-order);
+		}
 	}
 }
 
 @keyframes scroll {
     to {
-        transform: translate(-50%);
+        transform: translate(-100%);
     }
 }
