@@ -35,6 +35,10 @@ class Floating_Buttons extends PageBase {
 		return $properties;
 	}
 
+	public static function get_floating_element_type( $post_id ) {
+		return get_post_meta( $post_id, Module::FLOATING_ELEMENTS_TYPE_META_KEY, true ) ?: 'floating-buttons';
+	}
+
 	public static function is_editing_existing_floating_buttons_page() {
 		$action = ElementorUtils::get_super_global_value( $_GET, 'action' );
 		$post_id = ElementorUtils::get_super_global_value( $_GET, 'post' );
@@ -99,6 +103,37 @@ class Floating_Buttons extends PageBase {
 		return $built_with_elementor + $actions;
 	}
 
+	public static function get_meta_query_for_floating_buttons( string $floating_element_type ): array {
+		$meta_query = [
+			'relation' => 'AND',
+			[
+				'key' => '_elementor_conditions',
+				'compare' => 'EXISTS',
+			],
+		];
+
+		if ( 'floating-buttons' === $floating_element_type ) {
+			$meta_query[] = [
+				'relation' => 'OR',
+				[
+					'key' => Module::FLOATING_ELEMENTS_TYPE_META_KEY,
+					'compare' => 'NOT EXISTS',
+				],
+				[
+					'key' => Module::FLOATING_ELEMENTS_TYPE_META_KEY,
+					'value' => 'floating-buttons',
+				],
+			];
+		} else {
+			$meta_query[] = [
+				'key' => Module::FLOATING_ELEMENTS_TYPE_META_KEY,
+				'value' => $floating_element_type,
+			];
+		}
+
+		return $meta_query;
+	}
+
 	/**
 	 * Tries to find the post id of the floating element that is set as entire site.
 	 * If found, returns the post id, otherwise returns 0.
@@ -121,16 +156,7 @@ class Floating_Buttons extends PageBase {
 			'fields' => 'ids',
 			'no_found_rows' => true,
 			'update_post_term_cache' => false,
-			'meta_query' => [
-				[
-					'key' => Module::FLOATING_ELEMENTS_TYPE_META_KEY,
-					'value' => $floating_element_type,
-				],
-				[
-					'key' => '_elementor_conditions',
-					'compare' => 'EXISTS',
-				],
-			],
+			'meta_query' => static::get_meta_query_for_floating_buttons( $floating_element_type ),
 		] );
 
 		foreach ( $query->posts as $post_id ) {
@@ -150,7 +176,7 @@ class Floating_Buttons extends PageBase {
 	}
 
 	public function set_as_entire_site( $actions ) {
-		$floating_element_type = get_post_meta( $this->get_main_id(), Module::FLOATING_ELEMENTS_TYPE_META_KEY, true );
+		$floating_element_type = static::get_floating_element_type( $this->get_main_id() );
 		$current_set_as_entire_site_post_id = static::get_set_as_entire_site_post_id( $floating_element_type );
 
 		if ( $current_set_as_entire_site_post_id === $this->get_main_id() ) {
@@ -195,7 +221,7 @@ class Floating_Buttons extends PageBase {
 	public function admin_columns_content( $column_name ) {
 		if ( 'elementor_library_type' === $column_name ) {
 			$admin_filter_url = admin_url( Source_Local::ADMIN_MENU_SLUG . '&elementor_library_type=' . $this->get_name() );
-			$meta = get_post_meta( $this->get_main_id(), Module::FLOATING_ELEMENTS_TYPE_META_KEY, true );
+			$meta = get_post_meta( $this->get_main_id(), Module::FLOATING_ELEMENTS_TYPE_META_KEY, true ) ?: 'floating-buttons';
 			printf( '<a href="%s">%s</a>', $admin_filter_url, Module::get_floating_elements_types()[ $meta ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}

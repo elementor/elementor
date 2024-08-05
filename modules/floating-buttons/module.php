@@ -210,16 +210,9 @@ class Module extends BaseModule {
 						'no_found_rows' => true,
 						'update_post_term_cache' => false,
 						'update_post_meta_cache' => false,
-						'meta_query' => [
-							[
-								'key' => static::FLOATING_ELEMENTS_TYPE_META_KEY,
-								'value' => get_post_meta( $post, static::FLOATING_ELEMENTS_TYPE_META_KEY, true ),
-							],
-							[
-								'key' => '_elementor_conditions',
-								'compare' => 'EXISTS',
-							],
-						],
+						'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
+							Floating_Buttons::get_floating_element_type( $post )
+						),
 					] );
 
 					foreach ( $posts as $post_id ) {
