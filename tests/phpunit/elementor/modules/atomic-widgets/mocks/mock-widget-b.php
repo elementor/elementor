@@ -14,14 +14,14 @@ class Mock_Widget_B extends Atomic_Widget_Base {
 		return 'mock-widget-b';
 	}
 
-	public static function get_props_schema(): array {
+	protected static function define_props_schema(): array {
 		return [
 			'test_prop_b' => Atomic_Prop::make()
 				->default( 'default-value-b' ),
 		];
 	}
 
-	public function get_atomic_controls(): array {
+	protected function define_atomic_controls(): array {
 		return [];
 	}
 };
