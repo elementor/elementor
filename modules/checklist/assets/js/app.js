@@ -1,13 +1,9 @@
-
-import ReactDOM from 'react-dom';
-
 import { ThemeProvider } from "@elementor/ui/styles";
 import Launchpad from "./components/launchpad";
-//
-console.log('app fuck my life');
-debugger;
 
-const App = () => {
+console.log('app fuck my life');
+
+const App = () =>  {
 	return (
 		<ThemeProvider colorScheme={ 'light' }>
 			<Launchpad />
@@ -15,7 +11,4 @@ const App = () => {
 	);
 }
 
-const root = ReactDOM.createRoot(document.getElementById("e-checklist"));
-root.render(
-	<App />
-);
+export default App

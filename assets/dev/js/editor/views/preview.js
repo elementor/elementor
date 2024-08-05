@@ -1,4 +1,5 @@
 import AddSectionView from './add-section/independent';
+import App from "../../../../../modules/checklist/assets/js/app";
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
@@ -135,6 +136,45 @@ const Preview = BaseSectionsContainerView.extend( {
 
 			this.$el.append( addNewSectionView.$el );
 		}
+		setTimeout( ()=>{this.mount()}, 7000 );
+	},
+
+	getRootElement() {
+		let rootElement = window.parent.document.getElementById( 'e-checklist' );
+
+		if ( !! rootElement ) {
+			return rootElement;
+		}
+
+		rootElement = document.createElement( 'div' );
+		rootElement.setAttribute( 'id', 'e-checklist' );
+
+		return rootElement;
+	},
+
+	mount() {
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
+			isRTL = elementorCommon.config.isRTL,
+			rootElement = this.getRootElement();
+
+		window.parent.document.body.appendChild( rootElement );
+
+		ReactDOM.render( <App // eslint-disable-line react/no-deprecated
+			colorScheme={ colorScheme }
+			isRTL={ isRTL }
+			// getControlValue={ this.getOption( 'getControlValue' ) }
+			// setControlValue={ this.getOption( 'setControlValue' ) }
+			// fetchData={ this.getOption( 'fetchData' ) }
+			// onClose={ () => this.unmount( rootElement ) }
+			// conditionsConfig={ this.getOption( 'conditionsConfig' ) }
+			// setCacheNoticeStatus={ this.getOption( 'setCacheNoticeStatus' ) }
+		/>, rootElement );
+	},
+
+	unmount( rootElement ) {
+		// eslint-disable-next-line react/no-deprecated
+		ReactDOM.unmountComponentAtNode( rootElement );
+		rootElement.remove();
 	},
 } );
 

@@ -124,7 +124,6 @@ class Modules_Manager {
 			'editor-events',
 			'atomic-widgets',
 			'wc-product-editor',
-			'checklist',
 		];
 	}
 

@@ -7,6 +7,8 @@ use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,14 +42,21 @@ class Module extends BaseModule {
 //		}, 10, 2 );
 
 		//		$this->enqueue_checklist_scripts();
+		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			$hook_suffix = 'toplevel_page_elementor';
+			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_editor_scripts' ] );
+		}, 10, 2 );
 
-		add_action( 'current_screen', function () {
-			$this->render_checklist();
-		} );
+
+
+//		add_action( 'current_screen', function () {
+//			$this->render_checklist();
+//		} );
+		add_action( 'current_screen', [ $this, 'enqueue_editor_scripts' ] );
 	}
 
 	public function get_name() {
-		return 'e-checklist';
+		return 'checklist';
 	}
 
 	public function is_experiment_active(): bool {
@@ -92,7 +101,21 @@ class Module extends BaseModule {
 		] );
 	}
 
-	private function enqueue_editor_scripts() {
+	public function enqueue_editor_scripts() {
+//		$deps = [
+//			'react',
+//			'react-dom',
+//			'elementor-common',
+//			'elementor-v2-ui',
+//			'elementor-v2-icons',
+//		];
+//
+//		$is_editor_v2 = current_action() === 'elementor/editor/v2/scripts/enqueue';
+//
+//		if ( $is_editor_v2 ) {
+//			$deps[] = 'elementor-v2-editor-app-bar';
+//		}
+
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -104,7 +127,8 @@ class Module extends BaseModule {
 					'react-dom',
 					'elementor-common',
 					'elementor-v2-ui',
-					'elementor-v2-icons'
+					'elementor-v2-icons',
+					'elementor-v2-editor-app-bar'
 				],
 				ELEMENTOR_VERSION,
 				true
@@ -124,16 +148,28 @@ class Module extends BaseModule {
 		add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
+	private function update_user_progress_in_db() {
+		update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
+	}
+
+	private function validate_user_progress_property() {
+		if ( ! $this->user_progress ) {
+			$this->user_progress = $this->get_user_progress();
+		}
+	}
+
+	private function get_step_initial_progress( $id ) {
+		return [
+			'id' => $id,
+			Step_Base::MARKED_AS_DONE_KEY => false,
+			Step_Base::COMPLETED_KEY => false,
+		];
+	}
+
 	private function render_checklist() {
 		?>
 		<div id="e-checklist">
 		</div>
 		<?php
-	}
-
-	}
-
-		}
-
 	}
 }

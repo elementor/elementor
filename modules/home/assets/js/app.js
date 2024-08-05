@@ -29,10 +29,10 @@ App.propTypes = {
 	homeScreenData: PropTypes.object,
 };
 
-ReactUtils.render( (
-	<App
-		isRTL={ isRTL }
-		homeScreenData={ elementorHomeScreenData }
-		adminUrl={ adminUrl }
-	/>
-), rootElement );
+// ReactUtils.render( (
+// 	<App
+// 		isRTL={ isRTL }
+// 		homeScreenData={ elementorHomeScreenData }
+// 		adminUrl={ adminUrl }
+// 	/>
+// ), rootElement );
