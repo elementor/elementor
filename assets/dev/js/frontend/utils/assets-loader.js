@@ -19,9 +19,13 @@ export default class AssetsLoader {
 	load( type, key ) {
 		const assetData = AssetsLoader.assets[ type ][ key ];
 
-		// if ( this.isAssetLoaded( assetData, type ) ) {
-		// 	return Promise.resolve( true );
-		// }
+		if ( this.isAssetLoaded( assetData, type ) ) {
+			console.log( 'already loaded' );
+			console.log( 'assetData', assetData );
+			console.log( 'type', type );
+			console.log( 'key', key );
+			// return Promise.resolve( true );
+		}
 
 		if ( ! assetData.loader ) {
 			assetData.loader = new Promise( ( resolve ) => {
