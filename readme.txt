@@ -315,6 +315,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.23.4 - 2024-08-05 =
+
+* Fix: Links to Elementor Settings are broken in various locations
+
 = 3.23.3 - 2024-07-25 =
 
 * Fix: UI fixes to improve user experience
