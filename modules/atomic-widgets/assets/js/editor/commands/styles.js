@@ -110,12 +110,10 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 
 			styleDefID = style.id;
-		} else {
-			if ( ! oldStyles[ styleDefID ] ) {
-				throw new Error( 'Style Def not found' );
-			}
-
+		} else if ( oldStyles[ styleDefID ] ) {
 			style = oldStyles[ styleDefID ];
+		} else {
+			throw new Error( 'Style Def not found' );
 		}
 
 		if ( ! this.variantExists( style, meta ) ) {
