@@ -39,7 +39,7 @@ concurrency:
 jobs:
   build-plugin:
     name: Build plugin
-    uses: ./.github/workflows/build.yml
+    uses: elementor/elementor/.github/workflows/plugin-build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest

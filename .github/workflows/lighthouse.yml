@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build-plugin-lh:
     name: Build plugin
-    uses: ./.github/workflows/build.yml
+    uses: elementor/elementor/.github/workflows/plugin-build.yml
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4

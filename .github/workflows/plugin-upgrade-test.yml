@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-plugin:
-    uses: ./.github/workflows/build.yml
+    uses: elementor/elementor/.github/workflows/plugin-build.yml
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest
