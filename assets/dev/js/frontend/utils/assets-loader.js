@@ -74,6 +74,7 @@ AssetsLoader.assets = {
 	style: {
 		swiper: {
 			src: swiperCssSource,
+			parent: 'head',
 		},
 		'e-lightbox': {
 			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
