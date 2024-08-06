@@ -17,14 +17,14 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 	}
 
 	apply( args ) {
-		const { container, styleDefId, bind } = args;
+		const { container, styleDefID, bind } = args;
 		const oldStyles = container.model.get( 'styles' ) || {};
 
 		/* Translators: 1: container label, 2: number of old styles */
 		const label = sprintf( __( '%1$s Style %2$s', 'elementor' ), container.label, Object.keys( oldStyles ).length + 1 );
 
 		const newStyle = {
-			id: styleDefId ?? this.randomId( container.id ),
+			id: styleDefID ?? this.randomId( container.id ),
 			label,
 			type: 'class',
 			variants: [],
