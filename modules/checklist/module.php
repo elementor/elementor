@@ -5,7 +5,6 @@ namespace Elementor\Modules\Checklist;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -88,7 +87,7 @@ class Module extends BaseModule {
 	 *  }
 	 */
 	public function get_step_progress( $step_id ) {
-		foreach ( $this->user_progress['steps'] as $id ) {
+		foreach ( $this->user_progress['steps'] as $id => $step ) {
 			if ( $id === $step_id ) {
 				return $this->user_progress['steps'][ $step_id ] ?? null;
 			}
@@ -106,12 +105,9 @@ class Module extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function set_step_progress( $step_id, $step_progress, $should_update_db = false ) {
+	public function set_step_progress( $step_id, $step_progress ) {
 		$this->user_progress['steps'][ $step_id ] = $step_progress;
-
-		if ( $should_update_db ) {
-			$this->update_user_progress_in_db();
-		}
+		$this->update_user_progress_in_db();
 	}
 
 	/**
@@ -151,7 +147,7 @@ class Module extends BaseModule {
 
 	private function setup() {
 		$this->init_user_progress();
-		$this->user_progress = $this->get_user_progress_from_db();
+		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
 		$this->enqueue_editor_scripts();
 	}

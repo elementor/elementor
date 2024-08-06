@@ -12,7 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Step_Base {
 	const MARKED_AS_DONE_KEY = 'is_marked_done';
 	const COMPLETED_KEY = 'is_completed';
-	const SHOULD_BE_COMPLETED_ONLY_ONCE = 'is_completed_once';
+
+	/**
+	 * @var string
+	 * This is the key to be set to true if the step can be completed, and still be considered completed even if the user later did something to the should have it marked as not completed
+	 */
+	const IS_ONE_COMPLETION_SUFFICIENT = 'is_completed_once';
 
 	protected $step_data;
 	protected $user_progress;
@@ -29,6 +34,16 @@ abstract class Step_Base {
 	abstract protected function get_completion_absolute_status();
 
 	/**
+	 * @return string
+	 */
+	abstract public function get_id() : string;
+
+	/**
+	 * @return array
+	 */
+	abstract public function get_config() : array;
+
+	/**
 	 * Step_Base constructor.
 	 *
 	 * @param array $step_data
@@ -36,18 +51,11 @@ abstract class Step_Base {
 
 	 * @return void
 	 */
-	public function __construct( $step_data, $module ) {
-		$this->step_data = $step_data;
+	public function __construct( $module, ?Wordpress_Adapter $wordpress_adapter = null ) {
+		$this->step_data = $this->get_config();
 		$this->module = $module;
-		$this->wordpress_adapter = $module->get_wordpress_adapter();
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_id() : string {
-		return $this->step_data['id'];
 	}
 
 	/**
@@ -57,7 +65,7 @@ abstract class Step_Base {
 	 */
 	public function mark_as_done() : void {
 		$this->user_progress[ self::MARKED_AS_DONE_KEY ] = true;
-		$this->set_step_progress( true );
+		$this->set_step_progress();
 	}
 
 	/**
@@ -67,18 +75,18 @@ abstract class Step_Base {
 	 */
 	public function unmark_as_done() : void {
 		$this->user_progress[ self::MARKED_AS_DONE_KEY ] = false;
-		$this->set_step_progress( true );
+		$this->set_step_progress();
 	}
 
 	/**
-	 * Marking a step as completed if it was completed once and it's suffice to marketing's requirements
+	 * Marking a step as completed if it was completed once, and it's suffice to marketing's requirements
 	 *
 	 * @return void
 	 */
 	public function maybe_mark_as_completed() : void {
-		if ( $this->step_data[ self::SHOULD_BE_COMPLETED_ONLY_ONCE ] && $this->get_completion_absolute_status() ) {
+		if ( $this->step_data[ self::IS_ONE_COMPLETION_SUFFICIENT ] && $this->get_completion_absolute_status() ) {
 			$this->user_progress[ self::COMPLETED_KEY ] = true;
-			$this->set_step_progress( true );
+			$this->set_step_progress();
 		}
 	}
 
@@ -124,7 +132,7 @@ abstract class Step_Base {
 			self::COMPLETED_KEY => false,
 		];
 
-		$this->module->set_step_progress( $this->get_id(), $initial_progress, true );
+		$this->module->set_step_progress( $this->get_id(), $initial_progress );
 
 		return $initial_progress;
 	}
@@ -136,7 +144,7 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	private function set_step_progress( $should_update_db = false ) {
-		$this->module->set_step_progress( $this->get_id(), $this->user_progress, $should_update_db );
+	private function set_step_progress() {
+		$this->module->set_step_progress( $this->get_id(), $this->user_progress );
 	}
 }

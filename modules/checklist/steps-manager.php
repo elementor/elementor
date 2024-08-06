@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Checklist;
 
-use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,17 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Steps_Manager {
-	const CREATE_PAGES_STEP_ID = 'create_pages';
 	/** @var Step_Base[] $step_instances */
 	private $step_instances = [];
 
 	private Module $module;
 
-	private $steps_config;
-
 	public function __construct( Module $module ) {
 		$this->module = $module;
-		$this->steps_config = $this->get_steps_config_from_source();
 		$this->register_steps();
 	}
 
@@ -112,10 +108,8 @@ class Steps_Manager {
 	 * @return void
 	 */
 	private function register_steps() : void {
-		$steps = $this->steps_config;
-
-		foreach ( $steps as $step ) {
-			$step_instance = $this->get_step_instance( $step );
+		foreach ( $this->get_step_ids() as $step_id ) {
+			$step_instance = $this->get_step_instance( $step_id );
 
 			if ( $step_instance ) {
 				$this->step_instances[] = $step_instance;
@@ -130,15 +124,15 @@ class Steps_Manager {
 	 *
 	 * @return Step_Base|null
 	 */
-	private function get_step_instance( $step_data ) : ?Step_Base {
-		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_data['id'];
+	private function get_step_instance( $step_id ) : ?Step_Base {
+		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_id;
 
 		if ( ! class_exists( $class_name ) ) {
 			return null;
 		}
 
 		/** @var Step_Base $step */
-		return new $class_name( $step_data, $this->module );
+		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
 	}
 
 	/**
@@ -146,19 +140,7 @@ class Steps_Manager {
 	 *
 	 * @return array
 	 */
-	private static function get_steps_config_from_source() : array {
-		return [
-			[
-				'id' => self::CREATE_PAGES_STEP_ID,
-				'title' => esc_html__( 'Create your first 3 pages', 'elementor' ),
-				'description' => esc_html__( 'Jumpstart your creation with professional designs form the Template Library or start from scratch.', 'elementor' ),
-				'learn_more_text' => esc_html__( 'Learn more', 'elementor' ),
-				'learn_more_url' => esc_url( 'https://go.elementor.com/getting-started-with-elementor/' ),
-				'cta_text' => esc_html__( 'Create a new page', 'elementor' ),
-				'cta_url' => admin_url( 'post-new.php' ),
-				'is_responsive_to_changes' => false,
-				Step_Base::SHOULD_BE_COMPLETED_ONLY_ONCE => true,
-			],
-		];
+	private static function get_step_ids() : array {
+		return [ Create_Pages::STEP_ID ];
 	}
 }
