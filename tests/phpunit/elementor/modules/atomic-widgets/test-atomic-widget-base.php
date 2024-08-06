@@ -75,17 +75,21 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_atomic_settings__return_transformed_value() {
 		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'should_transform' => Atomic_Prop::make(),
-			],
-			'settings' => [
-				'should_transform' => [
-					'$$type' => 'classes',
-					'value' => [ 'one', 'two', 'three' ],
+		$widget = $this->make_mock_widget(
+			[
+				'props_schema' => [
+					'should_transform' => Atomic_Prop::make(),
 				],
 			],
-		] );
+			[
+				'settings' => [
+					'should_transform' => [
+						'$$type' => 'classes',
+						'value' => [ 'one', 'two', 'three' ],
+					],
+				],
+			]
+		);
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
@@ -98,17 +102,21 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_atomic_settings__return_null_when_transformer_not_exits() {
 		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'transformer_not_exits' => Atomic_Prop::make(),
-			],
-			'settings' => [
-				'transformer_not_exits' => [
-					'$$type' => 'not_exists_type',
-					'value' => [],
+		$widget = $this->make_mock_widget(
+			[
+				'props_schema' => [
+					'transformer_not_exits' => Atomic_Prop::make(),
 				],
 			],
-		] );
+			[
+				'settings' => [
+					'transformer_not_exits' => [
+						'$$type' => 'not_exists_type',
+						'value' => [],
+					],
+				],
+			]
+		);
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
@@ -119,21 +127,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_atomic_settings__return_setting_if_not_transformable() {
 		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'invalid_transformable_setting_1' => Atomic_Prop::make(),
-				'invalid_transformable_setting_2' => Atomic_Prop::make(),
-			],
-			'settings' => [
-				'invalid_transformable_setting_1' => [
-					'$$type' => 'type',
-				],
-				'invalid_transformable_setting_2' => [
-					'$$type' => [],
-					'value' => [],
+		$widget = $this->make_mock_widget(
+			[
+				'props_schema' => [
+					'invalid_transformable_setting_1' => Atomic_Prop::make(),
+					'invalid_transformable_setting_2' => Atomic_Prop::make(),
 				],
 			],
-		] );
+			[
+				'settings' => [
+					'invalid_transformable_setting_1' => [
+						'$$type' => 'type',
+					],
+					'invalid_transformable_setting_2' => [
+						'$$type' => [],
+						'value' => [],
+					],
+				],
+			]
+		);
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
@@ -267,27 +279,26 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	/**
 	 * @param array{controls: array, props_schema: array} $options
+	 * @param array $data
 	 */
-	private function make_mock_widget( array $options ) {
-		return new class( $options ) extends Atomic_Widget_Base {
+	private function make_mock_widget( array $options, array $data = [] ) {
+		return new class( $options, $data ) extends Atomic_Widget_Base {
 			private static array $options;
 
-			public function __construct( $options ) {
+			public function __construct( $options, $data ) {
 				static::$options = $options;
 
-				parent::__construct( [], [] );
+				$default_data = [
+					'id' => 1,
+				];
+
+				$data = array_merge( $default_data, $data );
+
+				parent::__construct( $data, [] );
 			}
 
 			public function get_name() {
 				return 'test-widget';
-			}
-
-			public function get_settings($setting = null) {
-				if ( empty( static::$options['settings'] ) ) {
-					return parent::get_settings($setting);
-				}
-
-				return static::$options['settings'];
 			}
 
 			protected function define_atomic_controls(): array {
