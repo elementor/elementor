@@ -1,4 +1,4 @@
-module.exports = Marionette.ItemView.extend( {
+export default Marionette.ItemView.extend( {
 
 	id: 'elementor-new-floating-elements-dialog-content',
 

@@ -1,11 +1,13 @@
-var NewFloatingelementsLayout = require( 'elementor-admin/floating-elements/layout' );
+import NewFloatingelementsLayout from 'elementor-admin/floating-elements/layout';
 
-var NewFloatingElementsModule = elementorModules.ViewModule.extend( {
+const NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 
 	getDefaultSettings() {
 		return {
 			selectors: {
-				addButton: '.page-title-action:first, #elementor-template-library-add-new, #wp-admin-bar-new-e-floating-buttons a',
+				addButtonTopBar: '.page-title-action',
+				addButtonAdminBar: '#wp-admin-bar-new-e-floating-buttons a',
+				addButtonEmptyTemplate: '#elementor-template-library-add-new',
 			},
 		};
 	},
@@ -14,12 +16,24 @@ var NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 		var selectors = this.getSettings( 'selectors' );
 
 		return {
-			$addButton: jQuery( selectors.addButton ),
+			addButtonTopBar: document.querySelector( selectors.addButtonTopBar ),
+			addButtonAdminBar: document.querySelector( selectors.addButtonAdminBar ),
+			addButtonEmptyTemplate: document.querySelector( selectors.addButtonEmptyTemplate ),
 		};
 	},
 
 	bindEvents() {
-		this.elements.$addButton.on( 'click', this.onAddButtonClick );
+		if ( this.elements.addButtonTopBar !== null ) {
+			this.elements.addButtonTopBar.addEventListener( 'click', this.onAddButtonClick );
+		}
+
+		if ( this.elements.addButtonAdminBar !== null ) {
+			this.elements.addButtonAdminBar.addEventListener( 'click', this.onAddButtonClick );
+		}
+
+		if ( this.elements.addButtonEmptyTemplate !== null ) {
+			this.elements.addButtonEmptyTemplate.addEventListener( 'click', this.onAddButtonClick );
+		}
 
 		elementorCommon.elements.$window.on( 'hashchange', this.showModalByHash.bind( this ) );
 	},
@@ -47,6 +61,6 @@ var NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 	},
 } );
 
-jQuery( function() {
+document.addEventListener( 'DOMContentLoaded', function() {
 	window.elementorNewFloatingElements = new NewFloatingElementsModule();
 } );

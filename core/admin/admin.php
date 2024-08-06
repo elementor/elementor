@@ -747,14 +747,14 @@ class Admin extends App {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script(
-			'elementor-new-floating-elements',
-			ELEMENTOR_ASSETS_URL . 'js/new-floating-elements' . $suffix . '.js',
+			'elementor-floating-elements-modal',
+			ELEMENTOR_ASSETS_URL . 'js/floating-elements-modal' . $suffix . '.js',
 			[],
 			ELEMENTOR_VERSION,
 			true
 		);
 
-		wp_set_script_translations( 'elementor-new-floating-elements', 'elementor' );
+		wp_set_script_translations( 'elementor-floating-elements-modal', 'elementor' );
 	}
 
 	/**
