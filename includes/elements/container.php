@@ -689,6 +689,22 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
+						'assets' => [
+							'styles' => [
+								[
+									'name' => 'swipper',
+									'conditions' => [
+										'terms' => [
+											[
+												'name' => 'background',
+												'operator' => '!==',
+												'value' => '',
+											],
+										],
+									],
+								],
+							],
+						],
 					],
 				],
 			]

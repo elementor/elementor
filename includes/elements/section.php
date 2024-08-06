@@ -552,6 +552,22 @@ class Element_Section extends Element_Base {
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
+						'assets' => [
+							'styles' => [
+								[
+									'name' => 'swipper-wrapper',
+									'conditions' => [
+										'terms' => [
+											[
+												'name' => 'background',
+												'operator' => '!==',
+												'value' => '',
+											],
+										],
+									],
+								],
+							],
+						],
 					],
 				],
 			]

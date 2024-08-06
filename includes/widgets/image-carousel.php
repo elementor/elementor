@@ -73,6 +73,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	public function get_style_depends(): array {
+		return [ 'swiper' ];
+	 }
+
 	protected function is_dynamic_content(): bool {
 		return false;
 	}

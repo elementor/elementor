@@ -638,7 +638,7 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			wp_enqueue_style( 'swiper' );
+			//wp_enqueue_style( 'swiper' );  We can remove this in version 3.26
 
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
