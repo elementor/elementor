@@ -13,7 +13,7 @@ class Test_Create_Pages_Step extends Step_Test_Base {
 	private Create_Pages $step;
 
 	public function test__various_cases() {
-		$this->step = $this->checklist_module->get_steps_manager()->get_step_by_id( Steps_Manager::CREATE_PAGES_STEP_ID );
+		$this->step = $this->checklist_module->get_steps_manager()->get_step_by_id( Create_Pages::STEP_ID );
 
 		$this->assertFalse( $this->step->is_marked_as_done() );
 		$this->assertFalse( $this->step->is_completed() );
