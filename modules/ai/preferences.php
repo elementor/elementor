@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\Ai;
 
-
 use Elementor\User;
 use Elementor\Utils;
 
@@ -53,7 +52,6 @@ class Preferences {
 			return;
 		}
 
-
 		$ai_option_name = static::ENABLE_AI;
 		$ai_value = User::get_user_option_with_default( $ai_option_name, $user->ID, '1' );
 		?>
@@ -94,8 +92,7 @@ class Preferences {
 		if ( ! $this->has_permissions_to_edit_user( $user_id ) ) {
 			return;
 		}
-
-
+		
 		$ai_option_name = static::ENABLE_AI;
 		$ai_value = empty( $_POST[ $ai_option_name ] ) ? '0' : '1';
 
