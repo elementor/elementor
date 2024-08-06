@@ -73,7 +73,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
-	public function test_get_atomic_settings__return_transformed_value() {
+	public function test_get_atomic_settings__returns_transformed_value() {
 		// Arrange.
 		$widget = $this->make_mock_widget(
 			[
@@ -100,7 +100,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
-	public function test_get_atomic_settings__return_null_when_transformer_not_exits() {
+	public function test_get_atomic_settings__returns_null_for_transformable_setting_when_transformer_does_not_exits() {
 		// Arrange.
 		$widget = $this->make_mock_widget(
 			[
@@ -125,7 +125,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertNull( $settings[ 'transformer_not_exits' ] );
 	}
 
-	public function test_get_atomic_settings__return_setting_if_not_transformable() {
+	public function test_get_atomic_settings__skip_the_value_transformation_when_it_is_not_transformable() {
 		// Arrange.
 		$widget = $this->make_mock_widget(
 			[

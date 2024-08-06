@@ -34,7 +34,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		$class = '';
 		if ( ! empty( $settings['classes'] ) ) {
-			$class = "class='" . $settings['classes'] . "'";
+			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
