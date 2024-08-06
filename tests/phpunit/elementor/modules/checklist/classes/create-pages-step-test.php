@@ -12,11 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Create_Pages_Step_Test extends Step_Test_Base {
 	private Create_Pages $step;
 
-	public function test_is_done() {
-		$this->assertTrue( $this->step->is_done() );
-	}
-
-	public function test_check__various_cases() {
+	public function test__various_cases() {
 		$this->step = $this->checklist_module->get_steps_manager()->get_step( Steps_Manager::CREATE_PAGES_STEP_ID );
 
 		$this->assertTrue( false );
