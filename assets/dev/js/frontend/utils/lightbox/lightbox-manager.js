@@ -1,5 +1,5 @@
 export default class LightboxManager extends elementorModules.ViewModule {
-	static getLightbox() {
+	static getLightbox( isSlideShow = false ) {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(
 					/* webpackChunkName: 'lightbox' */
@@ -10,7 +10,9 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
 			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
 			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' ),
-			lightboxSlideshowStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' );
+			lightboxSlideshowStylePromise = isSlideShow
+				? elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' )
+				: Promise.resolve();
 
 		return Promise.all( [
 			lightboxPromise,
@@ -26,6 +28,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		return {
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
+				slideshow: '[data-elementor-lightbox-slideshow]',
 			},
 		};
 	}
@@ -33,6 +36,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	getDefaultElements() {
 		return {
 			$links: jQuery( this.getSettings( 'selectors.links' ) ),
+			$slideshow: jQuery( this.getSettings( 'selectors.slideshow' ) ),
 		};
 	}
 
@@ -46,6 +50,10 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
+	}
+
+	isLightboxSlideshow() {
+		return 0 !== this.elements.$slideshow.length;
 	}
 
 	async onLinkClick( event ) {
@@ -74,7 +82,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = await LightboxManager.getLightbox();
+		const lightbox = await LightboxManager.getLightbox( this.isLightboxSlideshow() );
 
 		lightbox.createLightbox( element );
 	}
@@ -101,7 +109,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
-				LightboxManager.getLightbox();
+				LightboxManager.getLightbox( this.isLightboxSlideshow() );
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;
