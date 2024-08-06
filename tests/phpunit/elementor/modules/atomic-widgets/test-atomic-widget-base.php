@@ -73,6 +73,83 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
+	public function test_get_atomic_settings__return_transformed_value() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'should_transform' => Atomic_Prop::make(),
+			],
+			'settings' => [
+				'should_transform' => [
+					'$$type' => 'classes',
+					'value' => [ 'one', 'two', 'three' ],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertEquals( [
+			'should_transform' => 'one two three',
+		], $settings );
+	}
+
+	public function test_get_atomic_settings__return_null_when_transformer_not_exits() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'transformer_not_exits' => Atomic_Prop::make(),
+			],
+			'settings' => [
+				'transformer_not_exits' => [
+					'$$type' => 'not_exists_type',
+					'value' => [],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertNull( $settings[ 'transformer_not_exits' ] );
+	}
+
+	public function test_get_atomic_settings__return_setting_if_not_transformable() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'invalid_transformable_setting_1' => Atomic_Prop::make(),
+				'invalid_transformable_setting_2' => Atomic_Prop::make(),
+			],
+			'settings' => [
+				'invalid_transformable_setting_1' => [
+					'$$type' => 'type',
+				],
+				'invalid_transformable_setting_2' => [
+					'$$type' => [],
+					'value' => [],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertEquals( [
+			'invalid_transformable_setting_1' => [
+				'$$type' => 'type',
+			],
+			'invalid_transformable_setting_2' => [
+				'$$type' => [],
+				'value' => [],
+			],
+		], $settings );
+	}
+
 	public function test_get_props_schema__is_serializable() {
 		// Act.
 		$serialized = json_encode( Mock_Widget_A::get_props_schema() );
@@ -203,6 +280,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 			public function get_name() {
 				return 'test-widget';
+			}
+
+			public function get_settings($setting = null) {
+				if ( empty( static::$options['settings'] ) ) {
+					return parent::get_settings($setting);
+				}
+
+				return static::$options['settings'];
 			}
 
 			protected function define_atomic_controls(): array {

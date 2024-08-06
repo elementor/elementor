@@ -122,13 +122,14 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		foreach ( $schema as $key => $prop ) {
 			if ( array_key_exists( $key, $raw_settings ) ) {
-				$transformed_settings[ $key ] = $this->transform_setting( $raw_settings[ $key ] );
+				$transformed_settings[ $key ] = $raw_settings[ $key ];
 			} else {
 				$transformed_settings[ $key ] = $prop->get_default();
 			}
+
+			$transformed_settings[ $key ] = $this->transform_setting( $transformed_settings[ $key ] );
 		}
 
-		// TODO: Run through the transformers.
 		return $transformed_settings;
 	}
 
@@ -143,19 +144,17 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		switch ( $setting['$$type'] ) {
 			case 'classes':
-				if ( ! is_array( $setting['value'] ) ) {
-					break;
-				}
+				return is_array( $setting['value'] )
+					? join( ' ', $setting['value'] )
+					: null;
 
-				$setting = join( ' ', $setting['value'] );
-				break;
+			default:
+				return null;
 		}
-
-		return $setting;
 	}
 
 	private function is_transformable( $setting ): bool {
-		return isset( $setting['$$type'] ) && isset( $setting['value'] );
+		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
 	abstract protected static function define_props_schema(): array;

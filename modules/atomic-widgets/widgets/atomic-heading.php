@@ -89,8 +89,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Atomic_Prop::make()
-				->default( '' ),
+			'classes' => Atomic_Prop::make(),
 
 			'tag' => Atomic_Prop::make()
 				->default( 'h2' ),
