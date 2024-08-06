@@ -7,6 +7,7 @@ const EditorSelectors = {
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
 	pageTitle: '.entry-title >> nth=0',
+	pageHeader: '.page-header',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',

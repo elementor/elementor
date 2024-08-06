@@ -128,6 +128,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await editor.publishAndViewPage();
 
 		await page.locator( EditorSelectors.widget ).locator( 'a' ).click( );
-		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png' );
+
+		const maskPageTitle = page.locator( EditorSelectors.pageHeader );
+		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png', { mask: [ maskPageTitle ] } );
 	} );
 } );
