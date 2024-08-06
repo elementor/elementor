@@ -46,7 +46,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			'style' => [
 				'floating_bar_section' => [
 					'has_close_bg' => false,
-					'close_position_selector' => 'inset-inline-{{VALUE}}: 10px',
+					'close_position_selectors' => [
+						'{{WRAPPER}} .e-floating-bars__close-button' => 'inset-inline-{{VALUE}}: 10px;',
+					],
 					'has_close_position_control' => true,
 					'background_selector' => '{{WRAPPER}} .e-floating-bars',
 					'align_elements_selector' => [
@@ -1004,7 +1006,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		);
 
 		if ( $config['style']['floating_bar_section']['has_close_position_control'] ) {
-			$this->add_responsive_control(
+			$this->add_control(
 				'floating_bar_close_button_position',
 				[
 					'label' => esc_html__( 'Horizontal position', 'elementor' ),
@@ -1020,10 +1022,9 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						],
 					],
 					'default' => 'end',
-					'toggle' => true,
-					'selectors' => [
-						'{{WRAPPER}} .e-floating-bars__close-button' => $config['style']['floating_bar_section']['close_position_selector'],
-					],
+					'toggle' => false,
+					'frontend_available' => true,
+					'selectors' => $config['style']['floating_bar_section']['close_position_selectors'],
 					'condition' => [
 						'floating_bar_close_switch' => 'yes',
 					],
@@ -1169,7 +1170,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						[
 							'name' => 'style_floating_bar_elements_align',
 							'operator' => '!==',
-							'value' => 'stretch',
+							'value' => 'space-between',
 						],
 					],
 				],
