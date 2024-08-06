@@ -1,5 +1,5 @@
 export default class LightboxManager extends elementorModules.ViewModule {
-	static getLightbox( isSlideShow = false ) {
+	static getLightbox() {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(
 					/* webpackChunkName: 'lightbox' */
@@ -9,10 +9,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
 			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
-			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' ),
-			lightboxSlideshowStylePromise = isSlideShow
-				? elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox-slideshow' )
-				: Promise.resolve();
+			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
 
 		return Promise.all( [
 			lightboxPromise,
@@ -20,7 +17,6 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			shareLinkPromise,
 			swiperStylePromise,
 			lightboxStylePromise,
-			lightboxSlideshowStylePromise,
 		] ).then( () => lightboxPromise );
 	}
 
@@ -82,7 +78,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = await LightboxManager.getLightbox( this.isLightboxSlideshow() );
+		const lightbox = await LightboxManager.getLightbox();
 
 		lightbox.createLightbox( element );
 	}
@@ -109,7 +105,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
-				LightboxManager.getLightbox( this.isLightboxSlideshow() );
+				LightboxManager.getLightbox();
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;
