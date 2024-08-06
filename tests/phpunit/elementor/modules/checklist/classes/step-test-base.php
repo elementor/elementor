@@ -12,7 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Test_Base extends PHPUnit_TestCase {
-	protected Wordpress_Adapter&MockObject $wordpress_adapter;
+	/**
+	 * @var MockObject&Wordpress_Adapter
+	 */
+	protected $wordpress_adapter;
 	protected Checklist_Module $checklist_module;
 
 	public function setup(): void {

@@ -19,6 +19,7 @@ class Create_Pages_Step_Test extends Step_Test_Base {
 	public function test_check__various_cases() {
 		$this->step = $this->checklist_module->get_steps_manager()->get_step( Steps_Manager::CREATE_PAGES_STEP_ID );
 
+		$this->assertTrue( false );
 		$this->assertFalse( $this->step->is_marked_as_done() );
 		$this->assertFalse( $this->step->is_completed() );
 		$this->assertFalse( $this->step->get_completion_absolute_status() );
