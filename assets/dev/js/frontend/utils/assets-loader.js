@@ -79,5 +79,8 @@ AssetsLoader.assets = {
 		'e-lightbox': {
 			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
 		},
+		'dialog': {
+			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/dialog${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
+		},
 	},
 };
