@@ -56,10 +56,6 @@ class Widget_Social_Icons extends Widget_Base {
 		return 'eicon-social-icons';
 	}
 
-	public function get_style_depends(): array {
-		return [ 'e-apple-webkit' ];
-	}
-
 	/**
 	 * Get widget keywords.
 	 *
@@ -76,6 +72,22 @@ class Widget_Social_Icons extends Widget_Base {
 
 	protected function is_dynamic_content(): bool {
 		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-social-icons', 'e-apple-webkit' ]
+			: [ 'e-apple-webkit' ];
 	}
 
 	/**
