@@ -137,7 +137,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function transform_setting( $setting ) {
-		if ( ! isset( $setting['$$type'] ) || ! isset( $setting['value'] ) ) {
+		if ( ! $this->is_transformable( $setting ) ) {
 			return $setting;
 		}
 
@@ -147,11 +147,15 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 					break;
 				}
 
-				$setting = implode( ' ', $setting['value'] );
+				$setting = join( ' ', $setting['value'] );
 				break;
 		}
 
 		return $setting;
+	}
+
+	private function is_transformable( $setting ): bool {
+		return isset( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
 	abstract protected static function define_props_schema(): array;
