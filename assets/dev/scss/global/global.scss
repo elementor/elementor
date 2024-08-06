@@ -2,11 +2,6 @@
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
 
-// TODO: Remove in version 3.26.0 [ED-15471]
-@import "dialog-base";
-@import "dialog-lightbox";
-@import "dialog-confirm";
-
 .elementor-hidden {
 	display: none;
 }

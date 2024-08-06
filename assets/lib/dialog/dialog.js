@@ -6,6 +6,8 @@
  * Released under the MIT license
  * https://github.com/kobizz/dialogs-manager/blob/master/LICENSE.txt
  */
+// const AssetsLoader = require( "../../dev/js/frontend/utils/assets-loader" );
+// import AssetsLoader from '../../dev/js/frontend/utils/assets-loader';
 
 (function($, global) {
 	'use strict';
@@ -103,7 +105,28 @@
 			return Object.create(settings);
 		};
 
-		this.init = function(settings) {
+		this.loadAssets = function() {
+			const assetsLoaderPromise = new Promise(( resolveAssetsLoader ) => {
+				import(
+					/* webpackChunkName: 'assets-loader' */
+					`../../dev/js/frontend/utils/assets-loader.js`
+					)
+					.then( ( { default: AssetsLoaderClass } ) => {
+						const assetsLoaderInstance = new AssetsLoaderClass();
+						resolveAssetsLoader( assetsLoaderInstance );
+
+						return assetsLoaderInstance.load( 'style', 'dialog' );
+					} );
+			} );
+
+			assetsLoaderPromise.catch(error => {
+				console.error( "Failed to load assets:", error );
+			} );
+		};
+
+		this.init = function (settings) {
+
+			this.loadAssets();
 
 			initSettings(settings);
 

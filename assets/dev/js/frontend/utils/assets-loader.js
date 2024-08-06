@@ -49,23 +49,33 @@ export default class AssetsLoader {
 	}
 }
 
-const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
+const isAdmin = document.querySelector( 'body' ).classList.contains( 'wp-admin' );
 
-const swiperJsSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
-	: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
+const assetsUrl = isAdmin
+	? elementorCommonConfig.urls.assets
+	: elementorFrontendConfig.urls.assets;
 
-const swiperCssSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
-	: `${ elementorFrontendConfig.urls.assets }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
+const fileSuffix = ! isAdmin && elementorFrontendConfig?.environmentMode?.isScriptDebug ? '' : '.min';
+
+const pluginVersion = isAdmin
+	? elementorCommonConfig.version
+	: elementorFrontendConfig.version;
+
+const swiperJsSource = isAdmin || elementorFrontendConfig?.experimentalFeatures?.e_swiper_latest
+	? `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
+	: `${ assetsUrl }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
+
+const swiperCssSource = isAdmin || elementorFrontendConfig?.experimentalFeatures?.e_swiper_latest
+	? `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
+	: `${ assetsUrl }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
 
 AssetsLoader.assets = {
 	script: {
 		dialog: {
-			src: `${ elementorFrontendConfig.urls.assets }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.0`,
+			src: `${ assetsUrl }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.0`,
 		},
 		'share-link': {
-			src: `${ elementorFrontendConfig.urls.assets }lib/share-link/share-link${ fileSuffix }.js?ver=${ elementorFrontendConfig.version }`,
+			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
 		},
 		swiper: {
 			src: swiperJsSource,
@@ -77,10 +87,10 @@ AssetsLoader.assets = {
 			parent: 'head',
 		},
 		'e-lightbox': {
-			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
+			src: `${ assetsUrl }css/conditionals/lightbox${ fileSuffix }.css?ver=${ pluginVersion }`,
 		},
 		'dialog': {
-			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/dialog${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
+			src: `${ assetsUrl }css/conditionals/dialog${ fileSuffix }.css?ver=${ pluginVersion }`,
 		},
 	},
 };
