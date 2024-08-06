@@ -3,6 +3,7 @@
 namespace Elementor\Modules\FloatingButtons\Widgets;
 
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -23,5 +24,11 @@ class Contact_Buttons extends Widget_Contact_Button_Base {
 
 	public function get_title(): string {
 		return esc_html__( 'Single Chat', 'elementor' );
+	}
+
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-floating-buttons' ]
+			: [];
 	}
 }
