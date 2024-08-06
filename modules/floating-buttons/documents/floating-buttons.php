@@ -160,7 +160,7 @@ class Floating_Buttons extends PageBase {
 			'meta_query' => static::get_meta_query_for_floating_buttons( $floating_element_type ),
 		] );
 
-		foreach ( $query->posts as $post_id ) {
+		foreach ( $query->get_posts() as $post_id ) {
 			$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
 
 			if ( ! $conditions ) {
