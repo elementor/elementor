@@ -536,6 +536,13 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
+		wp_register_style(
+			'e-lightbox',
+			$this->get_css_assets_url( 'lightbox', 'assets/css/conditionals/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
