@@ -100,7 +100,7 @@ abstract class Step_Base {
 	 *
 	 * @return bool
 	 */
-	private function is_marked_as_done() : bool {
+	public function is_marked_as_done() : bool {
 		return $this->user_progress[ self::MARKED_AS_DONE_KEY ];
 	}
 
@@ -109,7 +109,7 @@ abstract class Step_Base {
 	 *
 	 * @return bool
 	 */
-	private function is_completed() : bool {
+	public function is_completed() : bool {
 		return $this->user_progress[ self::COMPLETED_KEY ];
 	}
 
@@ -118,7 +118,7 @@ abstract class Step_Base {
 	 *
 	 * @return array
 	 */
-	private function get_step_initial_progress() {
+	public function get_step_initial_progress() {
 		$initial_progress = [
 			self::MARKED_AS_DONE_KEY => false,
 			self::COMPLETED_KEY => false,

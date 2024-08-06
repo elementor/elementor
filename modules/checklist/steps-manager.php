@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Steps_Manager {
+	const CREATE_PAGES_STEP_ID = 'create_pages';
 	/** @var Step_Base[] $step_instances */
 	private $step_instances = [];
 
@@ -95,6 +96,16 @@ class Steps_Manager {
 		return false;
 	}
 
+	public function get_step_by_id( $step_id ) : ?Step_Base {
+		foreach ( $this->step_instances as $step ) {
+			if ( $step->get_id() === $step_id ) {
+				return $step;
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Getting the step instances array based on source's order
 	 *
@@ -138,7 +149,7 @@ class Steps_Manager {
 	private static function get_steps_config_from_source() : array {
 		return [
 			[
-				'id' => 'create_pages',
+				'id' => self::CREATE_PAGES_STEP_ID,
 				'title' => esc_html__( 'Create your first 3 pages', 'elementor' ),
 				'description' => esc_html__( 'Jumpstart your creation with professional designs form the Template Library or start from scratch.', 'elementor' ),
 				'learn_more_text' => esc_html__( 'Learn more', 'elementor' ),
@@ -146,6 +157,7 @@ class Steps_Manager {
 				'cta_text' => esc_html__( 'Create a new page', 'elementor' ),
 				'cta_url' => admin_url( 'post-new.php' ),
 				'is_responsive_to_changes' => false,
+				Step_Base::SHOULD_BE_COMPLETED_ONLY_ONCE => true,
 			],
 		];
 	}

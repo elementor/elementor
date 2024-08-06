@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Test_Base extends PHPUnit_TestCase {
-	protected Wordpress_Adapter $wordpress_adapter;
+	protected Wordpress_Adapter&MockObject $wordpress_adapter;
 	protected Checklist_Module $checklist_module;
 
 	public function setup(): void {

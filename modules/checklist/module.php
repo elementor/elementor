@@ -24,7 +24,7 @@ class Module extends BaseModule {
 	private Wordpress_Adapter $wordpress_adapter;
 
 	/**
-	 * @param Wordpress_Adapter|null $wordpress_adapter
+	 * @param ?Wordpress_Adapter $wordpress_adapter
 	 *
 	 * @return void
 	 */

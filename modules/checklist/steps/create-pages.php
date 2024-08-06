@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Create_Pages extends Step_Base {
-	protected function get_completion_absolute_status() : bool {
+	public function get_completion_absolute_status() : bool {
 		$pages = $this->wordpress_adapter->get_pages( [
 			'meta_key' => '_elementor_version',
 			'number' => 3,
