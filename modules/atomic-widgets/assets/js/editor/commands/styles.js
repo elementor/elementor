@@ -9,16 +9,16 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		if ( ! args.bind && ! args.styleDefId ) {
-			throw new Error( 'Missing bind or styleDefId' );
+		if ( ! args.bind && ! args.styleDefID ) {
+			throw new Error( 'Missing bind or styleDefID' );
 		}
 
 		if ( args.bind && 'string' !== typeof args.bind ) {
 			throw new Error( 'Invalid bind arg' );
 		}
 
-		if ( args.styleDefId && 'string' !== typeof args.styleDefId ) {
-			throw new Error( 'Invalid styleDefId arg' );
+		if ( args.styleDefID && 'string' !== typeof args.styleDefID ) {
+			throw new Error( 'Invalid styleDefID arg' );
 		}
 	}
 
@@ -32,17 +32,17 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 */
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' );
-		const changes = historyItem.get( 'data' ).changes;
+		const changes = historyItem.get( 'data' ).changes[ container.id ];
 
 		$e.internal( 'document/elements/set-settings', {
 			container,
 			options: {
 				render: false,
 			},
-			settings: isRedo ? changes.newSettings : changes.oldSettings,
+			settings: isRedo ? changes.new.settings : changes.old.settings,
 		} );
 
-		container.model.set( 'styles', isRedo ? changes.newStyles : changes.oldStyles );
+		container.model.set( 'styles', isRedo ? changes.new.styles : changes.old.styles );
 	}
 
 	/**
@@ -56,16 +56,21 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 */
 	addToHistory( container, oldSettings, newSettings, oldStyles, newStyles ) {
 		const changes = {
-				container,
-				oldSettings,
-				newSettings,
-				oldStyles,
-				newStyles,
+				[ container.id ]: {
+					old: {
+						settings: oldSettings,
+						styles: oldStyles,
+					},
+					new: {
+						settings: newSettings,
+						styles: newStyles,
+					},
+				},
 			},
 			historyItem = {
 				container,
 				data: { changes },
-				type: 'add',
+				type: 'change',
 				restore: Styles.restore,
 			};
 
@@ -79,7 +84,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		return {
 			container,
 			subTitle,
-			type: 'add',
+			type: 'change',
 		};
 	}
 
@@ -91,38 +96,37 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 	apply( args ) {
 		const { container, bind, meta, props } = args;
-		let styleDefId = args.styleDefId ?? null;
+		let styleDefID = args.styleDefID ?? null;
 
-		const oldStyles = container.model.get( 'styles' ) ?? {};
+		const oldStyles = structuredClone( container.model.get( 'styles' ) ) ?? {};
+
 		const oldBindSetting = container.settings.get( bind );
 		let style = {};
 
-		if ( ! styleDefId ) {
+		if ( ! styleDefID ) {
 			style = $e.internal( 'document/atomic-widgets/create-style', {
 				container,
 				bind,
 			} );
 
-			styleDefId = style.id;
+			styleDefID = style.id;
+		} else if ( oldStyles[ styleDefID ] ) {
+			style = oldStyles[ styleDefID ];
 		} else {
-			if ( ! oldStyles[ styleDefId ] ) {
-				throw new Error( 'Style Def not found' );
-			}
-
-			style = oldStyles[ styleDefId ];
+			throw new Error( 'Style Def not found' );
 		}
 
 		if ( ! this.variantExists( style, meta ) ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
-				styleDefId,
+				styleDefID,
 				meta,
 			} );
 		}
 
 		$e.internal( 'document/atomic-widgets/update-props', {
 			container,
-			styleDefId,
+			styleDefID,
 			bind,
 			meta,
 			props,

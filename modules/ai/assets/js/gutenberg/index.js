@@ -4,10 +4,11 @@ import GenerateFeaturedImageWithAI from './featured-image';
 import { GenerateTextWithAi } from './text-with-ai';
 import React from 'react';
 import { EditTextWithAi } from './edit-text-with-ai';
+import { getUniqueId } from '../editor/context/requests-ids';
 
 ( function() {
 	'use strict';
-
+	window.EDITOR_SESSION_ID = getUniqueId( 'wp-gutenberg-session' );
 	// Wait for the Gutenberg editor to initialize
 	wp.domReady( () => {
 		// Define a function to add the custom link to the excerpt panel

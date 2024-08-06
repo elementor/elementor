@@ -5,7 +5,7 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgumentConstructor( 'styleDefId', String, args );
+		this.requireArgumentConstructor( 'styleDefID', String, args );
 
 		this.requireArgumentConstructor( 'meta', Object, args );
 
@@ -47,10 +47,10 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 	}
 
 	apply( args ) {
-		const { container, styleDefId, meta, props } = args;
+		const { container, styleDefID, meta, props } = args;
 
 		const oldStyles = container.model.get( 'styles' ) || {};
-		let style = oldStyles[ styleDefId ];
+		let style = oldStyles[ styleDefID ];
 
 		if ( ! style ) {
 			throw new Error( 'Style Def not found' );
