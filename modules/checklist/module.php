@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Module extends BaseModule implements Checklist_Module_Interface  {
+class Module extends BaseModule implements Checklist_Module_Interface {
 	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
 
