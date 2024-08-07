@@ -33,6 +33,8 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+
+			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
 	}
 
@@ -53,5 +55,20 @@ class Module extends BaseModule {
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
+	}
+
+	/**
+	 * Enqueue the module scripts.
+	 *
+	 * @return void
+	 */
+	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-atomic-widgets-editor',
+			$this->get_js_assets_url( 'atomic-widgets-editor' ),
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 }
