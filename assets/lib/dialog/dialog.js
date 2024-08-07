@@ -106,7 +106,7 @@
 		this.loadAssets = function() {
 			import(
 				/* webpackChunkName: 'assets-loader' */
-				`../../dev/js/frontend/utils/assets-loader.js`
+				`elementor-frontend/utils/assets-loader`
 			)
 			.then( ( { default: AssetsLoaderClass } ) => {
 				const assetsLoader = new AssetsLoaderClass();
