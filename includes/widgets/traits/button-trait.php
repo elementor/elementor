@@ -132,72 +132,6 @@ trait Button_Trait {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = is_rtl() ? 'left' : 'right';
-
-		$this->add_control(
-			'icon_align',
-			[
-				'label' => esc_html__( 'Icon Position', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'default' => is_rtl() ? 'row-reverse' : 'row',
-				'options' => [
-					'row' => [
-						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-h-align-{$start}",
-					],
-					'row-reverse' => [
-						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-h-align-{$end}",
-					],
-				],
-				'selectors_dictionary' => [
-					'left' => is_rtl() ? 'row-reverse' : 'row',
-					'right' => is_rtl() ? 'row' : 'row-reverse',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
-				],
-				'condition' => array_merge(
-					$args['section_condition'],
-					[
-						'text!' => '',
-						'selected_icon[value]!' => '',
-					]
-				),
-			]
-		);
-
-		$this->add_control(
-			'icon_indent',
-			[
-				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'max' => 50,
-					],
-					'em' => [
-						'max' => 5,
-					],
-					'rem' => [
-						'max' => 5,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => array_merge(
-					$args['section_condition'],
-					[
-						'text!' => '',
-						'selected_icon[value]!' => '',
-					]
-				),
-			]
-		);
-
 		$this->add_control(
 			'button_css_id',
 			[
@@ -438,7 +372,7 @@ trait Button_Trait {
 					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'transition-duration: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--button-icon-transition: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -501,6 +435,162 @@ trait Button_Trait {
 				'condition' => $args['section_condition'],
 			]
 		);
+	}
+
+	protected function register_icon_style_controls( $args = [] ) {
+		$default_args = [
+			'section_condition' => [],
+			'alignment_default' => '',
+			'alignment_control_prefix_class' => 'elementor%s-align-',
+			'content_alignment_default' => '',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
+		$this->add_control(
+			'icon_align',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'row' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-{$start}",
+					],
+					'row-reverse' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-{$end}",
+					],
+					'column' => [
+						'title' => esc_html__( 'Above', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'column-reverse' => [
+						'title' => esc_html__( 'Below', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? '--button-flex-direction: row-reverse' : '--button-flex-direction: row',
+					'right' => is_rtl() ? '--button-flex-direction: row' : '--button-flex-direction: row-reverse',
+					'row' => '--button-flex-direction: row',
+					'row-reverse' => '--button-flex-direction: row-reverse',
+					'column' => '--button-flex-direction: column; --button-align-self: center; --button-icon-display: flex;',
+					'column-reverse' => '--button-flex-direction: column-reverse; --button-align-self: center; --button-icon-display: flex;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}};',
+				],
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
+				],
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--button-icon-size: {{SIZE}}{{UNIT}}; --button-icon-display: flex; --button-align-self: center;',
+				],
+        ]);
+
+		$this->add_control(
+			'icon_indent',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
+		]);
+
+		$this->start_controls_tabs(
+			'icons_button_style',
+		    [
+			'condition' => $args['section_condition'],
+		]);
+
+		$this->start_controls_tab(
+			'icon_button_normal',
+		    [
+                'label' => esc_html__( 'Normal', 'elementor' ),
+			    'condition' => $args['section_condition'],
+		]);
+
+		$this->add_control(
+			'icon_color', 
+		    [
+			'label' => esc_html__( 'Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--button-icon-color: {{VALUE}};',
+			],
+		]);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_button_hover',
+            [
+				'label' => esc_html__( 'Hover', 'elementor' ),
+				'condition' => $args['section_condition'],
+        ]);
+
+		$this->add_control(
+			'icon_color_hover',
+		    [
+			'label' => esc_html__( 'Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => '--button-icon-color-hover: {{VALUE}};',
+			],
+        ]);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 	}
 
 	/**
