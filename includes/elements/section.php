@@ -555,7 +555,7 @@ class Element_Section extends Element_Base {
 						'assets' => [
 							'styles' => [
 								[
-									'name' => 'swipper-wrapper',
+									'name' => 'swipper',
 									'conditions' => [
 										'terms' => [
 											[
