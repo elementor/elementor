@@ -1,5 +1,5 @@
 /*!
- * Dialogs Manager v4.9.4
+ * Dialogs Manager v4.9.3
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
@@ -104,20 +104,15 @@
 		};
 
 		this.loadAssets = function() {
-			const assetsLoaderPromise = new Promise(( resolveAssetsLoader ) => {
-				import(
-					/* webpackChunkName: 'assets-loader' */
-					`../../dev/js/frontend/utils/assets-loader.js`
-					)
-					.then( ( { default: AssetsLoaderClass } ) => {
-						const assetsLoaderInstance = new AssetsLoaderClass();
-						resolveAssetsLoader( assetsLoaderInstance );
-
-						return assetsLoaderInstance.load( 'style', 'dialog' );
-					} );
-			} );
-
-			assetsLoaderPromise.catch(error => {
+			import(
+				/* webpackChunkName: 'assets-loader' */
+				`../../dev/js/frontend/utils/assets-loader.js`
+			)
+			.then( ( { default: AssetsLoaderClass } ) => {
+				const assetsLoader = new AssetsLoaderClass();
+				return assetsLoader.load( 'style', 'dialog' ).then( () => assetsLoader );
+			} )
+			.catch( error => {
 				console.error( "Failed to load assets:", error );
 			} );
 		};
