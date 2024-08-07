@@ -1,0 +1,88 @@
+name: Plugin Build
+description: Build the plugin and create a zip file.
+
+inputs:
+  REPOSITORY:
+    required: true
+    description: 'The name of the repository to build the plugin from.'
+    default: "elementor"
+  NODE_VERSION:
+    required: true
+    description: 'The version of Node.js to use.'
+    default: "20.x"
+
+outputs:
+  artifact_name:
+    description: "The name of the generated zip file."
+    value: ${{ env.PLUGIN_ZIP_FILENAME }}
+  changelog_diff:
+    description: "Changes in the changelog file."
+    value: ${{ steps.changelog_diff_files.outputs.diff }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout source code
+      shell: bash
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      shell: bash
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Check if this is only a changelog PR
+      id: changelog_diff_files
+      uses: technote-space/get-diff-action@v6
+      with:
+        # PATTERNS are:
+        # Everything: **/*
+        # Everything in directories starting with a period: .*/**/*
+        # Not readme.txt: !readme.txt
+        # Not changelog.txt: !changelog.txt
+        PATTERNS: |
+          **/*
+          .*/**/*
+          !readme.txt
+          !changelog.txt
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        npm ci
+        composer install --optimize-autoloader --prefer-dist
+        composer install --no-scripts --no-dev
+        composer dump-autoload
+
+    - name: Build Plugin
+      shell: bash
+      run: |
+        npm config set git-tag-version false
+        export PUPPETEER_SKIP_DOWNLOAD=true
+
+        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        DATE_VERSION=$(date '+%Y%m%d.%H%M')
+
+        echo "PLUGIN_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}" >> $GITHUB_ENV
+        echo "PLUGIN_FILENAME=${{ inputs.REPOSITORY }}-${PLUGIN_VERSION}" >> $GITHUB_ENV
+        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip" >> $GITHUB_ENV
+
+        npx grunt build
+
+        sed -i -E "s/Version: (.*?)/Version: ${PLUGIN_VERSION}/g" build/${{ inputs.REPOSITORY }}.php
+        sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PLUGIN_VERSION}'/g" build/${{ inputs.REPOSITORY }}.php
+
+        mv build ${{ inputs.REPOSITORY }}
+
+        zip -r $PLUGIN_ZIP_FILENAME ${{ inputs.REPOSITORY }}
+
+
+    - name: Upload Build Zip Artifact
+      shell: bash
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PLUGIN_ZIP_FILENAME }}
+        path: ${{ inputs.REPOSITORY }}
+

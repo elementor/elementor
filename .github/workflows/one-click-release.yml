@@ -73,7 +73,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Build plugin
-        uses: elementor/elementor/.github/workflows/plugin-build.yml
+        uses: elementor/elementor/.github/workflows/plugin-build
       - name: Get Release Name
         uses : ./.github/workflows/get-release-name
         with:
