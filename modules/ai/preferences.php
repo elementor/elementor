@@ -26,7 +26,7 @@ class Preferences {
 			$this->update_personal_options_settings( $user_id );
 		} );
 	}
-	
+
 	/**
 	 * Determine if AI features are enabled for a user.
 	 *
