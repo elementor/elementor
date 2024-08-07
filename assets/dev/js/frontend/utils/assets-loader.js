@@ -60,23 +60,25 @@ export default class AssetsLoader {
 	}
 }
 
-const isAdmin = document.querySelector( 'body' ).classList.contains( 'wp-admin' );
+const isAdmin = document.querySelector( 'body' ).classList.contains( 'wp-admin' ),
+	isEditMode = document.querySelector( 'body' ).classList.contains( 'elementor-editor-active' ),
+	isFrontend = ! isAdmin && ! isEditMode;
 
-const assetsUrl = isAdmin
-	? elementorCommonConfig.urls.assets
-	: elementorFrontendConfig.urls.assets;
+const assetsUrl = isFrontend
+	? elementorFrontendConfig.urls.assets
+	: elementorCommonConfig.urls.assets;
 
-const fileSuffix = ! isAdmin && elementorFrontendConfig?.environmentMode?.isScriptDebug ? '' : '.min';
+const fileSuffix = isFrontend && elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
 
-const pluginVersion = isAdmin
-	? elementorCommonConfig.version
-	: elementorFrontendConfig.version;
+const pluginVersion = isFrontend
+	? elementorFrontendConfig.version
+	: elementorCommonConfig.version;
 
-const swiperJsSource = isAdmin || elementorFrontendConfig?.experimentalFeatures?.e_swiper_latest
+const swiperJsSource = ! isFrontend || elementorFrontendConfig?.experimentalFeatures?.e_swiper_latest
 	? `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
 	: `${ assetsUrl }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
 
-const swiperCssSource = isAdmin || elementorFrontendConfig?.experimentalFeatures?.e_swiper_latest
+const swiperCssSource = ! isFrontend || elementorFrontendConfig?.experimentalFeatures?.e_swiper_latest
 	? `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
 	: `${ assetsUrl }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
 
