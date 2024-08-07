@@ -696,31 +696,26 @@ class Container extends Element_Base {
 
 
 		$this->add_control(
-				'_TESTT',
-				[
-						'label' => esc_html__( 'CSS ID', 'elementor' ),
-						'type' => Controls_Manager::TEXT,
-						'default' => 'YES',
-						'assets' => [
-								'styles' => [
-										[
-												'name' => 'swiper',
-												'conditions' => [
-														'terms' => [
-																[
-																		'name' => 'background_background',
-																		'operator' => '===',
-																		'value' => 'slideshow',
-																],
-														],
-												],
-//												'condition' => [
-//														'background' => [ 'slideshow' ],
-//												],
-										],
+			'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
 								],
+							],
 						],
-				]
+					],
+				],
+			]
 		);
 
 		$this->end_controls_tab();
