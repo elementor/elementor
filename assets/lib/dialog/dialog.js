@@ -1,13 +1,11 @@
 /*!
- * Dialogs Manager v4.9.3
+ * Dialogs Manager v4.9.4
  * https://github.com/kobizz/dialogs-manager
  *
  * Copyright Kobi Zaltzberg
  * Released under the MIT license
  * https://github.com/kobizz/dialogs-manager/blob/master/LICENSE.txt
  */
-// const AssetsLoader = require( "../../dev/js/frontend/utils/assets-loader" );
-// import AssetsLoader from '../../dev/js/frontend/utils/assets-loader';
 
 (function($, global) {
 	'use strict';

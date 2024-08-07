@@ -83,7 +83,7 @@ const swiperCssSource = isAdmin || elementorFrontendConfig?.experimentalFeatures
 AssetsLoader.assets = {
 	script: {
 		dialog: {
-			src: `${ assetsUrl }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.0`,
+			src: `${ assetsUrl }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.4`,
 		},
 		'share-link': {
 			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
