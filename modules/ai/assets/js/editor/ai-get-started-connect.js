@@ -19,7 +19,7 @@ function isElementInViewport( el ) {
 	);
 }
 
-export const AiGetStartedConnect = ( { onClose, origin } ) => {
+export const AiGetStartedConnect = ( { onClose, source } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData } = useUserInfo();
 	const [ shouldShowPromotion, setShouldShowPromotion ] = useState( false );
 
@@ -71,7 +71,7 @@ export const AiGetStartedConnect = ( { onClose, origin } ) => {
 
 		return <AiPromotionInfotipWrapper
 			test-id="ai-promotion-infotip-wrapper"
-			origin={ origin }
+			source={ source }
 			anchor={ element }
 			clickAction={ () => {
 				element.click();
@@ -91,5 +91,5 @@ export const AiGetStartedConnect = ( { onClose, origin } ) => {
 
 AiGetStartedConnect.propTypes = {
 	onClose: PropTypes.func.isRequired,
-	origin: PropTypes.string.isRequired,
+	source: PropTypes.string.isRequired,
 };

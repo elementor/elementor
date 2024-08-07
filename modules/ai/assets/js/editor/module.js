@@ -44,7 +44,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {
-				const origin = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
+				const source = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
 				window.location.hash = '';
 
 				setTimeout( () => {
@@ -61,7 +61,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 									unmount();
 									rootElement.remove();
 								} }
-								origin={ origin }
+								source={ source }
 							/>
 						</LayoutAppWrapper>, rootElement );
 				}, 1000 );
