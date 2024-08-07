@@ -40,7 +40,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'close_position_selector' => 'inset-inline-{{VALUE}}: 10px',
 					'has_close_position_control' => true,
 					'background_selector' => '{{WRAPPER}} .e-floating-bars',
-				]
+				],
 			],
 			'advanced' => [],
 		];
@@ -203,7 +203,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'skin' => 'inline',
 					'label_block' => false,
-					'icon_exclude_inline_options' => [],
+					'exclude_inline_options' => [ 'none' ],
 					'recommended' => [
 						'fa-regular' => [
 							'pause-circle',
@@ -215,7 +215,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
 					]
-				]
+				],
 			);
 
 			$this->add_control(
@@ -230,7 +230,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'skin' => 'inline',
 					'label_block' => false,
-					'icon_exclude_inline_options' => [],
+					'exclude_inline_options' => [ 'none' ],
 					'recommended' => [
 						'fa-regular' => [
 							'play-circle',
@@ -242,7 +242,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
 					]
-				]
+				],
 			);
 		}
 
@@ -331,7 +331,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					[
 						'headlines_text' => esc_html__( 'Item #3', 'elementor' ),
-					]
+					],
 				],
 			]
 		);
@@ -1345,7 +1345,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'advanced_vertical_position',
 			[
 				'label' => esc_html__( 'Vertical Position', 'elementor' ),
