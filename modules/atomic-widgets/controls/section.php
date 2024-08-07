@@ -34,6 +34,10 @@ class Section implements JsonSerializable {
 		return $this;
 	}
 
+	public function get_items() {
+		return $this->items;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'type' => 'section',
