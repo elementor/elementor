@@ -32,8 +32,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$escaped_tag = Utils::validate_html_tag( $settings['tag'] );
 		$escaped_title = esc_html( $settings['title'] );
 
+		$class = '';
+		if ( ! empty( $settings['classes'] ) ) {
+			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
+		}
+
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo "<$escaped_tag>$escaped_title</$escaped_tag>";
+		echo "<$escaped_tag $class>$escaped_title</$escaped_tag>";
 	}
 
 	protected function define_atomic_controls(): array {
@@ -84,6 +89,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
+			'classes' => Atomic_Prop::make(),
+
 			'tag' => Atomic_Prop::make()
 				->default( 'h2' ),
 
