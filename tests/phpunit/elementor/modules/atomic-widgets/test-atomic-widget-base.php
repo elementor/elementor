@@ -73,6 +73,89 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
+	public function test_get_atomic_settings__returns_transformed_value() {
+		// Arrange.
+		$widget = $this->make_mock_widget(
+			[
+				'props_schema' => [
+					'should_transform' => Atomic_Prop::make(),
+				],
+				'settings' => [
+					'should_transform' => [
+						'$$type' => 'classes',
+						'value' => [ 'one', 'two', 'three' ],
+					],
+				],
+			],
+		);
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertEquals( [
+			'should_transform' => 'one two three',
+		], $settings );
+	}
+
+	public function test_get_atomic_settings__returns_null_for_transformable_setting_when_transformer_does_not_exist() {
+		// Arrange.
+		$widget = $this->make_mock_widget(
+			[
+				'props_schema' => [
+					'transformer_does_not_exist' => Atomic_Prop::make(),
+				],
+				'settings' => [
+					'transformer_does_not_exist' => [
+						'$$type' => 'non_existing_type',
+						'value' => [],
+					],
+				],
+			],
+		);
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertNull( $settings[ 'transformer_does_not_exist' ] );
+	}
+
+	public function test_get_atomic_settings__skip_the_value_transformation_when_it_is_not_transformable() {
+		// Arrange.
+		$widget = $this->make_mock_widget(
+			[
+				'props_schema' => [
+					'invalid_transformable_setting_1' => Atomic_Prop::make(),
+					'invalid_transformable_setting_2' => Atomic_Prop::make(),
+				],
+				'settings' => [
+					'invalid_transformable_setting_1' => [
+						'$$type' => 'type',
+					],
+					'invalid_transformable_setting_2' => [
+						'$$type' => [],
+						'value' => [],
+					],
+				],
+			],
+		);
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertEquals( [
+			'invalid_transformable_setting_1' => [
+				'$$type' => 'type',
+			],
+			'invalid_transformable_setting_2' => [
+				'$$type' => [],
+				'value' => [],
+			],
+		], $settings );
+	}
+
 	public function test_get_props_schema__is_serializable() {
 		// Act.
 		$serialized = json_encode( Mock_Widget_A::get_props_schema() );
@@ -189,7 +272,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @param array{controls: array, props_schema: array} $options
+	 * @param array{controls: array, props_schema: array, settings: array} $options
 	 */
 	private function make_mock_widget( array $options ) {
 		return new class( $options ) extends Atomic_Widget_Base {
@@ -198,7 +281,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			public function __construct( $options ) {
 				static::$options = $options;
 
-				parent::__construct( [], [] );
+				parent::__construct( [
+					'id' => 1,
+					'settings' => $options['settings'] ?? [],
+				], [] );
 			}
 
 			public function get_name() {
