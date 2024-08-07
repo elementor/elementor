@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Module extends BaseModule {
+class Module extends BaseModule implements Checklist_Module_Interface  {
 	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
 
@@ -38,7 +38,10 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->setup();
+		$this->init_user_progress();
+		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
+		$this->steps_manager = new Steps_Manager( $this );
+		$this->enqueue_editor_scripts();
 	}
 
 	/**
@@ -46,7 +49,7 @@ class Module extends BaseModule {
 	 *
 	 * @return string
 	 */
-	public function get_name() {
+	public function get_name() : string {
 		return 'e-checklist';
 	}
 
@@ -55,7 +58,7 @@ class Module extends BaseModule {
 	 *
 	 * @return bool
 	 */
-	public function is_experiment_active(): bool {
+	public function is_experiment_active() : bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID );
 	}
 
@@ -74,7 +77,7 @@ class Module extends BaseModule {
 	 *  }
 	 */
 	public function get_user_progress_from_db() : array {
-		return json_decode( get_option( self::DB_OPTION_KEY ), true );
+		return json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true );
 	}
 
 	/**
@@ -139,13 +142,6 @@ class Module extends BaseModule {
 		} );
 	}
 
-	private function setup() : void {
-		$this->init_user_progress();
-		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
-		$this->steps_manager = new Steps_Manager( $this );
-		$this->enqueue_editor_scripts();
-	}
-
 	private function register_experiment() : void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
@@ -163,10 +159,10 @@ class Module extends BaseModule {
 			'steps' => [],
 		];
 
-		add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
+		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
 	private function update_user_progress_in_db() : void {
-		update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
+		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
 	}
 }

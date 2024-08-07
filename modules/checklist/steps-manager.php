@@ -13,9 +13,9 @@ class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
 
-	private Module $module;
+	private Checklist_Module_Interface $module;
 
-	public function __construct( Module $module ) {
+	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
 		$this->register_steps();
 	}
@@ -28,8 +28,8 @@ class Steps_Manager {
 	public function get_steps_for_frontend() : array {
 		$formatted_steps = [];
 
-		foreach ( $this->step_instances as $step ) {
-			$formatted_steps[] = $step->get_step_config_for_frontend();
+		foreach ( $this->get_step_ids() as $step_id ) {
+			$formatted_steps[] = $this->step_instances[ $step_id ]->get_step_config_for_frontend();
 		}
 
 		return $formatted_steps;
@@ -87,13 +87,7 @@ class Steps_Manager {
 	}
 
 	public function get_step_by_id( string $step_id ) : ?Step_Base {
-		foreach ( $this->step_instances as $step ) {
-			if ( $step->get_id() === $step_id ) {
-				return $step;
-			}
-		}
-
-		return null;
+		return $this->step_instances[ $step_id ] ?? null;
 	}
 
 	/**
@@ -105,8 +99,8 @@ class Steps_Manager {
 		foreach ( $this->get_step_ids() as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
-			if ( $step_instance ) {
-				$this->step_instances[] = $step_instance;
+			if ( $step_instance && ! $this->step_instances[ $step_id ] ) {
+				$this->step_instances[ $step_id ] = $step_instance;
 			}
 		}
 	}

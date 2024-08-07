@@ -29,4 +29,16 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function get_pages( $args ) : ?array {
 		return get_pages( $args );
 	}
+
+	public function get_option( $option_key ) : mixed {
+		return get_option( $option_key );
+	}
+
+	public function update_option( $option_key, $option_value ) : void {
+		update_option( $option_key, $option_value );
+	}
+
+	public function add_option( $option_key, $option_value ) : void {
+		add_option( $option_key, $option_value );
+	}
 }

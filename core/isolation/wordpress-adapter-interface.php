@@ -12,4 +12,10 @@ interface Wordpress_Adapter_Interface {
 	public function self_admin_url( $path );
 
 	public function get_pages( $args );
+
+	public function get_option( $option_key );
+
+	public function add_option( $option_key, $option_value );
+
+	public function delete_option( $option_key );
 }
