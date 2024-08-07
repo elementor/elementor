@@ -36,7 +36,7 @@ class Loader extends Module {
 					'dependencies' => [],
 				],
 				'swiper' => [
-					'src' => $this->get_css_assets_url( 'swiper', 'assets/css/' ),
+					'src' => $this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
