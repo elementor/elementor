@@ -7,10 +7,10 @@ import { FocusOutListener, useFocusOutListener } from '../helpers/focus-out-list
 
 const AiPromotionInfotipWrapper = ( {
 	anchor, header, contentText, controlType, unmountAction, colorScheme,
-	isRTL, clickAction, placement, offset, mainActionText,
+	isRTL, clickAction, placement, offset, mainActionText, origin,
 } ) => {
 	const focusOutListener = useFocusOutListener();
-	const { isViewed, markAsViewed } = useIntroduction( `ai_get_started_introduction_${ controlType }` );
+	const { isViewed, markAsViewed } = useIntroduction( `ai_get_started_introduction_${ controlType }_${ origin }` );
 	if ( isViewed ) {
 		return;
 	}
@@ -69,6 +69,7 @@ AiPromotionInfotipWrapper.propTypes = {
 	placement: PropTypes.string,
 	offset: PropTypes.object,
 	mainActionText: PropTypes.string,
+	origin: PropTypes.string,
 };
 
 export default AiPromotionInfotipWrapper;
