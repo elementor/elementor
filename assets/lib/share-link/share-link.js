@@ -3,7 +3,7 @@
  */
 ( function() {
 	window.ShareLink = function( eElement, userSettings ) {
-		let element = {};
+		let element;
 		let settings = {};
 
 		const getNetworkNameFromClass = function( className ) {
@@ -112,17 +112,17 @@
 		} );
 
 		if ( 'email' === networkName ) {
-			if ( -1 < settings['title'].indexOf( '&' ) ||  -1 < settings['text'].indexOf( '&' ) ) {
+			if ( -1 < settings['title'].indexOf( '&' ) || -1 < settings['text'].indexOf( '&' ) ) {
 				const emailSafeSettings = {
-					text: settings['text'].replace( new RegExp('&', 'g'), '%26' ),
-					title: settings['title'].replace( new RegExp('&', 'g'), '%26' ),
+					text: settings['text'].replace( new RegExp( '&', 'g' ), '%26' ),
+					title: settings['title'].replace( new RegExp( '&', 'g' ), '%26' ),
 					url: settings['url'],
 				};
 
 				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, ( fullMatch, pureMatch ) => emailSafeSettings[ pureMatch ] );
 			}
 
-			if ( link.indexOf( '?subject=&body') ) {
+			if ( link.indexOf( '?subject=&body' ) ) {
 				link = link.replace( 'subject=&', '' );
 			}
 
