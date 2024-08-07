@@ -93,7 +93,6 @@ class Module extends BaseModule {
 
 	public function ajax_get_notifications() {
 		$notifications = API::get_notifications_by_conditions( true );
-		$notifications[0]['ctaLink'] = '#welcome-ai-whats-new';
 		Options::mark_notification_read( $notifications );
 
 		return $notifications;
