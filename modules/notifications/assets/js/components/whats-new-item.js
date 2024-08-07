@@ -100,4 +100,5 @@ WhatsNewItem.propTypes = {
 	item: PropTypes.object.isRequired,
 	itemIndex: PropTypes.number.isRequired,
 	itemsLength: PropTypes.number.isRequired,
+	setIsOpen: PropTypes.func.isRequired,
 };

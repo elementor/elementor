@@ -41,3 +41,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen } ) => {
 		} )
 	);
 };
+
+WhatsNewDrawerContent.propTypes = {
+	setIsOpen: PropTypes.func.isRequired,
+};
