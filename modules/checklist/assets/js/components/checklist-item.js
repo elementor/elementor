@@ -1,43 +1,24 @@
 import React, { useState } from 'react';
 import {
-	styled,
 	Button,
 	Card,
-	CardHeader,
 	CardContent,
 	CardActions,
 	Typography,
-	Checkbox,
-	IconButton,
-	IconButtonProps,
-	List,
-	ListItem,
 	ListItemButton,
 	ListItemIcon,
-	ListItemText, Collapse, Stack,
+	ListItemText,
+	Collapse
 } from '@elementor/ui';
 
-// Check why elementor/icons is not installed
 import { ChevronDownIcon, CheckedCircleIcon } from '@elementor/icons';
+import RadioButtonUncheckedIcon from "@elementor/icons/RadioButtonUncheckedIcon";
 import CardMedia from '@elementor/ui/CardMedia';
+// import image from '../media/step-3.png';
 
 function CheckListItem( props ) {
 	const { id, title, imagePath, description, link, CTA } = props.step,
-		[ expanded, setExpanded ] = React.useState( false ),
-		[ checked, setChecked ] = React.useState( [ 0 ] );
-
-	const handleToggle = ( value ) => () => {
-		const currentIndex = checked.indexOf( value );
-		const newChecked = [ ...checked ];
-
-		if ( -1 === currentIndex ) {
-			newChecked.push( value );
-		} else {
-			newChecked.splice( currentIndex, 1 );
-		}
-
-		setChecked( newChecked );
-	};
+		[ expanded, setExpanded ] = React.useState( false );
 
 	const handleExpandClick = () => {
 		setExpanded( ! expanded );
@@ -45,65 +26,30 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItem
-				sx={ { margin: 0 } }
-				divider={ true }
-				key={ id }
-				secondaryAction={
-					<Stack>
-						<IconButton onClick={ () => handleExpandClick( id ) } edge="end" aria-label="comments">
-							{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
-						</IconButton>
-					</Stack>
+			<ListItemButton onClick={ () => handleExpandClick( id ) } sx={{
+				"&.MuiButtonBase-root:hover": {
+					bgcolor: "transparent"
 				}
-				disablePadding
-			>
-				<ListItemButton role={ 'checkbox' } onClick={ handleToggle( id ) }>
-					<ListItemIcon>
-						<Checkbox
-							icon={ <CheckedCircleIcon /> }
-							checkedIcon={ <CheckedCircleIcon color="primary" /> }
-							edge="start"
-							checked={ checked.indexOf( id ) !== -1 }
-							tabIndex={ -1 }
-							inputProps={ { 'aria-labelledby': title } }
-						/>
-					</ListItemIcon>
-					<ListItemText id={ title } primary={ title } />
-				</ListItemButton>
-			</ListItem>
-			<Collapse in={ expanded } timeout="auto" unmountOnExit>
-				<Card
-					sx={ {
-						border: 'none',
-						boxShadow: 'none',
-						backgroundColor: 'transparent',
-						borderRadius: 0,
-					} }
-				>
+			}}>
+				<ListItemIcon> <RadioButtonUncheckedIcon/> </ListItemIcon>
+				<ListItemText id={ title } primary={ <Typography variant="body2">{title}</Typography> } />
+				{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)'} } /> : <ChevronDownIcon /> }
+			</ListItemButton>
+			<Collapse in={ expanded } >
+				<Card elevation={ 0 } square="true" sx={ { pt:1 } }>
 					<CardMedia
-						component="img"
-						height="194"
-						image={ imagePath }
-						alt={ title }
+						image="https://drive.google.com/drive/folders/10Z85-M37gKVcyiQ8Td2hOI0z2DJ-G1OS"
+						sx={ { height: 190 } }
 					/>
-					<CardContent
-
-					>
+					<CardContent>
 						<Typography variant="body2" color="text.secondary" component="p">
 							{ description + ' ' }
 							<a href={ link } target="_blank" rel="noreferrer">Learn more</a>
 						</Typography>
 					</CardContent>
-					<CardActions >
-						<Stack>
-							<Button size="small">
-								Mark as completed
-							</Button>
-							<Button size="small" color="primary">
-								{ CTA }
-							</Button>
-						</Stack>
+					<CardActions>
+						<Button color="secondary">Mark as completed</Button>
+						<Button variant="contained">{ CTA }</Button>
 					</CardActions>
 				</Card>
 			</Collapse>

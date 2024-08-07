@@ -67,7 +67,7 @@ class Steps_Manager {
 	}
 
 	private function get_step_instance( $step_data ) : ?Step_Base {
-		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_data['id'];
+		$class_name = '\\Elementor\\Modules\\App\\Steps\\' . $step_data['id'];
 
 		if ( ! class_exists( $class_name ) ) {
 			return null;

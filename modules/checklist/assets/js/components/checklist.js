@@ -3,7 +3,7 @@ import CheckListItem from './checklist-item';
 import { steps } from '../data/steps';
 function CheckList() {
 	return (
-		<List>
+		<List component="div">
 			{
 				steps.map( ( step, index ) => {
 					return (

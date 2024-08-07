@@ -1,13 +1,16 @@
-import { GiftIcon } from '../icons/gift-icon';
-import { editorOnButtonClicked } from './editor-on-button-clicked';
+import { SvgIcon } from "@elementor/ui";
 import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import * as React from "react";
+import { App } from "./app";
+import RocketIcon from "@elementor/icons/RocketIcon";
+
+console.log('app fuck my life');
 
 const IconWithBadge = ( { invisible } ) => {
 	return (
 		<Badge color="primary" variant="dot" invisible={ invisible }>
-			<GiftIcon />
+			<RocketIcon />
 		</Badge>
 	);
 };
@@ -20,31 +23,27 @@ export const editorV2 = () => {
 	const { utilitiesMenu } = window.elementorV2.editorAppBar;
 
 	utilitiesMenu.registerLink( {
-		id: 'app-bar-menu-item-whats-new',
-		priority: 45,
+		id: 'app-bar-menu-item-checklist',
+		priority: 10,
 		useProps: () => {
-			const [ isRead, setIsRead ] = useState( ! elementorNotifications.is_unread );
 
 			return {
-				title: __( "What's New", 'elementor' ),
-				icon: () => <IconWithBadge invisible={ isRead } />,
+				title: __( "Checklist", 'elementor' ),
+				icon: () => <RocketIcon />,
 				onClick: () => {
 					elementor.editorEvents.dispatchEvent(
-						elementor.editorEvents.config.names.topBar.whatsNew,
+						elementor.editorEvents.config.names.topBar.checklist,
 						{
 							location: elementor.editorEvents.config.locations.topBar,
-							secondaryLocation: elementor.editorEvents.config.secondaryLocations[ 'whats-new' ],
+							secondaryLocation: elementor.editorEvents.config.secondaryLocations[ 'checklist' ],
 							trigger: elementor.editorEvents.config.triggers.click,
 							element: elementor.editorEvents.config.elements.buttonIcon,
 						},
 					);
-
-					setIsRead( true );
-					elementorNotifications.is_unread = false;
-
-					editorOnButtonClicked( 'right' );
+					App();
 				},
 			};
 		},
 	} );
 };
+

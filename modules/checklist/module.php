@@ -49,9 +49,9 @@ class Module extends BaseModule {
 
 
 
-//		add_action( 'current_screen', function () {
-//			$this->render_checklist();
-//		} );
+		add_action( 'current_screen', function () {
+			$this->render_checklist();
+		} );
 		add_action( 'current_screen', [ $this, 'enqueue_editor_scripts' ] );
 	}
 
@@ -94,8 +94,8 @@ class Module extends BaseModule {
 	private function register_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
-			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
-			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
+			'title' => esc_html__( 'Launchpad App', 'elementor' ),
+			'description' => esc_html__( 'Launchpad App feature to boost productivity and deliver your site faster', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
 		] );
