@@ -42,10 +42,21 @@ export default class AssetsLoader {
 
 			element.onload = () => resolve( true );
 
-			const parent = 'head' === assetData.parent ? assetData.parent : 'body';
-
-			document[ parent ].appendChild( element );
+			this.appendAsset( assetData, element );
 		} );
+	}
+
+	appendAsset( assetData, element ) {
+		const beforeElement = document.querySelector( assetData.before );
+
+		if ( !! beforeElement ) {
+			beforeElement.insertAdjacentElement( 'beforebegin', element );
+			return;
+		}
+
+		const parent = 'head' === assetData.parent ? assetData.parent : 'body';
+
+		document[ parent ].appendChild( element );
 	}
 }
 
@@ -91,6 +102,8 @@ AssetsLoader.assets = {
 		},
 		'dialog': {
 			src: `${ assetsUrl }css/conditionals/dialog${ fileSuffix }.css?ver=${ pluginVersion }`,
+			parent: 'head',
+			before: '#elementor-frontend-css',
 		},
 	},
 };
