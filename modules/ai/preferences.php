@@ -26,9 +26,7 @@ class Preferences {
 			$this->update_personal_options_settings( $user_id );
 		} );
 	}
-
-
-
+	
 	/**
 	 * Determine if AI features are enabled for a user.
 	 *
@@ -37,7 +35,7 @@ class Preferences {
 	 * @return bool
 	 */
 	public static function is_ai_enabled( $user_id ) {
-		return ! ! User::get_user_option_with_default( static::ENABLE_AI, $user_id, true );
+		return (bool) User::get_user_option_with_default( static::ENABLE_AI, $user_id, true );
 	}
 
 	/**
@@ -52,20 +50,19 @@ class Preferences {
 			return;
 		}
 
-		$ai_option_name = static::ENABLE_AI;
-		$ai_value = User::get_user_option_with_default( $ai_option_name, $user->ID, '1' );
+		$ai_value = User::get_user_option_with_default( static::ENABLE_AI, $user->ID, '1' );
 		?>
 		<h2><?php echo esc_html__( 'Elementor - AI', 'elementor' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>
 				<th>
-					<label for="<?php echo esc_attr( $ai_option_name ); ?>">
+					<label for="<?php echo esc_attr( static::ENABLE_AI ); ?>">
 						<?php echo esc_html__( 'Status', 'elementor' ); ?>
 					</label>
 				</th>
 				<td>
-					<label for="<?php echo esc_attr( $ai_option_name ); ?>">
-						<input name="<?php echo esc_attr( $ai_option_name ); ?>" id="<?php echo esc_attr( $ai_option_name ); ?>" type="checkbox" value="1"<?php checked( '1', $ai_value ); ?> />
+					<label for="<?php echo esc_attr( static::ENABLE_AI ); ?>">
+						<input name="<?php echo esc_attr( static::ENABLE_AI ); ?>" id="<?php echo esc_attr( static::ENABLE_AI ); ?>" type="checkbox" value="1"<?php checked( '1', $ai_value ); ?> />
 						<?php echo esc_html__( 'Enable Elementor AI functionality', 'elementor' ); ?>
 					</label>
 				</td>
@@ -82,7 +79,6 @@ class Preferences {
 	 * @return void
 	 */
 	protected function update_personal_options_settings( $user_id ) {
-
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce already verified in `wp_verify_nonce`.
 		$wpnonce = Utils::get_super_global_value( $_POST, '_wpnonce' );
 		if ( ! wp_verify_nonce( $wpnonce, 'update-user_' . $user_id ) ) {
@@ -92,11 +88,10 @@ class Preferences {
 		if ( ! $this->has_permissions_to_edit_user( $user_id ) ) {
 			return;
 		}
-		
-		$ai_option_name = static::ENABLE_AI;
-		$ai_value = empty( $_POST[ $ai_option_name ] ) ? '0' : '1';
 
-		update_user_option( $user_id, $ai_option_name, sanitize_text_field( $ai_value ) );
+		$ai_value = empty( $_POST[ static::ENABLE_AI ] ) ? '0' : '1';
+
+		update_user_option( $user_id, static::ENABLE_AI, sanitize_text_field( $ai_value ) );
 	}
 
 	/**
@@ -107,8 +102,6 @@ class Preferences {
 	 * @return bool
 	 */
 	protected function has_permissions_to_edit_user( $user_id ) {
-		return (
-			current_user_can( 'edit_user', $user_id )
-		);
+		return current_user_can( 'edit_user', $user_id );
 	}
 }
