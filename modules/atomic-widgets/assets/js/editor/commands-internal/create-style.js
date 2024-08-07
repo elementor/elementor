@@ -48,9 +48,6 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 
 		$e.internal( 'document/elements/set-settings', {
 			container,
-			options: {
-				render: false,
-			},
 			settings: newBindSetting,
 		} );
 
