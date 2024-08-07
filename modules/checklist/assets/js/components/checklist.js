@@ -1,9 +1,10 @@
-import { List } from '@elementor/ui';
-import CheckListItem from './checklist-item';
+import List from '@elementor/ui/List';
 import { steps } from '../data/steps';
+import CheckListItem from './checklist-item';
+
 function CheckList() {
 	return (
-		<List component="div">
+		<List component="div" sx={{py:0}}>
 			{
 				steps.map( ( step, index ) => {
 					return (

@@ -1,11 +1,8 @@
-import { SvgIcon } from "@elementor/ui";
 import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import * as React from "react";
 import { App } from "./app";
 import RocketIcon from "@elementor/icons/RocketIcon";
-
-console.log('app fuck my life');
 
 const IconWithBadge = ( { invisible } ) => {
 	return (
@@ -24,7 +21,7 @@ export const editorV2 = () => {
 
 	utilitiesMenu.registerLink( {
 		id: 'app-bar-menu-item-checklist',
-		priority: 10,
+		priority: 5,
 		useProps: () => {
 
 			return {

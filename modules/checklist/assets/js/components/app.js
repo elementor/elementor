@@ -6,6 +6,7 @@ export const App = () =>  {
 	const container = document.createElement( 'div' ),
 		isRTL = elementorCommon.config.isRTL;
 
+	container.id = 'e-checklist'
 	document.body.append( container );
 
 	ReactUtils.render( (

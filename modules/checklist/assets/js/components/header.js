@@ -1,6 +1,8 @@
 import Typography  from '@elementor/ui/Typography';
-import XIcon from '@elementor/icons/XIcon';
-import { AppBar, Divider, IconButton, Toolbar } from "@elementor/ui";
+import CloseButton from "@elementor/ui/CloseButton";
+import AppBar from '@elementor/ui/AppBar';
+import Divider from '@elementor/ui/Divider';
+import Toolbar from '@elementor/ui/Toolbar';
 import { __ } from "@wordpress/i18n";
 
 const Header = ( props ) => {
@@ -26,18 +28,7 @@ const Header = ( props ) => {
 				>
 					{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 				</Typography>
-				<IconButton
-					aria-label={ 'close' }
-					size="small"
-					onClick={ () => {
-
-						setIsOpen( false )
-						console.log( isOpen )
-					} }
-					sx={ { p: 1 } }
-				>
-					<XIcon />
-				</IconButton>
+				<CloseButton onClick={ () => setIsOpen( false ) }/>
 			</Toolbar>
 		</AppBar>
 		<Divider />

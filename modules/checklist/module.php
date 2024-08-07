@@ -36,22 +36,11 @@ class Module extends BaseModule {
 		$this->enqueue_editor_scripts();
 		$this->validate_user_progress_property();
 		$this->steps_manager = new Steps_Manager( $this );
-//		add_action( 'elementor/admin/menu/after_register', function( Admin_Menu_Manager $admin_menu, array $hooks ) {
-//			$hook_suffix = 'toplevel_page_elementor';
-//			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_checklist_scripts' ] );
-//		}, 10, 2 );
 
-		//		$this->enqueue_checklist_scripts();
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			$hook_suffix = 'toplevel_page_elementor';
 			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_editor_scripts' ] );
 		}, 10, 2 );
-
-
-
-		add_action( 'current_screen', function () {
-			$this->render_checklist();
-		} );
 		add_action( 'current_screen', [ $this, 'enqueue_editor_scripts' ] );
 	}
 
@@ -102,20 +91,6 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_editor_scripts() {
-//		$deps = [
-//			'react',
-//			'react-dom',
-//			'elementor-common',
-//			'elementor-v2-ui',
-//			'elementor-v2-icons',
-//		];
-//
-//		$is_editor_v2 = current_action() === 'elementor/editor/v2/scripts/enqueue';
-//
-//		if ( $is_editor_v2 ) {
-//			$deps[] = 'elementor-v2-editor-app-bar';
-//		}
-
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -164,12 +139,5 @@ class Module extends BaseModule {
 			Step_Base::MARKED_AS_DONE_KEY => false,
 			Step_Base::COMPLETED_KEY => false,
 		];
-	}
-
-	private function render_checklist() {
-		?>
-		<div id="e-checklist">
-		</div>
-		<?php
 	}
 }
