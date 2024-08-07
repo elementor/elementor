@@ -103,23 +103,25 @@
 			return Object.create(settings);
 		};
 
-		this.loadAssets = function() {
-			import(
-				/* webpackChunkName: 'assets-loader' */
-				`elementor-frontend/utils/assets-loader`
-			)
-			.then( ( { default: AssetsLoaderClass } ) => {
-				const assetsLoader = new AssetsLoaderClass();
-				return assetsLoader.load( 'style', 'dialog' ).then( () => assetsLoader );
-			} )
-			.catch( error => {
-				console.error( "Failed to load assets:", error );
-			} );
+		this.maybeLoadAssets = async function () {
+			const isWpAdmin = !! document.querySelector( 'body.wp-admin' ),
+				isElementorEditor = !! document.querySelector( 'body.elementor-editor-active' ),
+				isFrontend = ! isWpAdmin && ! isElementorEditor;
+
+			if ( ! isFrontend ) {
+				return;
+			}
+
+			try {
+				await elementorFrontend.utils.assetsLoader.load( 'style', 'dialog' );
+			} catch ( error ) {
+				console.error( 'Failed to load assets:', error );
+			}
 		};
 
 		this.init = function (settings) {
 
-			this.loadAssets();
+			this.maybeLoadAssets();
 
 			initSettings(settings);
 
