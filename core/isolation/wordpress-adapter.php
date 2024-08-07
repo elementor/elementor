@@ -30,7 +30,7 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return get_pages( $args );
 	}
 
-	public function get_option( $option_key ) : mixed {
+	public function get_option( $option_key ) {
 		return get_option( $option_key );
 	}
 

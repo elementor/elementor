@@ -17,5 +17,5 @@ interface Wordpress_Adapter_Interface {
 
 	public function add_option( $option_key, $option_value );
 
-	public function delete_option( $option_key );
+	public function update_option( $option_key, $option_value );
 }

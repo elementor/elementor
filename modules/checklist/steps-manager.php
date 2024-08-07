@@ -99,7 +99,7 @@ class Steps_Manager {
 		foreach ( $this->get_step_ids() as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
-			if ( $step_instance && ! $this->step_instances[ $step_id ] ) {
+			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
 				$this->step_instances[ $step_id ] = $step_instance;
 			}
 		}
