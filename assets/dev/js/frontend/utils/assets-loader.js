@@ -100,7 +100,7 @@ AssetsLoader.assets = {
 		'e-lightbox': {
 			src: `${ assetsUrl }css/conditionals/lightbox${ fileSuffix }.css?ver=${ pluginVersion }`,
 		},
-		'dialog': {
+		dialog: {
 			src: `${ assetsUrl }css/conditionals/dialog${ fileSuffix }.css?ver=${ pluginVersion }`,
 			parent: 'head',
 			before: '#elementor-frontend-css',
