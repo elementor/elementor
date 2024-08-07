@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,11 +15,11 @@ class Create_Pages extends Step_Base {
 		return self::STEP_ID;
 	}
 
-	public function get_completion_absolute_status() : bool {
+	public function is_absolute_completed() : bool {
 		$pages = $this->wordpress_adapter->get_pages( [
 			'meta_key' => '_elementor_version',
 			'number' => 3,
-		] );
+		] ) ?? [];
 
 		return count( $pages ) >= 3;
 	}
@@ -30,9 +32,9 @@ class Create_Pages extends Step_Base {
 			'learn_more_text' => esc_html__( 'Learn more', 'elementor' ),
 			'learn_more_url' => esc_url( 'https://go.elementor.com/getting-started-with-elementor/' ),
 			'cta_text' => esc_html__( 'Create a new page', 'elementor' ),
-			'cta_url' => admin_url( 'post-new.php' ),
+			'cta_url' => Plugin::$instance->documents->get_create_new_post_url( 'page' ),
 			'is_responsive_to_changes' => false,
-			Step_Base::IS_ONE_COMPLETION_SUFFICIENT => true,
+			Step_Base::IS_COMPLETION_IMMUTABLE => true,
 		];
 	}
 }

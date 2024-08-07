@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
-	private $step_instances = [];
+	private array $step_instances = [];
 
 	private Module $module;
 
@@ -21,7 +21,7 @@ class Steps_Manager {
 	}
 
 	/**
-	 * Gets formatted and ordered array of step ( step data, is_marked_done and is_completed )
+	 * Gets formatted and ordered array of step ( step data, is_marked_completed and is_completed )
 	 *
 	 * @return array
 	 */
@@ -29,48 +29,44 @@ class Steps_Manager {
 		$formatted_steps = [];
 
 		foreach ( $this->step_instances as $step ) {
-			$formatted_steps[] = $step->get_step_data();
+			$formatted_steps[] = $step->get_step_config_for_frontend();
 		}
 
 		return $formatted_steps;
 	}
 
 	/**
-	 * Marks a step as done, returns true if the step was found and marked or false otherwise
+	 * Marks a step as completed, returns true if the step was found and marked or false otherwise
 	 *
 	 * @param string $step_id
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	public function mark_step_as_done( $step_id ) : bool {
+	public function mark_step_as_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
-				$step->mark_as_done();
+				$step->mark_as_completed();
 
-				return true;
+				return;
 			}
 		}
-
-		return false;
 	}
 
 	/**
-	 * Unmarks a step as done, returns true if the step was found and unmarked or false otherwise
+	 * Unmarks a step as completed, returns true if the step was found and unmarked or false otherwise
 	 *
 	 * @param string $step_id
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	public function unmark_step_as_done( $step_id ) : bool {
+	public function unmark_step_as_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
-				$step->unmark_as_done();
+				$step->unmark_as_completed();
 
-				return true;
+				return;
 			}
 		}
-
-		return false;
 	}
 
 	/**
@@ -78,21 +74,19 @@ class Steps_Manager {
 	 *
 	 * @param $step_id
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	public function maybe_mark_step_as_complete( $step_id ) : bool {
+	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
 				$step->maybe_mark_as_completed();
 
-				return true;
+				return;
 			}
 		}
-
-		return false;
 	}
 
-	public function get_step_by_id( $step_id ) : ?Step_Base {
+	public function get_step_by_id( string $step_id ) : ?Step_Base {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
 				return $step;
@@ -124,7 +118,7 @@ class Steps_Manager {
 	 *
 	 * @return Step_Base|null
 	 */
-	private function get_step_instance( $step_id ) : ?Step_Base {
+	private function get_step_instance( string $step_id ) : ?Step_Base {
 		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_id;
 
 		if ( ! class_exists( $class_name ) ) {

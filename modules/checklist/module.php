@@ -5,6 +5,7 @@ namespace Elementor\Modules\Checklist;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -14,20 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_ID = 'launchpad-checklist';
-	const DB_OPTION_KEY = 'e-checklist';
+	const DB_OPTION_KEY = 'elementor_checklist';
 
 	private $user_progress = null;
 
 	private Steps_Manager $steps_manager;
 
-	private Wordpress_Adapter $wordpress_adapter;
+	private Wordpress_Adapter_Interface $wordpress_adapter;
 
 	/**
-	 * @param ?Wordpress_Adapter $wordpress_adapter
+	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
 	 *
 	 * @return void
 	 */
-	public function __construct( $wordpress_adapter = null ) {
+	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		parent::__construct();
 
@@ -66,13 +67,13 @@ class Module extends BaseModule {
 	 *      @type int $last_opened_timestamp
 	 *      @type array $steps {
 	 *          @type string $step_id => {
-	 *              @type bool $is_marked_done
+	 *              @type bool $is_marked_completed
 	 *              @type bool $is_completed
 	 *          }
 	 *      }
 	 *  }
 	 */
-	public function get_user_progress_from_db() {
+	public function get_user_progress_from_db() : array {
 		return json_decode( get_option( self::DB_OPTION_KEY ), true );
 	}
 
@@ -82,18 +83,12 @@ class Module extends BaseModule {
 	 * @param $step_id
 	 *
 	 * @return null|array {
-	 *      @type bool $is_marked_done
+	 *      @type bool $is_marked_completed
 	 *      @type bool $is_completed
 	 *  }
 	 */
-	public function get_step_progress( $step_id ) {
-		foreach ( $this->user_progress['steps'] as $id => $step ) {
-			if ( $id === $step_id ) {
-				return $this->user_progress['steps'][ $step_id ] ?? null;
-			}
-		}
-
-		return null;
+	public function get_step_progress( $step_id ) : ?array {
+		return $this->user_progress['steps'][ $step_id ] ?? null;
 	}
 
 	/**
@@ -101,11 +96,10 @@ class Module extends BaseModule {
 	 *
 	 * @param $step_id
 	 * @param $step_progress
-	 * @param bool $should_update_db
 	 *
 	 * @return void
 	 */
-	public function set_step_progress( $step_id, $step_progress ) {
+	public function set_step_progress( $step_id, $step_progress ) : void {
 		$this->user_progress['steps'][ $step_id ] = $step_progress;
 		$this->update_user_progress_in_db();
 	}
@@ -113,18 +107,18 @@ class Module extends BaseModule {
 	/**
 	 * @return Steps_Manager
 	 */
-	public function get_steps_manager() {
+	public function get_steps_manager() : Steps_Manager {
 		return $this->steps_manager;
 	}
 
 	/**
 	 * @return Wordpress_Adapter
 	 */
-	public function get_wordpress_adapter() {
+	public function get_wordpress_adapter() : Wordpress_Adapter {
 		return $this->wordpress_adapter;
 	}
 
-	public function enqueue_editor_scripts() {
+	public function enqueue_editor_scripts() : void {
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -145,14 +139,14 @@ class Module extends BaseModule {
 		} );
 	}
 
-	private function setup() {
+	private function setup() : void {
 		$this->init_user_progress();
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
 		$this->enqueue_editor_scripts();
 	}
 
-	private function register_experiment() {
+	private function register_experiment() : void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
 			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
@@ -162,7 +156,7 @@ class Module extends BaseModule {
 		] );
 	}
 
-	private function init_user_progress() {
+	private function init_user_progress() : void {
 		$default_settings = [
 			'is_hidden' => false,
 			'last_opened_timestamp' => time(),
@@ -172,7 +166,7 @@ class Module extends BaseModule {
 		add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
-	private function update_user_progress_in_db() {
+	private function update_user_progress_in_db() : void {
 		update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
 	}
 }

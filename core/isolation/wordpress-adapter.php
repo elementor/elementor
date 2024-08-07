@@ -26,7 +26,7 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	 *                         specified post type is not hierarchical or the specified status is not
 	 *                         supported by the post type.
 	 */
-	public function get_pages( $args ) {
+	public function get_pages( $args ) : ?array {
 		return get_pages( $args );
 	}
 }
