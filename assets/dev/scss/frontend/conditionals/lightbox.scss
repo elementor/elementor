@@ -1,3 +1,6 @@
+@import "../../helpers/variables";
+@import "../breakpoints/breakpoints";
+
 .elementor-lightbox {
 	--lightbox-ui-color: #{$slides_gui};
 	--lightbox-ui-color-hover: #fff;
@@ -39,7 +42,7 @@
 			cursor: pointer;
 			position: absolute;
 			font-size: var(--lightbox-header-icons-size);
-			#{$end}: 0.75em;
+			inset-inline-end: 0.75em;
 			margin-top: 13px;
 			padding: .25em;
 			z-index: 2;
@@ -111,7 +114,10 @@
 
 	.elementor-video-container {
 		width: 100%;
-		@include absolute-center;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 
 		.elementor-video-square,
 		.elementor-video-landscape,
@@ -348,7 +354,7 @@
 		display: block;
 		position: absolute;
 		min-width: 200px;
-		@include end(2.8em);
+		inset-inline-end: 2.8em;
 		top: 3em;
 		background-color: #fff;
 		border-radius: 3px;
@@ -392,7 +398,7 @@
 			display: block;
 			position: absolute;
 			top: 1px;
-			@include end(0.5em);
+			inset-inline-end: 0.5em;
 			border: .45em solid;
 			border-color: transparent transparent #fff transparent;
 			transform: translateY(-100%) scaleX(0.7);
