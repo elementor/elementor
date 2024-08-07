@@ -42,10 +42,21 @@ export default class AssetsLoader {
 
 			element.onload = () => resolve( true );
 
-			const parent = 'head' === assetData.parent ? assetData.parent : 'body';
-
-			document[ parent ].appendChild( element );
+			this.appendAsset( assetData, element );
 		} );
+	}
+
+	appendAsset( assetData, element ) {
+		const beforeElement = document.querySelector( assetData.before );
+
+		if ( !! beforeElement ) {
+			beforeElement.insertAdjacentElement( 'beforebegin', element );
+			return;
+		}
+
+		const parent = 'head' === assetData.parent ? assetData.parent : 'body';
+
+		document[ parent ].appendChild( element );
 	}
 }
 
@@ -75,6 +86,7 @@ AssetsLoader.assets = {
 		swiper: {
 			src: swiperCssSource,
 			parent: 'head',
+			before: '#elementor-frontend-css',
 		},
 		'e-lightbox': {
 			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,

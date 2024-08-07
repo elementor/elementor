@@ -17,7 +17,8 @@ export default class Swiper {
 		container.closest( '.elementor-widget' )?.classList.add( 'e-widget-swiper' );
 
 		return new Promise( ( resolve ) => {
-			elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' )
+			elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' )
+				.then( () => elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' ) )
 				.then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
 		} );
 	}
