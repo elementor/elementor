@@ -126,14 +126,35 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			} else {
 				$transformed_settings[ $key ] = $prop->get_default();
 			}
+
+			$transformed_settings[ $key ] = $this->transform_setting( $transformed_settings[ $key ] );
 		}
 
-		// TODO: Run through the transformers.
 		return $transformed_settings;
 	}
 
 	public static function get_props_schema() {
 		return static::define_props_schema();
+	}
+
+	private function transform_setting( $setting ) {
+		if ( ! $this->is_transformable( $setting ) ) {
+			return $setting;
+		}
+
+		switch ( $setting['$$type'] ) {
+			case 'classes':
+				return is_array( $setting['value'] )
+					? join( ' ', $setting['value'] )
+					: null;
+
+			default:
+				return null;
+		}
+	}
+
+	private function is_transformable( $setting ): bool {
+		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
 	abstract protected static function define_props_schema(): array;
