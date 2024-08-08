@@ -3,18 +3,24 @@ import ChecklistApp from './checklist-app';
 
 export const App = () =>  {
 
-	const container = document.createElement( 'div' ),
-		isRTL = elementorCommon.config.isRTL;
+	let container = document.getElementById('e-checklist');
 
-	container.id = 'e-checklist'
-	document.body.append( container );
+	if (!container) {
+		container = document.createElement('div');
+		container.id = 'e-checklist';
+		document.body.append(container);
+	}
 
-	ReactUtils.render( (
-		<ChecklistApp
-			isRTL={ isRTL }
-		/>
-	), container );
+	const isRTL = elementorCommon.config.isRTL;
+
+	if (!container.hasChildNodes()) {
+		ReactUtils.render( (
+			<ChecklistApp
+				isRTL={ isRTL }
+			/>
+		), container );
+	}
 
 	elementor.trigger( 'elementor/editor/panel/checklist/clicked' );
-
 }
+
