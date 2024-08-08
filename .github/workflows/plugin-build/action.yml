@@ -22,10 +22,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout source code
-      shell: bash
-      uses: actions/checkout@v4
-
     - name: Install Node.js
       shell: bash
       uses: actions/setup-node@v4
