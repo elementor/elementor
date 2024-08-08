@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Plugin
-        uses: elementor/elementor/.github/workflows/plugin-build
+        uses: Batsirai-muchareva/elementor/.github/workflows/plugin-build@internal/ED-15416-unify-build-process-to-include-composer-install-command
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
