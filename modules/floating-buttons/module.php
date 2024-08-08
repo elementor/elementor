@@ -27,6 +27,8 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'floating-buttons';
 	const FLOATING_BARS_EXPERIMENT_NAME = 'floating-bars';
 
+	const FLOATING_ELEMENTS_TYPE_META_KEY = '_elementor_floating_elements_type';
+
 	const ROUTER_VERSION = '1.0.0';
 	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
 
@@ -43,6 +45,13 @@ class Module extends BaseModule {
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'container' );
+	}
+
+	public static function get_floating_elements_types() {
+		return [
+			'floating-buttons' => esc_html__( 'Floating Buttons', 'elementor' ),
+			'floating-bars' => esc_html__( 'Floating Bars', 'elementor' ),
+		];
 	}
 
 	public function get_name(): string {
@@ -128,6 +137,7 @@ class Module extends BaseModule {
 			if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 				return false;
 			}
+
 			return $common_controls;
 		} );
 
@@ -187,6 +197,7 @@ class Module extends BaseModule {
 					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 					check_admin_referer( 'remove_from_entire_site_' . $post );
 					delete_post_meta( $post, '_elementor_conditions' );
+
 					wp_redirect( $menu_args['menu_slug'] );
 					exit;
 				case 'set_as_entire_site':
@@ -198,8 +209,12 @@ class Module extends BaseModule {
 						'posts_per_page' => -1,
 						'post_status' => 'publish',
 						'fields' => 'ids',
-						'meta_key' => '_elementor_conditions',
-						'meta_compare' => 'EXISTS',
+						'no_found_rows' => true,
+						'update_post_term_cache' => false,
+						'update_post_meta_cache' => false,
+						'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
+							Floating_Buttons::get_floating_element_type( $post )
+						),
 					] );
 
 					foreach ( $posts as $post_id ) {
@@ -362,9 +377,9 @@ class Module extends BaseModule {
 			<?php
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
-				esc_html__( 'Floating Button', 'elementor' ),
+				esc_html__( 'Floating Element', 'elementor' ),
 				$this->get_add_new_contact_page_url(),
-				nl2br( esc_html__( 'Add a Floating button so your users can easily get in touch!', 'elementor' ) )
+				nl2br( esc_html__( 'Add a Floating element so your users can easily get in touch!', 'elementor' ) )
 			);
 
 			if ( ! empty( $trashed_posts ) ) : ?>
@@ -415,6 +430,7 @@ class Module extends BaseModule {
 			'labels' => $labels,
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
+			'show_in_nav_menus' => false,
 			'capability_type' => 'page',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'supports' => [
@@ -521,13 +537,14 @@ class Module extends BaseModule {
 
 		foreach ( $query->posts as $post_id ) {
 			$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
+
 			if ( ! $conditions ) {
 				continue;
 			}
+
 			if ( in_array( 'include/general', $conditions ) ) {
 				$document = Plugin::$instance->documents->get( $post_id );
 				$document->print_content();
-				break;
 			}
 		}
 	}

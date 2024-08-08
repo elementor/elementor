@@ -14,7 +14,7 @@ export class FloatingButtonsAddLibraryTab extends $e.modules.hookUI.After {
 
 	apply() {
 		$e.components.get( 'library' ).addTab( 'templates/floating-buttons', {
-			title: __( 'Floating Buttons', 'elementor' ),
+			title: __( 'Floating Elements', 'elementor' ),
 			filter: {
 				source: 'remote',
 				type: 'floating_button',
