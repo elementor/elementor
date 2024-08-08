@@ -40,6 +40,12 @@ class NestedTabs extends Widget_Nested_Base {
 		return [ 'nested', 'tabs', 'accordion', 'toggle' ];
 	}
 
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-nested-tabs' ]
+			: [];
+	}
+
 	protected function tab_content_container( int $index ) {
 		return [
 			'elType' => 'container',
