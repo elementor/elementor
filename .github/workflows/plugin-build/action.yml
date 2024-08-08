@@ -71,7 +71,6 @@ runs:
 
         ls -la build
         mv build ${{ inputs.REPOSITORY }}
-        ls -la build
         ls -la ${{ inputs.REPOSITORY }}
 
         zip -r $PLUGIN_ZIP_FILENAME ${{ inputs.REPOSITORY }}
