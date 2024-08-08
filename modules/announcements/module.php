@@ -125,7 +125,7 @@ class Module extends BaseApp {
 			],
 			'triggers' => [
 				[
-					'action' => 'aiStared',
+					'action' => 'aiStarted',
 				],
 			],
 		];
