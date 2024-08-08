@@ -44,7 +44,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
 
 			if ( is_array( $size_attributes ) ) {
-				$control_title .= sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
+				$control_title .= sprintf( ' - %d*%d', $size_attributes['width'], $size_attributes['height'] );
 			}
 
 			$image_sizes[] = [

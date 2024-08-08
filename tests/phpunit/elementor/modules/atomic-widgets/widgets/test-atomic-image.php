@@ -20,27 +20,27 @@ class Test_Atomic_Image extends Elementor_Test_Base {
         // Assert.
         $this->assertEqualSetsWithIndex( [
             [
-                'label' => 'Thumbnail - 150 x 150',
+                'label' => 'Thumbnail - 150*150',
                 'value' => 'thumbnail',
             ],
             [
-                'label' => 'Medium - 300 x 300',
+                'label' => 'Medium - 300*300',
                 'value' => 'medium',
             ],
             [
-                'label' => 'Medium Large - 768 x 0',
+                'label' => 'Medium Large - 768*0',
                 'value' => 'medium_large',
             ],
             [
-                'label' => 'Large - 1024 x 1024',
+                'label' => 'Large - 1024*1024',
                 'value' => 'large',
             ],
             [
-                'label' => '1536x1536 - 1536 x 1536',
+                'label' => '1536x1536 - 1536*1536',
                 'value' => '1536x1536',
             ],
             [
-                'label' => '2048x2048 - 2048 x 2048',
+                'label' => '2048x2048 - 2048*2048',
                 'value' => '2048x2048',
             ],
             [
