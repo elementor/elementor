@@ -134,7 +134,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 					'elementor-common',
 					'elementor-v2-ui',
 					'elementor-v2-icons',
-					'elementor-v2-editor-app-bar'
+					'elementor-v2-editor-app-bar',
 				],
 				ELEMENTOR_VERSION,
 				true
