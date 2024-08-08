@@ -640,7 +640,7 @@ class Ai extends Library {
 
 		$context['currentContext'] = $data['currentContext'];
 		$context['features'] = [
-			'supportedFeatures' => [],
+			'supportedFeatures' => [ 'Taxonomy' ],
 		];
 
 		if ( ElementorUtils::has_pro() ) {
@@ -653,10 +653,6 @@ class Ai extends Library {
 
 		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
 			$context['features']['supportedFeatures'][] = 'Nested';
-		}
-
-		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
-			$context['features']['supportedFeatures'][] = 'Taxonomy';
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
