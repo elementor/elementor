@@ -23,7 +23,6 @@ runs:
   using: "composite"
   steps:
     - name: Install Node.js
-      shell: bash
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.NODE_VERSION }}
