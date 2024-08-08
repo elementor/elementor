@@ -55,6 +55,7 @@ runs:
         PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip
 
         echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_OUTPUT
+        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
 
         npx grunt build
 
