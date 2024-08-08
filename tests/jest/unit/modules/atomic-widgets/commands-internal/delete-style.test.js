@@ -60,7 +60,6 @@ describe( 'DeleteStyle - apply', () => {
 			'document/elements/set-settings',
 			{
 				container,
-				options: { render: false },
 				settings: {
 					[ bind ]: {
 						$$type: 'classes',
@@ -119,7 +118,6 @@ describe( 'DeleteStyle - apply', () => {
 			'document/elements/set-settings',
 			{
 				container,
-				options: { render: false },
 				settings: {
 					[ bind ]: {
 						$$type: 'classes',
