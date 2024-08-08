@@ -57,24 +57,24 @@ class Preferences {
 		$ai_value = User::get_user_option_with_default( static::ENABLE_AI, $user->ID, '1' );
 		$escaped_id = esc_attr( static::ENABLE_AI );
 		?>
-            <tr>
-                <th style="padding:0px">
+			<tr>
+				<th style="padding:0px">
 		<h2><?php echo esc_html__( 'Elementor - AI', 'elementor' ); ?></h2>
-                </th>
-            </tr>
-        <tr>
-            <th>
+				</th>
+			</tr>
+		<tr>
+			<th>
 					<label for="<?php echo $escaped_id; ?>">
 						<?php echo esc_html__( 'Status', 'elementor' ); ?>
 					</label>
-            </th>
+			</th>
 				<td>
 					<label for="<?php echo $escaped_id; ?>">
 						<input name="<?php echo $escaped_id; ?>" id="<?php echo $escaped_id; ?>" type="checkbox" value="1"<?php checked( '1', $ai_value ); ?> />
 						<?php echo esc_html__( 'Enable Elementor AI functionality', 'elementor' ); ?>
 					</label>
 				</td>
-            </tr>
+			</tr>
 		<?php
 	}
 
