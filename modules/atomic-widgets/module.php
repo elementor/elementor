@@ -19,6 +19,7 @@ class Module extends BaseModule {
 		'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 		'editor-panels',
 		'editor-editing-panel',
+		'editor-style',
 	];
 
 	public function get_name() {
