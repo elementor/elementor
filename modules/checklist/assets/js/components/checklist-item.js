@@ -10,6 +10,7 @@ import Collapse from '@elementor/ui/Collapse';
 import ChevronDownIcon from '@elementor/icons/ChevronDownIcon';
 import RadioButtonUncheckedIcon from "@elementor/icons/RadioButtonUncheckedIcon";
 import CardMedia from '@elementor/ui/CardMedia';
+import Link from '@elementor/ui/Link'
 
 function CheckListItem( props ) {
 	const { id, title, imagePath, description, link, CTA } = props.step,
@@ -21,14 +22,14 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ () => handleExpandClick( id ) } sx={{
+			<ListItemButton onClick={ () => handleExpandClick( id ) } sx={ {
 				"&.MuiButtonBase-root:hover": {
 					bgcolor: "transparent"
 				}
-			}}>
-				<ListItemIcon> <RadioButtonUncheckedIcon/> </ListItemIcon>
-				<ListItemText id={ title } primary={ <Typography variant="body2">{title}</Typography> } />
-				{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)'} } /> : <ChevronDownIcon /> }
+			} }>
+				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
+				<ListItemText id={ title } primary={ <Typography variant="body2">{ title }</Typography> } />
+				{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
 			</ListItemButton>
 			<Collapse in={ expanded } >
 				<Card elevation={ 0 } square="true">
@@ -39,11 +40,11 @@ function CheckListItem( props ) {
 					<CardContent>
 						<Typography variant="body2" color="text.secondary" component="p">
 							{ description + ' ' }
-							<a href={ link } target="_blank" rel="noreferrer">Learn more</a>
+							<Link href={ link } target="_blank" rel="noreferrer" underline="hover" color="info.main">Learn more</Link>
 						</Typography>
 					</CardContent>
 					<CardActions>
-						<Button size="small" color="secondary">Mark as completed</Button>
+						<Button size="small" color="secondary" variant="text">Mark as done</Button>
 						<Button size="small" variant="contained">{ CTA }</Button>
 					</CardActions>
 				</Card>

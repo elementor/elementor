@@ -6,7 +6,7 @@ import Toolbar from '@elementor/ui/Toolbar';
 import { __ } from "@wordpress/i18n";
 
 const Header = ( props ) => {
-	const { isOpen, setIsOpen } = props;
+	const { setIsOpen } = props;
 
 	return (
 	<>
@@ -33,7 +33,6 @@ const Header = ( props ) => {
 		</AppBar>
 		<Divider />
 	</>
-
 	);
 }
 

@@ -6,15 +6,15 @@ const Launchpad = ( props ) => {
 	const { isOpen, setIsOpen } = props;
 
 	return (
-		<Paper elevation={5} sx={{position: 'fixed',
+		<Paper elevation={ 5 } sx={ {position: 'fixed',
 			width: '360px',
-			top: '100px',
+			bottom: '40px',
 			right: '40px',
 			zIndex: '99999',
 			hidden: true,
 			maxHeight: '645px',
 			overflowY: 'auto',
-		}}>
+		} }>
 			<Header
 				isOpen={ isOpen }
 				setIsOpen={ setIsOpen }

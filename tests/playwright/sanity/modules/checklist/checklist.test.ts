@@ -24,10 +24,8 @@ test.describe( 'Checklist tests ', () => {
 
 	test.describe( 'Checklist module', () => {
 		test( 'General test', async ( { page, apiRequests  }, testInfo ) => {
-			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage(),
-			frame = editor.getPreviewFrame();
+			editor = await wpAdmin.openNewPage();
 
 			await test.step( 'Rocket Icon in top bar is visible', async () => {
 				const rocketButton = editor.page.locator( '[aria-label="Checklist"]' )
@@ -36,15 +34,15 @@ test.describe( 'Checklist tests ', () => {
 
 			await test.step( 'Open checklist trigger', async () => {
 				const rocketButton = editor.page.locator( '[aria-label="Checklist"]' ),
-					checklist = editor.page.locator( '#e-checklist > div');
+					checklist = editor.page.locator( '#e-checklist > div' );
 
 				await rocketButton.click();
-				await expect(checklist).toBeVisible();
+				await expect( checklist ).toBeVisible();
 			} );
 
 			await test.step( 'Close checklist trigger', async () => {
 				const closeButton = editor.page.locator( '#e-checklist > div [aria-label="close"]' ),
-					checklist = editor.page.locator( '#e-checklist > div');
+					checklist = editor.page.locator( '#e-checklist > div' );
 
 				await closeButton.click();
 				await expect( checklist ).toBeHidden();
