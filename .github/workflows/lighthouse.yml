@@ -11,17 +11,14 @@ concurrency:
 
 jobs:
   build-plugin-lh:
-    name: Build plugin
+    name: Build Plugin
     runs-on: ubuntu-22.04
     outputs:
-      output1: ${{ steps.build_plugin_test.outputs.artifact_name }}
-      output2: 'testing output'
+      artifact_name: ${{ steps.build_plugin.outputs.artifact_name }}
+      changelog_diff: ${{ steps.build_plugin.outputs.changelog_diff }}
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
       - name: Build Plugin
-        id: build_plugin_test
+        id: build_plugin
         uses: ./.github/workflows/plugin-build
 
       - name: Debug Step

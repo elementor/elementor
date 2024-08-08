@@ -18,6 +18,9 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
     - name: Check if this is only a changelog PR
       id: changelog_diff_files
       uses: technote-space/get-diff-action@v6
