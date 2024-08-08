@@ -13,7 +13,7 @@ jobs:
   build-plugin-lh:
     name: Build plugin
     runs-on: ubuntu-22.04
-    uses: elementor/elementor/.github/workflows/plugin-build
+    uses: ./.github/workflows/plugin-build
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4

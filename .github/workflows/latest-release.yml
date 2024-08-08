@@ -63,7 +63,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Build plugin
-        uses: elementor/elementor/.github/workflows/plugin-build
+        uses: ./.github/workflows/plugin-build
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         env:

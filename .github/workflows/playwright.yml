@@ -40,7 +40,7 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-22.04
-    uses: elementor/elementor/.github/workflows/plugin-build
+    uses: ./.github/workflows/plugin-build
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
