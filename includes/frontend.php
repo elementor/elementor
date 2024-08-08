@@ -492,6 +492,10 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_styles() {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
 		/**
 		 * Before frontend register styles.
 		 *
@@ -543,21 +547,6 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		$frontend_file_name = "frontend{$direction_suffix}{$min_suffix}.css";
-
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		wp_register_style(
-			'elementor-frontend',
-			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			[],
-			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
-		);
-
 		wp_register_style(
 			'swiper',
 			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
@@ -572,12 +561,19 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		$internal_widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
+		wp_register_style(
+			'elementor-frontend',
+			$this->get_frontend_file_url( "frontend{$direction_suffix}{$min_suffix}.css", $has_custom_breakpoints ),
+			[],
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
 
-		foreach ( $internal_widgets_styles as $style_name ) {
+		$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
+
+		foreach ( $widgets_with_styles as $widget_name ) {
 			wp_register_style(
-				$style_name,
-				$this->get_css_assets_url( $style_name, null, true, true ),
+				"widget-{$widget_name}",
+				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
 				[],
 				ELEMENTOR_VERSION
 			);
