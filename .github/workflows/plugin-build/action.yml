@@ -71,14 +71,7 @@ runs:
 
         mv build ${{ inputs.REPOSITORY }}
 
-        echo "Checking environment variables:"
-        echo "REPOSITORY: ${{ inputs.REPOSITORY }}"
-        echo "PLUGIN_ZIP_FILENAME: ${PLUGIN_ZIP_FILENAME}"
-        echo "PLUGIN_FILENAME: ${PLUGIN_FILENAME}"
-        echo "PACKAGE_VERSION: ${PACKAGE_VERSION}"
-
         zip -r ${PLUGIN_ZIP_FILENAME} ${{ inputs.REPOSITORY }}
-
 
     - name: Upload Build Zip Artifact
       uses: actions/upload-artifact@v4
