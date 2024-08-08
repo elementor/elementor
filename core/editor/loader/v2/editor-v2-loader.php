@@ -25,8 +25,10 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'icons',
 		'locations',
 		'query',
+		'schema',
 		'store',
 		'ui',
+		'utils',
 	];
 
 	/**
