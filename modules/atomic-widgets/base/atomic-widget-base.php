@@ -147,7 +147,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			case 'classes':
 				return is_array( $setting['value'] )
 					? join( ' ', $setting['value'] )
-					: null;
+					: '';
 
 			default:
 				return null;
