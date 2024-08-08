@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Checklist;
 
+use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,85 +11,124 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
-	private $step_instances = [];
+	private array $step_instances = [];
 
-	private Module $module;
+	private Checklist_Module_Interface $module;
 
-	private $steps_config;
-
-	public function __construct( Module $module ) {
+	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
-		$this->steps_config = $this->get_steps_config_from_source();
 		$this->register_steps();
 	}
 
-	public function get_progress_for_frontend() : array {
+	/**
+	 * Gets formatted and ordered array of step ( step data, is_marked_completed and is_completed )
+	 *
+	 * @return array
+	 */
+	public function get_steps_for_frontend() : array {
 		$formatted_steps = [];
 
-		foreach ( $this->step_instances as $step ) {
-			$formatted_steps[] = $this->module->get_step_progress( $step->get_id() );
+		foreach ( $this->get_step_ids() as $step_id ) {
+			$formatted_steps[] = $this->step_instances[ $step_id ]->get_step_config_for_frontend();
 		}
 
 		return $formatted_steps;
 	}
 
-	public function mark_step_as_done( $step_id ) : void {
+	/**
+	 * Marks a step as completed, returns true if the step was found and marked or false otherwise
+	 *
+	 * @param string $step_id
+	 *
+	 * @return void
+	 */
+	public function mark_step_as_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
-				$step->mark_as_done();
+				$step->mark_as_completed();
 
 				return;
 			}
 		}
 	}
 
-	public function unmark_step_as_done( $step_id ) : void {
+	/**
+	 * Unmarks a step as completed, returns true if the step was found and unmarked or false otherwise
+	 *
+	 * @param string $step_id
+	 *
+	 * @return void
+	 */
+	public function unmark_step_as_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
-				$step->unmark_as_done();
+				$step->unmark_as_completed();
 
 				return;
 			}
 		}
 	}
 
+	/**
+	 * Maybe marks a step as completed (depending on if source allows it), returns true if the step was found and marked or false otherwise
+	 *
+	 * @param $step_id
+	 *
+	 * @return void
+	 */
+	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
+		foreach ( $this->step_instances as $step ) {
+			if ( $step->get_id() === $step_id ) {
+				$step->maybe_mark_as_completed();
+
+				return;
+			}
+		}
+	}
+
+	public function get_step_by_id( string $step_id ) : ?Step_Base {
+		return $this->step_instances[ $step_id ] ?? null;
+	}
+
+	/**
+	 * Getting the step instances array based on source's order
+	 *
+	 * @return void
+	 */
 	private function register_steps() : void {
-		$steps = $this->steps_config;
+		foreach ( $this->get_step_ids() as $step_id ) {
+			$step_instance = $this->get_step_instance( $step_id );
 
-		foreach ( $steps as $step ) {
-			$step_instance = $this->get_step_instance( $step );
-
-			if ( ! $step_instance ) {
-				continue;
+			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
+				$this->step_instances[ $step_id ] = $step_instance;
 			}
-
-			$this->step_instances[] = $step_instance;
 		}
 	}
 
-	private function get_step_instance( $step_data ) : ?Step_Base {
-		$class_name = '\\Elementor\\Modules\\App\\Steps\\' . $step_data['id'];
+	/**
+	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
+	 *
+	 * @param $step_data
+	 *
+	 * @return Step_Base|null
+	 */
+	private function get_step_instance( string $step_id ) : ?Step_Base {
+		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_id;
 
 		if ( ! class_exists( $class_name ) ) {
 			return null;
 		}
 
 		/** @var Step_Base $step */
-		return new $class_name( $step_data, $this->module );
+		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
 	}
 
-	private static function get_steps_config_from_source() : array {
-		return [
-			[
-				'id' => 'create_pages',
-				'title' => esc_html__( 'Create your first 3 pages', 'elementor' ),
-				'description' => esc_html__( 'Jumpstart your creation with professional designs form the Template Library or start from scratch.', 'elementor' ),
-				'learn_more_text' => esc_html__( 'Learn more', 'elementor' ),
-				'learn_more_url' => esc_url( 'https://go.elementor.com/getting-started-with-elementor/' ),
-				'cta_text' => esc_html__( 'Create a new page', 'elementor' ),
-				'cta_url' => admin_url( 'post-new.php' ),
-				'is_responsive_to_changes' => false,
-			],
-		];
+	/**
+	 * Returns the steps config from source
+	 *
+	 * @return array
+	 */
+	private static function get_step_ids() : array {
+		return [ Create_Pages::STEP_ID ];
 	}
 }

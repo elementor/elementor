@@ -1,5 +1,29 @@
-// Frontend Lite
-@import "frontend-lite";
+@import "../global/global";
+@import "breakpoints/proxy";
+@import "../helpers/mixins";
 
-// Widgets
-@import "widgets";
+// Core CSS
+@import "global";
+@import "grid";
+@import "devices";
+
+// Container
+@import "container";
+
+// Forms (Input, Textarea, Select Etc..)
+@import "forms";
+
+// Widgets Global Styles
+@import "widgets-global";
+
+// Swiper
+@import "swiper-customisations";
+
+// Animate
+@import "animate";
+
+// Compatibility
+@import "compatibility";
+
+// Visibility (for preview mode or front-end)
+@import "visibility";

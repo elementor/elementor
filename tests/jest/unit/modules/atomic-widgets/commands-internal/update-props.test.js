@@ -51,7 +51,7 @@ describe( 'UpdateProps - apply', () => {
 
 		// Act & Assert
 		expect( () => {
-			command.apply( { container, styleDefId: 'not-exited-style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
+			command.apply( { container, styleDefID: 'not-exited-style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
@@ -81,7 +81,7 @@ describe( 'UpdateProps - apply', () => {
 
 		// Act & Assert
 		expect( () => {
-			command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
+			command.apply( { container, styleDefID: 'style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
 		} ).toThrowError( 'Style Variant not found' );
 	} );
 
@@ -121,7 +121,7 @@ describe( 'UpdateProps - apply', () => {
 		// Act
 		command.apply( {
 			container,
-			styleDefId: 'style-id',
+			styleDefID: 'style-id',
 			meta: { breakpoint: null, state: null },
 			props: {
 				nullToDelete: null,
