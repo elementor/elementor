@@ -69,11 +69,17 @@ runs:
         sed -i -E "s/Version: (.*?)/Version: ${PLUGIN_VERSION}/g" build/${{ inputs.REPOSITORY }}.php
         sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PLUGIN_VERSION}'/g" build/${{ inputs.REPOSITORY }}.php
 
+        ls -la
         ls -la build
         mv build ${{ inputs.REPOSITORY }}
+        ls -la
+
         ls -la ${{ inputs.REPOSITORY }}
 
-        zip -r $PLUGIN_ZIP_FILENAME ${{ inputs.REPOSITORY }}
+        echo ${{ inputs.REPOSITORY }}
+        echo $PLUGIN_ZIP_FILENAME
+
+        zip -r $PLUGIN_ZIP_FILENAME ${{ inputs.REPOSITORY }}/
 
 
     - name: Upload Build Zip Artifact
