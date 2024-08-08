@@ -540,21 +540,6 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		$frontend_file_name = "frontend{$direction_suffix}{$min_suffix}.css";
-
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		wp_register_style(
-			'elementor-frontend',
-			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			[],
-			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
-		);
-
 		wp_register_style(
 			'swiper',
 			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
