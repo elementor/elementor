@@ -9,7 +9,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - shell: bash
+    - name: Get diff of changelog and readme files
       id: changelog_diff_files
       uses: technote-space/get-diff-action@v6
       with:
