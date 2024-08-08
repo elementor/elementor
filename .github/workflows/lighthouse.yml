@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       output1: ${{ steps.build_plugin_test.outputs.artifact_name }}
-      output2: 'hjvjhvhj'
+      output2: 'testing output'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
