@@ -10,15 +10,15 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		this.requireContainer( args );
 
 		if ( ! args.bind && ! args.styleDefID ) {
-			throw new Error( 'Missing bind or styleDefID' );
+			throw new Error__( 'Missing bind or styleDefID', 'elementor' );
 		}
 
 		if ( args.bind && 'string' !== typeof args.bind ) {
-			throw new Error( 'Invalid bind arg' );
+			throw new Error__( 'Invalid bind arg', 'elementor' );
 		}
 
 		if ( args.styleDefID && 'string' !== typeof args.styleDefID ) {
-			throw new Error( 'Invalid styleDefID arg' );
+			throw new Error__( 'Invalid styleDefID arg', 'elementor' );
 		}
 	}
 
@@ -113,7 +113,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		} else if ( oldStyles[ styleDefID ] ) {
 			style = oldStyles[ styleDefID ];
 		} else {
-			throw new Error( 'Style Def not found' );
+			throw new Error__( 'Style Def not found', 'elementor' );
 		}
 
 		if ( ! this.variantExists( style, meta ) ) {
