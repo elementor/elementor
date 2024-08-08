@@ -75,7 +75,6 @@ runs:
 
 
     - name: Upload Build Zip Artifact
-      shell: bash
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.PLUGIN_ZIP_FILENAME }}
