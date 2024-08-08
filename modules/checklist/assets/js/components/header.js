@@ -20,7 +20,7 @@ const Header = ( props ) => {
 		>
 			<Toolbar
 				variant="dense"
-				disableGutters="true"
+				disableGutters={ true }
 			>
 				<Typography
 					variant="subtitle1"

@@ -7,11 +7,8 @@ const ChecklistApp = () => {
 	const [ isOpen, setIsOpen ] = useState(true );
 
 	useEffect( () => {
-		if ( ! isOpen ) {
-			return;
-		}
-
-	}, [ isOpen ] );
+		elementor.on( 'elementor/editor/panel/checklist/clicked', () => setIsOpen( !isOpen ) );
+	}, [] );
 
 	return (
 		<ThemeProvider colorScheme={ 'light' }>

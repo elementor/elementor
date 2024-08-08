@@ -32,7 +32,7 @@ function CheckListItem( props ) {
 				{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
 			</ListItemButton>
 			<Collapse in={ expanded } >
-				<Card elevation={ 0 } square="true">
+				<Card elevation={ 0 } square={ true }>
 					<CardMedia
 						image="https://elementor.com/cdn-cgi/image/f=auto,w=1100/https://elementor.com/wp-content/uploads/2022/01/Frame-10879527.png"
 						sx={ { height: 180 } }
