@@ -222,7 +222,7 @@ class Floating_Buttons extends PageBase {
 	public function admin_columns_content( $column_name ) {
 		if ( 'elementor_library_type' === $column_name ) {
 			$admin_filter_url = admin_url( Source_Local::ADMIN_MENU_SLUG . '&elementor_library_type=' . $this->get_name() );
-			$meta = get_post_meta( $this->get_main_id(), Module::FLOATING_ELEMENTS_TYPE_META_KEY, true ) ?: 'floating-buttons';
+			$meta = static::get_floating_element_type( $this->get_main_id() );
 			printf( '<a href="%s">%s</a>', $admin_filter_url, Module::get_floating_elements_types()[ $meta ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
