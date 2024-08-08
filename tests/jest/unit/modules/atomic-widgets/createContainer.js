@@ -18,6 +18,7 @@ export default function createContainer( {
 			styles,
 			settings: settingsModel,
 		} ),
+		render: jest.fn(),
 	};
 }
 
