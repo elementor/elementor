@@ -3,18 +3,18 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Checklist tests ', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo,  ) => {
+	test.beforeAll( async ( { browser , apiRequests}, testInfo) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage(  page, testInfo, apiRequests );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
-			'editor_v2': true,
+			editor_v2: true,
 			'launchpad-checklist': true,
 		} );
 		await page.close();
 	} );
 
-	test.afterAll( async ( {  browser, apiRequests  }, testInfo  ) => {
+	test.afterAll( async ( { browser, apiRequests}, testInfo) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -23,12 +23,12 @@ test.describe( 'Checklist tests ', () => {
 	} );
 
 	test.describe( 'Checklist module', () => {
-		test( 'General test', async ( { page, apiRequests  }, testInfo ) => {
+		test( 'General test', async ( { page, apiRequests}, testInfo) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage();
+				editor = await wpAdmin.openNewPage();
 
 			await test.step( 'Rocket Icon in top bar is visible', async () => {
-				const rocketButton = editor.page.locator( '[aria-label="Checklist"]' )
+				const rocketButton = editor.page.locator( '[aria-label="Checklist"]' );
 				await expect( rocketButton ).toBeVisible();
 			} );
 

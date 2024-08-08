@@ -8,12 +8,12 @@ import ListItemIcon from '@elementor/ui/ListItemIcon';
 import ListItemText from '@elementor/ui/ListItemText';
 import Collapse from '@elementor/ui/Collapse';
 import ChevronDownIcon from '@elementor/icons/ChevronDownIcon';
-import RadioButtonUncheckedIcon from "@elementor/icons/RadioButtonUncheckedIcon";
+import RadioButtonUncheckedIcon from '@elementor/icons/RadioButtonUncheckedIcon';
 import CardMedia from '@elementor/ui/CardMedia';
 import Link from '@elementor/ui/Link'
 
 function CheckListItem( props ) {
-	const { id, title, imagePath, description, link, CTA } = props.step,
+	const { id, title, description, link, CTA } = props.step,
 		[ expanded, setExpanded ] = React.useState( false );
 
 	const handleExpandClick = () => {
@@ -23,9 +23,9 @@ function CheckListItem( props ) {
 	return (
 		<>
 			<ListItemButton onClick={ () => handleExpandClick( id ) } sx={ {
-				"&.MuiButtonBase-root:hover": {
-					bgcolor: "transparent"
-				}
+				'&.MuiButtonBase-root:hover': {
+					bgcolor: 'transparent'
+				},
 			} }>
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
 				<ListItemText id={ title } primary={ <Typography variant="body2">{ title }</Typography> } />
@@ -54,3 +54,11 @@ function CheckListItem( props ) {
 }
 
 export default CheckListItem;
+
+CheckListItem.propTypes = {
+	id: PropTypes.string,
+	title: PropTypes.string,
+	description: PropTypes.string,
+	link: PropTypes.string,
+	CTA: PropTypes.string,
+};

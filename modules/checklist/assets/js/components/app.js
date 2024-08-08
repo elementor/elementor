@@ -1,11 +1,10 @@
 import ReactUtils from 'elementor-utils/react';
 import ChecklistApp from './checklist-app';
 
-export const App = () =>  {
-
+export const App = () => {
 	let container = document.getElementById( 'e-checklist' );
 
-	if ( !container ) {
+	if ( ! container ) {
 		container = document.createElement( 'div' );
 		container.id = 'e-checklist';
 		document.body.append( container );
@@ -22,5 +21,4 @@ export const App = () =>  {
 	}
 
 	elementor.trigger( 'elementor/editor/panel/checklist/clicked' );
-}
-
+};

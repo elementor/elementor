@@ -4,7 +4,7 @@ import CheckListItem from './checklist-item';
 
 function CheckList() {
 	return (
-		<List component="div" sx={ { py:0 } }>
+		<List component="div" sx={ { py: 0 } }>
 			{
 				steps.map( ( step, index ) => {
 					return (

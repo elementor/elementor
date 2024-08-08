@@ -1,13 +1,13 @@
-import { ThemeProvider } from "@elementor/ui";
-import Launchpad from "./launchpad";
-import * as React from "react";
-import { useEffect, useState } from "react";
+import { ThemeProvider } from '@elementor/ui';
+import Launchpad from './launchpad';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 
 const ChecklistApp = () => {
-	const [ isOpen, setIsOpen ] = useState(true );
+	const [ isOpen, setIsOpen ] = useState( true );
 
 	useEffect( () => {
-		elementor.on( 'elementor/editor/panel/checklist/clicked', () => setIsOpen( !isOpen ) );
+		elementor.on( 'elementor/editor/panel/checklist/clicked', () => setIsOpen( ! isOpen ) );
 	}, [] );
 
 	return (
@@ -18,6 +18,6 @@ const ChecklistApp = () => {
 			/> }
 		</ThemeProvider>
 	);
-}
+};
 
 export default ChecklistApp
