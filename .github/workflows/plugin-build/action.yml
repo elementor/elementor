@@ -74,7 +74,10 @@ runs:
         ls -la ${{ inputs.REPOSITORY }}
 
         echo ${{ inputs.REPOSITORY }}/REPOSITORY
-        echo ${{ env.PLUGIN_ZIP_FILENAME }}/PLUGIN_ZIP_FILENAME
+        echo ${PLUGIN_ZIP_FILENAME}/PLUGIN_ZIP_FILENAME
+        echo ${PLUGIN_VERSION}/PLUGIN_VERSION
+        echo ${PLUGIN_FILENAME}/PLUGIN_FILENAME
+        echo ${PACKAGE_VERSION}/PACKAGE_VERSION
 
         zip -r $PLUGIN_ZIP_FILENAME ${{ inputs.REPOSITORY }}
 
