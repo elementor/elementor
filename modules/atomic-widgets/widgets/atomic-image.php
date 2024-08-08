@@ -87,11 +87,11 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$options = $this->get_image_sizes();
 
 		$resolution_control = Select_Control::bind_to( 'image_size' )
-			->set_label( __( 'Resolutions', 'elementor' ) )
+			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
 			->set_options( $options );
 
 		$content_section = Section::make()
-			->set_label( __( 'Content', 'elementor' ) )
+			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
 				$resolution_control,
 			]);
