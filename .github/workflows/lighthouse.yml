@@ -16,8 +16,17 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
       - name: Build Plugin
+        id: build_plugin_test
         uses: ./.github/workflows/plugin-build
+
+      - name: Debug Step
+        run: |
+          echo "${{ steps.build_plugin_test.outputs.artifact_name }}"
+          echo "steps: ${{ toJSON(steps) }}"
+          echo "steps.build_plugin_test: ${{ toJSON(steps.build_plugin_test) }}"
+
 
   debug-output:
     name: Debug build output

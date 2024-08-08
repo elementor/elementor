@@ -54,9 +54,6 @@ runs:
         PLUGIN_FILENAME=${{ inputs.REPOSITORY }}-${PLUGIN_VERSION}
         PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip
 
-        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_OUTPUT
-        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
-
         npx grunt build
 
         sed -i -E "s/Version: (.*?)/Version: ${PLUGIN_VERSION}/g" build/${{ inputs.REPOSITORY }}.php
@@ -66,8 +63,15 @@ runs:
 
         zip -r ${PLUGIN_ZIP_FILENAME} ${{ inputs.REPOSITORY }}
 
+        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_OUTPUT
+        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+
     - name: Upload Build Zip Artifact
       uses: actions/upload-artifact@v4
+      run: |
+        echo "env.PLUGIN_ZIP_FILENAME"
+        echo "Uploading artifact: ${{ steps.build_plugin.outputs.PLUGIN_ZIP_FILENAME }}"
+        echo "Uploading artifact: ${{ steps.build_plugin.outputs.plugin_zip_filename }}"
       with:
         name: ${{ env.PLUGIN_ZIP_FILENAME }}
         path: ${{ inputs.REPOSITORY }}
