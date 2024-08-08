@@ -59,10 +59,10 @@ runs:
 
         PACKAGE_VERSION=$(node -p "require('./package.json').version")
         DATE_VERSION=$(date '+%Y%m%d.%H%M')
+        PLUGIN_FILENAME=${{ inputs.REPOSITORY }}-${PACKAGE_VERSION}-${DATE_VERSION}
+        PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip
 
-        echo "PLUGIN_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}" >> $GITHUB_ENV
-        echo "PLUGIN_FILENAME=${{ inputs.REPOSITORY }}-${PLUGIN_VERSION}" >> $GITHUB_ENV
-        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip" >> $GITHUB_ENV
+        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
 
         npx grunt build
 
@@ -73,12 +73,11 @@ runs:
 
         echo "Checking environment variables:"
         echo "REPOSITORY: ${{ inputs.REPOSITORY }}"
-        echo "PLUGIN_ZIP_FILENAME: ${{ env.PLUGIN_ZIP_FILENAME }}"
-        echo "PLUGIN_VERSION: ${PLUGIN_VERSION}"
+        echo "PLUGIN_ZIP_FILENAME: ${PLUGIN_ZIP_FILENAME}"
         echo "PLUGIN_FILENAME: ${PLUGIN_FILENAME}"
         echo "PACKAGE_VERSION: ${PACKAGE_VERSION}"
 
-        zip -r ${{ env.PLUGIN_ZIP_FILENAME }} ${{ inputs.REPOSITORY }}
+        zip -r ${PLUGIN_ZIP_FILENAME} ${{ inputs.REPOSITORY }}
 
 
     - name: Upload Build Zip Artifact
