@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress.Elementor">
 	<description>Deprecated File! Elementor Coding Standard</description>
-
+	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
 	<arg name="parallel" value="8" />
 
 	<config name="text_domain" value="elementor" />
