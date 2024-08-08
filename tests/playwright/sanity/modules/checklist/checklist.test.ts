@@ -9,9 +9,6 @@ test.describe( 'Checklist tests ', () => {
 		const wpAdmin = new WpAdminPage(  page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			'editor_v2': true,
-		} );
-		await page.pause();
-		await wpAdmin.setExperiments( {
 			'launchpad-checklist': true,
 		} );
 		await page.close();
@@ -28,8 +25,9 @@ test.describe( 'Checklist tests ', () => {
 	test.describe( 'Checklist module', () => {
 		test( 'General test', async ( { page, apiRequests  }, testInfo ) => {
 			// Arrange.
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = await wpAdmin.openNewPage();
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame();
 
 			await test.step( 'Rocket Icon in top bar is visible', async () => {
 				const rocketButton = editor.page.locator( '[aria-label="Checklist"]' )
@@ -37,19 +35,20 @@ test.describe( 'Checklist tests ', () => {
 			} );
 
 			await test.step( 'Open checklist trigger', async () => {
-				const checklist = editor.page.locator( '#e-checklist' )
-				await expect( checklist ).toBeVisible();
+				const rocketButton = editor.page.locator( '[aria-label="Checklist"]' ),
+					checklist = editor.page.locator( '#e-checklist > div');
+
+				await rocketButton.click();
+				await expect(checklist).toBeVisible();
 			} );
 
-			await test.step( 'Open checklist trigger', async () => {
-				const closeButton = editor.page.locator( '[aria-label="Close"]' ),
-					checklist = editor.page.locator( '#e-checklist' );
+			await test.step( 'Close checklist trigger', async () => {
+				const closeButton = editor.page.locator( '#e-checklist > div [aria-label="close"]' ),
+					checklist = editor.page.locator( '#e-checklist > div');
 
 				await closeButton.click();
-				await expect( checklist ).toBeEmpty();
+				await expect( checklist ).toBeHidden();
 			} );
 		} );
-
 	} );
-
 } );
