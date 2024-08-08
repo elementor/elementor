@@ -36,13 +36,20 @@ class Loader extends Module {
 					'dependencies' => [],
 				],
 				'swiper' => [
-					'src' => $this->get_css_assets_url( 'swiper',  Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/' ),
-					'version' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? '8.4.5' : '5.3.6',
+					'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
+					'version' => $this->getSwiperVersion(),
 					'dependencies' => [],
 				],
 			],
 			'scripts' => [],
 		];
+	}
+
+	private function getSwiperPath() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
+	}
+	private function getSwiperVersion() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? '8.4.5' : '5.3.6';
 	}
 
 	public function get_assets() {

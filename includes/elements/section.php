@@ -555,14 +555,14 @@ class Element_Section extends Element_Base {
 						'assets' => [
 							'styles' => [
 								[
-									'name' => 'swipper',
+									'name' => 'swiper',
 									'conditions' => [
 										'terms' => [
-											[
+											[	
 												'name' => 'background',
 												'operator' => '!==',
 												'value' => '',
-											],
+											],	
 										],
 									],
 								],
