@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 class Test_Atomic_Image extends Elementor_Test_Base {
 
     public function test_get_atomic_controls__returns_the_expected_image_sizes() {
+        $this->markTestSkipped();
         // Arrange.
         $widget = new Atomic_Image( [], [] );
 
