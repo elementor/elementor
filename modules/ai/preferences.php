@@ -18,11 +18,15 @@ class Preferences {
 	 * @return void
 	 */
 	public function register() {
-		add_action( 'profile_personal_options', function ( \WP_User $user ) {
+		add_action( 'personal_options', function ( \WP_User $user ) {
 			$this->add_personal_options_settings( $user );
 		} );
 
 		add_action( 'personal_options_update', function ( $user_id ) {
+			$this->update_personal_options_settings( $user_id );
+		} );
+
+		add_action( 'edit_user_profile_update', function ( $user_id ) {
 			$this->update_personal_options_settings( $user_id );
 		} );
 	}
@@ -51,23 +55,26 @@ class Preferences {
 		}
 
 		$ai_value = User::get_user_option_with_default( static::ENABLE_AI, $user->ID, '1' );
+		$escaped_id = esc_attr( static::ENABLE_AI );
 		?>
+            <tr>
+                <th style="padding:0px">
 		<h2><?php echo esc_html__( 'Elementor - AI', 'elementor' ); ?></h2>
-		<table class="form-table" role="presentation">
-			<tr>
-				<th>
-					<label for="<?php echo esc_attr( static::ENABLE_AI ); ?>">
+                </th>
+            </tr>
+        <tr>
+            <th>
+					<label for="<?php echo $escaped_id; ?>">
 						<?php echo esc_html__( 'Status', 'elementor' ); ?>
 					</label>
-				</th>
+            </th>
 				<td>
-					<label for="<?php echo esc_attr( static::ENABLE_AI ); ?>">
-						<input name="<?php echo esc_attr( static::ENABLE_AI ); ?>" id="<?php echo esc_attr( static::ENABLE_AI ); ?>" type="checkbox" value="1"<?php checked( '1', $ai_value ); ?> />
+					<label for="<?php echo $escaped_id; ?>">
+						<input name="<?php echo $escaped_id; ?>" id="<?php echo $escaped_id; ?>" type="checkbox" value="1"<?php checked( '1', $ai_value ); ?> />
 						<?php echo esc_html__( 'Enable Elementor AI functionality', 'elementor' ); ?>
 					</label>
 				</td>
-			</tr>
-		</table>
+            </tr>
 		<?php
 	}
 
