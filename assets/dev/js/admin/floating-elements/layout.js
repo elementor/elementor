@@ -1,6 +1,7 @@
 import NewFloatingElementsView from 'elementor-admin/floating-elements/view';
+import ModalLayout from 'elementor-common/views/modal/layout';
 
-export default class extends elementorModules.common.views.modal.Layout {
+export default class extends ModalLayout {
 	getModalOptions() {
 		return {
 			id: 'elementor-new-floating-elements-modal',
@@ -14,7 +15,7 @@ export default class extends elementorModules.common.views.modal.Layout {
 	}
 
 	initialize() {
-		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
+		super.initialize();
 
 		this.showLogo();
 

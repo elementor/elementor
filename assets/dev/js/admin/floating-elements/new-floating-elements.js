@@ -13,7 +13,7 @@ const NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 	},
 
 	getDefaultElements() {
-		var selectors = this.getSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
 			addButtonTopBar: document.querySelector( selectors.addButtonTopBar ),
@@ -34,24 +34,12 @@ const NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 		if ( this.elements.addButtonEmptyTemplate !== null ) {
 			this.elements.addButtonEmptyTemplate.addEventListener( 'click', this.onAddButtonClick );
 		}
-
-		elementorCommon.elements.$window.on( 'hashchange', this.showModalByHash.bind( this ) );
-	},
-
-	showModalByHash() {
-		if ( '#add_new' === location.hash ) {
-			this.layout.showModal();
-
-			location.hash = '';
-		}
 	},
 
 	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.layout = new NewFloatingelementsLayout();
-
-		this.showModalByHash();
 	},
 
 	onAddButtonClick( event ) {
