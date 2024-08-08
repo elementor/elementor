@@ -13,7 +13,12 @@ jobs:
   build-plugin-lh:
     name: Build plugin
     runs-on: ubuntu-22.04
-    uses: ./.github/workflows/plugin-build
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build Plugin
+        uses: ./.github/workflows/plugin-build
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4

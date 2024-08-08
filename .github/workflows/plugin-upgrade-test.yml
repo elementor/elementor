@@ -17,7 +17,13 @@ concurrency:
 jobs:
   build-plugin:
     runs-on: ubuntu-22.04
-    uses: ./.github/workflows/plugin-build
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build Plugin
+        uses: ./.github/workflows/plugin-build
+
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest
