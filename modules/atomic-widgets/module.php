@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Google_Maps;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -56,6 +57,7 @@ class Module extends BaseModule {
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
+		$widgets_manager->register( new Atomic_Google_Maps() );
 	}
 
 	/**
