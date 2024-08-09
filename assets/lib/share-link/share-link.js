@@ -1,25 +1,23 @@
 /**
  * By Elementor Team
  */
-( function( $ ) {
-	window.ShareLink = function( element, userSettings ) {
-		var $element,
-			settings = {};
+( function() {
+	window.ShareLink = function( eElement, userSettings ) {
+		let element;
+		let settings = {};
 
-		var getNetworkNameFromClass = function( className ) {
-			var classNamePrefix = className.substr( 0, settings.classPrefixLength );
+		const getNetworkNameFromClass = function( className ) {
+			const classNamePrefix = className.substr( 0, settings.classPrefixLength );
 
 			return classNamePrefix === settings.classPrefix ? className.substr( settings.classPrefixLength ) : null;
 		};
 
-		var bindShareClick = function( networkName ) {
-			$element.on( 'click', function() {
-				openShareLink( networkName );
-			} );
+		const bindShareClick = function( networkName ) {
+			element.addEventListener( 'click', () => openShareLink( networkName ) );
 
 			// Add "Enter" and "Space" event only if the element has role=button attribute.
-			if ( 'button' === $element.attr( 'role' ) ) {
-				$element.on( 'keyup', ( event ) => {
+			if ( 'button' === element.getAttribute( 'role' ) ) {
+				element.addEventListener( 'keyup', ( event ) => {
 					if ( 13 === event.keyCode || 32 === event.keyCode ) {
 						event.preventDefault();
 
@@ -29,26 +27,26 @@
 			}
 		};
 
-		var openShareLink = function( networkName ) {
-			var shareWindowParams = '';
+		const openShareLink = function( networkName ) {
+			let shareWindowParams = '';
 
 			if ( settings.width && settings.height ) {
-				var shareWindowLeft = ( screen.width / 2 ) - ( settings.width / 2 ),
-					shareWindowTop = ( screen.height / 2 ) - ( settings.height / 2 );
+				const shareWindowLeft = ( screen.width / 2 ) - ( settings.width / 2 );
+				const shareWindowTop = ( screen.height / 2 ) - ( settings.height / 2 );
 
 				shareWindowParams = 'toolbar=0,status=0,width=' + settings.width + ',height=' + settings.height + ',top=' + shareWindowTop + ',left=' + shareWindowLeft;
 			}
 
-			var link = ShareLink.getNetworkLink( networkName, settings ),
-				isPlainLink = /^https?:\/\//.test( link ),
-				windowName = isPlainLink ? '' : '_self';
+			const link = ShareLink.getNetworkLink( networkName, settings );
+			const isPlainLink = /^https?:\/\//.test( link );
+			const windowName = isPlainLink ? '' : '_self';
 
 			open( link, windowName, shareWindowParams );
 		};
 
-		var run = function() {
-			$.each( element.classList, function() {
-				var networkName = getNetworkNameFromClass( this );
+		const run = function() {
+			element.classList.forEach( () => {
+				const networkName = getNetworkNameFromClass( this );
 
 				if ( networkName ) {
 					bindShareClick( networkName );
@@ -58,24 +56,16 @@
 			} );
 		};
 
-		var initSettings = function() {
-			$.extend( settings, ShareLink.defaultSettings, userSettings );
+		const initSettings = function() {
+			settings = { ...ShareLink.defaultSettings, ...userSettings };
 
-			[ 'title', 'text' ].forEach( function( propertyName ) {
-				settings[ propertyName ] = settings[ propertyName ].replace( '#', '' );
-			} );
+			[ 'title', 'text' ].forEach( ( propertyName ) => settings[ propertyName ] = settings[ propertyName ].replace( '#', '' ) );
 
 			settings.classPrefixLength = settings.classPrefix.length;
 		};
 
-		var initElements = function() {
-			$element = $( element );
-		};
-
-		var init = function() {
+		const init = function() {
 			initSettings();
-
-			initElements();
 
 			run();
 		};
@@ -83,7 +73,7 @@
 		init();
 	};
 
-	ShareLink.networkTemplates = {
+	window.ShareLink.networkTemplates = {
 		twitter: 'https://twitter.com/intent/tweet?text={text}\x20{url}',
 		'x-twitter': 'https://x.com/intent/tweet?text={text}\x20{url}',
 		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}&media={image}',
@@ -106,7 +96,7 @@
 		skype: 'https://web.skype.com/share?url={url}',
 	};
 
-	ShareLink.defaultSettings = {
+	window.ShareLink.defaultSettings = {
 		title: '',
 		text: '',
 		image: '',
@@ -116,25 +106,23 @@
 		height: 480,
 	};
 
-	ShareLink.getNetworkLink = function( networkName, settings ) {
-		var link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
+	window.ShareLink.getNetworkLink = function( networkName, settings ) {
+		let link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, ( fullMatch, pureMatch ) => {
 			return settings[ pureMatch ] || '';
 		} );
 
 		if ( 'email' === networkName ) {
-			if ( -1 < settings['title'].indexOf( '&' ) ||  -1 < settings['text'].indexOf( '&' ) ) {
-				var emailSafeSettings = {
-					text: settings['text'].replace( new RegExp('&', 'g'), '%26' ),
-					title: settings['title'].replace( new RegExp('&', 'g'), '%26' ),
+			if ( -1 < settings['title'].indexOf( '&' ) || -1 < settings['text'].indexOf( '&' ) ) {
+				const emailSafeSettings = {
+					text: settings['text'].replace( new RegExp( '&', 'g' ), '%26' ),
+					title: settings['title'].replace( new RegExp( '&', 'g' ), '%26' ),
 					url: settings['url'],
 				};
 
-				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, function( fullMatch, pureMatch ) {
-					return emailSafeSettings[ pureMatch ];
-				} );
+				link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, ( fullMatch, pureMatch ) => emailSafeSettings[ pureMatch ] );
 			}
 
-			if ( link.indexOf( '?subject=&body') ) {
+			if ( link.indexOf( '?subject=&body' ) ) {
 				link = link.replace( 'subject=&', '' );
 			}
 
@@ -144,9 +132,15 @@
 		return link;
 	};
 
-	$.fn.shareLink = function( settings ) {
-		return this.each( function() {
-			$( this ).data( 'shareLink', new ShareLink( this, settings ) );
-		} );
+	Element.prototype.shareLink = function ( settings ) {
+		new ShareLink( this, settings );
+		return this;
 	};
-} )( jQuery );
+
+	NodeList.prototype.shareLink = function ( settings ) {
+		this.forEach( ( element ) => {
+			new ShareLink( element, settings );
+		} );
+		return this;
+	};
+} )();
