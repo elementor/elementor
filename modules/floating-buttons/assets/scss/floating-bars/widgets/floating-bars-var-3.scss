@@ -1,0 +1,144 @@
+.e-floating-bars-var-3 {
+	--e-floating-bars-announcement-bg-color: #CDD9DF;
+	--e-floating-bars-announcement-text-color: #1C2448;
+	--e-floating-bars-announcement-icon-color: #1C2448;
+	--e-floating-bars-close-button-color: #1C2448;
+	--e-floating-bars-coupon-button-color: #467FF7;
+	--e-floating-bars-coupon-bg-color: #FFFFFF;
+	--e-floating-bars-coupon-border-color: #467FF7;
+
+	--e-floating-bars-coupon-icon-gap: 5px;
+	--e-floating-bars-coupon-border-width: 2px;
+	--e-floating-bars-coupon-padding-block-end: 8px;
+	--e-floating-bars-coupon-padding-block-start: 8px;
+	--e-floating-bars-coupon-padding-inline-end: 20px;
+	--e-floating-bars-coupon-padding-inline-start: 20px;
+	--e-floating-bars-coupon-animation-delay: 500ms;
+	--e-floating-bars-coupon-animation-duration: 1000ms;
+
+	.e-floating-bars {
+
+		&__coupon-button {
+			align-items: center;
+			background-color: var(--e-floating-bars-coupon-bg-color);
+			border: 0;
+			border-radius: 0;
+			color: var(--e-floating-bars-coupon-button-color);
+			display: flex;
+			order: 3;
+			padding-block-end: var(--e-floating-bars-coupon-padding-block-end);
+			padding-block-start: var(--e-floating-bars-coupon-padding-block-start);
+			padding-inline-end: var(--e-floating-bars-coupon-padding-inline-end);
+			padding-inline-start: var(--e-floating-bars-coupon-padding-inline-start);
+			position: relative;
+
+			&:hover,
+			&:focus {
+				background-color: var(--e-floating-bars-coupon-bg-color);
+			}
+
+			&.has-entrance-animation {
+				animation-delay: var(--e-floating-bars-coupon-animation-delay);
+				animation-duration: var(--e-floating-bars-coupon-animation-duration);
+				opacity: 0;
+			}
+	
+			&.visible {
+				opacity: 1;
+			}
+
+			&.is-type-text,
+			&.is-type-cutout {
+				border-color: var(--e-floating-bars-coupon-border-color);
+				border-style: solid;
+				border-width: var(--e-floating-bars-coupon-border-width);
+			}
+
+			&.is-type-text {
+				--e-floating-bars-coupon-padding-block-end: 0;
+				--e-floating-bars-coupon-padding-block-start: 0;
+				--e-floating-bars-coupon-padding-inline-end: 0;
+				--e-floating-bars-coupon-padding-inline-start: 0;
+				--e-floating-bars-coupon-border-width: 0;
+				--e-floating-bars-coupon-bg-color: transparent;
+			}
+
+			&.is-type-cutout {
+				border-style: dashed;
+			}
+
+			&.is-type-price-tag,
+			&.is-type-gift-tag,
+			&.is-type-round-ticket,
+			&.is-type-square-ticket {
+				--e-floating-bars-coupon-padding-block-end: 8px;
+				--e-floating-bars-coupon-padding-block-start: 8px;
+				--e-floating-bars-coupon-padding-inline-end: 20px;
+				--e-floating-bars-coupon-padding-inline-start: 20px;
+
+				background-color: transparent;
+			}
+
+			&.is-type-price-tag,
+			&.is-type-gift-tag {
+				padding-inline-start: calc(var(--e-floating-bars-coupon-padding-inline-start) + 1.5em);
+			}
+
+			&.is-type-round-ticket,
+			&.is-type-square-ticket {
+				padding-inline: calc(var(--e-floating-bars-coupon-padding-inline-start) + 0.5em);
+			}
+
+			&.has-border {
+
+				.shape {
+					stroke-width: var(--e-floating-bars-coupon-border-width);
+					stroke: var(--e-floating-bars-coupon-border-color);
+				}
+			}
+
+			@media (max-width: $screen-mobile-max) {
+				display: flex;
+				grid-column: span 2 / span 2;
+				grid-row-start: 2;
+				justify-content: center;
+			}
+		}
+		
+
+		&__shape {
+			left: 0;
+			position: absolute;
+			z-index: -1;
+
+			.path {
+				fill: var(--e-floating-bars-coupon-bg-color);
+			}
+
+			.circle {
+				fill: var(--e-floating-bars-announcement-bg-color);
+			}
+		}
+
+		&__coupon-icon {
+			color: var(--e-floating-bars-coupon-button-color);
+			display: flex;
+
+			svg {
+				fill: var(--e-floating-bars-coupon-button-color);
+				height: 1em; // width and height are relative to text size
+				width: 1em; // width and height are relative to text size
+			}
+		}
+
+		&__coupon-text-group {
+			align-items: center;
+			display: flex;
+			gap: var(--e-floating-bars-coupon-icon-gap);
+
+			&.is-hidden {
+				display: none;
+			}
+		}
+	}
+}
