@@ -30,6 +30,24 @@ runs:
 
         echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
 
+    - name: Set Package Version Environment Variable
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
+
+          DATE_VERSION=$(date '+%Y%m%d.%H%M')
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          BUILD_PACKAGE_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}
+
+        else
+
+          PACKAGE_VERSION=${{ inputs.PACKAGE_VERSION }}
+          BUILD_PACKAGE_VERSION=${PACKAGE_VERSION}
+
+        fi
+
+        echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
+
     - name: Build Plugin
       id: build_plugin
       shell: bash
@@ -41,20 +59,13 @@ runs:
         npx grunt build
 
         if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          DATE_VERSION=$(date '+%Y%m%d.%H%M')
-          PLUGIN_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}
 
           sed -i -E "s/Version: (.*?)/Version: ${PLUGIN_VERSION}/g" build/${{ env.REPOSITORY_NAME }}.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PLUGIN_VERSION}'/g" build/${{ env.REPOSITORY_NAME }}.php
 
-        else
-          PACKAGE_VERSION=${{ inputs.PACKAGE_VERSION }}
-          PLUGIN_VERSION=${PACKAGE_VERSION}
-
         fi
 
-        PLUGIN_FILENAME=${{ env.REPOSITORY_NAME }}-${PLUGIN_VERSION}
+        PLUGIN_FILENAME=${{ env.REPOSITORY_NAME }}-${{ env.BUILD_PACKAGE_VERSION }}
         PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip
 
         mv build ${{ env.REPOSITORY_NAME }}
