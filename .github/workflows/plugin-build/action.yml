@@ -33,6 +33,8 @@ runs:
       run: |
         npm config set git-tag-version false
         export PUPPETEER_SKIP_DOWNLOAD=true
+        echo "${{ github.repository }}"
+        
         npx grunt build
 
         if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
