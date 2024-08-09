@@ -1129,7 +1129,15 @@ JS;
 							'icon' => 'eicon-h-align-right',
 						],
 					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons__chat-button svg' => 'order: {{VALUE}};',
+					],
+					'selectors_dictionary' => [
+						'start' => '-1',
+						'end' => '2',
+					],
 					'default' => 'start',
+					'mobile_default' => 'start',
 					'toggle' => true,
 				]
 			);
@@ -2910,7 +2918,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'advanced_horizontal_position',
 				[
 					'label' => esc_html__( 'Horizontal Position', 'elementor' ),
@@ -2964,7 +2972,7 @@ JS;
 				);
 			}
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'advanced_vertical_position',
 				[
 					'label' => esc_html__( 'Vertical Position', 'elementor' ),
