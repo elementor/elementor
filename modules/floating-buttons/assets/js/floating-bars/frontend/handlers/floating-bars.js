@@ -74,10 +74,12 @@ export default class FloatingBarsHandler extends Base {
 	closeFloatingBar() {
 		const { isHidden } = this.getSettings( 'constants' );
 
-		this.elements.main.classList.add( isHidden );
+		if ( ! elementorFrontend.isEditMode() ) {
+			this.elements.main.classList.add( isHidden );
 
-		if ( this.isStickyTop() ) {
-			this.removeBodyPadding();
+			if ( this.isStickyTop() ) {
+				this.removeBodyPadding();
+			}
 		}
 	}
 

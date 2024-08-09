@@ -2,7 +2,8 @@
 * Contact Buttons has position: fixed, therefore the container results as `empty`
 * and it's not visible in the preview when the aside is hidden.
 */
-.elementor-element:has(.e-contact-buttons) {
+.elementor-element:has(.e-contact-buttons),
+.elementor-element:has(.e-floating-bars) {
 
 	.elementor-editor-preview & .elementor-widget-empty {
 		display: block;
