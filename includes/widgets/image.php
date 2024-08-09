@@ -664,7 +664,7 @@ class Widget_Image extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .widget-image-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
