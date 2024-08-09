@@ -35,7 +35,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'library' => 'fa-solid',
 					],
 					'text_label' => esc_html__( 'Text', 'elementor' ),
-					'text_default' => esc_html__( 'Just in! Cool summer tees', 'elementor' )
+					'text_default' => esc_html__( 'Just in! Cool summer tees', 'elementor' ),
 				],
 				'floating_bar_section' => [
 					'close_switch_default' => 'yes',
@@ -56,7 +56,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
 						'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
 					],
-				]
+				],
 			],
 			'advanced' => [],
 		];
@@ -231,7 +231,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
-					]
+					],
 				]
 			);
 
@@ -258,7 +258,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
-					]
+					],
 				]
 			);
 		}
@@ -348,7 +348,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					[
 						'headlines_text' => esc_html__( 'Item #3', 'elementor' ),
-					]
+					],
 				],
 			]
 		);
