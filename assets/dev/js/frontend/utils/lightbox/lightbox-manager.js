@@ -6,14 +6,16 @@ export default class LightboxManager extends elementorModules.ViewModule {
 					`elementor-frontend/utils/lightbox/lightbox`
 				).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
 			} ),
-			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
+			dialogScriptPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
+			dialogStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'dialog' ),
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
 			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
 			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
 
 		return Promise.all( [
 			lightboxPromise,
-			dialogPromise,
+			dialogScriptPromise,
+			dialogStylePromise,
 			shareLinkPromise,
 			swiperStylePromise,
 			lightboxStylePromise,
