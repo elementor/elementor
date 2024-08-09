@@ -27,14 +27,21 @@ runs:
         composer install --no-scripts --no-dev
         composer dump-autoload
 
+    - name: Set GitHub Repository Name Environment Variable
+      shell: bash
+      run: |
+        REPOSITORY_NAME=$(echo "${{ github.repository }}" | awk -F/ '{print $NF}')
+
+        echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
+
     - name: Build Plugin
       id: build_plugin
       shell: bash
       run: |
         npm config set git-tag-version false
         export PUPPETEER_SKIP_DOWNLOAD=true
-        echo "${{ github.repository }}"
-        
+        echo "${{ env.REPOSITORY_NAME }}"
+
         npx grunt build
 
         if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
