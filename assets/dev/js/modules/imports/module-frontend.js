@@ -1,26 +1,9 @@
-import { isFrontend } from '../../utils/is-frontend-check';
-
 const Module = function() {
-	const $ = jQuery,
-		instanceParams = arguments,
+	const instanceParams = arguments,
 		self = this,
 		events = {};
 
 	let settings;
-
-	const ensureClosureMethods = function() {
-		$.each( self, function( methodName ) {
-			const oldMethod = self[ methodName ];
-
-			if ( 'function' !== typeof oldMethod ) {
-				return;
-			}
-
-			self[ methodName ] = function() {
-				return oldMethod.apply( self, arguments );
-			};
-		} );
-	};
 
 	const initSettings = function() {
 		settings = self.getDefaultSettings();
@@ -28,14 +11,12 @@ const Module = function() {
 		const instanceSettings = instanceParams[ 0 ];
 
 		if ( instanceSettings ) {
-			$.extend( true, settings, instanceSettings );
+			Object.assign( settings, instanceSettings );
 		}
 	};
 
 	const init = function() {
 		self.__construct.apply( self, instanceParams );
-
-		ensureClosureMethods();
 
 		initSettings();
 
@@ -71,7 +52,7 @@ const Module = function() {
 		}
 
 		if ( 'object' === typeof settingKey ) {
-			$.extend( settingsContainer, settingKey );
+			extendObject( settingsContainer, settingKey );
 
 			return self;
 		}
@@ -113,7 +94,7 @@ const Module = function() {
 
 	this.on = function( eventName, callback ) {
 		if ( 'object' === typeof eventName ) {
-			$.each( eventName, function( singleEventName ) {
+			eventName.forEach( function( singleEventName ) {
 				self.on( singleEventName, this );
 			} );
 
@@ -170,7 +151,7 @@ const Module = function() {
 			return self;
 		}
 
-		$.each( callbacks, function( index, callback ) {
+		callbacks.forEach( function( callback ) {
 			callback.apply( self, params );
 		} );
 
@@ -191,26 +172,30 @@ Module.prototype.getConstructorID = function() {
 };
 
 Module.extend = function( properties ) {
-	if ( isFrontend() ) {
-		return null;
-	}
-
-	const $ = jQuery,
-		parent = this;
+	const parent = this;
 
 	const child = function() {
-		return parent.apply( this, arguments );
+		parent.apply( this, arguments );
 	};
 
-	$.extend( child, parent );
+	extendObject( child, parent );
 
-	child.prototype = Object.create( $.extend( {}, parent.prototype, properties ) );
-
+	child.prototype = Object.create( parent.prototype );
+	Object.assign( child.prototype, properties );
 	child.prototype.constructor = child;
 
 	child.__super__ = parent.prototype;
 
 	return child;
+};
+const extendObject = ( target, source ) => {
+	for ( const prop in source ) {
+		if ( source.hasOwnProperty( prop ) ) {
+			target[ prop ] = source[ prop ];
+		}
+	}
+
+	return target;
 };
 
 module.exports = Module;

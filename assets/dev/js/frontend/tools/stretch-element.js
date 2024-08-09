@@ -1,4 +1,4 @@
-module.exports = elementorModules.ViewModule.extend( {
+module.exports = elementorModules.ViewModuleFrontend.extend( {
 	getDefaultSettings() {
 		return {
 			element: null,

@@ -71,10 +71,15 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		const classes = this.getSettings( 'classes' ),
 			elementSettings = this.getElementSettings(),
 			direction = 'slide_left' === elementSettings.background_slideshow_slide_transition ? 'ltr' : 'rtl',
-			$container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
-			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } ),
 			kenBurnsActive = elementSettings.background_slideshow_ken_burns,
 			lazyload = 'yes' === elementSettings.background_slideshow_lazyload;
+
+		const containerElement = document.createElement( 'div' );
+		containerElement.classList.add( ...classes.swiperContainer.split( ' ' ) );
+		containerElement.setAttribute( 'dir', direction );
+
+		const wrapperElement = document.createElement( 'div' );
+		wrapperElement.classList.add( classes.swiperWrapper );
 
 		let slideInnerClass = classes.slideBackground;
 
@@ -90,40 +95,38 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slideInnerClass += ' swiper-lazy';
 		}
 
-		this.elements.$slides = jQuery();
+		this.elements.slides = [];
 
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
-			const $slide = jQuery( '<div>', { class: classes.swiperSlide } );
+			const slideElement = document.createElement( 'div' );
+			slideElement.classList.add( ...classes.swiperSlide.split( ' ' ) );
 
-			let $slidebg;
+			const slideBackgroundElement = document.createElement( 'div' );
 
 			if ( lazyload ) {
-				const $slideloader = jQuery( '<div>', { class: classes.swiperPreloader } );
+				const slideLoaderElement = document.createElement( 'div' );
+				slideLoaderElement.classList.add( classes.swiperPreloader );
 
-				$slidebg = jQuery( '<div>', {
-					class: slideInnerClass,
-					'data-background': slide.url,
-				} );
+				slideBackgroundElement.classList.add( slideInnerClass );
+				slideBackgroundElement.setAttribute( 'data-background', slide.url );
 
-				$slidebg.append( $slideloader );
+				slideBackgroundElement.appendChild( slideLoaderElement );
 			} else {
-				$slidebg = jQuery( '<div>', {
-					class: slideInnerClass,
-					style: 'background-image: url("' + slide.url + '");',
-				} );
+				slideBackgroundElement.classList.add( slideInnerClass );
+				slideBackgroundElement.style.backgroundImage = `url( ${ slide.url } )`;
 			}
 
-			$slide.append( $slidebg );
-			$wrapper.append( $slide );
+			slideElement.appendChild( slideBackgroundElement );
+			wrapperElement.appendChild( slideElement );
 
-			this.elements.$slides = this.elements.$slides.add( $slide );
+			this.elements.slides.push( slideElement );
 		} );
 
-		$container.append( $wrapper );
+		containerElement.appendChild( wrapperElement );
 
-		this.$element.prepend( $container );
+		this.eElement.insertBefore( containerElement, this.eElement.firstChild );
 
-		this.elements.$backgroundSlideShowContainer = $container;
+		this.elements.backgroundSlideShowContainer = containerElement;
 	}
 
 	async initSlider() {
@@ -135,14 +138,27 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 
 		const Swiper = elementorFrontend.utils.swiper;
 
-		this.swiper = await new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
+		this.swiper = await new Swiper( this.elements.backgroundSlideShowContainer, this.getSwiperOptions() );
 
 		// Expose the swiper instance in the frontend
-		this.elements.$backgroundSlideShowContainer.data( 'swiper', this.swiper );
+		this.elements.backgroundSlideShowContainer.dataset.swiper = JSON.stringify( this.swiper, this.getCircularReplacer() );
 
 		if ( elementSettings.background_slideshow_ken_burns ) {
 			this.handleKenBurns();
 		}
+	}
+
+	getCircularReplacer() {
+		const seen = new WeakSet();
+		return ( key, value ) => {
+			if ( typeof value === "object" && value !== null ) {
+				if ( seen.has( value ) ) {
+					return; // Remove circular reference
+				}
+				seen.add( value );
+			}
+			return value;
+		};
 	}
 
 	activate() {
@@ -155,7 +171,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		if ( this.swiper ) {
 			this.swiper.destroy();
 
-			this.elements.$backgroundSlideShowContainer.remove();
+			this.elements.backgroundSlideShowContainer.remove();
 		}
 	}
 
@@ -168,6 +184,8 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	}
 
 	onInit() {
+		this.isJqueryRequired = false;
+
 		super.onInit();
 
 		if ( this.getElementSettings( 'background_slideshow_gallery' ) ) {

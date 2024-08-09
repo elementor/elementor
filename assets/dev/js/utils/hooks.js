@@ -96,13 +96,13 @@ var EventManager = function() {
 		var hooks = STORAGE[ type ][ hook ];
 		if ( hooks ) {
 			// TEMP FIX BUG
-			var hasSameCallback = false;
-			jQuery.each( hooks, function() {
-				if ( this.callback === callback ) {
-					hasSameCallback = true;
-					return false;
-				}
-			} );
+			let hasSameCallback = false;
+			for (const hook of hooks) {
+			    if (hook.callback === callback) {
+			        hasSameCallback = true;
+			        break; // Exit the loop
+			    }
+			}
 
 			if ( hasSameCallback ) {
 				return;

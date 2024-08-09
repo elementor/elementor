@@ -1,7 +1,8 @@
-export default class extends elementorModules.ViewModule {
+export default class extends elementorModules.ViewModuleFrontend {
 	getDefaultSettings() {
 		return {
 			selectors: {
+				document: '.elementor',
 				elements: '.elementor-element',
 				nestedDocumentElements: '.elementor .elementor-element',
 			},
@@ -11,11 +12,33 @@ export default class extends elementorModules.ViewModule {
 		};
 	}
 
+	getSelectedElements( eElement, selector ) {
+		return Array.from( eElement?.querySelectorAll( selector ) );
+	}
+
+	getSelectedNestedElements( documents, nestedSelector ) {
+		let nestedElements = [];
+
+		documents.forEach( ( document ) => {
+			nestedElements = nestedElements?.concat( Array.from( document?.querySelectorAll( nestedSelector ) ) );
+		} );
+
+		return nestedElements;
+	}
+
+	getFilteredElements( elements, nestedElements ) {
+		return elements?.filter( ( element ) => ! nestedElements?.includes( element ) );
+	}
+
 	getDefaultElements() {
-		const selectors = this.getSettings( 'selectors' );
+		const selectors = this.getSettings( 'selectors' ),
+			innerElements = this.getSelectedElements( this.eElement, selectors.elements ),
+			documents = this.getSelectedElements( this.eElement, selectors.document ),
+			nestedElements = this.getSelectedNestedElements( documents, selectors.nestedDocumentElements ),
+			filteredElements = this.getFilteredElements( innerElements, nestedElements );
 
 		return {
-			$elements: this.$element.find( selectors.elements ).not( this.$element.find( selectors.nestedDocumentElements ) ),
+			eElements: filteredElements,
 		};
 	}
 
@@ -27,26 +50,26 @@ export default class extends elementorModules.ViewModule {
 
 			const settings = elementor.settings.page.model;
 
-			jQuery.each( settings.getActiveControls(), ( controlKey ) => {
-				elementSettings[ controlKey ] = settings.attributes[ controlKey ];
+			settings?.getActiveControls()?.forEach( ( controlKey ) => {
+				elementSettings[ controlKey ] = settings?.attributes?.[ controlKey ];
 			} );
 		} else {
-			elementSettings = this.$element.data( 'elementor-settings' ) || {};
+			elementSettings = this.eElement?.dataset.elementorSettings || {};
 		}
 
 		return this.getItems( elementSettings, setting );
 	}
 
 	runElementsHandlers() {
-		this.elements.$elements.each( ( index, element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
+		Array.from( this.elements?.eElements )?.forEach( ( element ) => setTimeout( () => elementorFrontend.elementsHandler.runReadyTrigger( element ) ) );
 	}
 
 	onInit() {
-		this.$element = this.getSettings( '$element' );
+		this.eElement = this.getSettings( 'eElement' );
 
 		super.onInit();
 
-		this.isEdit = this.$element.hasClass( this.getSettings( 'classes.editMode' ) );
+		this.isEdit = this.eElement?.classList?.contains( this.getSettings( 'classes.editMode' ) );
 
 		if ( this.isEdit ) {
 			elementor.on( 'document:loaded', () => {

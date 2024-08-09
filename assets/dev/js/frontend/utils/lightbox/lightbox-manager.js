@@ -1,4 +1,4 @@
-export default class LightboxManager extends elementorModules.ViewModule {
+export default class LightboxManager extends elementorModules.ViewModuleFrontend {
 	static getLightbox() {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(

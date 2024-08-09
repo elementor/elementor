@@ -54,6 +54,8 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 	}
 
 	onInit() {
+		super.onInit();
+
 		if ( ! this.isActive() ) {
 			return;
 		}

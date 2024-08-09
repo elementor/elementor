@@ -1,24 +1,26 @@
-module.exports = elementorModules.ViewModule.extend( {
-	$element: null,
+module.exports = elementorModules.ViewModuleFrontend.extend( {
+	eElement : null,
 
-	editorListeners: null,
+	editorListeners : null,
 
-	onElementChange: null,
+	onElementChange : null,
 
-	onEditSettingsChange: null,
+	onEditSettingsChange : null,
 
-	onPageSettingsChange: null,
+	onPageSettingsChange : null,
 
-	isEdit: null,
+	isEdit : null,
+
+	isJqueryRequired : null,
 
 	__construct( settings ) {
 		if ( ! this.isActive( settings ) ) {
 			return;
 		}
 
-		this.$element = settings.$element;
+		this.eElement = settings.eElement;
 
-		this.isEdit = this.$element.hasClass( 'elementor-element-edit-mode' );
+		this.isEdit = this.eElement?.classList?.contains( 'elementor-element-edit-mode' );
 
 		if ( this.isEdit ) {
 			this.addEditorListeners();
@@ -34,28 +36,38 @@ module.exports = elementorModules.ViewModule.extend( {
 			return false;
 		}
 
-		return elementor.documents.currentDocument.id.toString() === this.$element[ 0 ].closest( '.elementor' ).dataset.elementorId;
+		return elementor.documents.currentDocument.id.toString() === this.eElement?.closest( '.elementor' )?.dataset?.elementorId;
 	},
 
 	findElement( selector ) {
-		var $mainElement = this.$element;
+		const mainElement = this.eElement,
+			rawElements = mainElement?.querySelectorAll( selector );
 
-		return $mainElement.find( selector ).filter( function() {
+		if ( ! rawElements ) {
+			return;
+		}
+
+		return Array.from( rawElements ).filter( ( element ) => {
 			// Start `closest` from parent since self can be `.elementor-element`.
-			return jQuery( this ).parent().closest( '.elementor-element' ).is( $mainElement );
+			const closestElement = element.parentNode?.closest( '.elementor-element' );
+			return closestElement === mainElement;
 		} );
 	},
 
-	getUniqueHandlerID( cid, $element ) {
+	getUniqueHandlerID( cid, eElement ) {
 		if ( ! cid ) {
 			cid = this.getModelCID();
 		}
 
-		if ( ! $element ) {
-			$element = this.$element;
+		if ( ! eElement ) {
+			eElement = !! this.eElement ? this.eElement : this.getSettings( 'eElement' );
 		}
 
-		return cid + $element.attr( 'data-element_type' ) + this.getConstructorID();
+		const elementType = !! window.jQuery && !! eElement.jquery
+			? eElement.attr( 'data-element_type' )
+			: eElement.getAttribute( 'data-element_type' );
+
+		return cid + elementType + this.getConstructorID();
 	},
 
 	initEditorListeners() {
@@ -91,6 +103,10 @@ module.exports = elementorModules.ViewModule.extend( {
 					var elementViewHandlerID = self.getUniqueHandlerID( elementView.model.cid, elementView.$el );
 
 					if ( elementViewHandlerID !== self.getUniqueHandlerID() ) {
+						return;
+					}
+
+					if ( typeof self.onElementChange !== 'function' ) {
 						return;
 					}
 
@@ -155,11 +171,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getElementType() {
-		return this.$element.data( 'element_type' );
+		return this.eElement?.dataset?.element_type;
 	},
 
 	getWidgetType() {
-		const widgetType = this.$element.data( 'widget_type' );
+		const widgetType = this.eElement?.dataset?.widget_type;
 
 		if ( ! widgetType ) {
 			return;
@@ -169,10 +185,14 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	getID() {
-		return this.$element.data( 'id' );
+		return this.eElement?.dataset?.id;
 	},
 
 	getModelCID() {
+		if ( !! this.eElement ) {
+			return this.eElement.dataset?.modelCid;
+		}
+
 		return this.$element.data( 'model-cid' );
 	},
 
@@ -196,14 +216,14 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( ! settingsKeys ) {
 				settingsKeys = elementorFrontend.config.elements.keys[ type ] = [];
 
-				jQuery.each( settings.controls, ( name, control ) => {
+				Object.entries( settings.controls ).forEach( ( [ name, control ] ) => {
 					if ( control.frontend_available || control.editor_available ) {
 						settingsKeys.push( name );
 					}
 				} );
 			}
 
-			jQuery.each( settings.getActiveControls(), function( controlKey ) {
+			Object.keys( settings.getActiveControls() )?.forEach( ( controlKey ) => {
 				if ( -1 !== settingsKeys.indexOf( controlKey ) ) {
 					let value = attributes[ controlKey ];
 
@@ -215,14 +235,17 @@ module.exports = elementorModules.ViewModule.extend( {
 				}
 			} );
 		} else {
-			elementSettings = this.$element.data( 'settings' ) || {};
+			const rawSettings = this.eElement?.dataset?.settings;
+			elementSettings = !! rawSettings
+				? JSON.parse( rawSettings )
+				: {};
 		}
 
 		return this.getItems( elementSettings, setting );
 	},
 
 	getEditSettings( setting ) {
-		var attributes = {};
+		let attributes = {};
 
 		if ( this.isEdit ) {
 			attributes = elementorFrontend.config.elements.editSettings[ this.getModelCID() ].attributes;
@@ -236,8 +259,20 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onInit() {
+		if ( null === this.isJqueryRequired ) {
+			this.isJqueryRequired = true;
+		}
+
+		if ( ! this.eElement ) {
+			this.eElement = this.getSettings( 'eElement' );
+		}
+
+		if ( !! window.jQuery ) {
+			this.$element = jQuery( this.eElement );
+		}
+
 		if ( this.isActive( this.getSettings() ) ) {
-			elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+			elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
 		}
 	},
 

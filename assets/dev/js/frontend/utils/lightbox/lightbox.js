@@ -15,7 +15,7 @@ import {
 	zoomOutBold,
 } from '@elementor/e-icons';
 
-module.exports = elementorModules.ViewModule.extend( {
+module.exports = elementorModules.ViewModuleFrontend.extend( {
 	oldAnimation: null,
 
 	swiper: null,

@@ -14,7 +14,7 @@ export class Events {
 	 */
 	static dispatch( context, event, data = null, bcEvent = null ) {
 		// Make sure to use the native context if it's a jQuery instance.
-		context = ( context instanceof jQuery ) ? context[ 0 ] : context;
+		context = ( !! window.jQuery && context instanceof jQuery ) ? context[ 0 ] : context;
 
 		// Dispatch the BC event only if exists.
 		if ( bcEvent ) {

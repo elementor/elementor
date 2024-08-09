@@ -5,7 +5,7 @@
  *
  * @since 3.4.0
  */
-export default class Breakpoints extends elementorModules.Module {
+export default class Breakpoints extends elementorModules.ModuleFrontend {
 	constructor( responsiveConfig ) {
 		super();
 

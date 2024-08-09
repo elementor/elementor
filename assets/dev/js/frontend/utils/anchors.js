@@ -1,6 +1,6 @@
 import { isScrollSnapActive } from './utils';
 
-module.exports = elementorModules.ViewModule.extend( {
+module.exports = elementorModules.ViewModuleFrontend.extend( {
 	getDefaultSettings() {
 		return {
 			scrollDuration: 500,
@@ -83,6 +83,6 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onInit() {
-		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
+		elementorModules.ViewModuleFrontend.prototype.onInit.apply( this, arguments );
 	},
 } );

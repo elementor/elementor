@@ -1,6 +1,6 @@
-import ViewModule from '../view-module';
+import ViewModuleFrontend from '../view-module-frontend';
 
-export default ViewModule.extend( {
+export default ViewModuleFrontend.extend( {
 
 	getDefaultSettings() {
 		return {
