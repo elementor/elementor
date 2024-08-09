@@ -1,0 +1,25 @@
+name: Check if this is only a changelog PR
+description: This action checks if a PR only includes changes to changelog.txt and readme.txt.
+
+outputs:
+  changelog_diff:
+    description: "Changes in the changelog file."
+    value: ${{ steps.changelog_diff_files.outputs.diff }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get diff of changelog and readme files
+      id: changelog_diff_files
+      uses: technote-space/get-diff-action@v6
+      with:
+        # PATTERNS are:
+        # Everything: **/*
+        # Everything in directories starting with a period: .*/**/*
+        # Not readme.txt: !readme.txt
+        # Not changelog.txt: !changelog.txt
+        PATTERNS: |
+          **/*
+          .*/**/*
+          !readme.txt
+          !changelog.txt
