@@ -86,6 +86,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config = parent::get_initial_config();
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
+		$config['props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
 
 		return $config;
