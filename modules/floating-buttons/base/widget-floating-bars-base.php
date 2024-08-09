@@ -214,7 +214,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
-					]
+					],
 				],
 			);
 
@@ -241,7 +241,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
-					]
+					],
 				],
 			);
 		}
