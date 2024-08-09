@@ -694,6 +694,30 @@ class Container extends Element_Base {
 			]
 		);
 
+
+		$this->add_control(
+			'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
+				],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		/**
@@ -734,6 +758,22 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
 				],
+//					'assets' => [
+//							'styles' => [
+//									[
+//											'name' => 'swiper',
+//											'conditions' => [
+//													'terms' => [
+//															[
+//																	'name' => 'background_hover_transition',
+//																	'operator' => '!==',
+//																	'value' => '',
+//															],
+//													],
+//											],
+//									],
+//							],
+//					],
 			]
 		);
 
@@ -1172,22 +1212,22 @@ class Container extends Element_Base {
 					'options' => $shapes_options,
 					'render_type' => 'none',
 					'frontend_available' => true,
-					'assets' => [
-						'styles' => [
-							[
-								'name' => 'e-shapes',
-								'conditions' => [
-									'terms' => [
-										[
-											'name' => $base_control_key,
-											'operator' => '!==',
-											'value' => '',
-										],
-									],
-								],
-							],
-						],
-					],
+//					'assets' => [
+//						'styles' => [
+//							[
+//								'name' => 'e-shapes',
+//								'conditions' => [
+//									'terms' => [
+//										[
+//											'name' => $base_control_key,
+//											'operator' => '!==',
+//											'value' => '',
+//										],
+//									],
+//								],
+//							],
+//						],
+//					],
 				]
 			);
 
