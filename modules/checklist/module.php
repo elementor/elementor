@@ -133,6 +133,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 					'react-dom',
 					'elementor-common',
 					'elementor-v2-ui',
+					'elementor-v2-icons',
+					'elementor-v2-editor-app-bar',
 				],
 				ELEMENTOR_VERSION,
 				true
