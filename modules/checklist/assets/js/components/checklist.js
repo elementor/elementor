@@ -10,18 +10,11 @@ const Checklist = () => {
 		elementor.on( 'elementor/editor/panel/checklist/clicked', () => setIsOpen( ! isOpen ) );
 	}, [] );
 
-	if ( isOpen ) {
-		return (
-			<ThemeProvider colorScheme={ 'light' }>
-				<Launchpad
-					isOpen={ isOpen }
-					setIsOpen={ setIsOpen }
-				/>
-			</ThemeProvider>
-		);
-	} else {
-		return null
-	}
+	return isOpen && (
+		<ThemeProvider colorScheme="light">
+			<Launchpad setIsOpen={ setIsOpen } />
+		</ThemeProvider>
+	);
 };
 
 export default Checklist;

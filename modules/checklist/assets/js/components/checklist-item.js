@@ -25,11 +25,11 @@ function CheckListItem( props ) {
 	return (
 		<>
 			<ListItemButton onClick={ () => {
-				setExpandedIndex( id )
-				handleExpandClick()
+				setExpandedIndex( id );
+				handleExpandClick();
 			} } >
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
-				<ListItemText id={ title } primary={ title } primaryTypographyProps={ { variant: "body2" } }/>
+				<ListItemText id={ title } primary={ title } primaryTypographyProps={ { variant: 'body2' } } />
 				{ id === expandedIndex && expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
 			</ListItemButton>
 			<Collapse in={ id === expandedIndex && expanded } >
@@ -63,4 +63,6 @@ CheckListItem.propTypes = {
 	description: PropTypes.string.isRequired,
 	link: PropTypes.string.isRequired,
 	CTA: PropTypes.string.isRequired,
+	expandedIndex: PropTypes.string.isRequired,
+	setExpandedIndex: PropTypes.func.isRequired
 };
