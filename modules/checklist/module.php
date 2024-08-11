@@ -165,8 +165,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function init_user_progress() : void {
 		$default_settings = [
-			'is_shown' => static::is_checklist_shown(),
-			'last_opened_timestamp' => time(),
+			'last_opened_timestamp' => null,
 			'steps' => [],
 		];
 

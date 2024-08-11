@@ -95,6 +95,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public static function is_new_installation() : bool {
-		return static::install_compare( ELEMENTOR_VERSION, '>=' );
+		$installs_history = self::get_installs_history();
+		return empty( $installs_history ) || static::install_compare( ELEMENTOR_VERSION, '>=' );
 	}
 }
