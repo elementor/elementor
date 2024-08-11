@@ -36,12 +36,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		parent::__construct();
 
 		$this->register_experiment();
+		$this->init_user_progress();
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
 
-		$this->init_user_progress();
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
 		$this->enqueue_editor_scripts();
@@ -146,9 +146,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public static function is_checklist_shown() : bool {
-		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
 		$user_preferences = get_user_meta( get_current_user_id(), Preferences_Manager::META_KEY, true );
-		$is_checklist_shown = isset( $user_preferences[ self::VISIBILITY_SWITCH_ID ] ) ? $user_preferences[ self::VISIBILITY_SWITCH_ID ] : $is_new_installation;
+		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
+		$is_checklist_shown = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ??  $is_new_installation;
+
 		return 'yes' === $is_checklist_shown;
 	}
 
