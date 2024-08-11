@@ -4,7 +4,6 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Step_Base;
-use ElementorPro\Modules\Forms\Fields\Step;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
