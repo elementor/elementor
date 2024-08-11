@@ -36,14 +36,15 @@ export default class {
 	async saveOrUpdate( editor: EditorPage ) {
 		const hasTopBar: boolean = await editor.hasTopBar();
 		if ( hasTopBar ) {
-			const saveButton: Locator = this.page.locator( 'button:not([disabled])', { hasText: 'Save Changes' } );
-			await saveButton.waitFor();
-			await saveButton.click();
+			await this.page.evaluate( async () => {
+				const button = document.evaluate( "//button[text()='Save Changes']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;
+				button.click();
+				return button;
+			} );
 		} else {
 			await this.page.click( 'text=Update' );
+			await this.page.waitForSelector( '#elementor-toast' );
 		}
-
-		await this.page.waitForSelector( '#elementor-toast' );
 	}
 
 	async addAllBreakpoints( editor: EditorPage, experimentPostId?: string ) {
@@ -84,7 +85,6 @@ export default class {
 		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}
-
 		await this.saveOrUpdate( editor );
 	}
 }
