@@ -130,7 +130,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			{ children }
 
 			{ ! data.result && (
-				<Box component="form" onSubmit={ handleSubmit } onClose={ removeStyleTag }>
+				<Box component="form" onSubmit={ handleSubmit }>
 					<Box sx={ { pb: 1.5 } }>
 						<PromptSearch
 							placeholder={ __( 'Describe the code you want to use...', 'elementor' ) }
