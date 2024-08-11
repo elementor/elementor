@@ -20,7 +20,6 @@ abstract class Step_Base {
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
 	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
 
-	protected array $step_config;
 	protected array $user_progress;
 
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
@@ -73,7 +72,6 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
-		$this->step_config = $this->get_config();
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
@@ -112,8 +110,8 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function maybe_mark_as_completed() : void {
-		if ( $this->step_config[ self::IS_COMPLETION_IMMUTABLE ] && $this->is_absolute_completed() ) {
+	public function maybe_mark_as_completed( $step_config ) : void {
+		if ( $step_config[ self::IS_COMPLETION_IMMUTABLE ] && $this->is_absolute_completed() ) {
 			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
 			$this->set_step_progress();
 		}
@@ -122,9 +120,12 @@ abstract class Step_Base {
 	/**
 	 * Returns the step data as well as is_marked_completed and is_completed (not absolutely completed, but considered completed)
 	 *
-	 * @return array
+	 * @return array {
+	 *      @type string $is_marked_completed Whether the step is manually marked as completed by the user
+	 *      @type string $is_completed Whether the step is considered completed by the system
+	 *  }
 	 */
-	public function get_step_config_for_frontend() : array {
+	public function get_step_status_for_frontend() : array {
 		return [
 			self::MARKED_AS_COMPLETED_KEY => $this->is_marked_as_completed(),
 			self::IMMUTABLE_COMPLETION_KEY => $this->is_marked_as_completed() || $this->is_immutable_completed() || $this->is_absolute_completed(),
