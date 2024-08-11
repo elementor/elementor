@@ -126,7 +126,6 @@ abstract class Step_Base {
 	 */
 	public function get_step_config_for_frontend() : array {
 		return [
-			'data' => $this->get_config(),
 			self::MARKED_AS_COMPLETED_KEY => $this->is_marked_as_completed(),
 			self::IMMUTABLE_COMPLETION_KEY => $this->is_marked_as_completed() || $this->is_immutable_completed() || $this->is_absolute_completed(),
 		];
@@ -164,22 +163,6 @@ abstract class Step_Base {
 		$this->module->set_step_progress( $this->get_id(), $initial_progress );
 
 		return $initial_progress;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_config() : array {
-		return [
-			'id' => $this->get_id(),
-			'title' => $this->get_title(),
-			'description' => $this->get_description(),
-			'learn_more_text' => $this->get_learn_more_text(),
-			'learn_more_url' => $this->get_learn_more_url(),
-			'cta_text' => $this->get_cta_text(),
-			'cta_url' => $this->get_cta_url(),
-			self::IS_COMPLETION_IMMUTABLE => $this->get_is_completion_immutable(),
-		];
 	}
 
 	/**

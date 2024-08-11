@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Step_Base;
+use ElementorPro\Modules\Forms\Fields\Step;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,7 +30,9 @@ class Steps_Manager {
 		$formatted_steps = [];
 
 		foreach ( $this->get_step_ids() as $step_id ) {
-			$formatted_steps[] = $this->step_instances[ $step_id ]->get_step_config_for_frontend();
+			$step = $this->step_instances[ $step_id ]->get_step_config_for_frontend();
+			$step['config'] = $this->get_step_config( $step_id );
+			$formatted_steps[] = $step;
 		}
 
 		return $formatted_steps;
@@ -88,6 +91,26 @@ class Steps_Manager {
 
 	public function get_step_by_id( string $step_id ) : ?Step_Base {
 		return $this->step_instances[ $step_id ] ?? null;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_step_config( $step_id ) : array {
+		$step_instance = $this->step_instances[ $step_id ];
+
+		return $step_instance
+			? [
+				'id' => $step_instance->get_id(),
+				'title' => $step_instance->get_title(),
+				'description' => $step_instance->get_description(),
+				'learn_more_text' => $step_instance->get_learn_more_text(),
+				'learn_more_url' => $step_instance->get_learn_more_url(),
+				'cta_text' => $step_instance->get_cta_text(),
+				'cta_url' => $step_instance->get_cta_url(),
+				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
+			]
+			: [];
 	}
 
 	/**
