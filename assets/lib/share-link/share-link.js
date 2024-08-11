@@ -5,13 +5,13 @@
 	window.ShareLink = function( element, userSettings ) {
 		let settings = {};
 
-		const getNetworkNameFromClass = function( className ) {
+		const getNetworkNameFromClass = ( className ) => {
 			const classNamePrefix = className.substr( 0, settings.classPrefixLength );
 
 			return classNamePrefix === settings.classPrefix ? className.substr( settings.classPrefixLength ) : null;
 		};
 
-		const bindShareClick = function( networkName ) {
+		const bindShareClick = ( networkName ) => {
 			element.addEventListener( 'click', () => openShareLink( networkName ) );
 
 			// Add "Enter" and "Space" event only if the element has role=button attribute.
@@ -26,7 +26,7 @@
 			}
 		};
 
-		const openShareLink = function( networkName ) {
+		const openShareLink = ( networkName ) => {
 			let shareWindowParams = '';
 
 			if ( settings.width && settings.height ) {
@@ -55,7 +55,7 @@
 			} );
 		};
 
-		const initSettings = function() {
+		const initSettings = () => {
 			settings = { ...ShareLink.defaultSettings, ...userSettings };
 
 			[ 'title', 'text' ].forEach( ( propertyName ) => settings[ propertyName ] = settings[ propertyName ].replace( '#', '' ) );
@@ -63,7 +63,7 @@
 			settings.classPrefixLength = settings.classPrefix.length;
 		};
 
-		const init = function() {
+		const init = () => {
 			initSettings();
 
 			run();
