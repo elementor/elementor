@@ -29,7 +29,16 @@ class Steps_Manager {
 		$formatted_steps = [];
 
 		foreach ( $this->get_step_ids() as $step_id ) {
-			$formatted_steps[] = $this->step_instances[ $step_id ]->get_step_config_for_frontend();
+			$instance = $this->step_instances[ $step_id ];
+			$is_marked_as_completed = $instance->is_marked_as_completed();
+
+			$step = [
+				'should_allow_undo' => $is_marked_as_completed,
+				'is_completed' => $instance->is_immutable_completed() || $instance->is_marked_as_completed() || $instance->is_absolute_completed(),
+				'config' => $this->get_step_config( $step_id ),
+			];
+
+			$formatted_steps[] = $step;
 		}
 
 		return $formatted_steps;
@@ -88,6 +97,26 @@ class Steps_Manager {
 
 	public function get_step_by_id( string $step_id ) : ?Step_Base {
 		return $this->step_instances[ $step_id ] ?? null;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_step_config( $step_id ) : array {
+		$step_instance = $this->step_instances[ $step_id ];
+
+		return $step_instance
+			? [
+				'id' => $step_instance->get_id(),
+				'title' => $step_instance->get_title(),
+				'description' => $step_instance->get_description(),
+				'learn_more_text' => $step_instance->get_learn_more_text(),
+				'learn_more_url' => $step_instance->get_learn_more_url(),
+				'cta_text' => $step_instance->get_cta_text(),
+				'cta_url' => $step_instance->get_cta_url(),
+				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
+			]
+			: [];
 	}
 
 	/**
