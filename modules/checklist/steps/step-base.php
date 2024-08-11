@@ -11,15 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
-	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
-	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
-	const COMPLETED_KEY = 'is_completed';
 
 	/**
 	 * @var string
 	 * This is the key to be set to true if the step can be completed, and still be considered completed even if the user later did something to the should have it marked as not completed
 	 */
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
+	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
+	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
+	const COMPLETED_KEY = 'is_completed';
 
 	protected array $step_config;
 	protected array $user_progress;
@@ -40,9 +40,30 @@ abstract class Step_Base {
 	abstract public function get_id() : string;
 
 	/**
-	 * @return array
+	 * @return string
 	 */
-	abstract public function get_config() : array;
+	abstract public function get_title() : string;
+
+	/**
+	 * @return string
+	 */
+	abstract public function get_description() : string;
+
+	/**
+	 * For instance; 'Create 3 pages'
+	 * @return string
+	 */
+	abstract public function get_cta_text() : string;
+
+	/**
+	 * @return string
+	 */
+	abstract public function get_cta_url() : string;
+
+	/**
+	 * @return bool
+	 */
+	abstract public function get_is_completion_immutable() : bool;
 
 	/**
 	 * Step_Base constructor.
@@ -57,6 +78,14 @@ abstract class Step_Base {
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
+	}
+
+	public function get_learn_more_text() : string {
+		return esc_html__( 'Learn more', 'elementor' );
+	}
+
+	public function get_learn_more_url() : string {
+		return 'https://go.elementor.com/getting-started-with-elementor/';
 	}
 
 	/**
@@ -136,6 +165,22 @@ abstract class Step_Base {
 		$this->module->set_step_progress( $this->get_id(), $initial_progress );
 
 		return $initial_progress;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_config() : array {
+		return [
+			'id' => $this->get_id(),
+			'title' => $this->get_title(),
+			'description' => $this->get_description(),
+			'learn_more_text' => $this->get_learn_more_text(),
+			'learn_more_url' => $this->get_learn_more_url(),
+			'cta_text' => $this->get_cta_text(),
+			'cta_url' => $this->get_cta_url(),
+			self::IS_COMPLETION_IMMUTABLE => $this->get_is_completion_immutable(),
+		];
 	}
 
 	/**
