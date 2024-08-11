@@ -127,10 +127,26 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	moveFloatingBarsBasedOnPosition() {
+		const floatingBars = document.querySelectorAll( '[data-widget_type^="floating-bars"]' );
+
+		floatingBars.forEach( ( element ) => {
+			const floatingBar = element.querySelector( '.e-floating-bars' );
+
+			if ( floatingBar.classList.contains( 'has-vertical-position-top' ) && ! floatingBar.classList.contains( 'is-sticky' ) ) {
+				const elementToInsert = elementorFrontend.isEditMode() ? element.closest( '[data-element_type="container"]' ) : element;
+
+				document.body.insertBefore( elementToInsert, document.body.querySelector( 'header' ) );
+			}
+		} );
+	}
+
 	onInit( ...args ) {
 		const { hasEntranceAnimation, ctaEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
+
+		this.moveFloatingBarsBasedOnPosition();
 
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
