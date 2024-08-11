@@ -64,5 +64,5 @@ CheckListItem.propTypes = {
 	link: PropTypes.string.isRequired,
 	CTA: PropTypes.string.isRequired,
 	expandedIndex: PropTypes.string.isRequired,
-	setExpandedIndex: PropTypes.func.isRequired
+	setExpandedIndex: PropTypes.func.isRequired,
 };
