@@ -26,7 +26,7 @@ test.describe( 'Checklist tests ', () => {
 	} );
 
 	test.describe( 'Checklist module', () => {
-		test( 'General test', async ( { page, apiRequests }, testInfo) => {
+		test( 'General test', async ( { page, apiRequests }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage();
 
