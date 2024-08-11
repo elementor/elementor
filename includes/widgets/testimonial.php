@@ -78,6 +78,22 @@ class Widget_Testimonial extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-testimonial' ]
+			: [];
+	}
+
+	/**
 	 * Get widget upsale data.
 	 *
 	 * Retrieve the widget promotion data.
@@ -567,7 +583,7 @@ class Widget_Testimonial extends Widget_Base {
 
 			var imageHtml = '<img src="' + _.escape( imageUrl ) + '" alt="testimonial" />';
 			if ( settings.link.url ) {
-				imageHtml = '<a href="' + _.escape( settings.link.url ) + '">' + imageHtml + '</a>';
+				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + imageHtml + '</a>';
 			}
 		}
 

@@ -94,6 +94,22 @@ class Widget_Image extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-image' ]
+			: [];
+	}
+
+	/**
 	 * Register image widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -822,7 +838,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( link_url ) {
-					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
+					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ elementor.helpers.sanitizeUrl( link_url ) }}"><#
 			}
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
 

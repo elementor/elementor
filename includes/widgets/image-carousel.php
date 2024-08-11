@@ -78,6 +78,22 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-image-carousel' ]
+			: [];
+	}
+
+	/**
 	 * Get widget upsale data.
 	 *
 	 * Retrieve the widget promotion data.

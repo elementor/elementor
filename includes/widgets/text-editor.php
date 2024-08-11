@@ -95,6 +95,22 @@ class Widget_Text_Editor extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-text-editor' ]
+			: [];
+	}
+
+	/**
 	 * Register text editor widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.

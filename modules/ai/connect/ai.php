@@ -64,6 +64,24 @@ class Ai extends Library {
 		);
 	}
 
+	public function get_remote_frontend_config( $data ) {
+		return $this->ai_request(
+			'POST',
+			'remote-config/frontend-config',
+			[
+				'client_name' => $data['payload']['client_name'],
+				'client_version' => $data['payload']['client_version'],
+				'client_session_id' => $data['payload']['client_session_id'],
+
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
 	/**
 	 * get_file_payload
 	 * @param $filename
@@ -622,7 +640,7 @@ class Ai extends Library {
 
 		$context['currentContext'] = $data['currentContext'];
 		$context['features'] = [
-			'supportedFeatures' => [],
+			'supportedFeatures' => [ 'Taxonomy' ],
 		];
 
 		if ( ElementorUtils::has_pro() ) {
@@ -635,10 +653,6 @@ class Ai extends Library {
 
 		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
 			$context['features']['supportedFeatures'][] = 'Nested';
-		}
-
-		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
-			$context['features']['supportedFeatures'][] = 'Taxonomy';
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
