@@ -21,9 +21,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 
 	private $user_progress = null;
-
 	private Steps_Manager $steps_manager;
-
 	private Wordpress_Adapter_Interface $wordpress_adapter;
 
 	/**
