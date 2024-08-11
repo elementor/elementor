@@ -73,7 +73,7 @@
 		init();
 	};
 
-	window.ShareLink.networkTemplates = {
+	ShareLink.networkTemplates = {
 		twitter: 'https://twitter.com/intent/tweet?text={text}\x20{url}',
 		'x-twitter': 'https://x.com/intent/tweet?text={text}\x20{url}',
 		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}&media={image}',
@@ -96,7 +96,7 @@
 		skype: 'https://web.skype.com/share?url={url}',
 	};
 
-	window.ShareLink.defaultSettings = {
+	ShareLink.defaultSettings = {
 		title: '',
 		text: '',
 		image: '',
@@ -106,7 +106,7 @@
 		height: 480,
 	};
 
-	window.ShareLink.getNetworkLink = function( networkName, settings ) {
+	ShareLink.getNetworkLink = function( networkName, settings ) {
 		let link = ShareLink.networkTemplates[ networkName ].replace( /{([^}]+)}/g, ( fullMatch, pureMatch ) => {
 			return settings[ pureMatch ] || '';
 		} );
