@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Checklist tests ', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -14,7 +14,7 @@ test.describe( 'Checklist tests ', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -26,7 +26,7 @@ test.describe( 'Checklist tests ', () => {
 	} );
 
 	test.describe( 'Checklist module', () => {
-		test( 'General test', async ( { page, apiRequests}, testInfo) => {
+		test( 'General test', async ( { page, apiRequests }, testInfo) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage();
 

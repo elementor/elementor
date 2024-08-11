@@ -4,7 +4,6 @@ import AppBar from '@elementor/ui/AppBar';
 import Divider from '@elementor/ui/Divider';
 import Toolbar from '@elementor/ui/Toolbar';
 import { __ } from '@wordpress/i18n';
-import CheckListItem from "./checklist-item";
 
 const Header = ( props ) => {
 	const { setIsOpen } = props;
