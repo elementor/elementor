@@ -7,6 +7,7 @@ test.describe( 'Checklist tests ', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
 		await wpAdmin.setExperiments( {
 			editor_v2: true,
 			'launchpad-checklist': true,
@@ -18,6 +19,7 @@ test.describe( 'Checklist tests ', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
 		await wpAdmin.setExperiments( {
 			editor_v2: false,
 			'launchpad-checklist': false,

@@ -13,10 +13,8 @@ const Header = ( props ) => {
 			<AppBar
 				elevation={ 0 }
 				position="sticky"
-				sx={ {
-					backgroundColor: 'background.default',
-					p: 2,
-				} }
+				color="transparent"
+				sx={ { p: 2 } }
 			>
 				<Toolbar
 					variant="dense"

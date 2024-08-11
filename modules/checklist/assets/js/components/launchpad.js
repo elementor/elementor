@@ -10,15 +10,13 @@ const Launchpad = ( props ) => {
 			position: 'fixed',
 			width: '360px',
 			bottom: '40px',
-			right: '40px',
+			insetInlineEnd: '40px',
 			zIndex: '99999',
 			hidden: true,
 			maxHeight: '645px',
 			overflowY: 'auto',
 		} }>
-			<Header
-				setIsOpen={ setIsOpen }
-			/>
+			<Header setIsOpen={ setIsOpen } />
 			<CheckListWrapper />
 		</Paper>
 	);
@@ -28,5 +26,4 @@ export default Launchpad;
 
 Launchpad.propTypes = {
 	setIsOpen: PropTypes.func,
-	isOpen: PropTypes.bool,
 };

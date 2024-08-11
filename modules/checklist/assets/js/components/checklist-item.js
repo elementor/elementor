@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Button from '@elementor/ui/Button';
 import Card from '@elementor/ui/Card';
 import CardContent from '@elementor/ui/CardContent';
@@ -14,7 +15,8 @@ import Link from '@elementor/ui/Link';
 
 function CheckListItem( props ) {
 	const { id, title, description, link, CTA } = props.step,
-		[ expanded, setExpanded ] = React.useState( false );
+		{ expandedIndex, setExpandedIndex } = props,
+		[ expanded, setExpanded ] = useState( false );
 
 	const handleExpandClick = () => {
 		setExpanded( ! expanded );
@@ -22,16 +24,15 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ () => handleExpandClick( id ) } sx={ {
-				'&.MuiButtonBase-root:hover': {
-					bgcolor: 'transparent',
-				},
-			} }>
+			<ListItemButton onClick={ () => {
+				setExpandedIndex( id )
+				handleExpandClick()
+			} } >
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
-				<ListItemText id={ title } primary={ <Typography variant="body2">{ title }</Typography> } />
-				{ expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
+				<ListItemText id={ title } primary={ title } primaryTypographyProps={ { variant: "body2" } }/>
+				{ id === expandedIndex && expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
 			</ListItemButton>
-			<Collapse in={ expanded } >
+			<Collapse in={ id === expandedIndex && expanded } >
 				<Card elevation={ 0 } square={ true }>
 					<CardMedia
 						image="https://elementor.com/cdn-cgi/image/f=auto,w=1100/https://elementor.com/wp-content/uploads/2022/01/Frame-10879527.png"
@@ -56,10 +57,10 @@ function CheckListItem( props ) {
 export default CheckListItem;
 
 CheckListItem.propTypes = {
-	step: PropTypes.object,
-	id: PropTypes.string,
-	title: PropTypes.string,
-	description: PropTypes.string,
-	link: PropTypes.string,
-	CTA: PropTypes.string,
+	step: PropTypes.object.isRequired,
+	id: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	description: PropTypes.string.isRequired,
+	link: PropTypes.string.isRequired,
+	CTA: PropTypes.string.isRequired,
 };
