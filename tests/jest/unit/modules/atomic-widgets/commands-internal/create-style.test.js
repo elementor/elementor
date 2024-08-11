@@ -60,7 +60,6 @@ describe( 'CreateStyle - apply', () => {
 			'document/elements/set-settings',
 			{
 				container,
-				options: { render: false },
 				settings: {
 					classes: {
 						$$type: 'classes',
@@ -125,7 +124,6 @@ describe( 'CreateStyle - apply', () => {
 			'document/elements/set-settings',
 			{
 				container,
-				options: { render: false },
 				settings: {
 					classes: {
 						$$type: 'classes',

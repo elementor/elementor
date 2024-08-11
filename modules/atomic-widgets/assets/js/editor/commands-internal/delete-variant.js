@@ -5,7 +5,7 @@ export class DeleteVariant extends $e.modules.editor.CommandContainerInternalBas
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgumentConstructor( 'styleDefId', String, args );
+		this.requireArgumentConstructor( 'styleDefID', String, args );
 
 		this.requireArgumentConstructor( 'meta', Object, args );
 
@@ -15,16 +15,16 @@ export class DeleteVariant extends $e.modules.editor.CommandContainerInternalBas
 	}
 
 	apply( args ) {
-		const { container, styleDefId, meta } = args;
+		const { container, styleDefID, meta } = args;
 
 		const oldStyles = container.model.get( 'styles' ) || {};
 		let style = {};
 
-		if ( ! oldStyles[ styleDefId ] ) {
+		if ( ! oldStyles[ styleDefID ] ) {
 			throw new Error( 'Style Def not found' );
 		}
 
-		style = oldStyles[ styleDefId ];
+		style = oldStyles[ styleDefID ];
 
 		style.variants = style.variants.filter( ( variant ) => {
 			return variant.meta.breakpoint !== meta.breakpoint || variant.meta.state !== meta.state;

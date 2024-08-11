@@ -33,6 +33,11 @@ class Frontend extends App {
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
 	/**
+	 * The priority of the frontend enqueued styles.
+	 */
+	const ENQUEUED_STYLES_PRIORITY = 20;
+
+	/**
 	 * Post ID.
 	 *
 	 * Holds the ID of the current post.
@@ -238,7 +243,7 @@ class Frontend extends App {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], self::ENQUEUED_STYLES_PRIORITY );
 		}
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
@@ -485,6 +490,10 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_styles() {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
 		/**
 		 * Before frontend register styles.
 		 *
@@ -529,23 +538,6 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		$frontend_base_file_name = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
-
-		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
-
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		wp_register_style(
-			'elementor-frontend',
-			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			[],
-			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
-		);
-
 		wp_register_style(
 			'swiper',
 			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
@@ -559,6 +551,24 @@ class Frontend extends App {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		wp_register_style(
+			'elementor-frontend',
+			$this->get_frontend_file_url( "frontend{$direction_suffix}{$min_suffix}.css", $has_custom_breakpoints ),
+			[],
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
+
+		$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
+
+		foreach ( $widgets_with_styles as $widget_name ) {
+			wp_register_style(
+				"widget-{$widget_name}",
+				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		}
 
 		/**
 		 * After frontend register styles.
@@ -1541,11 +1551,5 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
-	}
-
-	private function is_optimized_css_mode() {
-		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
-
-		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}
 }
