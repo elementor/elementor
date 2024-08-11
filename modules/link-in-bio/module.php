@@ -14,6 +14,10 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'link-in-bio';
 
+	public function get_name(): string {
+		return static::EXPERIMENT_NAME;
+	}
+
 	public function get_widgets(): array {
 		return [
 			'Link_In_Bio',
