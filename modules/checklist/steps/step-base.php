@@ -19,12 +19,11 @@ abstract class Step_Base {
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
 	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
-	const COMPLETED_KEY = 'is_completed';
 
 	protected array $step_config;
 	protected array $user_progress;
-	protected Wordpress_Adapter_Interface $wordpress_adapter;
 
+	protected Wordpress_Adapter_Interface $wordpress_adapter;
 	protected Checklist_Module $module;
 
 	/**
@@ -129,7 +128,7 @@ abstract class Step_Base {
 		return [
 			'data' => $this->get_config(),
 			self::MARKED_AS_COMPLETED_KEY => $this->is_marked_as_completed(),
-			self::COMPLETED_KEY => $this->is_marked_as_completed() || $this->is_immutable_completed() || $this->is_absolute_completed(),
+			self::IMMUTABLE_COMPLETION_KEY => $this->is_marked_as_completed() || $this->is_immutable_completed() || $this->is_absolute_completed(),
 		];
 	}
 
