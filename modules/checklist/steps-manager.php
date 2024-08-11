@@ -31,9 +31,11 @@ class Steps_Manager {
 
 		foreach ( $this->get_step_ids() as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
+			$is_marked_as_completed = $instance->is_marked_as_completed();
+
 			$step = [
-				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed(),
-				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_marked_as_completed() || $instance->is_immutable_completed() || $instance->is_absolute_completed(),
+				'should_allow_undo' => $is_marked_as_completed,
+				'is_completed' => $instance->is_immutable_completed() || $instance->is_marked_as_completed() || $instance->is_absolute_completed(),
 				'config' => $this->get_step_config( $step_id ),
 			];
 
