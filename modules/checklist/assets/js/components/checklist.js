@@ -1,9 +1,9 @@
-import { ThemeProvider } from '@elementor/ui';
+import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import Launchpad from './launchpad';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-const Checklist = () => {
+const Checklist = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	useEffect( () => {
@@ -11,10 +11,17 @@ const Checklist = () => {
 	}, [] );
 
 	return isOpen && (
-		<ThemeProvider colorScheme="light">
-			<Launchpad setIsOpen={ setIsOpen } />
-		</ThemeProvider>
+		<DirectionProvider rtl={ props.isRTL }>
+			<ThemeProvider colorScheme="light">
+				<Launchpad setIsOpen={ setIsOpen } />
+			</ThemeProvider>
+		</DirectionProvider>
 	);
 };
 
 export default Checklist;
+
+Checklist.propTypes = {
+	isRTL: PropTypes.bool,
+};
+
