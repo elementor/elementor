@@ -2,8 +2,7 @@
  * By Elementor Team
  */
 ( function() {
-	window.ShareLink = function( eElement, userSettings ) {
-		let element;
+	window.ShareLink = function( element, userSettings ) {
 		let settings = {};
 
 		const getNetworkNameFromClass = function( className ) {
