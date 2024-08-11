@@ -95,7 +95,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 		return cssCode && cssCode
 			.replace( /`/g, '' ) // Remove backticks if any
-			.replace( /^css\s*/, '' ) // Remove "css" prefix if any
+			.replace( /^css\s*/i, '' ) // Remove "css" prefix if any, case-insensitive
 			.replace( /selector/g, selector ); // Replace `selector` with the actual selector
 	};
 
@@ -107,9 +107,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	};
 
 	const removeStyleTag = () => {
-		console.log( styleTagId.current );
-		const styleTag = document.getElementById( `style-${ styleTagId.current }` );
-		console.log( 'remove', styleTag );
+		const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
 		if ( styleTag ) {
 			styleTag.remove();
 		}
@@ -132,7 +130,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			{ children }
 
 			{ ! data.result && (
-				<Box component="form" onSubmit={ handleSubmit }>
+				<Box component="form" onSubmit={ handleSubmit } onClose={ removeStyleTag }>
 					<Box sx={ { pb: 1.5 } }>
 						<PromptSearch
 							placeholder={ __( 'Describe the code you want to use...', 'elementor' ) }
@@ -172,7 +170,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ () => {
-								reset(); removeStyleTag();
+								removeStyleTag(); reset();
 							} }>
 								{ __( 'New prompt', 'elementor' ) }
 							</Button>
