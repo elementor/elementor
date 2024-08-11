@@ -148,7 +148,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	public static function is_checklist_shown() : bool {
 		$user_preferences = get_user_meta( get_current_user_id(), Preferences_Manager::META_KEY, true );
 		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
-		$is_checklist_shown = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ??  $is_new_installation;
+		$is_checklist_shown = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
 
 		return 'yes' === $is_checklist_shown;
 	}
