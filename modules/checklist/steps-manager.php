@@ -30,8 +30,13 @@ class Steps_Manager {
 		$formatted_steps = [];
 
 		foreach ( $this->get_step_ids() as $step_id ) {
-			$step = $this->step_instances[ $step_id ]->get_step_status_for_frontend();
-			$step['config'] = $this->get_step_config( $step_id );
+			$instance = $this->step_instances[ $step_id ];
+			$step = [
+				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed(),
+				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_marked_as_completed() || $instance->is_immutable_completed() || $instance->is_absolute_completed(),
+				'config' => $this->get_step_config( $step_id ),
+			];
+
 			$formatted_steps[] = $step;
 		}
 
@@ -82,7 +87,7 @@ class Steps_Manager {
 	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
-				$step->maybe_mark_as_completed( $this->get_step_config( $step_id ) );
+				$step->maybe_mark_as_completed();
 
 				return;
 			}

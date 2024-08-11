@@ -110,26 +110,11 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function maybe_mark_as_completed( $step_config ) : void {
-		if ( $step_config[ self::IS_COMPLETION_IMMUTABLE ] && $this->is_absolute_completed() ) {
+	public function maybe_mark_as_completed() : void {
+		if ( $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
 			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
 			$this->set_step_progress();
 		}
-	}
-
-	/**
-	 * Returns the step data as well as is_marked_completed and is_completed (not absolutely completed, but considered completed)
-	 *
-	 * @return array {
-	 *      @type string $is_marked_completed Whether the step is manually marked as completed by the user
-	 *      @type string $is_completed Whether the step is considered completed by the system
-	 *  }
-	 */
-	public function get_step_status_for_frontend() : array {
-		return [
-			self::MARKED_AS_COMPLETED_KEY => $this->is_marked_as_completed(),
-			self::IMMUTABLE_COMPLETION_KEY => $this->is_marked_as_completed() || $this->is_immutable_completed() || $this->is_absolute_completed(),
-		];
 	}
 
 	/**

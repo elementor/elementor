@@ -34,8 +34,7 @@ class Test_Create_Pages_Step extends Step_Test_Base {
 			'get_pages' => [ [], [], [] ],
 		] );
 		$step = new Create_Pages( $this->checklist_module, $this->wordpress_adapter );
-		$step_config = $steps_manager->get_step_config( Create_Pages::STEP_ID );
-		$step->maybe_mark_as_completed( $step_config );
+		$step->maybe_mark_as_completed();
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertTrue( $step->is_immutable_completed() );
 		$this->assertTrue( $step->is_absolute_completed() );
