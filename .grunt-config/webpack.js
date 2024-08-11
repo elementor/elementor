@@ -136,6 +136,7 @@ const entry = {
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 	'wc-product-editor': path.resolve( __dirname, '../assets/dev/js/admin/wc-product-editor.js' ),
+	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 };
 
 const frontendEntries = {
