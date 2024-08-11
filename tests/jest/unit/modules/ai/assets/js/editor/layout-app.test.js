@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LayoutApp from '../../../../../../../../modules/ai/assets/js/editor/layout-app';
 import TestThemeProvider from './mock/test-theme-provider';
 import { ajaxResponses } from './mock/elementor-common';
@@ -31,16 +31,19 @@ const defaultExpectedUniqueIds = {
 const App = () => (
 	<TestThemeProvider>
 		<LayoutApp
-			onClose={ () => {} }
-			onConnect={ () => {} }
+			onClose={ () => {
+			} }
+			onConnect={ () => {
+			} }
 			onData={ onData }
-			onInsert={ () => {} }
-			onSelect={ () => {} }
+			onInsert={ () => {
+			} }
+			onSelect={ () => {
+			} }
 			onGenerate={ onGenerate }
 			mode={ 'layout' }
 			attachmentsTypes={ {} }
 			hasPro={ true }
-			editorSessionId={ 'EDITOR_SESSION_ID' }
 		/>
 	</TestThemeProvider>
 );
@@ -77,7 +80,7 @@ describe( 'LayoutApp', () => {
 				batchId: expect.stringMatching( /^batch-[a-z0-9]{7}$/ ),
 				requestId: expect.stringMatching( /^request-[a-z0-9]{7}$/ ),
 				sessionId: expect.stringMatching( /^session-[a-z0-9]{7}$/ ),
-				editorSessionId: 'EDITOR_SESSION_ID',
+				editorSessionId: expect.stringMatching( /^editor-session-[a-z0-9]{7}$/ ),
 			},
 			prevGeneratedIds: [],
 			prompt: 'test',
@@ -101,7 +104,7 @@ describe( 'LayoutApp', () => {
 
 		// Assert
 		assertUniqueIds( {
-			... defaultExpectedUniqueIds,
+			...defaultExpectedUniqueIds,
 			batchId: 2,
 			requestId: REQUESTS_PER_BATCH * 2,
 		} );
@@ -116,7 +119,7 @@ describe( 'LayoutApp', () => {
 
 		// Assert
 		assertUniqueIds( {
-			... defaultExpectedUniqueIds,
+			...defaultExpectedUniqueIds,
 			generateId: 2,
 			batchId: 3,
 			requestId: REQUESTS_PER_BATCH * 3,
@@ -135,11 +138,13 @@ describe( 'LayoutApp', () => {
 		// Arrange - another generate with a new prompt
 		await clickEditPromptButton();
 
-		await addPromptAndGenerate( 'test' );
+		await act( async () => {
+			await addPromptAndGenerate( 'test' );
+		} );
 
 		// Assert
 		assertUniqueIds( {
-			... defaultExpectedUniqueIds,
+			...defaultExpectedUniqueIds,
 			sessionId: 2,
 			generateId: 2,
 			batchId: 2,

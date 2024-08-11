@@ -10,6 +10,11 @@
 @import "loader";
 @import "forms";
 
+// Dialog
+@import "../global/dialog-base";
+@import "../global/dialog-lightbox";
+@import "../global/dialog-confirm";
+
 // Components
 @import "perfect-scrollbar";
 @import "nprogress";
@@ -18,6 +23,7 @@
 @import "mode-switcher";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
+@import "../../../../modules/promotions/assets/scss/editor";
 @import "../../../../core/kits/assets/css/panel";
 
 @import "animations";
@@ -27,6 +33,7 @@
 @import "dynamic-tags";
 @import "context-menu";
 @import "hotkeys";
+@import "../../../../modules/floating-buttons/assets/scss/floating-buttons/template/floating-buttons-template";
 
 @import "resizable";
 @import "navigator/navigator";

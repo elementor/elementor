@@ -59,10 +59,14 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 		};
 	},
 
-	behaviors: {
-		insertTemplate: {
-			behaviorClass: TemplateLibraryInsertTemplateBehavior,
-		},
+	behaviors() {
+		const behaviors = {
+			insertTemplate: {
+				behaviorClass: TemplateLibraryInsertTemplateBehavior,
+			},
+		};
+
+		return elementor.hooks.applyFilters( 'elementor/editor/template-library/template/behaviors', behaviors, this );
 	},
 } );
 

@@ -63,7 +63,7 @@ class Module extends Base_Module {
 		}
 
 		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( Go_Pro_Promotion_Item::URL );
+			wp_redirect( Go_Pro_Promotion_Item::get_url() );
 			die;
 		}
 	}

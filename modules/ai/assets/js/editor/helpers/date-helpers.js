@@ -9,9 +9,11 @@ export const MONTH_JANUARY_INDEX = 0;
  * @return {string}
  */
 export const translateDate = ( format, date, timezone ) => {
-	const { dateI18n } = window.wp?.date;
-
-	return dateI18n( format, date, timezone );
+	if ( window.wp?.date ) {
+		const { dateI18n } = window.wp?.date;
+		return dateI18n( format, date, timezone );
+	}
+	return date;
 };
 
 /**

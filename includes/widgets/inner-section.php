@@ -55,4 +55,8 @@ class Widget_Inner_Section extends Widget_Base {
 	public function get_keywords() {
 		return [ 'row', 'columns', 'nested' ];
 	}
+
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
 }

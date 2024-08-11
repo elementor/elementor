@@ -113,6 +113,7 @@ const entry = {
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
 	'nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/editor/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
+	'atomic-widgets-editor': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/editor/module.js' ),
 	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
@@ -122,34 +123,54 @@ const entry = {
 	'editor-environment-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-environment-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
+	'admin-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/admin.js' ),
+	'editor-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/editor.js' ),
 	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
+	'ai-gutenberg': path.resolve( __dirname, '../modules/ai/assets/js/gutenberg/index.js' ),
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
+	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
+	'ai-media-library': path.resolve( __dirname, '../modules/ai/assets/js/media-library/index.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
+	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
+	'wc-product-editor': path.resolve( __dirname, '../assets/dev/js/admin/wc-product-editor.js' ),
+	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
-	'preloaded-modules': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-modules.js' ), dependOn: 'frontend' },
 };
 
-const externals = {
-	'@wordpress/i18n': 'wp.i18n',
-	react: 'React',
-	'react-dom': 'ReactDOM',
-	'@elementor/app-ui': 'elementorAppPackages.appUi',
-	'@elementor/components': 'elementorAppPackages.components',
-	'@elementor/hooks': 'elementorAppPackages.hooks',
-	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-	'@elementor/router': 'elementorAppPackages.router',
-	'@elementor/ui': 'elementorV2.ui',
-	'@elementor/icons': 'elementorV2.icons',
-	'@wordpress/dom-ready': 'wp.domReady',
-	'@wordpress/components': 'wp.components',
-};
+const externals = [
+	{
+		'@wordpress/i18n': 'wp.i18n',
+		react: 'React',
+		'react-dom': 'ReactDOM',
+		'@elementor/app-ui': 'elementorAppPackages.appUi',
+		'@elementor/components': 'elementorAppPackages.components',
+		'@elementor/hooks': 'elementorAppPackages.hooks',
+		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+		'@elementor/router': 'elementorAppPackages.router',
+		'@elementor/ui': 'elementorV2.ui',
+		'@elementor/icons': 'elementorV2.icons',
+		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
+		'@wordpress/dom-ready': 'wp.domReady',
+		'@wordpress/components': 'wp.components',
+	},
+	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
+	function ( { request }, callback ) {
+		const matches = request.match( /^@elementor\/(ui|icons)\/(.+)$/ );
+
+		if ( matches?.length ) {
+			return callback( null, `elementorV2.${ matches[ 1 ] }['${ matches[ 2 ] }']` );
+		}
+
+		callback();
+	},
+];
 
 const plugins = [
 	new webpack.ProvidePlugin( {

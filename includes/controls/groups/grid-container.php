@@ -33,7 +33,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'label_on' => esc_html__( 'Show', 'elementor' ),
 			'label_off' => esc_html__( 'Hide', 'elementor' ),
 			'default' => 'yes',
-			'frontend_available' => true,
+			'editor_available' => true,
 		];
 
 		$responsive_unit_defaults = $this->get_responsive_unit_defaults();
@@ -64,7 +64,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
 			],
 			'responsive' => true,
-			'frontend_available' => true,
+			'editor_available' => true,
 		] + $responsive_unit_defaults;
 
 		$fields['rows_grid'] = [
@@ -89,7 +89,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)',
 			],
 			'responsive' => true,
-			'frontend_available' => true,
+			'editor_available' => true,
 		] + $responsive_unit_defaults;
 
 		$fields['gaps'] = [
@@ -124,7 +124,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
 			],
 			'responsive' => true,
-			'frontend_available' => true,
+			'editor_available' => true,
 		] + $this->get_responsive_autoflow_defaults();
 
 		$fields['justify_items'] = [

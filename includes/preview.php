@@ -19,6 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Preview extends App {
 
 	/**
+	 * The priority of the preview enqueued styles.
+	 */
+	const ENQUEUED_STYLES_PRIORITY = 20;
+
+	/**
 	 * Is Preview.
 	 *
 	 * Holds a flag if current request is a preview.
@@ -103,7 +108,7 @@ class Preview extends App {
 		add_action( 'wp_enqueue_scripts', function() {
 			$this->enqueue_styles();
 			$this->enqueue_scripts();
-		} );
+		}, self::ENQUEUED_STYLES_PRIORITY );
 
 		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
 
@@ -260,17 +265,6 @@ class Preview extends App {
 		);
 
 		wp_enqueue_style( 'editor-preview' );
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
-			wp_register_style(
-				'editor-preview-legacy',
-				ELEMENTOR_ASSETS_URL . 'css/editor-preview-legacy' . $direction_suffix . $suffix . '.css',
-				[],
-				ELEMENTOR_VERSION
-			);
-
-			wp_enqueue_style( 'editor-preview-legacy' );
-		}
 
 		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_style( 'wp-mediaelement' );

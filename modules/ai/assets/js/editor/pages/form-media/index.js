@@ -41,7 +41,7 @@ const FormMedia = ( {
 	onClose,
 	DialogProps,
 	getControlValue,
-	controlView,
+	setControlValue,
 	additionalOptions,
 	maybeRenderUpgradeChip,
 	hasSubscription,
@@ -75,13 +75,10 @@ const FormMedia = ( {
 	const globalActions = {
 		state,
 		getControlValue,
+		setControlValue,
 		saveAndClose,
 		close: onCloseIntent,
 		setHasUnsavedChanges,
-		setControlImage: ( image ) => {
-			controlView.setSettingsModel( image );
-			controlView.applySavedValue();
-		},
 	};
 
 	useEffect( () => {
@@ -106,7 +103,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet />
+								<MediaOutlet additionalOptions={ additionalOptions } />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>
@@ -126,7 +123,7 @@ FormMedia.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	DialogProps: PropTypes.object,
 	getControlValue: PropTypes.func.isRequired,
-	controlView: PropTypes.object,
+	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	maybeRenderUpgradeChip: PropTypes.func,

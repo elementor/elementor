@@ -74,6 +74,26 @@ class Widget_Tabs extends Widget_Base {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-tabs' ]
+			: [];
+	}
+
 	public function show_in_panel(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
@@ -160,11 +180,17 @@ class Widget_Tabs extends Widget_Base {
 			'type',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'default' => 'horizontal',
 				'options' => [
-					'horizontal' => esc_html__( 'Horizontal', 'elementor' ),
-					'vertical' => esc_html__( 'Vertical', 'elementor' ),
+					'vertical' => [
+						'title' => esc_html__( 'Vertical', 'elementor' ),
+						'icon' => 'eicon-h-align-' . ( is_rtl() ? 'right' : 'left' ),
+					],
+					'horizontal' => [
+						'title' => esc_html__( 'Horizontal', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
 				],
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',

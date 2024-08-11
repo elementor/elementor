@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{inputs.branch}}
       - name: Get Configuration
@@ -44,10 +44,10 @@ jobs:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
@@ -90,6 +90,11 @@ jobs:
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
+      - name: Check that the version contains an updated change log
+        if: github.event.inputs.channel == 'ga'
+        uses: ./.github/workflows/get-changelog-from-changelog-txt
+        with:
+          VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:

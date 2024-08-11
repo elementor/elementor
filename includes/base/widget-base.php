@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -112,6 +113,16 @@ abstract class Widget_Base extends Element_Base {
 		return [ 'general' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array|null Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return null;
 	}
@@ -369,7 +380,17 @@ abstract class Widget_Base extends Element_Base {
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
 			'upsale_data' => $this->get_upsale_data(),
+			'is_dynamic_content' => $this->is_dynamic_content(),
 		];
+
+		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
+			$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
+			$config['upsale_data'] = Filtered_Promotions_Manager::get_filtered_promotion_data( $config['upsale_data'], $filter_name, 'upgrade_url' );
+		}
+
+		if ( isset( $config['upsale_data']['image'] ) ) {
+			$config['upsale_data']['image'] = esc_url( $config['upsale_data']['image'] );
+		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -520,7 +541,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param array|string $element         The link HTML element.
 	 * @param int $id                       The ID of the image
-	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
+	 * @param string $lightbox_setting_key  The setting key that dictates whether to open the image in a lightbox
 	 * @param string $group_id              Unique ID for a group of lightbox images
 	 * @param bool $overwrite               Optional. Whether to overwrite existing
 	 *                                      attribute. Default is false, not to overwrite.
@@ -1061,12 +1082,14 @@ abstract class Widget_Base extends Element_Base {
 		// The local path of the widget's CSS file that is being read and saved in the DB when the CSS content should be printed inline.
 		$file_path = Plugin::$instance->frontend->get_frontend_file_path( $file_name, $has_custom_breakpoints );
 
+		$file_timestamp = file_exists( $file_path ) ? filemtime( $file_path ) : ELEMENTOR_VERSION;
+
 		return [
 			'key' => $widget_name,
 			'version' => ELEMENTOR_VERSION,
 			'file_path' => $file_path,
 			'data' => [
-				'file_url' => $file_url,
+				'file_url' => $file_url . '?ver=' . $file_timestamp,
 			],
 		];
 	}
@@ -1113,9 +1136,9 @@ abstract class Widget_Base extends Element_Base {
 		$this->add_control(
 			'deprecation_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => $message,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => $message,
 				'separator' => 'after',
 			]
 		);
@@ -1200,6 +1223,24 @@ abstract class Widget_Base extends Element_Base {
 
 		return $widget_css;
 
+	}
+
+	/**
+	 * Widgets styles loading strategy.
+	 *
+	 * Which loading strategy to apply, either loading the widgets styles
+	 * in the `<head>` or in the `<body>`.
+	 *
+	 * Currently, it's based on the optimized CSS loading experiment. In
+	 * the future, will be replaced with a setting in the performance tab.
+	 *
+	 * @since 3.23.4
+	 * @access public
+	 *
+	 * @return bool Whether to load widgets styles in the `<head>`.
+	 */
+	public function load_widgets_styles_in_head(): bool {
+		return ! $this->is_inline_css_mode();
 	}
 
 	private function is_inline_css_mode() {

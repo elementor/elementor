@@ -1,12 +1,73 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
+import ReactUtils from 'elementor-utils/react';
+import LayoutAppWrapper from './layout-app-wrapper';
+import { AiGetStartedConnect } from './ai-get-started-connect';
+import { getUiConfig } from './utils/editor-integration';
+import { getRemoteFrontendConfig } from './api';
+import { getUniqueId } from './context/requests-ids';
+
+setTimeout( async () => {
+	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
+		return;
+	}
+
+	window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'elementor-editor-session' );
+
+	try {
+		const config = await getRemoteFrontendConfig( {
+			client_name: 'elementor-editor-loading',
+			client_version: elementorCommon.config.version,
+			client_session_id: window.EDITOR_SESSION_ID,
+		},
+		true,
+		);
+
+		window.ElementorAIRemoteConfigData = config;
+
+		if ( config?.remoteIntegrationUrl ) {
+			// Add a script tag to the head of the document
+			const script = document.createElement( 'script' );
+			script.type = 'module';
+			script.src = config.remoteIntegrationUrl;
+			document.head.appendChild( script );
+		}
+	} catch ( e ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Elementor AI Integration Loader', e );
+	}
+}, 0 );
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
-	}
+		window.addEventListener( 'hashchange', function( e ) {
+			if ( e.newURL.includes( 'welcome-ai' ) ) {
+				const source = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
+				window.location.hash = '';
 
+				setTimeout( () => {
+					const rootElement = document.createElement( 'div' );
+					document.body.append( rootElement );
+					const { colorScheme, isRTL } = getUiConfig();
+					const { unmount } = ReactUtils.render(
+
+						<LayoutAppWrapper
+							isRTL={ isRTL }
+							colorScheme={ colorScheme }>
+							<AiGetStartedConnect
+								onClose={ () => {
+									unmount();
+									rootElement.remove();
+								} }
+								source={ source }
+							/>
+						</LayoutAppWrapper>, rootElement );
+				}, 1000 );
+			}
+		} );
+	}
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
 
@@ -69,7 +130,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 					type: aiOptions.type,
 					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: ( value ) => {},
+					setControlValue: ( image ) => {
+						view.setSettingsModel( image );
+						view.applySavedValue();
+					},
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
@@ -80,13 +144,36 @@ export default class Module extends elementorModules.editor.utils.Module {
 			}
 		}
 
+		if ( 'excerpt' === aiOptions.type ) {
+			behaviors.ai = {
+				behaviorClass: AiBehavior,
+				type: aiOptions.type,
+				getControlValue: view.getControlValue.bind( view ),
+				setControlValue: ( value ) => {
+					if ( 'wysiwyg' === controlType ) {
+						value = value.replaceAll( '\n', '<br>' );
+					}
+
+					view.setSettingsModel( value );
+					view.applySavedValue();
+				},
+				isLabelBlock: view.options.model.get( 'label_block' ),
+				additionalOptions: {
+					defaultValue: view.options.model.get( 'default' ),
+				},
+				context: this.getContextData( view, controlType ),
+			};
+		}
+
 		return behaviors;
 	}
 
 	getContextData( view, controlType ) {
+		const controlName = view.options.model.get( 'name' );
+
 		if ( ! view.options.container ) {
 			return {
-				controlName: view.options.model.get( 'name' ),
+				controlName,
 				controlType,
 			};
 		}
@@ -96,8 +183,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 			elementType: view.options.container.args.model.get( 'elType' ),
 			elementId: view.options.container.id,
 			widgetType: view.options.container.args.model.get( 'widgetType' ),
-			controlName: view.options.model.get( 'name' ),
+			controlName,
 			controlType,
+			controlValue: view.options.container.settings.get( controlName ),
 		};
 	}
 }

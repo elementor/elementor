@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
+use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,16 +44,20 @@ class Widgets_Manager {
 	 * @access private
 	 *
 	 * @var Widget_Base[]
+	 *
+	 * @return array
 	 */
-	private $_promoted_widgets = [
-		'nested-elements' => NestedTabs::class,
-		'nested-accordion' => Nested_Accordion::class,
+	private array $promoted_widgets = [
+		NestedElementsModule::EXPERIMENT_NAME => [
+			NestedTabs::class,
+			Nested_Accordion::class,
+		],
 	];
 
 	/**
 	 * Init widgets.
 	 *
-	 * Initialize Elementor widgets manager. Include all the the widgets files
+	 * Initialize Elementor widgets manager. Include all the widgets files
 	 * and register each Elementor and WordPress widget.
 	 *
 	 * @since 2.0.0
@@ -92,9 +97,12 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
+			'share-buttons',
 		];
 
 		$this->_widget_types = [];
+
+		$this->register_promoted_widgets();
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
@@ -105,8 +113,6 @@ class Widgets_Manager {
 
 			$this->register( new $class_name() );
 		}
-
-		$this->register_promoted_widgets();
 
 		$this->register_wp_widgets();
 
@@ -271,12 +277,8 @@ class Widgets_Manager {
 	 */
 	private function register_promoted_widgets() {
 
-		foreach ( $this->_promoted_widgets as $module_name => $class_name ) {
-
-			if ( Plugin::$instance->experiments->is_feature_active( $module_name ) ) {
-				$instance = new $class_name();
-				$this->_widget_types[ $instance->get_name() ] = $instance;
-			}
+		foreach ( $this->promoted_widgets as $experiment_name => $classes ) {
+			$this->register_promoted_active_widgets( $experiment_name, $classes );
 		}
 	}
 
@@ -551,6 +553,63 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Widgets with styles.
+	 *
+	 * Some Elementor widgets have custom styles. Each widget needs to register
+	 * the styles is depends on. Later, based on the loading strategy, Elementor
+	 * chooses how and where to enqueue these styles.
+	 *
+	 * Elementor has two types of widgets, widgets in the `/includes/widgets/`
+	 * folder and widgets in the `/modules/` folder.
+	 *
+	 * The styles are compiled to `/assets/css/widget-{$widget_name}.css` files
+	 * using grunt tasks.
+	 *
+	 * Widgets in the `/includes/widgets/` folder compile their SCSS files from
+	 * the `/assets/dev/scss/frontend/widgets/` folder.
+	 * Widgets in the `/modules/` folder compile their SCSS files from the
+	 * `/modules/{$module_name}/assets/scss/` folder.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have styles.
+	 */
+	public function widgets_with_styles(): array {
+		// Widgets inside the `/includes/widgets/` folder that have styles.
+		$widgets = [
+			'accordion',
+			'alert',
+			'counter',
+			'divider',
+			'google_maps',
+			'heading',
+			'icon-box',
+			'icon-list',
+			'image',
+			'image-box',
+			'image-carousel',
+			'image-gallery',
+			'menu-anchor',
+			'progress',
+			'rating',
+			'social-icons',
+			'spacer',
+			'star-rating',
+			'tabs',
+			'testimonial',
+			'text-editor',
+			'toggle',
+			'video',
+		];
+
+		return $widgets;
+	}
+
+	/**
 	 * Enqueue widgets scripts.
 	 *
 	 * Enqueue all the scripts defined as a dependency for each widget.
@@ -665,5 +724,20 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
 			return $this->ajax_get_widgets_default_value_translations( $data );
 		} );
+	}
+
+	/**
+	 * @param $experiment_name
+	 * @param $classes
+	 * @return void
+	 */
+	public function register_promoted_active_widgets( string $experiment_name, array $classes ) : void {
+		if ( ! Plugin::$instance->experiments->is_feature_active( $experiment_name ) || empty( $classes ) ) {
+			return;
+		}
+
+		foreach ( $classes as $class_name ) {
+			$this->register( new $class_name() );
+		}
 	}
 }

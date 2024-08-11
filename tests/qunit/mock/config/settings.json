@@ -11,26 +11,77 @@
 				"label": "Preferences",
 				"name": "preferences"
 			},
+			"editor_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Panel",
+				"name": "editor_heading"
+			},
 			"ui_theme": {
+				"type": "choose",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Display mode",
+				"description": "Set light or dark mode, or auto-detect to sync with your operating system settings.",
+				"default": "auto",
+				"options": {
+					"light": {
+						"title": "Light mode",
+						"icon": "eicon-light-mode"
+					},
+					"dark": {
+						"title": "Dark mode",
+						"icon": "eicon-dark-mode"
+					},
+					"auto": {
+						"title": "Auto Detect",
+						"icon": "eicon-header"
+					}
+				},	
+				"name": "ui_theme"
+			},
+			"panel_width": {
+				"type": "slider",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Width (px)",
+				"default": {
+					"size": "300"
+				},
+				"name": "panel_width"
+			},
+			"preview_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Canvas",
+				"separator": "before",
+				"name": "preview_heading"
+			},
+			"default_device_view": {
 				"type": "select",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "UI Theme",
-				"description": "Set light or dark mode, or use Auto Detect to sync it with your OS setting.",
-				"default": "auto",
+				"label": "Default device view",
+				"default": "default",
 				"options": {
-					"auto": "Auto Detect",
-					"light": "Light",
-					"dark": "Dark"
+					"default": "Default",
+					"mobile": "Mobile",
+					"tablet": "Tablet",
+					"desktop": "Desktop"
 				},
-				"name": "ui_theme"
+				"description": "Choose which device to display when clicking the Responsive Mode icon.",
+				"name": "default_device_view"
 			},
 			"edit_buttons": {
 				"type": "switcher",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Editing Handles",
-				"description": "Show editing handles when hovering over the element edit button.",
+				"label": "Show quick edit options",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "Show additional actions while hovering over the handle of an element.",
 				"name": "edit_buttons",
 				"default": ""
 			},
@@ -38,9 +89,63 @@
 				"type": "switcher",
 				"tab": "settings",
 				"section": "preferences",
-				"label": "Enable Lightbox In Editor",
+				"label": "Expand images in lightbox",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "This only applies while you’re working in the editor. The front end won’t be affected.",
 				"default": "yes",
 				"name": "lightbox_in_editor"
+			},
+			"show_hidden_elements": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Show hidden elements",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "This refers to elements you’ve hidden in the Responsive Visibility settings.",
+				"name": "show_hidden_elements"
+			},
+			"design_system_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Design System",
+				"separator": "before",
+				"name": "design_system_heading"
+			},
+			"enable_styleguide_preview": {
+				"type": "switcher",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Show global settings",
+				"label_on": "Yes",
+				"label_off": "No",
+				"description": "Temporarily overlay the canvas with the style guide to preview your changes to global colors and fonts.",
+				"default": "yes",
+				"name": "enable_styleguide_preview"
+			},
+			"navigation_heading": {
+				"type": "heading",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Navigation",
+				"separator": "before",
+				"name": "navigation_heading"
+			},
+			"exit_to": {
+				"type": "select",
+				"tab": "settings",
+				"section": "preferences",
+				"label": "Exit to",
+				"description": "Decide where you want to go when leaving the editor.",
+				"default": "this_post",
+				"options": {
+					"this_post": "This Post",
+					"all_posts": "All Posts",
+					"dashboard": "WP Dashboard"
+				},
+				"name": "exit_to"
 			}
 		},
 		"tabs": {

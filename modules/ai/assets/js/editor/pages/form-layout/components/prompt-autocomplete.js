@@ -92,7 +92,7 @@ const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 			fullWidth
 			disableClearable
 			open={ showSuggestions }
-			onClose={ () => setShowSuggestions( false ) }
+			onClose={ ( e ) => setShowSuggestions( 'A' === e.relatedTarget?.tagName ) }
 			onKeyDown={ ( e ) => {
 				if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
 					onSubmit( e );

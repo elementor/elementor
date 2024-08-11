@@ -17,6 +17,14 @@
 		}
 	}
 
+	&.elementor-repeater-has-maximum-rows {
+
+		.elementor-repeater-tool-duplicate,
+		.elementor-repeater-add {
+			display: none;
+		}
+	}
+
 	.elementor-repeater-fields {
 		margin: 10px 0;
 	}

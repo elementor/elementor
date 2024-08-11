@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Announcements;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Modules\Ai\Preferences;
 use Elementor\Modules\Announcements\Classes\Announcement;
 use Elementor\Settings as ElementorSettings;
 
@@ -42,10 +43,14 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'announcements-app',
 			$this->get_js_assets_url( 'announcements-app' ),
-			[],
+			[
+				'wp-i18n',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'announcements-app', 'elementor' );
 
 		$this->print_config( 'announcements-app' );
 	}
@@ -88,42 +93,42 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		$raw_announcements = [
-			[
-				'title' => 'Unlock the Power of Elementor AI',
-				'description' => '<p>Design professional websites with natively integrated AI tools.</p>
-				<ul>
-					<li>Boost creativity & productivity with AI-generated containers. Build layouts from scratch or existing Elementor containers. Coming soon: Generate containers from any layout you reference from the web!</li>
-					<li>Let AI write or edit your text, adjust its length and tone of voice. Also generate custom code that seamlessly integrates into your website.</li>
-					<li>Create one-of-a kind images, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
-					<li>Access and repurpose previously-generated text, code or image prompts with Elementor’s AI History Panel to work efficiently and ensure consistency.</li>
-				</ul>',
-				'media' => [
-					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
-				],
-				'cta' => [
-					[
-						'label' => 'Continue',
-						'variant' => 'primary',
-						'target' => '_blank',
-					],
-					[
-						'label' => 'Learn More',
-						'target' => '_blank',
-						'url' => 'https://go.elementor.com/whats-new-popup-learn-elementor-ai/',
-					],
-				],
-				'triggers' => [
-					[
-						'action' => 'aiStared',
-					],
-				],
-			],
-		];
+		$raw_announcements = [];
+
+		if ( Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			$raw_announcements[] = $this->get_ai_announcement_data();
+		}
 
 		// DO NOT USE THIS FILTER
 		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
+	}
+
+	private function get_ai_announcement_data(): array {
+		return [
+			'title' => __( 'Discover your new superpowers ', 'elementor' ),
+			'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
+			'media' => [
+				'type' => 'image',
+				'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
+			],
+			'cta' => [
+				[
+					'label' => __( 'Let\'s do it', 'elementor' ),
+					'variant' => 'primary',
+					'target' => '_top',
+					'url' => '#welcome-ai',
+				],
+				[
+					'label' => __( 'Skip', 'elementor' ),
+					'variant' => 'secondary',
+				],
+			],
+			'triggers' => [
+				[
+					'action' => 'aiStarted',
+				],
+			],
+		];
 	}
 
 	/**

@@ -31,20 +31,23 @@ export default function CptSelectBox() {
 				{ __( 'Custom Post Type', 'elementor' ) }
 			</Text>
 			{ customPostTypes.length > 0
-				? <Select2
+				? (
+					<Select2
 						multiple
 						settings={ { width: '100%' } }
 						options={ customPostTypes }
 						onChange={ ( e ) => selectedCpt( e.target.selectedOptions ) }
 						value={ selected }
 						placeholder={ __( 'Click to select custom post types', 'elementor' ) }
-				/>
-				: <TextField
+					/>
+				) : (
+					<TextField
 						variant="outlined"
 						// eslint-disable-next-line @wordpress/i18n-ellipsis
 						placeholder={ __( 'No custom post types in your site...', 'elementor' ) }
 						className="e-app-export-kit-content__disabled"
-				/>
+					/>
+				)
 			}
 			<Text variant="sm" tag="span" className="e-app-export-kit-content__small-notice">
 				{ __( 'Add the custom posts types to export. The latest 20 items from each type will be included.', 'elementor' ) }

@@ -8,6 +8,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
 use Elementor\Plugin;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,6 +37,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		if ( is_admin() ) {
+			( new Preferences() )->register();
+		}
+
+		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			return;
+		}
+
 		$this->register_layout_experiment();
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
@@ -46,7 +55,10 @@ class Module extends BaseModule {
 			$handlers = [
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
+				'ai_get_remote_frontend_config' => [ $this, 'ajax_ai_get_remote_frontend_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
+				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
+				'ai_get_featured_image' => [ $this, 'ajax_ai_get_featured_image' ],
 				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
 				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
 				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
@@ -101,6 +113,41 @@ class Module extends BaseModule {
 			}
 		} );
 
+		if ( is_admin() ) {
+			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+		}
+
+		add_action( 'enqueue_block_editor_assets', function() {
+			wp_enqueue_script( 'elementor-ai-gutenberg',
+				$this->get_js_assets_url( 'ai-gutenberg' ),
+				[
+					'jquery',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
+					'wp-blocks',
+					'wp-element',
+					'wp-editor',
+					'wp-data',
+					'wp-components',
+					'wp-compose',
+					'wp-i18n',
+					'wp-hooks',
+					'elementor-ai-media-library',
+				],
+			ELEMENTOR_VERSION, true );
+
+			wp_localize_script(
+				'elementor-ai-gutenberg',
+				'ElementorAiConfig',
+				[
+					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+					'connect_url' => $this->get_ai_connect_url(),
+				]
+			);
+
+			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
+		});
+
 		add_filter( 'elementor/document/save/data', function ( $data ) {
 			if ( $this->is_layout_active() ) {
 				return $this->remove_temporary_containers( $data );
@@ -116,11 +163,36 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Build with AI', 'elementor' ),
 			'description' => esc_html__( 'Tap into the potential of AI to easily create and customize containers to your specifications, right within Elementor. This feature comes packed with handy AI tools, including generation, variations, and URL references.', 'elementor' ),
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'dependencies' => [
 				'container',
 			],
 		] );
+	}
+
+	public function enqueue_ai_media_library() {
+		wp_enqueue_script( 'elementor-ai-media-library',
+			$this->get_js_assets_url( 'ai-media-library' ),
+			[
+				'jquery',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+				'media-grid',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-ai-media-library',
+			'ElementorAiConfig',
+			[
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+			]
+		);
+
+		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
 	}
 
 	private function enqueue_main_script() {
@@ -143,15 +215,20 @@ class Module extends BaseModule {
 			true
 		);
 
+		$config = [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+		];
+
+		if ( $this->get_ai_app()->is_connected() ) {
+			// Use a cached version, don't call the API on every editor load.
+			$config['usage'] = $this->get_ai_app()->get_cached_usage();
+		}
+
 		wp_localize_script(
 			'elementor-ai',
 			'ElementorAiConfig',
-			[
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-				// Use a cached version, don't call the API on every editor load.
-				'usage' => $this->get_ai_app()->get_cached_usage(),
-			]
+			$config
 		);
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
@@ -244,6 +321,22 @@ class Module extends BaseModule {
 		return $app->get_remote_config();
 	}
 
+	public function ajax_ai_get_remote_frontend_config( $data ) {
+		$callback = function () use ( $data ) {
+			return $this->get_ai_app()->get_remote_frontend_config( $data );
+		};
+
+		return Utils::get_cached_callback( $callback, 'ai_remote_frontend_config-' . get_current_user_id(), HOUR_IN_SECONDS );
+	}
+
+	public function verify_upload_permissions( $data ) {
+		$referer = wp_get_referer();
+
+		if ( str_contains( $referer, 'wp-admin/upload.php' ) && current_user_can( 'upload_files' ) ) {
+			return;
+		}
+		$this->verify_permissions( $data['editor_post_id'] );
+	}
 	private function verify_permissions( $editor_post_id ) {
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
@@ -251,13 +344,13 @@ class Module extends BaseModule {
 			throw new \Exception( 'Document not found' );
 		}
 
-		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+		if ( ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied' );
 		}
 	}
 
 	public function ajax_ai_get_image_prompt_enhancer( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
@@ -268,11 +361,10 @@ class Module extends BaseModule {
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_prompt_enhanced( $data['prompt'] );
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$result = $app->get_image_prompt_enhanced( $data['prompt'], [], $request_ids );
+		$this->throw_on_error( $result );
 
 		return [
 			'text' => $result['text'],
@@ -286,7 +378,7 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
@@ -296,13 +388,66 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-		$result = $app->get_completion_text( $data['prompt'], $context );
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
+		$this->throw_on_error( $result );
 
 		return [
 			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+
+	public function ajax_ai_get_excerpt( $data ): array {
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['content'] ) ) {
+			throw new \Exception( 'Missing content' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'Not connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_excerpt( $data['payload']['content'], $context, $request_ids );
+		$this->throw_on_error( $result );
+
+		return [
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_featured_image( $data ): array {
+		$this->verify_upload_permissions( $data );
+
+		if ( empty( $data['payload']['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_featured_image( $data, $context, $request_ids );
+
+		$this->throw_on_error( $result );
+
+		return [
+			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 		];
@@ -320,16 +465,24 @@ class Module extends BaseModule {
 		return $data['context'];
 	}
 
+	private function get_request_ids( $data ) {
+		if ( empty( $data['requestIds'] ) ) {
+			return new \stdClass();
+		}
+
+		return $data['requestIds'];
+	}
+
 	public function ajax_ai_get_edit_text( $data ) {
 		$this->verify_permissions( $data['editor_post_id'] );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['input'] ) ) {
+		if ( empty( $data['payload']['input'] ) ) {
 			throw new \Exception( 'Missing input' );
 		}
 
-		if ( empty( $data['instruction'] ) ) {
+		if ( empty( $data['payload']['instruction'] ) ) {
 			throw new \Exception( 'Missing instruction' );
 		}
 
@@ -339,10 +492,10 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-		$result = $app->get_edit_text( $data['input'], $data['instruction'], $context );
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_edit_text( $data, $context, $request_ids );
+		$this->throw_on_error( $result );
 
 		return [
 			'text' => $result['text'],
@@ -354,11 +507,11 @@ class Module extends BaseModule {
 	public function ajax_ai_get_custom_code( $data ) {
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['language'] ) ) {
+		if ( empty( $data['payload']['language'] ) ) {
 			throw new \Exception( 'Missing language' );
 		}
 
@@ -368,10 +521,10 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 
-		$result = $app->get_custom_code( $data['prompt'], $data['language'], $context );
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_custom_code( $data, $context, $request_ids );
+		$this->throw_on_error( $result );
 
 		return [
 			'text' => $result['text'],
@@ -385,15 +538,15 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['html_markup'] ) ) {
+		if ( empty( $data['payload']['html_markup'] ) ) {
 			$data['html_markup'] = '';
 		}
 
-		if ( empty( $data['element_id'] ) ) {
+		if ( empty( $data['payload']['element_id'] ) ) {
 			throw new \Exception( 'Missing element_id' );
 		}
 
@@ -402,11 +555,10 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_custom_css( $data['prompt'], $data['html_markup'], $data['element_id'], $context );
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$result = $app->get_custom_css( $data, $context, $request_ids );
+		$this->throw_on_error( $result );
 
 		return [
 			'text' => $result['text'],
@@ -442,9 +594,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_text_to_image( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
@@ -455,12 +607,11 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_text_to_image( $data['prompt'], $data['promptSettings'], $context );
+		$result = $app->get_text_to_image( $data, $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -470,19 +621,15 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
-
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['promptSettings'] ) ) {
+		if ( empty( $data['payload']['settings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
@@ -491,16 +638,15 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image( [
-			'prompt' => $data['prompt'],
-			'promptSettings' => $data['promptSettings'],
-			'attachment_id' => $data['image']['id'],
-		], $context );
+			'prompt' => $data['payload']['prompt'],
+			'promptSettings' => $data['payload']['settings'],
+			'attachment_id' => $data['payload']['image']['id'],
+		], $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -510,15 +656,15 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_upscale( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['promptSettings'] ) ) {
+		if ( empty( $data['payload']['promptSettings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
@@ -527,15 +673,14 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_upscale( [
-			'promptSettings' => $data['promptSettings'],
-			'attachment_id' => $data['image']['id'],
-		], $context );
+			'promptSettings' => $data['payload']['promptSettings'],
+			'attachment_id' => $data['payload']['image']['id'],
+		], $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -545,15 +690,15 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_replace_background( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Prompt Missing' );
 		}
 
@@ -562,15 +707,14 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_replace_background( [
-			'attachment_id' => $data['image']['id'],
-			'prompt' => $data['prompt'],
-		], $context );
+			'attachment_id' => $data['payload']['image']['id'],
+			'prompt' => $data['payload']['prompt'],
+		], $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -580,11 +724,11 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_remove_background( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
@@ -593,14 +737,12 @@ class Module extends BaseModule {
 		}
 
 		$context = $this->get_request_context( $data );
-
+		$request_ids = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_remove_background( [
-			'attachment_id' => $data['image']['id'],
-		], $context );
+			'attachment_id' => $data['payload']['image']['id'],
+		], $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -610,19 +752,19 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_image_to_image_mask( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
+		if ( empty( $data['payload']['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
 
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
 			throw new \Exception( 'Missing Image' );
 		}
 
-		if ( empty( $data['promptSettings'] ) ) {
+		if ( empty( $data['payload']['settings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
@@ -630,22 +772,20 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		if ( empty( $data['mask'] ) ) {
+		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Mask' );
 		}
 
 		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
 
 		$result = $app->get_image_to_image_mask( [
-			'prompt' => $data['prompt'],
-			'promptSettings' => $data['promptSettings'],
-			'attachment_id' => $data['image']['id'],
-			'mask' => $data['mask'],
-		], $context );
+			'prompt' => $data['payload']['prompt'],
+			'attachment_id' => $data['payload']['image']['id'],
+			'mask' => $data['payload']['mask'],
+		], $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -654,32 +794,28 @@ class Module extends BaseModule {
 		];
 	}
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
+		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
-
-		if ( empty( $data['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
 
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
 
-		if ( empty( $data['mask'] ) ) {
+		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Expended Image' );
 		}
 
 		$context = $this->get_request_context( $data );
-
+		$request_ids = $this->get_request_ids( $data['payload'] );
 		$result = $app->get_image_to_image_out_painting( [
-			'prompt' => $data['prompt'],
-			'mask' => $data['mask'],
-		], $context );
+			'size' => $data['payload']['size'],
+			'position' => $data['payload']['position'],
+			'mask' => $data['payload']['mask'],
+			'image_base64' => $data['payload']['image_base64'],
+		], $context, $request_ids );
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'images' => $result['images'],
@@ -730,7 +866,7 @@ class Module extends BaseModule {
 
 		$result = $app->generate_layout(
 			$data,
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context( $data )
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -738,9 +874,10 @@ class Module extends BaseModule {
 
 			if ( is_array( $message ) ) {
 				$message = implode( ', ', $message );
+				throw new \Exception( $message );
 			}
 
-			throw new \Exception( $message );
+			$this->throw_on_error( $result );
 		}
 
 		$elements = $result['text']['elements'] ?? [];
@@ -802,12 +939,10 @@ class Module extends BaseModule {
 		$result = $app->get_layout_prompt_enhanced(
 			$data['prompt'],
 			$data['enhance_type'],
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context( $data )
 		);
 
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
+		$this->throw_on_error( $result );
 
 		return [
 			'text' => $result['text'] ?? $data['prompt'],
@@ -816,11 +951,12 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function prepare_generate_layout_context() {
+	private function prepare_generate_layout_context( $data ) {
+		$request_context = $this->get_request_context( $data );
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( ! $kit ) {
-			return [];
+			return $request_context;
 		}
 
 		$kits_data = Collection::make( $kit->get_data()['settings'] ?? [] );
@@ -875,12 +1011,12 @@ class Module extends BaseModule {
 				];
 			} );
 
-		return [
-			'globals' => [
-				'colors' => $colors->all(),
-				'typography' => $typography->all(),
-			],
+		$request_context['globals'] = [
+			'colors' => $colors->all(),
+			'typography' => $typography->all(),
 		];
+
+		return $request_context;
 	}
 
 	private function upload_image( $image_url, $image_title, $parent_post_id = 0 ) {
@@ -971,5 +1107,17 @@ class Module extends BaseModule {
 		}
 
 		return [];
+	}
+
+	/**
+	 * @param mixed $result
+	 */
+	private function throw_on_error( $result ): void {
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( [
+				'message' => $result->get_error_message(),
+				'extra_data' => $result->get_error_data(),
+			] );
+		}
 	}
 }

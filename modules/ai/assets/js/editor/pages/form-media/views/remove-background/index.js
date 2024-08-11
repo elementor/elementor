@@ -12,10 +12,11 @@ import NewPromptButton from '../../components/new-prompt-button';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
 import useImageSize from '../../hooks/use-image-size';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const RemoveBackground = () => {
 	const { editImage } = useEditImage();
-
+	const { setGenerate } = useRequestIds();
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const { data, send, isLoading: isGenerating, error } = useRemoveBackground();
@@ -28,7 +29,8 @@ const RemoveBackground = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-		send( editImage );
+		setGenerate();
+		send( { image: editImage } );
 	};
 
 	return (
@@ -50,7 +52,7 @@ const RemoveBackground = () => {
 							disabled={ isLoading }
 							onClick={ () => navigate( LOCATIONS.GENERATE ) } />
 					) : (
-						<GenerateSubmit disabled={ isLoading } >
+						<GenerateSubmit disabled={ isLoading }>
 							{ __( 'Remove Background', 'elementor' ) }
 						</GenerateSubmit>
 					) }

@@ -223,7 +223,7 @@
             "time": "2023-09-26T02:20:38+00:00"
         },
         {
-            "name": "matipojo/elementor-editor-testing",
+            "name": "elementor/elementor-editor-testing",
             "version": "v0.0.3",
             "source": {
                 "type": "git",

@@ -1,13 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 import FavoriteWidgetsHelper from './helpers';
 import NotificationsHelpers from '../../../../../../../assets/js/editor/utils/notifications/helpers';
 
 test.describe( 'Favorite widgets', () => {
-	test( 'Add favorite', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Add favorite', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		const favoriteToAdd = 'Button';
 
@@ -28,7 +29,7 @@ test.describe( 'Favorite widgets', () => {
 		await page.waitForTimeout( 1000 );
 
 		await page.reload();
-		await editor.ensurePanelLoaded();
+		await editor.waitForPanelToLoad();
 
 		await expectFavoriteVisible();
 

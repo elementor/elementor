@@ -87,7 +87,7 @@ export default function Header() {
 	return (
 		<Wrapper>
 			<InnerWrapper>
-				<Title>{ __( 'Style Guide Preview', 'elementor' ) }</Title>
+				<Title>{ __( 'Show global settings', 'elementor' ) }</Title>
 				<ButtonsWrapper>
 					<AreaButton area={ 'colors' }>{ __( 'Colors', 'elementor' ) }</AreaButton>
 					<AreaButton area={ 'fonts' }>{ __( 'Fonts', 'elementor' ) }</AreaButton>

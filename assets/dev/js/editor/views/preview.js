@@ -6,7 +6,15 @@ const Preview = BaseSectionsContainerView.extend( {
 	initialize() {
 		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
 
+		this.config = {
+			allowEdit: true,
+		};
+
 		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+	},
+
+	setConfig( config ) {
+		this.config = Object.assign( this.config, config );
 	},
 
 	getChildViewContainer() {
@@ -79,7 +87,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	addElementFromPanel( options ) {
-		if ( elementor.helpers.maybeDisableWidget() ) {
+		if ( ! this.config.allowEdit || elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
 
@@ -113,27 +121,19 @@ const Preview = BaseSectionsContainerView.extend( {
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	},
 
+	shouldRenderAddNewSectionArea() {
+		return this.config.allowEdit && elementor.userCan( 'design' );
+	},
+
 	onRender() {
-		let $contentContainer;
+		this.$el.html( this.$childViewContainer );
 
-		if ( elementorCommon.config.experimentalFeatures.e_dom_optimization ) {
-			$contentContainer = this.$el;
-		} else {
-			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );
-
-			this.$el.html( $inner );
-
-			$contentContainer = $inner;
-		}
-
-		$contentContainer.html( this.$childViewContainer );
-
-		if ( elementor.userCan( 'design' ) ) {
+		if ( this.shouldRenderAddNewSectionArea() ) {
 			const addNewSectionView = new AddSectionView();
 
 			addNewSectionView.render();
 
-			$contentContainer.append( addNewSectionView.$el );
+			this.$el.append( addNewSectionView.$el );
 		}
 	},
 } );

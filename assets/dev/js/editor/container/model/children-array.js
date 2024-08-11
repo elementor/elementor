@@ -58,7 +58,6 @@ export default class ChildrenArray extends Array {
 	 * Will run over children recursively, breaks if the callback return true.
 	 *
 	 * @param {function(Container) : *} callback
-	 *
 	 */
 	someRecursive( callback ) {
 		for ( const container of this ) {

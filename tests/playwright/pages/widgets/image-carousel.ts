@@ -4,24 +4,10 @@ import { expect } from '@playwright/test';
 import { resolve } from 'path';
 
 export default class ImageCarousel extends Content {
-	async addWidget() {
-		const widgetId = await this.editorPage.addWidget( 'image-carousel' );
-		return widgetId;
-	}
-
-	async selectNavigation( option: string ) {
-		await this.page.selectOption( EditorSelectors.imageCarousel.navigationSelect, option );
-	}
-
-	async setAutoplay( option = 'no' ) {
-		await this.page.getByText( 'Additional Options' ).click();
-		await this.page.selectOption( EditorSelectors.imageCarousel.autoplaySelect, option );
-	}
-
 	async addImageGallery( args?: {images?: string[], metaData?: boolean} ) {
 		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
 
-		await this.editorPage.activatePanelTab( 'content' );
+		await this.editor.openPanelTab( 'content' );
 		await this.page.locator( EditorSelectors.imageCarousel.addGalleryBtn ).click();
 		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
 
@@ -50,7 +36,7 @@ export default class ImageCarousel extends Content {
 
 	async verifyCaption( expectedData: string[], captionCount = 3 ) {
 		for ( let i = 0; i < captionCount; i++ ) {
-			await expect( this.editorPage.getPreviewFrame()
+			await expect( this.editor.getPreviewFrame()
 				.locator( EditorSelectors.imageCarousel.imgCaption ).nth( i ) ).toHaveText( expectedData[ i ] );
 		}
 	}

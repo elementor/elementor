@@ -137,6 +137,10 @@
 		}
 	}
 
+	&.e-btn-txt-border {
+		border: 1px solid var(--e-a-color-txt-muted);
+	}
+
 	&.elementor-button-success,
 	&.e-success {
 		background-color: var(--e-a-btn-bg-success);
@@ -179,6 +183,16 @@
 
 		&:active {
 			background-color: var(--e-a-btn-bg-accent-active);
+		}
+	}
+
+	&.elementor-button-info,
+	&.e-info {
+		background-color: var(--e-a-btn-bg-info);
+
+		&:hover,
+		&:focus {
+			background-color: var(--e-a-btn-bg-info-hover);
 		}
 	}
 
@@ -235,13 +249,6 @@
 	&::-webkit-scrollbar-thumb {
 		background-color: $color;
 		border-radius: $border-radius;
-	}
-}
-
-@mixin button-focus-outline() {
-
-	&:focus-visible {
-		outline: 5px auto -webkit-focus-ring-color;
 	}
 }
 //End

@@ -41,5 +41,5 @@ type PromptHistoryPaginationData = {
 export type PromptHistoryResponseData = {
 	success: boolean
 	code: number
-	data: PromptHistoryPaginationData | string | any[]
+	data: PromptHistoryPaginationData | string | Array<unknown>
 }

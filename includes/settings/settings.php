@@ -2,11 +2,13 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Modules\Home\Module as Home_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -57,7 +59,14 @@ class Settings extends Settings_Page {
 	 */
 	const TAB_ADVANCED = 'advanced';
 
+	/**
+	 * Settings page performance tab slug.
+	 */
+	const TAB_PERFORMANCE = 'performance';
+
 	const ADMIN_MENU_PRIORITY = 10;
+
+	public Home_Module $home_module;
 
 	/**
 	 * Register admin menu.
@@ -83,10 +92,23 @@ class Settings extends Settings_Page {
 			esc_html__( 'Elementor', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
-			[ $this, 'display_settings_page' ],
+			[
+				$this,
+				$this->home_module->is_experiment_active() ? 'display_home_screen' : 'display_settings_page',
+			],
 			'',
 			'58.5'
 		);
+
+		if ( $this->home_module->is_experiment_active() ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
+			}, 0 );
+		}
+	}
+
+	public function display_home_screen() {
+		echo '<div id="e-home-screen"></div>';
 	}
 
 	/**
@@ -189,7 +211,11 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
+		$menu_name = $this->home_module->is_experiment_active()
+			? esc_html__( 'Home', 'elementor' )
+			: esc_html__( 'Settings', 'elementor' );
+
+		Utils::change_submenu_first_item_label( 'elementor', $menu_name );
 	}
 
 	/**
@@ -226,6 +252,13 @@ class Settings extends Settings_Page {
 				'label' => esc_html__( 'General', 'elementor' ),
 				'sections' => [
 					'general' => [
+						'label' => esc_html__( 'General', 'elementor' ),
+						'callback' => function() {
+							printf(
+								'<p>%s</p><br><hr><br>',
+								esc_html__( 'Tailor how Elementor enhances your site, from post types to other functions.', 'elementor' )
+							);
+						},
 						'fields' => [
 							self::UPDATE_TIME_FIELD => [
 								'full_field_id' => self::UPDATE_TIME_FIELD,
@@ -296,20 +329,14 @@ class Settings extends Settings_Page {
 				'label' => esc_html__( 'Advanced', 'elementor' ),
 				'sections' => [
 					'advanced' => [
+						'label' => esc_html__( 'Advanced', 'elementor' ),
+						'callback' => function() {
+							printf(
+								'<p>%s</p><br><hr><br>',
+								esc_html__( 'Personalize the way Elementor works on your website by choosing the advanced features and how they operate.', 'elementor' )
+							);
+						},
 						'fields' => [
-							'css_print_method' => [
-								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
-								'field_args' => [
-									'class' => 'elementor_css_print_method',
-									'type' => 'select',
-									'std' => 'external',
-									'options' => [
-										'external' => esc_html__( 'External File', 'elementor' ),
-										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
-									],
-									'desc' => '<div class="elementor-css-print-method-description" data-value="external" style="display: none">' . esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' ) . '</div><div class="elementor-css-print-method-description" data-value="internal" style="display: none">' . esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' ) . '</div>',
-								],
-							],
 							'editor_break_lines' => [
 								'label' => esc_html__( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
@@ -369,6 +396,80 @@ class Settings extends Settings_Page {
 					],
 				],
 			],
+			self::TAB_PERFORMANCE => [
+				'label' => esc_html__( 'Performance', 'elementor' ),
+				'sections' => [
+					'performance' => [
+						'label' => esc_html__( 'Performance', 'elementor' ),
+						'callback' => function() {
+							printf(
+								'<p>%s</p><br><hr><br>',
+								esc_html__( 'Improve loading times on your site by selecting the optimization tools that best fit your requirements.', 'elementor' )
+							);
+						},
+						'fields' => [
+							'css_print_method' => [
+								'label' => esc_html__( 'CSS Print Method', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_css_print_method',
+									'type' => 'select',
+									'std' => 'external',
+									'options' => [
+										'external' => esc_html__( 'External File', 'elementor' ),
+										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
+									],
+									'desc' => sprintf(
+										/* translators: %s: <head> tag. */
+										esc_html__( 'Internal Embedding places all CSS in the %s which works great for troubleshooting, while External File uses external CSS file for better performance (recommended).', 'elementor' ),
+										'<code>&lt;head&gt;</code>',
+									),
+								],
+							],
+							'optimized_image_loading' => [
+								'label' => esc_html__( 'Optimized Image Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => sprintf(
+										/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
+										esc_html__( 'Improve performance by applying %1$s on LCP image and %2$s on images below the fold.', 'elementor' ),
+										'<code>fetchpriority="high"</code>',
+										'<code>loading="lazy"</code>'
+									),
+								],
+							],
+							'optimized_gutenberg_loading' => [
+								'label' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Reduce unnecessary render-blocking loads by dequeuing unused Gutenberg block editor scripts and styles.', 'elementor' ),
+								],
+							],
+							'lazy_load_background_images' => [
+								'label' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Improve initial page load performance by lazy loading all background images except the first one.', 'elementor' ),
+								],
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 
@@ -383,10 +484,6 @@ class Settings extends Settings_Page {
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			return esc_html__( 'Settings', 'elementor' );
-		}
-
 		return esc_html__( 'Elementor', 'elementor' );
 	}
 
@@ -438,21 +535,21 @@ class Settings extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
+		$this->home_module = new Home_Module();
+
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->register_knowledge_base_menu( $admin_menu );
-			}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			$this->register_knowledge_base_menu( $admin_menu );
+		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
-			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 
-			add_filter( 'custom_menu_order', '__return_true' );
-			add_filter( 'menu_order', [ $this, 'menu_order' ] );
-		}
+		add_filter( 'custom_menu_order', '__return_true' );
+		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 

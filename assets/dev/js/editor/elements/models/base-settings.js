@@ -168,7 +168,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 		const globalControl = controls[ controlGlobalKey ];
 
-		if ( ! globalControl.global?.active ) {
+		if ( ! globalControl?.global?.active ) {
 			return false;
 		}
 

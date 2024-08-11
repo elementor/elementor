@@ -22,6 +22,7 @@ class Test_Svg_Handler extends Elementor_Test_Base {
 	 */
 	public function test_support_unfiltered_files_upload__accepts_svg() {
 		// Arrange.
+		$this->act_as_admin();
 		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
 
 		$key = 'svg';

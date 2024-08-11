@@ -3,7 +3,7 @@ import Content from '../elementor-panel-tabs/content';
 
 export default class ContextMenu extends Content {
 	async openContextMenu( widget: string ) {
-		await this.editorPage
+		await this.editor
 			.getPreviewFrame()
 			.locator( EditorSelectors.getWidgetByName( widget ) )
 			.click( { button: 'right' } );

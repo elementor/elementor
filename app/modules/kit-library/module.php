@@ -11,6 +11,7 @@ use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -60,7 +61,7 @@ class Module extends BaseModule {
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
 			'has_access_to_module' => current_user_can( 'administrator' ),
-			'subscription_plans' => $connect->get_subscription_plans( 'kit-library' ),
+			'subscription_plans' => $this->apply_filter_subscription_plans( $connect->get_subscription_plans( 'kit-library' ) ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
 			'library_connect_url'  => $kit_library->get_admin_url( 'authorize', [
@@ -75,6 +76,22 @@ class Module extends BaseModule {
 		] );
 	}
 
+	private function apply_filter_subscription_plans( array $subscription_plans ): array {
+		foreach ( $subscription_plans as $key => $plan ) {
+			if ( null === $plan['promotion_url'] ) {
+				continue;
+			}
+
+			$subscription_plans[ $key ] = Filtered_Promotions_Manager::get_filtered_promotion_data(
+				$plan,
+				'elementor/kit_library/' . $key . '/promotion',
+				'promotion_url'
+			);
+		}
+
+		return $subscription_plans;
+	}
+
 	/**
 	 * Module constructor.
 	 */
@@ -85,15 +102,9 @@ class Module extends BaseModule {
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
-				$this->register_admin_menu( $menu );
-			} );
-		} else {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$this->register_admin_menu_legacy( $admin_menu );
-			}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
-		}
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			$this->register_admin_menu_legacy( $admin_menu );
+		}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );
