@@ -93,4 +93,8 @@ class Manager extends DB_Upgrades_Manager {
 
 		update_option( static::get_install_history_meta(), $installs_history );
 	}
+
+	public static function is_new_installation() : bool {
+		return static::install_compare( ELEMENTOR_VERSION, '>=' );
+	}
 }
