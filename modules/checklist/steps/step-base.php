@@ -111,7 +111,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function maybe_mark_as_completed() : void {
-		$is_immutable_completed = self::IMMUTABLE_COMPLETION_KEY ?? false;
+		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
 			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
