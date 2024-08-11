@@ -553,7 +553,7 @@ class Widgets_Manager {
 	}
 
 	/**
-	 * Widgets styles names.
+	 * Widgets with styles.
 	 *
 	 * Some Elementor widgets have custom styles. Each widget needs to register
 	 * the styles is depends on. Later, based on the loading strategy, Elementor
@@ -576,11 +576,9 @@ class Widgets_Manager {
 	 * @since 3.24.0
 	 * @access public
 	 *
-	 * @return array The names of the widgets styles.
+	 * @return array The names of the widgets that have styles.
 	 */
-	public function widgets_styles_names(): array {
-		$widgets_styles = [];
-
+	public function widgets_with_styles(): array {
 		// Widgets inside the `/includes/widgets/` folder that have styles.
 		$widgets = [
 			'accordion',
@@ -608,11 +606,7 @@ class Widgets_Manager {
 			'video',
 		];
 
-		foreach ( $widgets as $widget_name ) {
-			$widgets_styles[] = "widget-{$widget_name}";
-		}
-
-		return $widgets_styles;
+		return $widgets;
 	}
 
 	/**
