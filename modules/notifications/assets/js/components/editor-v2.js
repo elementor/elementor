@@ -21,7 +21,7 @@ export const editorV2 = () => {
 
 	utilitiesMenu.registerLink( {
 		id: 'app-bar-menu-item-whats-new',
-		priority: 45,
+		priority: 25,
 		useProps: () => {
 			const [ isRead, setIsRead ] = useState( ! elementorNotifications.is_unread );
 

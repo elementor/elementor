@@ -10,7 +10,7 @@ import Collapse from '@elementor/ui/Collapse';
 import ChevronDownIcon from '@elementor/icons/ChevronDownIcon';
 import RadioButtonUncheckedIcon from '@elementor/icons/RadioButtonUncheckedIcon';
 import CardMedia from '@elementor/ui/CardMedia';
-import Link from '@elementor/ui/Link'
+import Link from '@elementor/ui/Link';
 
 function CheckListItem( props ) {
 	const { id, title, description, link, CTA } = props.step,
@@ -24,7 +24,7 @@ function CheckListItem( props ) {
 		<>
 			<ListItemButton onClick={ () => handleExpandClick( id ) } sx={ {
 				'&.MuiButtonBase-root:hover': {
-					bgcolor: 'transparent'
+					bgcolor: 'transparent',
 				},
 			} }>
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
@@ -44,7 +44,7 @@ function CheckListItem( props ) {
 						</Typography>
 					</CardContent>
 					<CardActions>
-						<Button size="small" color="secondary" variant="text">Mark as done</Button>
+						<Button size="small" color="secondary" variant="text">{ __( 'Mark as done', 'elementor' ) }</Button>
 						<Button size="small" variant="contained">{ CTA }</Button>
 					</CardActions>
 				</Card>
@@ -56,6 +56,7 @@ function CheckListItem( props ) {
 export default CheckListItem;
 
 CheckListItem.propTypes = {
+	step: PropTypes.object,
 	id: PropTypes.string,
 	title: PropTypes.string,
 	description: PropTypes.string,

@@ -1,19 +1,23 @@
-import List from '@elementor/ui/List';
-import { steps } from '../data/steps';
-import CheckListItem from './checklist-item';
+import { ThemeProvider } from '@elementor/ui';
+import Launchpad from './launchpad';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 
-function CheckList() {
+const Checklist = () => {
+	const [ isOpen, setIsOpen ] = useState( true );
+
+	useEffect( () => {
+		elementor.on( 'elementor/editor/panel/checklist/clicked', () => setIsOpen( ! isOpen ) );
+	}, [] );
+
 	return (
-		<List component="div" sx={ { py: 0 } }>
-			{
-				steps.map( ( step, index ) => {
-					return (
-						<CheckListItem step={ step } key={ index } />
-					);
-				} )
-			}
-		</List>
+		<ThemeProvider colorScheme={ 'light' }>
+			{ isOpen && <Launchpad
+				isOpen={ isOpen }
+				setIsOpen={ setIsOpen }
+			/> }
+		</ThemeProvider>
 	);
-}
+};
 
-export default CheckList;
+export default Checklist;

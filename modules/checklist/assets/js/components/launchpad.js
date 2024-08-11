@@ -1,9 +1,9 @@
-import CheckList from './checklist';
+import CheckListWrapper from './checklist-wrapper';
 import Header from './header';
 import Paper from '@elementor/ui/Paper';
 
 const Launchpad = ( props ) => {
-	const { isOpen, setIsOpen } = props;
+	const { setIsOpen } = props;
 
 	return (
 		<Paper elevation={ 5 } sx={ {
@@ -17,10 +17,9 @@ const Launchpad = ( props ) => {
 			overflowY: 'auto',
 		} }>
 			<Header
-				isOpen={ isOpen }
 				setIsOpen={ setIsOpen }
 			/>
-			<CheckList />
+			<CheckListWrapper />
 		</Paper>
 	);
 };
@@ -29,5 +28,5 @@ export default Launchpad;
 
 Launchpad.propTypes = {
 	setIsOpen: PropTypes.func,
-	isOpen: PropTypes.bool
+	isOpen: PropTypes.bool,
 };

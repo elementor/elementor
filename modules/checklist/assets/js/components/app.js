@@ -1,5 +1,5 @@
 import ReactUtils from 'elementor-utils/react';
-import ChecklistApp from './checklist-app';
+import Checklist from './checklist';
 
 export const App = () => {
 	let container = document.getElementById( 'e-checklist' );
@@ -14,7 +14,7 @@ export const App = () => {
 
 	if ( ! container.hasChildNodes() ) {
 		ReactUtils.render( (
-			<ChecklistApp
+			<Checklist
 				isRTL={ isRTL }
 			/>
 		), container );

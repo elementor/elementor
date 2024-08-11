@@ -37,7 +37,7 @@ export const editorV2 = () => {
 						},
 					);
 					App();
-				}
+				},
 			};
 		},
 	} );
