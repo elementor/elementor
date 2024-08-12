@@ -52,13 +52,13 @@ jobs:
         with:
           node-version: 20.x
 
-#      - name: Env Vars Configure
-#        id: env_vars_configure
-#        uses: ./.github/workflows/env-vars-configure
-#        with:
-#          CHANNEL: ${{ env.CHANNEL }}
-#          REF: ${{ github.ref }}
-#          POSTFIX: ''
+      - name: Env Vars Configure
+        id: env_vars_configure
+        uses: ./.github/workflows/env-vars-configure
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          REF: ${{ github.ref }}
+          POSTFIX: ''
 
 #      - name: Bump Channel Version
 #        id: bump_channel_version
