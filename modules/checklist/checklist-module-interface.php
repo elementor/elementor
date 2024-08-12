@@ -22,6 +22,4 @@ interface Checklist_Module_Interface {
 	public function get_steps_manager() : Steps_Manager;
 
 	public function get_wordpress_adapter() : Wordpress_Adapter;
-
-	public function enqueue_editor_scripts() : void;
 }

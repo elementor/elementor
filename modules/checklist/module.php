@@ -18,9 +18,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const DB_OPTION_KEY = 'elementor_checklist';
 
 	private $user_progress = null;
-
 	private Steps_Manager $steps_manager;
-
 	private Wordpress_Adapter_Interface $wordpress_adapter;
 
 	/**
