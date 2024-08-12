@@ -1,5 +1,6 @@
 import ReactUtils from 'elementor-utils/react';
-import Checklist from './checklist';
+import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import Checklist from './components/checklist';
 
 export const App = () => {
 	let container = document.getElementById( 'e-checklist' );
@@ -14,9 +15,11 @@ export const App = () => {
 
 	if ( ! container.hasChildNodes() ) {
 		ReactUtils.render( (
-			<Checklist
-				isRTL={ isRTL }
-			/>
+			<DirectionProvider rtl={ isRTL }>
+				<ThemeProvider colorScheme="light">
+					<Checklist />
+				</ThemeProvider>
+			</DirectionProvider>
 		), container );
 	}
 
