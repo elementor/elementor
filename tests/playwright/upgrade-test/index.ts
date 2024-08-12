@@ -23,8 +23,10 @@ export class UpgradeElementor {
 	getBuild() {
 		// Don't forget to npx grunt build in root folder for local testing
 		this.cmd( 'mkdir plugin' );
+		this.cmd( 'ls -al' );
 		this.cmd( 'cd ../../../ && mkdir elementor' );
-		this.cmd( 'cd ../../../ && cp -r ./build/* elementor && zip -r elementor elementor' );
+		this.cmd( 'ls -al' );
+		this.cmd( 'cd ../../../ && ls -al && cp -r ./build/* elementor && zip -r elementor elementor' );
 		this.cmd( 'cd ../../../ && mv ./elementor.zip ./tests/playwright/upgrade-test/plugin' );
 	}
 

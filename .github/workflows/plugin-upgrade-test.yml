@@ -25,13 +25,23 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Build Plugin
-        id: build_plugin
-        uses: ./.github/workflows/plugin-build
-
       - name: Check if this is only a changelog PR
         id: changelog_diffs
         uses: ./.github/workflows/check-changelog-pr
+
+      - name: Debug
+        run: |
+          ls -al
+
+      - name: Build Plugin
+        if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+        id: build_plugin
+        uses: ./.github/workflows/plugin-build
+
+      - name: Debug 2
+        run: |
+          ls -al
+
 
   run-upgrade-test:
     name: Playwright plugin upgrade test
@@ -46,6 +56,9 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
+      - name: Debug 3
+        run: |
+          ls -al
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -54,6 +67,8 @@ jobs:
       - name: Install dependencies
         run: |
             npm ci
+            ls -al
+            ls -al ./tests/playwright/upgrade-test
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
