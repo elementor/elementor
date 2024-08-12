@@ -87,8 +87,12 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	}, [] );
 
 	const showCssPreview = ( cssCode ) => {
-		const parsedCssCode = parseCSS( cssCode );
-		insertStyleTag( parsedCssCode );
+		try {
+			const parsedCssCode = parseCSS( cssCode );
+			insertStyleTag( parsedCssCode );
+		} catch ( e ) {
+			console.warn( 'Failed to present CSS preview', e );
+		}
 	};
 
 	const parseCSS = ( cssCode ) => {
@@ -111,9 +115,13 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	};
 
 	const removeStyleTag = () => {
-		const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
-		if ( styleTag ) {
-			styleTag.remove();
+		try {
+			const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
+			if ( styleTag ) {
+				styleTag.remove();
+			}
+		} catch ( e ) {
+			console.warn( 'Failed to remove style tag', e );
 		}
 	};
 
