@@ -74,6 +74,9 @@ jobs:
         uses: ./.github/workflows/plugin-build
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+
+      - name: Testing
+        run: echo "Done Building"
 #
 #      - name: Create GitHub release
 #        uses: softprops/action-gh-release@v1
