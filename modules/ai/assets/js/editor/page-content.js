@@ -168,7 +168,6 @@ const PageContent = (
 					<PromptHistoryActionProvider>
 						<PromptDialog.Header onClose={ onClose }>
 							<PromptHistory />
-
 							{ maybeRenderUpgradeChip() }
 						</PromptDialog.Header>
 

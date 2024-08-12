@@ -48,6 +48,9 @@ const DraggablePaper = ( props ) => {
 };
 
 const PromptDialog = ( props ) => {
+	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
+	const timeoutRef = useRef( null );
+
 	return (
 		<Dialog
 			scroll="paper"
@@ -56,19 +59,35 @@ const PromptDialog = ( props ) => {
 			hideBackdrop={ true }
 			PaperComponent={ DraggablePaper }
 			disableScrollLock={ true }
+			{ ...props }
 			sx={ {
+				// eslint-disable-next-line react/prop-types
+				...props.sx,
+				...sxStyle,
 				'& .MuiDialog-container': {
 					alignItems: 'flex-start',
 					mt: '18vh',
 				},
 			} }
 			PaperProps={ {
+				// eslint-disable-next-line react/prop-types
+				...props.PaperProps,
+				onMouseEnter: () => {
+					clearTimeout( timeoutRef.current );
+					setSxStyle( { pointerEvents: 'all' } );
+				},
+				onMouseLeave: () => {
+					clearTimeout( timeoutRef.current );
+					timeoutRef.current = setTimeout( () => {
+						setSxStyle( { pointerEvents: 'none' } );
+					}, 200 );
+				},
 				sx: {
 					m: 0,
 					maxHeight: '76vh',
+					pointerEvents: 'auto',
 				},
 			} }
-			{ ...props }
 		>
 			{ props.children }
 		</Dialog>

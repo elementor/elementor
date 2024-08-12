@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -20,9 +20,7 @@ import { useRequestIds } from '../../context/requests-ids';
 import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 import { splitText } from './splitTextResult';
 
-const generateUniqueStyleTagId = () => {
-	return `style-${ Math.random().toString( 36 ).substr( 2, 9 ) }`;
-};
+const generateUniqueId = () => Math.random().toString( 36 ).substr( 2, 9 );
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -44,7 +42,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const { code, details } = splitText( data.result );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
-	const styleTagId = useRef( generateUniqueStyleTagId() );
+	const styleTagId = useRef( generateUniqueId() );
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -81,6 +79,12 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			showCssPreview( splitText( response.result ).code );
 		}
 	};
+
+	useEffect( () => {
+		return () => {
+			removeStyleTag();
+		};
+	}, [] );
 
 	const showCssPreview = ( cssCode ) => {
 		const parsedCssCode = parseCSS( cssCode );
