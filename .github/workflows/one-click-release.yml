@@ -52,22 +52,22 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Env Vars Configure
-        id: env_vars_configure
-        uses: ./.github/workflows/env-vars-configure
-        with:
-          CHANNEL: ${{ env.CHANNEL }}
-          REF: ${{ github.ref }}
-          POSTFIX: ''
+#      - name: Env Vars Configure
+#        id: env_vars_configure
+#        uses: ./.github/workflows/env-vars-configure
+#        with:
+#          CHANNEL: ${{ env.CHANNEL }}
+#          REF: ${{ github.ref }}
+#          POSTFIX: ''
 
-      - name: Bump Channel Version
-        id: bump_channel_version
-        uses: ./.github/workflows/bump-channel-version
-        with:
-          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
-          CHANNEL: ${{ env.CHANNEL }}
-          POSTFIX: ''
-          OVERRIDE_PACKAGE_VERSION: true
+#      - name: Bump Channel Version
+#        id: bump_channel_version
+#        uses: ./.github/workflows/bump-channel-version
+#        with:
+#          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+#          CHANNEL: ${{ env.CHANNEL }}
+#          POSTFIX: ''
+#          OVERRIDE_PACKAGE_VERSION: true
 
       - name: Update Readme.txt
         if: env.CHANNEL != 'cloud'
