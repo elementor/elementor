@@ -81,7 +81,7 @@ jobs:
         run: npm ci
 
       - name: Build plugin
-        uses: ./.github/workflows/plugin-build
+        uses: Batsirai-muchareva/elementor@main
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
 
