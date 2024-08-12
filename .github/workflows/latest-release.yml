@@ -6,7 +6,6 @@ env:
 
 on:
   pull_request_target:
-  workflow_dispatch:
     types: [closed]
     branches:
       - main
@@ -75,57 +74,54 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
 
-      - name: Testing
-        run: echo "Done Building"
-#
-#      - name: Create GitHub release
-#        uses: softprops/action-gh-release@v1
-#        env:
-#          GITHUB_REPOSITORY: ${{ github.repository }}
-#        with:
-#          tag_name: ${{ env.PACKAGE_VERSION }}
-#          target_commitish: ${{ env.CLEAN_REF }}
-#          files: elementor-*.zip
-#          body: "Automated release for ${{ env.PACKAGE_VERSION }}"
-#          prerelease: ${{ env.PRERELEASE }}
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Post To Slack Created Latest auto Release
-#        if: ${{ github.event.inputs.pre_release }} == false
-#        uses: ./.github/workflows/post-to-slack
-#        with:
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-#          SLACK_TAG_CHANNELS: ${{ secrets.LATEST_HOSTING_RELEASE_CHANNAL_ID }}
-#          PAYLOAD: |
-#            {
-#              "blocks": [
-#                {
-#                  "type": "section",
-#                  "text": {
-#                    "type": "mrkdwn",
-#                    "text": "Hi All :smile:\n\nWe just Published Latest release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
-#                  }
-#                },
-#                {
-#                  "type": "divider"
-#                },
-#                {
-#                  "type": "section",
-#                  "text": {
-#                    "type": "mrkdwn",
-#                    "text": "GitHub Release *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
-#                  },
-#                  "accessory": {
-#                    "type": "button",
-#                    "text": {
-#                      "type": "plain_text",
-#                      "text": "Open :point_left:",
-#                      "emoji": true
-#                    },
-#                    "value": "open-release",
-#                    "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
-#                    "action_id": "button-action"
-#                  }
-#                }
-#              ]
-#            }
-#
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          target_commitish: ${{ env.CLEAN_REF }}
+          files: elementor-*.zip
+          body: "Automated release for ${{ env.PACKAGE_VERSION }}"
+          prerelease: ${{ env.PRERELEASE }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Post To Slack Created Latest auto Release
+        if: ${{ github.event.inputs.pre_release }} == false
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.LATEST_HOSTING_RELEASE_CHANNAL_ID }}
+          PAYLOAD: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Hi All :smile:\n\nWe just Published Latest release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Release *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "Open :point_left:",
+                      "emoji": true
+                    },
+                    "value": "open-release",
+                    "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
+                    "action_id": "button-action"
+                  }
+                }
+              ]
+            }
+
