@@ -56,8 +56,8 @@ runs:
             echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
             echo "PLUGIN_ZIP_PATH=./elementor/**/*" >> $GITHUB_ENV
 
-      - name: Get Previous Release
-        uses : ./.github/workflows/get-previous-release
-        with:
-          CHANNEL: ${{ inputs.CHANNEL }}
-          POSTFIX: ${{ inputs.POSTFIX }}
+#      - name: Get Previous Release
+#        uses : ./.github/workflows/get-previous-release
+#        with:
+#          CHANNEL: ${{ inputs.CHANNEL }}
+#          POSTFIX: ${{ inputs.POSTFIX }}
