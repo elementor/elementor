@@ -659,6 +659,10 @@ class Ai extends Library {
 			$context['features']['supportedFeatures'][] = 'MegaMenu';
 		}
 
+		if ( class_exists( 'WC' ) ) {
+			$context['features']['supportedFeatures'][] = 'WooCommerce';
+		}
+
 		$metadata = [
 			'context' => $context,
 			'api_version' => ELEMENTOR_VERSION,
