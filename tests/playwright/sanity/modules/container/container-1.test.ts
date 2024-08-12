@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../parallelTest';
 import { getElementSelector } from '../../../assets/elements-utils';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
-import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -27,21 +26,29 @@ test.describe( 'Container tests @container', () => {
 		await page.close();
 	} );
 
-	test('Background slide show', async ({ page, apiRequests }, testInfo) => {
+	test('Background slideshow', async ({ page, apiRequests }, testInfo) => {
 		const wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
 		const editor = await wpAdmin.openNewPage();
-		await editor.addElement({ elType: 'container' }, 'document');
-		const imageCarousel = new ImageCarousel(page, testInfo);
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( 'heading', containerId );
+		await editor.selectElement( containerId );
 
 		await editor.closeNavigatorIfOpen();
 		await editor.openPanelTab('style');
 		await editor.openSection('section_background');
-		await editor.setSwitcherControlValue('slideshow', true);
-		await imageCarousel.addImageGallery({ images: ['A.jpg', 'B.jpg', 'C.jpg'] });
+		await editor.setChooseControlValue( 'background_background', 'eicon-slideshow' );
+		await editor.addImagesToContainerSlideshow();
 
 		await test.step('Verify background slideshow', async () => {
-			await expect.soft( editor.getPreviewFrame().locator( 'elementor-background-slideshow' ) ).toHaveCount( 1 );
+			await editor.togglePreviewMode();
+			await expect.soft( editor.getPreviewFrame().locator( '.e-con' ).nth( 0 ) ).toHaveScreenshot( 'editor-container-background-slideshow.png' );
+			await editor.togglePreviewMode();
+			await editor.publishAndViewPage();
 		});
+
+		await test.step( 'Verify background slideshow on the frontend', async () => {
+			await expect.soft( page.locator( '.e-con' ) ).toHaveScreenshot( 'frontend-container-background-slideshow.png' );
+		} );
 	});
 
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
