@@ -24,7 +24,7 @@ const Header = () => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<CloseButton onClick={ closeChecklist } />
+					<CloseButton onClick={ closeChecklist } className="e-checklist-close" />
 				</Toolbar>
 			</AppBar>
 			<Divider />

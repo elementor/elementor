@@ -12,7 +12,7 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ handleExpandClick } >
+			<ListItemButton onClick={ handleExpandClick } className="e-checklist-item-button">
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
 				<ListItemText id={ step.title } primary={ step.title } primaryTypographyProps={ { variant: 'body2' } } />
 				{ index === expandedIndex ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
