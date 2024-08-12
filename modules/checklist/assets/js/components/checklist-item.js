@@ -20,16 +20,15 @@ function CheckListItem( props ) {
 		[ expanded, setExpanded ] = useState( false );
 
 	const handleExpandClick = () => {
-		setExpanded( !expanded )
+		setExpanded( ! expanded );
 	};
 
 	return (
 		<>
 			<ListItemButton onClick={ () => {
-				setExpandedIndex( index )
-				handleExpandClick()
-			}
-				} >
+				setExpandedIndex( index );
+				handleExpandClick();
+			} } >
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
 				<ListItemText id={ title } primary={ title } primaryTypographyProps={ { variant: 'body2' } } />
 				{ index === expandedIndex && expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
