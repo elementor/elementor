@@ -27,15 +27,6 @@ export const editorV2 = () => {
 				title: __( 'Checklist', 'elementor' ),
 				icon: () => <RocketIcon />,
 				onClick: () => {
-					elementor.editorEvents.dispatchEvent(
-						elementor.editorEvents.config.names.topBar.checklist,
-						{
-							location: elementor.editorEvents.config.locations.topBar,
-							secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklist,
-							trigger: elementor.editorEvents.config.triggers.click,
-							element: elementor.editorEvents.config.elements.buttonIcon,
-						},
-					);
 					App();
 				},
 			};
