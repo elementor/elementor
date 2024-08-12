@@ -6,7 +6,7 @@ export class StylesUpdated extends $e.modules.editor.CommandContainerBase {
 		this.requireContainer( args );
 	}
 
-	apply( args ) {}
+	apply() {}
 }
 
 export default StylesUpdated;
