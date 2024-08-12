@@ -31,7 +31,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$image_url = $settings['url'];
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo "<img src='" . esc_url($image_url) . "' />";
+		echo "<img src='" . esc_url( $image_url ) . "' />";
 	}
 
 	private function get_image_sizes() {
@@ -40,7 +40,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$image_sizes = [];
 
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
-			
+
 			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
 
 			if ( is_array( $size_attributes ) ) {
@@ -48,7 +48,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 			}
 
 			$image_sizes[] = [
-				'label'=> $control_title,
+				'label' => $control_title,
 				'value' => $size_key,
 			];
 		}
@@ -74,7 +74,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				'crop' => (bool) get_option( $size . '_crop' ),
 			];
 		}
-		
+
 		if ( $additional_sizes ) {
 			$image_sizes = array_merge( $image_sizes, $additional_sizes );
 		}
@@ -105,7 +105,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			'image_size' => Atomic_Prop::make()
 				->default( 'large' ),
-			
+
 			'url' => Atomic_Prop::make()
 				->default( Utils::get_placeholder_image_src() ),
 		];
