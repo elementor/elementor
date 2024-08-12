@@ -24,17 +24,23 @@ class Create_Pages extends Step_Base {
 		return count( $pages ) >= 3;
 	}
 
-	public function get_config() : array {
-		return [
-			'id' => self::get_id(),
-			'title' => esc_html__( 'Create your first 3 pages', 'elementor' ),
-			'description' => esc_html__( 'Jumpstart your creation with professional designs form the Template Library or start from scratch.', 'elementor' ),
-			'learn_more_text' => esc_html__( 'Learn more', 'elementor' ),
-			'learn_more_url' => esc_url( 'https://go.elementor.com/getting-started-with-elementor/' ),
-			'cta_text' => esc_html__( 'Create a new page', 'elementor' ),
-			'cta_url' => Plugin::$instance->documents->get_create_new_post_url( 'page' ),
-			'is_responsive_to_changes' => false,
-			Step_Base::IS_COMPLETION_IMMUTABLE => true,
-		];
+	public function get_title() : string {
+		return esc_html__( 'Create your first 3 pages', 'elementor' );
+	}
+
+	public function get_description() : string {
+		return esc_html__( 'Jumpstart your creation with professional designs form the Template Library or start from scratch.', 'elementor' );
+	}
+
+	public function get_cta_text() : string {
+		return esc_html__( 'Create a new page', 'elementor' );
+	}
+
+	public function get_cta_url() : string {
+		return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+	}
+
+	public function get_is_completion_immutable() : bool {
+		return true;
 	}
 }
