@@ -91,6 +91,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			const parsedCssCode = parseCSS( cssCode );
 			insertStyleTag( parsedCssCode );
 		} catch ( e ) {
+			// eslint-disable-next-line no-console
 			console.warn( 'Failed to present CSS preview', e );
 		}
 	};
@@ -121,6 +122,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 				styleTag.remove();
 			}
 		} catch ( e ) {
+			// eslint-disable-next-line no-console
 			console.warn( 'Failed to remove style tag', e );
 		}
 	};
