@@ -43,6 +43,8 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		} );
 
 		container.model.set( 'styles', isRedo ? changes.new.styles : changes.old.styles );
+
+		$e.run( 'document/atomic-widgets/styles-updated', { container } );
 	}
 
 	/**
