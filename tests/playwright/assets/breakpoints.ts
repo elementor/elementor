@@ -36,11 +36,16 @@ export default class {
 	async saveOrUpdate( editor: EditorPage, toReload = false ) {
 		const hasTopBar: boolean = await editor.hasTopBar();
 		if ( hasTopBar ) {
-			await this.page.evaluate( async () => {
-				const button: HTMLElement = document.evaluate( "//button[text()='Save Changes']", document ).singleNodeValue as HTMLElement;
-				button.click();
-				return button;
-			} );
+			const saveButton = "//button[text()='Save Changes']";
+			if ( await this.page.locator( saveButton ).isVisible() ) {
+				await this.page.locator( saveButton ).click();
+			} else {
+				await this.page.evaluate( async () => {
+					const button: HTMLElement = document.evaluate( saveButton, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
+					button.click();
+					return button;
+				} );
+			}
 			if ( toReload ) {
 				const reloadButton = this.page.locator( 'button', { hasText: 'Reload Now' } );
 				await reloadButton.waitFor();
