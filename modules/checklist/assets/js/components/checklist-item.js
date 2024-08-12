@@ -14,25 +14,26 @@ import CardMedia from '@elementor/ui/CardMedia';
 import Link from '@elementor/ui/Link';
 
 function CheckListItem( props ) {
-	const { id, title, description, link, CTA } = props.step,
-		{ expandedIndex, setExpandedIndex } = props,
+	const { title, description, link, CTA } = props.step,
+		{ expandedIndex, setExpandedIndex, index } = props,
 		[ expanded, setExpanded ] = useState( false );
 
 	const handleExpandClick = () => {
-		setExpanded( ! expanded );
+		setExpanded( !expanded )
 	};
 
 	return (
 		<>
 			<ListItemButton onClick={ () => {
-				setExpandedIndex( id );
-				handleExpandClick();
-			} } >
+				setExpandedIndex( index )
+				handleExpandClick()
+			}
+				} >
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
 				<ListItemText id={ title } primary={ title } primaryTypographyProps={ { variant: 'body2' } } />
-				{ id === expandedIndex && expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
+				{ index === expandedIndex && expanded ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
 			</ListItemButton>
-			<Collapse in={ id === expandedIndex && expanded } >
+			<Collapse in={ index === expandedIndex && expanded } >
 				<Card elevation={ 0 } square={ true }>
 					<CardMedia
 						image="https://elementor.com/cdn-cgi/image/f=auto,w=1100/https://elementor.com/wp-content/uploads/2022/01/Frame-10879527.png"
@@ -58,11 +59,11 @@ export default CheckListItem;
 
 CheckListItem.propTypes = {
 	step: PropTypes.object.isRequired,
-	id: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
 	link: PropTypes.string.isRequired,
 	CTA: PropTypes.string.isRequired,
-	expandedIndex: PropTypes.string.isRequired,
+	expandedIndex: PropTypes.number.isRequired,
 	setExpandedIndex: PropTypes.func.isRequired,
+	index: PropTypes.number.isRequired,
 };

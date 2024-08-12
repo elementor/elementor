@@ -1,6 +1,5 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import Launchpad from './launchpad';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 const Checklist = ( props ) => {
