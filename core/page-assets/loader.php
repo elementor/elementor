@@ -48,6 +48,7 @@ class Loader extends Module {
 	private function getSwiperPath() {
 		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
 	}
+
 	private function getSwiperVersion() {
 		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? '8.4.5' : '5.3.6';
 	}

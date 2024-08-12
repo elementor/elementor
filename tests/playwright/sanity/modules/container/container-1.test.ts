@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { getElementSelector } from '../../../assets/elements-utils';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
+import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -25,6 +26,23 @@ test.describe( 'Container tests @container', () => {
 		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
+
+	test('Background slide show', async ({ page, apiRequests }, testInfo) => {
+		const wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
+		const editor = await wpAdmin.openNewPage();
+		await editor.addElement({ elType: 'container' }, 'document');
+		const imageCarousel = new ImageCarousel(page, testInfo);
+
+		await editor.closeNavigatorIfOpen();
+		await editor.openPanelTab('style');
+		await editor.openSection('section_background');
+		await editor.setSwitcherControlValue('slideshow', true);
+		await imageCarousel.addImageGallery({ images: ['A.jpg', 'B.jpg', 'C.jpg'] });
+
+		await test.step('Verify background slideshow', async () => {
+			await expect.soft( editor.getPreviewFrame().locator( 'elementor-background-slideshow' ) ).toHaveCount( 1 );
+		});
+	});
 
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
