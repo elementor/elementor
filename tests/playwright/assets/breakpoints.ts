@@ -37,7 +37,7 @@ export default class {
 		const hasTopBar: boolean = await editor.hasTopBar();
 		if ( hasTopBar ) {
 			await this.page.evaluate( async () => {
-				const button = document.evaluate( "//button[text()='Save Changes']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;
+				const button: HTMLElement = document.evaluate( "//button[text()='Save Changes']", document ).singleNodeValue as HTMLElement;
 				button.click();
 				return button;
 			} );
