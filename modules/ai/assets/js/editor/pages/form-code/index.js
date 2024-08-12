@@ -20,7 +20,7 @@ import { useRequestIds } from '../../context/requests-ids';
 import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 import { splitText } from './splitTextResult';
 
-const generateUniqueId = () => Math.random().toString( 36 ).substr( 2, 9 );
+const generateUniqueId = () => `custom-css-${ Math.random().toString( 36 ).substr( 2, 9 ) }`;
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -87,13 +87,8 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	}, [] );
 
 	const showCssPreview = ( cssCode ) => {
-		try {
-			const parsedCssCode = parseCSS( cssCode );
-			insertStyleTag( parsedCssCode );
-		} catch ( e ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to present CSS preview', e );
-		}
+		const parsedCssCode = parseCSS( cssCode );
+		insertStyleTag( parsedCssCode );
 	};
 
 	const parseCSS = ( cssCode ) => {
@@ -116,14 +111,9 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	};
 
 	const removeStyleTag = () => {
-		try {
-			const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
-			if ( styleTag ) {
-				styleTag.remove();
-			}
-		} catch ( e ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to remove style tag', e );
+		const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
+		if ( styleTag ) {
+			styleTag.remove();
 		}
 	};
 
