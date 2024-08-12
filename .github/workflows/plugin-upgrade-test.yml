@@ -32,7 +32,7 @@ jobs:
       - name: Build Plugin
         if: ${{ github.event.pull_request.title == null || steps.changelog_diffs.outputs.changelog_diff }}
         id: build_plugin
-        uses: ./.github/workflows/plugin-build
+        uses: ./
 
   run-upgrade-test:
     name: Playwright plugin upgrade test
