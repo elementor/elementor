@@ -6,6 +6,14 @@ inputs:
     required: false
     description: 'Optional. The version of the package to use.'
     default: ""
+  DEPLOY_BUILDS_ENDPOINT:
+    required: true
+    description: 'The endpoint to deploy the builds to.'
+    default: ""
+  REPOSITORY_NAME:
+    required: true
+    description: 'The name of the repository.'
+    default: ""
 
 outputs:
   artifact_name:
@@ -130,7 +138,7 @@ runs:
     - name: Publish zip on push to release or develop
       shell: bash
       if: env.REPOSITORY_NAME == 'elementor-pro' && github.event_name == 'push' && startsWith(github.repository, 'elementor/') && (startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/develop')
-      run: curl --fail -F "package=@${{ env.PLUGIN_ZIP_FILENAME }}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=pro"
+      run: curl --fail -F "package=@${{ env.PLUGIN_ZIP_FILENAME }}" "${{ inputs.DEPLOY_BUILDS_ENDPOINT }}&type=pro"
 
     - name: Upload Build Zip Artifact
       uses: actions/upload-artifact@v4
