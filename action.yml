@@ -10,7 +10,7 @@ inputs:
 outputs:
   artifact_name:
     description: "The name of the generated zip file."
-    value: ${{ steps.build_plugin.outputs.PLUGIN_ZIP_FILENAME }}
+    value: ${{ steps.build_plugin.outputs.PLUGIN_FILENAME }}
 
 runs:
   using: "composite"
@@ -72,10 +72,10 @@ runs:
 
         zip -r ${PLUGIN_ZIP_FILENAME} ${{ env.REPOSITORY_NAME }}
 
-        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_OUTPUT
+        echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_OUTPUT
 
     - name: Upload Build Zip Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.build_plugin.outputs.PLUGIN_ZIP_FILENAME }}
+        name: ${{ steps.build_plugin.outputs.PLUGIN_FILENAME }}
         path: ${{ env.REPOSITORY_NAME }}
