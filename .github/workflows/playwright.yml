@@ -54,7 +54,7 @@ jobs:
       - name: Build Plugin
         if: ${{ github.event.pull_request.title == null || steps.changelog_diffs.outputs.changelog_diff }}
         id: build_plugin
-        uses: Batsirai-muchareva/elementor@v1
+        uses: Batsirai-muchareva/elementor@v2
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
