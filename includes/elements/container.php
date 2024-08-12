@@ -758,22 +758,22 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
 				],
-//					'assets' => [
-//							'styles' => [
-//									[
-//											'name' => 'swiper',
-//											'conditions' => [
-//													'terms' => [
-//															[
-//																	'name' => 'background_hover_transition',
-//																	'operator' => '!==',
-//																	'value' => '',
-//															],
-//													],
-//											],
-//									],
-//							],
-//					],
+				'assets' => [
+						'styles' => [
+								[
+										'name' => 'swiper',
+										'conditions' => [
+												'terms' => [
+														[
+																'name' => 'background_hover_transition',
+																'operator' => '!==',
+																'value' => '',
+														],
+												],
+										],
+								],
+						],
+				],
 			]
 		);
 
