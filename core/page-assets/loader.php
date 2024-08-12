@@ -30,6 +30,11 @@ class Loader extends Module {
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				'e-shapes' => [
+					'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				],
 			],
 			'scripts' => [],
 		];
@@ -57,6 +62,12 @@ class Loader extends Module {
 		foreach ( $assets_data as $assets_type => $assets_list ) {
 			foreach ( $assets_list as $asset_name ) {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
+
+				if ( 'scripts' === $assets_type ) {
+					wp_enqueue_script( $asset_name );
+				} else {
+					wp_enqueue_style( $asset_name );
+				}
 			}
 		}
 	}
@@ -75,12 +86,19 @@ class Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
+	/**
+	 * @deprecated 3.22.0
+	 */
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 
 		foreach ( $assets as $assets_type => $assets_type_data ) {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
+				if ( empty( $asset_data['src'] ) ) {
+					continue;
+				}
+
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );

@@ -13,6 +13,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 				container,
 				name: data.name,
 				index: data.index,
+				isRestored: true,
 			} );
 		} else {
 			$e.run( 'document/repeater/insert', {
@@ -20,6 +21,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.model,
 				name: data.name,
 				options: { at: data.index },
+				isRestored: true,
 			} );
 		}
 	}
@@ -42,7 +44,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
-		const { name, containers = [ args.container ] } = args,
+		const { name, containers = [ args.container ], isRestored = false } = args,
 			index = null === args.index ? -1 : args.index,
 			result = [];
 
@@ -67,7 +69,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			collection.remove( model );
 
-			if ( shouldUseAtomicRepeaters( widgetType ) ) {
+			if ( shouldUseAtomicRepeaters( widgetType ) && ! isRestored ) {
 				const widgetContainer = container.view.$el[ 0 ];
 				widgetNodes( widgetType ).targetContainer.forEach( ( item ) => {
 					widgetContainer.querySelector( item ).children[ index ].remove();

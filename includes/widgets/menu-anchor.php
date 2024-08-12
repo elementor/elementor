@@ -71,6 +71,26 @@ class Widget_Menu_Anchor extends Widget_Base {
 		return [ 'menu', 'anchor', 'link' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-menu-anchor' ]
+			: [];
+	}
+
 	/**
 	 * Register menu anchor widget controls.
 	 *
@@ -163,7 +183,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 		}
 
 		view.addRenderAttribute(
-			'inner', 
+			'inner',
 			{
 				'class': 'elementor-menu-anchor',
 				'id': settings.anchor,

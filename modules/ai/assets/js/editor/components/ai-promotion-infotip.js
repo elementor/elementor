@@ -83,7 +83,7 @@ export default function AiPromotionInfotip( { anchor, content, focusOutListener,
 }
 
 AiPromotionInfotip.propTypes = {
-	anchor: PropTypes.element.isRequired,
+	anchor: PropTypes.object.isRequired,
 	content: PropTypes.object.isRequired,
 	focusOutListener: PropTypes.object.isRequired,
 	placement: PropTypes.string,

@@ -22,7 +22,7 @@ class Utils {
 	const EDITOR_BREAK_LINES_OPTION_KEY = 'elementor_editor_break_lines';
 
 	/**
-	 * A list of safe tage for `validate_html_tag` method.
+	 * A list of safe tags for `validate_html_tag` method.
 	 */
 	const ALLOWED_HTML_WRAPPER_TAGS = [
 		'a',
@@ -532,7 +532,7 @@ class Utils {
 		 *
 		 * Filters the meta tag containing the viewport information.
 		 *
-		 * This hook can be used to change the intial viewport meta tag set by Elementor
+		 * This hook can be used to change the initial viewport meta tag set by Elementor
 		 * and replace it with a different viewport tag.
 		 *
 		 * @since 2.5.0
@@ -872,5 +872,14 @@ class Utils {
 		}
 
 		return $cache;
+	}
+
+	public static function is_sale_time(): bool {
+		$sale_start_time = gmmktime( 12, 0, 0, 5, 28, 2024 );
+		$sale_end_time = gmmktime( 4, 59, 0, 6, 4, 2024 );
+
+		$now_time = gmdate( 'U' );
+
+		return $now_time >= $sale_start_time && $now_time <= $sale_end_time;
 	}
 }

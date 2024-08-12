@@ -44,27 +44,35 @@ class Settings extends Base_Category {
 	 * @return array
 	 */
 	public function get_category_items( array $options = [] ) {
-		$settings_url = ElementorSettings::get_url();
-
 		return [
 			'general-settings' => [
 				'title' => esc_html__( 'General Settings', 'elementor' ),
-				'url' => $settings_url,
+				'url' => ElementorSettings::get_settings_tab_url( 'general' ),
 				'keywords' => [ 'general', 'settings', 'elementor' ],
+			],
+			'integrations' => [
+				'title' => esc_html__( 'Integrations', 'elementor' ),
+				'url' => ElementorSettings::get_settings_tab_url( 'integrations' ),
+				'keywords' => [ 'integrations', 'settings', 'elementor' ],
 			],
 			'advanced' => [
 				'title' => esc_html__( 'Advanced', 'elementor' ),
-				'url' => $settings_url . '#tab-advanced',
+				'url' => ElementorSettings::get_settings_tab_url( 'advanced' ),
 				'keywords' => [ 'advanced', 'settings', 'elementor' ],
+			],
+			'performance' => [
+				'title' => esc_html__( 'Performance', 'elementor' ),
+				'url' => ElementorSettings::get_settings_tab_url( 'performance' ),
+				'keywords' => [ 'performance', 'settings', 'elementor' ],
 			],
 			'experiments' => [
 				'title' => esc_html__( 'Experiments', 'elementor' ),
-				'url' => $settings_url . '#tab-experiments',
+				'url' => ElementorSettings::get_settings_tab_url( 'experiments' ),
 				'keywords' => [ 'settings', 'elementor', 'experiments' ],
 			],
 			'features' => [
 				'title' => esc_html__( 'Features', 'elementor' ),
-				'url' => $settings_url . '#tab-experiments',
+				'url' => ElementorSettings::get_settings_tab_url( 'experiments' ),
 				'keywords' => [ 'settings', 'elementor', 'features' ],
 			],
 			'element-manager' => [

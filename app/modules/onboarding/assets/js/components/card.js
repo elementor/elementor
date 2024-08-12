@@ -15,7 +15,7 @@ export default function Card( { image, imageAlt, text, link, name, clickAction }
 	};
 
 	return (
-		<a className="e-onboarding__card" href={ link } onClick={ onClick }>
+		<a target="_self" className="e-onboarding__card" href={ link } onClick={ onClick }>
 			<img className="e-onboarding__card-image" src={ image } alt={ imageAlt } />
 			<div className="e-onboarding__card-text">{ text }</div>
 		</a>

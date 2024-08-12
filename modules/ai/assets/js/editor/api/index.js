@@ -1,6 +1,10 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorAiCurrentContext ) {
+			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
+		}
 	}
 
 	return new Promise( ( resolve, reject ) => {
@@ -20,11 +24,17 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	} );
 };
 
-export const getUserInformation = () => request( 'ai_get_user_information' );
+export const getUserInformation = ( immediately ) => request( 'ai_get_user_information', undefined, immediately );
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 
+export const getRemoteFrontendConfig = ( payload, immediately ) => request( 'ai_get_remote_frontend_config', { payload }, immediately );
+
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
+
+export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
+
+export const getFeaturedImage = ( payload ) => request( 'ai_get_featured_image', { payload } );
 
 export const getEditText = ( payload ) => request( 'ai_get_edit_text', { payload } );
 

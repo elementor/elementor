@@ -44,6 +44,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return [ 'nested', 'tabs', 'accordion', 'toggle' ];
 	}
 
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-nested-accordion' ]
+			: [];
+	}
+
 	public function show_in_panel(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
@@ -895,6 +901,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'support_improved_repeaters' => true,
 				'target_container' => [ '.e-n-accordion' ],
 				'node' => 'details',
+				'is_interlaced' => true,
 			] );
 		}
 
@@ -925,6 +932,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'items',
 			'data-binding-setting': ['item_title'],
 			'data-binding-index': view.collection.length + 1,
+			'data-binding-dynamic': 'true',
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
@@ -998,6 +1006,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-repeater-name': 'items',
 						'data-binding-setting': ['item_title'],
 						'data-binding-index': itemCount,
+						'data-binding-dynamic': 'true',
 					});
 				#>
 

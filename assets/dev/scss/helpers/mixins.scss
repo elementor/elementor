@@ -251,11 +251,4 @@
 		border-radius: $border-radius;
 	}
 }
-
-@mixin button-focus-outline() {
-
-	&:focus-visible {
-		outline: 5px auto -webkit-focus-ring-color;
-	}
-}
 //End

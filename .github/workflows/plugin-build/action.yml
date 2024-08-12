@@ -1,0 +1,81 @@
+name: Plugin Build
+description: Build the plugin and create a zip file.
+
+inputs:
+  PACKAGE_VERSION:
+    required: false
+    description: 'Optional. The version of the package to use.'
+    default: ""
+
+outputs:
+  artifact_name:
+    description: "The name of the generated zip file."
+    value: ${{ steps.build_plugin.outputs.PLUGIN_ZIP_FILENAME }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        npm ci
+        composer install --optimize-autoloader --prefer-dist
+        composer install --no-scripts --no-dev
+        composer dump-autoload
+
+    - name: Set GitHub Repository Name Environment Variable
+      shell: bash
+      run: |
+        REPOSITORY_NAME=$(echo "${{ github.repository }}" | awk -F/ '{print $NF}')
+
+        echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
+
+    - name: Set Package Version Environment Variable
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
+
+          DATE_VERSION=$(date '+%Y%m%d.%H%M')
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          BUILD_PACKAGE_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}
+
+        else
+
+          PACKAGE_VERSION=${{ inputs.PACKAGE_VERSION }}
+          BUILD_PACKAGE_VERSION=${PACKAGE_VERSION}
+
+        fi
+
+        echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
+
+    - name: Build Plugin
+      id: build_plugin
+      shell: bash
+      run: |
+        npm config set git-tag-version false
+        export PUPPETEER_SKIP_DOWNLOAD=true
+        echo "${{ env.REPOSITORY_NAME }}"
+
+        npx grunt build
+
+        if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
+
+          sed -i -E "s/Version: (.*?)/Version: ${{ env.BUILD_PACKAGE_VERSION }}/g" build/${{ env.REPOSITORY_NAME }}.php
+          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${{ env.BUILD_PACKAGE_VERSION }}'/g" build/${{ env.REPOSITORY_NAME }}.php
+
+        fi
+
+        PLUGIN_FILENAME=${{ env.REPOSITORY_NAME }}-${{ env.BUILD_PACKAGE_VERSION }}
+        PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip
+
+        mv build ${{ env.REPOSITORY_NAME }}
+
+        zip -r ${PLUGIN_ZIP_FILENAME} ${{ env.REPOSITORY_NAME }}
+
+        echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_OUTPUT
+
+    - name: Upload Build Zip Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build_plugin.outputs.PLUGIN_ZIP_FILENAME }}
+        path: ${{ env.REPOSITORY_NAME }}

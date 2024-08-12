@@ -73,6 +73,26 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-image-carousel' ]
+			: [];
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *
@@ -968,7 +988,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
-				<?php // PHPCS - $slides contains the slides content, all the relevent content is escaped above. ?>
+				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
 				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
@@ -1043,6 +1063,10 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		if ( 'title' === $caption_type ) {
 			return $attachment_post->post_title;
+		}
+
+		if ( empty( $attachment_post->post_content ) ) {
+			return '';
 		}
 
 		return $attachment_post->post_content;

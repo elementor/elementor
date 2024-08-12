@@ -286,6 +286,20 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Whether the element returns dynamic content.
+	 *
+	 * set to determine whether to cache the element output or not.
+	 *
+	 * @since 3.22.0
+	 * @access protected
+	 *
+	 * @return bool Whether to cache the element output.
+	 */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/**
 	 * Get child elements.
 	 *
 	 * Retrieve all the child elements of this element.
@@ -430,6 +444,11 @@ abstract class Element_Base extends Controls_Stack {
 	public function print_element() {
 		$element_type = $this->get_type();
 
+		if ( $this->should_render_shortcode() ) {
+			echo '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			return;
+		}
+
 		/**
 		 * Before frontend element render.
 		 *
@@ -494,6 +513,8 @@ abstract class Element_Base extends Controls_Stack {
 			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$this->after_render();
 
+			// TODO: Remove this in the future
+			// Since version 3.24.0 page scripts/styles are handled by `page_assets`.
 			$this->enqueue_scripts();
 			$this->enqueue_styles();
 		}
@@ -521,6 +542,52 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( 'elementor/frontend/after_render', $this );
+	}
+
+	protected function should_render_shortcode() {
+		$should_render_shortcode = apply_filters( 'elementor/element/should_render_shortcode', false );
+
+		if ( ! $should_render_shortcode ) {
+			return false;
+		}
+
+		$raw_data = $this->get_raw_data();
+
+		if ( ! empty( $raw_data['settings']['_element_cache'] ) ) {
+			return 'yes' === $raw_data['settings']['_element_cache'];
+		}
+
+		if ( $this->is_dynamic_content() ) {
+			return true;
+		}
+
+		$is_dynamic_content = apply_filters( 'elementor/element/is_dynamic_content', false, $raw_data, $this );
+
+		$has_dynamic_tag = $this->has_element_dynamic_tag( $raw_data['settings'] );
+
+		if ( $is_dynamic_content || $has_dynamic_tag ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private function has_element_dynamic_tag( $element_settings ): bool {
+		if ( is_array( $element_settings ) ) {
+			if ( ! empty( $element_settings['__dynamic__'] ) ) {
+				return true;
+			}
+
+			foreach ( $element_settings as $value ) {
+				$has_dynamic = $this->has_element_dynamic_tag( $value );
+
+				if ( $has_dynamic ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**

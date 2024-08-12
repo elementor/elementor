@@ -74,6 +74,10 @@ class Element_Column extends Element_Base {
 		return 'eicon-column';
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get initial config.
 	 *

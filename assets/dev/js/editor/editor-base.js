@@ -29,10 +29,13 @@ import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
 import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
-import LinksPageLibraryModule from 'elementor/modules/conversion-center/assets/js/editor/module';
+import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
+import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
+import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
+import { FontVariables } from './utils/font-variables';
 
 /**
  * @typedef {import('./container/container')} Container
@@ -283,8 +286,28 @@ export default class EditorBase extends Marionette.Application {
 				return false;
 			}
 
-			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
+			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
+
+				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
+
+				// TODO: Move this code to own file.
+				if ( this.widgetsCache[ widgetType ].controls?._element_cache ) {
+					let elementCacheDescription = __( 'The default cache status for this element:', 'elementor' );
+
+					elementCacheDescription += ' <strong>';
+					if ( this.widgetsCache[ widgetType ]?.is_dynamic_content ) {
+						elementCacheDescription += __( 'Inactive', 'elementor' );
+					} else {
+						elementCacheDescription += __( 'Active', 'elementor' );
+					}
+					elementCacheDescription += '</strong><br />';
+					elementCacheDescription += __( 'Activating cache improves loading times by storing a static version of this element.', 'elementor' );
+					elementCacheDescription += ' <a href="https://go.elementor.com/element-caching-help/" target="_blank">' + __( 'Learn more', 'elementor' ) + '</a>.';
+
+					this.widgetsCache[ widgetType ].controls._element_cache.description = elementCacheDescription;
+				}
+				// TODO: End of code to move.
 
 				this.widgetsCache[ widgetType ].commonMerged = true;
 			}
@@ -418,8 +441,16 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
-			this.modules.linksPageLibraryModule = new LinksPageLibraryModule();
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			this.modules.floatingButtonsLibraryModule = new FloatingButtonsLibraryModule();
+		}
+
+		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
+			this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
+		}
+
+		if ( elementorCommon.config.experimentalFeatures[ 'floating-bars' ] ) {
+			this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
 		}
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
@@ -435,6 +466,8 @@ export default class EditorBase extends Marionette.Application {
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
+
+		new FontVariables();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}

@@ -30,6 +30,16 @@ class Widget_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'review', 'score', 'scale' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-rating' ]
+			: [];
+	}
+
 	/**
 	 * @return void
 	 */

@@ -89,6 +89,26 @@ class Widget_Image extends Widget_Base {
 		return [ 'image', 'photo', 'visual' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-image' ]
+			: [];
+	}
+
 	/**
 	 * Register image widget controls.
 	 *
@@ -361,6 +381,7 @@ class Widget_Image extends Widget_Base {
 					'fill' => esc_html__( 'Fill', 'elementor' ),
 					'cover' => esc_html__( 'Cover', 'elementor' ),
 					'contain' => esc_html__( 'Contain', 'elementor' ),
+					'scale-down' => esc_html__( 'Scale Down', 'elementor' ),
 				],
 				'default' => '',
 				'selectors' => [
@@ -391,7 +412,7 @@ class Widget_Image extends Widget_Base {
 				],
 				'condition' => [
 					'height[size]!' => '',
-					'object-fit' => 'cover',
+					'object-fit' => [ 'cover', 'contain', 'scale-down' ],
 				],
 			]
 		);
@@ -643,7 +664,7 @@ class Widget_Image extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .widget-image-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .widget-image-caption' => 'margin-block-start: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -817,7 +838,7 @@ class Widget_Image extends Widget_Base {
 			}
 
 			if ( link_url ) {
-					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
+					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ elementor.helpers.sanitizeUrl( link_url ) }}"><#
 			}
 						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
 

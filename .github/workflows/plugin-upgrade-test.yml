@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Elementor version from Wordpress svn'
+        description: 'Elementor version from WordPress svn'
         required: false
         default: ''
 
@@ -16,7 +16,24 @@ concurrency:
 
 jobs:
   build-plugin:
-    uses: ./.github/workflows/build.yml
+    name: Build Plugin
+    runs-on: ubuntu-22.04
+    outputs:
+      artifact_name: ${{ steps.build_plugin.outputs.artifact_name }}
+      changelog_diff: ${{ steps.changelog_diffs.outputs.changelog_diff }}
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Check if this is only a changelog PR
+        id: changelog_diffs
+        uses: ./.github/workflows/check-changelog-pr
+
+      - name: Build Plugin
+        if: ${{ github.event.pull_request.title == null || steps.changelog_diffs.outputs.changelog_diff }}
+        id: build_plugin
+        uses: ./.github/workflows/plugin-build
+
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest

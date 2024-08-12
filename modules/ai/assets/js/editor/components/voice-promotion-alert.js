@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Alert, Link } from '@elementor/ui';
 import BulbIcon from '../icons/bulb-icon';
 import useIntroduction from '../hooks/use-introduction';
+import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 
 export const VoicePromotionAlert = ( props ) => {
 	const { isViewed, markAsViewed } = useIntroduction( props.introductionKey );

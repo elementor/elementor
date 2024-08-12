@@ -14,12 +14,14 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.model,
 				name: data.name,
 				options: { at: data.index },
+				isRestored: true,
 			} );
 		} else {
 			$e.run( 'document/repeater/remove', {
 				containers,
 				name: data.name,
 				index: data.index,
+				isRestored: true,
 			} );
 		}
 	}
@@ -57,7 +59,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
-		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true } = args,
+		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true, isRestored = false } = args,
 			result = [];
 
 		containers.forEach( ( container ) => {
@@ -76,7 +78,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 			if ( renderAfterInsert ) {
 				const widgetType = container.settings.get( 'widgetType' );
 
-				if ( shouldUseAtomicRepeaters( widgetType ) ) {
+				if ( shouldUseAtomicRepeaters( widgetType ) && ! isRestored ) {
 					const domConfig = widgetNodes( widgetType ),
 						containerNode = container.view.$el[ 0 ],
 						targetContainer = containerNode.querySelector( domConfig.targetContainer ),

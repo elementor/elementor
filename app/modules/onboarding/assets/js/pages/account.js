@@ -30,7 +30,7 @@ export default function Account() {
 			listItems: elementorAppConfig.onboarding.experiment
 				? [
 					__( 'Set your site\'s theme', 'elementor' ),
-					__( 'Chose additional features', 'elementor' ),
+					__( 'Choose additional features', 'elementor' ),
 					__( 'Choose how to start creating', 'elementor' ),
 				] : [
 					__( 'Set your site\'s theme', 'elementor' ),

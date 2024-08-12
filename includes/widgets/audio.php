@@ -81,6 +81,10 @@ class Widget_Audio extends Widget_Base {
 		return [ 'audio', 'player', 'soundcloud', 'embed' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Register audio widget controls.
 	 *

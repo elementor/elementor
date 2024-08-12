@@ -58,7 +58,10 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
 
-		$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
+		if ( this.getElementSettings( 'autoplay' ) ) {
+			$videoIframe.attr( 'allow', 'autoplay' );
+			$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
+		}
 	}
 
 	async animateVideo() {

@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { afterAll, beforeAll } from './helper';
 import _path from 'path';
@@ -7,16 +8,16 @@ const iconExperimentStates = [ 'inactive', 'active' ];
 
 iconExperimentStates.forEach( ( iconExperimentState ) => {
 	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
-		test.beforeAll( async ( { browser }, testInfo ) => {
-			await beforeAll( browser, testInfo, iconExperimentState );
+		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+			await beforeAll( browser, apiRequests, testInfo, iconExperimentState );
 		} );
 
-		test.afterAll( async ( { browser }, testInfo ) => {
-			await afterAll( browser, testInfo );
+		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+			await afterAll( browser, apiRequests, testInfo );
 		} );
 
-		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo ),
+		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				ratingId = await editor.addWidget( 'rating', container ),
@@ -28,11 +29,11 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Set styling controls', async () => {
-				await editor.activatePanelTab( 'style' );
+				await editor.openPanelTab( 'style' );
 				await editor.setSliderControlValue( 'icon_size', '50' );
 				await editor.setSliderControlValue( 'icon_gap', '30' );
-				await editor.setColorControlValue( '#FA0000', 'icon_color' );
-				await editor.setColorControlValue( '#2200FF', 'icon_unmarked_color' );
+				await editor.setColorControlValue( 'icon_color', '#FA0000' );
+				await editor.setColorControlValue( 'icon_unmarked_color', '#2200FF' );
 			} );
 
 			await test.step( 'Assert styling', async () => {
@@ -73,7 +74,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Assert styling of asymmetric Font Awesome icon has same size with font experiment on and off', async () => {
-				await editor.activatePanelTab( 'content' );
+				await editor.openPanelTab( 'content' );
 				await page.locator( '.elementor-control-icons--inline__icon >> nth=0' ).click();
 				await page.locator( `.elementor-icons-manager__tab__item__content .fa-address-card` ).first().click();
 
@@ -86,8 +87,8 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 		} );
 
-		test( `Rating flex-wrap styling: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo ),
+		test( `Rating flex-wrap styling: ${ iconExperimentState }`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage();
 
 			await test.step( 'Load Template', async () => {
@@ -109,7 +110,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 
 			await test.step( 'Assert flex-wrap with center alignment screenshot inside the editor', async () => {
 				await editor.getPreviewFrame().locator( '.e-rating' ).click();
-				await page.locator( '.elementor-control-icon_alignment .eicon-align-end-h' ).click();
+				await editor.setChooseControlValue( 'icon_alignment', 'eicon-align-end-h' );
 
 				await editor.togglePreviewMode();
 
@@ -120,7 +121,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				await editor.togglePreviewMode();
 
 				await editor.getPreviewFrame().locator( '.e-rating' ).click();
-				await page.locator( '.elementor-control-icon_alignment .eicon-align-start-h' ).click();
+				await editor.setChooseControlValue( 'icon_alignment', 'eicon-align-start-h' );
 			} );
 
 			await test.step( 'Assert flex-wrap screenshot on the front end', async () => {

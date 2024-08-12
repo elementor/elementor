@@ -33,25 +33,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Localize settings.
-	 *
-	 * Add new localized settings for the history module.
-	 *
-	 * Fired by `elementor/editor/localize_settings` filter.
-	 *
-	 * @since 1.7.0
-	 * @deprecated 3.1.0
-	 * @access public
-	 *
-	 * @return array Localized settings.
-	 */
-	public function localize_settings() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
-
-		return [];
-	}
-
-	/**
 	 * @since 2.3.0
 	 * @access public
 	 */

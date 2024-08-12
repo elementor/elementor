@@ -90,6 +90,26 @@ class Widget_Divider extends Widget_Base {
 		return [ 'divider', 'hr', 'line', 'border' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-divider' ]
+			: [];
+	}
+
 	private static function get_additional_styles() {
 		static $additional_styles = null;
 

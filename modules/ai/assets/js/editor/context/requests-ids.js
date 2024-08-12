@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Context = createContext( {} );
@@ -50,6 +50,12 @@ export const RequestIdsProvider = ( props ) => {
 		return requestId;
 	};
 
+	const [ usagePercentage, setUsagePercentage ] = useState( 0 );
+
+	const updateUsagePercentage = ( newPercentage ) => {
+		setUsagePercentage( newPercentage );
+	};
+
 	return (
 		<Context.Provider
 			value={ {
@@ -61,6 +67,8 @@ export const RequestIdsProvider = ( props ) => {
 				setGenerate,
 				setBatch,
 				setRequest,
+				usagePercentage,
+				updateUsagePercentage,
 			} }
 		>
 			{ props.children }

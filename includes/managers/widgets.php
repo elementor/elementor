@@ -553,6 +553,63 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Widgets with styles.
+	 *
+	 * Some Elementor widgets have custom styles. Each widget needs to register
+	 * the styles is depends on. Later, based on the loading strategy, Elementor
+	 * chooses how and where to enqueue these styles.
+	 *
+	 * Elementor has two types of widgets, widgets in the `/includes/widgets/`
+	 * folder and widgets in the `/modules/` folder.
+	 *
+	 * The styles are compiled to `/assets/css/widget-{$widget_name}.css` files
+	 * using grunt tasks.
+	 *
+	 * Widgets in the `/includes/widgets/` folder compile their SCSS files from
+	 * the `/assets/dev/scss/frontend/widgets/` folder.
+	 * Widgets in the `/modules/` folder compile their SCSS files from the
+	 * `/modules/{$module_name}/assets/scss/` folder.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have styles.
+	 */
+	public function widgets_with_styles(): array {
+		// Widgets inside the `/includes/widgets/` folder that have styles.
+		$widgets = [
+			'accordion',
+			'alert',
+			'counter',
+			'divider',
+			'google_maps',
+			'heading',
+			'icon-box',
+			'icon-list',
+			'image',
+			'image-box',
+			'image-carousel',
+			'image-gallery',
+			'menu-anchor',
+			'progress',
+			'rating',
+			'social-icons',
+			'spacer',
+			'star-rating',
+			'tabs',
+			'testimonial',
+			'text-editor',
+			'toggle',
+			'video',
+		];
+
+		return $widgets;
+	}
+
+	/**
 	 * Enqueue widgets scripts.
 	 *
 	 * Enqueue all the scripts defined as a dependency for each widget.
