@@ -60,14 +60,14 @@ jobs:
           REF: ${{ github.ref }}
           POSTFIX: ''
 
-#      - name: Bump Channel Version
-#        id: bump_channel_version
-#        uses: ./.github/workflows/bump-channel-version
-#        with:
-#          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
-#          CHANNEL: ${{ env.CHANNEL }}
-#          POSTFIX: ''
-#          OVERRIDE_PACKAGE_VERSION: true
+      - name: Bump Channel Version
+        id: bump_channel_version
+        uses: ./.github/workflows/bump-channel-version
+        with:
+          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+          CHANNEL: ${{ env.CHANNEL }}
+          POSTFIX: ''
+          OVERRIDE_PACKAGE_VERSION: true
 
 #      - name: Update Readme.txt
 #        if: env.CHANNEL != 'cloud'
