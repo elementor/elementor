@@ -20,9 +20,9 @@ runs:
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
           POSTFIX: ${{ inputs.POSTFIX }}
-      - name: Increment Patch Version
-        if: inputs.CHANNEL == 'ga'
-        uses: ./.github/workflows/increment-patch-version
+#      - name: Increment Patch Version
+#        if: inputs.CHANNEL == 'ga'
+#        uses: ./.github/workflows/increment-patch-version
       - shell: bash
         run: |
             # This command retrieves the latest tag that matches the specified channel and package version,
