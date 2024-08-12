@@ -694,7 +694,6 @@ class Container extends Element_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'handle_slideshow_asset_loading',
 			[

@@ -552,18 +552,25 @@ class Element_Section extends Element_Base {
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
-						'assets' => [
-							'styles' => [
-								[
-									'name' => 'swiper',
-									'conditions' => [
-										'terms' => [
-											[	
-												'name' => 'background',
-												'operator' => '!==',
-												'value' => '',
-											],	
-										],
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+		'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
 									],
 								],
 							],

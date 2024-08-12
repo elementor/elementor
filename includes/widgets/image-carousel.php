@@ -73,10 +73,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
-	public function get_style_depends(): array {
-		return [ 'swiper' ];
-	 }
-
 	protected function is_dynamic_content(): bool {
 		return false;
 	}
@@ -92,9 +88,13 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return $this->load_widgets_styles_in_head()
-			? [ 'widget-image-carousel' ]
-			: [];
+		$assets = [ 'swiper' ];
+
+		if ( $this->load_widgets_styles_in_head() ) {
+			$assets[] = 'elementor-image-carousel';
+		}
+
+		return $assets;
 	}
 
 	/**
