@@ -34,10 +34,6 @@ jobs:
         id: build_plugin
         uses: ./.github/workflows/plugin-build
 
-      - name: Debug 1
-        run: |
-          ls -al
-
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest
@@ -51,10 +47,6 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      - name: Debug 2
-        run: |
-          ls -al
-
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -63,9 +55,6 @@ jobs:
       - name: Install dependencies
         run: |
             npm ci
-            ls -al
-            ls -al ./build
-            ls -al ./tests/playwright/upgrade-test
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
