@@ -106,9 +106,10 @@
 		this.maybeLoadAssets = async function () {
 			const isWpAdmin = !! document.querySelector( 'body.wp-admin' ),
 				isElementorEditor = !! document.querySelector( 'body.elementor-editor-active' ),
-				isFrontend = ! isWpAdmin && ! isElementorEditor;
+				isFrontend = ! isWpAdmin && ! isElementorEditor,
+				hasAdminBar = !! document.querySelector( '#wpadminbar' );
 
-			if ( ! isFrontend ) {
+			if ( ! isFrontend || hasAdminBar ) {
 				return;
 			}
 
