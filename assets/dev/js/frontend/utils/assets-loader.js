@@ -42,30 +42,45 @@ export default class AssetsLoader {
 
 			element.onload = () => resolve( true );
 
-			const parent = 'head' === assetData.parent ? assetData.parent : 'body';
-
-			document[ parent ].appendChild( element );
+			this.appendAsset( assetData, element );
 		} );
+	}
+
+	appendAsset( assetData, element ) {
+		const beforeElement = document.querySelector( assetData.before );
+
+		if ( !! beforeElement ) {
+			beforeElement.insertAdjacentElement( 'beforebegin', element );
+			return;
+		}
+
+		const parent = 'head' === assetData.parent ? assetData.parent : 'body';
+
+		document[ parent ].appendChild( element );
 	}
 }
 
+const assetsUrl = elementorFrontendConfig.urls.assets;
+
 const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
 
+const pluginVersion = elementorFrontendConfig.version;
+
 const swiperJsSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
-	: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
+	? `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
+	: `${ assetsUrl }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
 
 const swiperCssSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
-	: `${ elementorFrontendConfig.urls.assets }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
+	? `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
+	: `${ assetsUrl }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
 
 AssetsLoader.assets = {
 	script: {
 		dialog: {
-			src: `${ elementorFrontendConfig.urls.assets }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.0`,
+			src: `${ assetsUrl }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.3`,
 		},
 		'share-link': {
-			src: `${ elementorFrontendConfig.urls.assets }lib/share-link/share-link${ fileSuffix }.js?ver=${ elementorFrontendConfig.version }`,
+			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
 		},
 		swiper: {
 			src: swiperJsSource,
@@ -77,7 +92,12 @@ AssetsLoader.assets = {
 			parent: 'head',
 		},
 		'e-lightbox': {
-			src: `${ elementorFrontendConfig.urls.assets }css/conditionals/lightbox${ fileSuffix }.css?ver=${ elementorFrontendConfig.version }`,
+			src: `${ assetsUrl }css/conditionals/lightbox${ fileSuffix }.css?ver=${ pluginVersion }`,
+		},
+		dialog: {
+			src: `${ assetsUrl }css/conditionals/dialog${ fileSuffix }.css?ver=${ pluginVersion }`,
+			parent: 'head',
+			before: '#elementor-frontend-css',
 		},
 	},
 };
