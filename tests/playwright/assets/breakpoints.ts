@@ -33,7 +33,7 @@ export default class {
 		return [ 'mobile', 'tablet', 'desktop' ];
 	}
 
-	async saveOrUpdate( editor: EditorPage ) {
+	async saveOrUpdate( editor: EditorPage, toReload = false ) {
 		const hasTopBar: boolean = await editor.hasTopBar();
 		if ( hasTopBar ) {
 			await this.page.evaluate( async () => {
@@ -41,6 +41,11 @@ export default class {
 				button.click();
 				return button;
 			} );
+			if ( toReload ) {
+				const reloadButton = this.page.locator( 'button', { hasText: 'Reload Now' } );
+				await reloadButton.waitFor();
+				await reloadButton.click();
+			}
 		} else {
 			await this.page.click( 'text=Update' );
 			await this.page.waitForSelector( '#elementor-toast' );
@@ -53,15 +58,19 @@ export default class {
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];
+		const removeBreakpointButton = '#elementor-kit-panel-content .select2-selection__choice__remove';
 
-		for ( const device of devices ) {
-			if ( await this.page.$( '.select2-selection__e-plus-button' ) ) {
-				await this.page.click( '.select2-selection__e-plus-button' );
-				await this.page.click( `li:has-text("${ device }")` );
+		const numOfCustomBreakpoints = await this.page.locator( removeBreakpointButton ).count();
+		if ( numOfCustomBreakpoints < devices.length ) {
+			for ( const device of devices ) {
+				if ( await this.page.$( '.select2-selection__e-plus-button' ) ) {
+					await this.page.click( '.select2-selection__e-plus-button' );
+					await this.page.click( `li:has-text("${ device }")` );
+				}
 			}
-		}
 
-		await this.saveOrUpdate( editor );
+			await this.saveOrUpdate( editor, true );
+		}
 
 		if ( experimentPostId ) {
 			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
