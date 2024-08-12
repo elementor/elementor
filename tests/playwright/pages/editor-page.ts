@@ -2,7 +2,7 @@ import { addElement, getElementSelector } from '../assets/elements-utils';
 import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
-import _path, {resolve} from 'path';
+import _path, { resolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
 import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
