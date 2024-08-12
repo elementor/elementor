@@ -52,7 +52,7 @@ jobs:
         uses: ./.github/workflows/check-changelog-pr
 
       - name: Build Plugin
-        if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+        if: ${{ github.event.pull_request.title == null || steps.changelog_diffs.outputs.changelog_diff }}
         id: build_plugin
         uses: ./.github/workflows/plugin-build
 
