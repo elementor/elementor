@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import List from '@elementor/ui/List';
+import { List } from '@elementor/ui';
 import { steps } from '../data/steps';
 import CheckListItem from './checklist-item';
 

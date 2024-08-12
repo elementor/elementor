@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import CheckListWrapper from './checklist-wrapper';
 import Header from './header';
-import Paper from '@elementor/ui/Paper';
+import { Paper } from '@elementor/ui';
 
 const Launchpad = ( props ) => {
 	const { setIsOpen } = props;

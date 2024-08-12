@@ -1,9 +1,5 @@
 import PropTypes from 'prop-types';
-import Typography from '@elementor/ui/Typography';
-import CloseButton from '@elementor/ui/CloseButton';
-import AppBar from '@elementor/ui/AppBar';
-import Divider from '@elementor/ui/Divider';
-import Toolbar from '@elementor/ui/Toolbar';
+import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const Header = ( props ) => {
