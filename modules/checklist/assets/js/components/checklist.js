@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import Launchpad from './launchpad';
 
-const Checklist = ( props ) => {
+const Checklist = () => {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	const handleClick = () => {
-		setIsOpen( ! isOpen )
+		setIsOpen( ! isOpen );
 	};
 
 	useEffect( () => {
-		elementor.on( 'elementor/editor/panel/checklist/clicked', handleClick );
+		elementor.on( 'elementor/editor/panel/checklist/clicked', () => setIsOpen( ! isOpen ) );
 	}, [] );
 
 	return isOpen ? <Launchpad setIsOpen={ setIsOpen } /> : null;
