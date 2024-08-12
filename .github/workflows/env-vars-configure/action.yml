@@ -20,9 +20,9 @@ runs:
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
           POSTFIX: ${{ inputs.POSTFIX }}
-      - name: Increment Patch Version
-        if: inputs.CHANNEL == 'ga'
-        uses: ./.github/workflows/increment-patch-version
+#      - name: Increment Patch Version
+#        if: inputs.CHANNEL == 'ga'
+#        uses: ./.github/workflows/increment-patch-version
       - shell: bash
         run: |
             # This command retrieves the latest tag that matches the specified channel and package version,
@@ -56,8 +56,8 @@ runs:
             echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
             echo "PLUGIN_ZIP_PATH=./elementor/**/*" >> $GITHUB_ENV
 
-      - name: Get Previous Release
-        uses : ./.github/workflows/get-previous-release
-        with:
-          CHANNEL: ${{ inputs.CHANNEL }}
-          POSTFIX: ${{ inputs.POSTFIX }}
+#      - name: Get Previous Release
+#        uses : ./.github/workflows/get-previous-release
+#        with:
+#          CHANNEL: ${{ inputs.CHANNEL }}
+#          POSTFIX: ${{ inputs.POSTFIX }}
