@@ -17,6 +17,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'atomic_widgets';
 
 	const PACKAGES = [
+		'wp-media',
 		'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 		'editor-panels',
 		'editor-editing-panel',
