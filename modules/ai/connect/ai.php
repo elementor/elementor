@@ -659,9 +659,7 @@ class Ai extends Library {
 			$context['features']['supportedFeatures'][] = 'MegaMenu';
 		}
 
-		// Check if WooCommerce is installed and active
 		if ( class_exists( 'WC' ) ) {
-			// WooCommerce is active
 			$context['features']['supportedFeatures'][] = 'WooCommerce';
 		}
 
