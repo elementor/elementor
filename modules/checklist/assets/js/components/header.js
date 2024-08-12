@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import Typography from '@elementor/ui/Typography';
 import CloseButton from '@elementor/ui/CloseButton';
 import AppBar from '@elementor/ui/AppBar';

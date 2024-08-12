@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import Button from '@elementor/ui/Button';
 import Card from '@elementor/ui/Card';
 import CardContent from '@elementor/ui/CardContent';
