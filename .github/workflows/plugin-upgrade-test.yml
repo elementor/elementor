@@ -64,6 +64,7 @@ jobs:
         run: |
             npm ci
             ls -al
+            ls -al ./build
             ls -al ./tests/playwright/upgrade-test
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
