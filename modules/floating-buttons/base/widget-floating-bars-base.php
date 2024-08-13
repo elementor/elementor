@@ -220,7 +220,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'skin' => 'inline',
 					'label_block' => false,
-					'icon_exclude_inline_options' => [],
+					'exclude_inline_options' => [ 'none' ],
 					'recommended' => [
 						'fa-regular' => [
 							'pause-circle',
@@ -232,7 +232,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
 					],
-				]
+				],
 			);
 
 			$this->add_control(
@@ -247,7 +247,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'skin' => 'inline',
 					'label_block' => false,
-					'icon_exclude_inline_options' => [],
+					'exclude_inline_options' => [ 'none' ],
 					'recommended' => [
 						'fa-regular' => [
 							'play-circle',
@@ -259,7 +259,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'condition' => [
 						'floating_bar_pause_switch' => 'yes',
 					],
-				]
+				],
 			);
 		}
 
@@ -964,6 +964,17 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'name' => 'floating_bar_background_overlay_type',
 				'types' => [ 'classic', 'gradient' ],
 				'selector' => '{{WRAPPER}} .e-floating-bars__overlay',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+					'position' => [
+						'default' => 'center center',
+					],
+					'size' => [
+						'default' => 'cover',
+					],
+				],
 			]
 		);
 
@@ -1006,7 +1017,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		);
 
 		if ( $config['style']['floating_bar_section']['has_close_position_control'] ) {
-			$this->add_control(
+			$this->add_responsive_control(
 				'floating_bar_close_button_position',
 				[
 					'label' => esc_html__( 'Horizontal position', 'elementor' ),
@@ -1022,8 +1033,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						],
 					],
 					'default' => 'end',
-					'toggle' => false,
-					'frontend_available' => true,
+					'toggle' => true,
 					'selectors' => $config['style']['floating_bar_section']['close_position_selectors'],
 					'condition' => [
 						'floating_bar_close_switch' => 'yes',
@@ -1058,6 +1068,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'condition' => [
 						'floating_bar_close_switch' => 'yes',
 					],
+					'separator' => 'after',
 				]
 			);
 		}
@@ -1170,7 +1181,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						[
 							'name' => 'style_floating_bar_elements_align',
 							'operator' => '!==',
-							'value' => 'space-between',
+							'value' => 'stretch',
 						],
 					],
 				],
@@ -1334,91 +1345,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	protected function add_ticker_style_section(): void {
-		$this->start_controls_section(
-			'style_ticker',
-			[
-				'label' => esc_html__( 'Ticker', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_responsive_control(
-			'style_ticker_animation_type',
-			[
-				'label' => esc_html__( 'Type', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'autoplay',
-				'options' => [
-					'autoplay' => esc_html__( 'Autoplay', 'elementor' ),
-					'scroll' => esc_html__( 'On page scroll', 'elementor' ),
-				],
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_responsive_control(
-			'style_ticker_scroll_direction',
-			[
-				'label' => esc_html__( 'Scroll Direction', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'default' => 'forwards',
-				'toggle' => false,
-				'options' => [
-					'reverse' => [
-						'title' => esc_html__( 'Reverse', 'elementor' ),
-						'icon' => 'eicon-arrow-left',
-					],
-					'forwards' => [
-						'title' => esc_html__( 'Forwards', 'elementor' ),
-						'icon' => 'eicon-arrow-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-direction: {{VALUE}};',
-				],
-				'frontend_available' => true,
-				'condition' => [
-					'style_ticker_animation_type' => 'autoplay',
-				],
-			]
-		);
-
-		$this->add_control(
-			'style_ticker_scroll_speed',
-			[
-				'label' => esc_html__( 'Scroll speed (s)', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
-					'active' => false,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-scroll-duration: {{VALUE}}s;',
-				],
-				'condition' => [
-					'style_ticker_animation_type' => 'autoplay',
-				],
-			],
-		);
-
-		$this->add_control(
-			'style_ticker_pause_hover',
-			[
-				'label' => esc_html__( 'Pause on Hover', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'elementor' ),
-				'label_off' => esc_html__( 'No', 'elementor' ),
-				'return_value' => 'yes',
-				'default' => 'yes',
-				'condition' => [
-					'style_ticker_animation_type' => 'autoplay',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
 	protected function add_advanced_tab(): void {
 		Controls_Manager::add_tab(
 			static::TAB_ADVANCED,
@@ -1433,7 +1359,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'advanced_vertical_position',
 			[
 				'label' => esc_html__( 'Vertical Position', 'elementor' ),
