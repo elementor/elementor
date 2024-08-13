@@ -26,7 +26,7 @@ test.describe( 'Container tests @container', () => {
 		await page.close();
 	} );
 
-	test( 'Background slideshow', async ({ page, apiRequests }, testInfo) => {
+	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -49,7 +49,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Verify background slideshow on the frontend', async () => {
 			await expect.soft( page.locator( '.e-con' ) ).toHaveScreenshot( 'frontend-container-background-slideshow.png' );
 		} );
-	});
+	} );
 
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
