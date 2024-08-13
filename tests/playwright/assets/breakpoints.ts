@@ -37,13 +37,13 @@ export default class {
 		const hasTopBar: boolean = await editor.hasTopBar();
 		if ( hasTopBar ) {
 			const saveButton = "//button[text()='Save Changes']";
-			if ( await this.page.locator( saveButton ).isVisible() ) {
+			if ( await this.page.locator( saveButton ).isEnabled() ) {
 				await this.page.locator( saveButton ).click();
 			} else {
-				await this.page.evaluate( async () => {
-					const button: HTMLElement = document.evaluate( saveButton, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
+				await this.page.evaluate( ( selector ) => {
+					const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
 					button.click();
-				} );
+				}, saveButton );
 			}
 			if ( toReload ) {
 				const reloadButton = this.page.locator( 'button', { hasText: 'Reload Now' } );
@@ -94,6 +94,6 @@ export default class {
 		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}
-		await this.saveOrUpdate( editor );
+		await this.saveOrUpdate( editor, true );
 	}
 }
