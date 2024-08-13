@@ -22,7 +22,7 @@ const ChecklistCardContent = ( props ) => {
 			</CardActions>
 		</Card>
 	);
-}
+};
 
 export default ChecklistCardContent;
 
