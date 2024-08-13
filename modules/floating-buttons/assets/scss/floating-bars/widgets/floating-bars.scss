@@ -46,6 +46,7 @@
 		grid-template-columns: auto auto;
 		grid-template-rows: auto auto;
 		gap: var(--e-floating-bars-elements-gap);
+		row-gap: 16px;
 	}
 
 	&.has-vertical-position-top {
@@ -91,8 +92,10 @@
 	}
 
 	&__announcement-icon {
+		align-items: center;
 		color: var(--e-floating-bars-announcement-icon-color);
 		display: flex;
+		height: 100%;
 
 		svg {
 			fill: var(--e-floating-bars-announcement-icon-color);
@@ -213,6 +216,8 @@
 	}
 
 	&__overlay {
+		background-position: center center;
+		background-size: cover;
 		height: 100%;
 		inset-block-end: 0;
 		inset-block-start: 0;
