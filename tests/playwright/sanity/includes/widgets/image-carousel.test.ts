@@ -19,7 +19,6 @@ test.describe( 'Image carousel tests', () => {
 
 	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
 		await wpAdmin.openNewPage();
@@ -75,7 +74,6 @@ test.describe( 'Image carousel tests', () => {
 
 	test.skip( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: true,
@@ -116,7 +114,6 @@ test.describe( 'Image carousel tests', () => {
 
 	test( 'Accessibility test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'default' );

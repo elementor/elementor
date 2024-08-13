@@ -2,7 +2,6 @@ import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import Content from '../pages/elementor-panel-tabs/content';
-import ImageCarousel from '../pages/widgets/image-carousel';
 
 test.describe( 'Testing link control for widgets: @styleguide_image_link', () => {
 	const data = [
@@ -21,7 +20,6 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			const link = 'https://elementor.com/';
 			const customAttributes = { key: 'mykey', value: 'myValue' };
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const imageCarousel = new ImageCarousel( page, testInfo );
 			const editor = await wpAdmin.openNewPage();
 			const contentTab = new Content( page, testInfo );
 
