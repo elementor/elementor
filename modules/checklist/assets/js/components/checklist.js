@@ -1,17 +1,42 @@
+import { useEffect, useState } from 'react';
 import { List } from '@elementor/ui';
 import CheckListItem from './checklist-item';
-import { steps } from '../data/steps';
+import { useQuery, gql } from '@apollo/client';
+import { GET_CHECKLIST } from '../../../graphql/queries';
 function CheckList() {
+	const { loading, error, data } = useQuery( GET_CHECKLIST ),
+		[ steps, setSteps ] = useState( [] );
+
+	useEffect(() => {
+		if ( error ) {
+			console.log( error );
+		}
+		setSteps( data?.checklistSteps?.edges );
+	}, [ data ] );
+
 	return (
-		<List>
-			{
-				steps.map( ( step, index ) => {
-					return (
-						<CheckListItem step={ step } key={ index } />
-					);
-				} )
+		<div>
+			{ steps &&
+				<List>
+					{
+						steps.map( ( step, index ) => {
+							return (
+								<CheckListItem step={ step } key={ index } />
+							);
+						} )
+					}
+				</List>
 			}
-		</List>
+		</div>
+		// <List>
+		// 	{
+		// 		steps.map( ( step, index ) => {
+		// 			return (
+		// 				<CheckListItem step={ step } key={ index } />
+		// 			);
+		// 		} )
+		// 	}
+		// </List>
 	);
 }
 

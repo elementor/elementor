@@ -17,14 +17,14 @@ import {
 	ListItemText, Collapse, Stack,
 } from '@elementor/ui';
 
-import { doAjaxRequest } from '@elementor/utils';
 
 // Check why elementor/icons is not installed
 import { ChevronDownIcon, CheckedCircleIcon } from '@elementor/icons';
 import CardMedia from '@elementor/ui/CardMedia';
 
 function CheckListItem( props ) {
-	const { id, title, imagePath, description, link, CTA } = props.step,
+	debugger;
+	const { id, title, content: description, link, CTA, checklistStepCpt:{ learnMoreUrl, stepImage: { node: { sourceUrl: imagePath } = {} } = {} } = {} } = props.step.node,
 		[ expanded, setExpanded ] = React.useState( false ),
 		[ checked, setChecked ] = React.useState( [ 0 ] );
 
@@ -94,15 +94,15 @@ function CheckListItem( props ) {
 					>
 						<Typography variant="body2" color="text.secondary" component="p">
 							{ description + ' ' }
-							<a href={ link } target="_blank" rel="noreferrer">Learn more</a>
+							<a href={ learnMoreUrl } target="_blank" rel="noreferrer">Learn more</a>
 						</Typography>
 					</CardContent>
 					<CardActions >
 						<Stack>
-							<Button size="small">
+							<Button size="small" >
 								Mark as completed
 							</Button>
-							<Button size="small" color="primary">
+							<Button size="small" color="primary" >
 								{ CTA }
 							</Button>
 						</Stack>

@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Settings;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
 if( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -66,6 +67,7 @@ class Module extends BaseApp {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 		] );
 	}
+
 
 	public function __construct() {
 		parent::__construct();
