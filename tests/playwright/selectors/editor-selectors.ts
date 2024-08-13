@@ -92,12 +92,14 @@ const EditorSelectors = {
 			return `${ this.widget } img`;
 		},
 	},
+	galleryControl: {
+		addGalleryBtn: 'button.elementor-control-gallery-add',
+	},
 	imageCarousel: {
 		widget: '[data-widget_type="image-carousel.default"]',
 		get link() {
 			return `${ this.widget } a`;
 		},
-		addGalleryBtn: 'button.elementor-control-gallery-add',
 		navigationSelect: '.elementor-control-navigation select',
 		autoplaySelect: 'input[data-setting="autoplay"]',
 		autoplaySpeedLabel: 'Autoplay Speed',
