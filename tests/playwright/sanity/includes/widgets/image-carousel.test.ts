@@ -114,6 +114,7 @@ test.describe( 'Image carousel tests', () => {
 
 	test( 'Accessibility test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'default' );
