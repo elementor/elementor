@@ -14,7 +14,7 @@ class Attachment_Control extends Atomic_Control_Base {
 	private string $media_type;
 
 	/**
-	 * @var string $wp_media_title The title of the media in the WordPress media library.
+	 * @var string $wp_media_title The title of the WordPress media library modal.
 	 */
 	private string $wp_media_title;
 
