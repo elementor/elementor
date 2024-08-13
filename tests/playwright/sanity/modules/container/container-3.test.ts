@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Container tests @container', () => {
@@ -28,7 +27,6 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 
 		// Arrange.
 		const editor = await wpAdmin.openNewPage(),
