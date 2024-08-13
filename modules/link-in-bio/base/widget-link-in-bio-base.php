@@ -8,7 +8,6 @@ use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\LinkInBio\Classes\Render\Core_Render;
-use Elementor\Modules\LinkInBio\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -179,10 +178,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
 			'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
 		];
-	}
-
-	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( ConversionCenterModule::EXPERIMENT_NAME );
 	}
 
 	protected function register_controls(): void {

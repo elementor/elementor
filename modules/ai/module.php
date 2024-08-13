@@ -37,6 +37,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		if ( is_admin() ) {
+			( new Preferences() )->register();
+		}
+
+		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			return;
+		}
+
 		$this->register_layout_experiment();
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
