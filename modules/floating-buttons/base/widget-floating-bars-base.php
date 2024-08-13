@@ -20,6 +20,14 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		return 'eicon-banner';
 	}
 
+	public function show_in_panel() {
+		return false;
+	}
+
+	public function hide_on_search() {
+		return true;
+	}
+
 	protected function get_initial_config(): array {
 		return array_merge( parent::get_initial_config(), [
 			'commonMerged' => true,
