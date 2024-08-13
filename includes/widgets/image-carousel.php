@@ -91,7 +91,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$assets = [ 'swiper' ];
 
 		if ( $this->load_widgets_styles_in_head() ) {
-			$assets[] = 'elementor-image-carousel';
+			$assets[] = 'widget-image-carousel';
 		}
 
 		return $assets;
