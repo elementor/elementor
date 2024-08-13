@@ -88,11 +88,11 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		$assets = $this->load_widgets_styles_in_head()
-			? [ 'elementor-image-carousel' ]
-			: [];
+		$assets = [ 'swiper' ];
 
-		$assets[] = 'swiper';
+		if ( $this->load_widgets_styles_in_head() ) {
+			$assets[] = 'elementor-image-carousel';
+		}
 
 		return $assets;
 	}
