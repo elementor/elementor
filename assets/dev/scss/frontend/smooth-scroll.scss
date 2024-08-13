@@ -1,9 +1,3 @@
-
-:root {
-	--e-sticky-scroll-padding-top: 0;
-}
-
 html {
 	scroll-behavior: smooth;
-	scroll-padding-top: var(--e-sticky-scroll-padding-top);
 }
