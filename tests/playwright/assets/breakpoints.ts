@@ -62,6 +62,7 @@ export default class {
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];
+
 		for ( const device of devices ) {
 			if ( await this.page.$( '.select2-selection__e-plus-button' ) ) {
 				await this.page.click( '.select2-selection__e-plus-button' );

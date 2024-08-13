@@ -5,7 +5,6 @@ import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
-import ReverseColumns from '../elements/section/reverse-columns/reverse-columns';
 
 test.describe( 'Image carousel tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -19,11 +18,13 @@ test.describe( 'Image carousel tests', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
-		await reverseColumns.resetAdditionalBreakpoints();
+		const editor = await wpAdmin.openNewPage();
+		const breakpoints = new Breakpoints( page );
+		await breakpoints.resetBreakpoints( editor );
 	} );
 
 	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
