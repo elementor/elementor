@@ -712,18 +712,6 @@ class Container extends Element_Base {
 								],
 							],
 						],
-						[
-							'name' => 'swiper',
-							'conditions' => [
-								'terms' => [
-									[
-										'name' => 'background_background',
-										'operator' => '===',
-										'value' => 'slideshow',
-									],
-								],
-							],
-						],
 					],
 				],
 			]
