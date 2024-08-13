@@ -136,7 +136,7 @@ export default class FloatingBarsHandler extends Base {
 			if ( floatingBar.classList.contains( 'has-vertical-position-top' ) && ! floatingBar.classList.contains( 'is-sticky' ) ) {
 				const elementToInsert = elementorFrontend.isEditMode() ? element.closest( '[data-element_type="container"]' ) : element;
 
-				document.body.insertBefore( elementToInsert, document.body.querySelector( 'header' ) );
+				document.body.prepend( elementToInsert );
 			}
 		} );
 	}
