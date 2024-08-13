@@ -104,9 +104,7 @@
 		};
 
 		this.maybeLoadAssets = async function () {
-			const isWpAdmin = !! document.querySelector( 'body.wp-admin' ),
-				isElementorEditor = !! document.querySelector( 'body.elementor-editor-active' ),
-				isFrontend = ! isWpAdmin && ! isElementorEditor;
+			const isFrontend = !! window.elementorFrontend?.utils?.assetsLoader;
 
 			if ( ! isFrontend ) {
 				return;
