@@ -72,7 +72,8 @@ test.describe( 'Container tests @container', () => {
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Add images.
-		await imageCarousel.addImageGallery();
+		await editor.openPanelTab( 'content' );
+		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 

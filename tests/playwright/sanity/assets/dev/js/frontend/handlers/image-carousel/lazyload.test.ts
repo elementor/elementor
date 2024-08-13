@@ -10,7 +10,8 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests 
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
 	await editor.addWidget( 'image-carousel' );
-	await imageCarousel.addImageGallery( { images } );
+	await editor.openPanelTab( 'content' );
+	await editor.addImagesToGalleryControl( { images } );
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSwitcherControlValue( 'lazyload', true );
 	await editor.setSwitcherControlValue( 'autoplay', false );

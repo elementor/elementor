@@ -224,7 +224,8 @@ const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: Edito
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 
 	// Add images.
-	await imageCarousel.addImageGallery();
+	await editor.openPanelTab( 'content' );
+	await editor.addImagesToGalleryControl();
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSwitcherControlValue( 'autoplay', false );
 
