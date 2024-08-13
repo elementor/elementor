@@ -1,5 +1,5 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from "@elementor/ui";
-import PropTypes from "prop-types";
+import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const ChecklistCardContent = ( props ) => {
 	const { description, link, CTA } = props.step;
@@ -21,7 +21,7 @@ const ChecklistCardContent = ( props ) => {
 				<Button size="small" variant="contained">{ CTA }</Button>
 			</CardActions>
 		</Card>
-	)
+	);
 }
 
 export default ChecklistCardContent;
