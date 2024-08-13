@@ -558,7 +558,7 @@ class Element_Section extends Element_Base {
 		);
 
 		$this->add_control(
-		'handle_slideshow_asset_loading',
+			'handle_slideshow_asset_loading',
 			[
 				'type' => Controls_Manager::HIDDEN,
 				'assets' => [
