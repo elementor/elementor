@@ -34,8 +34,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 		echo "<img src='" . esc_url( $image_url ) . "' />";
 	}
 
-	private function get_image_sizes() {
-		$wp_image_sizes = self::get_all_image_sizes();
+	private function get_image_size_options() {
+		$wp_image_sizes = self::get_wp_image_sizes();
 
 		$image_sizes = [];
 
@@ -61,7 +61,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return $image_sizes;
 	}
 
-	private static function get_all_image_sizes() {
+	private static function get_wp_image_sizes() {
 		$default_image_sizes = get_intermediate_image_sizes();
 		$additional_sizes = wp_get_additional_image_sizes();
 
@@ -84,7 +84,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$options = $this->get_image_sizes();
+		$options = $this->get_image_size_options();
 
 		$resolution_control = Select_Control::bind_to( 'image_size' )
 			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
