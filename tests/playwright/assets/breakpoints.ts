@@ -43,7 +43,6 @@ export default class {
 				await this.page.evaluate( async () => {
 					const button: HTMLElement = document.evaluate( saveButton, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
 					button.click();
-					return button;
 				} );
 			}
 			if ( toReload ) {
@@ -63,19 +62,14 @@ export default class {
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];
-		const removeBreakpointButton = '#elementor-kit-panel-content .select2-selection__choice__remove';
-
-		const numOfCustomBreakpoints = await this.page.locator( removeBreakpointButton ).count();
-		if ( numOfCustomBreakpoints < devices.length ) {
-			for ( const device of devices ) {
-				if ( await this.page.$( '.select2-selection__e-plus-button' ) ) {
-					await this.page.click( '.select2-selection__e-plus-button' );
-					await this.page.click( `li:has-text("${ device }")` );
-				}
+		for ( const device of devices ) {
+			if ( await this.page.$( '.select2-selection__e-plus-button' ) ) {
+				await this.page.click( '.select2-selection__e-plus-button' );
+				await this.page.click( `li:has-text("${ device }")` );
 			}
-
-			await this.saveOrUpdate( editor, true );
 		}
+
+		await this.saveOrUpdate( editor, true );
 
 		if ( experimentPostId ) {
 			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
