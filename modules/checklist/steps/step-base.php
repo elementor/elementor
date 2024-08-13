@@ -11,20 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
-	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
-	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
-	const COMPLETED_KEY = 'is_completed';
 
 	/**
 	 * @var string
 	 * This is the key to be set to true if the step can be completed, and still be considered completed even if the user later did something to the should have it marked as not completed
 	 */
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
+	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
+	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
 
-	protected array $step_config;
 	protected array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
-
 	protected Checklist_Module $module;
 
 	/**
@@ -40,9 +37,30 @@ abstract class Step_Base {
 	abstract public function get_id() : string;
 
 	/**
-	 * @return array
+	 * @return string
 	 */
-	abstract public function get_config() : array;
+	abstract public function get_title() : string;
+
+	/**
+	 * @return string
+	 */
+	abstract public function get_description() : string;
+
+	/**
+	 * For instance; 'Create 3 pages'
+	 * @return string
+	 */
+	abstract public function get_cta_text() : string;
+
+	/**
+	 * @return string
+	 */
+	abstract public function get_cta_url() : string;
+
+	/**
+	 * @return bool
+	 */
+	abstract public function get_is_completion_immutable() : bool;
 
 	/**
 	 * Step_Base constructor.
@@ -53,10 +71,17 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
-		$this->step_config = $this->get_config();
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
+	}
+
+	public function get_learn_more_text() : string {
+		return esc_html__( 'Learn more', 'elementor' );
+	}
+
+	public function get_learn_more_url() : string {
+		return 'https://go.elementor.com/getting-started-with-elementor/';
 	}
 
 	/**
@@ -85,23 +110,12 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function maybe_mark_as_completed() : void {
-		if ( $this->step_config[ self::IS_COMPLETION_IMMUTABLE ] && $this->is_absolute_completed() ) {
+		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
+
+		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
 			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
 			$this->set_step_progress();
 		}
-	}
-
-	/**
-	 * Returns the step data as well as is_marked_completed and is_completed (not absolutely completed, but considered completed)
-	 *
-	 * @return array
-	 */
-	public function get_step_config_for_frontend() : array {
-		return [
-			'data' => $this->get_config(),
-			self::MARKED_AS_COMPLETED_KEY => $this->is_marked_as_completed(),
-			self::COMPLETED_KEY => $this->is_marked_as_completed() || $this->is_immutable_completed() || $this->is_absolute_completed(),
-		];
 	}
 
 	/**
