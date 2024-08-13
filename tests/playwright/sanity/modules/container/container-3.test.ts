@@ -28,7 +28,6 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 
 		// Arrange.
 		const editor = await wpAdmin.openNewPage(),

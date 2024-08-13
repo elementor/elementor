@@ -217,7 +217,7 @@ const testTitlesWithHTML = async ( page: Page, editor: EditorPage ) => {
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( 'Tab #3' );
 };
 
-const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: EditorPage, imageCarousel: ImageCarousel ) => {
+const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: EditorPage ) => {
 	// Act.
 	const contentContainerId = await selectDropdownContainer( editor, '', 0 ),
 		activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
