@@ -29,17 +29,33 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	public static function get_configuration() {
 		return [
 			'content' => [
+				'announcement_section' => [
+					'icon_default' => [
+						'value' => 'fas fa-tshirt',
+						'library' => 'fa-solid',
+					],
+					'text_label' => esc_html__( 'Text', 'elementor' ),
+					'text_default' => esc_html__( 'Just in! Cool summer tees', 'elementor' ),
+				],
 				'floating_bar_section' => [
 					'close_switch_default' => 'yes',
 					'has_pause_switch' => false,
+					'accessible_name_default' => esc_html__( 'Banner', 'elementor' ),
 				],
 			],
 			'style' => [
 				'floating_bar_section' => [
 					'has_close_bg' => false,
-					'close_position_selector' => 'inset-inline-{{VALUE}}: 10px',
+					'close_position_selectors' => [
+						'{{WRAPPER}} .e-floating-bars__close-button' => 'inset-inline-{{VALUE}}: 10px;',
+					],
 					'has_close_position_control' => true,
 					'background_selector' => '{{WRAPPER}} .e-floating-bars',
+					'align_elements_selector' => [
+						'{{WRAPPER}} .e-floating-bars' => 'justify-content: {{VALUE}};',
+						'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
+						'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
+					],
 				],
 			],
 			'advanced' => [],
@@ -55,6 +71,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	}
 
 	protected function add_announcement_content_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'announcement_content_section',
 			[
@@ -69,10 +87,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
-				'default' => [
-					'value' => 'fas fa-tshirt',
-					'library' => 'fa-solid',
-				],
+				'default' => $config['content']['announcement_section']['icon_default'],
 				'skin' => 'inline',
 				'label_block' => false,
 				'icon_exclude_inline_options' => [],
@@ -82,13 +97,13 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->add_control(
 			'announcement_text',
 			[
-				'label' => esc_html__( 'Text', 'elementor' ),
+				'label' => $config['content']['announcement_section']['text_label'],
 				'type' => Controls_Manager::TEXTAREA,
 				'dynamic' => [
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Enter your text here', 'elementor' ),
-				'default' => esc_html__( 'Just in! Cool summer tees', 'elementor' ),
+				'default' => $config['content']['announcement_section']['text_default'],
 			]
 		);
 
@@ -150,6 +165,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	}
 
 	protected function add_accessible_name_control(): void {
+		$config = static::get_configuration();
+
 		$this->add_control(
 			'accessible_name',
 			[
@@ -159,7 +176,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'Enter text', 'elementor' ),
-				'default' => esc_html__( 'Banner', 'elementor' ),
+				'default' => $config['content']['floating_bar_section']['accessible_name_default'],
 				'condition' => [
 					'floating_bar_close_switch' => 'yes',
 				],
@@ -340,6 +357,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 	}
 
 	protected function add_announcement_style_section(): void {
+		$config = static::get_configuration();
+
 		$this->start_controls_section(
 			'style_announcement',
 			[
@@ -476,7 +495,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$this->add_control(
 			'style_announcement_text_heading',
 			[
-				'label' => esc_html__( 'Text', 'elementor' ),
+				'label' => $config['content']['announcement_section']['text_label'],
 				'type' => Controls_Manager::HEADING,
 			]
 		);
@@ -1015,9 +1034,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					],
 					'default' => 'end',
 					'toggle' => true,
-					'selectors' => [
-						'{{WRAPPER}} .e-floating-bars__close-button' => $config['style']['floating_bar_section']['close_position_selector'],
-					],
+					'selectors' => $config['style']['floating_bar_section']['close_position_selectors'],
 					'condition' => [
 						'floating_bar_close_switch' => 'yes',
 					],
@@ -1051,6 +1068,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 					'condition' => [
 						'floating_bar_close_switch' => 'yes',
 					],
+					'separator' => 'after',
 				]
 			);
 		}
@@ -1110,6 +1128,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 			]
 		);
 
+		$this->add_floating_bar_close_button_style_controls();
+
 		$this->add_responsive_control(
 			'style_floating_bar_elements_align',
 			[
@@ -1135,12 +1155,8 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						'icon' => 'eicon-align-stretch-h',
 					],
 				],
-				'selectors' => [
-					'{{WRAPPER}} .e-floating-bars' => 'justify-content: {{VALUE}};',
-					'{{WRAPPER}} .e-floating-bars__cta-button-container' => 'justify-content: {{VALUE}};',
-					'{{WRAPPER}} .e-floating-bars__announcement-text' => 'text-align: {{VALUE}};',
-
-				],
+				'selectors' => $config['style']['floating_bar_section']['align_elements_selector'],
+				'separator' => 'before',
 			]
 		);
 
@@ -1183,8 +1199,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				],
 			]
 		);
-
-		$this->add_floating_bar_close_button_style_controls();
 
 		$this->add_floating_bar_background_style_controls();
 
