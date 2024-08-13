@@ -130,6 +130,7 @@ export default class FloatingBarsHandler extends Base {
 	moveFloatingBarsBasedOnPosition() {
 		const el = this.$element[ 0 ];
 		const $widget = el.querySelector( '.e-floating-bars' );
+
 		if (
 			el.dataset.widget_type.startsWith( 'floating-bars' ) &&
 			$widget.classList.contains( 'has-vertical-position-top' ) &&
