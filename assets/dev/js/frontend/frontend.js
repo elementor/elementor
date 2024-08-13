@@ -204,7 +204,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			controls: new Controls(),
 		};
 
-		if ( ! this.config.experimentalFeatures[ 'e_css_smooth_scroll' ] ) {
+		if ( ! this.config.experimentalFeatures.e_css_smooth_scroll ) {
 			this.utils.anchors = new AnchorsModule();
 		}
 
