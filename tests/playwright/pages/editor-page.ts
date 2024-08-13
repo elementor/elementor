@@ -2,7 +2,7 @@ import { addElement, getElementSelector } from '../assets/elements-utils';
 import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
-import _path from 'path';
+import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
 import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
@@ -1256,5 +1256,35 @@ export default class EditorPage extends BasePage {
 	 */
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
+	}
+
+	async addImagesToGalleryControl( args?: { images?: string[], metaData?: boolean } ) {
+		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
+
+		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+
+		const _images = args?.images === undefined ? defaultImages : args.images;
+
+		for ( const i in _images ) {
+			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
+
+			if ( args?.metaData ) {
+				await this.addTestImageMetaData();
+			}
+		}
+
+		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		await this.page.locator( 'text=Insert gallery' ).click();
+	}
+
+	async addTestImageMetaData( args = { caption: 'Test caption!', description: 'Test description!' } ) {
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgCaption ).clear();
+		await this.page.locator( EditorSelectors.media.imgCaption ).type( args.caption );
+
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgDescription ).clear();
+		await this.page.locator( EditorSelectors.media.imgDescription ).type( args.description );
 	}
 }
