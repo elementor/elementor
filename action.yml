@@ -10,10 +10,10 @@ inputs:
     required: true
     description: 'The endpoint to deploy the builds to.'
     default: ""
-  REPOSITORY_NAME:
-    required: true
-    description: 'The name of the repository.'
-    default: ""
+  ELEMENTOR_PRO_CORE_BRANCH:
+    required: false
+    description: 'The branch of the core repository to use.'
+    default: "main"
 
 outputs:
   artifact_name:
@@ -85,6 +85,7 @@ runs:
           fi
 
         fi
+
     - name: Build Plugin
       id: build_plugin
       shell: bash
@@ -104,22 +105,24 @@ runs:
 
         elif [ "${{ env.REPOSITORY_NAME }}" == "elementor-pro" ]; then
 
-          ELEMENTOR_CORE_BRANCH="${ELEMENTOR_CORE_BRANCH:=main}"
-          PLUGIN_FILENAME="elementor-pro-${PACKAGE_VERSION}"
+          PLUGIN_FILENAME="elementor-pro-${{ env.BUILD_PACKAGE_VERSION }}"
           PLUGIN_ZIP_FILENAME="${PLUGIN_FILENAME}.zip"
+
           PACKAGE_BASE_DIR="/tmp/elementor-pro-releases/"
           PACKAGE_PATH=$(ls $PACKAGE_BASE_DIR)
           PLUGIN_ZIP_PATH=$(pwd)/${PLUGIN_ZIP_FILENAME}
 
-          rm -rf ../elementor
-          echo "Cloning ELEMENTOR_CORE_BRANCH: ${ELEMENTOR_CORE_BRANCH}"
-          git clone --single-branch --branch ${ELEMENTOR_CORE_BRANCH} https://github.com/elementor/elementor.git ../elementor
-
+#         When the 'npx grunt build' is done running in PRO it creates a zip build file in
+#         /tmp/elementor-pro-releases folder named elementor-pro-{PACKAGE_VERSION}.zip
+#         So we move the zip generated to the root folder of the repository
           mv "${PACKAGE_BASE_DIR}/${PACKAGE_PATH}" ${PLUGIN_ZIP_FILENAME}
 
+#         Unzip the zip file in the root folder into the /tmp folder
           unzip -q ${PLUGIN_ZIP_PATH} -d /tmp/
-          cd /tmp/
+#         Remove the zip file from the root folder
           rm ${PLUGIN_ZIP_PATH}
+
+          cd /tmp/
           zip -r -q ${PLUGIN_ZIP_PATH} ./elementor-pro
 
           echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
@@ -127,6 +130,42 @@ runs:
         fi
 
         echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_OUTPUT
+
+    - name: Build Core Plugin for Pro
+      if: env.REPOSITORY_NAME == 'elementor-pro'
+      shell: bash
+      run: |
+        ELEMENTOR_CORE_BRANCH="${{ inputs.ELEMENTOR_PRO_CORE_BRANCH }}"
+        ROOT_DIR=$(pwd)
+
+        rm -rf ../elementor
+        echo "Cloning ELEMENTOR_CORE_BRANCH: ${ELEMENTOR_CORE_BRANCH}"
+
+#       Cloning the core plugin into the elementor folder outside elementor-pro folder
+        git clone --single-branch --branch ${ELEMENTOR_CORE_BRANCH} https://github.com/elementor/elementor.git ../elementor
+
+#       Navigate to elementor folder
+        cd ../elementor
+
+#       Run installation of npm and composer dependencies for core plugin
+        npm ci
+        composer install --optimize-autoloader --prefer-dist
+        composer install --no-scripts --no-dev
+        composer dump-autoload
+
+#       Build the core plugin
+#       When the 'npx grunt build' is done running it creates a build folder in the elementor folder
+#       and in the /tmp/elementor-builds. These builds are the same 203.161.54.121
+        npx grunt build
+
+        CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        echo "CORE_PACKAGE_VERSION=${CORE_PACKAGE_VERSION}" >> $GITHUB_ENV
+
+        cd $ROOT_DIR
+
+        zip -r elementor.zip /tmp/elementor-builds/${{ env.CORE_PACKAGE_VERSION }}
+        mv /tmp/elementor-builds/elementor.zip ./elementor.zip
+
 
     - name: Publish zip on push to release or develop
       shell: bash
