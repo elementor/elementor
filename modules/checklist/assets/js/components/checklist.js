@@ -3,7 +3,6 @@ import CheckListWrapper from './checklist-wrapper';
 import { Paper } from '@elementor/ui';
 
 const Checklist = () => {
-
 	return (
 		<Paper elevation={ 5 } sx={ {
 			position: 'fixed',

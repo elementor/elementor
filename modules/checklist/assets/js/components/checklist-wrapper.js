@@ -3,7 +3,7 @@ import { List } from '@elementor/ui';
 import { steps } from '../data/steps';
 import CheckListItem from './checklist-item';
 
-function ChecklistWrapper() {
+const  ChecklistWrapper = () => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
 
 	return (
@@ -17,6 +17,6 @@ function ChecklistWrapper() {
 			}
 		</List>
 	);
-}
+};
 
 export default ChecklistWrapper;

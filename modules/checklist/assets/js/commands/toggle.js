@@ -43,4 +43,3 @@ export class Toggle extends $e.modules.CommandBase {
 }
 
 export default Toggle;
-
