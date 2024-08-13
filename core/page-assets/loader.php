@@ -35,6 +35,11 @@ class Loader extends Module {
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				'e-swiper' => [
+					'src' => $this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				],
 				'swiper' => [
 					'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
 					'version' => $this->getSwiperVersion(),
