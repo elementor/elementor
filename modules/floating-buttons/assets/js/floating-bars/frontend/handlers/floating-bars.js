@@ -43,7 +43,7 @@ export default class FloatingBarsHandler extends Base {
 		}
 
 		if ( this.elements.ctaButton ) {
-			this.elements.ctaButton.addEventListener( 'animationend', this.removeEntranceAnimationClasses.bind( this, this.elements.ctaButton, ctaEntranceAnimation ) );
+			this.elements.ctaButton.addEventListener( 'animationend', this.handleAnimationEnd.bind( this, this.elements.ctaButton, ctaEntranceAnimation ) );
 		}
 
 		if ( this.elements.main ) {
@@ -71,13 +71,23 @@ export default class FloatingBarsHandler extends Base {
 		document.body.style.paddingTop = '0';
 	}
 
+	handleWPAdminBar() {
+		const wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+
+		if ( wpAdminBar.length ) {
+			this.elements.main.style.top = `${ wpAdminBar.height() }px`;
+		}
+	}
+
 	closeFloatingBar() {
 		const { isHidden } = this.getSettings( 'constants' );
 
-		this.elements.main.classList.add( isHidden );
+		if ( ! elementorFrontend.isEditMode() ) {
+			this.elements.main.classList.add( isHidden );
 
-		if ( this.isStickyTop() ) {
-			this.removeBodyPadding();
+			if ( this.isStickyTop() ) {
+				this.removeBodyPadding();
+			}
 		}
 	}
 
@@ -91,6 +101,11 @@ export default class FloatingBarsHandler extends Base {
 		}
 
 		element.classList.add( entranceAnimationControl );
+	}
+
+	handleAnimationEnd( element, animation ) {
+		this.removeEntranceAnimationClasses( element, animation );
+		this.focusOnLoad();
 	}
 
 	removeEntranceAnimationClasses( element, animation ) {
@@ -118,11 +133,14 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	initDefaultState() {
+		const { hasEntranceAnimation } = this.getSettings( 'constants' );
+
 		if ( this.isStickyTop() ) {
 			this.applyBodyPadding();
+			this.handleWPAdminBar();
 		}
 
-		if ( this.elements.main && ! elementorFrontend.isEditMode() ) {
+		if ( this.elements.main && ! this.elements.ctaButton.classList.contains( hasEntranceAnimation ) && ! elementorFrontend.isEditMode() ) {
 			this.focusOnLoad();
 		}
 	}
