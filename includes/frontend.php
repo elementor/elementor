@@ -548,6 +548,13 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
+			'swiper',
+			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
+			[],
+			$this->e_swiper_version
+		);
+
+		wp_register_style(
 			'elementor-wp-admin-bar',
 			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
 			[],
