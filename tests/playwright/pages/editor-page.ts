@@ -1258,16 +1258,20 @@ export default class EditorPage extends BasePage {
 		return Number( itemID.replace( idPrefix, '' ) );
 	}
 
-	async addImagesToContainerSlideshow( args?: { images?: string[] } ) {
+	async addImagesToGalleryControl( args?: { images?: string[], metaData?: boolean } ) {
 		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
 
-		await this.page.locator( EditorSelectors.imageCarousel.addGalleryBtn ).nth( 0 ).click();
+		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
 		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
 
 		const _images = args?.images === undefined ? defaultImages : args.images;
 
 		for ( const i in _images ) {
 			await this.page.setInputFiles( EditorSelectors.media.imageInp, resolve( __dirname, `../resources/${ _images[ i ] }` ) );
+
+			if ( args?.metaData ) {
+				await this.addTestImageMetaData();
+			}
 		}
 
 		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();

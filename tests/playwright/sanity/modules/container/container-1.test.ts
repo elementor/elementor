@@ -37,7 +37,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.openPanelTab('style');
 		await editor.openSection('section_background');
 		await editor.setChooseControlValue( 'background_background', 'eicon-slideshow' );
-		await editor.addImagesToContainerSlideshow();
+		await editor.addImagesToGalleryControl();
 
 		await test.step('Verify background slideshow', async () => {
 			await editor.togglePreviewMode();
