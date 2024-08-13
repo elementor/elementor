@@ -135,8 +135,13 @@ export default class FloatingBarsHandler extends Base {
 
 			if ( floatingBar.classList.contains( 'has-vertical-position-top' ) && ! floatingBar.classList.contains( 'is-sticky' ) ) {
 				const elementToInsert = elementorFrontend.isEditMode() ? element.closest( '[data-element_type="container"]' ) : element;
+				const wpAdminBar = document.getElementById( 'wpadminbar' );
 
-				document.body.prepend( elementToInsert );
+				if ( wpAdminBar ) {
+					wpAdminBar.after( elementToInsert );
+				} else {
+					document.body.prepend( elementToInsert );
+				}
 			}
 		} );
 	}
