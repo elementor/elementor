@@ -5,13 +5,6 @@ export class Toggle extends $e.modules.CommandBase {
 	static rootElement = null;
 	static isOpen = false;
 
-	// static getInfo() {
-	// 	return {
-	// 		isSafe: true,
-	// 		isSafeWithArgs: true,
-	// 	};
-	// }
-
 	apply() {
 		if ( ! Toggle.isOpen ) {
 			this.mount();
@@ -25,7 +18,7 @@ export class Toggle extends $e.modules.CommandBase {
 	mount() {
 		this.setRootElement();
 
-		Toggle.rootElement.render( <App /> ); // eslint-disable-line react/no-deprecated
+		Toggle.rootElement.render( <App /> );
 	}
 
 	/**

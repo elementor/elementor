@@ -4,7 +4,7 @@ import { steps } from '../data/steps';
 import CheckListItem from './checklist-item';
 
 function ChecklistWrapper() {
-	const [ expandedIndex, setExpandedIndex ] = useState( null );
+	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
 
 	return (
 		<List component="div" sx={ { py: 0 } }>

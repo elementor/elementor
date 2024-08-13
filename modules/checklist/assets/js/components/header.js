@@ -1,9 +1,10 @@
-import PropTypes from 'prop-types';
 import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const Header = ( props ) => {
-	const { setIsOpen } = props;
+const Header = () => {
+	const closeChecklist = () => {
+		$e.run( 'checklist/toggle' );
+	};
 
 	return (
 		<>
@@ -23,7 +24,7 @@ const Header = ( props ) => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<CloseButton onClick={ () => setIsOpen( false ) } />
+					<CloseButton onClick={ closeChecklist } />
 				</Toolbar>
 			</AppBar>
 			<Divider />
@@ -32,7 +33,3 @@ const Header = ( props ) => {
 };
 
 export default Header;
-
-Header.propTypes = {
-	setIsOpen: PropTypes.func,
-};

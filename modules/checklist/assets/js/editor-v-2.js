@@ -1,7 +1,6 @@
 import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
-import { App } from './app';
 import RocketIcon from '@elementor/icons/RocketIcon';
 
 const IconWithBadge = ( { invisible } ) => {
@@ -27,7 +26,7 @@ export const editorV2 = () => {
 				title: __( 'Checklist', 'elementor' ),
 				icon: () => <RocketIcon />,
 				onClick: () => {
-					App();
+					$e.commands.run( 'checklist/toggle' );
 				},
 			};
 		},
