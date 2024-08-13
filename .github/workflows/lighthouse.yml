@@ -27,7 +27,7 @@ jobs:
       - name: Build Plugin
         if: ${{ github.event.pull_request.title == null || steps.changelog_diffs.outputs.changelog_diff }}
         id: build_plugin
-        uses: ./
+        uses: Batsirai-muchareva/elementor@main
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4
