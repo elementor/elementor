@@ -128,22 +128,22 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	moveFloatingBarsBasedOnPosition() {
-		const floatingBars = document.querySelectorAll( '[data-widget_type^="floating-bars"]' );
+		const el = this.$element[ 0 ];
+		const $widget = el.querySelector( '.e-floating-bars' );
+		if (
+			el.dataset.widget_type.startsWith( 'floating-bars' ) &&
+			$widget.classList.contains( 'has-vertical-position-top' ) &&
+			! $widget.classList.contains( 'is-sticky' )
+		) {
+			const elementToInsert = elementorFrontend.isEditMode() ? el.closest( '[data-element_type="container"]' ) : el;
+			const wpAdminBar = document.getElementById( 'wpadminbar' );
 
-		floatingBars.forEach( ( element ) => {
-			const floatingBar = element.querySelector( '.e-floating-bars' );
-
-			if ( floatingBar.classList.contains( 'has-vertical-position-top' ) && ! floatingBar.classList.contains( 'is-sticky' ) ) {
-				const elementToInsert = elementorFrontend.isEditMode() ? element.closest( '[data-element_type="container"]' ) : element;
-				const wpAdminBar = document.getElementById( 'wpadminbar' );
-
-				if ( wpAdminBar ) {
-					wpAdminBar.after( elementToInsert );
-				} else {
-					document.body.prepend( elementToInsert );
-				}
+			if ( wpAdminBar ) {
+				wpAdminBar.after( elementToInsert );
+			} else {
+				document.body.prepend( elementToInsert );
 			}
-		} );
+		}
 	}
 
 	onInit( ...args ) {
