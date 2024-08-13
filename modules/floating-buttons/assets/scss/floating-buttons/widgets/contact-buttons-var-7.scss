@@ -59,28 +59,6 @@
 			&:focus {
 				color: var(--e-contact-buttons-button-icon-hover);
 			}
-
-			&.has-icon-position-start {
-
-				.e-contact-buttons__chat-button-text {
-					order: 2;
-				}
-
-				svg {
-					order: 1;
-				}
-			}
-
-			&.has-icon-position-end {
-
-				.e-contact-buttons__chat-button-text {
-					order: 1;
-				}
-
-				svg {
-					order: 2;
-				}
-			}
 		}
 	}
 }
