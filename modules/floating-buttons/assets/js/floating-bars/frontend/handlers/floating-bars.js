@@ -145,10 +145,32 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	moveFloatingBarsBasedOnPosition() {
+		const el = this.$element[ 0 ];
+		const $widget = el.querySelector( '.e-floating-bars' );
+
+		if (
+			el.dataset.widget_type.startsWith( 'floating-bars' ) &&
+			$widget.classList.contains( 'has-vertical-position-top' ) &&
+			! $widget.classList.contains( 'is-sticky' )
+		) {
+			const elementToInsert = elementorFrontend.isEditMode() ? el.closest( '[data-element_type="container"]' ) : el;
+			const wpAdminBar = document.getElementById( 'wpadminbar' );
+
+			if ( wpAdminBar ) {
+				wpAdminBar.after( elementToInsert );
+			} else {
+				document.body.prepend( elementToInsert );
+			}
+		}
+	}
+
 	onInit( ...args ) {
 		const { hasEntranceAnimation, ctaEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
+
+		this.moveFloatingBarsBasedOnPosition();
 
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
 			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
