@@ -26,7 +26,7 @@ test.describe( 'Container tests @container', () => {
 		await page.close();
 	} );
 
-	test('Background slideshow', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Background slideshow', async ({ page, apiRequests }, testInfo) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -39,12 +39,12 @@ test.describe( 'Container tests @container', () => {
 		await editor.setChooseControlValue( 'background_background', 'eicon-slideshow' );
 		await editor.addImagesToGalleryControl();
 
-		await test.step( 'Verify background slideshow' , async () => {
+		await test.step( 'Verify background slideshow', async () => {
 			await editor.togglePreviewMode();
 			await expect.soft( editor.getPreviewFrame().locator( '.e-con' ).nth( 0 ) ).toHaveScreenshot( 'editor-container-background-slideshow.png' );
 			await editor.togglePreviewMode();
 			await editor.publishAndViewPage();
-		});
+		} );
 
 		await test.step( 'Verify background slideshow on the frontend', async () => {
 			await expect.soft( page.locator( '.e-con' ) ).toHaveScreenshot( 'frontend-container-background-slideshow.png' );

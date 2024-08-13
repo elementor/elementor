@@ -4,7 +4,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';
 import { clickTab, setup, setTabItemColor, selectDropdownContainer } from './helper';
-import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -29,7 +28,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	} );
 
 	test( 'General test', async ( { page, apiRequests }, testInfo ) => {
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -43,7 +41,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tests.
 		await testIconCount( editor );
 		await testTitlesWithHTML( page, editor );
-		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( editor, imageCarousel );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( editor );
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 

@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Container tests @container', () => {
