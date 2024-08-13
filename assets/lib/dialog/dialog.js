@@ -104,7 +104,7 @@
 		};
 
 		this.maybeLoadAssets = async function () {
-			const isFrontend = window.hasOwnProperty( 'elementorFrontend' ) && window.elementorFrontend.hasOwnProperty( 'utils' ) && window.elementorFrontend.utils.hasOwnProperty( 'assetsLoader' )
+			const isFrontend = !! window.elementorFrontend?.utils?.assetsLoader;
 
 			if ( ! isFrontend ) {
 				return;
