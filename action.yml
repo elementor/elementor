@@ -7,7 +7,7 @@ inputs:
     description: 'Optional. The version of the package to use.'
     default: ""
   DEPLOY_BUILDS_ENDPOINT:
-    required: true
+    required: false
     description: 'The endpoint to deploy the builds to.'
     default: ""
   ELEMENTOR_PRO_CORE_BRANCH:
