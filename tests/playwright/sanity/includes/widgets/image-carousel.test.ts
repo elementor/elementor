@@ -29,7 +29,6 @@ test.describe( 'Image carousel tests', () => {
 
 	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
 		await wpAdmin.openNewPage();
@@ -38,7 +37,8 @@ test.describe( 'Image carousel tests', () => {
 
 		const widgetId = await editor.addWidget( 'image-carousel' );
 		await editor.setSelectControlValue( 'navigation', 'none' );
-		await imageCarousel.addImageGallery();
+		await editor.openPanelTab( 'content' );
+		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
@@ -84,7 +84,6 @@ test.describe( 'Image carousel tests', () => {
 
 	test( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
@@ -99,7 +98,8 @@ test.describe( 'Image carousel tests', () => {
 
 		// Add and configure widget
 		await editor.addWidget( 'image-carousel' );
-		await imageCarousel.addImageGallery();
+		await editor.openPanelTab( 'content' );
+		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 		await editor.openPanelTab( 'style' );
@@ -139,7 +139,8 @@ test.describe( 'Image carousel tests', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'heading' );
 		await editor.addWidget( 'image-carousel' );
-		await imageCarousel.addImageGallery();
+		await editor.openPanelTab( 'content' );
+		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
@@ -178,7 +179,8 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setSwitcherControlValue( 'autoplay', false );
 		await editor.openSection( 'section_image_carousel' );
 		await editor.setSelectControlValue( 'navigation', 'none' );
-		await imageCarousel.addImageGallery( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
+		await editor.openPanelTab( 'content' );
+		await editor.addImagesToGalleryControl( { images: [ 'A.jpg', 'B.jpg', 'C.jpg' ], metaData: true } );
 		await editor.setSelectControlValue( 'caption_type', 'caption' );
 		await imageCarousel.verifyCaption( caption );
 		await editor.setSelectControlValue( 'caption_type', 'description' );
