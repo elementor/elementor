@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Modules\Checklist\Data\Controller;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -27,6 +28,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		parent::__construct();
 
