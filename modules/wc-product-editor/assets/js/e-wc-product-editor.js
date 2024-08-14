@@ -15,4 +15,5 @@ function ElementorHeaderItem() {
 
 registerPlugin( 'elementor-header-item', {
 	render: ElementorHeaderItem,
+	scope: 'woocommerce-product-block-editor',
 } );
