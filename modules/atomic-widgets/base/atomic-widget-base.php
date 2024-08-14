@@ -152,14 +152,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			case 'image-attachment':
 				$attachment_url = wp_get_attachment_url( $setting['value']['id'] );
 
-				if ( ! $attachment_url ) {
-					return [
-						'url' => Utils::get_placeholder_image_src(),
-					];
-				}
-
 				return [
-					'url' => $attachment_url,
+					'url' => $attachment_url ?? Utils::get_placeholder_image_src(),
 				];
 
 			case 'image-url':
