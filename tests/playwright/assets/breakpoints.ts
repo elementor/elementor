@@ -51,7 +51,7 @@ export default class {
 				await reloadButton.click();
 			}
 		} else {
-			await this.page.click( 'text=Update' );
+			await this.page.locator( 'text=Update' ).click();
 			await this.page.waitForSelector( '#elementor-toast' );
 		}
 	}
