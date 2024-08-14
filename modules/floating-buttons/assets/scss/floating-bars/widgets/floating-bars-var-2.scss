@@ -11,13 +11,12 @@
 	--e-floating-bars-headline-icon-size: 16px;
 	--e-floating-bars-vertical-padding: 16px;
 	--e-floating-bars-headline-icon-position: row;
-	--e-floating-bars-pause-play-icon-size: 16px;
+	--e-floating-bars-controls-icon-size: 16px;
 	--e-floating-bars-scroll-duration: 100s;
 	--e-floating-bars-scroll-direction: forwards;
 	--e-floating-bars-ticker-controls-order: 1;
 
 	align-items: stretch;
-	background-color: unset;
 	gap: 0;
 	padding: 0;
 
@@ -85,6 +84,11 @@
 				height: var(--e-floating-bars-headline-icon-size);
 				width: var(--e-floating-bars-headline-icon-size);
 			}
+
+			i {
+				color: var(--e-floating-bars-headline-icon-color);
+				font-size: var(--e-floating-bars-headline-icon-size);
+			}
 		}
 
 		&__ticker-controls {
@@ -107,8 +111,13 @@
 
 			svg {
 				fill: var(--e-floating-bars-pause-play-icon-color);
-				height: var(--e-floating-bars-pause-play-icon-size);
-				width: var(--e-floating-bars-pause-play-icon-size);
+				height: var(--e-floating-bars-controls-icon-size);
+				width: var(--e-floating-bars-controls-icon-size);
+			}
+
+			i {
+				color: var(--e-floating-bars-pause-play-icon-color);
+				font-size: var(--e-floating-bars-controls-icon-size);
 			}
 
 			&[aria-hidden="true"] {
@@ -121,7 +130,6 @@
 			align-self: stretch !important; // to override the core variation
 			background-color: var(--e-floating-bars-close-button-bg-color);
 			border-radius: 0;
-			font-size: 28px;
 			inset-inline-end: unset !important; // to override the core variation
 			inset-inline-start: unset !important; // to override the core variation
 			order: var(--e-floating-bars-ticker-controls-order);
@@ -129,6 +137,10 @@
 			position: relative;
 			top: unset !important; // to override the core variation
 			z-index: $first-layer;
+
+			i {
+				font-size: var(--e-floating-bars-controls-icon-size);
+			}
 		}
 
 		&__play-pause-controls {
