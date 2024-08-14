@@ -1,16 +1,15 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
-import ImageCarousel from '../../../../../../../pages/widgets/image-carousel';
 
 test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
-	const imageCarousel = new ImageCarousel( page, testInfo );
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
 	await editor.addWidget( 'image-carousel' );
-	await imageCarousel.addImageGallery( { images } );
+	await editor.openPanelTab( 'content' );
+	await editor.addImagesToGalleryControl( { images } );
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSwitcherControlValue( 'lazyload', true );
 	await editor.setSwitcherControlValue( 'autoplay', false );
