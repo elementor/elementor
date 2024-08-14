@@ -7,9 +7,9 @@ function ElementorHeaderItem() {
     const productId = useEntityId( 'postType', 'product' );
 
     return (
-        <WooHeaderItem name="product">
-            <Button>Edit with Elementor { productId }</Button>
-        </WooHeaderItem>
+		<WooHeaderItem name="product">
+			<Button>Edit with Elementor { productId }</Button>
+		</WooHeaderItem>
     );
 }
 
