@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Utils;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -147,6 +148,18 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				return is_array( $setting['value'] )
 					? join( ' ', $setting['value'] )
 					: '';
+
+			case 'image-attachment':
+				$attachment_url = wp_get_attachment_url( $setting['value']['id'] );
+
+				return [
+					'url' => $attachment_url ?? Utils::get_placeholder_image_src(),
+				];
+
+			case 'image-url':
+				return [
+					'url' => $setting['value']['url'] ?? Utils::get_placeholder_image_src(),
+				];
 
 			default:
 				return null;
