@@ -148,9 +148,13 @@
 		transition: $transition-hover;
 		white-space: nowrap;
 
-		&.has-entrance-animation {
+		&.animated {
 			animation-delay: var(--e-floating-bars-cta-button-animation-delay);
 			animation-duration: var(--e-floating-bars-cta-button-animation-duration);
+			animation-iteration-count: 1;
+		}
+
+		&.has-entrance-animation {
 			opacity: 0;
 		}
 	
