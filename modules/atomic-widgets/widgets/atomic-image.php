@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Attachment_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -86,9 +87,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$media_control = Attachment_Control::bind_to( 'image' )
-			->set_media_type( 'image' )
-			->set_wp_media_title( esc_html__( 'Insert Media', 'elementor' ) );
+		$image_control = Attachment_Control::bind_to( 'image' )
+			->set_media_type( 'image' );
 
 		$options = $this->get_image_size_options();
 
@@ -99,8 +99,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
+				$image_control,
 				$resolution_control,
-				$media_control,
 			]);
 
 		return [
