@@ -18,9 +18,9 @@ test.describe( 'Image carousel tests', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 		const breakpoints = new Breakpoints( page );
