@@ -647,7 +647,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->register_runtime_widget( $this->get_group_name() );
 			}
 
-			$this->print_widget_css();
+			// $this->print_widget_css();
 
 			// get_name
 

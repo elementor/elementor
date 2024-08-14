@@ -564,7 +564,7 @@ class Widgets_Manager {
 	 * @return array The names of the widgets that have styles.
 	 */
 	public function widgets_with_styles(): array {
-		$widgets = [
+		return [
 			'counter',
 			'divider',
 			'google_maps',
@@ -579,8 +579,6 @@ class Widgets_Manager {
 			'text-editor',
 			'video',
 		];
-
-		return $widgets;
 	}
 
 	/**
@@ -595,7 +593,7 @@ class Widgets_Manager {
 	 * @return array The names of the widgets that have responsive styles.
 	 */
 	public function widgets_with_responsive_styles(): array {
-		$widgets = [
+		return [
 			'accordion',
 			'alert',
 			'icon-box',
@@ -607,8 +605,6 @@ class Widgets_Manager {
 			'tabs',
 			'toggle',
 		];
-
-		return $widgets;
 	}
 
 	/**
