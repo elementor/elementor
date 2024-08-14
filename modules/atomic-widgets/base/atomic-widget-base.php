@@ -155,19 +155,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				if ( ! $attachment_url ) {
 					return [
 						'url' => Utils::get_placeholder_image_src(),
-						'alt' => 'Default Image',
 					];
 				}
 
 				return [
 					'url' => $attachment_url,
-					'alt' => 'Alt Text', //TODO: Get the alt text from the attachment.
 				];
 
 			case 'image-url':
 				return [
 					'url' => $setting['value']['url'] ?? Utils::get_placeholder_image_src(),
-					'alt' => $setting['value']['alt'] ?? 'Default Image',
 				];
 
 			default:

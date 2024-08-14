@@ -32,7 +32,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		?> <img
 			src='<?php echo esc_attr( $image['url'] ); ?>'
-			alt='<?php echo esc_attr( $image['alt'] ); ?>'
+			alt='Atomic Image'
 		/>
 		<?php
 	}
@@ -115,7 +115,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 					'$$type' => 'image-url',
 					'value' => [
 						'url' => Utils::get_placeholder_image_src(),
-						'alt' => 'Default Image',
 					],
 				] ),
 
