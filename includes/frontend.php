@@ -573,9 +573,9 @@ class Frontend extends App {
 		foreach ( $widgets_with_styles as $widget_name ) {
 			wp_register_style(
 				"widget-{$widget_name}",
-				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
+				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
 				[],
-				ELEMENTOR_VERSION
+				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
 
