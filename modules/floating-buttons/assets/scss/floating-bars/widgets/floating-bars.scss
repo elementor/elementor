@@ -38,7 +38,7 @@
 	padding-inline-end: var(--e-floating-bars-elements-padding-inline-end);
 	padding-inline-start: var(--e-floating-bars-elements-padding-inline-start);
 	width: 100%;
-	z-index: $element-overlay;
+	z-index: $super-layer;
 
 	@media (max-width: $screen-mobile-max) {
 		align-items: flex-start;
@@ -85,9 +85,12 @@
 	}
 
 	&__announcement-text {
+		align-items: center;
 		color: var(--e-floating-bars-announcement-text-color);
+		display: flex;
 		font-size: 16px;
 		font-weight: 400;
+		height: 100%;
 		margin: 0;
 	}
 
@@ -101,6 +104,11 @@
 			fill: var(--e-floating-bars-announcement-icon-color);
 			height: var(--e-floating-bars-announcement-icon-size);
 			width: var(--e-floating-bars-announcement-icon-size);
+		}
+
+		i {
+			color: var(--e-floating-bars-announcement-icon-color);
+			font-size: var(--e-floating-bars-announcement-icon-size);
 		}
 	}
 
