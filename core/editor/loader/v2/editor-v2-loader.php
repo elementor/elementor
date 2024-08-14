@@ -32,6 +32,16 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	];
 
 	/**
+	 * Additional dependencies for packages that rely on global variables, rather than
+	 * an explicit npm dependency (e.g. `window.elementor`, `window.wp`, etc.).
+	 */
+	const ADDITIONAL_DEPS = [
+		'editor-v1-adapters' => [
+			'elementor-web-cli',
+		],
+	];
+
+	/**
 	 * @return void
 	 */
 	public function init() {
@@ -75,13 +85,13 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				);
 			}
 
-			$additional_deps = $this->get_additional_deps( $config['handle'] );
-			$final_deps = array_merge( $config['deps'], $additional_deps );
+			$additional_deps = self::ADDITIONAL_DEPS[ $package ] ?? [];
+			$deps = array_merge( $config['deps'], $additional_deps );
 
 			wp_register_script(
 				$config['handle'],
 				"{$assets_url}js/packages/{$package}/{$package}{$min_suffix}.js",
-				$final_deps,
+				$deps,
 				ELEMENTOR_VERSION,
 				true
 			);
@@ -190,24 +200,5 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		return Collection::make( $styles )
 			->unique()
 			->all();
-	}
-
-	/**
-	 * Get additional dependencies for packages that rely on global variables, rather
-	 * than an explicit npm dependency (e.g. `window.elementor`, `window.wp`, etc.).
-	 *
-	 * @param string $handle
-	 *
-	 * @return string[]
-	 */
-	private function get_additional_deps( string $handle ): array {
-		$map = [
-			'elementor-v2-editor-v1-adapters' => [
-				'elementor-editor',
-				'elementor-web-cli',
-			],
-		];
-
-		return $map[ $handle ] ?? [];
 	}
 }
