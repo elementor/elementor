@@ -1041,7 +1041,7 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 						],
 					],
 					'default' => 'end',
-					'toggle' => true,
+					'toggle' => false,
 					'selectors' => $config['style']['floating_bar_section']['close_position_selectors'],
 					'condition' => [
 						'floating_bar_close_switch' => 'yes',
@@ -1057,6 +1057,27 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-close-button-color: {{VALUE}}',
+				],
+				'condition' => [
+					'floating_bar_close_switch' => 'yes',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'style_floating_bar_close_button_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 150,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-close-icon-size: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
 					'floating_bar_close_switch' => 'yes',

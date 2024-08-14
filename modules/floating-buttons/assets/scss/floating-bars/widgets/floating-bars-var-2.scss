@@ -47,6 +47,10 @@
 
 			.e-floating-bars__headlines-inner {
 				animation: scroll var(--e-floating-bars-scroll-duration) var(--e-floating-bars-scroll-direction) linear infinite;
+
+				[dir="rtl"] & {
+					animation: scroll-reverse var(--e-floating-bars-scroll-duration) var(--e-floating-bars-scroll-direction) linear infinite;
+				}
 			}
 
 			&.is-paused,
@@ -160,7 +164,13 @@
 }
 
 @keyframes scroll {
-    to {
-        transform: translate(-100%);
-    }
+	to {
+		transform: translate(-100%);
+	}
+}
+
+@keyframes scroll-reverse {
+	to {
+		transform: translate(100%);
+	}
 }

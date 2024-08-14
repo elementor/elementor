@@ -77,6 +77,14 @@
 			&.is-type-price-tag,
 			&.is-type-gift-tag {
 				padding-inline-start: calc(var(--e-floating-bars-coupon-padding-inline-start) + 1.5em);
+
+				[dir="rtl"] & {
+
+					.e-floating-bars__shape {
+						transform: rotate(180deg);
+					}
+				}
+
 			}
 
 			&.is-type-round-ticket,
@@ -112,6 +120,10 @@
 
 			.circle {
 				fill: var(--e-floating-bars-announcement-bg-color);
+			}
+
+			&:not(:root) {
+				overflow: visible !important; // to prevent cutting off the shape
 			}
 		}
 

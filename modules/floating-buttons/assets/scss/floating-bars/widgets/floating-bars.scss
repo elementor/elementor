@@ -26,6 +26,7 @@
 	--e-floating-bars-cta-button-animation-delay: 500ms;
 	--e-floating-bars-cta-button-animation-duration: 1000ms;
 	--e-floating-bars-background-overlay-opacity: 0.5;
+	--e-floating-bars-close-icon-size: 24px;
 
 	align-items: center;
 	background-color: var(--e-floating-bars-announcement-bg-color);
@@ -202,7 +203,7 @@
 		position: absolute;
 
 		i {
-			font-size: 24px;
+			font-size: var(--e-floating-bars-close-icon-size);
 		}
 
 		@media (max-width: $screen-mobile-max) {
