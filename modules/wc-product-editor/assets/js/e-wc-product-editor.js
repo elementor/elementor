@@ -1,15 +1,14 @@
-import { WooHeaderItem } from '@woocommerce/admin-layout';
-import { useEntityId } from '@wordpress/core-data';
-import { Button } from '@wordpress/components';
-
+const { WooHeaderItem } = wc.adminLayout;
+const { useEntityId } = wp.coreData;
+const { Button } = wp.components;
 const { registerPlugin } = wp.plugins;
 
 function ElementorHeaderItem() {
-    // const productId = useEntityId( 'postType', 'product' );
+    const productId = useEntityId( 'postType', 'product' );
 
     return (
         <WooHeaderItem name="product">
-            <Button>Edit with Elementor</Button>
+            <Button>Edit with Elementor { productId }</Button>
         </WooHeaderItem>
     );
 }
