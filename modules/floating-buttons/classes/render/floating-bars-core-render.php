@@ -16,7 +16,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 	protected function render_announcement_icon(): void {
 		$icon = $this->settings['announcement_icon'] ?? '';
 
-		if ( '' !== $icon ) : ?>
+		if ( '' !== $icon['value'] ) : ?>
 			<span class="e-floating-bars__announcement-icon"><?php Icons_Manager::render_icon( $icon, [ 'aria-hidden' => 'true' ] ); ?></span>
 		<?php endif;
 	}
@@ -43,7 +43,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 			'class' => $icon_classnames,
 		] );
 
-		if ( '' !== $icon ) : ?>
+		if ( '' !== $icon['value'] ) : ?>
 			<span <?php echo $this->widget->get_render_attribute_string( 'cta-icon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php Icons_Manager::render_icon( $icon, [ 'aria-hidden' => 'true' ] ); ?></span>
 		<?php endif;
 	}
@@ -113,7 +113,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		?>
 			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<i class="eicon-editor-close"></i>
+				<i class="eicon-close"></i>
 			</button>
 		<?php
 	}
@@ -131,7 +131,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 			$this->render_cta_button();
 
-			if ( $has_close_button ) {
+			if ( 'yes' === $has_close_button ) {
 				$this->render_close_button();
 			}
 			?>

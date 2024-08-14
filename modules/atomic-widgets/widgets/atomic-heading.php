@@ -43,7 +43,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected function define_atomic_controls(): array {
 		$tag_control = Select_Control::bind_to( 'tag' )
-			->set_label( __( 'Tag', 'elementor' ) )
+			->set_label( esc_html__( 'Tag', 'elementor' ) )
 			->set_options( [
 				[
 					'value' => 'h1',
