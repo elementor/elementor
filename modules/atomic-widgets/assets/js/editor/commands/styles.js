@@ -118,7 +118,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		const { bind, meta, props } = args;
 		container = container.lookup();
 
-		const initialStyleDefID = args.styleDefID;
 		let styleDefID = args.styleDefID ?? null;
 
 		const oldStyles = structuredClone( container.model.get( 'styles' ) ) ?? {};
@@ -161,7 +160,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		} );
 
 		if ( this.isHistoryActive() ) {
-			const oldStyleDef = initialStyleDefID ? oldStyles[ initialStyleDefID ] : undefined;
+			const oldStyleDef = oldStyles[ styleDefID ];
 			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 			const newBindSetting = container.settings.get( bind );
 
