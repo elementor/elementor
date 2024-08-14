@@ -60,8 +60,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 * @param {{}}        meta
 	 * @param {{}}        props
 	 * @param {{}}        oldProps
-	 * @param {{}}        oldSettings
-	 * @param {{}}        newSettings
 	 */
 	addToHistory(
 		container,
@@ -70,8 +68,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		meta,
 		props,
 		oldProps,
-		oldSettings,
-		newSettings,
 	) {
 		const newPropsEmpty = Object.keys( props ).reduce( ( emptyValues, key ) => {
 			emptyValues[ key ] = undefined;
@@ -83,11 +79,9 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 					styleDefID,
 					meta,
 					old: {
-						settings: oldSettings,
 						props: { ...newPropsEmpty, ...oldProps },
 					},
 					new: {
-						settings: newSettings,
 						props,
 					},
 				},
@@ -122,7 +116,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 		const oldStyles = structuredClone( container.model.get( 'styles' ) ) ?? {};
 
-		const oldBindSetting = container.settings.get( bind );
 		let style = {};
 
 		if ( ! styleDefID ) {
@@ -162,15 +155,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		if ( this.isHistoryActive() ) {
 			const oldStyleDef = oldStyles[ styleDefID ];
 			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
-			const newBindSetting = container.settings.get( bind );
-
-			const oldSettings = {
-				[ bind ]: oldBindSetting ?? null,
-			};
-
-			const newSettings = {
-				[ bind ]: newBindSetting,
-			};
 
 			this.addToHistory(
 				container,
@@ -179,8 +163,6 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 				meta,
 				props,
 				oldProps,
-				oldSettings,
-				newSettings,
 			);
 		}
 	}
