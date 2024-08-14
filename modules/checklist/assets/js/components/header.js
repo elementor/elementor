@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 const Header = () => {
 	const closeChecklist = () => {
-		$e.run( 'checklist/toggle' );
+		$e.run( 'checklist/toggle-popup' );
 	};
 
 	return (

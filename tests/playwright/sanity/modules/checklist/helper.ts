@@ -17,7 +17,14 @@ export default class ChecklistHelper {
 
 	async setChecklistSwitcherInPreferences( shouldShow: boolean ) {
 		await this.editor.openUserPreferencesPanel();
+		// await this.page.pause()
 		await this.editor.setSwitcherControlValue( controlIds.preferencePanel.checklistSwitcher, shouldShow );
+		await this.page.waitForResponse( async ( response ) => {
+			const body = await response.json();
+			console.log( body);
+
+			return response.url().includes( 'wp-admin/admin-ajax.php' ) && body.data?.responses?.save_editorPreferences_settings?.success;
+		} );
 	}
 
 	async toggleChecklistInTheEditor( shouldOpen: boolean = true ) {
@@ -41,7 +48,7 @@ export default class ChecklistHelper {
 			return;
 		}
 
-		await this.page.click( this.getButtonSelector( itemId ) );
+		await this.page.click( this.getStepButtonSelector( itemId ) );
 	}
 
 	async isChecklistOpen() {
@@ -50,25 +57,23 @@ export default class ChecklistHelper {
 	}
 
 	async isChecklistItemExpanded( itemId: string ) {
-		const checklistItemSelector = this.getContentSelector( itemId );
+		const checklistItemSelector = this.getStepContentSelector( itemId );
 
 		return await this.isChecklistOpen() && (
-			await this.editor.previewFrame.locator( checklistItemSelector ).isVisible() ||
+			await this.editor.page.locator( checklistItemSelector ).isVisible() ||
 			await this.page.locator( checklistItemSelector ).isVisible()
 		);
 	}
 
 	async toggleMarkAsDone( itemId: string, status: 'done' | 'undone' ) {
 		await this.toggleChecklistItem( itemId, true );
-
-
 	}
 
-	getContentSelector( itemId: string, innerSelector: string = '' ) {
+	getStepContentSelector( itemId: string, innerSelector: string = '' ) {
 		return `${ selectors.popup } ${ selectors.checklistItemContent }[data-id="${ itemId }"] ${ innerSelector }`;
 	}
 
-	getButtonSelector( itemId: string ) {
+	getStepButtonSelector( itemId: string ) {
 		return `${ selectors.popup } ${ selectors.checklistItemButton }[data-id="${ itemId }"]`;
 	}
 }

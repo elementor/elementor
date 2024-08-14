@@ -8,6 +8,7 @@ const controlIds = {
 };
 
 const selectors = {
+	topBarIcon: '[aria-label="Checklist"]',
 	popup: '#e-checklist .e-checklist-popup',
 	closeButton: '.e-checklist-close',
 	checklistItemButton: '.e-checklist-item-button',

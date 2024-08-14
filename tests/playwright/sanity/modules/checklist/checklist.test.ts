@@ -2,20 +2,21 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
+import ChecklistHelper from "./helper";
 
 test.describe( 'Launchpad checklist tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			editor_v2: true,
-			'launchpad-checklist': true,
-		} );
-
-		await page.close();
-	} );
+	// test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+	// 	const context = await browser.newContext();
+	// 	const page = await context.newPage();
+	// 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	//
+	// 	await wpAdmin.setExperiments( {
+	// 		editor_v2: true,
+	// 		'launchpad-checklist': true,
+	// 	} );
+	//
+	// 	await page.close();
+	// } );
 
 	// test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 	// 	const context = await browser.newContext();
@@ -36,12 +37,12 @@ test.describe( 'Launchpad checklist tests', () => {
 				editor = await wpAdmin.openNewPage();
 
 			await test.step( 'Rocket Icon in top bar is visible', async () => {
-				const rocketButton = editor.page.locator( controlIds.topBar.icon );
+				const rocketButton = editor.page.locator( selectors.topBarIcon  );
 				await expect( rocketButton ).toBeVisible();
 			} );
 
 			await test.step( 'Open checklist trigger', async () => {
-				const rocketButton = editor.page.locator( controlIds.topBar.icon ),
+				const rocketButton = editor.page.locator( selectors.topBarIcon  ),
 					checklist = editor.page.locator( selectors.popup );
 
 				await rocketButton.click();
@@ -58,15 +59,56 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 	} );
 
-	test.only( 'Checklist should be displayed', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage();
+	test.only( 'Checklist preference switch effects', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			checklistHelper = new ChecklistHelper( page, wpAdmin, editor );
 
 		await test.step( 'Assert switch is visible in user preferences', async () => {
 			await editor.openUserPreferencesPanel();
 			await editor.openSection( 'preferences' );
 
-			await expect.soft( page.locator( controlIds.preferencePanel.checklistSwitcher ) ).toHaveScreenshot( 'checklist-switch-on.png' );
+			await expect.soft( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) )
+				.toHaveScreenshot( 'checklist-switch-on.png' );
+			await expect( page.locator( selectors.topBarIcon ) ).toBeVisible();
+		} );
+
+		await test.step( 'Assert no top bar icon when switch is off', async () => {
+			await checklistHelper.toggleChecklistInTheEditor( true );
+			await editor.page.waitForSelector( selectors.popup );
+
+			await expect( page.locator( selectors.topBarIcon ) ).toBeVisible();
+
+			await checklistHelper.setChecklistSwitcherInPreferences( false );
+
+			await expect( page.locator( selectors.topBarIcon ) ).toBeHidden();
+			await expect( editor.page.locator( selectors.popup ) ).toBeHidden();
+		} );
+
+		await editor.saveAndReloadPage();
+
+		await test.step( 'Assert off preference is saved and items are hidden', async () => {
+			await editor.openUserPreferencesPanel();
+			await editor.openSection( 'preferences' );
+
+			await expect.soft( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) )
+				.toHaveScreenshot( 'checklist-switch-off.png' );
+			await expect( page.locator( selectors.topBarIcon ) ).toBeHidden();
+		} );
+
+		await checklistHelper.setChecklistSwitcherInPreferences( true );
+		await editor.saveAndReloadPage();
+		await wpAdmin.setExperiments( {
+			'launchpad-checklist': false,
+		} );
+
+		await test.step( 'Assert nothing is visible when experiment is off', async () => {
+			await editor.openUserPreferencesPanel();
+			await editor.openSection( 'preferences' );
+
+			await expect.soft( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) )
+				.toHaveScreenshot( 'checklist-switch-off.png' );
+			await expect( page.locator( selectors.topBarIcon ) ).toBeHidden();
 		} );
 	} );
 } );
