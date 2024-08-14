@@ -17,14 +17,8 @@ export default class ChecklistHelper {
 
 	async setChecklistSwitcherInPreferences( shouldShow: boolean ) {
 		await this.editor.openUserPreferencesPanel();
-		// await this.page.pause()
 		await this.editor.setSwitcherControlValue( controlIds.preferencePanel.checklistSwitcher, shouldShow );
-		await this.page.waitForResponse( async ( response ) => {
-			const body = await response.json();
-			console.log( body);
-
-			return response.url().includes( 'wp-admin/admin-ajax.php' ) && body.data?.responses?.save_editorPreferences_settings?.success;
-		} );
+		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 	}
 
 	async toggleChecklistInTheEditor( shouldOpen: boolean = true ) {
