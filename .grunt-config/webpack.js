@@ -136,7 +136,7 @@ const entry = {
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
-	'wc-product-editor': path.resolve( __dirname, '../assets/dev/js/admin/wc-product-editor.js' ),
+	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 };
 
@@ -160,6 +160,8 @@ const externals = [
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
+		'@wordpress/core-data': 'wp.coreData',
+		'@woocommerce/admin-layout': 'wc.adminLayout',
 	},
 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
 	function ( { request }, callback ) {
