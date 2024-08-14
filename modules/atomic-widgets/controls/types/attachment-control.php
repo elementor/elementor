@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Attachment_Control extends Atomic_Control_Base {
+	private string $title;
+
 	/**
 	 * @var string $media_type The type of the media. Can be 'image';
 	 */
@@ -15,6 +17,12 @@ class Attachment_Control extends Atomic_Control_Base {
 
 	public function get_type(): string {
 		return 'attachment';
+	}
+
+	public function set_title( string $title ): self {
+		$this->title = $title;
+
+		return $this;
 	}
 
 	public function set_media_type( string $media_type ): self {
@@ -25,6 +33,7 @@ class Attachment_Control extends Atomic_Control_Base {
 
 	public function get_props(): array {
 		return [
+			'title' => $this->title,
 			'media_type' => $this->media_type,
 		];
 	}
