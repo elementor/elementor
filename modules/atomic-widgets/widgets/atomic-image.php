@@ -88,8 +88,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 	protected function define_atomic_controls(): array {
 		$image_control = Attachment_Control::bind_to( 'image' )
-			->set_title( esc_html__( 'Image', 'elementor' ) )
-			->set_media_type( 'image' );
+			->set_media_types( [ 'image' ] );
 
 		$options = $this->get_image_size_options();
 
