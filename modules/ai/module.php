@@ -794,7 +794,6 @@ class Module extends BaseModule {
 			'usage' => $result['usage'],
 		];
 	}
-
 	public function ajax_ai_get_image_to_image_mask_cleanup ( $data ) {
 		$this->verify_upload_permissions( $data );
 
