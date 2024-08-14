@@ -35,9 +35,27 @@ class Loader extends Module {
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				'e-swiper' => [
+					'src' => $this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [ 'swiper' ],
+				],
+				'swiper' => [
+					'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
+					'version' => $this->getSwiperVersion(),
+					'dependencies' => [],
+				],
 			],
 			'scripts' => [],
 		];
+	}
+
+	private function getSwiperPath() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
+	}
+
+	private function getSwiperVersion() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? '8.4.5' : '5.3.6';
 	}
 
 	public function get_assets() {
