@@ -9,6 +9,7 @@ export const LOCATIONS = {
 	REMOVE_BACKGROUND: 'remove-background',
 	REPLACE_BACKGROUND: 'replace-background',
 	REMOVE_TEXT: 'remove-text',
+	CLEANUP: 'cleanup',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
