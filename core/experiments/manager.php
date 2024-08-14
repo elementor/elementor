@@ -471,7 +471,7 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_swiper_css_conditional_loading',
-			'title' => esc_html__( 'Load Swiper CSS on every page', 'elementor' ),
+			'title' => esc_html__( 'Conditionally load Swiper CSS files', 'elementor' ),
 			static::TYPE_HIDDEN => true,
 			'default' => self::STATE_INACTIVE,
 		] );
