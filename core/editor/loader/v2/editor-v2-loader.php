@@ -29,6 +29,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'store',
 		'ui',
 		'utils',
+		'wp-media',
 	];
 
 	/**
@@ -38,6 +39,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	const ADDITIONAL_DEPS = [
 		'editor-v1-adapters' => [
 			'elementor-web-cli',
+		],
+		'wp-media' => [
+			'media-models',
 		],
 	];
 
