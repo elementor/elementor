@@ -46,7 +46,7 @@ export default class ChecklistHelper {
 	}
 
 	async isChecklistOpen() {
-		return ( await this.editor?.previewFrame.locator( selectors.popup ).isVisible() ) ||
+		return ( await this.editor?.page.locator( selectors.popup ).isVisible() ) ||
 			( await this.page.locator( selectors.popup ).isVisible() );
 	}
 
@@ -59,16 +59,16 @@ export default class ChecklistHelper {
 		);
 	}
 
-	async toggleMarkAsDone( itemId: string, status: 'done' | 'undone' ) {
+	async toggleMarkAsDone( itemId: string ) {
 		await this.toggleChecklistItem( itemId, true );
 	}
 
 	getStepContentSelector( itemId: string, innerSelector: string = '' ) {
-		return `${ selectors.popup } ${ selectors.checklistItemContent }[data-id="${ itemId }"] ${ innerSelector }`;
+		return `${ selectors.popup } ${ selectors.checklistItemContent }.checklist-step-${ itemId } ${ innerSelector }`;
 	}
 
 	getStepButtonSelector( itemId: string ) {
-		return `${ selectors.popup } ${ selectors.checklistItemButton }[data-id="${ itemId }"]`;
+		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId }`;
 	}
 }
 

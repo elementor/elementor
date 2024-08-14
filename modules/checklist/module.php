@@ -146,12 +146,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		} );
 	}
 
-	public static function is_checklist_shown() : bool {
+	public static function is_preference_switch_on() : bool {
 		$user_preferences = get_user_meta( get_current_user_id(), Preferences_Manager::META_KEY, true );
 		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
-		$is_checklist_shown = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
+		$is_preference_switch_on = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
 
-		return 'yes' === $is_checklist_shown;
+		return 'yes' === $is_preference_switch_on;
 	}
 
 	private function register_experiment() : void {

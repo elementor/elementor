@@ -2,10 +2,10 @@ import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } f
 import PropTypes from 'prop-types';
 
 const ChecklistCardContent = ( props ) => {
-	const { description, link, CTA } = props.step;
+	const { description, link, CTA, id } = props.step;
 
 	return (
-		<Card elevation={ 0 } square={ true } className="e-checklist-item-content">
+		<Card elevation={ 0 } square={ true } className={ `e-checklist-item-content checklist-step-${ id }` }>
 			<CardMedia
 				image="https://elementor.com/cdn-cgi/image/f=auto,w=1100/https://elementor.com/wp-content/uploads/2022/01/Frame-10879527.png"
 				sx={ { height: 180 } }

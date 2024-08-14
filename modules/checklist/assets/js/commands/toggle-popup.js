@@ -21,11 +21,8 @@ export class TogglePopup extends $e.modules.CommandBase {
 		TogglePopup.rootElement.render( <App /> );
 	}
 
-	/**
-	 * Remove the app from the page
-	 */
 	unmount() {
-		TogglePopup.rootElement.unmount(); // eslint-disable-line react/no-deprecated
+		TogglePopup.rootElement.unmount();
 		document.body.removeChild( document.body.querySelector( '#e-checklist' ) );
 	}
 

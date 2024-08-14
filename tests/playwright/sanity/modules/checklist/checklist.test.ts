@@ -37,12 +37,12 @@ test.describe( 'Launchpad checklist tests', () => {
 				editor = await wpAdmin.openNewPage();
 
 			await test.step( 'Rocket Icon in top bar is visible', async () => {
-				const rocketButton = editor.page.locator( selectors.topBarIcon  );
+				const rocketButton = editor.page.locator( selectors.topBarIcon );
 				await expect( rocketButton ).toBeVisible();
 			} );
 
 			await test.step( 'Open checklist trigger', async () => {
-				const rocketButton = editor.page.locator( selectors.topBarIcon  ),
+				const rocketButton = editor.page.locator( selectors.topBarIcon ),
 					checklist = editor.page.locator( selectors.popup );
 
 				await rocketButton.click();
