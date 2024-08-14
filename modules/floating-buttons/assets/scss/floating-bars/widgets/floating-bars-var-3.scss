@@ -47,10 +47,9 @@
 				opacity: 1;
 			}
 
-			&.is-type-text,
-			&.is-type-cutout {
+			&.has-border.is-type-cutout {
 				border-color: var(--e-floating-bars-coupon-border-color);
-				border-style: solid;
+				border-style: dashed;
 				border-width: var(--e-floating-bars-coupon-border-width);
 			}
 
@@ -61,10 +60,6 @@
 				--e-floating-bars-coupon-padding-inline-start: 0;
 				--e-floating-bars-coupon-border-width: 0;
 				--e-floating-bars-coupon-bg-color: transparent;
-			}
-
-			&.is-type-cutout {
-				border-style: dashed;
 			}
 
 			&.is-type-price-tag,
