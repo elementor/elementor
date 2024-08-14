@@ -556,7 +556,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-wp-admin-bar',
-			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			$this->get_css_assets_url( 'admin-bar', 'assets/css/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
