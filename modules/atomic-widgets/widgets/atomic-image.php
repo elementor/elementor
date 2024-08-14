@@ -28,10 +28,10 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image = $settings['image'];
+		$image_url = $settings['image']['url'];
 
 		?> <img
-			src='<?php echo esc_attr( $image['url'] ); ?>'
+			src='<?php echo esc_url( $image_url ); ?>'
 			alt='Atomic Image'
 		/>
 		<?php
