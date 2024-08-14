@@ -134,7 +134,7 @@
 		"@elementor/store": "0.8.5",
 		"@elementor/ui": "1.16.0",
 		"@elementor/utils": "0.2.1",
-		"@elementor/wp-media": "0.1.0",
+		"@elementor/wp-media": "0.1.1",
 		"@lodder/grunt-postcss": "^3.1.1",
 		"@reach/router": "1.3.4",
 		"@reduxjs/toolkit": "^1.8.3",
