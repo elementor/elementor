@@ -120,7 +120,7 @@
 		"@elementor/editor": "0.12.0",
 		"@elementor/editor-app-bar": "0.16.1",
 		"@elementor/editor-documents": "0.11.6",
-		"@elementor/editor-editing-panel": "0.10.0",
+		"@elementor/editor-editing-panel": "0.9.1",
 		"@elementor/editor-panels": "0.5.0",
 		"@elementor/editor-responsive": "0.12.0",
 		"@elementor/editor-site-navigation": "0.23.1",
