@@ -1,5 +1,5 @@
 import Base from 'elementor-frontend/handlers/base';
-import FloatingBarDomHelper from "../classes/floatin-bar-dom";
+import FloatingBarDomHelper from '../classes/floatin-bar-dom';
 
 export default class FloatingBarsHandler extends Base {
 	getDefaultSettings() {
