@@ -168,6 +168,10 @@
 		"@reach/router": {
 			"react": "$react",
 			"react-dom": "$react-dom"
+		},
+		"@woocommerce/admin-layout": {
+			"react": "$react",
+			"react-dom": "$react-dom"
 		}
 	}
 }
