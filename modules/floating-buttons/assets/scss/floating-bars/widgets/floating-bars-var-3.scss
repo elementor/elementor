@@ -15,6 +15,8 @@
 	--e-floating-bars-coupon-padding-inline-start: 20px;
 	--e-floating-bars-coupon-animation-delay: 500ms;
 	--e-floating-bars-coupon-animation-duration: 1000ms;
+	--e-floating-bars-coupon-width: initial;
+	--e-floating-bars-coupon-height: initial;
 
 	.e-floating-bars {
 
@@ -25,12 +27,14 @@
 			border-radius: 0;
 			color: var(--e-floating-bars-coupon-button-color);
 			display: flex;
+			height: var(--e-floating-bars-coupon-height);
 			order: 3;
 			padding-block-end: var(--e-floating-bars-coupon-padding-block-end);
 			padding-block-start: var(--e-floating-bars-coupon-padding-block-start);
 			padding-inline-end: var(--e-floating-bars-coupon-padding-inline-end);
 			padding-inline-start: var(--e-floating-bars-coupon-padding-inline-start);
 			position: relative;
+			width: var(--e-floating-bars-coupon-width);
 
 			&:hover,
 			&:focus {
