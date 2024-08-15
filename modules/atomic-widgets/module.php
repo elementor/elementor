@@ -4,6 +4,9 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\transformers\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\transformers\Image_Attachment_Transformer;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
@@ -36,6 +39,11 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 
+			add_filter(
+				'elementor/atomic-widgets/settings/transformers',
+				fn (Collection $transformers) => $this->register_transformers( $transformers )
+			);
+
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
 	}
@@ -58,6 +66,12 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
+	}
+
+	private function register_transformers( Collection $transformers ): Collection {
+		$transformers->offsetSet( Classes_Transformer::type(), new Classes_Transformer() );
+
+		return $transformers;
 	}
 
 	/**

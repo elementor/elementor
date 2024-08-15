@@ -2,7 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\Settings_Provider;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -116,58 +116,14 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		$schema = static::get_props_schema();
-		$raw_settings = $this->get_settings();
-
-		$transformed_settings = [];
-
-		foreach ( $schema as $key => $prop ) {
-			if ( array_key_exists( $key, $raw_settings ) ) {
-				$transformed_settings[ $key ] = $raw_settings[ $key ];
-			} else {
-				$transformed_settings[ $key ] = $prop->get_default();
-			}
-
-			$transformed_settings[ $key ] = $this->transform_setting( $transformed_settings[ $key ] );
-		}
-
-		return $transformed_settings;
+		return Settings_Provider::instance()->transform(
+			$this->get_settings(),
+			static::get_props_schema()
+		);
 	}
 
 	public static function get_props_schema() {
 		return static::define_props_schema();
-	}
-
-	private function transform_setting( $setting ) {
-		if ( ! $this->is_transformable( $setting ) ) {
-			return $setting;
-		}
-
-		switch ( $setting['$$type'] ) {
-			case 'classes':
-				return is_array( $setting['value'] )
-					? join( ' ', $setting['value'] )
-					: '';
-
-			case 'image-attachment':
-				$attachment_url = wp_get_attachment_url( $setting['value']['id'] );
-
-				return [
-					'url' => $attachment_url ?? Utils::get_placeholder_image_src(),
-				];
-
-			case 'image-url':
-				return [
-					'url' => $setting['value']['url'] ?? Utils::get_placeholder_image_src(),
-				];
-
-			default:
-				return null;
-		}
-	}
-
-	private function is_transformable( $setting ): bool {
-		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
 	abstract protected static function define_props_schema(): array;
