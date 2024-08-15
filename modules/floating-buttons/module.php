@@ -136,6 +136,12 @@ class Module extends BaseModule {
 			return $common_controls;
 		} );
 
+		add_filter( 'elementor/settings/controls/checkbox_list_cpt/post_type_objects', function ( $post_types ) {
+			unset( $post_types[ static::CPT_FLOATING_BUTTONS ] );
+
+			return $post_types;
+		} );
+
 		add_filter(
 			'elementor/template_library/sources/local/is_valid_template_type',
 			function ( $is_valid_template_type, $cpt ) {
