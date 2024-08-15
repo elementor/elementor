@@ -40,10 +40,10 @@ function EditWithElementorButton() {
 
 	const getEditUrl = ( id ) => {
 		const url = new URL( ElementorWCProductEditorSettings.editLink );
-	
+
 		url.searchParams.set( 'post', id );
 		url.searchParams.set( 'action', 'elementor' );
-	
+
 		return url.toString();
 	};
 
