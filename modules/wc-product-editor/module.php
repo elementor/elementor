@@ -26,7 +26,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'e-wc-product-editor',
 			ELEMENTOR_ASSETS_URL . 'js/e-wc-product-editor' . $suffix . '.js',
-			[ 'wp-components', 'wp-core-data', 'wc-admin-layout', 'wp-plugins', 'wc-product-editor', 'wc-experimental' ],
+			[ 'wp-components', 'wp-core-data', 'wc-admin-layout', 'wp-plugins' ],
 			ELEMENTOR_VERSION,
 			true
 		);
