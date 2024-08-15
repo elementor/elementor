@@ -556,7 +556,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-wp-admin-bar',
-			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			$this->get_css_assets_url( 'admin-bar', 'assets/css/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -655,8 +655,10 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			// TODO: Remove in version 3.26.0 [ED-15471]
-			wp_enqueue_style( 'e-swiper' );
+			// TODO: Update in version 3.26.0 [ED-15471]
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
+				wp_enqueue_style( 'e-swiper' );
+			}
 
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
