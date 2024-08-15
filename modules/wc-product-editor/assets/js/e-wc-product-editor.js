@@ -4,7 +4,7 @@ const { Button } = wp.components;
 const { registerPlugin } = wp.plugins;
 const { useDispatch, useSelect } = wp.data;
 
-function ElementorHeaderItem() {
+function EditWithElementorButton() {
 	const productId = useEntityId( 'postType', 'product' );
 	const { saveEntityRecord } = useDispatch( 'core' );
 
@@ -58,6 +58,6 @@ function ElementorHeaderItem() {
 }
 
 registerPlugin( 'elementor-header-item', {
-	render: ElementorHeaderItem,
+	render: EditWithElementorButton,
 	scope: 'woocommerce-product-block-editor',
 } );
