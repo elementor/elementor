@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Attachment_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,11 +28,13 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		// TODO: Replace with actual URL prop
-		$image_url = $settings['url'];
+		$image_url = $settings['image']['url'];
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo "<img src='" . esc_url( $image_url ) . "' />";
+		?> <img
+			src='<?php echo esc_url( $image_url ); ?>'
+			alt='Atomic Image'
+		/>
+		<?php
 	}
 
 	private function get_image_size_options() {
@@ -84,6 +87,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
+		$image_control = Attachment_Control::bind_to( 'image' )
+			->set_media_types( [ 'image' ] );
+
 		$options = $this->get_image_size_options();
 
 		$resolution_control = Select_Control::bind_to( 'image_size' )
@@ -93,6 +99,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
+				$image_control,
 				$resolution_control,
 			]);
 
@@ -103,11 +110,16 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
+			'image' => Atomic_Prop::make()
+				->default( [
+					'$$type' => 'image-url',
+					'value' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				] ),
+
 			'image_size' => Atomic_Prop::make()
 				->default( 'large' ),
-
-			'url' => Atomic_Prop::make()
-				->default( Utils::get_placeholder_image_src() ),
 		];
 	}
 }
