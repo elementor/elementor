@@ -28,13 +28,19 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = $settings['image']['url'];
+		$attrs = $settings['image'] ?? [];
 
-		?> <img
-			src='<?php echo esc_url( $image_url ); ?>'
-			alt='Atomic Image'
-		/>
-		<?php
+		if ( $settings['classes'] ) {
+			$attrs['class'] = $settings['classes'];
+		}
+
+		Utils::print_wp_kses_extended(
+			sprintf(
+				'<img %1$s />',
+				Utils::render_html_attributes( $attrs )
+			),
+			[ 'image' ]
+		);
 	}
 
 	private function get_image_size_options() {
@@ -110,6 +116,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
+			'classes' => Atomic_Prop::make(),
+
 			'image' => Atomic_Prop::make()
 				->default( [
 					'$$type' => 'image-url',
