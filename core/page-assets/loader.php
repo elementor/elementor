@@ -3,6 +3,7 @@ namespace Elementor\Core\Page_Assets;
 
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
+use Elementor\Control_Animation;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -25,11 +26,13 @@ class Loader extends Module {
 	private function init_assets() {
 		$this->assets = [
 			'styles' => [
+				// TODO: Remove the 'e-animations' registration in v3.26.0 [ED-15471].
 				'e-animations' => [
 					'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				$this->get_animation_styles(),
 				'e-shapes' => [
 					'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
 					'version' => ELEMENTOR_VERSION,
@@ -50,12 +53,30 @@ class Loader extends Module {
 		];
 	}
 
-	private function getSwiperPath() {
+	private function getSwiperPath(): string {
 		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
 	}
 
-	private function getSwiperVersion() {
+	private function getSwiperVersion(): string {
 		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? '8.4.5' : '5.3.6';
+	}
+
+	private function get_animation_styles(): array {
+		$animations = Control_Animation::get_animations();
+
+		$styles = [];
+
+		foreach ( $animations as $group ) {
+			foreach ( $group as $animation => $label ) {
+				$styles[ $animation ] = [
+					'src' => $this->get_css_assets_url( 'e-animation-' . $animation, 'assets/lib/animations/styles' ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				];
+			}
+		}
+
+		return $styles;
 	}
 
 	public function get_assets() {
