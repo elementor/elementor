@@ -64,7 +64,8 @@ import { getUniqueId } from '../editor/context/requests-ids';
 
 		const addAiIndicator = ( panelName, functionAddAi ) => {
 			const isSidebarOpened = wp.data.select( 'core/edit-post' )?.isEditorPanelOpened( panelName );
-			if ( isSidebarOpened ) {
+			const isSidebarEnabled = wp.data.select( 'core/edit-post' )?.isEditorPanelEnabled( panelName );
+			if ( isSidebarOpened || isSidebarEnabled ) {
 				setTimeout( function() {
 					functionAddAi();
 				}, 1 );
