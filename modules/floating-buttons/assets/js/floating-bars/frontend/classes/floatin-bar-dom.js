@@ -20,9 +20,9 @@ export default class FloatingBarDomHelper {
 			const wpAdminBar = document.getElementById( 'wpadminbar' );
 
 			if ( wpAdminBar ) {
-				wpAdminBar.after( widget );
+				wpAdminBar.after( el );
 			} else {
-				document.body.prepend( widget );
+				document.body.prepend( el );
 			}
 		}
 	}
