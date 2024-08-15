@@ -39,8 +39,7 @@ function ElementorHeaderItem() {
 	};
 
 	const getEditUrl = ( id ) => {
-		const baseUrl = ElementorWCProductEditorSettings.editLink,
-			url = new URL( baseUrl );
+		const url = new URL( ElementorWCProductEditorSettings.editLink );
 	
 		url.searchParams.set( 'post', id );
 		url.searchParams.set( 'action', 'elementor' );
