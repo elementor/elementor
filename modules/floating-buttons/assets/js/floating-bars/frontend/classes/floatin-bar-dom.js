@@ -19,10 +19,12 @@ export default class FloatingBarDomHelper {
 		) {
 			const wpAdminBar = document.getElementById( 'wpadminbar' );
 
+			const elementToInsert = el.closest( '.elementor' );
+
 			if ( wpAdminBar ) {
-				wpAdminBar.after( el );
+				wpAdminBar.after( elementToInsert );
 			} else {
-				document.body.prepend( el );
+				document.body.prepend( elementToInsert );
 			}
 		}
 	}
