@@ -569,13 +569,22 @@ class Frontend extends App {
 		);
 
 		$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
-
 		foreach ( $widgets_with_styles as $widget_name ) {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
 				[],
 				ELEMENTOR_VERSION
+			);
+		}
+
+		$widgets_with_responsive_styles = Plugin::$instance->widgets_manager->widgets_with_responsive_styles();
+		foreach ( $widgets_with_responsive_styles as $widget_name ) {
+			wp_register_style(
+				"widget-{$widget_name}",
+				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
+				[],
+				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
 
