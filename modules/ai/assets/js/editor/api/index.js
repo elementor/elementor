@@ -50,6 +50,8 @@ export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_
 
 export const getImageToImageGeneration = ( payload ) => request( 'ai_get_image_to_image', { payload } );
 
+export const getImageToImageMaskCleanup = ( payload ) => request( 'ai_get_image_to_image_mask_cleanup', { payload } );
+
 export const getImageToImageMaskGeneration = ( payload ) => request( 'ai_get_image_to_image_mask', { payload } );
 
 export const getImageToImageOutPainting = ( payload ) => request( 'ai_get_image_to_image_outpainting', { payload } );
