@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	public function __construct() {
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 	}
 
 	public static function is_active() {
@@ -30,6 +30,11 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		$elementor_settings = [
+			'editLink' => admin_url( 'post.php' ),
+		];
+		Utils::print_js_config( 'e-wc-product-editor', 'ElementorWCProductEditorSettings', $elementor_settings );
 	}
 
 	public function get_name() {

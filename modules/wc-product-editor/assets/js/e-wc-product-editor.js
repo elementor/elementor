@@ -31,11 +31,21 @@ function ElementorHeaderItem() {
 			if ( wp.data.select( 'core/editor' ).isSavingPost() ) {
 				setTimeout( checkSaveStatus, 300 );
 			} else {
-				window.location.href = `/wp-admin/post.php?post=${ id }&action=elementor`;
+				window.location.href = getEditUrl( id );
 			}
 		};
 
 		checkSaveStatus();
+	};
+
+	const getEditUrl = ( id ) => {
+		const baseUrl = ElementorWCProductEditorSettings.editLink || '/wp-admin/post.php',
+			url = new URL( baseUrl );
+	
+		url.searchParams.set( 'post', id );
+		url.searchParams.set( 'action', 'elementor' );
+	
+		return url.toString();
 	};
 
 	return (
