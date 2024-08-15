@@ -95,7 +95,7 @@ class Loader extends Module {
 		$styles = [];
 
 		foreach ( $animations as $animation => $group_label ) {
-			$style_prefix = 'hover' === $group_label ? 'elementor-animation-' : '';
+			$style_prefix = 'hover' === $group_label ? 'e-animation-' : '';
 
 			$styles[ 'e-animation-' . $animation ] = [
 				'src' => $this->get_css_assets_url( $style_prefix . $animation, 'assets/lib/animations/styles/' ),
