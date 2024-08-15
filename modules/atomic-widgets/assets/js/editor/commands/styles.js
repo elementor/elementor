@@ -114,26 +114,29 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 		let styleDefID = args.styleDefID ?? null;
 
-		const oldStyles = structuredClone( container.model.get( 'styles' ) ) ?? {};
+		const currentStyle = structuredClone( container.model.get( 'styles' ) ) ?? {};
 
 		let style = {};
 
 		if ( ! styleDefID ) {
+			// Create a new style definition for the first time
 			style = $e.internal( 'document/atomic-widgets/create-style', {
 				container,
 				bind,
 			} );
 
 			styleDefID = style.id;
-		} else if ( ! oldStyles[ styleDefID ] ) {
+		} else if ( ! currentStyle[ styleDefID ] ) {
+			// Create a new style definition with the given ID
+			// used when the style is deleted and then re-applied (i.e. history undo/redo)
 			style = $e.internal( 'document/atomic-widgets/create-style', {
 				container,
 				styleDefID,
 				bind,
 			} );
-			// Throw new Error( 'Style Def not found' );
 		} else {
-			style = oldStyles[ styleDefID ];
+			// Use the existing style definition
+			style = currentStyle[ styleDefID ];
 		}
 
 		if ( ! getVariantByMeta( style.variants, meta ) ) {
@@ -144,16 +147,39 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		$e.internal( 'document/atomic-widgets/update-props', {
-			container,
-			styleDefID,
-			bind,
-			meta,
-			props,
-		} );
+		const nonEmptyValues = Object.values( props ).filter( ( value ) => value !== undefined );
+		if ( 0 === nonEmptyValues.length ) {
+			// Doesn't have any props to use for this variant
+			$e.internal( 'document/atomic-widgets/delete-variant', {
+				container,
+				styleDefID,
+				meta,
+			} );
+
+			const newStyles = container.model.get( 'styles' );
+			const newVariants = newStyles[ styleDefID ].variants;
+
+			if ( 0 === newVariants.length ) {
+				// After deleting the variant, there are no variants left
+				$e.internal( 'document/atomic-widgets/delete-style', {
+					container,
+					styleDefID,
+					bind,
+				} );
+			}
+		} else {
+			// Has valid props in the current variant
+			$e.internal( 'document/atomic-widgets/update-props', {
+				container,
+				styleDefID,
+				bind,
+				meta,
+				props,
+			} );
+		}
 
 		if ( this.isHistoryActive() ) {
-			const oldStyleDef = oldStyles[ styleDefID ];
+			const oldStyleDef = currentStyle[ styleDefID ];
 			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 
 			this.addToHistory(
