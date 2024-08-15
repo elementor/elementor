@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.3.0
  */
 class Loader extends Module {
-	private array $assets;
+	private array $assets = [];
 
 	public function get_name(): string {
 		return 'assets-loader';
