@@ -39,11 +39,14 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function register_styles() {
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
 		wp_register_style(
 			'widget-nested-tabs',
-			$this->get_css_assets_url( 'widget-nested-tabs', null, true, true ),
+			$this->get_frontend_file_url( "widget-nested-tabs{$direction_suffix}.min.css", $has_custom_breakpoints ),
 			[],
-			ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 	}
 }
