@@ -50,6 +50,10 @@
 		row-gap: 16px;
 	}
 
+	&:focus {
+		outline: none;
+	}
+
 	&.has-vertical-position-top {
 		inset-block-start: 0;
 	}
