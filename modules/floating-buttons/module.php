@@ -26,16 +26,11 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'floating-buttons';
 	const FLOATING_BARS_EXPERIMENT_NAME = 'floating-bars';
-
 	const FLOATING_ELEMENTS_TYPE_META_KEY = '_elementor_floating_elements_type';
-
 	const ROUTER_VERSION = '1.0.0';
 	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
-
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
-
 	const CLICK_TRACKING_NONCE = 'elementor-conversion-center-click';
-
 	const FLOATING_BUTTONS_DOCUMENT_TYPE = 'floating-buttons';
 	const CPT_FLOATING_BUTTONS = 'e-floating-buttons';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=e-floating-buttons';

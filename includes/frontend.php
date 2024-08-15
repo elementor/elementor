@@ -436,7 +436,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.9.0',
+			'4.9.3',
 			true
 		);
 
@@ -539,6 +539,13 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
+			'e-swiper',
+			$this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
+			[ 'swiper' ],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
 			'swiper',
 			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
 			[],
@@ -547,7 +554,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-wp-admin-bar',
-			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			$this->get_css_assets_url( 'admin-bar', 'assets/css/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -560,13 +567,22 @@ class Frontend extends App {
 		);
 
 		$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
-
 		foreach ( $widgets_with_styles as $widget_name ) {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
 				[],
 				ELEMENTOR_VERSION
+			);
+		}
+
+		$widgets_with_responsive_styles = Plugin::$instance->widgets_manager->widgets_with_responsive_styles();
+		foreach ( $widgets_with_responsive_styles as $widget_name ) {
+			wp_register_style(
+				"widget-{$widget_name}",
+				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
+				[],
+				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
 
@@ -646,7 +662,10 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			wp_enqueue_style( 'swiper' );
+			// TODO: Update in version 3.26.0 [ED-15471]
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
+				wp_enqueue_style( 'e-swiper' );
+			}
 
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
