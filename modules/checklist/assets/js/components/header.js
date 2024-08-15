@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 const Header = () => {
 	const closeChecklist = () => {
-		$e.run( 'checklist/toggle' );
+		$e.run( 'checklist/toggle-popup' );
 	};
 
 	return (
@@ -24,7 +24,7 @@ const Header = () => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<CloseButton onClick={ closeChecklist } />
+					<CloseButton onClick={ closeChecklist } className="e-checklist-close" />
 				</Toolbar>
 			</AppBar>
 			<Divider />

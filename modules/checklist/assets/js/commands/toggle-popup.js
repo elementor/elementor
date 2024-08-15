@@ -1,31 +1,28 @@
 import App from '../app';
 import ReactDOM from 'react-dom/client';
 
-export class Toggle extends $e.modules.CommandBase {
+export class TogglePopup extends $e.modules.CommandBase {
 	static rootElement = null;
 	static isOpen = false;
 
 	apply() {
-		if ( ! Toggle.isOpen ) {
+		if ( ! TogglePopup.isOpen ) {
 			this.mount();
 		} else {
 			this.unmount();
 		}
 
-		Toggle.isOpen = ! Toggle.isOpen;
+		TogglePopup.isOpen = ! TogglePopup.isOpen;
 	}
 
 	mount() {
 		this.setRootElement();
 
-		Toggle.rootElement.render( <App /> );
+		TogglePopup.rootElement.render( <App /> );
 	}
 
-	/**
-	 * Remove the app from the page
-	 */
 	unmount() {
-		Toggle.rootElement.unmount(); // eslint-disable-line react/no-deprecated
+		TogglePopup.rootElement.unmount();
 		document.body.removeChild( document.body.querySelector( '#e-checklist' ) );
 	}
 
@@ -38,8 +35,8 @@ export class Toggle extends $e.modules.CommandBase {
 			document.body.appendChild( root );
 		}
 
-		Toggle.rootElement = ReactDOM.createRoot( root );
+		TogglePopup.rootElement = ReactDOM.createRoot( root );
 	}
 }
 
-export default Toggle;
+export default TogglePopup;
