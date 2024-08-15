@@ -5,7 +5,7 @@ namespace Elementor\Modules\Checklist;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
-use Elementor\Core\Settings\EditorPreferences\Manager as Preferences_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
@@ -147,7 +147,9 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public static function is_preference_switch_on() : bool {
-		$user_preferences = get_user_meta( get_current_user_id(), Preferences_Manager::META_KEY, true );
+		$user_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->get_settings( self::VISIBILITY_SWITCH_ID );
 		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
 		$is_preference_switch_on = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
 
