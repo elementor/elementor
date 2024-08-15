@@ -175,7 +175,7 @@ class Control_Animation extends Base_Data_Control {
 		}
 
 		return [
-			'styles' => [ 'e-animations' ],
+			'styles' => [ 'e-animation-' . $setting ],
 		];
 	}
 }
