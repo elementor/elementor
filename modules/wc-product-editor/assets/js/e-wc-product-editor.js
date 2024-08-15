@@ -1,8 +1,8 @@
-const { WooHeaderItem } = wc.adminLayout;
-const { useEntityId } = wp.coreData;
-const { Button } = wp.components;
-const { registerPlugin } = wp.plugins;
-const { useDispatch, useSelect } = wp.data;
+import { WooHeaderItem } from '@woocommerce/admin-layout';
+import { useEntityId } from '@wordpress/core-data';
+import { Button } from '@wordpress/components';
+import { registerPlugin } from '@wordpress/plugins';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 function EditWithElementorButton() {
 	const productId = useEntityId( 'postType', 'product' );

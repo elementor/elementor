@@ -160,6 +160,10 @@ const externals = [
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
+		'@wordpress/core-data': 'wp.coreData',
+		'@wordpress/data': 'wp.data',
+		'@wordpress/plugins': 'wp.plugins',
+		'@woocommerce/admin-layout': 'wc.adminLayout',
 	},
 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
 	function ( { request }, callback ) {
