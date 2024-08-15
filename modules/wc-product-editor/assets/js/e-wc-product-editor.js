@@ -39,7 +39,7 @@ function ElementorHeaderItem() {
 	};
 
 	const getEditUrl = ( id ) => {
-		const baseUrl = ElementorWCProductEditorSettings.editLink || '/wp-admin/post.php',
+		const baseUrl = ElementorWCProductEditorSettings.editLink,
 			url = new URL( baseUrl );
 	
 		url.searchParams.set( 'post', id );
