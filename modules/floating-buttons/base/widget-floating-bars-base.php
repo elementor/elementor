@@ -1304,10 +1304,31 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-icon-size: {{SIZE}}{{UNIT}}',
 				],
-				'separator' => 'after',
 			]
 		);
 
+		$this->add_responsive_control(
+			'style_headlines_icon_spacing',
+			[
+				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .e-floating-bars' => '--e-floating-bars-headline-icon-gap: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
 		$this->add_control(
 			'style_headline_text_heading',
 			[

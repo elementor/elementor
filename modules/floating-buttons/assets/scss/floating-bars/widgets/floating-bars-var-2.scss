@@ -15,6 +15,7 @@
 	--e-floating-bars-scroll-duration: 100s;
 	--e-floating-bars-scroll-direction: forwards;
 	--e-floating-bars-ticker-controls-order: 1;
+	--e-floating-bars-headline-icon-gap: 10px;
 
 	align-items: stretch;
 	gap: 0;
@@ -68,7 +69,7 @@
 			color: var(--e-floating-bars-headline-text-color);
 			display: flex;
 			flex-direction: var(--e-floating-bars-headline-icon-position);
-			gap: 10px;
+			gap: var(--e-floating-bars-headline-icon-gap);
 			position: relative;
 			width: max-content;
 			z-index: $first-layer;

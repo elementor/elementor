@@ -197,11 +197,16 @@
 		}
 
 		&.is-type-link {
-			text-decoration: underline;
+			text-decoration: none;
+
+			.e-floating-bars__cta-text {
+				text-decoration: underline;
+			}
 		}
 	}
 
-	&__close-button {
+	&__close-button,
+	&__close-button[type="button"] {
 		align-items: center;
 		display: flex;
 		position: absolute;
