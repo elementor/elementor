@@ -344,13 +344,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Assert animation stylesheet on the frontend', async () => {
-			await expect( page.locator( '#e-animation-pulse-css' ) ).toHaveCount( 0 );
-			await expect( page.locator( '#e-animations-css' ) ).toHaveCount( 0 );
-
-			const eAnimationBounceInStylesheet = page.locator( '#e-animation-bounceIn-css' );
-
-			await expect( eAnimationBounceInStylesheet ).toHaveCount( 1 );
-			await expect( eAnimationBounceInStylesheet ).toHaveAttribute( 'href', expect.stringContaining( 'assets/lib/animations/styles/bounceIn.css' ) );
+			await expect( page.locator( EditorSelectors.container ) ).toHaveCSS( 'animation-name', 'bounceIn' );
 		} );
 	} );
 } );
