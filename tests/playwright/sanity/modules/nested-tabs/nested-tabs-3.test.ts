@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { editTab, clickTab, setup, selectDropdownContainer } from './helper';
-import exp from "constants";
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
