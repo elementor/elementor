@@ -59,7 +59,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect( finalTabWidth ).toBe( initialTabWidth );
 	} );
 
-	test.only( 'Test the hover animation', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Test the hover animation', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
