@@ -1,4 +1,4 @@
-name: Reusable workflow
+name: Reusable Build workflow
 
 on:
   workflow_call:
@@ -143,7 +143,7 @@ jobs:
 
           mv /tmp/elementor-builds/elementor.zip ./elementor.zip
 
-      - name: Build Plugin
+      - name: Build Plugin 2
         id: build_plugin
         run: |
           npm config set git-tag-version false

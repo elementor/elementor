@@ -51,10 +51,10 @@ jobs:
         uses: ./.github/workflows/check-changelog-pr
 
   build-plugin:
+    name: Build Plugin
     needs: [validate-changelog-diff]
     if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
     uses: ./.github/workflows/plugin-build.yml
-    name: Build Plugin
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
