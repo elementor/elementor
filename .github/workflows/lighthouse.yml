@@ -24,10 +24,10 @@ jobs:
         uses: ./.github/workflows/check-changelog-pr
 
   build-plugin:
+    name: Build Plugin
     needs: [validate-changelog-diff]
     if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
     uses: ./.github/workflows/plugin-build.yml
-    name: Build Plugin
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4

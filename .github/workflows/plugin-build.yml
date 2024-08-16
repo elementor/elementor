@@ -18,7 +18,6 @@ on:
       DEPLOY_BUILDS_ENDPOINT:
         required: false
         description: 'The endpoint to deploy the builds to.'
-        default: ""
 
     outputs:
       artifact_name:
