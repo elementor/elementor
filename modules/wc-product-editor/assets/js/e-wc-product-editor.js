@@ -1,16 +1,27 @@
-import { WooHeaderItem } from '@woocommerce/admin-layout';
+import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEntityId } from '@wordpress/core-data';
 import { Button } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { WooHeaderItem } from '@woocommerce/admin-layout';
 
 function EditWithElementorButton() {
+	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const productId = useEntityId( 'postType', 'product' );
 	const { saveEntityRecord } = useDispatch( 'core' );
 
 	const postStatus = useSelect( ( select ) => {
 		return select( 'core' ).getEditedEntityRecord( 'postType', 'product', productId )?.status;
 	}, [ productId ] );
+
+	const isSaving = wp.data.select( 'core/editor' ).isSavingPost();
+
+	useEffect( () => {
+		if ( isRedirecting && ! isSaving ) {
+			redirectToElementor();
+		}
+	}, [ isRedirecting, isSaving ] );
 
 	const handleClick = () => {
 		if ( 'auto-draft' === postStatus ) {
@@ -19,19 +30,19 @@ function EditWithElementorButton() {
 				name: `Elementor #${ productId }`,
 				status: 'draft',
 			} ).then( () => {
-				redirectToElementor( productId );
+				setIsRedirecting( true );
 			} ).catch( () => {} );
 		} else {
-			redirectToElementor( productId );
+			setIsRedirecting( true );
 		}
 	};
 
-	const redirectToElementor = ( id ) => {
+	const redirectToElementor = () => {
 		const checkSaveStatus = () => {
 			if ( wp.data.select( 'core/editor' ).isSavingPost() ) {
 				setTimeout( checkSaveStatus, 300 );
 			} else {
-				window.location.href = getEditUrl( id );
+				window.location.href = getEditUrl( productId );
 			}
 		};
 
@@ -51,7 +62,7 @@ function EditWithElementorButton() {
 		<WooHeaderItem name="product">
 			<Button variant="primary" onClick={ handleClick } style={ { display: 'flex', alignItems: 'center' } }>
 				<i className="eicon-elementor-square" aria-hidden="true" style={ { paddingInlineEnd: '8px' } }></i>
-				Edit with Elementor
+				{ __( 'Edit with Elementor', 'elementor' ) }
 			</Button>
 		</WooHeaderItem>
 	);
