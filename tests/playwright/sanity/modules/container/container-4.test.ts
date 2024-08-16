@@ -328,7 +328,6 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 
-
 	test( 'Test animation style inside the container', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
