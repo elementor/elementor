@@ -103,6 +103,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			} );
 
 			expect( tabHover ).toBe( true );
+		} );
 
 		await test.step( 'Test active tab on the frontend', async () => {
 			// Hover over an active tab.
