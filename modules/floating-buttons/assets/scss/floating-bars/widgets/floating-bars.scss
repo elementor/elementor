@@ -262,3 +262,12 @@
 .e-con-inner:has(.e-floating-bars) {
 	padding: 0;
 }
+
+.elementor-element:has(.e-floating-bars:is(:not(.is-sticky))) {
+	padding: 0;
+
+	.e-con-inner {
+		max-width: unset;
+		padding: 0;
+	}
+}
