@@ -88,14 +88,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		await test.step( 'Test hover animation settings on the frontend', async () => {
-			await page.waitForSelector( '.elementor-widget-n-tabs' );
+			const widget = page.locator( '.elementor-widget-n-tabs' );
+			await widget.waitFor();
 
 			await expect( page.locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
 
 			// Test the hover animation.
 			const tabNormal = page.locator( '.e-n-tab-title[aria-selected="false"]' ).last();
 			await tabNormal.hover();
-			await expect( tabNormal ).toHaveCSS( 'transform', 'matrix(1.1, 0, 0, 1.1, 0, 0)' );
+			await page.waitForTimeout( 1500 );
+			await expect.soft( widget ).toHaveScreenshot( 'nested-tabs-with-hover-grow.png' );
 		} );
 
 		await test.step( 'Test active tab on the frontend', async () => {
