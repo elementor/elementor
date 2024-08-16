@@ -38,15 +38,7 @@ function EditWithElementorButton() {
 	};
 
 	const redirectToElementor = () => {
-		const checkSaveStatus = () => {
-			if ( wp.data.select( 'core/editor' ).isSavingPost() ) {
-				setTimeout( checkSaveStatus, 300 );
-			} else {
-				window.location.href = getEditUrl();
-			}
-		};
-
-		checkSaveStatus();
+		window.location.href = getEditUrl();
 	};
 
 	const getEditUrl = () => {
