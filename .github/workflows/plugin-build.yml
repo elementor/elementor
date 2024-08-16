@@ -10,6 +10,7 @@ on:
         default: ""
       ELEMENTOR_PRO_CORE_BRANCH:
         required: false
+        type: string
         description: 'The branch of the core repository to use.'
         default: "main"
 
