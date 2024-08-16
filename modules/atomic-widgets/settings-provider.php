@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Transformer_Base;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -64,7 +65,7 @@ class Settings_Provider {
 				$transformer->transform( $value['value'] ),
 				$depth + 1
 			);
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			return null;
 		}
 	}
