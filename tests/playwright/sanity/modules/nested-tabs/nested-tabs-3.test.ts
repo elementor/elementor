@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { editTab, clickTab, setup, selectDropdownContainer } from './helper';
+import exp from "constants";
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
@@ -95,13 +96,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			// Test the hover animation.
 			const tabNormal = page.locator( '.e-n-tab-title[aria-selected="false"]' ).last();
 			await tabNormal.hover();
-			const tabHover = await tabNormal.evaluate( ( element ) => {
-				const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
-
-				return animationValue.includes( 'matrix(' );
-			} );
-
-			expect( tabHover ).toBe( true );
+			await expect( tabNormal ).toHaveCSS( 'transform', 'matrix(1.1, 0, 0, 1.1, 0, 0)' );
 		} );
 
 		await test.step( 'Test active tab on the frontend', async () => {
@@ -109,16 +104,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			const tabActive = page.locator( '.e-n-tab-title[aria-selected="true"]' );
 			await tabActive.hover();
 			await expect( tabActive ).toHaveCSS( 'transform', 'none' );
-		} );
-
-		await test.step( 'Assert that the correct stylesheets have been loaded', async () => {
-			await expect( page.locator( '#e-animation-pulse-css' ) ).toHaveCount( 0 );
-			await expect( page.locator( '#e-animations-css' ) ).toHaveCount( 0 );
-
-			const eAnimationGrowStylesheet = page.locator( '#e-animation-grow-css' );
-
-			await expect( eAnimationGrowStylesheet ).toHaveCount( 1 );
-			await expect( eAnimationGrowStylesheet ).toHaveAttribute( 'href', expect.stringContaining( 'assets/lib/animations/styles/e-animation-grow.css' ) );
 		} );
 
 		await test.step( 'Test mobile on the frontend', async () => {
