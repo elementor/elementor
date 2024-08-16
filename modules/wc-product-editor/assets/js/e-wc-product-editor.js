@@ -42,17 +42,17 @@ function EditWithElementorButton() {
 			if ( wp.data.select( 'core/editor' ).isSavingPost() ) {
 				setTimeout( checkSaveStatus, 300 );
 			} else {
-				window.location.href = getEditUrl( productId );
+				window.location.href = getEditUrl();
 			}
 		};
 
 		checkSaveStatus();
 	};
 
-	const getEditUrl = ( id ) => {
+	const getEditUrl = () => {
 		const url = new URL( ElementorWCProductEditorSettings.editLink );
 
-		url.searchParams.set( 'post', id );
+		url.searchParams.set( 'post', productId );
 		url.searchParams.set( 'action', 'elementor' );
 
 		return url.toString();
