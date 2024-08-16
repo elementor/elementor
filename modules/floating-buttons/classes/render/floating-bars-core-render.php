@@ -56,6 +56,7 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		$corners = $this->settings['style_cta_button_corners'];
 		$link_type = $this->settings['style_cta_type'];
 		$entrance_animation = $this->settings['style_cta_button_animation'];
+		$has_border = $this->settings['style_cta_button_show_border'];
 
 		$cta_classnames = 'e-floating-bars__cta-button';
 
@@ -73,6 +74,10 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 
 		if ( ! empty( $entrance_animation ) && 'none' != $entrance_animation ) {
 			$cta_classnames .= ' has-entrance-animation';
+		}
+
+		if ( 'yes' == $has_border ) {
+			$cta_classnames .= ' has-border';
 		}
 
 		$this->widget->add_render_attribute( 'cta-button', [
