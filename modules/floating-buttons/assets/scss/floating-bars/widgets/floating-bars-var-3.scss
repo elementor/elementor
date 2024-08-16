@@ -15,6 +15,8 @@
 	--e-floating-bars-coupon-padding-inline-start: 20px;
 	--e-floating-bars-coupon-animation-delay: 500ms;
 	--e-floating-bars-coupon-animation-duration: 1000ms;
+	--e-floating-bars-coupon-width: initial;
+	--e-floating-bars-coupon-height: initial;
 
 	.e-floating-bars {
 
@@ -25,24 +27,31 @@
 			border-radius: 0;
 			color: var(--e-floating-bars-coupon-button-color);
 			display: flex;
+			height: var(--e-floating-bars-coupon-height);
+			justify-content: center;
 			order: 3;
 			padding-block-end: var(--e-floating-bars-coupon-padding-block-end);
 			padding-block-start: var(--e-floating-bars-coupon-padding-block-start);
 			padding-inline-end: var(--e-floating-bars-coupon-padding-inline-end);
 			padding-inline-start: var(--e-floating-bars-coupon-padding-inline-start);
 			position: relative;
+			width: var(--e-floating-bars-coupon-width);
 
 			&:hover,
 			&:focus {
 				background-color: var(--e-floating-bars-coupon-bg-color);
 			}
 
-			&.has-entrance-animation {
+			&.animated {
 				animation-delay: var(--e-floating-bars-coupon-animation-delay);
 				animation-duration: var(--e-floating-bars-coupon-animation-duration);
+				animation-iteration-count: 1;
+			}
+
+			&.has-entrance-animation {
 				opacity: 0;
 			}
-	
+
 			&.visible {
 				opacity: 1;
 			}
@@ -77,6 +86,14 @@
 			&.is-type-price-tag,
 			&.is-type-gift-tag {
 				padding-inline-start: calc(var(--e-floating-bars-coupon-padding-inline-start) + 1.5em);
+
+				[dir="rtl"] & {
+
+					.e-floating-bars__shape {
+						transform: rotate(180deg);
+					}
+				}
+
 			}
 
 			&.is-type-round-ticket,
@@ -99,7 +116,6 @@
 				justify-content: center;
 			}
 		}
-		
 
 		&__shape {
 			left: 0;
@@ -112,6 +128,10 @@
 
 			.circle {
 				fill: var(--e-floating-bars-announcement-bg-color);
+			}
+
+			&:not(:root) {
+				overflow: visible !important; // to prevent cutting off the shape
 			}
 		}
 

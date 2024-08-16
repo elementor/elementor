@@ -10,11 +10,13 @@ export default class FloatingBarsHandler extends Base {
 			},
 			constants: {
 				ctaEntranceAnimation: 'style_cta_button_animation',
+				ctaEntranceAnimationDelay: 'style_cta_button_animation_delay',
 				hasEntranceAnimation: 'has-entrance-animation',
 				visible: 'visible',
 				isSticky: 'is-sticky',
 				hasVerticalPositionTop: 'has-vertical-position-top',
 				isHidden: 'is-hidden',
+				animated: 'animated',
 			},
 		};
 	}
@@ -36,14 +38,12 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	bindEvents() {
-		const { ctaEntranceAnimation } = this.getSettings( 'constants' );
-
 		if ( this.elements.closeButton ) {
 			this.elements.closeButton.addEventListener( 'click', this.closeFloatingBar.bind( this ) );
 		}
 
 		if ( this.elements.ctaButton ) {
-			this.elements.ctaButton.addEventListener( 'animationend', this.handleAnimationEnd.bind( this, this.elements.ctaButton, ctaEntranceAnimation ) );
+			this.elements.ctaButton.addEventListener( 'animationend', this.handleAnimationEnd.bind( this ) );
 		}
 
 		if ( this.elements.main ) {
@@ -91,32 +91,35 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
-	initEntranceAnimation( element, animation ) {
-		const { none } = this.getSettings( 'constants' );
+	initEntranceAnimation() {
+		const { animated, ctaEntranceAnimation, ctaEntranceAnimationDelay, hasEntranceAnimation } = this.getSettings( 'constants' );
+		const entranceAnimationClass = this.getResponsiveSetting( ctaEntranceAnimation );
+		const entranceAnimationDelay = this.getResponsiveSetting( ctaEntranceAnimationDelay ) || 0;
+		const setTimeoutDelay = entranceAnimationDelay + 500;
 
-		const entranceAnimationControl = this.getResponsiveSetting( animation );
+		this.elements.ctaButton.classList.add( animated );
+		this.elements.ctaButton.classList.add( entranceAnimationClass );
 
-		if ( ! entranceAnimationControl || none === entranceAnimationControl ) {
-			return;
-		}
-
-		element.classList.add( entranceAnimationControl );
+		setTimeout( () => {
+			this.elements.ctaButton.classList.remove( hasEntranceAnimation );
+		}, setTimeoutDelay );
 	}
 
-	handleAnimationEnd( element, animation ) {
-		this.removeEntranceAnimationClasses( element, animation );
+	handleAnimationEnd() {
+		this.removeEntranceAnimationClasses();
 		this.focusOnLoad();
 	}
 
-	removeEntranceAnimationClasses( element, animation ) {
-		if ( ! element ) {
+	removeEntranceAnimationClasses() {
+		if ( ! this.elements.ctaButton ) {
 			return;
 		}
+		const { animated, ctaEntranceAnimation, visible } = this.getSettings( 'constants' );
+		const entranceAnimationClass = this.getResponsiveSetting( ctaEntranceAnimation );
 
-		const { visible } = this.getSettings( 'constants' );
-
-		element.classList.remove( animation );
-		element.classList.add( visible );
+		this.elements.ctaButton.classList.remove( animated );
+		this.elements.ctaButton.classList.remove( entranceAnimationClass );
+		this.elements.ctaButton.classList.add( visible );
 	}
 
 	onDocumentKeyup( event ) {
@@ -166,14 +169,14 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	onInit( ...args ) {
-		const { hasEntranceAnimation, ctaEntranceAnimation } = this.getSettings( 'constants' );
+		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
 
 		this.moveFloatingBarsBasedOnPosition();
 
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
-			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
+			this.initEntranceAnimation();
 		}
 
 		this.initDefaultState();
