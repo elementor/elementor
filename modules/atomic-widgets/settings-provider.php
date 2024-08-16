@@ -51,11 +51,9 @@ class Settings_Provider {
 
 			$transformer = $this->transformers->get( $value['$$type'] );
 
-			if ( ! ( $transformer instanceof Atomic_Transformer_Base ) ) {
-				$result[ $prop_name ] = null;
-
-				continue;
-			}
+		if ( ! ( $transformer instanceof Atomic_Transformer_Base ) ) {
+			return null;
+		}
 
 			try {
 				$result[ $prop_name ] = $transformer->transform( $value['value'] );

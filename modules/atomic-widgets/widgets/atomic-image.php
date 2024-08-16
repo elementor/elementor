@@ -13,34 +13,65 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Image extends Atomic_Widget_Base {
-	public function get_icon() {
-		return 'eicon-image';
+	public function get_name() {
+		return 'a-image';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Atomic Image', 'elementor' );
 	}
 
-	public function get_name() {
-		return 'a-image';
+	public function get_icon() {
+		return 'eicon-image';
 	}
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$attrs = $settings['image'] ?? [];
-
-		if ( $settings['classes'] ) {
-			$attrs['class'] = $settings['classes'];
-		}
+		$attrs = array_filter( array_merge(
+			$settings['image'] ?? [],
+			[ 'class' => $settings['classes'] ?? '' ]
+		) );
 
 		Utils::print_wp_kses_extended(
 			sprintf(
-				'<img %1$s />',
+				'<img %1$s >',
 				Utils::render_html_attributes( $attrs )
 			),
 			[ 'image' ]
 		);
+	}
+
+	protected function define_atomic_controls(): array {
+		return [
+			Section::make()
+				->set_label( esc_html__( 'Content', 'elementor' ) )
+				->set_items( [
+					Attachment_Control::bind_to( 'image' )
+						->set_media_types( [ 'image' ] ),
+
+					Select_Control::bind_to( 'image_size' )
+						->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
+						->set_options( $this->get_image_size_options() ),
+				]),
+		];
+	}
+
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Atomic_Prop::make(),
+
+			'image' => Atomic_Prop::make()
+				->default( [
+					'$$type' => 'image-url',
+					'value' => [
+						'url' => Utils::get_placeholder_image_src(),
+					],
+				] ),
+
+			'image_size' => Atomic_Prop::make()
+				->default( 'large' ),
+		];
 	}
 
 	private function get_image_size_options() {
@@ -90,44 +121,5 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		// /** This filter is documented in wp-admin/includes/media.php */
 		return apply_filters( 'image_size_names_choose', $image_sizes );
-	}
-
-	protected function define_atomic_controls(): array {
-		$image_control = Attachment_Control::bind_to( 'image' )
-			->set_media_types( [ 'image' ] );
-
-		$options = $this->get_image_size_options();
-
-		$resolution_control = Select_Control::bind_to( 'image_size' )
-			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
-			->set_options( $options );
-
-		$content_section = Section::make()
-			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( [
-				$image_control,
-				$resolution_control,
-			]);
-
-		return [
-			$content_section,
-		];
-	}
-
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Atomic_Prop::make(),
-
-			'image' => Atomic_Prop::make()
-				->default( [
-					'$$type' => 'image-url',
-					'value' => [
-						'url' => Utils::get_placeholder_image_src(),
-					],
-				] ),
-
-			'image_size' => Atomic_Prop::make()
-				->default( 'large' ),
-		];
 	}
 }

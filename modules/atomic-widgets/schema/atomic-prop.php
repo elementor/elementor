@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Schema;
 use JsonSerializable;
 
 class Atomic_Prop implements JsonSerializable {
+	/** @var mixed  */
 	private $default_value = null;
 
 	public static function make(): self {
