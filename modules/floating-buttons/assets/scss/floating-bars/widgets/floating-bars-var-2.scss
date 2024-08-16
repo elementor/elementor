@@ -15,6 +15,7 @@
 	--e-floating-bars-scroll-duration: 100s;
 	--e-floating-bars-scroll-direction: forwards;
 	--e-floating-bars-ticker-controls-order: 1;
+	--e-floating-bars-headline-icon-gap: 10px;
 
 	align-items: stretch;
 	gap: 0;
@@ -47,6 +48,10 @@
 
 			.e-floating-bars__headlines-inner {
 				animation: scroll var(--e-floating-bars-scroll-duration) var(--e-floating-bars-scroll-direction) linear infinite;
+
+				[dir="rtl"] & {
+					animation: scroll-reverse var(--e-floating-bars-scroll-duration) var(--e-floating-bars-scroll-direction) linear infinite;
+				}
 			}
 
 			&.is-paused,
@@ -64,7 +69,7 @@
 			color: var(--e-floating-bars-headline-text-color);
 			display: flex;
 			flex-direction: var(--e-floating-bars-headline-icon-position);
-			gap: 10px;
+			gap: var(--e-floating-bars-headline-icon-gap);
 			position: relative;
 			width: max-content;
 			z-index: $first-layer;
@@ -125,7 +130,8 @@
 			}
 		}
 
-		&__close-button {
+		&__close-button,
+		&__close-button[type="button"] {
 			align-items: center;
 			align-self: stretch !important; // to override the core variation
 			background-color: var(--e-floating-bars-close-button-bg-color);
@@ -160,7 +166,13 @@
 }
 
 @keyframes scroll {
-    to {
-        transform: translate(-100%);
-    }
+	to {
+		transform: translate(-100%);
+	}
+}
+
+@keyframes scroll-reverse {
+	to {
+		transform: translate(100%);
+	}
 }
