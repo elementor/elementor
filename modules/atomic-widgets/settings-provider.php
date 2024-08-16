@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Settings_Provider {
+	const TRANSFORM_DEPTH_LIMIT = 3;
+
 	private static Settings_Provider $instance;
 
 	private Collection $transformers;
@@ -32,37 +34,39 @@ class Settings_Provider {
 	public function transform( array $settings, array $schema ): array {
 		$result = [];
 
+
 		foreach ( $schema as $prop_name => $prop ) {
-			if ( ! ( $prop instanceof Atomic_Prop ) ) {
-				$result[ $prop_name ] = null;
+			$result[ $prop_name ] = $prop instanceof Atomic_Prop
+				? $this->transform_value( $settings[ $prop_name ] ?? $prop->get_default() )
+				: null;
+		}
 
-				continue;
-			}
+		return $result;
+	}
 
-			$value = array_key_exists( $prop_name, $settings )
-				? $settings[ $prop_name ]
-				: $prop->get_default();
+	private function transform_value( $value, int $depth = 0 ) {
+		if ( ! $value || ! $this->is_transformable( $value ) ) {
+			return $value;
+		}
 
-			if ( ! $value || ! $this->is_transformable( $value ) ) {
-				$result[ $prop_name ] = $value;
+		if ( $depth >= self::TRANSFORM_DEPTH_LIMIT ) {
+			return null;
+		}
 
-				continue;
-			}
-
-			$transformer = $this->transformers->get( $value['$$type'] );
+		$transformer = $this->transformers->get( $value['$$type'] );
 
 		if ( ! ( $transformer instanceof Atomic_Transformer_Base ) ) {
 			return null;
 		}
 
-			try {
-				$result[ $prop_name ] = $transformer->transform( $value['value'] );
-			} catch ( \Exception $e ) {
-				$result[ $prop_name ] = null;
-			}
+		try {
+			return $this->transform_value(
+				$transformer->transform( $value['value'] ),
+				$depth + 1
+			);
+		} catch ( \Exception $e ) {
+			return null;
 		}
-
-		return $result;
 	}
 
 	private function is_transformable( $value ): bool {
