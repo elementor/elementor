@@ -5,6 +5,7 @@ namespace Elementor\Core\Settings\EditorPreferences;
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
 use Elementor\Modules\EditorAppBar\Module as AppBarModule;
+use Elementor\Modules\Checklist\Module as ChecklistModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -166,6 +167,29 @@ class Model extends BaseModel {
 				'description' => esc_html__( 'This refers to elements you’ve hidden in the Responsive Visibility settings.', 'elementor' ),
 			]
 		);
+
+		if ( Plugin::$instance->experiments->is_feature_active( ChecklistModule::EXPERIMENT_ID ) ) {
+			$this->add_control(
+				'get_started_heading',
+				[
+					'label' => esc_html__( 'Get Started', 'elementor' ),
+					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
+				]
+			);
+
+			$this->add_control(
+				ChecklistModule::VISIBILITY_SWITCH_ID,
+				[
+					'label' => esc_html__( 'Launchpad Checklist', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'Show', 'elementor' ),
+					'label_off' => esc_html__( 'Hide', 'elementor' ),
+					'default' => ChecklistModule::is_preference_switch_on() ? 'yes' : '',
+					'description' => esc_html__( 'Show a checklist to guide you through your first steps of website creation.', 'elementor' ),
+				]
+			);
+		}
 
 		$this->add_control(
 			'design_system_heading',

@@ -10,16 +10,8 @@ export default class Component extends ComponentModalBase {
 		const modalCommands = super.defaultCommands();
 
 		return {
-			toggle: () => {
-				elementorDevTools.deprecation.deprecated(
-					"$e.run( 'checklist/toggle' )",
-					'3.0.0',
-					"$e.run( 'checklist/toggle' )",
-				);
-
-				$e.run( 'checklist/toggle' );
-			},
-
+			togglePopup: () => $e.run( 'checklist/toggle-popup' ),
+			toggleIcon: () => $e.run( 'checklist/toggle-icon' ),
 			... modalCommands,
 			... this.importCommands( commands ),
 		};
