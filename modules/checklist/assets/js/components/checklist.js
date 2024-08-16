@@ -4,7 +4,7 @@ import { Paper } from '@elementor/ui';
 
 const Checklist = () => {
 	return (
-		<Paper elevation={ 5 } sx={ {
+		<Paper elevation={ 5 } className="e-checklist-popup" sx={ {
 			position: 'fixed',
 			width: '360px',
 			bottom: '40px',
