@@ -10,11 +10,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-plugin:
-    name: Build Plugin
+  validate-changelog-diff:
+    name: Validate Changelog Diff
     runs-on: ubuntu-22.04
     outputs:
-      artifact_name: ${{ steps.build_plugin.outputs.artifact_name }}
       changelog_diff: ${{ steps.changelog_diffs.outputs.changelog_diff }}
     steps:
       - name: Checkout Source Code
@@ -24,16 +23,17 @@ jobs:
         id: changelog_diffs
         uses: ./.github/workflows/check-changelog-pr
 
-      - name: Build Plugin
-        if: ${{ github.event.pull_request.title == null || steps.changelog_diffs.outputs.changelog_diff }}
-        id: build_plugin
-        uses: Batsirai-muchareva/elementor@main
+  build-plugin:
+    needs: [validate-changelog-diff]
+    if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
+    uses: ./.github/workflows/plugin-build.yml
+    name: Build Plugin
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4
     runs-on: ubuntu-latest
-    needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    needs: [build-plugin, validate-changelog-diff]
+    if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
