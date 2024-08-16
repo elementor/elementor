@@ -1,4 +1,5 @@
 import { Badge } from '@elementor/ui';
+import * as EditorAppBar from '@elementor/editor-app-bar';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import RocketIcon from '@elementor/icons/RocketIcon';
@@ -16,7 +17,7 @@ IconWithBadge.propTypes = {
 };
 
 export const editorV2 = () => {
-	const { utilitiesMenu } = window.elementorV2.editorAppBar;
+	const { utilitiesMenu } = EditorAppBar;
 
 	utilitiesMenu.registerLink( {
 		id: 'app-bar-menu-item-checklist',
@@ -26,7 +27,7 @@ export const editorV2 = () => {
 				title: __( 'Checklist', 'elementor' ),
 				icon: () => <RocketIcon />,
 				onClick: () => {
-					$e.commands.run( 'checklist/toggle' );
+					$e.commands.run( 'checklist/toggle-popup' );
 				},
 			};
 		},

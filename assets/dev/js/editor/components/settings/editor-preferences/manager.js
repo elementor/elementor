@@ -15,7 +15,14 @@ export default class extends BaseManager {
 			panel_width: this.onPanelWidthChanged,
 			edit_buttons: this.onEditButtonsChanged,
 			show_hidden_elements: this.onShowHiddenElementsChange,
+			show_launchpad_checklist: this.toggleChecklistIconVisibility,
 		};
+	}
+
+	toggleChecklistIconVisibility( switcherValue ) {
+		const shouldShow = 'yes' === switcherValue;
+
+		$e.run( 'checklist/toggle-icon', shouldShow );
 	}
 
 	onUIThemeChanged( newValue ) {
