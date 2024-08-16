@@ -25,7 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'floating-buttons';
-	const FLOATING_BARS_EXPERIMENT_NAME = 'floating-bars';
 	const FLOATING_ELEMENTS_TYPE_META_KEY = '_elementor_floating_elements_type';
 	const ROUTER_VERSION = '1.0.0';
 	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
@@ -54,15 +53,10 @@ class Module extends BaseModule {
 	}
 
 	public function get_widgets(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( static::FLOATING_BARS_EXPERIMENT_NAME ) ) {
-			return [
-				'Contact_Buttons',
-				'Floating_Bars_Var_1',
-			];
-		}
 
 		return [
 			'Contact_Buttons',
+			'Floating_Bars_Var_1',
 		];
 	}
 
@@ -79,20 +73,6 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-
-		Plugin::$instance->experiments->add_feature(
-			[
-				'name' => static::FLOATING_BARS_EXPERIMENT_NAME,
-				'title' => esc_html__( 'Floating Bars', 'elementor' ),
-				'description' => esc_html__( 'Boost visitor engagement with Floating Bars.', 'elementor' ),
-				Manager::TYPE_HIDDEN => true,
-				'release_status' => Manager::RELEASE_STATUS_DEV,
-				'default' => Manager::STATE_INACTIVE,
-				'dependencies' => [
-					'container',
-				],
-			]
-		);
 
 		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
@@ -134,6 +114,12 @@ class Module extends BaseModule {
 			}
 
 			return $common_controls;
+		} );
+
+		add_filter( 'elementor/settings/controls/checkbox_list_cpt/post_type_objects', function ( $post_types ) {
+			unset( $post_types[ static::CPT_FLOATING_BUTTONS ] );
+
+			return $post_types;
 		} );
 
 		add_filter(
