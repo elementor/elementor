@@ -31,6 +31,7 @@ jobs:
       PLUGIN_ZIP_FILENAME: ${{ env.PLUGIN_ZIP_FILENAME }}
       PLUGIN_ZIP_PATH: ${{ env.PLUGIN_ZIP_PATH }}
       PACKAGE_FILES_VERSION: ${{ env.PACKAGE_FILES_VERSION }}
+      BETA_VERSION: ${{ env.BETA_VERSION }}
       PREVIOUS_TAG_SHA: ${{ env.PREVIOUS_TAG_SHA }}
     steps:
       - name: Checkout Branch
@@ -80,6 +81,7 @@ jobs:
       PLUGIN_ZIP_FILENAME: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_FILENAME }}
       PLUGIN_ZIP_PATH: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_PATH }}
       PREVIOUS_TAG_SHA: ${{ needs.configure-env-variables.outputs.PREVIOUS_TAG_SHA }}
+      BETA_VERSION: ${{ needs.configure-env-variables.outputs.BETA_VERSION }}
     permissions: write-all
     runs-on: ubuntu-22.04
     steps:
@@ -102,6 +104,17 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Update Beta tag in Readme.txt file
+        run: |
+          if grep -q "Beta tag:" ./readme.txt
+            then
+              echo "Replace existing beta tag in readme file"
+              sed -i -E "s/Beta tag: .*/Beta tag: ${{ env.BETA_VERSION }}/g" ./readme.txt
+            else
+              echo "Add beta tag to readme file"
+              sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: ${{ env.BETA_VERSION }}$(printf '\n\r')" ./readme.txt
+          fi
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
