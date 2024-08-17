@@ -77,7 +77,7 @@ jobs:
 
       - name:  Update Versions in elementor files
         run: |
-          PACKAGE_FILES_VERSION = ${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
+          PACKAGE_FILES_VERSION=${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
 
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_FILES_VERSION}/g" ./${{ env.REPOSITORY_NAME }}.php
 
