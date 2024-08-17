@@ -24,10 +24,6 @@ on:
         description: "The name of the generated zip file."
         value: ${{ jobs.plugin_build.outputs.artifact_name }}
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   plugin_build:
     runs-on: ubuntu-latest

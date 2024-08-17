@@ -21,27 +21,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  latest_release:
-    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
-    permissions: write-all
+  configure-env-variables:
     runs-on: ubuntu-22.04
+    outputs:
+      PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+      CURRENT_CHANNEL_VERSION: ${{ env.CURRENT_CHANNEL_VERSION }}
+      CLEAN_REF: ${{ env.CLEAN_REF }}
+      PLUGIN_ZIP_FILENAME: ${{ env.PLUGIN_ZIP_FILENAME }}
+      PLUGIN_ZIP_PATH: ${{ env.PLUGIN_ZIP_PATH }}
+      PREVIOUS_TAG_SHA: ${{ env.PREVIOUS_TAG_SHA }}
     steps:
-      - name: checkout branch
+      - name: Checkout Branch
         uses: actions/checkout@v4
         with:
           ref: main
-
-      - name: Get Configuration
-        id: configuration
-        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
-        with:
-          filename: './.github/workflows/config.json'
-          prefix: config
-
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
 
       - name: Set POSTFIX value
         id: set_postfix_value
@@ -66,13 +60,57 @@ jobs:
           POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
           OVERRIDE_PACKAGE_VERSION: true
 
+  build-plugin:
+    name: Lighthouse Build Plugin
+    needs: [configure-env-variables]
+    uses: ./.github/workflows/plugin-build.yml
+    with:
+      PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
+
+  latest_release:
+    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+    needs: [ build-plugin, configure-env-variables ]
+    env:
+      PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
+      CLEAN_PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.CLEAN_PACKAGE_VERSION }}
+      CURRENT_CHANNEL_VERSION: ${{ needs.configure-env-variables.outputs.CURRENT_CHANNEL_VERSION }}
+      CLEAN_REF: ${{ needs.configure-env-variables.outputs.CLEAN_REF }}
+      PLUGIN_ZIP_FILENAME: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_FILENAME }}
+      PLUGIN_ZIP_PATH: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_PATH }}
+      PREVIOUS_TAG_SHA: ${{ needs.configure-env-variables.outputs.PREVIOUS_TAG_SHA }}
+    permissions: write-all
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Get Configuration
+        id: configuration
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
+        with:
+          filename: './.github/workflows/config.json'
+          prefix: config
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build plugin 5
-        uses: ./
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./elementor
+
+      - name: Zip the downloaded build
+        run: |
+          PLUGIN_ZIP_FILENAME=elementor-${{ env.PACKAGE_VERSION }}.zip
+          zip -r ${PLUGIN_ZIP_FILENAME} elementor
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1

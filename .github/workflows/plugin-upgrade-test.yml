@@ -34,7 +34,6 @@ jobs:
     if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
     uses: ./.github/workflows/plugin-build.yml
 
-
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-latest

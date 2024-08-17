@@ -25,10 +25,59 @@ permissions:
   id-token: "write"
 
 jobs:
+  configure-env-variables:
+    runs-on: ubuntu-22.04
+    outputs:
+      PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+      CURRENT_CHANNEL_VERSION: ${{ env.CURRENT_CHANNEL_VERSION }}
+      CLEAN_REF: ${{ env.CLEAN_REF }}
+      PLUGIN_ZIP_FILENAME: ${{ env.PLUGIN_ZIP_FILENAME }}
+      PLUGIN_ZIP_PATH: ${{ env.PLUGIN_ZIP_PATH }}
+      PREVIOUS_TAG_SHA: ${{ env.PREVIOUS_TAG_SHA }}
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.branch}}
+
+      - name: Env Vars Configure
+        id: env_vars_configure
+        uses: ./.github/workflows/env-vars-configure
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          REF: ${{ github.ref }}
+          POSTFIX: ''
+
+      - name: Bump Channel Version
+        id: bump_channel_version
+        uses: ./.github/workflows/bump-channel-version
+        with:
+          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+          CHANNEL: ${{ env.CHANNEL }}
+          POSTFIX: ''
+          OVERRIDE_PACKAGE_VERSION: true
+
+  build-plugin:
+    name: Lighthouse Build Plugin
+    needs: [configure-env-variables]
+    uses: ./.github/workflows/plugin-build.yml
+    with:
+      PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
+
   release:
     runs-on: ubuntu-22.04
+    needs: [ build-plugin, configure-env-variables ]
+    env:
+      PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
+      CLEAN_PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.CLEAN_PACKAGE_VERSION }}
+      CURRENT_CHANNEL_VERSION: ${{ needs.configure-env-variables.outputs.CURRENT_CHANNEL_VERSION }}
+      CLEAN_REF: ${{ needs.configure-env-variables.outputs.CLEAN_REF }}
+      PLUGIN_ZIP_FILENAME: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_FILENAME }}
+      PLUGIN_ZIP_PATH: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_PATH }}
+      PREVIOUS_TAG_SHA: ${{ needs.configure-env-variables.outputs.PREVIOUS_TAG_SHA }}
     steps:
-      - name: checkout branch
+      - name: Checkout Branch
         uses: actions/checkout@v4
         with:
           ref: ${{inputs.branch}}
@@ -52,23 +101,6 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Env Vars Configure
-        id: env_vars_configure
-        uses: ./.github/workflows/env-vars-configure
-        with:
-          CHANNEL: ${{ env.CHANNEL }}
-          REF: ${{ github.ref }}
-          POSTFIX: ''
-
-      - name: Bump Channel Version
-        id: bump_channel_version
-        uses: ./.github/workflows/bump-channel-version
-        with:
-          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
-          CHANNEL: ${{ env.CHANNEL }}
-          POSTFIX: ''
-          OVERRIDE_PACKAGE_VERSION: true
-
       - name: Update Readme.txt
         if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
@@ -80,10 +112,16 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build plugin 3
-        uses: ./
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./elementor
+
+      - name: Zip the downloaded build
+        run: |
+          PLUGIN_ZIP_FILENAME=elementor-${{ env.PACKAGE_VERSION }}.zip
+          zip -r ${PLUGIN_ZIP_FILENAME} elementor
 
       - name: Get Release Name
         uses : ./.github/workflows/get-release-name
