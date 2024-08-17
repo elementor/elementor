@@ -8,6 +8,10 @@ on:
         type: string
         description: 'Optional. The version of the package to use.'
         default: ""
+      PACKAGE_FILES_VERSION:
+        required: false
+        type: string
+        default: ""
       ELEMENTOR_PRO_CORE_BRANCH:
         required: false
         type: string
@@ -73,34 +77,32 @@ jobs:
 
       - name:  Update Versions in elementor files
         run: |
-          if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
+          PACKAGE_FILES_VERSION = ${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
 
-            sed -i -E "s/Version: (.*?)/Version: ${{ env.BUILD_PACKAGE_VERSION }}/g" ./${{ env.REPOSITORY_NAME }}.php
+          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_FILES_VERSION}/g" ./${{ env.REPOSITORY_NAME }}.php
 
-            case "${{ env.REPOSITORY_NAME }}" in
-              "elementor")
-                # Update Elementor version
+          case "${{ env.REPOSITORY_NAME }}" in
+            "elementor")
+              # Update Elementor version
 
-                sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${{ env.BUILD_PACKAGE_VERSION }}'/g" ./${{ env.REPOSITORY_NAME }}.php
+              sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_FILES_VERSION}'/g" ./${{ env.REPOSITORY_NAME }}.php
 
-                ;;
+              ;;
 
-              "elementor-pro")
+            "elementor-pro")
 
-                sed -i -E "s/ELEMENTOR_PRO_VERSION', '(.*?)'/ELEMENTOR_PRO_VERSION', '${{ env.BUILD_PACKAGE_VERSION }}'/g" ./${{ env.REPOSITORY_NAME }}.php
-                sed -i -E "s/ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '(.*?)'/ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '${{ env.ELEMENTOR_VERSION_DEPENDENCY }}'/g" ./${{ env.REPOSITORY_NAME }}.php
-                sed -i -E "s/ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '(.*?)'/ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '${{ env.ELEMENTOR_VERSION_RECOMMENDATION }}'/g" ./${{ env.REPOSITORY_NAME }}.php
+              sed -i -E "s/ELEMENTOR_PRO_VERSION', '(.*?)'/ELEMENTOR_PRO_VERSION', '${PACKAGE_FILES_VERSION}'/g" ./${{ env.REPOSITORY_NAME }}.php
+              sed -i -E "s/ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '(.*?)'/ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '${{ env.ELEMENTOR_VERSION_DEPENDENCY }}'/g" ./${{ env.REPOSITORY_NAME }}.php
+              sed -i -E "s/ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '(.*?)'/ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '${{ env.ELEMENTOR_VERSION_RECOMMENDATION }}'/g" ./${{ env.REPOSITORY_NAME }}.php
 
-               ;;
-              *)
+              ;;
+            *)
 
-                echo "Unknown repository name: ${REPOSITORY_NAME}"
-                exit 1
+              echo "Unknown repository name: ${REPOSITORY_NAME}"
+              exit 1
 
-                ;;
-            esac
-
-          fi
+              ;;
+          esac
 
       - name: Build Core Plugin for Pro
         if: env.REPOSITORY_NAME == 'elementor-pro'

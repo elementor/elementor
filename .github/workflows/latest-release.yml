@@ -30,6 +30,7 @@ jobs:
       CLEAN_REF: ${{ env.CLEAN_REF }}
       PLUGIN_ZIP_FILENAME: ${{ env.PLUGIN_ZIP_FILENAME }}
       PLUGIN_ZIP_PATH: ${{ env.PLUGIN_ZIP_PATH }}
+      PACKAGE_FILES_VERSION: ${{ env.PACKAGE_FILES_VERSION }}
       PREVIOUS_TAG_SHA: ${{ env.PREVIOUS_TAG_SHA }}
     steps:
       - name: Checkout Branch
@@ -66,6 +67,7 @@ jobs:
     uses: ./.github/workflows/plugin-build.yml
     with:
       PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
+      PACKAGE_FILES_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_FILES_VERSION }}
 
   latest_release:
     if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )

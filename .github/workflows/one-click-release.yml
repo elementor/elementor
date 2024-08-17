@@ -64,6 +64,7 @@ jobs:
     uses: ./.github/workflows/plugin-build.yml
     with:
       PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
+      PACKAGE_FILES_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_FILES_VERSION }}
 
   release:
     runs-on: ubuntu-22.04
