@@ -61,7 +61,7 @@ jobs:
           OVERRIDE_PACKAGE_VERSION: true
 
   build-plugin:
-    name: Lighthouse Build Plugin
+    name: Build Plugin
     needs: [configure-env-variables]
     uses: ./.github/workflows/plugin-build.yml
     with:
