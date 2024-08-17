@@ -75,6 +75,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await editor.openPanelTab( 'style' );
 			await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 			await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
+			await editor.setSliderControlValue( 'tabs_title_transition_duration', '0' );
 		} );
 
 		await test.step( 'Test animation class inside Editor', async () => {
@@ -96,7 +97,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			// Test the hover animation.
 			const tabNormal = page.locator( '.e-n-tab-title[aria-selected="false"]' ).last();
 			await tabNormal.hover();
-			await page.waitForTimeout( 1500 );
+			await page.waitForTimeout( 100 );
 			await expect.soft( widget ).toHaveScreenshot( 'nested-tabs-with-hover-grow.png' );
 		} );
 
