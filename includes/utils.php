@@ -882,4 +882,12 @@ class Utils {
 
 		return $now_time >= $sale_start_time && $now_time <= $sale_end_time;
 	}
+
+	public static function safe_throw( string $message ) {
+		if ( ! defined( 'ELEMENTOR_DEBUG' ) || ! ELEMENTOR_DEBUG ) {
+			return;
+		}
+
+		throw new \Exception( $message );
+	}
 }
