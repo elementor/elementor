@@ -5,12 +5,12 @@ import PropTypes from "prop-types";
 const Progress = ( { steps } ) => {
 	const [ value, setValue ] = useState( 0 );
 
-	useEffect(() => {
+	useEffect( () => {
 		const totalSteps = steps.length,
-			doneSteps = steps.filter( i => i.done ).length;
+			doneSteps = steps.filter( ( i ) => i.done ).length;
 
 		setValue( doneSteps / totalSteps * 100 );
-	}, [] );
+	} );
 
 	return (
 		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
@@ -28,5 +28,5 @@ const Progress = ( { steps } ) => {
 export default Progress;
 
 Progress.propTypes = {
-	step: PropTypes.object.isRequired,
-}
+	steps: PropTypes.object.isRequired,
+};
