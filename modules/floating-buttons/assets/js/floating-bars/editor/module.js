@@ -6,7 +6,6 @@ class FloatingBarsLibraryModule extends elementorModules.editor.utils.Module {
 	hideAdvancedTab( sectionName, editor ) {
 		const widgetType = editor?.model?.get( 'widgetType' ) || '';
 
-		console.log( widgetType);
 		if ( ! widgetType.startsWith( 'floating-bars' ) ) {
 			return;
 		}
