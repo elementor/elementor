@@ -29,6 +29,8 @@ class Link_In_Bio extends Widget_Link_In_Bio_Base {
 	}
 
 	public function get_style_depends(): array {
-		return [ 'widget-link-in-bio' ];
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-link-in-bio' ]
+			: [];
 	}
 }

@@ -45,7 +45,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	public function get_style_depends(): array {
-		return [ 'widget-nested-accordion' ];
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-nested-accordion' ]
+			: [];
 	}
 
 	public function show_in_panel(): bool {

@@ -88,7 +88,9 @@ class Widget_Icon_List extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-icon-list' ];
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-icon-list' ]
+			: [];
 	}
 
 	/**

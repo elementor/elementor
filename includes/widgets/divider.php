@@ -105,7 +105,9 @@ class Widget_Divider extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-divider' ];
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-divider' ]
+			: [];
 	}
 
 	private static function get_additional_styles() {

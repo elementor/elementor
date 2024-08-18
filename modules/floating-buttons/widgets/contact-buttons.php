@@ -27,6 +27,8 @@ class Contact_Buttons extends Widget_Contact_Button_Base {
 	}
 
 	public function get_style_depends(): array {
-		return [ 'widget-floating-buttons' ];
+		return $this->load_widgets_styles_in_head()
+			? [ 'widget-floating-buttons' ]
+			: [];
 	}
 }
