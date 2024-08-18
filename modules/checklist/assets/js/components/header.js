@@ -1,6 +1,8 @@
 import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import Progress from './progress'
+import PropTypes from "prop-types";
+import CheckListItem from "./checklist-item";
 
 const Header = ( { steps } ) => {
 	const closeChecklist = () => {
@@ -35,3 +37,7 @@ const Header = ( { steps } ) => {
 };
 
 export default Header;
+
+Header.propTypes = {
+	step: PropTypes.object.isRequired,
+}

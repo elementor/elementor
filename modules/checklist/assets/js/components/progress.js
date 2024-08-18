@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Box, LinearProgress, Typography } from '@elementor/ui';
+import PropTypes from "prop-types";
+
 const Progress = ( { steps } ) => {
 	const [ value, setValue ] = useState( 0 );
 
-	useEffect(()=> {
-		let totalSteps = steps.length;
-		let doneSteps = steps.filter( i => i.done ).length;
-		setValue( doneSteps / totalSteps * 100 )
+	useEffect(() => {
+		const totalSteps = steps.length,
+			doneSteps = steps.filter( i => i.done ).length;
+
+		setValue( doneSteps / totalSteps * 100 );
 	}, [] );
 
 	return (
@@ -19,7 +22,11 @@ const Progress = ( { steps } ) => {
 					value ) }%` }</Typography>
 			</Box>
 		</Box>
-	)
-}
+	);
+};
 
-export default Progress
+export default Progress;
+
+Progress.propTypes = {
+	step: PropTypes.object.isRequired,
+}
