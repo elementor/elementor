@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box, LinearProgress, Typography } from '@elementor/ui';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const Progress = ( { steps } ) => {
 	const [ value, setValue ] = useState( 0 );
