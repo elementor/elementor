@@ -1,25 +1,21 @@
-import { useState, useEffect } from 'react';
 import { Box, LinearProgress, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 const Progress = ( { steps } ) => {
-	const [ value, setValue ] = useState( 0 );
+	const getProgressPercentage = () => {
+		return steps.filter( ( { is_completed } ) => is_completed ).length * 100 / steps.length;
+	};
 
-	useEffect( () => {
-		const totalSteps = steps.length,
-			doneSteps = steps.filter( ( i ) => i.done ).length;
-
-		setValue( doneSteps / totalSteps * 100 );
-	} );
+	const progress = getProgressPercentage();
 
 	return (
 		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
 			<Box sx={ { width: '100%' } }>
-				<LinearProgress variant="determinate" value={ value } />
+				<LinearProgress variant="determinate" value={ progress } />
 			</Box>
 			<Box sx={ { minWidth: 35 } }>
 				<Typography variant="body2" color="text.secondary">{ `${ Math.round(
-					value ) }%` }</Typography>
+					progress) }%` }</Typography>
 			</Box>
 		</Box>
 	);
@@ -28,5 +24,5 @@ const Progress = ( { steps } ) => {
 export default Progress;
 
 Progress.propTypes = {
-	steps: PropTypes.object.isRequired,
+	steps: PropTypes.array.isRequired,
 };

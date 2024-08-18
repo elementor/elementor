@@ -22,5 +22,5 @@ const ChecklistWrapper = ( { steps } ) => {
 export default ChecklistWrapper;
 
 ChecklistWrapper.propTypes = {
-	steps: PropTypes.object.isRequired,
+	steps: PropTypes.array.isRequired,
 };

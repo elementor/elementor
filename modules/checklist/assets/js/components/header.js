@@ -38,5 +38,5 @@ const Header = ( { steps } ) => {
 export default Header;
 
 Header.propTypes = {
-	steps: PropTypes.object.isRequired,
+	steps: PropTypes.array.isRequired,
 };
