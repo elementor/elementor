@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				'</span>'
 			);
 			?></div>
-		<div id="elementor-new-floating-elements__description__content"><?php echo esc_html__( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
+		<div id="elementor-new-floating-elements__description__content"><?php echo esc_html__( 'Use floating elements to engage your visitors and increase conversions.', 'elementor' ); ?></div>
 	</div>
 	<form id="elementor-new-floating-elements__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 		<input type="hidden" name="post_type" value="<?php echo esc_attr( Module::CPT_FLOATING_BUTTONS ); ?>">
