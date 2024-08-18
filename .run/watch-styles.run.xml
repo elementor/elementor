@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Elementor - Styles" type="js.build_tools.grunt">
+    <node-interpreter value="$USER_HOME$/.local/state/fnm_multishells/21036_1721131033847/bin/node" />
+    <gruntfile value="$PROJECT_DIR$/app/public/wp-content/plugins/elementor/Gruntfile.js" />
+    <tasks>
+      <task value="watch_styles" />
+    </tasks>
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>
