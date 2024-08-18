@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { List } from '@elementor/ui';
-import { steps } from '../data/steps';
 import CheckListItem from './checklist-item';
 
-const ChecklistWrapper = () => {
+const ChecklistWrapper = ( { steps } ) => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
 
 	return (

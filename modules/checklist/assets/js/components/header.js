@@ -1,7 +1,8 @@
 import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import Progress from './progress'
 
-const Header = () => {
+const Header = ( { steps } ) => {
 	const closeChecklist = () => {
 		$e.run( 'checklist/toggle-popup' );
 	};
@@ -26,6 +27,7 @@ const Header = () => {
 					</Typography>
 					<CloseButton onClick={ closeChecklist } className="e-checklist-close" />
 				</Toolbar>
+				<Progress steps={ steps } />
 			</AppBar>
 			<Divider />
 		</>

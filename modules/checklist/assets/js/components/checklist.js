@@ -1,6 +1,7 @@
 import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
 import { Paper } from '@elementor/ui';
+import { steps } from '../data/steps';
 
 const Checklist = () => {
 	return (
@@ -14,8 +15,8 @@ const Checklist = () => {
 			maxHeight: '645px',
 			overflowY: 'auto',
 		} }>
-			<Header />
-			<CheckListWrapper />
+			<Header steps={ steps } />
+			<CheckListWrapper steps={ steps } />
 		</Paper>
 	);
 };
