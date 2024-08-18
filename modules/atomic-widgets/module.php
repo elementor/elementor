@@ -4,6 +4,9 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
@@ -37,6 +40,8 @@ class Module extends BaseModule {
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+
+			add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->add_css( $post, $element ), 10, 2 );
 		}
 	}
 
@@ -73,5 +78,40 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	/**
+	 * Add the CSS for the element.
+	 *
+	 * @param Post $post
+	 * @param Element_Base $element
+	 */
+	private function add_css( Post $post, Element_Base $element ) {
+		if ( ! ( $element instanceof Atomic_Widget_Base ) || Post::class !== get_class( $post ) ) {
+			return;
+		}
+
+		$styles = $element->get_raw_data()['styles'];
+
+		if ( empty( $styles ) ) {
+			return;
+		}
+
+		$css = $this->prepare_css( $styles );
+
+		$post->get_stylesheet()->add_raw_css( $css );
+	}
+
+	/**
+	 * Prepare the CSS for the element.
+	 *
+	 * @param array $styles
+	 *
+	 * @return string
+	 */
+	private function prepare_css( $styles ) {
+		$css = '.elementor-widget-a-heading { color: red; }';
+
+		return $css;
 	}
 }
