@@ -141,7 +141,7 @@ jobs:
 
           mv /tmp/elementor-builds/elementor.zip ./elementor.zip
 
-      - name: Build Plugin 2
+      - name: Build Plugin
         id: build_plugin
         run: |
           npm config set git-tag-version false

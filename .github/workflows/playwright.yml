@@ -51,7 +51,7 @@ jobs:
         uses: ./.github/workflows/check-changelog-pr
 
   build-plugin:
-    name: Build Plugin 4
+    name: Build Plugin
     needs: [validate-changelog-diff]
     if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
     uses: ./.github/workflows/plugin-build.yml

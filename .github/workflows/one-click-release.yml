@@ -102,16 +102,8 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Update Beta tag in Readme.txt file
-        run: |
-          if grep -q "Beta tag:" ./readme.txt
-            then
-              echo "Replace existing beta tag in readme file"
-              sed -i -E "s/Beta tag: .*/Beta tag: ${{ env.BETA_VERSION }}/g" ./readme.txt
-            else
-              echo "Add beta tag to readme file"
-              sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: ${{ env.BETA_VERSION }}$(printf '\n\r')" ./readme.txt
-          fi
+      - name: Update Beta tag
+        uses: ./.github/workflows/update-beta-tag-in-readme
 
       - name: Update Readme.txt
         if: env.CHANNEL != 'cloud'

@@ -1,0 +1,17 @@
+name: Update Beta tag in Readme.txt file
+description: Sets the Beta tag in the readme.txt file
+
+runs:
+  using: "composite"
+  steps:
+    - name: Update Beta tag
+      shell: bash
+      run: |
+        if grep -q "Beta tag:" ./readme.txt
+          then
+            echo "Replace existing beta tag in readme file"
+            sed -i -E "s/Beta tag: .*/Beta tag: ${{ env.BETA_VERSION }}/g" ./readme.txt
+          else
+            echo "Add beta tag to readme file"
+            sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: ${{ env.BETA_VERSION }}$(printf '\n\r')" ./readme.txt
+        fi
