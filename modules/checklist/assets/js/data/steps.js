@@ -6,7 +6,7 @@ export const steps = [
 		description: 'Jumpstart your creation with professional designs form the Template Library or start from scratch.',
 		link: 'https://elementor.com/help/create-new-page/',
 		CTA: 'Create a new page',
-		is_completed: true,
+		isCompleted: true,
 	},
 	{
 		id: 'add-header',
@@ -15,7 +15,7 @@ export const steps = [
 		description: 'Jumpstart your creation with professional designs form the Template Library or start from scratch.',
 		link: 'https://elementor.com/help/create-new-page/',
 		CTA: 'Create a new page',
-		is_completed: false,
+		isCompleted: false,
 	},
 	{
 		id: 'add-404',
@@ -24,6 +24,6 @@ export const steps = [
 		description: 'Jumpstart your creation with professional designs form the Template Library or start from scratch.',
 		link: 'https://elementor.com/help/create-new-page/',
 		CTA: 'Create a new page',
-		is_completed: false,
+		isCompleted: false,
 	},
 ];

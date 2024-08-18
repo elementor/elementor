@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const Progress = ( { steps } ) => {
 	const getProgressPercentage = () => {
-		return steps.filter( ( { is_completed } ) => is_completed ).length * 100 / steps.length;
+		return steps.filter( ( { isCompleted } ) => isCompleted ).length * 100 / steps.length;
 	};
 
 	const progress = getProgressPercentage();
@@ -15,7 +15,7 @@ const Progress = ( { steps } ) => {
 			</Box>
 			<Box sx={ { minWidth: 35 } }>
 				<Typography variant="body2" color="text.secondary">{ `${ Math.round(
-					progress) }%` }</Typography>
+					progress ) }%` }</Typography>
 			</Box>
 		</Box>
 	);
