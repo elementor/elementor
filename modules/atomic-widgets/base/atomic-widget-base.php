@@ -148,16 +148,20 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				Utils::safe_throw( "Data type for `$key` prop is not defined in `{$widget_name}`." );
 			}
 
-			// Validate default value against the data type.
-			if ( ! $prop->validate( $prop->get_default() ) ) {
-				Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );
-			}
+			static::validate_prop_default_value( $prop, $key );
+		}
+	}
 
-			// Validate default value against the constraints.
-			foreach ( $prop->get_constraints() as $constraint ) {
-				if ( ! $constraint->validate( $prop->get_default() ) ) {
-					Utils::safe_throw( "Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}`." );
-				}
+	private static function validate_prop_default_value( Atomic_Prop $prop, string $key ) {
+		$widget_name = ( new static() )->get_name();
+
+		if ( ! $prop->validate( $prop->get_default() ) ) {
+			Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );
+		}
+
+		foreach ( $prop->get_constraints() as $constraint ) {
+			if ( ! $constraint->validate( $prop->get_default() ) ) {
+				Utils::safe_throw( "Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}`." );
 			}
 		}
 	}

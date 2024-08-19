@@ -5,6 +5,11 @@ namespace Elementor\Modules\AtomicWidgets\Schema;
 use JsonSerializable;
 
 class Atomic_Prop implements JsonSerializable {
+
+	const TYPE_STRING = 'string';
+	const TYPE_NUMBER = 'number';
+	const TYPE_BOOLEAN = 'boolean';
+
 	private $default_value = null;
 
 	private ?string $type = null;
@@ -52,21 +57,21 @@ class Atomic_Prop implements JsonSerializable {
 	 * @param array<Prop_Constraint> $constraints
 	 */
 	public function string( array $constraints = [] ): self {
-		return $this->type( 'string', $constraints );
+		return $this->type( static::TYPE_STRING, $constraints );
 	}
 
 	/**
 	 * @param array<Prop_Constraint> $constraints
 	 */
 	public function number( array $constraints = [] ): self {
-		return $this->type( 'number', $constraints );
+		return $this->type( static::TYPE_NUMBER, $constraints );
 	}
 
 	/**
 	 * @param array<Prop_Constraint> $constraints
 	 */
 	public function boolean( array $constraints = [] ): self {
-		return $this->type( 'boolean', $constraints );
+		return $this->type( static::TYPE_BOOLEAN, $constraints );
 	}
 
 	public function get_type(): string {
@@ -83,13 +88,13 @@ class Atomic_Prop implements JsonSerializable {
 	// TODO: Move to a `Schema_Validator` class?
 	public function validate( $value ) {
 		switch ( $this->get_type() ) {
-			case 'string':
+			case static::TYPE_STRING:
 				return is_string( $value );
 
-			case 'number':
+			case static::TYPE_NUMBER:
 				return is_numeric( $value );
 
-			case 'boolean':
+			case static::TYPE_BOOLEAN:
 				return is_bool( $value );
 
 			default:
@@ -107,8 +112,14 @@ class Atomic_Prop implements JsonSerializable {
 		);
 	}
 
-	private function is_primitive() {
-		return in_array( $this->get_type(), [ 'string', 'number', 'boolean' ], true );
+	private function is_primitive(): bool {
+		$primitives = [
+			static::TYPE_STRING,
+			static::TYPE_NUMBER,
+			static::TYPE_BOOLEAN,
+		];
+
+		return in_array( $this->get_type(), $primitives, true );
 	}
 
 	public function jsonSerialize(): array {
