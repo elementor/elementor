@@ -9,12 +9,12 @@ const Progress = ( { steps } ) => {
 	const progress = getProgressPercentage();
 
 	return (
-		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } } className={ 'e-checklist-progress-bar-wrapper' }>
 			<Box sx={ { width: '100%' } }>
 				<LinearProgress variant="determinate" value={ progress } />
 			</Box>
 			<Box sx={ { minWidth: 35 } }>
-				<Typography variant="body2" color="text.secondary">{ `${ Math.round(
+				<Typography variant="body2" color="text.secondary" className={ 'e-checklist-progress-bar-percentage' }>{ `${ Math.round(
 					progress ) }%` }</Typography>
 			</Box>
 		</Box>
