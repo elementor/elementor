@@ -47,6 +47,11 @@ body {
 			padding: 10px 0;
 			cursor: move;
 		}
+
+		iframe + &__title {
+			padding-inline-end: 17.5px;
+		}
+		  
 	}
 
 	&__close,
