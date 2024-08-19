@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,6 +21,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'test_prop' => Atomic_Prop::make()
+					->string()
 					->default( 'default-value' ),
 			],
 			'settings' => [
@@ -41,6 +43,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'test_prop' => Atomic_Prop::make()
+					->string()
 					->default( 'default-value-a' ),
 			],
 			'settings' => [],
@@ -60,6 +63,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'test_prop' => Atomic_Prop::make()
+					->string()
 					->default( 'default-value-a' ),
 			],
 			'settings' => [
@@ -82,7 +86,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget(
 			[
 				'props_schema' => [
-					'should_transform' => Atomic_Prop::make(),
+					'should_transform' => Atomic_Prop::make()
+						->type( 'classes' )
+						->default( [] ),
 				],
 				'settings' => [
 					'should_transform' => [
@@ -107,7 +113,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget(
 			[
 				'props_schema' => [
-					'classes' => Atomic_Prop::make(),
+					'classes' => Atomic_Prop::make()
+						->type( 'classes' )
+						->default( [] ),
 				],
 				'settings' => [
 					'classes' => [
@@ -132,7 +140,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget(
 			[
 				'props_schema' => [
-					'transformer_does_not_exist' => Atomic_Prop::make(),
+					'transformer_does_not_exist' => Atomic_Prop::make()
+						->type( 'non_existing_type' )
+						->default( [] ),
 				],
 				'settings' => [
 					'transformer_does_not_exist' => [
@@ -155,8 +165,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget(
 			[
 				'props_schema' => [
-					'invalid_transformable_setting_1' => Atomic_Prop::make(),
-					'invalid_transformable_setting_2' => Atomic_Prop::make(),
+					'invalid_transformable_setting_1' => Atomic_Prop::make()->string(),
+					'invalid_transformable_setting_2' => Atomic_Prop::make()->string(),
 				],
 				'settings' => [
 					'invalid_transformable_setting_1' => [
@@ -189,8 +199,17 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Act.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'test_prop' => Atomic_Prop::make()
-					->default( 'default-value-a' ),
+				'string_prop' => Atomic_Prop::make()
+					->string( [
+						Enum::make( [ 'value-a', 'value-b' ] )
+					] )
+					->default( 'value-a' ),
+
+				'transformable_prop' => Atomic_Prop::make()
+					->type( 'transformable' )
+					->default( [
+						'key' => 'value',
+					] ),
 			],
 			'settings' => [],
 		] );
@@ -199,8 +218,17 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
-			"test_prop": {
-				"default": "default-value-a"
+			"string_prop": {
+				"type": "string",
+				"constraints": [
+					{ "type": "enum", "value": ["value-a", "value-b"] }
+				],
+				"default": "value-a"
+			},
+			"transformable_prop": {
+				"type": "transformable",
+				"constraints": [],
+				"default": { "$$type": "transformable", "value": { "key": "value" } }
 			}
 		}', $serialized );
 	}
@@ -294,9 +322,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'text' => Atomic_Prop::make(),
-				'select' => Atomic_Prop::make(),
-				'nested-text' => Atomic_Prop::make(),
+				'text' => Atomic_Prop::make()->string(),
+				'select' => Atomic_Prop::make()->string(),
+				'nested-text' => Atomic_Prop::make()->string(),
 			],
 			'controls' => $controls_definitions,
 		] );

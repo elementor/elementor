@@ -137,7 +137,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	// TODO: Move to a `Schema_Validator` class?
 	private static function validate_schema( array $schema ) {
-		$widget_name = ( new static() )->get_name();
+		$widget_name = static::class;
 
 		foreach ( $schema as $key => $prop ) {
 			if ( ! ( $prop instanceof Atomic_Prop ) ) {
@@ -153,7 +153,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private static function validate_prop_default_value( Atomic_Prop $prop, string $key ) {
-		$widget_name = ( new static() )->get_name();
+		$widget_name = static::class;
 
 		if ( ! $prop->validate( $prop->get_default() ) ) {
 			Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );

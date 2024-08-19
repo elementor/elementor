@@ -57,7 +57,10 @@ class Atomic_Prop implements JsonSerializable {
 	 * @param array<Prop_Constraint> $constraints
 	 */
 	public function string( array $constraints = [] ): self {
-		return $this->type( static::TYPE_STRING, $constraints );
+		// TODO: Can we assume this default?
+		return $this
+			->type( static::TYPE_STRING, $constraints )
+			->default( '' );
 	}
 
 	/**
@@ -74,7 +77,7 @@ class Atomic_Prop implements JsonSerializable {
 		return $this->type( static::TYPE_BOOLEAN, $constraints );
 	}
 
-	public function get_type(): string {
+	public function get_type(): ?string {
 		return $this->type;
 	}
 
