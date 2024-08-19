@@ -27,11 +27,9 @@ class Loader extends Module {
 
 	private function init_assets(): void {
 		$assets = [
-			'styles' => [],
+			'styles' => $this->init_styles(),
 			'scripts' => [],
 		];
-
-		$assets['styles'] = $this->init_styles();
 
 		$this->assets = $assets;
 	}
