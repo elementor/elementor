@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Dependencies for the main repository
-        uses: ./.github/workflows/dependencies-installation
+        uses: Batsirai-muchareva/elementor/.github/workflows/dependencies-installation@main
 
       - name: Set GitHub Repository Name Environment Variable
         shell: bash
