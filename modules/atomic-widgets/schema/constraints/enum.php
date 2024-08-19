@@ -28,9 +28,12 @@ class Enum extends Prop_Constraint {
 		return new static( $allowed_values );
 	}
 
-	// TODO: Return an actual error to the user instead of boolean?
-	public function validate( $value ): bool {
-		return in_array( $value, $this->allowed_values, true );
+	public function validate( $value ): void {
+		$is_allowed = in_array( $value, $this->allowed_values, true );
+
+		if ( ! $is_allowed ) {
+			throw new \Exception( 'Value is not in the list of allowed values.' );
+		}
 	}
 
 	private function all_are_strings( array $allowed_values ): bool {

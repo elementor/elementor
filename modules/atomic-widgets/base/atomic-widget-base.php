@@ -160,8 +160,12 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		}
 
 		foreach ( $prop->get_constraints() as $constraint ) {
-			if ( ! $constraint->validate( $prop->get_default() ) ) {
-				Utils::safe_throw( "Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}`." );
+			try {
+				$constraint->validate( $prop->get_default() );
+			} catch ( \Exception $e ) {
+				Utils::safe_throw(
+					"Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}` - {$e->getMessage()}"
+				);
 			}
 		}
 	}

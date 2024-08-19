@@ -260,6 +260,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop does not pass the constraint `enum`' );
+		$this->expectExceptionMessage( 'Value is not in the list of allowed values.' );
 
 		// Act.
 		$widget::get_props_schema();

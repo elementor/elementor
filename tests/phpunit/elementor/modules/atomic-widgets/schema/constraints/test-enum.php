@@ -19,4 +19,13 @@ class Test_Enum extends Elementor_Test_Base {
 		// Act.
 		Enum::make( [ 'string', 1 ] );
 	}
+
+	public function test_validate__throws_when_value_is_not_in_allowed_values() {
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Value is not in the list of allowed values.' );
+
+		// Act.
+		Enum::make( [ 'a', 'b', 'c' ] )->validate( 'd' );
+	}
 }

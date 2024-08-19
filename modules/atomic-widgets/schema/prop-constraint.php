@@ -7,7 +7,7 @@ abstract class Prop_Constraint implements \JsonSerializable {
 
 	abstract public function get_value();
 
-	abstract public function validate( $value ): bool;
+	abstract public function validate( $value ): void;
 
 	public function jsonSerialize(): array {
 		return [
