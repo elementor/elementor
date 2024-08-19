@@ -245,7 +245,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget::get_props_schema();
 	}
 
-	public function test_get_props_schema__throws_when_default_value_doesnt_pass_constraints() {
+	public function test_get_props_schema__throws_when_default_value_doesnt_pass_constraint_validation() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
