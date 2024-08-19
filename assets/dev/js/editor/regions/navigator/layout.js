@@ -41,7 +41,6 @@ export default class extends Marionette.LayoutView {
 
 	handleHashChange() {
 		if ( elementorCommon.config.library_connect?.is_connected && window.location.hash.includes( 'ai-titles' ) ) {
-			this.ui.aiTitlesButton.remove();
 			window.location.hash = '';
 			window.location.reload();
 		}
