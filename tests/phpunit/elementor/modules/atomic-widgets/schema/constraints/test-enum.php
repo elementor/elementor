@@ -20,10 +20,19 @@ class Test_Enum extends Elementor_Test_Base {
 		Enum::make( [ 'string', 1 ] );
 	}
 
+	public function test_validate__throws_when_value_is_not_a_string() {
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Expected value to be of type `string`, but got `integer`.' );
+
+		// Act.
+		Enum::make( [ 'a', 'b', 'c' ] )->validate( 1 );
+	}
+
 	public function test_validate__throws_when_value_is_not_in_allowed_values() {
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value is not in the list of allowed values.' );
+		$this->expectExceptionMessage( '`d` is not in the list of allowed values (`a`, `b`, `c`).' );
 
 		// Act.
 		Enum::make( [ 'a', 'b', 'c' ] )->validate( 'd' );

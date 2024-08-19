@@ -29,10 +29,21 @@ class Enum extends Prop_Constraint {
 	}
 
 	public function validate( $value ): void {
+		if ( ! is_string( $value ) ) {
+			throw new \Exception( 'Expected value to be of type `string`, but got `' . gettype( $value ) . '`.' );
+		}
+
 		$is_allowed = in_array( $value, $this->allowed_values, true );
 
 		if ( ! $is_allowed ) {
-			throw new \Exception( 'Value is not in the list of allowed values.' );
+			$allowed_values = array_map(
+				fn ( $value ) => "`$value`",
+				$this->allowed_values
+			);
+
+			$allowed_values = implode( ', ', $allowed_values );
+
+			throw new \Exception( "`$value` is not in the list of allowed values ($allowed_values)." );
 		}
 	}
 
