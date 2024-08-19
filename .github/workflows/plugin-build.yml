@@ -17,6 +17,11 @@ on:
         type: string
         description: 'The branch of the core repository to use.'
         default: "main"
+      IS_CORE_PRO:
+        required: false
+        type: boolean
+        description: 'Whether the core plugin is being built for Pro.'
+        default: false
 
     secrets:
       DEPLOY_BUILDS_ENDPOINT:
@@ -37,16 +42,13 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          npm ci
-          composer install --optimize-autoloader --prefer-dist
-          composer install --no-scripts --no-dev
-          composer dump-autoload
+      - name: Install Dependencies for the main repository
+        uses: ./.github/workflows/dependencies-installation
 
       - name: Set GitHub Repository Name Environment Variable
         shell: bash
         run: |
+          ls -al
           REPOSITORY_NAME=$(echo "${{ github.repository }}" | awk -F/ '{print $NF}')
 
           echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
@@ -61,16 +63,9 @@ jobs:
             BUILD_PACKAGE_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}
 
           else
+
             BUILD_PACKAGE_VERSION=${{ inputs.PACKAGE_VERSION }}
-          fi
 
-          # Handle Elementor Pro specific environment variables
-          if [ "${{ env.REPOSITORY_NAME }}" == "elementor-pro" ] && [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
-              ELEMENTOR_VERSION_DEPENDENCY=$(node -p "require('./package.json').elementor_version_dependency")
-              ELEMENTOR_VERSION_RECOMMENDATION=$(node -p "require('./package.json').elementor_version_recommendation")
-
-              echo "ELEMENTOR_VERSION_DEPENDENCY=${ELEMENTOR_VERSION_DEPENDENCY}" >> $GITHUB_ENV
-              echo "ELEMENTOR_VERSION_RECOMMENDATION=${ELEMENTOR_VERSION_RECOMMENDATION}" >> $GITHUB_ENV
           fi
 
           echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
@@ -92,8 +87,6 @@ jobs:
             "elementor-pro")
 
               sed -i -E "s/ELEMENTOR_PRO_VERSION', '(.*?)'/ELEMENTOR_PRO_VERSION', '${PACKAGE_FILES_VERSION}'/g" ./${{ env.REPOSITORY_NAME }}.php
-              sed -i -E "s/ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '(.*?)'/ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '${{ env.ELEMENTOR_VERSION_DEPENDENCY }}'/g" ./${{ env.REPOSITORY_NAME }}.php
-              sed -i -E "s/ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '(.*?)'/ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '${{ env.ELEMENTOR_VERSION_RECOMMENDATION }}'/g" ./${{ env.REPOSITORY_NAME }}.php
 
               ;;
             *)
@@ -104,12 +97,10 @@ jobs:
               ;;
           esac
 
-      - name: Build Core Plugin for Pro
-        if: env.REPOSITORY_NAME == 'elementor-pro'
-        run: |
-          ELEMENTOR_CORE_BRANCH="${{ inputs.ELEMENTOR_PRO_CORE_BRANCH }}"
-          ROOT_DIR=$(pwd)
 
+      - name: Clone Elementor Core
+        if: ${{ inputs.IS_CORE_PRO == true }}
+        run: |
           rm -rf ../elementor
           echo "Cloning ELEMENTOR_CORE_BRANCH: ${ELEMENTOR_CORE_BRANCH}"
 
@@ -118,6 +109,12 @@ jobs:
 
           # Navigate to elementor folder
           cd ../elementor
+
+      - name: Build Core Plugin for Pro
+        if: env.REPOSITORY_NAME == 'elementor-pro'
+        run: |
+          ELEMENTOR_CORE_BRANCH="${{ inputs.ELEMENTOR_PRO_CORE_BRANCH }}"
+          ROOT_DIR=$(pwd)
 
           # Run installation of npm and composer dependencies for core plugin
           npm ci
@@ -160,7 +157,6 @@ jobs:
           zip -r ${PLUGIN_ZIP_FILENAME} elementor
 
           echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_ENV
-
 
       - name: Zip Elementor Pro Build Files
         id: zip_elementor_pro

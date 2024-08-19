@@ -63,6 +63,7 @@ jobs:
           OVERRIDE_PACKAGE_VERSION: true
 
   build-plugin:
+    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     name: Build Plugin
     needs: [configure-env-variables]
     uses: ./.github/workflows/plugin-build.yml
