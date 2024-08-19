@@ -165,8 +165,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget(
 			[
 				'props_schema' => [
-					'invalid_transformable_setting_1' => Atomic_Prop::make()->string(),
-					'invalid_transformable_setting_2' => Atomic_Prop::make()->string(),
+					'invalid_transformable_setting_1' => Atomic_Prop::make()->string()->default( '' ),
+					'invalid_transformable_setting_2' => Atomic_Prop::make()->string()->default( '' ),
 				],
 				'settings' => [
 					'invalid_transformable_setting_1' => [
@@ -427,9 +427,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'text' => Atomic_Prop::make()->string(),
-				'select' => Atomic_Prop::make()->string(),
-				'nested-text' => Atomic_Prop::make()->string(),
+				'text' => Atomic_Prop::make()->string()->default( '' ),
+				'select' => Atomic_Prop::make()->string()->default( '' ),
+				'nested-text' => Atomic_Prop::make()->string()->default( '' ),
 			],
 			'controls' => $controls_definitions,
 		] );
