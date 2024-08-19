@@ -40,7 +40,7 @@ export default class extends Marionette.LayoutView {
 	}
 
 	handleHashChange() {
-		if ( elementorCommon.config.library_connect.is_connected && window.location.hash.includes( 'ai-titles' ) ) {
+		if ( elementorCommon.config.library_connect?.is_connected && window.location.hash.includes( 'ai-titles' ) ) {
 			this.ui.aiTitles.remove();
 			window.location.hash = '';
 			window.location.reload();
@@ -80,7 +80,7 @@ export default class extends Marionette.LayoutView {
 	}
 
 	onShow() {
-		if ( elementorCommon.config.library_connect.is_connected ) {
+		if ( elementorCommon.config.library_connect?.is_connected ) {
 			this.ui.aiTitles.remove();
 		}
 		this.elements.show( new ElementView( {
