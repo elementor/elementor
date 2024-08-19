@@ -74,6 +74,37 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		add_action('rest_api_init', function(){
+			error_log('rest_api_init');
+			register_meta(
+				'post',
+				'_elementor_floating_elements_type',
+				array(
+					'single'       => true,
+					'type'         => 'string',
+					'show_in_rest' => true,
+					'auth_callback' => function() {
+						return current_user_can( 'edit_posts' );
+					}
+				)
+			);
+		});
+
+		add_action('init', function(){
+			error_log('init');
+			register_meta(
+				'post',
+				'_elementor_floating_elements_type',
+				array(
+					'single'       => true,
+					'type'         => 'string',
+					'show_in_rest' => true,
+					'auth_callback' => function() {
+						return current_user_can( 'edit_posts' );
+					}
+				)
+			);
+		});
 		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
 				Widget_Contact_Button_Base::TAB_ADVANCED,
@@ -414,6 +445,7 @@ class Module extends BaseModule {
 			'show_in_nav_menus' => false,
 			'capability_type' => 'page',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'show_in_rest' => true,
 			'supports' => [
 				'title',
 				'editor',
