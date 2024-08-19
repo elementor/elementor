@@ -32,6 +32,18 @@ export default class extends Marionette.LayoutView {
 		};
 	}
 
+	aiTitleClickHandler() {
+		window.location.hash = 'welcome-ai-return-to-ai-titles';
+		window.addEventListener( 'hashchange', this.handleHashChange.bind( this ) );
+	}
+
+	handleHashChange() {
+		if ( elementorCommon.config.library_connect?.is_connected && window.location.hash.includes( 'ai-titles' ) ) {
+			window.location.hash = '';
+			window.location.reload();
+		}
+	}
+
 	toggleElements() {
 		const state = 'expand' === this.ui.toggleButton.data( 'elementor-action' ),
 			a11yText = state ? __( 'Collapse all elements', 'elementor' ) : __( 'Expand all elements', 'elementor' ),
