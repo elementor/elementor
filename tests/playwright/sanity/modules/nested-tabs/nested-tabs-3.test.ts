@@ -55,56 +55,64 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
-		expect.soft( finalTabWidth ).toBe( initialTabWidth );
+		expect( finalTabWidth ).toBe( initialTabWidth );
 	} );
 
 	test( 'Test the hover animation', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		await test.step( 'Add widget and settings', async () => {
+			// Arrange.
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+			// Add widget.
+			await editor.addWidget( 'nested-tabs', container );
+			await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
-		// Act.
-		// Set the hover animation.
-		await editor.openPanelTab( 'style' );
-		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
-		await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
-
-		// Assert.
-		// Test inside editor.
-		await expect.soft( editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
-
-		// Test on the front end.
-		// Open the front end.
-		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs' );
-		// Test on desktop.
-		await expect.soft( page.locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
-		// Test the hover animation.
-		const tabNormal = page.locator( '.e-n-tab-title[aria-selected="false"]' ).last();
-		await tabNormal.hover();
-		const tabHover = await tabNormal.evaluate( ( element ) => {
-			const animationValue = window.getComputedStyle( element ).getPropertyValue( 'transform' );
-
-			return animationValue.includes( 'matrix(' );
+			// Act.
+			// Set the hover animation.
+			await editor.openPanelTab( 'style' );
+			await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
+			await editor.setSelect2ControlValue( 'hover_animation', 'Grow' );
+			await editor.setSliderControlValue( 'tabs_title_transition_duration', '0' );
 		} );
-		expect.soft( tabHover ).toBe( true );
-		// Hover over an active tab.
-		const tabActive = page.locator( '.e-n-tab-title[aria-selected="true"]' );
-		await tabActive.hover();
-		await expect.soft( tabActive ).toHaveCSS( 'transform', 'none' );
 
-		// Test on mobile.
-		await page.setViewportSize( viewportSize.mobile );
-		await expect.soft( page.locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
+		await test.step( 'Test animation class inside Editor', async () => {
+			// Assert.
+			// Test inside editor.
+			await expect( editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
 
-		// Reset the original state.
-		await page.setViewportSize( viewportSize.desktop );
+			// Test on the front end.
+			// Open the front end.
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Test hover animation settings on the frontend', async () => {
+			const widget = page.locator( '.elementor-widget-n-tabs' );
+			await widget.waitFor();
+
+			await expect( page.locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
+
+			// Test the hover animation.
+			const tabNormal = page.locator( '.e-n-tab-title[aria-selected="false"]' ).last();
+			await tabNormal.hover();
+			await page.waitForTimeout( 100 );
+			await expect.soft( widget ).toHaveScreenshot( 'nested-tabs-with-hover-grow.png' );
+		} );
+
+		await test.step( 'Test active tab on the frontend', async () => {
+			// Hover over an active tab.
+			const tabActive = page.locator( '.e-n-tab-title[aria-selected="true"]' );
+			await tabActive.hover();
+			await expect( tabActive ).toHaveCSS( 'transform', 'none' );
+		} );
+
+		await test.step( 'Test mobile on the frontend', async () => {
+			// Test on mobile.
+			await page.setViewportSize( viewportSize.mobile );
+			await expect( page.locator( '.e-n-tab-title[aria-selected="true"]' ) ).toHaveClass( 'e-n-tab-title elementor-animation-grow' );
+		} );
 	} );
 
 	test( 'Test the container width type', async ( { page, apiRequests }, testInfo ) => {
@@ -122,7 +130,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const containerFullWidthCheck = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
 			return element.classList.contains( 'e-con-full' );
 		} );
-		expect.soft( containerFullWidthCheck ).toBe( true );
+		expect( containerFullWidthCheck ).toBe( true );
 	} );
 
 	test( 'Test swiper based carousel works as expected when switching to a new tab', async ( { page, apiRequests }, testInfo ) => {
@@ -160,7 +168,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Check the swiper in the second nested tab has initialized.
-		await expect.soft( page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
+		await expect( page.locator( `.e-n-tabs-content .e-con.e-active .swiper-slide.swiper-slide-active` ) ).toBeVisible();
 	} );
 
 	test( 'Verify that the tab activation works correctly', async ( { page, apiRequests }, testInfo ) => {
@@ -181,7 +189,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Verify that after clicking on the tab, the tab is activated correctly.
-		await expect.soft( lastTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( lastTab ).toHaveAttribute( 'aria-selected', 'true' );
 
 		// Act.
 		const lastContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con` ).last(),
@@ -195,7 +203,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Verify that after clicking on the tab, the tab is activated correctly.
-		await expect.soft( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
 	} );
 
 	test( 'Test the nested tabs behaviour when using container flex row', async ( { page, apiRequests }, testInfo ) => {
@@ -262,7 +270,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		// Verify that the content width doesn't change after changing the active tab.
-		expect.soft( contentContainerOneWidth === contentContainerTwoWidth && contentContainerOneWidth === contentContainerThreeWidth ).toBeTruthy();
+		expect( contentContainerOneWidth === contentContainerTwoWidth && contentContainerOneWidth === contentContainerThreeWidth ).toBeTruthy();
 	} );
 
 	test( 'Tabs and containers are duplicated correctly', async ( { page, apiRequests }, testInfo ) => {
@@ -284,7 +292,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await clickTab( editor.getPreviewFrame(), 2 );
 
 		// Assert.
-		await expect.soft( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
+		await expect( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
 	} );
 
 	test( "Check widget content styling doesn't override the content container styling when they are used together", async ( { page, apiRequests }, testInfo ) => {
@@ -382,10 +390,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 				switch ( valueToTest ) {
 					case 'containerBackgroundColor':
-						await expect.soft( activeContainer ).toHaveCSS( 'background-color', expectedCssValue );
+						await expect( activeContainer ).toHaveCSS( 'background-color', expectedCssValue );
 						break;
 					case 'containerBorderStyle':
-						await expect.soft( activeContainer ).toHaveCSS( 'border-style', expectedCssValue );
+						await expect( activeContainer ).toHaveCSS( 'border-style', expectedCssValue );
 						break;
 					case 'containerBorderWidth':
 						// Workaround Flaky Border Width sometimes shrinks by small % as in Nested Tabs
@@ -395,16 +403,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 							return window.getComputedStyle( element ).getPropertyValue( 'border-width' );
 						} );
 
-						expect.soft( parseFloat( borderWidth.slice( 0, -2 ) ), 'Child container border width should be larger than ' + ApproxBorderWidth + 'and not overwritten by Nested Tab Border Width' ).toBeGreaterThan( ApproxBorderWidth );
+						expect( parseFloat( borderWidth.slice( 0, -2 ) ), 'Child container border width should be larger than ' + ApproxBorderWidth + 'and not overwritten by Nested Tab Border Width' ).toBeGreaterThan( ApproxBorderWidth );
 						break;
 					case 'containerBorderColor':
-						await expect.soft( activeContainer ).toHaveCSS( 'border-color', expectedCssValue );
+						await expect( activeContainer ).toHaveCSS( 'border-color', expectedCssValue );
 						break;
 					case 'containerBoxedShadow':
-						await expect.soft( activeContainer ).toHaveCSS( 'box-shadow', expectedCssValue );
+						await expect( activeContainer ).toHaveCSS( 'box-shadow', expectedCssValue );
 						break;
 					case 'containerPadding':
-						await expect.soft( activeContainer ).toHaveCSS( 'padding', expectedCssValue );
+						await expect( activeContainer ).toHaveCSS( 'padding', expectedCssValue );
 						break;
 				}
 			}
@@ -423,6 +431,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert
 		const nestedTabsHeading = frame.locator( '.e-n-tabs-heading' );
-		await expect.soft( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
+		await expect( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 	} );
 } );
