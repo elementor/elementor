@@ -145,7 +145,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			}
 
 			if ( ! $prop->get_type() ) {
-				Utils::safe_throw( "Data type for `$key` prop is not defined in `{$widget_name}`." );
+				Utils::safe_throw( "Prop `$key` must have a type in `{$widget_name}`." );
 			}
 
 			static::validate_prop_default_value( $prop, $key );
