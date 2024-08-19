@@ -48,10 +48,23 @@ body {
 			cursor: move;
 		}
 
-		iframe + &__title {
+		iframe + &__title,
+		#elementor-navigator__ai-titles + &__title {
 			padding-inline-end: 17.5px;
 		}
 		  
+	}
+
+	&__ai-titles {
+		width: 35px;
+		text-align: center;
+		cursor: pointer;
+		background-color: transparent;
+		border: none;
+
+		&:hover {
+			color: $e-pink-600;
+		}
 	}
 
 	&__close,
