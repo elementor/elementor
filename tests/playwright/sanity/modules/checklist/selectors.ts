@@ -16,6 +16,8 @@ const selectors = {
 	markAsDone: '.mark-as-done',
 	unmarkAsDone: '.mark-as-undone',
 	cta: '.cta-button',
+	progressBarWrapper: '.e-checklist-progress-bar-wrapper',
+	progressBarPercentage: '.e-checklist-progress-bar-percentage',
 };
 
 export { controlIds, selectors };
