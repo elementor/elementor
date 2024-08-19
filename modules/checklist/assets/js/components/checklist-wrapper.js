@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { List } from '@elementor/ui';
-import { steps } from '../data/steps';
 import CheckListItem from './checklist-item';
+import PropTypes from 'prop-types';
 
-const ChecklistWrapper = () => {
+const ChecklistWrapper = ( { steps } ) => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
 
 	return (
@@ -20,3 +20,7 @@ const ChecklistWrapper = () => {
 };
 
 export default ChecklistWrapper;
+
+ChecklistWrapper.propTypes = {
+	steps: PropTypes.array.isRequired,
+};
