@@ -124,16 +124,16 @@ test.describe( 'Launchpad checklist tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			checklistHelper = new ChecklistHelper( page, wpAdmin ),
-			steps = await checklistHelper.getSteps(),
+			steps = checklistHelper.getSteps(),
 			progressToCompare = Math.round( steps.filter( ( { isCompleted } ) => isCompleted ).length * 100 / steps.length ),
-			progressTextToCompare = `${progressToCompare}%`,
+			progressTextToCompare = `${ progressToCompare }%`,
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			pageProgress = editor.page.locator( selectors.progressBarPercentage );
 
-			await rocketButton.click();
+		await rocketButton.click();
 
-			const pageProgressText = await pageProgress.textContent();
+		const pageProgressText = await pageProgress.textContent();
 
-			await expect( pageProgressText ).toBe( progressTextToCompare );
-		} );
+		expect( pageProgressText ).toBe( progressTextToCompare );
+	} );
 } );
