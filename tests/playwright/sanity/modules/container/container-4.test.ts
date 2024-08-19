@@ -327,4 +327,24 @@ test.describe( 'Container tests @container', () => {
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer2 }` ) ).toHaveClass( /e-con-full/ );
 		} );
 	} );
+
+	test( 'Test animation style inside the container', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add container with animation', async () => {
+			await editor.addElement( { elType: 'container' }, 'document' );
+
+			await editor.openPanelTab( 'advanced' );
+			await editor.openSection( 'section_effects' );
+			await editor.setSelect2ControlValue( 'animation', 'Bounce In' );
+
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Assert animation stylesheet on the frontend', async () => {
+			await expect( page.locator( EditorSelectors.container ) ).toHaveCSS( 'animation-name', 'bounceIn' );
+		} );
+	} );
 } );
