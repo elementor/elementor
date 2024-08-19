@@ -1,4 +1,4 @@
-[class^="elementor-control-type-switcher"] {
+div:where(.elementor-control-type-switcher, .elementor-control-type-switcher_motion_fx) {
 
 	.elementor-control-input-wrapper {
 		text-align: end;
