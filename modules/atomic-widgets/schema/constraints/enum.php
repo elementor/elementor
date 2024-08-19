@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Schema\Constraints;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Schema\Prop_Constraint;
 use Elementor\Utils;
 
@@ -36,14 +37,11 @@ class Enum extends Prop_Constraint {
 		$is_allowed = in_array( $value, $this->allowed_values, true );
 
 		if ( ! $is_allowed ) {
-			$allowed_values = array_map(
-				fn ( $value ) => "`$value`",
-				$this->allowed_values
-			);
+			$values = Collection::make( $this->allowed_values )
+				->map( fn ( $value ) => "`$value`" )
+				->implode( ', ' );
 
-			$allowed_values = implode( ', ', $allowed_values );
-
-			throw new \Exception( "`$value` is not in the list of allowed values ($allowed_values)." );
+			throw new \Exception( "`$value` is not in the list of allowed values ($values)." );
 		}
 	}
 
