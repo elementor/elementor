@@ -123,7 +123,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 				] ),
 
 			'image_size' => Atomic_Prop::make()
-				->string( [
+				->string()
+				->constraints( [
 					Enum::make( $image_sizes ),
 				] )
 				->default( 'full' ),

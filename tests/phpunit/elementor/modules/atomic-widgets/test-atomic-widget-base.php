@@ -250,7 +250,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'prop_with_wrong_default_type' => Atomic_Prop::make()
-					->string( [
+					->string()
+					->constraints( [
 						Enum::make( [ 'value-a', 'value-b' ] ),
 					] )
 					->default( 'value-c' ),
@@ -271,7 +272,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => Atomic_Prop::make()
-					->string( [
+					->string()
+					->constraints( [
 						Enum::make( [ 'value-a', 'value-b' ] )
 					] )
 					->default( 'value-a' ),
@@ -326,7 +328,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Act.
 		$schema = [
 			'string_prop' => Atomic_Prop::make()
-				->string( [
+				->string()
+				->constraints( [
 					Enum::make( [ 'value-a', 'value-b' ] )
 				] )
 				->default( 'value-a' ),

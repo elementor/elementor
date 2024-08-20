@@ -95,7 +95,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'tag' => Atomic_Prop::make()
-				->string( [
+				->string()
+				->constraints( [
 					Enum::make( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ),
 				] )
 				->default( 'h2' ),
