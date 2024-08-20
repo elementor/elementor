@@ -33,7 +33,6 @@ jobs:
       CURRENT_CHANNEL_VERSION: ${{ env.CURRENT_CHANNEL_VERSION }}
       CLEAN_REF: ${{ env.CLEAN_REF }}
       PLUGIN_ZIP_FILENAME: ${{ env.PLUGIN_ZIP_FILENAME }}
-      PLUGIN_ZIP_PATH: ${{ env.PLUGIN_ZIP_PATH }}
       PREVIOUS_TAG_SHA: ${{ env.PREVIOUS_TAG_SHA }}
     steps:
       - name: Checkout Branch
@@ -75,7 +74,6 @@ jobs:
       CURRENT_CHANNEL_VERSION: ${{ needs.configure-env-variables.outputs.CURRENT_CHANNEL_VERSION }}
       CLEAN_REF: ${{ needs.configure-env-variables.outputs.CLEAN_REF }}
       PLUGIN_ZIP_FILENAME: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_FILENAME }}
-      PLUGIN_ZIP_PATH: ${{ needs.configure-env-variables.outputs.PLUGIN_ZIP_PATH }}
       PREVIOUS_TAG_SHA: ${{ needs.configure-env-variables.outputs.PREVIOUS_TAG_SHA }}
     steps:
       - name: Checkout Branch

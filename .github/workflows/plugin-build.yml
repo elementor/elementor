@@ -146,16 +146,17 @@ jobs:
           zip -r elementor.zip ./elementor
 
           cd $ROOT_DIR
-
           mv /tmp/elementor-builds/elementor.zip ./elementor.zip
 
-      - name: Build Plugin for the Repository
-        id: build_plugin
+      - name: Set configs
+        if:  ${{ inputs.IS_CORE_FOR_PRO == false }}
         run: |
           npm config set git-tag-version false
           export PUPPETEER_SKIP_DOWNLOAD=true
 
-          npx grunt build
+      - name: Build Plugin for the Main Repository
+        id: build_plugin
+        run: npx grunt build
 
       - name: Zip Elementor Build Files
         id: zip_elementor
