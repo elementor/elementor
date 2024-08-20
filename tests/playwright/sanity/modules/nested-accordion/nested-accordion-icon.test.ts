@@ -72,4 +72,39 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			await expectScreenshotToMatchLocator( 'header-style-editor-test-on-frontend.png', nestedAccordionWidget );
 		} );
 	} );
-} );
+
+	test('Nested Accordion Inside Another Accordion Icon Toggling', async ({ browser, apiRequests }, testInfo) => {
+		await test.step('experiment Inline Font Icons off', async () => {
+			const page = await browser.newPage(),
+				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.setExperiments( {
+				e_font_icon_svg: 'active',
+			} );
+			const editor = await wpAdmin.openNewPage(),
+				container = await editor.addElement({ elType: 'container' }, 'document');
+
+			// Add a nested-accordion widget
+			await editor.closeNavigatorIfOpen();
+			const parentAccordionID = await editor.addWidget('nested-accordion', container);
+			await editor.selectElement(parentAccordionID);
+
+			// Add a nested accordion widget inside the parent nested-accordion
+			const nestedAccordionID = await editor.addWidget('nested-accordion', parentAccordionID, true);
+			await editor.selectElement(nestedAccordionID);
+			await editor.publishAndViewPage();
+
+			// Click the second child accordion item to toggle its icon
+			const nestedSecondAccordionWidget = page.locator('.e-n-accordion-item-title').nth(2);
+			await editor.isUiStable(nestedSecondAccordionWidget);
+			const childAccordionItemSecondTitleIcon = nestedSecondAccordionWidget.locator('.e-n-accordion-item-title-icon').first();
+			await childAccordionItemSecondTitleIcon.click();
+
+			// Click the third child accordion item to toggle its icon
+			const nestedThirdAccordionWidget = page.locator('.e-n-accordion-item-title').nth(3);
+			await editor.isUiStable(nestedThirdAccordionWidget);
+			const childAccordionItemThirdTitleIcon = nestedThirdAccordionWidget.locator('.e-n-accordion-item-title-icon').first();
+			await childAccordionItemThirdTitleIcon.click();
+
+		});
+	});
+});
