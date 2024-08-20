@@ -14,12 +14,12 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-        $this->register_endpoint( new Refresh_Checklist($this) );
+		$this->register_endpoint( new Refresh_Checklist( $this ) );
 	}
 
-    public function get_item_permissions_check ( $request ) {
-        return true;
-    }
+	public function get_item_permissions_check( $request ) {
+		return true;
+	}
 
 	public function get_items_permissions_check( $request ) {
 		return true;

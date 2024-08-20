@@ -29,7 +29,7 @@ class Refresh_Checklist extends Base {
 		$steps_data = $checklist_module->get_steps_manager()->get_steps_for_frontend();
 
 		return [
-			'data' => wp_json_encode( $steps_data ),
+			'data' => $steps_data,
 		];
 	}
 }
