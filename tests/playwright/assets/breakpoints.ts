@@ -37,21 +37,9 @@ export default class {
 	async saveOrUpdate( editor: EditorPage, toReload = false ) {
 		const hasTopBar: boolean = await editor.hasTopBar();
 		if ( hasTopBar ) {
-			const saveButton = "//button[text()='Save Changes']";
-			if ( await this.page.locator( saveButton ).isEnabled() ) {
-				await this.page.locator( saveButton ).click();
-			} else {
-				await this.page.evaluate( ( selector ) => {
-					const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
-					button.click();
-				}, saveButton );
-			}
-			if ( toReload ) {
-				await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
-			}
+			await editor.saveSiteSettingsWithTopBar( toReload );
 		} else {
-			await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
-			await this.page.locator( EditorSelectors.toast ).waitFor();
+			await editor.saveSiteSettingsNoTopBar();
 		}
 	}
 
@@ -89,7 +77,7 @@ export default class {
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
-		const removeBreakpointButton = '#elementor-kit-panel-content .select2-selection__choice__remove';
+		const removeBreakpointButton = EditorSelectors.panels.siteSettings.layout.breakpoints.removeBreakpointButton;
 		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}

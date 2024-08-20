@@ -27,6 +27,12 @@ const EditorSelectors = {
 		},
 		siteSettings: {
 			wrapper: '#elementor-panel-page-menu',
+			saveButton: '//button[text()="Save Changes"]',
+			layout: {
+				breakpoints: {
+					removeBreakpointButton: '#elementor-kit-panel-content .select2-selection__choice__remove',
+				},
+			},
 		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
