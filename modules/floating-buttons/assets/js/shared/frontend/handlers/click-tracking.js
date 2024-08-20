@@ -22,6 +22,7 @@ export default class ClickTrackingHandler extends Base {
 			contentWrapperFloatingBars: this.$element[ 0 ].querySelector( selectors.contentWrapperFloatingBars ),
 		};
 	}
+
 	bindEvents() {
 		if ( this.elements.contentWrapper ) {
 			this.elements.contentWrapper.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
