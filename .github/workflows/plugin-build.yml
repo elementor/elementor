@@ -17,7 +17,7 @@ on:
         type: string
         description: 'The branch of the core repository to use.'
         default: "main"
-      IS_CORE_PRO:
+      IS_CORE_FOR_PRO:
         required: false
         type: boolean
         description: 'Whether the core plugin is being built for Pro.'
@@ -99,7 +99,7 @@ jobs:
 
 
       - name: Clone Elementor Core
-        if: ${{ inputs.IS_CORE_PRO == true }}
+        if: ${{ inputs.IS_CORE_FOR_PRO == true }}
         run: |
           rm -rf ../elementor
           echo "Cloning ELEMENTOR_CORE_BRANCH: ${ELEMENTOR_CORE_BRANCH}"
