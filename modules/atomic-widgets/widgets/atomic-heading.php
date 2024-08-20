@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -89,12 +90,19 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Atomic_Prop::make(),
+			'classes' => Atomic_Prop::make()
+				->type( 'classes' )
+				->default( [] ),
 
 			'tag' => Atomic_Prop::make()
+				->string()
+				->constraints( [
+					Enum::make( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ),
+				] )
 				->default( 'h2' ),
 
 			'title' => Atomic_Prop::make()
+				->string()
 				->default( __( 'Your Title Here', 'elementor' ) ),
 		];
 	}
