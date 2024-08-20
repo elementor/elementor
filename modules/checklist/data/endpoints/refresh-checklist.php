@@ -15,7 +15,7 @@ class Refresh_Checklist extends Base {
 		return 'refresh-checklist';
 	}
 
-	public function get_route() : string {
+	public function get_format() : string {
 		return 'checklist';
 	}
 
