@@ -29,7 +29,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = $settings['image']['url'];
+		$image_url = $settings['image'];
 
 		?> <img
 			src='<?php echo esc_url( $image_url ); ?>'
