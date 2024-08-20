@@ -22,6 +22,9 @@ class Steps extends Endpoint_Base {
 		return $this->get_checklist_data();
 	}
 
+	// Bypass, currently does not required.
+	protected function register() {}
+
 	private function get_checklist_data(): array {
 		$checklist_module = Plugin::$instance->modules_manager->get_modules( 'checklist' );
 		$steps_data = $checklist_module->get_steps_manager()->get_steps_for_frontend();
