@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -19,6 +20,7 @@ class Module extends BaseModule {
 		'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 		'editor-panels',
 		'editor-editing-panel',
+		'editor-style',
 	];
 
 	public function get_name() {
@@ -55,6 +57,7 @@ class Module extends BaseModule {
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
+		$widgets_manager->register( new Atomic_Image() );
 	}
 
 	/**

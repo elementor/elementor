@@ -37,6 +37,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		if ( is_admin() ) {
+			( new Preferences() )->register();
+		}
+
+		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			return;
+		}
+
 		$this->register_layout_experiment();
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
@@ -60,6 +68,7 @@ class Module extends BaseModule {
 				'ai_get_text_to_image' => [ $this, 'ajax_ai_get_text_to_image' ],
 				'ai_get_image_to_image' => [ $this, 'ajax_ai_get_image_to_image' ],
 				'ai_get_image_to_image_mask' => [ $this, 'ajax_ai_get_image_to_image_mask' ],
+				'ai_get_image_to_image_mask_cleanup' => [ $this, 'ajax_ai_get_image_to_image_mask_cleanup' ],
 				'ai_get_image_to_image_outpainting' => [ $this, 'ajax_ai_get_image_to_image_outpainting' ],
 				'ai_get_image_to_image_upscale' => [ $this, 'ajax_ai_get_image_to_image_upscale' ],
 				'ai_get_image_to_image_remove_background' => [ $this, 'ajax_ai_get_image_to_image_remove_background' ],
@@ -785,6 +794,44 @@ class Module extends BaseModule {
 			'usage' => $result['usage'],
 		];
 	}
+	public function ajax_ai_get_image_to_image_mask_cleanup( $data ) {
+		$this->verify_upload_permissions( $data );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['payload']['settings'] ) ) {
+			throw new \Exception( 'Missing prompt settings' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		if ( empty( $data['payload']['mask'] ) ) {
+			throw new \Exception( 'Missing Mask' );
+		}
+
+		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_image_to_image_mask_cleanup( [
+			'attachment_id' => $data['payload']['image']['id'],
+			'mask' => $data['payload']['mask'],
+		], $context, $request_ids );
+
+		$this->throw_on_error( $result );
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
 		$this->verify_upload_permissions( $data );
 

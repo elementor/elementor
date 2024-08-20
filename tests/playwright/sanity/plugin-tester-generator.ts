@@ -89,7 +89,7 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			} finally {
-				if ( plugin.installByAPI ) {
+				if ( 'api' === plugin.installSource ) {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 				} else {
