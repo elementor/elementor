@@ -73,11 +73,11 @@ export default class NestedAccordion extends Base {
 		const settings = this.getSettings();
 		const defaultState = this.getElementSettings( 'default_state' );
 
-		$accordionItems.each((index, item) => {
+		$accordionItems.each( ( index, item ) => {
 			const itemSummary = item.querySelector( settings.selectors.accordionItemTitles );
-			const isOpen = defaultState === 'expanded' && index === 0;
+			const isOpen = 'expanded' === defaultState && 0 === index;
 			this.toggleIcon( itemSummary, isOpen );
-		});
+		} );
 	}
 
 	linkContainer( event ) {
@@ -234,11 +234,11 @@ export default class NestedAccordion extends Base {
 		return size * ( 'ms' === unit ? 1 : 1000 );
 	}
 
-	toggleIcon(itemSummary, isOpen) {
+	toggleIcon( itemSummary, isOpen ) {
 		const openIcon = itemSummary.querySelector( '.e-opened' );
 		const closedIcon = itemSummary.querySelector( '.e-closed' );
 
-		if (isOpen) {
+		if ( isOpen ) {
 			openIcon.style.display = 'flex';
 			closedIcon.style.display = 'none';
 		} else {
