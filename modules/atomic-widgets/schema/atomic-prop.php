@@ -83,7 +83,6 @@ class Atomic_Prop implements JsonSerializable {
 		return $this->constraints;
 	}
 
-	// TODO: Move to a `Schema_Validator` class?
 	public function validate( $value ) {
 		switch ( $this->get_type() ) {
 			case static::TYPE_STRING:
