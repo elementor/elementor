@@ -2,6 +2,7 @@ import { editorOnButtonClicked } from './editor-on-button-clicked';
 import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import SpeakerphoneIcon from '@elementor/icons/SpeakerphoneIcon';
 
 const IconWithBadge = ( { invisible } ) => {
 	return (
