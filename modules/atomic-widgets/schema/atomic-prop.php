@@ -41,11 +41,11 @@ class Atomic_Prop implements JsonSerializable {
 	}
 
 	/**
-	 * @param string $data_type
+	 * @param string $type
 	 * @return $this
 	 */
-	public function type( string $data_type ): self {
-		$this->type = $data_type;
+	public function type( string $type ): self {
+		$this->type = $type;
 
 		return $this;
 	}
