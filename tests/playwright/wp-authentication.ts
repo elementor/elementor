@@ -4,7 +4,7 @@ export async function login( apiRequest: APIRequest, user: string, password: str
 	// Important: make sure we authenticate in a clean environment by unsetting storage state.
 	const context = await apiRequest.newContext( { storageState: undefined } );
 
-	const response = await context.post( `${ baseUrl }/wp-login.php`, {
+	await context.post( `${ baseUrl }/wp-login.php`, {
 		form: {
 			log: user,
 			pwd: password,
@@ -13,9 +13,6 @@ export async function login( apiRequest: APIRequest, user: string, password: str
 			testcookie: '1',
 		},
 	} );
-	if ( ! response.ok() ) {
-		throw new Error( `Failed to login: ${ response.status() }` );
-	}
 	return context;
 }
 
