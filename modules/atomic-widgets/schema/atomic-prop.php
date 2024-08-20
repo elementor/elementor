@@ -12,7 +12,7 @@ class Atomic_Prop implements JsonSerializable {
 
 	private $default_value = null;
 
-	private ?string $type = null; 
+	private ?string $type = null;
 
 	/**
 	 * @var array <Prop_Constraint>
