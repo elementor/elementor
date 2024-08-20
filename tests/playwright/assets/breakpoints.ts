@@ -1,6 +1,7 @@
 import { Locator, type Page } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 import { Device } from '../types/types';
+import EditorSelectors from '../selectors/editor-selectors';
 
 export default class {
 	readonly page: Page;
@@ -46,13 +47,11 @@ export default class {
 				}, saveButton );
 			}
 			if ( toReload ) {
-				const reloadButton = this.page.locator( 'button', { hasText: 'Reload Now' } );
-				await reloadButton.waitFor();
-				await reloadButton.click();
+				await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
 			}
 		} else {
-			await this.page.locator( 'text=Update' ).click();
-			await this.page.waitForSelector( '#elementor-toast' );
+			await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
+			await this.page.locator( EditorSelectors.toast ).waitFor();
 		}
 	}
 
