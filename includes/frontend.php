@@ -569,13 +569,22 @@ class Frontend extends App {
 		);
 
 		$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
-
 		foreach ( $widgets_with_styles as $widget_name ) {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
 				[],
 				ELEMENTOR_VERSION
+			);
+		}
+
+		$widgets_with_responsive_styles = Plugin::$instance->widgets_manager->widgets_with_responsive_styles();
+		foreach ( $widgets_with_responsive_styles as $widget_name ) {
+			wp_register_style(
+				"widget-{$widget_name}",
+				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
+				[],
+				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
 
@@ -679,13 +688,13 @@ class Frontend extends App {
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
-					$css_file = Post_CSS::create( get_the_ID() );
-					$css_file->enqueue();
-
 					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
 					if ( ! empty( $page_assets ) ) {
 						Plugin::$instance->assets_loader->enable_assets( $page_assets );
 					}
+
+					$css_file = Post_CSS::create( get_the_ID() );
+					$css_file->enqueue();
 				}
 			}
 		}
