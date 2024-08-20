@@ -1,6 +1,7 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
+import { expect } from '@playwright/test';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -73,38 +74,51 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		} );
 	} );
 
-	test('Nested Accordion Inside Another Accordion Icon Toggling', async ({ browser, apiRequests }, testInfo) => {
-		await test.step('experiment Inline Font Icons off', async () => {
-			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'active',
-			} );
-			const editor = await wpAdmin.openNewPage(),
-				container = await editor.addElement({ elType: 'container' }, 'document');
+	test( 'Nested Accordion Inside Another Accordion Icon Toggling', async ( { browser, apiRequests }, testInfo ) => {
+		// Arrange
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.closeNavigatorIfOpen();
+		const parentAccordionID = await editor.addWidget( 'nested-accordion', container );
+		await editor.selectElement( parentAccordionID );
+		const nestedAccordionID = await editor.addWidget( 'nested-accordion', parentAccordionID, true );
+		await editor.selectElement( nestedAccordionID );
+		await addIcon( editor, page, 'address card' );
+		await editor.publishAndViewPage();
 
-			// Add a nested-accordion widget
-			await editor.closeNavigatorIfOpen();
-			const parentAccordionID = await editor.addWidget('nested-accordion', container);
-			await editor.selectElement(parentAccordionID);
+		const nestedSecondAccordionWidget = page.locator( '.e-n-accordion-item-title' ).nth( 2 );
+		const childAccordionItemSecondTitleIcon = nestedSecondAccordionWidget.locator( '.e-n-accordion-item-title-icon' ).first();
 
-			// Add a nested accordion widget inside the parent nested-accordion
-			const nestedAccordionID = await editor.addWidget('nested-accordion', parentAccordionID, true);
-			await editor.selectElement(nestedAccordionID);
-			await editor.publishAndViewPage();
+		// Act
+		await editor.isUiStable( nestedSecondAccordionWidget );
+		const isPlusDisplayed = await childAccordionItemSecondTitleIcon.locator( '.e-closed' )
+			.evaluate( ( node ) => window.getComputedStyle( node ).display );
+		const plus = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
+		const addressCardClassname = await plus.evaluate( ( node ) => {
+			const addressIconElement = node.firstChild as HTMLElement;
+			return addressIconElement ? Array.from( addressIconElement.classList ) : [];
+		} );
+		const minus = nestedSecondAccordionWidget.locator( '.e-opened' );
+		const minusIconClassname = await minus.evaluate( ( node ) => {
+			const minusIconElement = node.firstChild as HTMLElement;
+			return minusIconElement ? Array.from( minusIconElement.classList ) : [];
+		} );
+		const isMinusDisplayed = await childAccordionItemSecondTitleIcon.locator( '.e-opened' )
+			.evaluate( ( node ) => window.getComputedStyle( node ).display );
+		await nestedSecondAccordionWidget.click();
+		const isMinusDisplayedAfterClick = await childAccordionItemSecondTitleIcon.locator( '.e-opened' )
+			.evaluate( ( node ) => window.getComputedStyle( node ).display );
+		const isPlusDisplayedAfterClick = await childAccordionItemSecondTitleIcon.locator( '.e-closed' )
+			.evaluate( ( node ) => window.getComputedStyle( node ).display );
 
-			// Click the second child accordion item to toggle its icon
-			const nestedSecondAccordionWidget = page.locator('.e-n-accordion-item-title').nth(2);
-			await editor.isUiStable(nestedSecondAccordionWidget);
-			const childAccordionItemSecondTitleIcon = nestedSecondAccordionWidget.locator('.e-n-accordion-item-title-icon').first();
-			await childAccordionItemSecondTitleIcon.click();
-
-			// Click the third child accordion item to toggle its icon
-			const nestedThirdAccordionWidget = page.locator('.e-n-accordion-item-title').nth(3);
-			await editor.isUiStable(nestedThirdAccordionWidget);
-			const childAccordionItemThirdTitleIcon = nestedThirdAccordionWidget.locator('.e-n-accordion-item-title-icon').first();
-			await childAccordionItemThirdTitleIcon.click();
-
-		});
-	});
-});
+		// Assert
+		expect( isPlusDisplayed ).toBe( 'flex' );
+		expect( isMinusDisplayed ).toBe( 'none' );
+		expect( addressCardClassname ).toContain( 'e-far-address-card' );
+		expect( isPlusDisplayedAfterClick ).toBe( 'none' );
+		expect( isMinusDisplayedAfterClick ).toBe( 'flex' );
+		expect( minusIconClassname ).toContain( 'e-fas-minus' );
+	} );
+} );
