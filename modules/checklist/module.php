@@ -4,6 +4,8 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
@@ -17,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule implements Checklist_Module_Interface {
 	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
+	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 
 	private $user_progress = null;
 	private Steps_Manager $steps_manager;
@@ -32,6 +35,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		parent::__construct();
 
 		$this->register_experiment();
+		$this->init_user_progress();
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
@@ -146,6 +150,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		} );
 	}
 
+	public static function is_preference_switch_on() : bool {
+		$user_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->get_settings( self::VISIBILITY_SWITCH_ID );
+		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
+		$is_preference_switch_on = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
+
+		return 'yes' === $is_preference_switch_on;
+	}
+
 	private function register_experiment() : void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
@@ -158,8 +172,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function init_user_progress() : void {
 		$default_settings = [
-			'is_hidden' => false,
-			'last_opened_timestamp' => time(),
+			'last_opened_timestamp' => null,
 			'steps' => [],
 		];
 

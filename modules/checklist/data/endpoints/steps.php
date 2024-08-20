@@ -9,10 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Refresh_Checklist extends Base {
+class Steps extends Base {
 
 	public function get_name() : string {
-		return 'refresh-checklist';
+		return 'steps';
 	}
 
 	public function get_format() : string {
