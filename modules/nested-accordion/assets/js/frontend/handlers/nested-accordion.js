@@ -48,6 +48,7 @@ export default class NestedAccordion extends Base {
 		}
 
 		this.injectKeyboardHandler();
+		this.initializeIcons();
 	}
 
 	injectKeyboardHandler() {
@@ -65,6 +66,18 @@ export default class NestedAccordion extends Base {
 		$contentContainers.each( ( index, element ) => {
 			$accordionItems[ index ].appendChild( element );
 		} );
+	}
+
+	initializeIcons() {
+		const { $accordionItems } = this.getDefaultElements();
+		const settings = this.getSettings();
+		const defaultState = this.getElementSettings( 'default_state' );
+
+		$accordionItems.each((index, item) => {
+			const itemSummary = item.querySelector( settings.selectors.accordionItemTitles );
+			const isOpen = defaultState === 'expanded' && index === 0;
+			this.toggleIcon( itemSummary, isOpen );
+		});
 	}
 
 	linkContainer( event ) {
@@ -156,8 +169,10 @@ export default class NestedAccordion extends Base {
 
 		if ( ! accordionItem.open ) {
 			this.prepareOpenAnimation( accordionItem, itemSummary, accordionContent );
+			this.toggleIcon( itemSummary, true );
 		} else {
 			this.closeAccordionItem( accordionItem, itemSummary );
+			this.toggleIcon( itemSummary, false );
 		}
 	}
 
@@ -210,11 +225,25 @@ export default class NestedAccordion extends Base {
 	closeAllItems( items, titles ) {
 		titles.forEach( ( title, index ) => {
 			this.closeAccordionItem( items[ index ], title );
+			this.toggleIcon( title, false );
 		} );
 	}
 
 	getAnimationDuration() {
 		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
 		return size * ( 'ms' === unit ? 1 : 1000 );
+	}
+
+	toggleIcon(itemSummary, isOpen) {
+		const openIcon = itemSummary.querySelector( '.e-opened' );
+		const closedIcon = itemSummary.querySelector( '.e-closed' );
+
+		if (isOpen) {
+			openIcon.style.display = 'flex';
+			closedIcon.style.display = 'none';
+		} else {
+			openIcon.style.display = 'none';
+			closedIcon.style.display = 'flex';
+		}
 	}
 }
