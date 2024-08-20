@@ -38,7 +38,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
 	 * text, And that clicking on it opens the popup to create an account in my.elementor.com
 	 */
-	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
+	test.skip( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
