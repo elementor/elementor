@@ -21,10 +21,10 @@ class Controller extends Controller_Base {
 	protected function register_index_endpoint() {}
 
 	public function get_item_permissions_check( $request ) {
-		return true;
+		return current_user_can( 'manage_options' );
 	}
 
 	public function get_items_permissions_check( $request ) {
-		return true;
+		return current_user_can( 'manage_options' );
 	}
 }
