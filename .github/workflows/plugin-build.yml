@@ -59,7 +59,7 @@ jobs:
           REPOSITORY_NAME=$(echo "${{ github.repository }}" | awk -F/ '{print $NF}')
           echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
 
-      - name: Set Package Version Environment Variable
+      - name: Set Environment Variable
         run: |
           # Determine PACKAGE_VERSION
           if [ -z "${{ inputs.PACKAGE_VERSION }}" ]; then
@@ -76,11 +76,18 @@ jobs:
 
           echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
 
-      - name:  Update Versions in elementor files
+          ROOT_DIR=$(pwd);
+          echo "ROOT_DIR=${ROOT_DIR}" >> $GITHUB_ENV
+
+
+
+      - name: Update Elementor Pro Versions in elementor files
+        if: ${{ inputs.IS_RELEASE == true && env.REPOSITORY_NAME == 'elementor-pro' }}
         run: |
           PACKAGE_FILES_VERSION=${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
 
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_FILES_VERSION}/g" ./${{ env.REPOSITORY_NAME }}.php
+          sed -i -E "s/ELEMENTOR_PRO_VERSION', '(.*?)'/ELEMENTOR_PRO_VERSION', '${PACKAGE_FILES_VERSION}'/g" ./${{ env.REPOSITORY_NAME }}.php
 
           case "${{ env.REPOSITORY_NAME }}" in
             "elementor")
@@ -126,27 +133,11 @@ jobs:
           composer install --no-scripts --no-dev
           composer dump-autoload
 
-      - name: Build Core for Pro Plugin
+      - name: Navigate to the Elementor Core Directory
         if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
         run: |
-          ROOT_DIR=$(pwd)
-
           # Navigate to elementor folder
           cd ../elementor
-
-          # Build the core plugin
-          # When the 'npx grunt build' is done running it creates a build folder in the elementor folder
-          # and in the /tmp/elementor-builds. These builds are the same
-          npx grunt build
-
-          CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-
-          cd /tmp/elementor-builds/
-          mv ./${CORE_PACKAGE_VERSION} ./elementor
-          zip -r elementor.zip ./elementor
-
-          cd $ROOT_DIR
-          mv /tmp/elementor-builds/elementor.zip ./elementor.zip
 
       - name: Set configs
         if:  ${{ inputs.IS_CORE_FOR_PRO == false }}
@@ -157,6 +148,18 @@ jobs:
       - name: Build Plugin for the Main Repository
         id: build_plugin
         run: npx grunt build
+
+      - name: Move Builds Files to /tmp
+        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
+        run: |
+          CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
+
+          cd /tmp/elementor-builds/
+          mv ./${CORE_PACKAGE_VERSION} ./elementor
+          zip -r elementor.zip ./elementor
+
+          cd ${{ env.ROOT_DIR }}
+          mv /tmp/elementor-builds/elementor.zip ./elementor.zip
 
       - name: Zip Elementor Build Files
         id: zip_elementor
@@ -174,7 +177,7 @@ jobs:
         id: zip_elementor_pro
         if: ${{ env.REPOSITORY_NAME == 'elementor-pro' }}
         run: |
-          ROOT_DIR=$(pwd)
+
           PLUGIN_FILENAME="elementor-pro-${{ env.BUILD_PACKAGE_VERSION }}"
           PLUGIN_ZIP_FILENAME="${PLUGIN_FILENAME}.zip"
 
@@ -195,7 +198,7 @@ jobs:
 
           cd /tmp/
           zip -r -q ${PLUGIN_ZIP_PATH} ./elementor-pro
-          cd $ROOT_DIR
+          cd ${{ env.ROOT_DIR }}
 
           unzip -qo ${PLUGIN_ZIP_PATH} -d ./elementor-pro
 
@@ -204,7 +207,7 @@ jobs:
 
       - name: Publish zip on push to release or develop
         shell: bash
-        if: env.REPOSITORY_NAME == 'elementor-pro' && github.event_name == 'push' && startsWith(github.repository, 'elementor/') && (startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/develop')
+        if: env.REPOSITORY_NAME == 'elementor-pro' && github.event_name == 'push' && startsWith( github.repository, 'elementor/' ) && ( startsWith( github.ref, 'refs/heads/release/' ) || github.ref == 'refs/heads/develop' )
         run: curl --fail -F "package=@${{ env.PLUGIN_ZIP_FILENAME }}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=pro"
 
       - name: Upload Build Zip Artifact
