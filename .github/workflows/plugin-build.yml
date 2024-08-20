@@ -1,5 +1,7 @@
 name: Reusable Build workflow
 
+# This unified build file is responsible for building both the Elementor and Elementor Pro plugins.
+# When the build is building PRO plugin it also builds CORE FOR PRO plugin, because PRO plugin is dependent on CORE plugin.
 on:
   workflow_call:
     inputs:
@@ -42,15 +44,19 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies for the main repository
-        uses: Batsirai-muchareva/elementor/.github/workflows/dependencies-installation@main
+      - name: Install Dependencies For Main Repository
+        run: |
+          # There is a duplicate of the same step in step `Build Core Plugin for Pro`
+          # if you update here you also need to update there
+          npm ci
+          composer install --optimize-autoloader --prefer-dist
+          composer install --no-scripts --no-dev
+          composer dump-autoload
 
       - name: Set GitHub Repository Name Environment Variable
         shell: bash
         run: |
-          ls -al
           REPOSITORY_NAME=$(echo "${{ github.repository }}" | awk -F/ '{print $NF}')
-
           echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
 
       - name: Set Package Version Environment Variable
@@ -97,30 +103,36 @@ jobs:
               ;;
           esac
 
-
-      - name: Clone Elementor Core
-        if: ${{ inputs.IS_CORE_FOR_PRO == true }}
+      - name: Clone Elementor Core For Pro
+        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
         run: |
+          ELEMENTOR_CORE_BRANCH="${{ inputs.ELEMENTOR_PRO_CORE_BRANCH }}"
+
           rm -rf ../elementor
           echo "Cloning ELEMENTOR_CORE_BRANCH: ${ELEMENTOR_CORE_BRANCH}"
 
           # Cloning the core plugin into the elementor folder outside elementor-pro folder
           git clone --single-branch --branch ${ELEMENTOR_CORE_BRANCH} https://github.com/elementor/elementor.git ../elementor
 
+      - name: Install Dependencies for Core For Pro
+        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
+        run: |
           # Navigate to elementor folder
           cd ../elementor
 
-      - name: Build Core Plugin for Pro
-        if: env.REPOSITORY_NAME == 'elementor-pro'
-        run: |
-          ELEMENTOR_CORE_BRANCH="${{ inputs.ELEMENTOR_PRO_CORE_BRANCH }}"
-          ROOT_DIR=$(pwd)
-
-          # Run installation of npm and composer dependencies for core plugin
+          # Run installation of npm and composer dependencies for CORE Plugin which is a PRO dependency
           npm ci
           composer install --optimize-autoloader --prefer-dist
           composer install --no-scripts --no-dev
           composer dump-autoload
+
+      - name: Build Core for Pro Plugin
+        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
+        run: |
+          ROOT_DIR=$(pwd)
+
+          # Navigate to elementor folder
+          cd ../elementor
 
           # Build the core plugin
           # When the 'npx grunt build' is done running it creates a build folder in the elementor folder
@@ -128,7 +140,6 @@ jobs:
           npx grunt build
 
           CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "CORE_PACKAGE_VERSION=${CORE_PACKAGE_VERSION}" >> $GITHUB_ENV
 
           cd /tmp/elementor-builds/
           mv ./${CORE_PACKAGE_VERSION} ./elementor
@@ -138,7 +149,7 @@ jobs:
 
           mv /tmp/elementor-builds/elementor.zip ./elementor.zip
 
-      - name: Build Plugin
+      - name: Build Plugin for the Repository
         id: build_plugin
         run: |
           npm config set git-tag-version false
