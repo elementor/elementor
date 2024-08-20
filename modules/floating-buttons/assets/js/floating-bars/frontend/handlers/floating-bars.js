@@ -1,4 +1,5 @@
 import Base from 'elementor-frontend/handlers/base';
+import FloatingBarDomHelper from '../classes/floatin-bar-dom';
 
 export default class FloatingBarsHandler extends Base {
 	getDefaultSettings() {
@@ -10,11 +11,13 @@ export default class FloatingBarsHandler extends Base {
 			},
 			constants: {
 				ctaEntranceAnimation: 'style_cta_button_animation',
+				ctaEntranceAnimationDelay: 'style_cta_button_animation_delay',
 				hasEntranceAnimation: 'has-entrance-animation',
 				visible: 'visible',
 				isSticky: 'is-sticky',
 				hasVerticalPositionTop: 'has-vertical-position-top',
 				isHidden: 'is-hidden',
+				animated: 'animated',
 			},
 		};
 	}
@@ -36,14 +39,12 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	bindEvents() {
-		const { ctaEntranceAnimation } = this.getSettings( 'constants' );
-
 		if ( this.elements.closeButton ) {
 			this.elements.closeButton.addEventListener( 'click', this.closeFloatingBar.bind( this ) );
 		}
 
 		if ( this.elements.ctaButton ) {
-			this.elements.ctaButton.addEventListener( 'animationend', this.removeEntranceAnimationClasses.bind( this, this.elements.ctaButton, ctaEntranceAnimation ) );
+			this.elements.ctaButton.addEventListener( 'animationend', this.handleAnimationEnd.bind( this ) );
 		}
 
 		if ( this.elements.main ) {
@@ -71,37 +72,55 @@ export default class FloatingBarsHandler extends Base {
 		document.body.style.paddingTop = '0';
 	}
 
+	handleWPAdminBar() {
+		const wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+
+		if ( wpAdminBar.length ) {
+			this.elements.main.style.top = `${ wpAdminBar.height() }px`;
+		}
+	}
+
 	closeFloatingBar() {
 		const { isHidden } = this.getSettings( 'constants' );
 
-		this.elements.main.classList.add( isHidden );
+		if ( ! elementorFrontend.isEditMode() ) {
+			this.elements.main.classList.add( isHidden );
 
-		if ( this.isStickyTop() ) {
-			this.removeBodyPadding();
+			if ( this.isStickyTop() ) {
+				this.removeBodyPadding();
+			}
 		}
 	}
 
-	initEntranceAnimation( element, animation ) {
-		const { none } = this.getSettings( 'constants' );
+	initEntranceAnimation() {
+		const { animated, ctaEntranceAnimation, ctaEntranceAnimationDelay, hasEntranceAnimation } = this.getSettings( 'constants' );
+		const entranceAnimationClass = this.getResponsiveSetting( ctaEntranceAnimation );
+		const entranceAnimationDelay = this.getResponsiveSetting( ctaEntranceAnimationDelay ) || 0;
+		const setTimeoutDelay = entranceAnimationDelay + 500;
 
-		const entranceAnimationControl = this.getResponsiveSetting( animation );
+		this.elements.ctaButton.classList.add( animated );
+		this.elements.ctaButton.classList.add( entranceAnimationClass );
 
-		if ( ! entranceAnimationControl || none === entranceAnimationControl ) {
-			return;
-		}
-
-		element.classList.add( entranceAnimationControl );
+		setTimeout( () => {
+			this.elements.ctaButton.classList.remove( hasEntranceAnimation );
+		}, setTimeoutDelay );
 	}
 
-	removeEntranceAnimationClasses( element, animation ) {
-		if ( ! element ) {
+	handleAnimationEnd() {
+		this.removeEntranceAnimationClasses();
+		this.focusOnLoad();
+	}
+
+	removeEntranceAnimationClasses() {
+		if ( ! this.elements.ctaButton ) {
 			return;
 		}
+		const { animated, ctaEntranceAnimation, visible } = this.getSettings( 'constants' );
+		const entranceAnimationClass = this.getResponsiveSetting( ctaEntranceAnimation );
 
-		const { visible } = this.getSettings( 'constants' );
-
-		element.classList.remove( animation );
-		element.classList.add( visible );
+		this.elements.ctaButton.classList.remove( animated );
+		this.elements.ctaButton.classList.remove( entranceAnimationClass );
+		this.elements.ctaButton.classList.add( visible );
 	}
 
 	onDocumentKeyup( event ) {
@@ -118,22 +137,28 @@ export default class FloatingBarsHandler extends Base {
 	}
 
 	initDefaultState() {
+		const { hasEntranceAnimation } = this.getSettings( 'constants' );
+
 		if ( this.isStickyTop() ) {
 			this.applyBodyPadding();
+			this.handleWPAdminBar();
 		}
 
-		if ( this.elements.main && ! elementorFrontend.isEditMode() ) {
+		if ( this.elements.main && ! this.elements.ctaButton.classList.contains( hasEntranceAnimation ) && ! elementorFrontend.isEditMode() ) {
 			this.focusOnLoad();
 		}
 	}
 
 	onInit( ...args ) {
-		const { hasEntranceAnimation, ctaEntranceAnimation } = this.getSettings( 'constants' );
+		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
 
+		const domHelper = new FloatingBarDomHelper( this.$element );
+		domHelper.maybeMoveToTop();
+
 		if ( this.elements.ctaButton && this.elements.ctaButton.classList.contains( hasEntranceAnimation ) ) {
-			this.initEntranceAnimation( this.elements.ctaButton, ctaEntranceAnimation );
+			this.initEntranceAnimation();
 		}
 
 		this.initDefaultState();

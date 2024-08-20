@@ -2,6 +2,8 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Utils;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,19 +44,19 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			}
 
 			if ( ! ( $control instanceof Atomic_Control_Base ) ) {
-				$this->safe_throw( 'Control must be an instance of `Atomic_Control_Base`.' );
+				Utils::safe_throw( 'Control must be an instance of `Atomic_Control_Base`.' );
 				continue;
 			}
 
 			$prop_name = $control->get_bind();
 
 			if ( ! $prop_name ) {
-				$this->safe_throw( 'Control is missing a bound prop from the schema.' );
+				Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
 				continue;
 			}
 
 			if ( ! array_key_exists( $prop_name, $schema ) ) {
-				$this->safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`. Did you forget to define it?" );
+				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
 				continue;
 			}
 
@@ -62,14 +64,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		}
 
 		return $valid_controls;
-	}
-
-	private function safe_throw( string $message ) {
-		if ( ! defined( 'ELEMENTOR_DEBUG' ) || ! ELEMENTOR_DEBUG ) {
-			return;
-		}
-
-		throw new \Exception( $message );
 	}
 
 	abstract protected function define_atomic_controls(): array;
@@ -86,6 +80,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config = parent::get_initial_config();
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
+		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
 
 		return $config;
@@ -126,14 +121,86 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			} else {
 				$transformed_settings[ $key ] = $prop->get_default();
 			}
+
+			$transformed_settings[ $key ] = $this->transform_setting( $transformed_settings[ $key ] );
 		}
 
-		// TODO: Run through the transformers.
 		return $transformed_settings;
 	}
 
 	public static function get_props_schema() {
-		return static::define_props_schema();
+		$schema = static::define_props_schema();
+
+		static::validate_schema( $schema );
+
+		return $schema;
+	}
+
+	// TODO: Move to a `Schema_Validator` class?
+	private static function validate_schema( array $schema ) {
+		$widget_name = static::class;
+
+		foreach ( $schema as $key => $prop ) {
+			if ( ! ( $prop instanceof Atomic_Prop ) ) {
+				Utils::safe_throw( "Prop `$key` must be an instance of `Atomic_Prop` in `{$widget_name}`." );
+			}
+
+			if ( ! $prop->get_type() ) {
+				Utils::safe_throw( "Prop `$key` must have a type in `{$widget_name}`." );
+			}
+
+			static::validate_prop_default_value( $prop, $key );
+		}
+	}
+
+	private static function validate_prop_default_value( Atomic_Prop $prop, string $key ) {
+		$widget_name = static::class;
+
+		if ( ! $prop->validate( $prop->get_default() ) ) {
+			Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );
+		}
+
+		foreach ( $prop->get_constraints() as $constraint ) {
+			try {
+				$constraint->validate( $prop->get_default() );
+			} catch ( \Exception $e ) {
+				Utils::safe_throw(
+					"Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}` - {$e->getMessage()}"
+				);
+			}
+		}
+	}
+
+	private function transform_setting( $setting ) {
+		if ( ! $this->is_transformable( $setting ) ) {
+			return $setting;
+		}
+
+		switch ( $setting['$$type'] ) {
+			case 'classes':
+				return is_array( $setting['value'] )
+					? join( ' ', $setting['value'] )
+					: '';
+
+			case 'image-attachment':
+				$attachment_url = wp_get_attachment_url( $setting['value']['id'] );
+
+				return [
+					'url' => $attachment_url ?? Utils::get_placeholder_image_src(),
+				];
+
+			case 'image-url':
+				return [
+					'url' => $setting['value']['url'] ?? Utils::get_placeholder_image_src(),
+				];
+
+			default:
+				return null;
+		}
+	}
+
+	private function is_transformable( $setting ): bool {
+		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
 	abstract protected static function define_props_schema(): array;

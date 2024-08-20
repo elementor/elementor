@@ -553,22 +553,7 @@ class Widgets_Manager {
 	}
 
 	/**
-	 * Widgets styles names.
-	 *
-	 * Some Elementor widgets have custom styles. Each widget needs to register
-	 * the styles is depends on. Later, based on the loading strategy, Elementor
-	 * chooses how and where to enqueue these styles.
-	 *
-	 * Elementor has two types of widgets, widgets in the `/includes/widgets/`
-	 * folder and widgets in the `/modules/` folder.
-	 *
-	 * The styles are compiled to `/assets/css/widget-{$widget_name}.css` files
-	 * using grunt tasks.
-	 *
-	 * Widgets in the `/includes/widgets/` folder compile their SCSS files from
-	 * the `/assets/dev/scss/frontend/widgets/` folder.
-	 * Widgets in the `/modules/` folder compile their SCSS files from the
-	 * `/modules/{$module_name}/assets/scss/` folder.
+	 * Widgets with styles.
 	 *
 	 * This method returns the list of all the widgets in the `/includes/`
 	 * folder that have styles.
@@ -576,43 +561,50 @@ class Widgets_Manager {
 	 * @since 3.24.0
 	 * @access public
 	 *
-	 * @return array The names of the widgets styles.
+	 * @return array The names of the widgets that have styles.
 	 */
-	public function widgets_styles_names(): array {
-		$widgets_styles = [];
-
-		// Widgets inside the `/includes/widgets/` folder that have styles.
-		$widgets = [
-			'accordion',
-			'alert',
+	public function widgets_with_styles(): array {
+		return [
 			'counter',
 			'divider',
 			'google_maps',
 			'heading',
-			'icon-box',
-			'icon-list',
 			'image',
-			'image-box',
 			'image-carousel',
-			'image-gallery',
 			'menu-anchor',
-			'progress',
 			'rating',
 			'social-icons',
 			'spacer',
-			'star-rating',
-			'tabs',
 			'testimonial',
 			'text-editor',
-			'toggle',
 			'video',
 		];
+	}
 
-		foreach ( $widgets as $widget_name ) {
-			$widgets_styles[] = "widget-{$widget_name}";
-		}
-
-		return $widgets_styles;
+	/**
+	 * Widgets with responsive styles.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have responsive styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have responsive styles.
+	 */
+	public function widgets_with_responsive_styles(): array {
+		return [
+			'accordion',
+			'alert',
+			'icon-box',
+			'icon-list',
+			'image-box',
+			'image-gallery',
+			'progress',
+			'star-rating',
+			'tabs',
+			'toggle',
+		];
 	}
 
 	/**

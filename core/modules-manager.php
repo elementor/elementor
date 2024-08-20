@@ -97,6 +97,7 @@ class Modules_Manager {
 			'shapes',
 			'favorites',
 			'admin-top-bar',
+			'checklist',
 			'element-manager',
 			'nested-elements',
 			// Depends on Nested Elements module
@@ -123,6 +124,7 @@ class Modules_Manager {
 			'editor-events',
 			'atomic-widgets',
 			'wc-product-editor',
+			'checklist',
 		];
 	}
 
