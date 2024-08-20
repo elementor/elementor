@@ -368,7 +368,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`. Did you forget to define it?' );
+		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`.' );
 
 		// Act.
 		$widget->get_atomic_controls();
@@ -385,7 +385,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`. Did you forget to define it?' );
+		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`.' );
 
 		// Act.
 		$widget->get_atomic_controls();

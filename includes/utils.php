@@ -114,6 +114,10 @@ class Utils {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
+	public static function is_elementor_debug() {
+		return defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
+	}
+
 	/**
 	 * Whether elementor test mode is enabled or not.
 	 *
@@ -884,7 +888,7 @@ class Utils {
 	}
 
 	public static function safe_throw( string $message ) {
-		if ( ! defined( 'ELEMENTOR_DEBUG' ) || ! ELEMENTOR_DEBUG ) {
+		if ( ! static::is_elementor_debug() ) {
 			return;
 		}
 

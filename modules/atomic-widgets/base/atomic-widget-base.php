@@ -56,7 +56,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			}
 
 			if ( ! array_key_exists( $prop_name, $schema ) ) {
-				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`. Did you forget to define it?" );
+				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
 				continue;
 			}
 
@@ -80,6 +80,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config = parent::get_initial_config();
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
+		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
 
 		return $config;
