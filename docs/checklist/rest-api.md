@@ -26,7 +26,7 @@ Use this endpoint to get the checklist global config, as well as users progress.
 | Key       		        		  | Type		|Description										 |
 |------------------------------------|-------------|----------------------------------------------------|
 | `should_allow_undo`                | `boolean`	|True if the unmark as done button should be enabled |
-| `is_completed`                     | `boolean`	|True is step should be "checked" as done			 |
+| `is_completed`                     | `boolean`	|True if step should be "checked" as done			 |
 | `config.id`						  | `string`	|Step unique ID										 |
 | `config.title`					  | `string`	|Step title to be displayed as an item list			 |
 | `config.description`				  | `string`	|Step instructions inside the list card item element |
