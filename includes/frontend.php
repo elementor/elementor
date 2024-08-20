@@ -688,13 +688,13 @@ class Frontend extends App {
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
-					$css_file = Post_CSS::create( get_the_ID() );
-					$css_file->enqueue();
-
 					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
 					if ( ! empty( $page_assets ) ) {
 						Plugin::$instance->assets_loader->enable_assets( $page_assets );
 					}
+
+					$css_file = Post_CSS::create( get_the_ID() );
+					$css_file->enqueue();
 				}
 			}
 		}
