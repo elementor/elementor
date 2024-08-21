@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getRemoteConfig } from '../../../api';
 
@@ -19,6 +19,7 @@ export const RemoteConfigProvider = ( props ) => {
 
 	const fetchData = async () => {
 		setIsLoading( true );
+		setIsError( false );
 
 		try {
 			const result = await getRemoteConfig().finally( () => {
@@ -37,6 +38,14 @@ export const RemoteConfigProvider = ( props ) => {
 			setIsLoading( false );
 		}
 	};
+
+	useEffect( () => {
+		window.addEventListener( 'elementor/connect/success', fetchData );
+
+		return () => {
+			window.removeEventListener( 'elementor/connect/success', fetchData );
+		};
+	}, [] );
 
 	if ( ! isLoaded && ! isLoading ) {
 		fetchData();
