@@ -189,7 +189,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 					$url = $setting['value']['url'];
 				}
 
-				return $url ?? Utils::get_placeholder_image_src();
+				return empty( $url ) ? Utils::get_placeholder_image_src() : $url;
 
 			default:
 				return null;
