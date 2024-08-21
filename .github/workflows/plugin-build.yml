@@ -121,7 +121,6 @@ jobs:
         if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_RELEASE == false
         run: export PUPPETEER_SKIP_DOWNLOAD=true
 
-
       - name: Clone Elementor Core For Pro
         if: env.REPOSITORY_NAME == 'elementor-pro'
         run: |
@@ -156,58 +155,39 @@ jobs:
 
           npx grunt build
 
-      - name: Zip Elementor Core Build Files
-        if: ${{ env.REPOSITORY_NAME == 'elementor' }}
+      - name: Zip build files
         run: |
-          PLUGIN_FILENAME=elementor-${{ env.BUILD_PACKAGE_VERSION }}
+          PLUGIN_FILENAME=${{ env.REPOSITORY_NAME }}-${{ env.BUILD_PACKAGE_VERSION }}
           PLUGIN_ZIP_FILENAME=${PLUGIN_FILENAME}.zip
 
-          mv build elementor
-          zip -r ${PLUGIN_ZIP_FILENAME} elementor
+          if [[ ${{ env.REPOSITORY_NAME }} == "elementor" ]]; then
+            mv build elementor
 
-          echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_ENV
-
-      - name: Zip Core for Pro Plugin
-        if: env.REPOSITORY_NAME == 'elementor-pro' &&  inputs.IS_CORE_FOR_PRO  == true
-        run: |
-          CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-
-          cd /tmp/elementor-builds/
-          mv ./${CORE_PACKAGE_VERSION} ./elementor
-          zip -r elementor.zip ./elementor
-
-          cd ${{ env.ROOT_DIR }}
-          mv /tmp/elementor-builds/elementor.zip ./elementor.zip
-          PLUGIN_FILENAME=elementor
-
-          echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_ENV
-
-      - name: Zip Elementor Pro Build Files
-        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO  == false
-        run: |
-          PLUGIN_FILENAME="elementor-pro-${{ env.BUILD_PACKAGE_VERSION }}"
-          PLUGIN_ZIP_FILENAME="${PLUGIN_FILENAME}.zip"
-
-          PACKAGE_BASE_DIR="/tmp/elementor-pro-releases/"
-          PACKAGE_PATH=$(ls $PACKAGE_BASE_DIR)
-          PLUGIN_ZIP_PATH=$(pwd)/${PLUGIN_ZIP_FILENAME}
+            zip -r ${PLUGIN_ZIP_FILENAME} elementor
+          fi
 
           # When the 'npx grunt build' is done running in PRO it creates a zip build file in
           # /tmp/elementor-pro-releases folder named elementor-pro-{PACKAGE_VERSION}.zip
           # So we move the zip generated to the root folder of the repository
-          mv "${PACKAGE_BASE_DIR}/${PACKAGE_PATH}" ${PLUGIN_ZIP_FILENAME}
+          if [[ ${{ env.REPOSITORY_NAME }} == "elementor-pro" &&  ${{ inputs.IS_CORE_FOR_PRO }} == "false"  ]]; then
+            PACKAGE_BASE_DIR="/tmp/elementor-pro-releases/"
+            PACKAGE_PATH=$(ls $PACKAGE_BASE_DIR)
+            PLUGIN_ZIP_PATH=$(pwd)/${PLUGIN_ZIP_FILENAME}
 
-          # Unzip the zip file in the root folder into the /tmp folder
-          unzip -q ${PLUGIN_ZIP_PATH} -d /tmp/
+            mv "${PACKAGE_BASE_DIR}/${PACKAGE_PATH}" ${PLUGIN_ZIP_FILENAME}
+          fi
 
-          # Remove the zip file from the root folder
-          rm ${PLUGIN_ZIP_PATH}
+          if [[ ${{ env.REPOSITORY_NAME }} == "elementor-pro" &&  ${{ inputs.IS_CORE_FOR_PRO }} == "true"  ]]; then
+            CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
 
-          cd /tmp/
-          zip -r -q ${PLUGIN_ZIP_PATH} ./elementor-pro
-          cd ${{ env.ROOT_DIR }}
+            cd /tmp/elementor-builds/
+            mv ./${CORE_PACKAGE_VERSION} ./elementor
+            zip -r elementor.zip ./elementor
 
-          unzip -qo ${PLUGIN_ZIP_PATH} -d ./elementor-pro
+            cd ${{ env.ROOT_DIR }}
+            mv /tmp/elementor-builds/elementor.zip ./elementor.zip
+            PLUGIN_FILENAME=elementor
+          fi
 
           echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
           echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_ENV
