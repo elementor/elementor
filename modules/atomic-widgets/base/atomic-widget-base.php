@@ -183,15 +183,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 					: '';
 
 			case 'image':
-				if ( isset( $setting['value']['url'] ) ) {
-					$attachment_url = $setting['value']['url'];
-				}
-
 				if ( isset( $setting['value']['attachmentId'] ) ) {
-					$attachment_url = wp_get_attachment_image_url( $setting['value']['attachmentId'] ) ?? null;
+					$url = wp_get_attachment_image_url( $setting['value']['attachmentId'] ) ?? null;
+				} elseif ( isset( $setting['value']['url'] ) ) {
+					$url = $setting['value']['url'];
 				}
 
-				return $attachment_url ?? Utils::get_placeholder_image_src();
+				return $url ?? Utils::get_placeholder_image_src();
 
 			default:
 				return null;
