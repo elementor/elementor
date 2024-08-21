@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -14,7 +13,7 @@ class Utils {
 		$result = [];
 
 		foreach ( $dynamic_tags as $tag ) {
-			$atomic_tag = self::transform_tag_to_atomic( $tag );
+			$atomic_tag = self::transform_dynamic_tag_to_atomic( $tag );
 			if ( $atomic_tag ) {
 				$result[] = $atomic_tag;
 			}
@@ -23,7 +22,7 @@ class Utils {
 		return $result;
 	}
 
-	private static function transform_tag_to_atomic( $tag ) {
+	private static function transform_dynamic_tag_to_atomic( $tag ) {
 		if ( ! $tag['controls'] ) {
 			return [
 				'name' => $tag['name'],
