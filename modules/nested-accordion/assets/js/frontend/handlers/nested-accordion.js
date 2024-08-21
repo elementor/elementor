@@ -239,11 +239,11 @@ export default class NestedAccordion extends Base {
 		const closedIcon = itemSummary.querySelector( '.e-closed' );
 
 		if ( isOpen ) {
-			openIcon.style.display = 'flex';
-			closedIcon.style.display = 'none';
+			openIcon?.classList.add( 'e-show' );
+			closedIcon?.classList.remove( 'e-show' );
 		} else {
-			openIcon.style.display = 'none';
-			closedIcon.style.display = 'flex';
+			closedIcon?.classList.add( 'e-show' );
+			openIcon?.classList.remove( 'e-show' );
 		}
 	}
 }
