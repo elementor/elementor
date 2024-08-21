@@ -37,6 +37,8 @@ class Module extends BaseModule {
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+
+			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags( $settings ) );
 		}
 	}
 
@@ -58,6 +60,12 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
+	}
+
+	private function add_atomic_dynamic_tags( $settings ) {
+		$settings['atomicDynamicTags'] = Utils::transform_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
+
+		return $settings;
 	}
 
 	/**
