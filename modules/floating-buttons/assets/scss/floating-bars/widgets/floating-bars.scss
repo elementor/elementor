@@ -26,6 +26,7 @@
 	--e-floating-bars-cta-button-animation-delay: 500ms;
 	--e-floating-bars-cta-button-animation-duration: 1000ms;
 	--e-floating-bars-background-overlay-opacity: 0.5;
+	--e-floating-bars-close-icon-size: 24px;
 
 	align-items: center;
 	background-color: var(--e-floating-bars-announcement-bg-color);
@@ -47,6 +48,10 @@
 		grid-template-rows: auto auto;
 		gap: var(--e-floating-bars-elements-gap);
 		row-gap: 16px;
+	}
+
+	&:focus {
+		outline: none;
 	}
 
 	&.has-vertical-position-top {
@@ -147,9 +152,13 @@
 		transition: $transition-hover;
 		white-space: nowrap;
 
-		&.has-entrance-animation {
+		&.animated {
 			animation-delay: var(--e-floating-bars-cta-button-animation-delay);
 			animation-duration: var(--e-floating-bars-cta-button-animation-duration);
+			animation-iteration-count: 1;
+		}
+
+		&.has-entrance-animation {
 			opacity: 0;
 		}
 	
@@ -173,11 +182,19 @@
 			}
 		}
 
-		&.is-type-button {
-			background-color: var(--e-floating-bars-cta-button-bg-color);
+		&.has-border {
 			border-color: var(--e-floating-bars-cta-button-border-color);
 			border-style: solid;
 			border-width: var(--e-floating-bars-cta-button-border-width);
+			
+			&:hover,
+			&:focus {
+				border-color: var(--e-floating-bars-cta-button-border-color-hover);
+			}
+		}
+
+		&.is-type-button {
+			background-color: var(--e-floating-bars-cta-button-bg-color);
 			border-radius: var(--e-floating-bars-corners);
 			padding-block-end: var(--e-floating-bars-cta-button-padding-block-end);
 			padding-block-start: var(--e-floating-bars-cta-button-padding-block-start);
@@ -187,22 +204,26 @@
 			&:hover,
 			&:focus {
 				background-color: var(--e-floating-bars-cta-button-bg-color-hover);
-				border-color: var(--e-floating-bars-cta-button-border-color-hover);
 			}
 		}
 
 		&.is-type-link {
-			text-decoration: underline;
+			text-decoration: none;
+
+			.e-floating-bars__cta-text {
+				text-decoration: underline;
+			}
 		}
 	}
 
-	&__close-button {
+	&__close-button,
+	&__close-button[type="button"] {
 		align-items: center;
 		display: flex;
 		position: absolute;
 
 		i {
-			font-size: 24px;
+			font-size: var(--e-floating-bars-close-icon-size);
 		}
 
 		@media (max-width: $screen-mobile-max) {
@@ -240,4 +261,13 @@
 
 .e-con-inner:has(.e-floating-bars) {
 	padding: 0;
+}
+
+.elementor-element:has(.e-floating-bars:is(:not(.is-sticky))) {
+	padding: 0;
+
+	.e-con-inner {
+		max-width: unset;
+		padding: 0;
+	}
 }
