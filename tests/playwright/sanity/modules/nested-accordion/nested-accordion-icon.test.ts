@@ -91,7 +91,8 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const childAccordionItemSecondTitleIcon = nestedSecondAccordionWidget.locator( '.e-n-accordion-item-title-icon' ).first();
 
 		// Act
-		await editor.isUiStable( nestedSecondAccordionWidget );
+		await nestedSecondAccordionWidget.waitFor();
+
 		const plus = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
 		const minus = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
 		await nestedSecondAccordionWidget.click();
@@ -103,7 +104,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		await expect( minus ).toHaveCSS( 'display', 'flex' );
 		await expect( isPlusDisplayedAfterClick ).toHaveCSS( 'display', 'flex' );
 		await expect( isMinusDisplayedAfterClick ).toHaveCSS( 'display', 'none' );
-		await expect( plus.locator( 'svg' ) ).toHaveClass( 'e-font-icon-svg e-far-address-card' );
-		await expect( minus.locator( 'svg' ) ).toHaveClass( 'e-font-icon-svg e-fas-minus' );
+		await expect( plus.locator( 'svg' ) ).toHaveClass( /e-font-icon-svg e-far-address-card/ );
+		await expect( minus.locator( 'svg' ) ).toHaveClass( /e-font-icon-svg e-fas-minus/ );
 	} );
 } );
