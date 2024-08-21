@@ -17,7 +17,7 @@ on:
       ELEMENTOR_PRO_CORE_BRANCH:
         required: false
         type: string
-        description: 'The branch of the core repository to use.'
+        description: 'The branch of the core repository to use when executing this action from Elementor Pro.'
         default: "main"
       IS_CUSTOM_CORE:
         required: false
@@ -35,7 +35,6 @@ on:
         description: 'Optional. If true, the core for pro plugin will be built.'
         default: false
 
-
     secrets:
       DEPLOY_BUILDS_ENDPOINT:
         required: false
@@ -44,10 +43,6 @@ on:
     outputs:
       artifact_name:
         description: "The name of the generated zip file."
-        value: ${{ jobs.plugin_build.outputs.artifact_name }}
-
-      core_for_pro_artifact_name:
-        description: "The name of the generated zip file for core for pro"
         value: ${{ jobs.plugin_build.outputs.artifact_name }}
 
 jobs:
@@ -86,7 +81,7 @@ jobs:
           echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "ROOT_DIR=${ROOT_DIR}" >> $GITHUB_ENV
 
-      - name:  Update Versions in elementor files
+      - name: Update Versions in elementor files
         run: |
           PACKAGE_FILES_VERSION=${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
 
@@ -132,7 +127,7 @@ jobs:
           # Cloning the core plugin into the elementor folder outside elementor-pro folder
           git clone --single-branch --branch ${ELEMENTOR_CORE_BRANCH} https://github.com/elementor/elementor.git ../elementor
 
-      - name: Install Dependencies For Main Repository
+      - name: Install Dependencies
         run: |
           # There is a duplicate of the same step in step `Build Core Plugin for Pro`
           # if you update here you also need to update there
@@ -146,7 +141,7 @@ jobs:
           composer install --no-scripts --no-dev
           composer dump-autoload
 
-      - name: Build Plugin for the Main Repository
+      - name: Build Plugin
         id: build_plugin
         run: |
           if [[ ${{ inputs.IS_CORE_FOR_PRO }} == "true" || ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then

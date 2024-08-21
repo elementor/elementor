@@ -23,6 +23,7 @@ concurrency:
 jobs:
   configure-env-variables:
     runs-on: ubuntu-22.04
+    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     outputs:
       PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
@@ -106,7 +107,9 @@ jobs:
         run: npm ci
 
       - name: Update Beta tag
-        uses: ./.github/workflows/update-beta-tag-in-readme
+        uses: ./.github/workflows/update-readme-txt
+        with:
+          UPDATE_BETA_TAG: true
 
       - name: Download build artifact
         uses: actions/download-artifact@v4

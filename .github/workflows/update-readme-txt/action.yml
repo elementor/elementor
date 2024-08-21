@@ -10,12 +10,21 @@ inputs:
     description: 'The package version to get the version from.'
   README_TXT_PATH:
     required: true
-    description: 'Path to Readme.txt'  
+    description: 'Path to Readme.txt'
+  UPDATE_STABLE_TAG:
+    required: false
+    default: 'false'
+    description: 'Set to true if you want to update the Stable tag.'
+  UPDATE_BETA_TAG:
+    required: false
+    default: 'false'
+    description: 'Set to true if you want to update the Beta tag.'
 
 runs:
   using: "composite"
   steps:
       - name: Get & Update Stable Tag In Readme.txt
+        if: inputs.UPDATE_STABLE_TAG == 'true'
         shell: bash
         run: |
               README_TXT_PATH=${{ inputs.README_TXT_PATH }}
@@ -53,3 +62,16 @@ runs:
               echo "Readme.txt updated with Stable tag: ${latest_tag}"
               echo "Readme.txt preview: \n"
               head -n 10 $README_TXT_PATH
+
+      - name: Update Beta tag
+        if: inputs.UPDATE_BETA_TAG == 'true'
+        shell: bash
+        run: |
+          if grep -q "Beta tag:" ./readme.txt
+            then
+              echo "Replace existing beta tag in readme file"
+              sed -i -E "s/Beta tag: .*/Beta tag: ${{ env.BETA_VERSION }}/g" ./readme.txt
+            else
+              echo "Add beta tag to readme file"
+              sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: ${{ env.BETA_VERSION }}$(printf '\n\r')" ./readme.txt
+          fi
