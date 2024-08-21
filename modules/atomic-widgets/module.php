@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
+use Elementor\Modules\AtomicWidgets\AtomicDynamicTags\Module as Atomic_Dynamic_Tags_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,7 +39,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
-			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings ) );
+			( new Atomic_Dynamic_Tags_Module() )->register_hooks();
 		}
 	}
 
@@ -60,12 +61,6 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
-	}
-
-	private function add_atomic_dynamic_tags_settings( $settings ) {
-		$settings['atomicDynamicTags'] = Utils::transform_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
-
-		return $settings;
 	}
 
 	/**

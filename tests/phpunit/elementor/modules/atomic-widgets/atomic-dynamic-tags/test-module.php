@@ -1,17 +1,21 @@
 <?php
-namespace Elementor\Testing\Modules\AtomicWidgets;
+namespace Elementor\Testing\Modules\AtomicWidgets\AtomicDynamicTags;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Module;
-use Elementor\Modules\AtomicWidgets\Utils;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
-
+use Elementor\Modules\AtomicWidgets\AtomicDynamicTags\Module;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Utils extends Elementor_Test_Base {
+class Test_Module extends Elementor_Test_Base {
+	private $module;
+
+	public function set_up() {
+		parent::set_up();
+
+		$this->module = new Module();
+	}
+
 	public function test_transform_dynamic_tags_to_atomic__returns_the_atomic_dynamic_tags() {
 		// Arrange.
 		$tags = [
@@ -51,7 +55,7 @@ class Test_Utils extends Elementor_Test_Base {
 		];
 
 		// Act.
-		$atomic_tags = Utils::transform_dynamic_tags_to_atomic( $tags );
+		$atomic_tags = $this->module::transform_dynamic_tags_to_atomic( $tags );
 
 		// Assert.
 		$expected = [
@@ -168,7 +172,7 @@ class Test_Utils extends Elementor_Test_Base {
 		];
 
 		// Act.
-		$atomic_tags = Utils::transform_dynamic_tags_to_atomic( $tags );
+		$atomic_tags = $this->module::transform_dynamic_tags_to_atomic( $tags );
 
 		// Assert.
 		$this->assertEmpty( $atomic_tags );
@@ -209,7 +213,7 @@ class Test_Utils extends Elementor_Test_Base {
 		];
 
 		// Act.
-		$atomic_tags = Utils::transform_dynamic_tags_to_atomic( $tags );
+		$atomic_tags = $this->module::transform_dynamic_tags_to_atomic( $tags );
 
 		// Assert.
 		$this->assertEmpty( $atomic_tags );

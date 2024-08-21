@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\AtomicDynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -8,7 +8,17 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
 use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
 
-class Utils {
+class Module {
+	public function register_hooks() {
+		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this::add_atomic_dynamic_tags_settings( $settings ) );
+	}
+
+	private function add_atomic_dynamic_tags_settings( $settings ) {
+		$settings['atomicDynamicTags'] = self::transform_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
+
+		return $settings;
+	}
+
 	public static function transform_dynamic_tags_to_atomic( $dynamic_tags ) {
 		$result = [];
 
@@ -50,7 +60,7 @@ class Utils {
 		];
 	}
 
-	public static function transform_controls_to_atomic( $controls ) {
+	private static function transform_controls_to_atomic( $controls ) {
 		$atomic_controls = [];
 		$props_schema = [];
 
