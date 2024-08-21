@@ -63,6 +63,11 @@ abstract class Step_Base {
 	abstract public function get_is_completion_immutable() : bool;
 
 	/**
+	 * @return bool
+	 */
+	abstract public function get_image_src() : bool;
+
+	/**
 	 * Step_Base constructor.
 	 *
 	 * @param Checklist_Module $module

@@ -2,12 +2,12 @@ import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } f
 import PropTypes from 'prop-types';
 
 const ChecklistCardContent = ( props ) => {
-	const { description, link, CTA, id, imagePath } = props.step;
+	const { description, link, CTA, id, imageSrc } = props.step;
 
 	return (
 		<Card elevation={ 0 } square={ true } className={ `e-checklist-item-content checklist-step-${ id }` }>
 			<CardMedia
-				image={ imagePath }
+				image={ imageSrc }
 				sx={ { height: 180 } }
 			/>
 			<CardContent>

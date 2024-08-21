@@ -43,4 +43,8 @@ class Create_Pages extends Step_Base {
 	public function get_is_completion_immutable() : bool {
 		return true;
 	}
+
+	public function get_image_src() : bool {
+		return ELEMENTOR_URL . 'modules/checklist/image/';
+	}
 }

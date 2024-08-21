@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import Checklist from './components/checklist';
 
@@ -6,14 +6,14 @@ const App = () => {
 	const [ steps, setSteps ] = useState( null );
 	const isRTL = elementorCommon.config.isRTL;
 
-	useEffect( () => {
-		fetch( '/wp-json/elementor/v2/checklist/steps' )
+	if ( ! steps ) {
+		fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps` )
 			.then( ( response ) => response.json() )
-			.then( ( data ) => setSteps( data.data ) )
-			.catch( ( ) => {
+			.then( ( data ) => setSteps( data ) )
+			.catch( () => {
 				return null;
 			} );
-	}, [] );
+	}
 
 	if ( ! steps ) {
 		return null;
