@@ -38,7 +38,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
-			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags( $settings ) );
+			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings ) );
 		}
 	}
 
@@ -62,7 +62,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 	}
 
-	private function add_atomic_dynamic_tags( $settings ) {
+	private function add_atomic_dynamic_tags_settings( $settings ) {
 		$settings['atomicDynamicTags'] = Utils::transform_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
 
 		return $settings;
