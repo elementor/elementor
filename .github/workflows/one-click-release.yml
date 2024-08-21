@@ -62,6 +62,7 @@ jobs:
     needs: [configure-env-variables]
     uses: ./.github/workflows/plugin-build.yml
     with:
+      IS_RELEASE: true
       PACKAGE_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_VERSION }}
       PACKAGE_FILES_VERSION: ${{ needs.configure-env-variables.outputs.PACKAGE_FILES_VERSION }}
 
