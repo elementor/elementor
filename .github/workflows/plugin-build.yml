@@ -19,11 +19,22 @@ on:
         type: string
         description: 'The branch of the core repository to use.'
         default: "main"
+      IS_CUSTOM_CORE:
+        required: false
+        type: boolean
+        description: 'Optional. If true, if the core plugin is custom core'
+        default: false
+      IS_RELEASE:
+        required: false
+        type: boolean
+        description: 'Optional. If true, the plugin build will be released.'
+        default: false
       IS_CORE_FOR_PRO:
         required: false
         type: boolean
-        description: 'Whether the core plugin is being built for Pro.'
+        description: 'Optional. If true, the core for pro plugin will be built.'
         default: false
+
 
     secrets:
       DEPLOY_BUILDS_ENDPOINT:
@@ -35,23 +46,19 @@ on:
         description: "The name of the generated zip file."
         value: ${{ jobs.plugin_build.outputs.artifact_name }}
 
+      core_for_pro_artifact_name:
+        description: "The name of the generated zip file for core for pro"
+        value: ${{ jobs.plugin_build.outputs.artifact_name }}
+
 jobs:
   plugin_build:
     runs-on: ubuntu-latest
     outputs:
       artifact_name: ${{ env.PLUGIN_FILENAME }}
+      core_for_pro_artifact_name: ${{ env.CORE_FOR_PRO_PLUGIN_FILENAME || 'elementor' }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
-
-      - name: Install Dependencies For Main Repository
-        run: |
-          # There is a duplicate of the same step in step `Build Core Plugin for Pro`
-          # if you update here you also need to update there
-          npm ci
-          composer install --optimize-autoloader --prefer-dist
-          composer install --no-scripts --no-dev
-          composer dump-autoload
 
       - name: Set GitHub Repository Name Environment Variable
         shell: bash
@@ -74,20 +81,16 @@ jobs:
 
           fi
 
-          echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
-
           ROOT_DIR=$(pwd);
+
+          echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "ROOT_DIR=${ROOT_DIR}" >> $GITHUB_ENV
 
-
-
-      - name: Update Elementor Pro Versions in elementor files
-        if: ${{ inputs.IS_RELEASE == true && env.REPOSITORY_NAME == 'elementor-pro' }}
+      - name:  Update Versions in elementor files
         run: |
           PACKAGE_FILES_VERSION=${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
 
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_FILES_VERSION}/g" ./${{ env.REPOSITORY_NAME }}.php
-          sed -i -E "s/ELEMENTOR_PRO_VERSION', '(.*?)'/ELEMENTOR_PRO_VERSION', '${PACKAGE_FILES_VERSION}'/g" ./${{ env.REPOSITORY_NAME }}.php
 
           case "${{ env.REPOSITORY_NAME }}" in
             "elementor")
@@ -110,8 +113,17 @@ jobs:
               ;;
           esac
 
+      - name: Prevent git tag versioning
+        if: env.REPOSITORY_NAME == 'elementor' && inputs.IS_RELEASE == false
+        run: npm config set git-tag-version false
+
+      - name: Skip puppeteer download
+        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_RELEASE == false
+        run: export PUPPETEER_SKIP_DOWNLOAD=true
+
+
       - name: Clone Elementor Core For Pro
-        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
+        if: env.REPOSITORY_NAME == 'elementor-pro'
         run: |
           ELEMENTOR_CORE_BRANCH="${{ inputs.ELEMENTOR_PRO_CORE_BRANCH }}"
 
@@ -121,48 +133,30 @@ jobs:
           # Cloning the core plugin into the elementor folder outside elementor-pro folder
           git clone --single-branch --branch ${ELEMENTOR_CORE_BRANCH} https://github.com/elementor/elementor.git ../elementor
 
-      - name: Install Dependencies for Core For Pro
-        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
+      - name: Install Dependencies For Main Repository
         run: |
-          # Navigate to elementor folder
-          cd ../elementor
+          # There is a duplicate of the same step in step `Build Core Plugin for Pro`
+          # if you update here you also need to update there
 
-          # Run installation of npm and composer dependencies for CORE Plugin which is a PRO dependency
+          if [[ ${{ inputs.IS_CORE_FOR_PRO }} == "true" || ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then
+            cd ../elementor
+          fi
+
           npm ci
           composer install --optimize-autoloader --prefer-dist
           composer install --no-scripts --no-dev
           composer dump-autoload
 
-      - name: Navigate to the Elementor Core Directory
-        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
-        run: |
-          # Navigate to elementor folder
-          cd ../elementor
-
-      - name: Set configs
-        if:  ${{ inputs.IS_CORE_FOR_PRO == false }}
-        run: |
-          npm config set git-tag-version false
-          export PUPPETEER_SKIP_DOWNLOAD=true
-
       - name: Build Plugin for the Main Repository
         id: build_plugin
-        run: npx grunt build
-
-      - name: Move Builds Files to /tmp
-        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO == true
         run: |
-          CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [[ ${{ inputs.IS_CORE_FOR_PRO }} == "true" || ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then
+            cd ../elementor
+          fi
 
-          cd /tmp/elementor-builds/
-          mv ./${CORE_PACKAGE_VERSION} ./elementor
-          zip -r elementor.zip ./elementor
+          npx grunt build
 
-          cd ${{ env.ROOT_DIR }}
-          mv /tmp/elementor-builds/elementor.zip ./elementor.zip
-
-      - name: Zip Elementor Build Files
-        id: zip_elementor
+      - name: Zip Elementor Core Build Files
         if: ${{ env.REPOSITORY_NAME == 'elementor' }}
         run: |
           PLUGIN_FILENAME=elementor-${{ env.BUILD_PACKAGE_VERSION }}
@@ -173,11 +167,24 @@ jobs:
 
           echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_ENV
 
-      - name: Zip Elementor Pro Build Files
-        id: zip_elementor_pro
-        if: ${{ env.REPOSITORY_NAME == 'elementor-pro' }}
+      - name: Zip Core for Pro Plugin
+        if: env.REPOSITORY_NAME == 'elementor-pro' &&  inputs.IS_CORE_FOR_PRO  == true
         run: |
+          CORE_PACKAGE_VERSION=$(node -p "require('./package.json').version")
 
+          cd /tmp/elementor-builds/
+          mv ./${CORE_PACKAGE_VERSION} ./elementor
+          zip -r elementor.zip ./elementor
+
+          cd ${{ env.ROOT_DIR }}
+          mv /tmp/elementor-builds/elementor.zip ./elementor.zip
+          PLUGIN_FILENAME=elementor
+
+          echo "PLUGIN_FILENAME=${PLUGIN_FILENAME}" >> $GITHUB_ENV
+
+      - name: Zip Elementor Pro Build Files
+        if: env.REPOSITORY_NAME == 'elementor-pro' && inputs.IS_CORE_FOR_PRO  == false
+        run: |
           PLUGIN_FILENAME="elementor-pro-${{ env.BUILD_PACKAGE_VERSION }}"
           PLUGIN_ZIP_FILENAME="${PLUGIN_FILENAME}.zip"
 
@@ -207,7 +214,7 @@ jobs:
 
       - name: Publish zip on push to release or develop
         shell: bash
-        if: env.REPOSITORY_NAME == 'elementor-pro' && github.event_name == 'push' && startsWith( github.repository, 'elementor/' ) && ( startsWith( github.ref, 'refs/heads/release/' ) || github.ref == 'refs/heads/develop' )
+        if: env.REPOSITORY_NAME == 'elementor-pro' && github.event_name == 'push' && startsWith(github.repository, 'elementor/') && (startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/develop')
         run: curl --fail -F "package=@${{ env.PLUGIN_ZIP_FILENAME }}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=pro"
 
       - name: Upload Build Zip Artifact
