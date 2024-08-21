@@ -1,7 +1,6 @@
 import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
 import { Paper } from '@elementor/ui';
-import { steps } from '../data/steps';
 
 const Checklist = () => {
 	return (
@@ -19,6 +18,10 @@ const Checklist = () => {
 			<CheckListWrapper steps={ steps } />
 		</Paper>
 	);
+};
+
+Checklist.propTypes = {
+	steps: PropTypes.array.isRequired,
 };
 
 export default Checklist;
