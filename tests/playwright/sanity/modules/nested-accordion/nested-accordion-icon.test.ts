@@ -87,35 +87,23 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		await editor.selectElement( nestedAccordionID );
 		await addIcon( editor, page, 'address card' );
 		await editor.publishAndViewPage();
-
 		const nestedSecondAccordionWidget = page.locator( '.e-n-accordion-item-title' ).nth( 2 );
 		const childAccordionItemSecondTitleIcon = nestedSecondAccordionWidget.locator( '.e-n-accordion-item-title-icon' ).first();
 
 		// Act
 		await editor.isUiStable( nestedSecondAccordionWidget );
-		const isPlusDisplayed = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
 		const plus = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
-		const addressCardClassname = await plus.evaluate( ( node ) => {
-			const addressIconElement = node.firstChild as HTMLElement;
-			return addressIconElement ? Array.from( addressIconElement.classList ) : [];
-		} );
-
-		const minus = nestedSecondAccordionWidget.locator( '.e-opened' );
-		const minusIconClassname = await minus.evaluate( ( node ) => {
-			const minusIconElement = node.firstChild as HTMLElement;
-			return minusIconElement ? Array.from( minusIconElement.classList ) : [];
-		} );
-		const isMinusDisplayed = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
+		const minus = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
 		await nestedSecondAccordionWidget.click();
-		const isMinusDisplayedAfterClick = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
-		const isPlusDisplayedAfterClick = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
+		const isPlusDisplayedAfterClick = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
+		const isMinusDisplayedAfterClick = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
 
 		// Assert
-		await expect( isPlusDisplayed ).toHaveCSS( 'display', 'flex' );
-		await expect( isMinusDisplayed ).toHaveCSS( 'display', 'none' );
-		await expect( isPlusDisplayedAfterClick ).toHaveCSS( 'display', 'none' );
-		await expect( isMinusDisplayedAfterClick ).toHaveCSS( 'display', 'flex' );
-		expect( addressCardClassname ).toContain( 'e-far-address-card' );
-		expect( minusIconClassname ).toContain( 'e-fas-minus' );
+		await expect( plus ).toHaveCSS( 'display', 'none' );
+		await expect( minus ).toHaveCSS( 'display', 'flex' );
+		await expect( isPlusDisplayedAfterClick ).toHaveCSS( 'display', 'flex' );
+		await expect( isMinusDisplayedAfterClick ).toHaveCSS( 'display', 'none' );
+		await expect( plus.locator( 'svg' ) ).toHaveClass( 'e-font-icon-svg e-far-address-card' );
+		await expect( minus.locator( 'svg' ) ).toHaveClass( 'e-font-icon-svg e-fas-minus' );
 	} );
 } );
