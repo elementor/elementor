@@ -37,6 +37,8 @@ class Module extends BaseModule {
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+
+			( new Compatibility() )->register_hooks();
 		}
 	}
 
