@@ -7,22 +7,28 @@ const App = () => {
 	const isRTL = elementorCommon.config.isRTL;
 
 	if ( ! steps ) {
-		fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps` )
+		fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': elementorWebCliConfig.nonce,
+			},
+		} )
 			.then( ( response ) => response.json() )
-			.then( ( data ) => setSteps( data ) )
+			.then( ( data ) => setSteps( data.data ) )
 			.catch( () => {
 				return null;
 			} );
 	}
 
-	if ( ! steps ) {
+	if ( ! steps.data || 0 === steps.data.length ) {
 		return null;
 	}
 
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme="light">
-				<Checklist steps={ steps } />
+				<Checklist steps={ steps.data } />
 			</ThemeProvider>
 		</DirectionProvider>
 	);
