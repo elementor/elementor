@@ -25,9 +25,6 @@ const App = () => {
 		return null;
 	}
 
-	console.log('steps');
-	console.log(steps);
-
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme="light">
