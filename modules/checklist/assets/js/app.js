@@ -1,27 +1,29 @@
-import { useState } from 'react';
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import { QueryClient, QueryClientProvider, useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
 
-const App = () => {
-	const [ steps, setSteps ] = useState( null );
+const fetchSteps = async () => {
+	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-WP-Nonce': elementorWebCliConfig.nonce,
+		},
+	} );
+	const data = await response.json();
+	return data.data;
+};
+
+const queryClient = new QueryClient();
+
+const AppContent = () => {
 	const isRTL = elementorCommon.config.isRTL;
+	const { error, data: steps } = useQuery( {
+		queryKey: [ 'steps' ],
+		queryFn: fetchSteps,
+	} );
 
-	if ( ! steps ) {
-		fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': elementorWebCliConfig.nonce,
-			},
-		} )
-			.then( ( response ) => response.json() )
-			.then( ( data ) => setSteps( data.data ) )
-			.catch( () => {
-				return null;
-			} );
-	}
-
-	if ( ! steps ) {
+	if ( error || ! steps || 0 === steps.length ) {
 		return null;
 	}
 
@@ -33,5 +35,11 @@ const App = () => {
 		</DirectionProvider>
 	);
 };
+
+const App = () => (
+	<QueryClientProvider client={ queryClient }>
+		<AppContent />
+	</QueryClientProvider>
+);
 
 export default App;
