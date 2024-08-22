@@ -15,7 +15,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/editor/localize_settings' );
 	}
 
-	public function test_convert_dynamic_tags_to_atomic__returns_the_atomic_dynamic_tags() {
+	public function test_add_atomic_dynamic_tags_settings__returns_the_atomic_dynamic_tags() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -138,7 +138,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 		$this->assertEquals( $expected, json_decode( json_encode( $settings['atomicDynamicTags'] ), true ) );
 	}
 
-	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_no_name() {
+	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_no_name() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -159,7 +159,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 		$this->assertEmpty( $settings['atomicDynamicTags'] );
 	}
 
-	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_no_categories() {
+	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_no_categories() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -178,7 +178,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 		$this->assertEmpty( $settings['atomicDynamicTags'] );
 	}
 
-	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_unsupported_control() {
+	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_unsupported_control() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -221,7 +221,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 		$this->assertEmpty( $settings['atomicDynamicTags'] );
 	}
 
-	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_select_control_with_no_options() {
+	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_select_control_with_no_options() {
 		// Arrange.
 		$tags = [
 			'tag' => [
