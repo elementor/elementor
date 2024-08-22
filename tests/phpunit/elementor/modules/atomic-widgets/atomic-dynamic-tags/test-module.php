@@ -138,6 +138,42 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( $expected, json_decode( json_encode( $atomic_tags ), true ) );
 	}
 
+	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_no_name() {
+		// Arrange.
+		$tags = [
+			'tag' => [
+				'title' => 'Info',
+				'categories' => [
+					'text',
+				],
+				'group' => 'post',
+			],
+		];
+
+		// Act.
+		$atomic_tags = $this->module->convert_dynamic_tags_to_atomic( $tags );
+
+		// Assert.
+		$this->assertEmpty( $atomic_tags );
+	}
+
+	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_no_categories() {
+		// Arrange.
+		$tags = [
+			'tag' => [
+				'name' => 'info',
+				'title' => 'Info',
+				'group' => 'post',
+			],
+		];
+
+		// Act.
+		$atomic_tags = $this->module->convert_dynamic_tags_to_atomic( $tags );
+
+		// Assert.
+		$this->assertEmpty( $atomic_tags );
+	}
+
 	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_unsupported_control() {
 		// Arrange.
 		$tags = [
