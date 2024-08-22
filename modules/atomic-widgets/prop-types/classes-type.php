@@ -29,10 +29,4 @@ class Classes_Type extends Transformable_Type {
 			return $carry && is_string( $item );
 		}, true );
 	}
-
-	public function get_dynamic_categories(): array {
-		return [
-			DynamicTags::IMAGE_CATEGORY,
-		];
-	}
 }
