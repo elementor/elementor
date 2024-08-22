@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
-use Elementor\Modules\AtomicWidgets\AtomicDynamicTags\Module as Atomic_Dynamic_Tags_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,7 +38,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
-			( new Atomic_Dynamic_Tags_Module() )->register_hooks();
+			( new Compatibility() )->register_hooks();
 		}
 	}
 

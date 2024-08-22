@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Text_Control extends Atomic_Control_Base {
-	private $placeholder = null;
+	private ?string $placeholder = null;
 
 	public function get_type(): string {
 		return 'text';
