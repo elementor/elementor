@@ -87,28 +87,38 @@ class Module {
 	}
 
 	private function convert_control_to_atomic( $control ) {
-		if ( 'select' === $control['type'] ) {
-			return $this->convert_select_control_to_atomic( $control );
-		}
 
-		if ( 'text' === $control['type'] ) {
-			return $this->convert_text_control_to_atomic( $control );
+		$map = [
+			'select' => fn( $control ) =>  $this->convert_select_control_to_atomic( $control ),
+			'text' => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
+		];
+
+		if ( isset( $map[ $control['type'] ] ) ) {
+			return $map[ $control['type'] ]( $control );
 		}
 
 		throw new \Exception( 'Control type is not allowed' );
 	}
 
+	/**
+	 * @param $control
+	 *
+	 * @throws \Exception
+	 * @return array{ atomic_control: Select_Control, prop_schema: Atomic_Prop }
+	 */
 	private function convert_select_control_to_atomic( $control ) {
 		if ( ! isset( $control['options'] ) ) {
 			throw new \Exception( 'Select control must have options' );
 		}
 
-		$options = array_map( function ( $key, $value ) {
-			return [
+		$options = array_map(
+			fn( $key, $value) => [
 				'value' => $key,
 				'label' => $value,
-			];
-		}, array_keys( $control['options'] ), $control['options'] );
+			],
+			array_keys( $control['options'] ),
+			$control['options']
+		);
 
 		$atomic_control = Select_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] )
@@ -125,6 +135,11 @@ class Module {
 		];
 	}
 
+	/**
+	 * @param $control
+	 *
+	 * @return array{ atomic_control: Text_Control, prop_schema: Atomic_Prop }
+	 */
 	private static function convert_text_control_to_atomic( $control ) {
 		$atomic_control = Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
