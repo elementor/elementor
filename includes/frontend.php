@@ -664,6 +664,15 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+				$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
+				$widgets_with_responsive_styles = Plugin::$instance->widgets_manager->widgets_with_responsive_styles();
+
+				foreach ( array_merge( $widgets_with_styles, $widgets_with_responsive_styles ) as $widget_name ) {
+					wp_enqueue_style( "widget-{$widget_name}" );
+				}
+			}
+
 			// TODO: Update in version 3.26.0 [ED-15471]
 			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
 				wp_enqueue_style( 'e-swiper' );
