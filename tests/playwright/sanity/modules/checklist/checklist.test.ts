@@ -46,7 +46,7 @@ test.describe( 'Launchpad checklist tests', () => {
 					checklist = editor.page.locator( selectors.popup );
 
 				await rocketButton.click();
-				await expect( checklist ).toBeVisible( { timeout: 15000 } );
+				await expect( checklist ).toBeVisible( { timeout: 10000 } );
 			} );
 
 			await test.step( 'Close checklist trigger', async () => {
@@ -94,7 +94,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await test.step( 'Assert no top bar icon when switch is off', async () => {
 			await checklistHelper.toggleChecklistInTheEditor( true );
-			await editor.page.waitForSelector( selectors.popup, { timeout: 15000 } );
+			await editor.page.waitForSelector( selectors.popup, { timeout: 10000 } );
 
 			await expect( page.locator( selectors.topBarIcon ) ).toBeVisible();
 
@@ -132,7 +132,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await rocketButton.click();
 
-		const pageProgressText = await pageProgress.textContent( { timeout: 15000 } );
+		const pageProgressText = await pageProgress.textContent( { timeout: 10000 } );
 
 		expect( pageProgressText ).toBe( progressTextToCompare );
 	} );
