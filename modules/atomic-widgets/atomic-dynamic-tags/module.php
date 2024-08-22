@@ -33,11 +33,15 @@ class Module {
 	}
 
 	private function convert_dynamic_tag_to_atomic( $tag ) {
+		if ( ! isset( $tag['name'], $tag['categories'] ) ) {
+			return null;
+		}
+
 		$atomic_dynamic_tag = [
 			'name' => $tag['name'],
-			'label' => $tag['title'],
-			'group' => $tag['group'],
 			'categories' => $tag['categories'],
+			'label' => $tag['title'] ?? '',
+			'group' => $tag['group'] ?? '',
 		];
 
 		if ( ! $tag['controls'] ) {
