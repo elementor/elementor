@@ -29,7 +29,6 @@ class Image_Type extends Transformable_Type {
 		if ( $has_url && ! is_string( $value['url'] ) ) {
 			throw new \Exception( 'URL must be a string, ' . gettype( $value['url'] ) . ' given.' );
 		}
-
 	}
 
 	public function get_dynamic_categories(): array {
