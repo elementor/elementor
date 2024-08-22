@@ -14,16 +14,16 @@ class Module {
 	}
 
 	private function add_atomic_dynamic_tags_settings( $settings ) {
-		$settings['atomicDynamicTags'] = self::transform_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
+		$settings['atomicDynamicTags'] = $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
 
 		return $settings;
 	}
 
-	public static function transform_dynamic_tags_to_atomic( $dynamic_tags ) {
+	public function convert_dynamic_tags_to_atomic( $dynamic_tags ) {
 		$result = [];
 
 		foreach ( $dynamic_tags as $tag ) {
-			$atomic_tag = self::transform_dynamic_tag_to_atomic( $tag );
+			$atomic_tag = $this->convert_dynamic_tag_to_atomic( $tag );
 			if ( $atomic_tag ) {
 				$result[] = $atomic_tag;
 			}
@@ -32,35 +32,30 @@ class Module {
 		return $result;
 	}
 
-	private static function transform_dynamic_tag_to_atomic( $tag ) {
-		if ( ! $tag['controls'] ) {
-			return [
-				'name' => $tag['name'],
-				'label' => $tag['title'],
-				'group' => $tag['group'],
-				'categories' => $tag['categories'],
-			];
-		}
-
-		try {
-			['controls' => $controls, 'props_schema' => $props_schema] = self::transform_controls_to_atomic( $tag['controls'] );
-			$tag['controls'] = $controls;
-			$tag['props_schema'] = $props_schema;
-		} catch ( \Exception $e ) {
-			return null;
-		}
-
-		return [
+	private function convert_dynamic_tag_to_atomic( $tag ) {
+		$atomic_dynamic_tag = [
 			'name' => $tag['name'],
 			'label' => $tag['title'],
 			'group' => $tag['group'],
 			'categories' => $tag['categories'],
-			'controls' => $tag['controls'],
-			'props_schema' => $tag['props_schema'],
 		];
+
+		if ( ! $tag['controls'] ) {
+			return $atomic_dynamic_tag;
+		}
+
+		try {
+			['controls' => $controls, 'props_schema' => $props_schema] = $this->convert_controls_to_atomic( $tag['controls'] );
+			$atomic_dynamic_tag['controls'] = $controls;
+			$atomic_dynamic_tag['props_schema'] = $props_schema;
+		} catch ( \Exception $e ) {
+			return null;
+		}
+
+		return $atomic_dynamic_tag;
 	}
 
-	private static function transform_controls_to_atomic( $controls ) {
+	private function convert_controls_to_atomic( $controls ) {
 		$atomic_controls = [];
 		$props_schema = [];
 
@@ -69,7 +64,7 @@ class Module {
 				continue;
 			}
 
-			['atomic_control' => $atomic_control, 'prop_schema' => $prop_schema] = self::transform_control_to_atomic( $control );
+			['atomic_control' => $atomic_control, 'prop_schema' => $prop_schema] = $this->convert_control_to_atomic( $control );
 
 			$section_name = $control['section'];
 			if ( ! isset( $atomic_controls[ $section_name ] ) ) {
@@ -77,7 +72,7 @@ class Module {
 					->set_label( $controls[ $section_name ]['label'] );
 			}
 
-			$section = $atomic_controls[ $control['section'] ];
+			$section = $atomic_controls[ $section_name ];
 
 			$section->set_items( array_merge( $section->get_items(), [ $atomic_control ] ) );
 
@@ -91,19 +86,19 @@ class Module {
 		];
 	}
 
-	public static function transform_control_to_atomic( $control ) {
+	private function convert_control_to_atomic( $control ) {
 		if ( 'select' === $control['type'] ) {
-			return self::transform_select_control_to_atomic( $control );
+			return $this->convert_select_control_to_atomic( $control );
 		}
 
 		if ( 'text' === $control['type'] ) {
-			return self::transform_text_control_to_atomic( $control );
+			return $this->convert_text_control_to_atomic( $control );
 		}
 
 		throw new \Exception( 'Control type is not allowed' );
 	}
 
-	public static function transform_select_control_to_atomic( $control ) {
+	private function convert_select_control_to_atomic( $control ) {
 		if ( ! isset( $control['options'] ) ) {
 			throw new \Exception( 'Select control must have options' );
 		}
@@ -121,8 +116,8 @@ class Module {
 
 		$prop_schema = Atomic_Prop::make()
 			->string()
-			->default( $control['default'] )
-			->constraints( [ Enum::make( array_keys( $control['options'] ) ) ] );
+			->constraints( [ Enum::make( array_keys( $control['options'] ) ) ] )
+			->default( $control['default'] );
 
 		return [
 			'atomic_control' => $atomic_control,
@@ -130,7 +125,7 @@ class Module {
 		];
 	}
 
-	public static function transform_text_control_to_atomic( $control ) {
+	private static function convert_text_control_to_atomic( $control ) {
 		$atomic_control = Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
 

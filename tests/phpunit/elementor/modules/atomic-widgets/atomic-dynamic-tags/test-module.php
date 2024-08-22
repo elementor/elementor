@@ -3,6 +3,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\AtomicDynamicTags;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\AtomicWidgets\AtomicDynamicTags\Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -16,7 +17,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->module = new Module();
 	}
 
-	public function test_transform_dynamic_tags_to_atomic__returns_the_atomic_dynamic_tags() {
+	public function test_convert_dynamic_tags_to_atomic__returns_the_atomic_dynamic_tags() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -55,7 +56,7 @@ class Test_Module extends Elementor_Test_Base {
 		];
 
 		// Act.
-		$atomic_tags = $this->module::transform_dynamic_tags_to_atomic( $tags );
+		$atomic_tags = $this->module->convert_dynamic_tags_to_atomic( $tags );
 
 		// Assert.
 		$expected = [
@@ -137,7 +138,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( $expected, json_decode( json_encode( $atomic_tags ), true ) );
 	}
 
-	public function test_transform_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_unsupported_control() {
+	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_unsupported_control() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -172,13 +173,13 @@ class Test_Module extends Elementor_Test_Base {
 		];
 
 		// Act.
-		$atomic_tags = $this->module::transform_dynamic_tags_to_atomic( $tags );
+		$atomic_tags = $this->module->convert_dynamic_tags_to_atomic( $tags );
 
 		// Assert.
 		$this->assertEmpty( $atomic_tags );
 	}
 
-	public function test_transform_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_select_control_with_no_options() {
+	public function test_convert_dynamic_tags_to_atomic__returns_empty_array_when_tags_have_select_control_with_no_options() {
 		// Arrange.
 		$tags = [
 			'tag' => [
@@ -213,7 +214,7 @@ class Test_Module extends Elementor_Test_Base {
 		];
 
 		// Act.
-		$atomic_tags = $this->module::transform_dynamic_tags_to_atomic( $tags );
+		$atomic_tags = $this->module->convert_dynamic_tags_to_atomic( $tags );
 
 		// Assert.
 		$this->assertEmpty( $atomic_tags );
