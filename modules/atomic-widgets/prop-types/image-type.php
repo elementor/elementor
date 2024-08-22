@@ -19,7 +19,11 @@ class Image_Type extends Transformable_Type {
 		$has_url = isset( $value['url'] );
 
 		if ( ! $has_id && ! $has_url ) {
-			throw new \Exception( 'Value must have either an attachmentId or a URL.' );
+			throw new \Exception( 'Value must have an `attachmentId` or a `url` key.' );
+		}
+
+		if ( $has_id && $has_url ) {
+			throw new \Exception( 'Value must have either an `attachmentId` or a `url` key, not both.' );
 		}
 
 		if ( $has_id && ! is_numeric( $value['attachmentId'] ) ) {
