@@ -139,7 +139,7 @@ jobs:
           # There is a duplicate of the same step in step `Build Core Plugin for Pro`
           # if you update here you also need to update there
 
-          if [[ ${{ inputs.IS_CORE_FOR_PRO_BUILD }} == "true" || ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then
+          if [[ ${{ inputs.IS_CORE_FOR_PRO_BUILD }} == "true" && ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then
             cd ../elementor
           fi
 
@@ -151,7 +151,7 @@ jobs:
       - name: Build Plugin
         id: build_plugin
         run: |
-          if [[ ${{ inputs.IS_CORE_FOR_PRO_BUILD }} == "true" || ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then
+          if [[ ${{ inputs.IS_CORE_FOR_PRO_BUILD }} == "true" && ${{ env.REPOSITORY_NAME }} == "elementor-pro" ]]; then
             cd ../elementor
           fi
 
@@ -164,8 +164,6 @@ jobs:
 
           if [[ ${{ env.REPOSITORY_NAME }} == "elementor" ]]; then
             mv build elementor
-
-            zip -r ${PLUGIN_ZIP_FILENAME} elementor
           fi
 
           # When the 'npx grunt build' is done running in PRO it creates a zip build file in
@@ -177,6 +175,10 @@ jobs:
             PLUGIN_ZIP_PATH=$(pwd)/${PLUGIN_ZIP_FILENAME}
 
             mv "${PACKAGE_BASE_DIR}/${PACKAGE_PATH}" ${PLUGIN_ZIP_FILENAME}
+
+            unzip -q ${PLUGIN_ZIP_PATH} -d .
+
+            PLUGIN_FILENAME=elementor-pro
           fi
 
           if [[ ${{ env.REPOSITORY_NAME }} == "elementor-pro" &&  ${{ inputs.IS_CORE_FOR_PRO_BUILD }} == "true"  ]]; then
