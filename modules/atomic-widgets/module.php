@@ -97,21 +97,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$css = $this->prepare_css( $styles );
+		$css = ''; // TODO: Implement style render engine.
 
 		$post->get_stylesheet()->add_raw_css( $css );
-	}
-
-	/**
-	 * Prepare the CSS for the element.
-	 *
-	 * @param array $styles
-	 *
-	 * @return string
-	 */
-	private function prepare_css( $styles ) {
-		$css = '.elementor-widget-a-heading { color: red; }';
-
-		return $css;
 	}
 }
