@@ -15,19 +15,19 @@ class Image_Type extends Transformable_Type {
 	}
 
 	public function validate_value( $value ): void {
-		$has_id = isset( $value['attachmentId'] );
+		$has_id = isset( $value['attachment_id'] );
 		$has_url = isset( $value['url'] );
 
 		if ( ! $has_id && ! $has_url ) {
-			throw new \Exception( 'Value must have an `attachmentId` or a `url` key.' );
+			throw new \Exception( 'Value must have an `attachment_id` or a `url` key.' );
 		}
 
 		if ( $has_id && $has_url ) {
-			throw new \Exception( 'Value must have either an `attachmentId` or a `url` key, not both.' );
+			throw new \Exception( 'Value must have either an `attachment_id` or a `url` key, not both.' );
 		}
 
-		if ( $has_id && ! is_numeric( $value['attachmentId'] ) ) {
-			throw new \Exception( 'Attachment id must be numeric, ' . gettype( $value['attachmentId'] ) . ' given.' );
+		if ( $has_id && ! is_numeric( $value['attachment_id'] ) ) {
+			throw new \Exception( 'Attachment id must be numeric, ' . gettype( $value['attachment_id'] ) . ' given.' );
 		}
 
 		if ( $has_url && ! is_string( $value['url'] ) ) {

@@ -17,7 +17,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must have an `attachmentId` or a `url` key.' );
+		$this->expectExceptionMessage( 'Value must have an `attachment_id` or a `url` key.' );
 
 		// Act.
 		$prop_type->validate_value( null );
@@ -29,7 +29,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must have an `attachmentId` or a `url` key.' );
+		$this->expectExceptionMessage( 'Value must have an `attachment_id` or a `url` key.' );
 
 		// Act.
 		$prop_type->validate_value( [ 'key' => 'test' ] );
@@ -41,11 +41,11 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must have either an `attachmentId` or a `url` key, not both.' );
+		$this->expectExceptionMessage( 'Value must have either an `attachment_id` or a `url` key, not both.' );
 
 		// Act.
 		$prop_type->validate_value( [
-			'attachmentId' => 123,
+			'attachment_id' => 123,
 			'url' => 'https://example.com/image.jpg',
 		] );
 	}
@@ -59,7 +59,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Attachment id must be numeric, string given.' );
 
 		// Act.
-		$prop_type->validate_value( [ 'attachmentId' => 'not-number' ] );
+		$prop_type->validate_value( [ 'attachment_id' => 'not-number' ] );
 	}
 
 	public function test_validate_value__throws_when_passing_array_with_non_string_url() {
