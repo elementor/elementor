@@ -65,7 +65,7 @@ abstract class Step_Base {
 	/**
 	 * @return bool
 	 */
-	abstract public function get_image_src() : bool;
+	abstract public function get_image_src() : string;
 
 	/**
 	 * Step_Base constructor.

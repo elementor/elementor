@@ -21,14 +21,17 @@ const App = () => {
 			} );
 	}
 
-	if ( ! steps.data || 0 === steps.data.length ) {
+	if ( ! steps ) {
 		return null;
 	}
+
+	console.log('steps');
+	console.log(steps);
 
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme="light">
-				<Checklist steps={ steps.data } />
+				<Checklist steps={ steps } />
 			</ThemeProvider>
 		</DirectionProvider>
 	);

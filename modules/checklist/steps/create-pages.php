@@ -44,7 +44,7 @@ class Create_Pages extends Step_Base {
 		return true;
 	}
 
-	public function get_image_src() : bool {
-		return ELEMENTOR_URL . 'modules/checklist/image/';
+	public function get_image_src() : string {
+		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-3.jpg';
 	}
 }
