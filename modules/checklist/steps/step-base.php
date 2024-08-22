@@ -63,7 +63,7 @@ abstract class Step_Base {
 	abstract public function get_is_completion_immutable() : bool;
 
 	/**
-	 * @return bool
+	 * @return string
 	 */
 	abstract public function get_image_src() : string;
 
