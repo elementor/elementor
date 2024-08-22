@@ -156,8 +156,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	private static function validate_prop_default_value( Atomic_Prop $prop, string $key ) {
 		$widget_name = static::class;
 
-		if ( ! $prop->validate( $prop->get_default() ) ) {
-			Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );
+		try {
+			$prop->validate( $prop->get_default() );
+		} catch ( \Exception $e ) {
+			Utils::safe_throw( "Default value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
 		}
 
 		foreach ( $prop->get_constraints() as $constraint ) {
