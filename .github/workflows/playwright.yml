@@ -53,14 +53,14 @@ jobs:
   build-plugin:
     name: Build Plugin
     needs: [validate-changelog-diff]
-    if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
+    if: ${{ !needs.validate-changelog-diff.outputs.changelog_diff }}
     uses: ./.github/workflows/plugin-build.yml
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
     needs: [build-plugin, validate-changelog-diff]
-    if: ${{ github.event.pull_request.title == null || needs.validate-changelog-diff.outputs.changelog_diff }}
+    if: ${{ !needs.validate-changelog-diff.outputs.changelog_diff }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || true }}
       matrix:

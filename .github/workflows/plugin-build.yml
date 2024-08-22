@@ -88,7 +88,7 @@ jobs:
           echo "BUILD_PACKAGE_VERSION=${BUILD_PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "ROOT_DIR=${ROOT_DIR}" >> $GITHUB_ENV
 
-      - name: Update Versions in elementor files
+      - name: Update Versions in the plugin files
         run: |
           PACKAGE_FILES_VERSION=${{ inputs.PACKAGE_FILES_VERSION || env.BUILD_PACKAGE_VERSION }}
 
