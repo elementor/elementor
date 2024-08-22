@@ -18,7 +18,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 	public function test_add_atomic_dynamic_tags_settings__returns_the_atomic_dynamic_tags() {
 		// Arrange.
 		$tags = [
-			'tag' => [
+			'info' => [
 				'name' => 'info',
 				'title' => 'Info',
 				'categories' => [
@@ -51,9 +51,9 @@ class Test_Compatibility extends Elementor_Test_Base {
 					],
 				],
 			],
-			'tag1' => [
-				'name' => 'info1',
-				'title' => 'Info1',
+			'post' => [
+				'name' => 'post',
+				'title' => 'Post',
 				'categories' => [
 					'text',
 				],
@@ -70,7 +70,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 
 		// Assert.
 		$expected = [
-			[
+			'info' => [
 				'name' => 'info',
 				'label' => 'Info',
 				'categories' => [
@@ -143,9 +143,9 @@ class Test_Compatibility extends Elementor_Test_Base {
 					],
 				],
 			],
-			[
-				'name' => 'info1',
-				'label' => 'Info1',
+			'post' => [
+				'name' => 'post',
+				'label' => 'Post',
 				'categories' => [
 					'text',
 				],

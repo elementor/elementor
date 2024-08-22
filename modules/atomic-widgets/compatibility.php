@@ -22,11 +22,11 @@ class Compatibility {
 	private function convert_dynamic_tags_to_atomic( $dynamic_tags ) {
 		$result = [];
 
-		foreach ( $dynamic_tags as $tag ) {
+		foreach ( $dynamic_tags as $name => $tag ) {
 			$atomic_tag = $this->convert_dynamic_tag_to_atomic( $tag );
 
 			if ( $atomic_tag ) {
-				$result[] = $atomic_tag;
+				$result[ $name ] = $atomic_tag;
 			}
 		}
 
