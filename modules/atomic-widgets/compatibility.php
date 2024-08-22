@@ -43,9 +43,11 @@ class Compatibility {
 			'categories' => $tag['categories'],
 			'label' => $tag['title'] ?? '',
 			'group' => $tag['group'] ?? '',
+			'atomic_controls' => [],
+			'props_schema' => [],
 		];
 
-		if ( ! $tag['controls'] ) {
+		if ( ! isset( $tag['controls'] ) ) {
 			return $atomic_dynamic_tag;
 		}
 

@@ -51,6 +51,16 @@ class Test_Compatibility extends Elementor_Test_Base {
 					],
 				],
 			],
+			'tag1' => [
+				'name' => 'info1',
+				'title' => 'Info1',
+				'categories' => [
+					'text',
+				],
+				'group' => 'post',
+				'atomic_controls' => [],
+				'props_schema' => [],
+			],
 		];
 
 		( new Compatibility() )->register_hooks();
@@ -132,6 +142,16 @@ class Test_Compatibility extends Elementor_Test_Base {
 						],
 					],
 				],
+			],
+			[
+				'name' => 'info1',
+				'label' => 'Info1',
+				'categories' => [
+					'text',
+				],
+				'group' => 'post',
+				'atomic_controls' => [],
+				'props_schema' => [],
 			]
 		];
 
