@@ -469,4 +469,49 @@ class Test_Collection extends Elementor_Test_Base {
 		// Act
 		$collection->each( [ $mock, 'each_callback' ] );
 	}
+
+	public function test_find() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result = $collection->find( function( $item ) {
+			return strpos( $item, '3' ) !== false;
+		} );
+
+		// Assert.
+		$this->assertEquals( 'c3', $result );
+	}
+
+	public function test_contains() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result1 = $collection->contains( 'b2' );
+
+		$result2 = $collection->contains( function ( $item ) {
+			return 'd4' === $item;
+		} );
+
+		$result3 = $collection->contains( 'b3' );
+
+		// Assert.
+		$this->assertTrue( $result1 );
+		$this->assertTrue( $result2 );
+		$this->assertFalse( $result3 );
+	}
+
+	public function test_some() {
+		// Arrange.
+		$collection = Collection::make( [ 1, 2, 3, 4 ] );
+
+		// Act.
+		$has_evens = $collection->some( fn ( $item ) => $item % 2 === 0 );
+		$has_10 = $collection->some( fn ( $item ) => $item === 10 );
+
+		// Assert.
+		$this->assertTrue( $has_evens );
+		$this->assertFalse( $has_10 );
+	}
 }

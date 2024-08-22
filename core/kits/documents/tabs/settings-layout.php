@@ -56,7 +56,7 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
-					'size' => '1140',
+					'size' => 1140,
 				],
 				'tablet_default' => [
 					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
@@ -97,31 +97,41 @@ class Settings_Layout extends Tab_Base {
 		}
 
 		$widgets_space_label = $is_container_active
-			? esc_html__( 'Gap between elements', 'elementor' )
+			? esc_html__( 'Gaps', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
 
 		$this->add_control(
 			'space_between_widgets',
 			[
 				'label' => $widgets_space_label,
-				'type' => Controls_Manager::SLIDER,
+				'type' => Controls_Manager::GAPS,
 				'default' => [
-					'size' => 20,
+					'row' => '20',
+					'column' => '20',
+					'unit' => 'px',
 				],
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 40,
-					],
-				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'placeholder' => [
-					'size' => 20,
+					'row' => '20',
+					'column' => '20',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
+					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{ROW}}{{UNIT}}',
+					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				],
+				'conversion_map' => [
+					'old_key' => 'size',
+					'new_key' => 'column',
+				],
+				'upgrade_conversion_map' => [
+					'old_key' => 'size',
+					'new_keys' => [ 'column', 'row' ],
+				],
+				'validators' => [
+					'Number' => [
+						'min' => 0,
+					],
 				],
 			]
 		);
@@ -135,6 +145,9 @@ class Settings_Layout extends Tab_Base {
 				'placeholder' => 'h1.entry-title',
 				'description' => esc_html__( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 				'label_block' => true,
+				'ai' => [
+					'active' => false,
+				],
 				'selectors' => [
 					// Hack to convert the value into a CSS selector.
 					'' => '}{{VALUE}}{display: var(--page-title-display)',
@@ -151,6 +164,9 @@ class Settings_Layout extends Tab_Base {
 				'description' => esc_html__( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 				'label_block' => true,
 				'frontend_available' => true,
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -308,6 +324,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => $default_breakpoint_config['label'],
 					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
 					'conditions' => [
 						'terms' => [
 							[
@@ -325,7 +342,6 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => $default_breakpoint_config['default_value'],
 				'frontend_available' => true,
-				'separator' => 'after',
 				'validators' => [
 					'Breakpoint' => [
 						'breakpointName' => $breakpoint_key,

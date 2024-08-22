@@ -8,13 +8,13 @@ class Test_Server extends Elementor_Test_Base {
 
 	const DIR_PATH = __DIR__ . '/mock-test-dir';
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 
 		mkdir( static::DIR_PATH );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 
 		chmod( static::DIR_PATH, 0777 );

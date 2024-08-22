@@ -1,4 +1,5 @@
 import { SvgIcon } from '@elementor/ui';
+import React from 'react';
 
 const BrushIcon = React.forwardRef( ( props, ref ) => {
 	return (

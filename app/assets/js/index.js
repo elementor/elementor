@@ -1,3 +1,4 @@
+import ReactUtils from 'elementor-utils/react';
 import App from './app';
 import ImportExport from '../../modules/import-export/assets/js/module';
 import KitLibrary from '../../modules/kit-library/assets/js/module';
@@ -13,11 +14,10 @@ new Onboarding();
 
 const AppWrapper = React.Fragment;
 
-ReactDOM.render(
+ReactUtils.render( (
 	<AppWrapper>
 		<AppProvider>
 			<App />
 		</AppProvider>
-	</AppWrapper>,
-	document.getElementById( 'e-app' ),
-);
+	</AppWrapper>
+), document.getElementById( 'e-app' ) );

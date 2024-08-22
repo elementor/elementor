@@ -10,6 +10,9 @@
 
 // Admin Global
 @import "global";
+@import "../global/dialog-base";
+@import "../global/dialog-lightbox";
+@import "../global/dialog-confirm";
 
 @import "css-variables";
 @import "getting-started";
@@ -28,3 +31,5 @@
 @import "beta-tester";
 @import "experiments";
 @import "landing-pages";
+@import "promotion";
+@import "../editor/panel/controls/_notice";

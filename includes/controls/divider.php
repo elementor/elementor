@@ -30,24 +30,6 @@ class Control_Divider extends Base_UI_Control {
 	}
 
 	/**
-	 * Get divider control default settings.
-	 *
-	 * Retrieve the default settings of the divider control. Used to
-	 * return the default settings while initializing the divider
-	 * control.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 *
-	 * @return array Control default settings.
-	 */
-	protected function get_default_settings() {
-		return [
-			'separator' => 'none',
-		];
-	}
-
-	/**
 	 * Render divider control output in the editor.
 	 *
 	 * Used to generate the control HTML in the editor using Underscore JS

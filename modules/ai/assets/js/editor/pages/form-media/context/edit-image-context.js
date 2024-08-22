@@ -1,4 +1,4 @@
-
+import PropTypes from 'prop-types';
 import { createContext, useReducer, useContext, useEffect } from 'react';
 import useImageSize from '../hooks/use-image-size';
 import { getAspectRatioSizes } from '../utils';

@@ -23,7 +23,7 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 
 	private $original_menu;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		global $menu, $submenu;
@@ -32,7 +32,7 @@ class Test_Admin_Menu_Manager extends Elementor_Test_Base {
 		$this->original_menu = $menu;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		global $menu, $submenu;

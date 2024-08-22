@@ -140,6 +140,16 @@ export default class Component extends ComponentModalBase {
 
 	// TODO: Move function to 'insert-template' command.
 	insertTemplate( args ) {
+		this.downloadTemplate( args, ( data, callbackParams ) => {
+			$e.run( 'document/elements/import', {
+				model: callbackParams.model,
+				data,
+				options: callbackParams.importOptions,
+			} );
+		} );
+	}
+
+	downloadTemplate( args, callback ) {
 		const autoImportSettings = elementor.config.document.remoteLibrary.autoImportSettings,
 			model = args.model;
 
@@ -174,11 +184,7 @@ export default class Component extends ComponentModalBase {
 
 				this.manager.layout.hideModal();
 
-				$e.run( 'document/elements/import', {
-					model,
-					data,
-					options: importOptions,
-				} );
+				callback( data, { model, importOptions } );
 			},
 			error: ( data ) => {
 				this.manager.showErrorDialog( data );

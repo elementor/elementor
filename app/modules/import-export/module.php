@@ -43,6 +43,10 @@ class Module extends BaseModule {
 
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
+	const THIRD_PARTY_ERROR = 'third-party-error';
+
+	const DOMDOCUMENT_MISSING = 'domdocument-missing';
+
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
@@ -129,7 +133,7 @@ class Module extends BaseModule {
 		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
-		/* translators: 1: New line break, 2: Learn More link. */
+			/* translators: 1: New line break, 2: Learn more link. */
 			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link
@@ -331,10 +335,12 @@ class Module extends BaseModule {
 	 */
 	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
+		$this->ensure_DOMDocument_exists();
 
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
+		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
@@ -489,6 +495,12 @@ class Module extends BaseModule {
 		}
 	}
 
+	private function ensure_DOMDocument_exists() {
+		if ( ! class_exists( 'DOMDocument' ) ) {
+			throw new \Error( self::DOMDOCUMENT_MISSING );
+		}
+	}
+
 	/**
 	 * Enqueue admin scripts
 	 */
@@ -549,6 +561,11 @@ class Module extends BaseModule {
 					'trace' => $e->getTraceAsString(),
 				],
 			] );
+
+			if ( isset( $this->import ) && $this->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_ERROR, 500 );
+			}
+
 			wp_send_json_error( $e->getMessage(), 500 );
 		}
 	}
@@ -645,6 +662,12 @@ class Module extends BaseModule {
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
 
+		Plugin::$instance->logger->get_logger()->info(
+			sprintf( 'Selected import runners: %1$s',
+				implode( ', ', $import['runners'] )
+			)
+		);
+
 		wp_send_json_success( $import );
 	}
 
@@ -661,6 +684,15 @@ class Module extends BaseModule {
 
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
+
+		if ( ! empty( $import['status'] ) ) {
+			Plugin::$instance->logger->get_logger()->info(
+				sprintf( 'Import runner completed: %1$s %2$s',
+					$import['runner'],
+					( 'success' === $import['status'] ? '✓' : '✗' )
+				)
+			);
+		}
 
 		wp_send_json_success( $import );
 	}
@@ -734,8 +766,8 @@ class Module extends BaseModule {
 			$post_type_object = get_post_type_object( $post_type );
 
 			$summary_titles['content'][ $post_type ] = [
-				'single' => $post_type_object->labels->singular_name,
-				'plural' => $post_type_object->label,
+				'single' => $post_type_object->labels->singular_name ?? '',
+				'plural' => $post_type_object->label ?? '',
 			];
 		}
 
@@ -747,14 +779,14 @@ class Module extends BaseModule {
 				// CPT data appears in two arrays:
 				// 1. content object: in order to show the export summary when completed in getLabel function
 				$summary_titles['content'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
+					'single' => $custom_post_types_object->labels->singular_name ?? '',
+					'plural' => $custom_post_types_object->label ?? '',
 				];
 
 				// 2. customPostTypes object: in order to actually export the data
 				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
+					'single' => $custom_post_types_object->labels->singular_name ?? '',
+					'plural' => $custom_post_types_object->label ?? '',
 				];
 			}
 		}
@@ -851,5 +883,27 @@ class Module extends BaseModule {
 		$document = $this->get_elementor_document( $page_id );
 
 		return $document ? $document->get_edit_url() : '';
+	}
+
+	/**
+	 * @param string $class
+	 *
+	 * @return bool
+	 */
+	public function is_third_party_class( $class ) {
+		$allowed_classes = [
+			'Elementor\\',
+			'ElementorPro\\',
+			'WP_',
+			'wp_',
+		];
+
+		foreach ( $allowed_classes as $allowed_class ) {
+			if ( str_starts_with( $class, $allowed_class ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

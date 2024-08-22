@@ -1,3 +1,8 @@
+import {
+	widgetNodes,
+	shouldUseAtomicRepeaters,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils.js';
+
 export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
@@ -8,6 +13,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 				container,
 				name: data.name,
 				index: data.index,
+				isRestored: true,
 			} );
 		} else {
 			$e.run( 'document/repeater/insert', {
@@ -15,6 +21,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.model,
 				name: data.name,
 				options: { at: data.index },
+				isRestored: true,
 			} );
 		}
 	}
@@ -37,7 +44,7 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
-		const { name, containers = [ args.container ] } = args,
+		const { name, containers = [ args.container ], isRestored = false } = args,
 			index = null === args.index ? -1 : args.index,
 			result = [];
 
@@ -46,7 +53,8 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			const collection = container.settings.get( name ),
 				model = collection.at( index ),
-				repeaterContainer = container.repeaters[ name ];
+				repeaterContainer = container.repeaters[ name ],
+				widgetType = container.settings.get( 'widgetType' );
 
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
@@ -61,8 +69,15 @@ export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 
 			collection.remove( model );
 
-			// Trigger render on widget but with the settings of the control.
-			repeaterContainer.render();
+			if ( shouldUseAtomicRepeaters( widgetType ) && ! isRestored ) {
+				const widgetContainer = container.view.$el[ 0 ];
+				widgetNodes( widgetType ).targetContainer.forEach( ( item ) => {
+					widgetContainer.querySelector( item ).children[ index ].remove();
+				} );
+			} else {
+				// Trigger render on widget but with the settings of the control.
+				repeaterContainer.render();
+			}
 		} );
 
 		if ( 1 === result.length ) {

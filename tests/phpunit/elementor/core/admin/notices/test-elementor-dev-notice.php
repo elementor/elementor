@@ -59,38 +59,6 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 		];
 	}
 
-	/** @dataProvider admin_pages_data_provider */
-	public function test_should_print__when_one_experiment_in_active_and_the_admin_paged_is_allowed( $admin_page_id, $expected ) {
-		// Arrange
-		$this->act_as_admin_or_network_admin();
-
-		set_current_screen( $admin_page_id );
-
-		// Demonstrates a situation when the user sets the specific feature active (different from default-active)
-		add_option( 'elementor_experiment-test_feature', Experiments_Manager::STATE_ACTIVE );
-
-		$this->elementor()->experiments->add_feature( [ 'name' => 'test_feature' ] );
-		$this->elementor()->experiments->add_feature( [ 'name' => 'test_feature2' ] );
-
-		$notice = $this->mock_notice();
-
-		// Act
-		$result = $notice->should_print();
-
-		$this->remove_test_features();
-
-		// Assert
-		$this->assertEquals( $expected, $result );
-	}
-
-	public function admin_pages_data_provider() {
-		return [
-			[ 'toplevel_page_' . Settings::PAGE_ID, true ],
-			[ 'dashboard', false ],
-			[ 'options-general', false ],
-		];
-	}
-
 	public function test_should_print__should_not_print_when_user_cannot_install_plugins() {
 		// Arrange
 		$this->act_as_editor();

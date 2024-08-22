@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../pages/wp-admin-page';
 
-test( 'renderDataBindings() sanity test', async ( { page }, testInfo ) => {
+test( 'renderDataBindings() sanity test', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost(),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+		editor = await wpAdmin.openNewPage(),
 		elementId = await editor.addWidget( 'testimonial' ),
 		elementHandle = await editor.getElementHandle( elementId ),
 		elementContent = await elementHandle.$( '.elementor-testimonial-image' );

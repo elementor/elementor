@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -287,18 +286,31 @@ class Elements_Manager {
 			],
 			'pro-elements' => [
 				'title' => esc_html__( 'Pro', 'elementor' ),
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+				],
 			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
+			'link-in-bio' => [
+				'title' => esc_html__( 'Link In Bio', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-site-widget-panel/' ),
+				],
 			],
 			'woocommerce-elements' => [
 				'title' => esc_html__( 'WooCommerce', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-woocommerce-widget-panel/' ),
+				],
 			],
 		];
 

@@ -70,7 +70,7 @@
 			letter-spacing: inherit;
 			line-height: inherit;
 			flex-basis: 100%;
-			@include padding-end(20px);
+			padding-inline-end: 20px;
 		}
 
 		&:before {
@@ -107,7 +107,7 @@
 	&.elementor-subgroup-inline {
 
 		.elementor-field-option {
-			@include padding-end(10px);
+			padding-inline-end: 10px;
 		}
 	}
 
@@ -141,7 +141,7 @@
 	.elementor-mark-required &:after {
 		content: '*';
 		color: red;
-		@include padding-start(0.2em);
+		padding-inline-start: 0.2em;
 	}
 }
 
@@ -291,7 +291,7 @@
 		font-weight: normal;
 		font-style: normal;
 		vertical-align: middle;
-		@include margin-end(5px);
+		margin-inline-end: 5px;
 	}
 
 	&.elementor-message-danger {
@@ -311,13 +311,16 @@
 .elementor-form {
 
 	.elementor-button {
-		padding-top: 0;
-		padding-bottom: 0;
+		padding-block-start: 0;
+		padding-block-end: 0;
 		border: none;
 
-		& > span {
+		& > span, // BC for older versions, before 3.22, should be deleted in 3.25.
+		&-content-wrapper {
 			display: flex;
 			justify-content: center;
+			flex-direction: row;
+			gap: 5px;
 		}
 
 		&.elementor-size- {

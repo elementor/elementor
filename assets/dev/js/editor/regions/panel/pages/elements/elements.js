@@ -100,7 +100,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		if ( elementorCommon.config.experimentalFeatures.grid_widget ) {
+		if ( elementorCommon.config.experimentalFeatures.container_grid ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
 				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
 					replacements = widget.replacements,
@@ -166,6 +166,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					? categoryConfig.hideIfEmpty
 					: true,
 				items: categories[ categoryName ],
+				promotion: categoryConfig.promotion ?? null,
 			} );
 		} );
 
@@ -209,6 +210,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showView( viewName ) {
+		if ( ! $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			return;
+		}
+
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {};
 

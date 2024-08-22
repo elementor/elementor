@@ -1,4 +1,5 @@
 import PromptActionSelection from '../../../components/prompt-action-selection';
+import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from '../constants';
 
 const imageTypes = Object.entries( IMAGE_PROMPT_CATEGORIES ).map( ( [ key, { label } ] ) => ( { label, value: key } ) );

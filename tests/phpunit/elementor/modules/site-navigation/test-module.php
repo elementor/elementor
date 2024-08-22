@@ -10,7 +10,7 @@ use Elementor\Plugin;
 class Elementor_Test_Module extends Elementor_Test_Base {
 	private $original_experiment_default_state;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		remove_all_filters( 'elementor/editor/v2/scripts/env' );
@@ -19,7 +19,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			->get_features( SiteNavigation::PAGES_PANEL_EXPERIMENT_NAME )['default'];
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->experiments->set_feature_default_state(

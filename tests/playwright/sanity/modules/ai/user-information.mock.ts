@@ -23,7 +23,7 @@ export const userInformationMock = getJsonMock( {
 	},
 } );
 
-export const userInformationExceededQuotaMock = getJsonMock( {
+export const freeUserInformationExceededQuota80Mock = getJsonMock( {
 	success: true,
 	code: 200,
 	data: {
@@ -31,7 +31,77 @@ export const userInformationExceededQuotaMock = getJsonMock( {
 		is_get_started: '1',
 		usage: {
 			hasAiSubscription: false,
-			usedQuota: 100,
+			usedQuota: 80,
+			quota: 100,
+		},
+	},
+} );
+
+export const freeUserInformationExceededQuota75Mock = getJsonMock( {
+	success: true,
+	code: 200,
+	data: {
+		is_connected: true,
+		is_get_started: '1',
+		usage: {
+			hasAiSubscription: false,
+			usedQuota: 75,
+			quota: 100,
+		},
+	},
+} );
+
+export const freeUserInformationExceededQuota95Mock = getJsonMock( {
+	success: true,
+	code: 200,
+	data: {
+		is_connected: true,
+		is_get_started: '1',
+		usage: {
+			hasAiSubscription: false,
+			usedQuota: 95,
+			quota: 100,
+		},
+	},
+} );
+
+export const paidUserInformationExceededQuota80Mock = getJsonMock( {
+	success: true,
+	code: 200,
+	data: {
+		is_connected: true,
+		is_get_started: '1',
+		usage: {
+			hasAiSubscription: true,
+			usedQuota: 80,
+			quota: 100,
+		},
+	},
+} );
+
+export const paidUserInformationExceededQuota75Mock = getJsonMock( {
+	success: true,
+	code: 200,
+	data: {
+		is_connected: true,
+		is_get_started: '1',
+		usage: {
+			hasAiSubscription: true,
+			usedQuota: 75,
+			quota: 100,
+		},
+	},
+} );
+
+export const paidUserInformationExceededQuota95Mock = getJsonMock( {
+	success: true,
+	code: 200,
+	data: {
+		is_connected: true,
+		is_get_started: '1',
+		usage: {
+			hasAiSubscription: true,
+			usedQuota: 95,
 			quota: 100,
 		},
 	},

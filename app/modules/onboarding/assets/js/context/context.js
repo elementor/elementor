@@ -18,6 +18,7 @@ export function ContextProvider( props ) {
 			steps: {
 				account: false,
 				hello: false,
+				chooseFeatures: false,
 				siteName: false,
 				siteLogo: false,
 				goodToGo: false,

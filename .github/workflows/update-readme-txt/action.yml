@@ -8,6 +8,9 @@ inputs:
   PACKAGE_VERSION:
     required: true
     description: 'The package version to get the version from.'
+  README_TXT_PATH:
+    required: true
+    description: 'Path to Readme.txt'  
 
 runs:
   using: "composite"
@@ -15,7 +18,7 @@ runs:
       - name: Get & Update Stable Tag In Readme.txt
         shell: bash
         run: |
-              README_TXT_PATH=$GITHUB_WORKSPACE/elementor/readme.txt
+              README_TXT_PATH=${{ inputs.README_TXT_PATH }}
               if [[ "${{ inputs.CHANNEL }}" == "cloud" || "${{ inputs.CHANNEL }}" == "beta" || "${{ inputs.CHANNEL }}" == "dev" ]]; then
 
                 # git ls-remote --tags: This command lists all the tags in the remote repository along with their corresponding commit hash.

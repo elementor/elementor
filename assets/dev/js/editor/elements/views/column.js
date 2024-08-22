@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: elementorCommon.config.experimentalFeatures.e_dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
+	childViewContainer: '> .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = elementorCommon.config.experimentalFeatures.e_dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
+		ui.columnInner = '> .elementor-widget-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -197,27 +197,15 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender() {
-		const isDomOptimizationActive = elementorCommon.config.experimentalFeatures.e_dom_optimization,
-			getDropIndex = ( side, event ) => {
-				let newIndex = jQuery( event.currentTarget ).index();
+		const getDropIndex = ( side, event ) => {
+			let newIndex = jQuery( event.currentTarget ).index();
 
-				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
-				if ( 'bottom' === side && ! isDomOptimizationActive ) {
-					newIndex++;
-				} else if ( 'top' === side && isDomOptimizationActive ) {
-					newIndex--;
-				}
+			if ( 'top' === side ) {
+				newIndex--;
+			}
 
-				return newIndex;
-			};
-
-		let itemsClasses = '';
-
-		if ( isDomOptimizationActive ) {
-			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
-		} else {
-			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
-		}
+			return newIndex;
+		};
 
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
@@ -226,7 +214,7 @@ ColumnView = BaseElementView.extend( {
 		this.changeSizeUI();
 
 		this.$el.html5Droppable( {
-			items: itemsClasses,
+			items: ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),

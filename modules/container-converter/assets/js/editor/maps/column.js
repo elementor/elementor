@@ -24,6 +24,8 @@ const map = () => ( {
 		const deviceKey = getDeviceKey( 'flex_gap', breakpoint );
 		const newValue = {
 			size: deviceValue,
+			column: '' + deviceValue,
+			row: '' + deviceValue,
 			unit: 'px',
 		};
 

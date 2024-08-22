@@ -13,13 +13,16 @@ import {
 	styled,
 	withDirection,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import UndoIcon from '../../../../icons/undo-icon';
 import RedoIcon from '../../../../icons/redo-icon';
 
 const STROKE_SELECT_WIDTH = 120;
 
-const BRUSH_COLOR = 'rgba(0, 0, 0, 0.75)';
+const BRUSH_COLOR = 'rgba(255, 255, 255)';
+const CANVAS_COLOR = 'rgba(0, 0, 0)';
 
 const StyledUndoIcon = withDirection( UndoIcon );
 const StyledRedoIcon = withDirection( RedoIcon );
@@ -42,11 +45,9 @@ const BrishSizeIcon = styled( Box, { shouldForwardProp: ( prop ) => 'size' === p
 	backgroundColor: theme.palette.secondary.main,
 } ) );
 
-const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: canvasHeight } ) => {
+const InPaintingContent = ( { editImage, setMask, setIsCanvasChanged, width: canvasWidth, height: canvasHeight } ) => {
 	const sketchRef = useRef();
-
 	const [ stroke, setStroke ] = useState( 30 );
-
 	const brushCursorRef = useRef();
 
 	useEffect( () => {
@@ -72,9 +73,9 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 	}, [ stroke ] );
 
 	return (
-		<Stack alignItems="flex-start" spacing={ 2 } flexGrow={ 1 }>
-			<Stack width="100%" direction="row" spacing={ 7 } alignSelf="center" justifyContent="center" sx={ { mb: 6 } }>
-				<Stack direction="row" gap={ 3 }>
+		<Stack alignItems="flex-start" spacing={ 0.5 } flexGrow={ 1 }>
+			<Stack width="100%" direction="row" spacing={ 3 } alignSelf="center" justifyContent="center" sx={ { mb: 2.5 } }>
+				<Stack direction="row" gap={ 1 }>
 					<Tooltip title={ __( 'Undo', 'elementor' ) }>
 						<Button variant="outlined" color="secondary" onClick={ () => sketchRef.current.undo() } sx={ { px: 0 } }>
 							<StyledUndoIcon />
@@ -88,14 +89,13 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					</Tooltip>
 				</Stack>
 
-				<FormControl sx={ { minWidth: STROKE_SELECT_WIDTH } }>
+				<FormControl size="small" color="secondary" sx={ { minWidth: STROKE_SELECT_WIDTH } }>
 					<InputLabel id="stroke">Stroke</InputLabel>
 
 					<Select
 						autoWidth
 						label="Stroke"
 						value={ stroke }
-						color="secondary"
 						id="demo-simple-select"
 						labelId="demo-simple-select-label"
 						onChange={ ( e ) => setStroke( e.target.value ) }
@@ -113,7 +113,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 						} }
 						sx={ {
 							'& .MuiSelect-select .MuiListItemIcon-root': {
-								mr: 1,
+								mr: 0.25,
 								width: 'initial',
 								minWidth: 'initial',
 								justifyContent: 'flex-start',
@@ -122,7 +122,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					>
 						{ [ 10, 20, 30, 40, 50 ].map( ( value ) => (
 							<MenuItem key={ 'stroke-width-option-' + value } value={ value }>
-								<Stack direction="row" alignItems="center" gap={ 3 }>
+								<Stack direction="row" alignItems="center" gap={ 1 }>
 									<ListItemIcon sx={ { width: 30, display: 'flex', justifyContent: 'center' } }>
 										<BrishSizeIcon size={ value } />
 									</ListItemIcon>
@@ -152,7 +152,9 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					width={ canvasWidth + 'px' }
 					strokeWidth={ stroke }
 					strokeColor={ BRUSH_COLOR }
+					canvasColor={ CANVAS_COLOR }
 					backgroundImage={ editImage.url }
+					onStroke={ () => setIsCanvasChanged( true ) }
 					onChange={ async () => {
 						const svg = await sketchRef.current.exportSvg();
 						setMask( svg );
@@ -165,6 +167,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 
 InPaintingContent.propTypes = {
 	setMask: PropTypes.func.isRequired,
+	setIsCanvasChanged: PropTypes.func.isRequired,
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
 	editImage: PropTypes.object.isRequired,

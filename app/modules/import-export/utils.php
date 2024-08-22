@@ -4,7 +4,7 @@ namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
-use Elementor\Modules\System_Info\Reporters\Server;
+use \Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
@@ -59,7 +59,12 @@ class Utils {
 	}
 
 	public static function get_elementor_post_types() {
-		return [ 'post', 'page', 'e-landing-page' ];
+		$elementor_post_types = get_post_types_by_support( 'elementor' );
+
+		return array_filter( $elementor_post_types, function ( $value ) {
+			// Templates are handled in a separate process.
+			return 'elementor_library' !== $value;
+		} );
 	}
 
 	public static function get_builtin_wp_post_types() {
@@ -75,7 +80,8 @@ class Utils {
 
 		unset(
 			$post_types[ Landing_Pages_Module::CPT ],
-			$post_types[ Source_Local::CPT ]
+			$post_types[ Source_Local::CPT ],
+			$post_types[ Floating_Buttons_Module::CPT_FLOATING_BUTTONS ]
 		);
 
 		return array_keys( $post_types );
@@ -114,5 +120,21 @@ class Utils {
 		}
 
 		return $import_sessions;
+	}
+
+	public static function update_space_between_widgets_values( $space_between_widgets ) {
+		$setting_exist = isset( $space_between_widgets['size'] );
+		$already_processed = isset( $space_between_widgets['column'] );
+
+		if ( ! $setting_exist || $already_processed ) {
+			return $space_between_widgets;
+		}
+
+		$size = strval( $space_between_widgets['size'] );
+		$space_between_widgets['column'] = $size;
+		$space_between_widgets['row'] = $size;
+		$space_between_widgets['isLinked'] = true;
+
+		return $space_between_widgets;
 	}
 }

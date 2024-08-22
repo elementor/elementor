@@ -9,6 +9,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Frontend\Performance;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
@@ -96,20 +97,6 @@ abstract class Base extends Base_File {
 	 * @abstract
 	 */
 	abstract public function get_name();
-
-	/**
-	 * Get file handle ID.
-	 *
-	 * Retrieve the handle ID for the CSS file.
-	 *
-	 * @since 3.15.0
-	 * @access public
-	 *
-	 * @return string CSS file handle ID.
-	 */
-	public function get_id() {
-		return $this->get_file_handle_id();
-	}
 
 	protected function is_global_parsing_supported() {
 		return false;
@@ -684,7 +671,7 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
-		do_action( 'elementor/css_file/parse_content', $this );
+		Performance::set_use_style_controls( true );
 
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
@@ -708,6 +695,8 @@ abstract class Base extends Base_File {
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
+
+		Performance::set_use_style_controls( false );
 
 		return $this->get_stylesheet()->__toString();
 	}

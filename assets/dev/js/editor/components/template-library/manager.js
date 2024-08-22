@@ -218,7 +218,7 @@ TemplateLibraryManager = function() {
 		if ( ! errorDialog ) {
 			errorDialog = elementorCommon.dialogsManager.createWidget( 'alert', {
 				id: 'elementor-template-library-error-dialog',
-				headerMessage: __( 'An error occurred', 'elementor' ),
+				headerMessage: __( 'An error occurred.', 'elementor' ),
 			} );
 		}
 
@@ -314,7 +314,9 @@ TemplateLibraryManager = function() {
 		}
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
-			templatesCollection = new TemplateLibraryCollection( result.data.templates );
+			templatesCollection = new TemplateLibraryCollection(
+				result.data.templates,
+			);
 
 			if ( result.data.config ) {
 				config = result.data.config;

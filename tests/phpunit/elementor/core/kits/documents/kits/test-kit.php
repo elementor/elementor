@@ -13,7 +13,7 @@ class Test_Kit extends Elementor_Test_Base {
 	 */
 	private $kit;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );

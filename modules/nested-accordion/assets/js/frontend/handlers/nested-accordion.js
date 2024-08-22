@@ -1,4 +1,5 @@
-import Base from 'elementor/assets/dev/js/frontend/handlers/base';
+import Base from 'elementor-frontend/handlers/base';
+import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboard-handler';
 
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
@@ -14,9 +15,16 @@ export default class NestedAccordion extends Base {
 				accordionContentContainers: '.e-n-accordion > .e-con',
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
+				accordionItemTitlesText: '.e-n-accordion-item-title-text',
 				accordionContent: '.e-n-accordion-item > .e-con',
+				directAccordionItems: ':scope > .e-n-accordion-item',
+				directAccordionItemTitles: ':scope > .e-n-accordion-item > .e-n-accordion-item-title',
 			},
 			default_state: 'expanded',
+			attributes: {
+				index: 'data-accordion-index',
+				ariaLabelledBy: 'aria-labelledby',
+			},
 		};
 	}
 
@@ -35,8 +43,20 @@ export default class NestedAccordion extends Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( elementorFrontend.isEditMode() ) {
+		if ( elementorFrontend.isEditMode() && ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) {
 			this.interlaceContainers();
+		}
+
+		this.injectKeyboardHandler();
+		this.initializeIcons();
+	}
+
+	injectKeyboardHandler() {
+		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
+			new NestedAccordionTitleKeyboardHandler( {
+				$element: this.$element,
+				toggleTitle: this.clickListener.bind( this ),
+			} );
 		}
 	}
 
@@ -48,8 +68,82 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
+	initializeIcons() {
+		const { $accordionItems } = this.getDefaultElements();
+		const settings = this.getSettings();
+		const defaultState = this.getElementSettings( 'default_state' );
+
+		$accordionItems.each( ( index, item ) => {
+			const itemSummary = item.querySelector( settings.selectors.accordionItemTitles );
+			const isOpen = 'expanded' === defaultState && 0 === index;
+			this.toggleIcon( itemSummary, isOpen );
+		} );
+	}
+
+	linkContainer( event ) {
+		const { container, index, targetContainer, action: { type } } = event.detail,
+			view = container.view.$el,
+			id = container.model.get( 'id' ),
+			currentId = this.$element.data( 'id' );
+
+		if ( id === currentId ) {
+			const { $accordionItems } = this.getDefaultElements();
+
+			let accordionItem, contentContainer;
+
+			switch ( type ) {
+				case 'move':
+					[ accordionItem, contentContainer ] = this.move( view, index, targetContainer, $accordionItems );
+					break;
+				case 'duplicate':
+					[ accordionItem, contentContainer ] = this.duplicate( view, index, targetContainer, $accordionItems );
+					break;
+				default:
+					break;
+			}
+
+			if ( undefined !== accordionItem ) {
+				accordionItem.appendChild( contentContainer );
+			}
+
+			this.updateIndexValues();
+			this.updateListeners( view );
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent( new CustomEvent( 'elementor/elements/link-data-bindings' ) );
+		}
+	}
+
+	move( view, index, targetContainer, accordionItems ) {
+		return [ accordionItems[ index ], targetContainer.view.$el[ 0 ] ];
+	}
+
+	duplicate( view, index, targetContainer, accordionItems ) {
+		return [ accordionItems[ index + 1 ], targetContainer.view.$el[ 0 ] ];
+	}
+
+	updateIndexValues() {
+		const { $accordionContent, $accordionItems } = this.getDefaultElements(),
+			settings = this.getSettings(),
+			itemIdBase = $accordionItems[ 0 ].getAttribute( 'id' ).slice( 0, -1 );
+
+		$accordionItems.each( ( index, element ) => {
+			element.setAttribute( 'id', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( settings.attributes.index, index + 1 );
+			element.querySelector( settings.selectors.accordionItemTitles ).setAttribute( 'aria-controls', `${ itemIdBase }${ index }` );
+			element.querySelector( settings.selectors.accordionItemTitlesText ).setAttribute( 'data-binding-index', index + 1 );
+			$accordionContent[ index ].setAttribute( settings.attributes.ariaLabelledBy, `${ itemIdBase }${ index }` );
+		} );
+	}
+
+	updateListeners( view ) {
+		this.elements.$accordionTitles = view.find( this.getSettings( 'selectors.accordionItemTitles' ) );
+		this.elements.$accordionItems = view.find( this.getSettings( 'selectors.accordionItems' ) );
+		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
+	}
+
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
+		elementorFrontend.elements.$window.on( 'elementor/nested-container/atomic-repeater', this.linkContainer.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -58,21 +152,27 @@ export default class NestedAccordion extends Base {
 
 	clickListener( event ) {
 		event.preventDefault();
+		this.elements = this.getDefaultElements();
 
-		const accordionItem = event.currentTarget.parentElement,
-			settings = this.getSettings(),
+		const settings = this.getSettings(),
+			accordionItem = event?.currentTarget?.closest( settings.selectors.accordionItems ),
+			accordion = event?.currentTarget?.closest( settings.selectors.accordion ),
+			itemSummary = accordionItem.querySelector( settings.selectors.accordionItemTitles ),
 			accordionContent = accordionItem.querySelector( settings.selectors.accordionContent ),
 			{ max_items_expended: maxItemsExpended } = this.getElementSettings(),
-			{ $accordionTitles, $accordionItems } = this.elements;
+			directAccordionItems = accordion.querySelectorAll( settings.selectors.directAccordionItems ),
+			directAccordionItemTitles = accordion.querySelectorAll( settings.selectors.directAccordionItemTitles );
 
 		if ( 'one' === maxItemsExpended ) {
-			this.closeAllItems( $accordionItems, $accordionTitles );
+			this.closeAllItems( directAccordionItems, directAccordionItemTitles );
 		}
 
 		if ( ! accordionItem.open ) {
-			this.prepareOpenAnimation( accordionItem, event.currentTarget, accordionContent );
+			this.prepareOpenAnimation( accordionItem, itemSummary, accordionContent );
+			this.toggleIcon( itemSummary, true );
 		} else {
-			this.closeAccordionItem( accordionItem, event.currentTarget );
+			this.closeAccordionItem( accordionItem, itemSummary );
+			this.toggleIcon( itemSummary, false );
 		}
 	}
 
@@ -91,6 +191,8 @@ export default class NestedAccordion extends Base {
 
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
 		this.animations.set( accordionItem, animation );
+
+		accordionItem.querySelector( 'summary' )?.setAttribute( 'aria-expanded', isOpen );
 	}
 
 	closeAccordionItem( accordionItem, accordionItemTitle ) {
@@ -120,14 +222,28 @@ export default class NestedAccordion extends Base {
 		accordionItem.style.height = accordionItem.style.overflow = '';
 	}
 
-	closeAllItems( $items, $titles ) {
-		$titles.each( ( index, title ) => {
-			this.closeAccordionItem( $items[ index ], title );
+	closeAllItems( items, titles ) {
+		titles.forEach( ( title, index ) => {
+			this.closeAccordionItem( items[ index ], title );
+			this.toggleIcon( title, false );
 		} );
 	}
 
 	getAnimationDuration() {
 		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
 		return size * ( 'ms' === unit ? 1 : 1000 );
+	}
+
+	toggleIcon( itemSummary, isOpen ) {
+		const openIcon = itemSummary.querySelector( '.e-opened' );
+		const closedIcon = itemSummary.querySelector( '.e-closed' );
+
+		if ( isOpen ) {
+			openIcon?.classList.add( 'e-show' );
+			closedIcon?.classList.remove( 'e-show' );
+		} else {
+			closedIcon?.classList.add( 'e-show' );
+			openIcon?.classList.remove( 'e-show' );
+		}
 	}
 }

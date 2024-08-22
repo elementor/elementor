@@ -1,3 +1,4 @@
+import ReactUtils from 'elementor-utils/react';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
 /**
@@ -35,14 +36,17 @@ export default class EmptyView extends Marionette.ItemView {
 			defaultElement = <EmptyComponent container={ container } />;
 		}
 
-		ReactDOM.render( defaultElement, this.el );
+		const { unmount } = ReactUtils.render( defaultElement, this.el );
+		this.unmount = unmount;
 	}
 
-	attachElContent() {
+	onRender() {
 		this.$el.addClass( this.className );
 
-		setTimeout( () => {
-			this.renderReactDefaultElement( this.ownerView.container );
-		} );
+		this.renderReactDefaultElement( this.ownerView.container );
+	}
+
+	onDestroy() {
+		this.unmount();
 	}
 }

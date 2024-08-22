@@ -1,16 +1,17 @@
 {
     "content": [
         {
-            "id": "5c2f6971",
+            "id": "6bf09d51",
             "settings": [],
             "elements": [
                 {
-                    "id": "d1f611b",
+                    "id": "11866e03",
                     "settings": {
                         "__globals__": {
                             "sc_color": "globals\/colors?id=accent"
                         },
-                        "sc_show_comments": ""
+                        "sc_show_comments": "",
+                        "sc_show_playcount": ""
                     },
                     "elements": [],
                     "isInner": false,
@@ -18,7 +19,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "220fc93c",
+                    "id": "30d7cafb",
                     "settings": {
                         "sc_buying": "",
                         "sc_liking": "",
@@ -38,7 +39,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "15c0e97f",
+                    "id": "55194391",
                     "settings": {
                         "visual": "yes",
                         "sc_show_comments": ""

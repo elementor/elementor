@@ -1,8 +1,11 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const UnsavedChangesAlert = ( { onClose, onCancel, ...props } ) => {
 	return (
 		<Dialog
+			sx={ { zIndex: 200000 } } // Make sure the dialog is above the AI dialog
 			aria-labelledby="unsaved-changes-alert-title"
 			aria-describedby="unsaved-changes-alert-description"
 			{ ...props }

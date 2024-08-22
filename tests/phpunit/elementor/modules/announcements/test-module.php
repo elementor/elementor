@@ -29,7 +29,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
@@ -54,7 +54,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->module = new Module();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->experiments->set_feature_default_state(
@@ -90,6 +90,9 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_construct_render() {
+		// Arrange
+		do_action( 'elementor/init' );
+
 		// Act
 		ob_start();
 		do_action( 'elementor/editor/footer' );

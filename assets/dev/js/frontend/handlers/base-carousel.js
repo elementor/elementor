@@ -133,6 +133,11 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
 			},
+			init: () => {
+				this.a11ySetWidgetAriaDetails();
+				this.a11ySetPaginationTabindex();
+				this.a11ySetSlideAriaHidden( 'initialisation' );
+			},
 		};
 
 		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
@@ -152,8 +157,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
 			return;
 		}
-
-		const offset = this.getOffsetWidth();
 
 		switch ( offsetSide ) {
 			case 'right':
@@ -185,21 +188,20 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		const Swiper = elementorFrontend.utils.swiper;
-
-		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
-
-		// Expose the swiper instance in the frontend
-		this.elements.$swiperContainer.data( 'swiper', this.swiper );
+		await this.initSwiper();
 
 		const elementSettings = this.getElementSettings();
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
+	}
 
-		this.a11ySetWidgetAriaDetails();
-		this.a11ySetPaginationTabindex();
-		this.a11ySetSlideAriaHidden( 'initialisation' );
+	async initSwiper() {
+		const Swiper = elementorFrontend.utils.swiper;
+		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
+
+		// Expose the swiper instance in the frontend
+		this.elements.$swiperContainer.data( 'swiper', this.swiper );
 	}
 
 	bindEvents() {
@@ -219,7 +221,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	onDirectionArrowKeydown( event ) {
-		const isRTL = elementorFrontend.config.isRTL,
+		const isRTL = elementorFrontend.config.is_rtl,
 			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
 			currentKeydown = event.originalEvent.code,
 			isDirectionInlineKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
@@ -326,18 +328,18 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetPaginationTabindex() {
-		const bulletClass = this.swiper?.params.pagination.bulletClass,
-			activeBulletClass = this.swiper?.params.pagination.bulletActiveClass;
+		const bulletClass = this.swiper?.params?.pagination.bulletClass,
+			activeBulletClass = this.swiper?.params?.pagination.bulletActiveClass;
 
 		this.getPaginationBullets().forEach( ( bullet ) => {
-			if ( ! bullet.classList.contains( activeBulletClass ) ) {
+			if ( ! bullet.classList?.contains( activeBulletClass ) ) {
 				bullet.removeAttribute( 'tabindex' );
 			}
 		} );
 
 		const isDirectionInlineArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
 
-		if ( event?.target?.classList.contains( bulletClass ) && isDirectionInlineArrowKey ) {
+		if ( event?.target?.classList?.contains( bulletClass ) && isDirectionInlineArrowKey ) {
 			this.$element.find( `.${ activeBulletClass }` ).trigger( 'focus' );
 		}
 	}

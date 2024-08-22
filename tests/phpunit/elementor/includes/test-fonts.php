@@ -6,7 +6,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Fonts extends Elementor_Test_Base {
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Fonts::reset_local_cache();

@@ -19,6 +19,7 @@
 	--e-a-color-warning: 		#{$e-warning};
 	--e-a-color-accent: 		#{$e-accent};
 	--e-a-color-global: 		#{$e-teal-400};
+	--e-a-color-accent-promotion: 	#{$e-accent};
 
 	//Backgrounds
 	--e-a-bg-default: 			#{$white};
@@ -65,11 +66,17 @@
 	--e-a-btn-bg-primary-hover: #{$e-pink-100};
 	--e-a-btn-bg-primary-active:#{$e-pink-300};
 	--e-a-btn-bg-accent: 		#{$e-accent};
-	--e-a-btn-bg-accent-hover:	#{$e-indigo-700};
-	--e-a-btn-bg-accent-active:	#{$e-indigo-800};
+	--e-a-btn-bg-accent-hover:	#{$e-rose-700};
+	--e-a-btn-bg-accent-active:	#{$e-rose-600};
+	--e-a-btn-bg-info: 			#{$e-info};
+	--e-a-btn-bg-info-hover:	#{darken($e-info, 10%)};
+	--e-a-btn-bg-info-active:	#{darken($e-info, 20%)};
 	--e-a-btn-bg-success: 		#{$e-success};
 	--e-a-btn-bg-success-hover:	#{darken($e-success, 10%)};
 	--e-a-btn-bg-success-active:#{darken($e-success, 20%)};
+	--e-a-btn-bg-warning: 		#{$e-warning};
+	--e-a-btn-bg-warning-hover:	#{darken($e-warning, 10%)};
+	--e-a-btn-bg-warning-active:#{darken($e-warning, 20%)};
 	--e-a-btn-bg-danger: 		#{$e-danger};
 	--e-a-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
 	--e-a-btn-bg-danger-active:	#{darken($e-danger, 20%)};

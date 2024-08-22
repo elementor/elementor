@@ -334,7 +334,7 @@ class Module extends \Elementor\Core\Base\Module {
 									}
 								},
 								error: function() {
-									alert( 'An error occurred' );
+									alert( 'An error occurred.' );
 								},
 							},
 							true
@@ -408,7 +408,7 @@ class Module extends \Elementor\Core\Base\Module {
 									location.assign( url );
 								},
 								error: function() {
-									alert( 'An error occurred' );
+									alert( 'An error occurred.' );
 								},
 							},
 							true

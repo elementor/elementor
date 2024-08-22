@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Stack, Typography, Button, Link, Checkbox } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { setGetStarted } from '../../api';
 import { AIIcon } from '@elementor/icons';
 
@@ -13,16 +15,15 @@ const GetStarted = ( { onSuccess } ) => {
 	};
 
 	return (
-		<Stack alignItems="center" gap={ 4 }>
-			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
+		<Stack alignItems="center" gap={ 1.5 }>
+			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 1 } } />
 
 			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
 			<Typography variant="body2">{ __( 'Create smarter with AI text and code generators built right into the editor.', 'elementor' ) }</Typography>
 
-			<Stack direction="row" gap={ 4 } alignItems="flex-start">
-				<Checkbox id="e-ai-terms-approval" color="secondary" sx={ { p: 0 } } onChange={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
-
+			<Stack direction="row" gap={ 1.5 } alignItems="flex-start" >
+				<Checkbox id="e-ai-terms-approval" color="secondary" checked={ isTermsChecked } onClick={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
 				<Stack>
 					<Typography variant="caption" sx={ { maxWidth: 520 } } component="label" htmlFor="e-ai-terms-approval">
 						{ __( 'I approve the ', 'elementor' ) }
@@ -41,7 +42,7 @@ const GetStarted = ( { onSuccess } ) => {
 				variant="contained"
 				onClick={ onGetStartedClick }
 				sx={ {
-					mt: 3,
+					mt: 1,
 					'&:hover': {
 						color: 'primary.contrastText',
 					},

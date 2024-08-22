@@ -1,4 +1,4 @@
-export class ConvertAll extends $e.modules.document.CommandHistory {
+export class ConvertAll extends $e.modules.editor.document.CommandHistoryBase {
 	getHistory() {
 		return {
 			type: __( 'Converted to Containers', 'elementor' ),

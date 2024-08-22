@@ -79,8 +79,11 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			/* translators: %s: Remote user. */
-			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
+			$title = sprintf(
+				/* translators: %s: Remote user. */
+				esc_html__( 'Connected as %s', 'elementor' ),
+				'<strong>' . esc_html( $remote_user->email ) . '</strong>'
+			);
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
@@ -468,7 +471,7 @@ abstract class Base_App {
 			$args
 		);
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) && empty( $options['with_error_data'] ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
 			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
@@ -498,6 +501,10 @@ abstract class Base_App {
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
+			if ( ! $code ) {
+				$code = $response_code;
+			}
+
 			if ( 401 === $code ) {
 				$this->delete();
 
@@ -506,6 +513,10 @@ abstract class Base_App {
 				if ( $should_retry ) {
 					$this->action_authorize();
 				}
+			}
+
+			if ( isset( $options['with_error_data'] ) && true === $options['with_error_data'] ) {
+				return new \WP_Error( $code, $message, $body );
 			}
 
 			return new \WP_Error( $code, $message );
@@ -647,6 +658,10 @@ abstract class Base_App {
 			if ( opener && opener !== window ) {
 				opener.jQuery( 'body' ).trigger(
 					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>',
+					<?php echo wp_json_encode( $data ); ?>
+				);
+
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success' ),
 					<?php echo wp_json_encode( $data ); ?>
 				);
 

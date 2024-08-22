@@ -85,8 +85,10 @@
 
 	ShareLink.networkTemplates = {
 		twitter: 'https://twitter.com/intent/tweet?text={text}\x20{url}',
+		'x-twitter': 'https://x.com/intent/tweet?text={text}\x20{url}',
 		pinterest: 'https://www.pinterest.com/pin/create/button/?url={url}&media={image}',
 		facebook: 'https://www.facebook.com/sharer.php?u={url}',
+		threads: 'https://threads.net/intent/post?text={text}\x20{url}',
 		vk: 'https://vkontakte.ru/share.php?url={url}&title={title}&description={text}&image={image}',
 		linkedin: 'https://www.linkedin.com/shareArticle?mini=true&url={url}&title={title}&summary={text}&source={url}',
 		odnoklassniki: 'https://connect.ok.ru/offer?url={url}&title={title}&imageUrl={image}',

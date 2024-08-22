@@ -1,5 +1,8 @@
 import Base from '../../../base';
-import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import {
+	findChildContainerOrFail,
+	shouldUseAtomicRepeaters, sortViewsByModels,
+} from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterMoveContainer extends Base {
 	getId() {
@@ -11,7 +14,7 @@ export class NestedRepeaterMoveContainer extends Base {
 	}
 
 	apply( { container, sourceIndex, targetIndex } ) {
-		$e.run( 'document/elements/move', {
+		const result = $e.run( 'document/elements/move', {
 			container: findChildContainerOrFail( container, sourceIndex ),
 			target: container,
 			options: {
@@ -19,6 +22,25 @@ export class NestedRepeaterMoveContainer extends Base {
 				edit: false, // Not losing focus.
 			},
 		} );
+
+		const widgetType = container.settings.get( 'widgetType' );
+
+		if ( shouldUseAtomicRepeaters( widgetType ) ) {
+			container.view.children._views = sortViewsByModels( container );
+
+			elementor.$preview[ 0 ].contentWindow.dispatchEvent(
+				new CustomEvent( 'elementor/nested-container/atomic-repeater', {
+					detail: {
+						container,
+						targetContainer: result,
+						index: targetIndex,
+						action: {
+							type: 'move',
+						},
+					},
+				} ),
+			);
+		}
 	}
 }
 

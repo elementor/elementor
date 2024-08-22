@@ -119,7 +119,7 @@ export default class ColorPicker extends elementorModules.Module {
 	createClearButton() {
 		const { classes } = this.getSettings();
 
-		this.$clearButton = jQuery( '<div>', { class: classes.clearButton + ' ' + classes.pickerTool } )
+		this.$clearButton = jQuery( '<button>', { class: classes.clearButton + ' ' + classes.pickerTool } )
 			.html( '<i class="eicon-undo"></i>' );
 
 		this.$clearButton.on( 'click', () => this.picker._clearColor() );

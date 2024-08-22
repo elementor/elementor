@@ -74,6 +74,24 @@ class Widget_Tabs extends Widget_Base {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-tabs' ];
+	}
+
 	public function show_in_panel(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
@@ -157,23 +175,20 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->add_control(
 			'type',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'default' => 'horizontal',
 				'options' => [
-					'horizontal' => esc_html__( 'Horizontal', 'elementor' ),
-					'vertical' => esc_html__( 'Vertical', 'elementor' ),
+					'vertical' => [
+						'title' => esc_html__( 'Vertical', 'elementor' ),
+						'icon' => 'eicon-h-align-' . ( is_rtl() ? 'right' : 'left' ),
+					],
+					'horizontal' => [
+						'title' => esc_html__( 'Horizontal', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
 				],
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',
@@ -255,12 +270,25 @@ class Widget_Tabs extends Widget_Base {
 			[
 				'label' => esc_html__( 'Navigation Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
 				'range' => [
+					'px' => [
+						'min' => 10,
+						'max' => 500,
+					],
 					'%' => [
 						'min' => 10,
+						'max' => 50,
+					],
+					'em' => [
+						'min' => 1,
+						'max' => 50,
+					],
+					'rem' => [
+						'min' => 1,
 						'max' => 50,
 					],
 				],

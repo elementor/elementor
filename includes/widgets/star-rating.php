@@ -73,6 +73,36 @@ class Widget_Star_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'rate', 'review' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-star-rating' ];
+	}
+
+	/**
+	 * Hide widget from panel.
+	 *
+	 * Hide the star rating widget from the panel.
+	 *
+	 * @since 3.17.0
+	 * @return bool
+	 */
+	public function show_in_panel(): bool {
+		return false;
+	}
+
 	/**
 	 * Register star rating widget controls.
 	 *
@@ -85,9 +115,20 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->start_controls_section(
 			'section_rating',
 			[
-				'label' => esc_html__( 'Rating', 'elementor' ),
+				'label' => esc_html__( 'Star Rating', 'elementor' ),
 			]
 		);
+
+		if ( Plugin::$instance->widgets_manager->get_widget_types( 'rating' ) ) {
+			$this->add_deprecation_message(
+				'3.17.0',
+				esc_html__(
+					'You are currently editing a Star Rating widget in its old version. Drag a new Rating widget onto your page to use a newer version, providing better capabilities.',
+					'elementor'
+				),
+				'rating'
+			);
+		}
 
 		$this->add_control(
 			'rating_scale',
@@ -245,10 +286,18 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -273,10 +322,18 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -290,10 +347,18 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 5,
 					],
 				],
 				'selectors' => [

@@ -1,7 +1,7 @@
 @import "assets/dev/scss/helpers/variables.scss";
 @import "assets/dev/scss/helpers/mixins.scss";
 
-body.elementor_page_elementor-apps {
+body.elementor-apps-page {
 
 	& {
 		background: var(--e-a-color-white);
@@ -34,6 +34,11 @@ body.elementor_page_elementor-apps {
 	.e-a-page-footer {
 		margin: 60px auto;
 		text-align: center;
+
+		p {
+			max-width: 1200px;
+			margin: auto;
+		}
 	}
 
 	.e-a-list {
@@ -66,7 +71,7 @@ body.elementor_page_elementor-apps {
 			border-radius: var(--e-a-border-radius);
 			width: 70px;
 			display: flex;
-			margin-bottom: 20px;
+			margin-block-end: 20px;
 		}
 
 		.e-a-badge {
@@ -105,7 +110,7 @@ body.elementor_page_elementor-apps {
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		margin-top: 20px;
+		margin-block-start: 20px;
 
 		a {
 			text-decoration: none;

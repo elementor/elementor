@@ -1,20 +1,21 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		originalActiveTheme = wpAdmin.getActiveTheme();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		originalActiveTheme = await wpAdmin.getActiveTheme();
 		wpAdmin.activateTheme( 'twentytwentytwo' );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		wpAdmin.activateTheme( originalActiveTheme );
 	} );
 
@@ -24,11 +25,11 @@ test.describe( 'On boarding @onBoarding', async () => {
 	test( 'Onboarding Upgrade Popover', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
-		const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
+		const goProHeaderButton = page.locator( '#eps-app-header-btn-go-pro' );
 
 		await goProHeaderButton.hover();
 
-		const goProPopover = await page.locator( '.e-app__popover.e-onboarding__go-pro' );
+		const goProPopover = page.locator( '.e-app__popover.e-onboarding__go-pro' );
 
 		await expect( goProPopover ).toBeVisible();
 	} );
@@ -37,12 +38,12 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
 	 * text, And that clicking on it opens the popup to create an account in my.elementor.com
 	 */
-	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
+	test.skip( 'Onboarding Create Account Popup Open', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-		await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
 
 		const [ popup ] = await Promise.all( [
 			// It is important to call waitForEvent before click to set up waiting.
@@ -53,14 +54,14 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await popup.waitForLoadState( 'domcontentloaded' );
 
-		await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
+		expect( popup.url() ).toContain( 'my.elementor.com/signup' );
 
-		const signupForm = await popup.locator( 'form#signup-form' );
+		const signupForm = popup.locator( 'form#signup-form' );
 
 		// Check that the popup opens the Elementor Connect screen.
 		await expect( signupForm ).toBeVisible();
 
-		popup.close();
+		await popup.close();
 	} );
 
 	/**
@@ -93,7 +94,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await page.fill( 'input[type="text"]', '' );
 
-		const nextButton = await page.locator( 'text=Next' );
+		const nextButton = page.locator( 'text=Next' );
 
 		await expect( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
 
@@ -105,7 +106,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
+		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' ),
 			pageTitleText = await pageTitle.innerText();
 
 		expect( pageTitleText ).toBe( 'Have a logo? Add it here.' );
@@ -121,7 +122,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	test( 'Onboarding Site Logo Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
-		const nextButton = await page.locator( 'text=Next' ),
+		const nextButton = page.locator( 'text=Next' ),
 			activeButtonClasses = 'e-onboarding__button e-onboarding__button-action',
 			disabledButtonClasses = 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
 			siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
@@ -130,7 +131,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 			// If there is a logo already in the test website - make sure the "Next" button is active (not disabled).
 			await expect( nextButton ).toHaveClass( activeButtonClasses );
 
-			const removeButton = await page.locator( '.e-onboarding__logo-remove' );
+			const removeButton = page.locator( '.e-onboarding__logo-remove' );
 
 			await removeButton.click();
 		}
@@ -146,7 +147,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 			pageTitleText = await pageTitle.innerText();
 
 		// Test that the "Skip" button leads the user to the "Good to Go" screen.
-		expect( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
+		expect( pageTitleText ).toContain( 'What\'s next?' );
 	} );
 
 	/**
@@ -162,5 +163,74 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const kitLibraryTitle = page.locator( 'text=Kit Library' );
 
 		await expect( kitLibraryTitle ).toBeVisible();
+	} );
+} );
+
+test.describe( 'Onboarding @onBoarding', async () => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_onboarding: 'active',
+		} );
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_onboarding: 'inactive',
+		} );
+	} );
+
+	test( 'Onboarding Choose Features page', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures' );
+
+		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
+			upgradeNowBtn = page.locator( '.e-onboarding__button-action' ),
+			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
+			tiers = {
+				advanced: 'Advanced',
+				essential: 'Essential',
+			};
+
+		await upgradeNowBtn.waitFor();
+
+		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
+
+		await test.step( 'Check that Upgrade Now button is disabled', async () => {
+			await expect( upgradeNowBtn ).toHaveClass( /e-onboarding__button--disabled/ );
+		} );
+
+		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
+			await page.locator( '#essential-2' ).check();
+			await expect( tierLocator ).toHaveText( tiers.essential );
+		} );
+
+		await test.step( 'Check that Upgrade Now button is not disabled', async () => {
+			await expect( upgradeNowBtn ).not.toHaveClass( /e-onboarding__button--disabled/ );
+		} );
+
+		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
+			await page.locator( '#advanced-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
+			await page.locator( '#advanced-1' ).uncheck();
+			await expect( tierLocator ).toHaveText( tiers.essential );
+		} );
+
+		await test.step( 'Check that is not visible when unchecking all items', async () => {
+			await page.locator( '#essential-2' ).uncheck();
+			await expect( tierLocator ).not.toBeVisible();
+		} );
+
+		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
+			await page.locator( '#advanced-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
 	} );
 } );

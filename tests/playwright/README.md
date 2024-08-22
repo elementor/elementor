@@ -24,4 +24,5 @@ We have several test packages that can be run separately. The separation has bee
 To run the tests, run the following command:
 `npm run test:playwright`
 This command runs the "default" test package.
-If you want to run a different package, add `:<test package>` to the command, e.g. `npm run test:playwright:nested-tabs`
+If you want to run a different package: `npm run test:playwright -- --grep="@nested-tabs"` or
+`TEST_SUITE=@nested-tabs npm run test:playwright`

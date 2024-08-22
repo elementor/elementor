@@ -1,3 +1,4 @@
+import React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
 const CopyIcon = React.forwardRef( ( props, ref ) => {

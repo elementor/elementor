@@ -22,7 +22,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		],
 	];
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		wp_set_current_user( self::factory()->get_administrator_user()->ID );

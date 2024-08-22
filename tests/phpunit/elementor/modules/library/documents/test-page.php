@@ -9,7 +9,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	/** @var Page */
 	private static $page;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		self::$page = new Page( [ 'post_id' => self::factory()->create_and_get_default_post()->ID ] );
 	}
@@ -35,7 +35,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	public function test_should_return_css_wrapper_selector() {
 		$css_wrapper = self::$page->get_css_wrapper_selector();
 
-		$this->assertContains( 'body.elementor-page-', $css_wrapper );
+		$this->assertStringContainsString( 'body.elementor-page-', $css_wrapper );
 	}
 
 	public function test_should_register_controls() {

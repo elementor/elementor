@@ -7,10 +7,6 @@ export default function AddSectionArea( props ) {
 
 	// Make droppable area.
 	useEffect( () => {
-		if ( props.container.view.isDisconnected() ) {
-			return;
-		}
-
 		const $addAreaElementRef = jQuery( addAreaElementRef.current ),
 			defaultDroppableOptions = props.container.view.getDroppableOptions();
 

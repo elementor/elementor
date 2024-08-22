@@ -316,7 +316,7 @@ export default class extends Marionette.CompositeView {
 			return;
 		}
 
-		this.ui.item.css( 'padding-inline-start', this.getIndent() );
+		this.ui.item.css( 'padding-inline-start', this.getIndent() + 'px' );
 
 		this.toggleHiddenClass();
 

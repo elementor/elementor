@@ -1,4 +1,5 @@
 import { Box, Stack } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import useImageSize from '../hooks/use-image-size';
 import useImageNavigation from '../../../hooks/use-image-navigation';
 import ImageSlider from './image-slider';
@@ -18,9 +19,10 @@ Container.propTypes = {
 
 const ImagesDisplay = ( {
 	images,
-	aspectRatio,
+	aspectRatio = '1:1',
 	onUseImage,
 	onEditImage,
+	transparentContainer = false,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
@@ -48,11 +50,16 @@ const ImagesDisplay = ( {
 
 	if ( 1 === images.length ) {
 		const image = images[ 0 ];
-
+		const singleImageStyle = { width, height };
+		if ( transparentContainer ) {
+			singleImageStyle.backgroundImage = 'linear-gradient(45deg, #bbb 25%, transparent 25%), linear-gradient(-45deg, #bbb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #bbb 75%), linear-gradient(-45deg, transparent 75%, #bbb 75%)';
+			singleImageStyle.backgroundSize = '20px 20px';
+			singleImageStyle.backgroundPosition = '0 0, 0 10px, 10px -10px, -10px 0px';
+		}
 		return (
 			<Container flexDirection="column">
 				<SingleImagePreview>
-					<SingleImagePreview.Image src={ image.image_url || image.url } style={ { width, height } } alt="generated-image">
+					<SingleImagePreview.Image src={ image.image_url || image.url } style={ singleImageStyle } alt="generated-image">
 						<SingleImagePreview.Actions>
 							<ImageActions.EditImage onClick={ () => onEditImage( image ) } />
 							<ImageActions.UseImage onClick={ () => onUseImage( image ) } />
@@ -73,11 +80,12 @@ const ImagesDisplay = ( {
 							alt={ `generated-${ index }` }
 							src={ image.image_url }
 							aspectRatio={ aspectRatio }
+							data-testid="e-gallery-image"
 						>
 							<ImageActions>
 								<ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium" fullWidth />
 
-								<Stack direction="row" spacing={ 1 } alignItems="center">
+								<Stack direction="row" spacing={ 0.25 } alignItems="center">
 									<ImageActions.ZoomIcon onClick={ () => setZoomIndex( index ) } size="medium" />
 									<ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" />
 								</Stack>
@@ -95,6 +103,7 @@ ImagesDisplay.propTypes = {
 	aspectRatio: PropTypes.string,
 	onUseImage: PropTypes.func,
 	onEditImage: PropTypes.func,
+	transparentContainer: PropTypes.bool,
 };
 
 ImagesDisplay.Container = Container;

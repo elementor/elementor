@@ -1,4 +1,5 @@
 import { Stack, IconButton, Box, withDirection } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
 import ChevronRightIcon from '../../../icons/chevron-right-icon';
 
@@ -7,13 +8,13 @@ const StyledChevronRightIcon = withDirection( ChevronRightIcon );
 
 const ImageSlider = ( { onPrev, onNext, children, ...props } ) => {
 	return (
-		<Stack alignItems="flex-start" spacing={ 2 } { ...props }>
-			<Stack direction="row" spacing={ 6 } alignSelf="center" alignItems="center">
+		<Stack alignItems="flex-start" spacing={ 0.5 } { ...props }>
+			<Stack direction="row" spacing={ 2.5 } alignSelf="center" alignItems="center">
 				<IconButton onClick={ onPrev } size="large" color="secondary">
 					<StyledChevronLeftIcon />
 				</IconButton>
 
-				<Stack spacing={ 2 } justifyContent="space-around" alignItems="center">
+				<Stack spacing={ 0.5 } justifyContent="space-around" alignItems="center">
 					{ children }
 				</Stack>
 
@@ -32,10 +33,10 @@ ImageSlider.propTypes = {
 };
 
 const Actions = ( { children, startAction, sx = {}, ...props } ) => (
-	<Box display="flex" justifyContent="flex-end" alignItems="center" width="100%" { ...props } sx={ { mb: 4, ...sx } }>
+	<Box display="flex" justifyContent="flex-end" alignItems="center" width="100%" { ...props } sx={ { mb: 1.5, ...sx } }>
 		{ startAction }
 
-		<Stack direction="row" spacing={ 3 } justifyContent="flex-end" flexGrow={ 1 } width="100%">
+		<Stack direction="row" spacing={ 2 } justifyContent="flex-end" flexGrow={ 1 } width="100%">
 			{ children }
 		</Stack>
 	</Box>

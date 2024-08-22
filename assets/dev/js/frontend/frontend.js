@@ -29,14 +29,14 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.config.legacyMode = {
 			/**
-			 * @deprecated since 3.1.0, use `elementorFrontend.config.experimentalFeatures.e_dom_optimization` instead.
+			 * @deprecated since 3.1.0
 			 */
 			get elementWrappers() {
 				if ( elementorFrontend.isEditMode() ) {
-					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0' );
 				}
 
-				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
+				return false;
 			},
 		};
 
@@ -296,29 +296,6 @@ export default class Frontend extends elementorModules.ViewModule {
 				func.apply( context, args );
 			}
 		};
-	}
-
-	waypoint( $element, callback, options ) {
-		const defaultOptions = {
-			offset: '100%',
-			triggerOnce: true,
-		};
-
-		options = jQuery.extend( defaultOptions, options );
-
-		const correctCallback = function() {
-			const element = this.element || this,
-				result = callback.apply( element, arguments );
-
-			// If is Waypoint new API and is frontend
-			if ( options.triggerOnce && this.destroy ) {
-				this.destroy();
-			}
-
-			return result;
-		};
-
-		return $element.elementorWaypoint( correctCallback, options );
 	}
 
 	muteMigrationTraces() {

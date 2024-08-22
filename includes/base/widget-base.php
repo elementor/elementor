@@ -1,8 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
-use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,12 +47,6 @@ abstract class Widget_Base extends Element_Base {
 	 * @var array
 	 */
 	public static $registered_runtime_widgets = [];
-
-	public static $registered_inline_css_widgets = [];
-
-	private static $widgets_css_data_manager;
-
-	private static $responsive_widgets_data_manager;
 
 	/**
 	 * Get element type.
@@ -110,6 +103,20 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public function get_categories() {
 		return [ 'general' ];
+	}
+
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array|null Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return null;
 	}
 
 	/**
@@ -364,7 +371,18 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
+			'upsale_data' => $this->get_upsale_data(),
+			'is_dynamic_content' => $this->is_dynamic_content(),
 		];
+
+		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
+			$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
+			$config['upsale_data'] = Filtered_Promotions_Manager::get_filtered_promotion_data( $config['upsale_data'], $filter_name, 'upgrade_url' );
+		}
+
+		if ( isset( $config['upsale_data']['image'] ) ) {
+			$config['upsale_data']['image'] = esc_url( $config['upsale_data']['image'] );
+		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
@@ -515,7 +533,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param array|string $element         The link HTML element.
 	 * @param int $id                       The ID of the image
-	 * @param string $lightbox_setting_key  The setting key that dictates weather to open the image in a lightbox
+	 * @param string $lightbox_setting_key  The setting key that dictates whether to open the image in a lightbox
 	 * @param string $group_id              Unique ID for a group of lightbox images
 	 * @param bool $overwrite               Optional. Whether to overwrite existing
 	 *                                      attribute. Default is false, not to overwrite.
@@ -621,7 +639,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->register_runtime_widget( $this->get_group_name() );
 			}
 
-			$this->print_widget_css();
+			// $this->print_widget_css();
 
 			// get_name
 
@@ -983,20 +1001,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
-	 * Get Inline CSS dependencies.
-	 *
-	 * Retrieve a list of inline CSS dependencies that the element requires.
-	 *
-	 * @since 3.3.0
-	 * @access public
-	 *
-	 * @return array.
-	 */
-	public function get_inline_css_depends() {
-		return [];
-	}
-
-	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -1043,51 +1047,6 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	public function get_widget_css_config( $widget_name ) {
-		$direction = is_rtl() ? '-rtl' : '';
-
-		$has_custom_breakpoints = $this->is_custom_breakpoints_widget();
-
-		$file_name = 'widget-' . $widget_name . $direction . '.min.css';
-
-		// The URL of the widget's external CSS file that is loaded in case that the CSS content is too large to be printed inline.
-		$file_url = Plugin::$instance->frontend->get_frontend_file_url( $file_name, $has_custom_breakpoints );
-
-		// The local path of the widget's CSS file that is being read and saved in the DB when the CSS content should be printed inline.
-		$file_path = Plugin::$instance->frontend->get_frontend_file_path( $file_name, $has_custom_breakpoints );
-
-		return [
-			'key' => $widget_name,
-			'version' => ELEMENTOR_VERSION,
-			'file_path' => $file_path,
-			'data' => [
-				'file_url' => $file_url,
-			],
-		];
-	}
-
-	public function get_css_config() {
-		return $this->get_widget_css_config( $this->get_group_name() );
-	}
-
-	public function get_responsive_widgets_config() {
-		$responsive_widgets_data_manager = $this->get_responsive_widgets_data_manager();
-
-		return [
-			'key' => $responsive_widgets_data_manager::RESPONSIVE_WIDGETS_DATABASE_KEY,
-			'version' => ELEMENTOR_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_PATH . $responsive_widgets_data_manager::RESPONSIVE_WIDGETS_FILE_PATH,
-		];
-	}
-
-	public function get_responsive_widgets() {
-		$responsive_widgets_data_manager = $this->get_responsive_widgets_data_manager();
-
-		$config = $this->get_responsive_widgets_config();
-
-		return $responsive_widgets_data_manager->get_asset_data_from_config( $config );
-	}
-
 	/**
 	 * Mark widget as deprecated.
 	 *
@@ -1108,122 +1067,11 @@ abstract class Widget_Base extends Element_Base {
 		$this->add_control(
 			'deprecation_message',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => $message,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => $message,
 				'separator' => 'after',
 			]
 		);
-	}
-
-	/**
-	 * Get Responsive Widgets Data Manager.
-	 *
-	 * Retrieve the data manager that handles widgets that are using media queries for custom-breakpoints values.
-	 *
-	 * @since 3.5.0
-	 * @access protected
-	 *
-	 * @return Responsive_Widgets_Data_Manager
-	 */
-	protected function get_responsive_widgets_data_manager() {
-		if ( ! self::$responsive_widgets_data_manager ) {
-			self::$responsive_widgets_data_manager = new Responsive_Widgets_Data_Manager();
-		}
-
-		return self::$responsive_widgets_data_manager;
-	}
-
-	/**
-	 * Is Custom Breakpoints Widget.
-	 *
-	 * Checking if there are active custom-breakpoints and if the widget use them.
-	 *
-	 * @since 3.5.0
-	 * @access protected
-	 *
-	 * @return boolean
-	 */
-	protected function is_custom_breakpoints_widget() {
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( $has_custom_breakpoints ) {
-			$responsive_widgets = $this->get_responsive_widgets();
-
-			// The $widget_name can also represents a widgets group name, therefore we need to use the current widget name to check if it's responsive widget.
-			$current_widget_name = $this->get_name();
-
-			// If the widget is not implementing custom-breakpoints media queries then it has no custom- css file.
-			if ( ! isset( $responsive_widgets[ $current_widget_name ] ) ) {
-				$has_custom_breakpoints = false;
-			}
-		}
-
-		return $has_custom_breakpoints;
-	}
-
-	private function get_widget_css() {
-		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
-
-		$widgets_list = $this->get_inline_css_depends();
-
-		$widgets_list[] = $this->get_group_name();
-
-		$widget_css = '';
-
-		foreach ( $widgets_list as $widget_data ) {
-			$widget_name = isset( $widget_data['name'] ) ? $widget_data['name'] : $widget_data;
-
-			if ( ! in_array( $widget_name, self::$registered_inline_css_widgets, true ) ) {
-				if ( $this->get_group_name() === $widget_name ) {
-					$config = $this->get_css_config();
-				} else {
-					/**
-					 * The core-dependency allowing to create a dependency specifically with the core widgets.
-					 * Otherwise, the config will be taken from the class that inherits from Widget_Base.
-					 */
-					$is_core_dependency = isset( $widget_data['is_core_dependency'] ) ? true : false;
-
-					$config = $is_core_dependency ? self::get_widget_css_config( $widget_name ) : $this->get_widget_css_config( $widget_name );
-				}
-
-				$widget_css .= $widgets_css_data_manager->get_asset_data_from_config( $config );
-
-				self::$registered_inline_css_widgets[] = $widget_name;
-			}
-		}
-
-		return $widget_css;
-
-	}
-
-	private function is_inline_css_mode() {
-		static $is_active;
-
-		if ( null === $is_active ) {
-			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-			$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
-			$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
-
-			$is_active = ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode || ! $is_optimized_mode ) ? false : true;
-		}
-
-		return $is_active;
-	}
-
-	private function print_widget_css() {
-		if ( ! $this->is_inline_css_mode() ) {
-			return;
-		}
-
-		Utils::print_unescaped_internal_string( $this->get_widget_css() );
-	}
-
-	private function get_widgets_css_data_manager() {
-		if ( ! self::$widgets_css_data_manager ) {
-			self::$widgets_css_data_manager = new Widgets_Css_Data_Manager();
-		}
-
-		return self::$widgets_css_data_manager;
 	}
 }

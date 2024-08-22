@@ -175,7 +175,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->expectException(\WPDieException::class);
 
 		// Act
-		do_action( 'before_delete_post', $kit->get_id() );
+		do_action( 'before_delete_post', $kit->get_id(), get_post( $kit->get_id() ) );
 	}
 
 	public function test_before_trash_kit__when_permanently_deleting_and_kit_in_trash() {
@@ -191,7 +191,7 @@ class Test_Manager extends Elementor_Test_Base {
 		Plugin::$instance->documents->get( $kit->get_id(), false );
 
 		// Act
-		do_action( 'before_delete_post', $kit->get_id() );
+		do_action( 'before_delete_post', $kit->get_id(), get_post( $kit->get_id() ) );
 
 		// This assert is just to make sure that the test is passed the exception.
 		$this->assertTrue( true );
@@ -231,7 +231,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'id' => 'elementor_site_settings',
 			'title' => 'Site Settings',
 			'sub_title' => 'Site',
-			'href' => $document->get_edit_url() . '#' . Manager::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+			'href' => $document->get_edit_url() . '&active-document=' . Plugin::$instance->kits_manager->get_active_id(),
 			'class' => 'elementor-site-settings',
 			'parent_class' => 'elementor-second-section',
 		];
@@ -253,7 +253,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$post = $document_not_built_with_elementor->get_post();
 
 		$adminbar_settings = ( new Adminbar_Module() )->get_settings();
-		$expected = $document_that_built_with_elementor->get_edit_url() . '#' . Manager::E_HASH_COMMAND_OPEN_SITE_SETTINGS;
+		$expected = $document_that_built_with_elementor->get_edit_url() . '&active-document=' . Plugin::$instance->kits_manager->get_active_id();
 
 		$this->assertEquals( $expected, $adminbar_settings['elementor_edit_page']['children'][0]['href'] );
 	}

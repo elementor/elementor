@@ -60,6 +60,14 @@ const messagesContent = {
 		title: __( 'Couldn’t install the Kit', 'elementor' ),
 		text: __( 'The Kit includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
 	},
+	'third-party-error': {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: __( 'This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go.', 'elementor' ),
+	},
+	'domdocument-missing': {
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: __( 'This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor' ),
+	},
 };
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {

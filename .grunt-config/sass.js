@@ -37,13 +37,6 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'modules/lazyload/assets/scss',
-				src: 'frontend.scss',
-				dest: 'assets/css/modules/lazyload',
-				ext: '.css',
-			},
-			{
-				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',
@@ -66,7 +59,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'modules/ai/assets/scss',
-				src: 'editor.scss',
+				src: '*.scss',
 				dest: 'assets/css/modules/ai',
 				ext: '.css',
 			},
@@ -75,6 +68,27 @@ const sass = {
 				cwd: 'modules/apps/assets/scss',
 				src: 'admin.scss',
 				dest: 'assets/css/modules/apps',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: 'admin-bar.scss',
+				dest: 'assets/css',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/admin',
+				src: 'wc-product-editor.scss',
+				dest: 'assets/css',
 				ext: '.css',
 			},
 		]

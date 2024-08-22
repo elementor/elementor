@@ -239,22 +239,17 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[
-				'label' => esc_html__( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Custom Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
 				'range' => [
 					'px' => [
 						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'max' => 100,
-						'step' => 1,
 					],
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
 				],
@@ -327,9 +322,10 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_position_description',
 			[
-				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'heading' => esc_html__( 'Please note!', 'elementor' ),
+				'content' => esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
 				'render_type' => 'ui',
 				'condition' => [
 					'_position!' => '',
@@ -391,7 +387,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -407,7 +402,7 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
@@ -430,7 +425,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 0.1,
 					],
 					'%' => [
 						'min' => -200,
@@ -446,7 +440,7 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
@@ -493,7 +487,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -510,7 +503,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
@@ -531,7 +524,6 @@ class Widget_Common extends Widget_Base {
 					'px' => [
 						'min' => -1000,
 						'max' => 1000,
-						'step' => 1,
 					],
 					'%' => [
 						'min' => -200,
@@ -548,7 +540,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
-					'size' => '0',
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
@@ -606,6 +598,8 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
+
 		$this->end_controls_section();
 	}
 
@@ -622,6 +616,8 @@ class Widget_Common extends Widget_Base {
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(
 			'_animation',
@@ -696,15 +692,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
-				'fields_options' => [
-					'image' => [
-						'background_lazyload' => [
-							'active' => true,
-							'keys' => [ '_background_image', 'url' ],
-							'selector' => '.elementor-widget-container',
-						],
-					],
-				],
 			]
 		);
 
@@ -728,10 +715,11 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -842,11 +830,12 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -930,10 +919,9 @@ class Widget_Common extends Widget_Base {
 				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) .
 						'<br>' .
 						sprintf(
-							/* translators: 1: Link open tag, 2: Link close tag. */
-							esc_html__( 'Explore additional Premium Shape packs and use them in your site. %1$sLearn More%2$s', 'elementor' ),
-							'<a target="_blank" href="https://go.elementor.com/mask-control">',
-							'</a>'
+							'%1$s <a target="_blank" href="https://go.elementor.com/mask-control">%2$s</a>',
+							esc_html__( 'Explore additional Premium Shape packs and use them in your site.', 'elementor' ),
+							esc_html__( 'Learn more', 'elementor' ),
 						),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [
@@ -978,10 +966,6 @@ class Widget_Common extends Widget_Base {
 					'%' => [
 						'min' => 0,
 						'max' => 200,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'default' => [
@@ -1175,8 +1159,16 @@ class Widget_Common extends Widget_Base {
 
 		$this->register_responsive_section();
 
-		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
+		$register_common_controls = apply_filters(
+			'elementor/widget/common/register_css_attributes_control',
+			true,
+			$this
+		);
 
-		Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+		if ( $register_common_controls ) {
+			Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
+
+			Plugin::$instance->controls_manager->add_custom_css_controls( $this );
+		}
 	}
 }

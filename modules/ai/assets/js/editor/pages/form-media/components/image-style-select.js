@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 import PromptActionSelection from '../../../components/prompt-action-selection';
 import { IMAGE_PROMPT_CATEGORIES } from '../constants';
 

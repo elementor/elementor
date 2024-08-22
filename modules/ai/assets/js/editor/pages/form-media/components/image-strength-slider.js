@@ -1,4 +1,5 @@
 import { Box, FormControl, Slider, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 const ImageStrengthSlider = ( props ) => {
 	return (

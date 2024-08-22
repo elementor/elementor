@@ -112,6 +112,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						cssProperty = control.unit_selectors_dictionary[ value.unit ];
 					}
 
+					if ( this.shouldDoUpgradeMap( control, value ) ) {
+						control.upgrade_conversion_map?.new_keys.forEach( ( key ) => {
+							value[ key ] = '' + value[ control.upgrade_conversion_map.old_key ];
+						} );
+					}
+
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
 						const externalControlMissing = controlName && ! controls[ controlName ];
 
@@ -219,6 +225,13 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 	unitHasCustomSelector( control, value ) {
 		return control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ value.unit ];
+	},
+
+	shouldDoUpgradeMap( control, value ) {
+		return control.upgrade_conversion_map &&
+			!! value.hasOwnProperty( control.upgrade_conversion_map.old_key ) &&
+			'' !== value[ control.upgrade_conversion_map.old_key ] &&
+			! value.hasOwnProperty( control.upgrade_conversion_map.new_keys[ 0 ] );
 	},
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {

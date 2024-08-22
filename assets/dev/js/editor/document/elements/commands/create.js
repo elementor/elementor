@@ -1,5 +1,3 @@
-import { addElementToDocumentState } from 'elementor-document/elements/utils';
-
 export class Create extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
@@ -68,15 +66,6 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 					},
 				} );
 			}
-
-			$e.store.dispatch(
-				this.component.store.actions.create( {
-					documentId: elementor.documents.getCurrentId(),
-					parentId: container.id,
-					elements: [ createdContainer.model.toJSON() ],
-					index: options.at,
-				} ),
-			);
 		} );
 
 		if ( 1 === result.length ) {
@@ -84,26 +73,6 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return result;
-	}
-
-	static reducer( state, { payload } ) {
-		const { parentId, documentId, elements, index } = payload;
-
-		if ( ! state[ documentId ] ) {
-			state[ documentId ] = {
-				document: {
-					id: 'document',
-					elements: [],
-				},
-			};
-		}
-
-		addElementToDocumentState(
-			elements,
-			state[ documentId ],
-			parentId,
-			index,
-		);
 	}
 }
 

@@ -6,8 +6,8 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
+use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
-use Elementor\Modules\NestedTabsHtml\Widgets\NestedTabsHtml;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -44,16 +44,20 @@ class Widgets_Manager {
 	 * @access private
 	 *
 	 * @var Widget_Base[]
+	 *
+	 * @return array
 	 */
-	private $_promoted_widgets = [
-		'nested-elements' => NestedTabs::class,
-		'nested-accordion' => Nested_Accordion::class,
+	private array $promoted_widgets = [
+		NestedElementsModule::EXPERIMENT_NAME => [
+			NestedTabs::class,
+			Nested_Accordion::class,
+		],
 	];
 
 	/**
 	 * Init widgets.
 	 *
-	 * Initialize Elementor widgets manager. Include all the the widgets files
+	 * Initialize Elementor widgets manager. Include all the widgets files
 	 * and register each Elementor and WordPress widget.
 	 *
 	 * @since 2.0.0
@@ -92,9 +96,13 @@ class Widgets_Manager {
 			'menu-anchor',
 			'sidebar',
 			'read-more',
+			'rating',
+			'share-buttons',
 		];
 
 		$this->_widget_types = [];
+
+		$this->register_promoted_widgets();
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
@@ -105,8 +113,6 @@ class Widgets_Manager {
 
 			$this->register( new $class_name() );
 		}
-
-		$this->register_promoted_widgets();
 
 		$this->register_wp_widgets();
 
@@ -234,14 +240,27 @@ class Widgets_Manager {
 	 *
 	 * @param \Elementor\Widget_Base $widget_instance Elementor Widget.
 	 *
-	 * @return true True if the widget was registered.
+	 * @return bool True if the widget was registered.
 	 * @since 3.5.0
 	 * @access public
-	 *
 	 */
 	public function register( Widget_Base $widget_instance ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->init_widgets();
+		}
+
+		/**
+		 * Should widget be registered.
+		 *
+		 * @since 3.18.0
+		 *
+		 * @param bool $should_register Should widget be registered. Default is `true`.
+		 * @param \Elementor\Widget_Base $widget_instance Widget instance.
+		 */
+		$should_register = apply_filters( 'elementor/widgets/is_widget_enabled', true, $widget_instance );
+
+		if ( ! $should_register ) {
+			return false;
 		}
 
 		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;
@@ -249,26 +268,17 @@ class Widgets_Manager {
 		return true;
 	}
 
-	/** register promoted widgets
+	/** Register promoted widgets
 	 *
 	 * Since we cannot allow widgets to place themselves is a specific
-	 * location on our widgets panel we need to use an hard coded solution fort his
+	 * location on our widgets panel we need to use a hard coded solution for this.
 	 *
 	 * @return void
 	 */
 	private function register_promoted_widgets() {
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements-html' ) ) {
-			$this->_promoted_widgets['nested-elements-html'] = NestedTabsHtml::class;
-			unset( $this->_promoted_widgets['nested-elements'] );
-		}
-
-		foreach ( $this->_promoted_widgets as $module_name => $class_name ) {
-
-			if ( Plugin::$instance->experiments->is_feature_active( $module_name ) ) {
-				$instance = new $class_name();
-				$this->_widget_types[ $instance->get_name() ] = $instance;
-			}
+		foreach ( $this->promoted_widgets as $experiment_name => $classes ) {
+			$this->register_promoted_active_widgets( $experiment_name, $classes );
 		}
 	}
 
@@ -543,6 +553,61 @@ class Widgets_Manager {
 	}
 
 	/**
+	 * Widgets with styles.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have styles.
+	 */
+	public function widgets_with_styles(): array {
+		return [
+			'counter',
+			'divider',
+			'google_maps',
+			'heading',
+			'image',
+			'image-carousel',
+			'menu-anchor',
+			'rating',
+			'social-icons',
+			'spacer',
+			'testimonial',
+			'text-editor',
+			'video',
+		];
+	}
+
+	/**
+	 * Widgets with responsive styles.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have responsive styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have responsive styles.
+	 */
+	public function widgets_with_responsive_styles(): array {
+		return [
+			'accordion',
+			'alert',
+			'icon-box',
+			'icon-list',
+			'image-box',
+			'image-gallery',
+			'progress',
+			'star-rating',
+			'tabs',
+			'toggle',
+		];
+	}
+
+	/**
 	 * Enqueue widgets scripts.
 	 *
 	 * Enqueue all the scripts defined as a dependency for each widget.
@@ -657,5 +722,20 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
 			return $this->ajax_get_widgets_default_value_translations( $data );
 		} );
+	}
+
+	/**
+	 * @param $experiment_name
+	 * @param $classes
+	 * @return void
+	 */
+	public function register_promoted_active_widgets( string $experiment_name, array $classes ) : void {
+		if ( ! Plugin::$instance->experiments->is_feature_active( $experiment_name ) || empty( $classes ) ) {
+			return;
+		}
+
+		foreach ( $classes as $class_name ) {
+			$this->register( new $class_name() );
+		}
 	}
 }

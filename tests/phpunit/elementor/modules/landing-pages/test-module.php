@@ -27,7 +27,7 @@ class Elementor_Test_Landing_Pages_Module extends Elementor_Test_Base {
 		$output = $this->render_landing_pages_admin_menu();
 
 		// Assert.
-		$this->assertContains( 'Create Your First Landing Page', $output );
+		$this->assertStringContainsString( 'Create Your First Landing Page', $output );
 	}
 
 	public function test_register_admin_menu__renders_edit_view() {
