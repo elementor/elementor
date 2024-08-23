@@ -55,7 +55,6 @@ jobs:
 
       - name: Set ENV variables
         shell: bash
-        id: package_version_step
         run: |
           DATE_VERSION=$(date '+%Y%m%d.%H%M')
           VERSION=$(cat package.json \
