@@ -64,7 +64,7 @@ jobs:
               | sed 's/[",]//g' \
               | tr -d '[[:space:]]')
 
-          PACKAGE_VERSION=${PACKAGE_VERSION}-${DATE_VERSION}
+          PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
           PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
 
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
