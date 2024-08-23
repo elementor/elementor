@@ -15,7 +15,6 @@
 		"start-local-server": "npm run setup-templates && wp-env start",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
 		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
-		"test:qunit": "grunt qunit",
 		"test:setup:playwright": "wp-env run cli bash elementor-config/setup.sh && wp-env run tests-cli bash elementor-config/setup.sh",
 		"test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:debug": "npm run test:playwright -- --debug",
