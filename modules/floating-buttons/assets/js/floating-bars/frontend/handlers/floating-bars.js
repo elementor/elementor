@@ -1,5 +1,6 @@
 import Base from 'elementor-frontend/handlers/base';
 import FloatingBarDomHelper from '../classes/floatin-bar-dom';
+import ClickTrackingHandler from '../../../shared/frontend/handlers/click-tracking';
 
 export default class FloatingBarsHandler extends Base {
 	getDefaultSettings() {
@@ -153,6 +154,8 @@ export default class FloatingBarsHandler extends Base {
 		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
+
+		this.clickTrackingHandler = new ClickTrackingHandler( { $element: this.$element } );
 
 		const domHelper = new FloatingBarDomHelper( this.$element );
 		domHelper.maybeMoveToTop();
