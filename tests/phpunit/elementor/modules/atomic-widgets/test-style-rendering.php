@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Style\Style_Render;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -10,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Style_Rendering extends Elementor_Test_Base {
+	use MatchesSnapshots;
+
     public function test_basic_style() {
         // Arrange.
         $styles = [
@@ -37,6 +40,7 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 
         // Assert.
         $this->assertStringContainsString('.test-style{color:red;font-size:16px}', $css);
+		$this->assertMatchesSnapshot($css);
     }
 
     public function test_style_with_variants() {
@@ -67,6 +71,7 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 
         // Assert.
         $this->assertStringContainsString('.test-style:hover{color:blue}', $css);
+		$this->assertMatchesSnapshot($css);
     }
 
     public function test_style_with_media_queries() {
@@ -102,6 +107,7 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 
         // Assert.
         $this->assertStringContainsString('@media(max-width:768px){.test-style{color:green}}', $css);
+		$this->assertMatchesSnapshot($css);
     }
 
     public function test_style_with_transformers() {
@@ -146,6 +152,7 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 
         // Assert.
         $this->assertStringContainsString('.test-style{font-size:14px;text-decoration:unset}', $css);
+		$this->assertMatchesSnapshot($css);
     }
 
 	public function test_multiple_style_definitions_and_variants() {
@@ -244,5 +251,6 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 		$this->assertStringContainsString('@media(max-width:1024px){.test-style-1{font-weight:bold;color:yellow;font-size:14px}}', $css);
 		$this->assertStringContainsString('.test-style-2{color:blue}', $css);
 		$this->assertStringContainsString('@media(max-width:768px){.test-style-2{color:green;font-size:12px}}', $css);
+		$this->assertMatchesSnapshot($css);
 	}
 }
