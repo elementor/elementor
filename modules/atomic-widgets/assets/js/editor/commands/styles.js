@@ -1,3 +1,5 @@
+import { getVariantByMeta } from '../utils/get-variants';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -33,37 +35,54 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' );
 		const changes = historyItem.get( 'data' ).changes[ container.id ];
+		const {
+			bind,
+			styleDefID,
+			meta,
+		} = changes;
+		const { props } = isRedo ? changes.new : changes.old;
 
-		$e.internal( 'document/elements/set-settings', {
+		$e.run( 'document/atomic-widgets/styles', {
 			container,
-			options: {
-				render: false,
-			},
-			settings: isRedo ? changes.new.settings : changes.old.settings,
+			bind,
+			styleDefID,
+			meta,
+			props,
 		} );
-
-		container.model.set( 'styles', isRedo ? changes.new.styles : changes.old.styles );
 	}
 
 	/**
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param {{}}        oldSettings
-	 * @param {{}}        newSettings
-	 * @param {{}}        oldStyles
-	 * @param {{}}        newStyles
+	 * @param {string}    bind
+	 * @param {string}    styleDefID
+	 * @param {{}}        meta
+	 * @param {{}}        props
+	 * @param {{}}        oldProps
 	 */
-	addToHistory( container, oldSettings, newSettings, oldStyles, newStyles ) {
+	addToHistory(
+		container,
+		bind,
+		styleDefID,
+		meta,
+		props,
+		oldProps,
+	) {
+		const newPropsEmpty = Object.keys( props ).reduce( ( emptyValues, key ) => {
+			emptyValues[ key ] = undefined;
+			return emptyValues;
+		}, {} );
 		const changes = {
 				[ container.id ]: {
+					bind,
+					styleDefID,
+					meta,
 					old: {
-						settings: oldSettings,
-						styles: oldStyles,
+						props: { ...newPropsEmpty, ...oldProps },
 					},
 					new: {
-						settings: newSettings,
-						styles: newStyles,
+						props,
 					},
 				},
 			},
@@ -88,35 +107,39 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		};
 	}
 
-	variantExists( style, meta ) {
-		return style.variants.some( ( variant ) => {
-			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
-		} );
-	}
-
 	apply( args ) {
-		const { container, bind, meta, props } = args;
+		let { container } = args;
+		const { bind, meta, props } = args;
+		container = container.lookup();
+
 		let styleDefID = args.styleDefID ?? null;
 
-		const oldStyles = structuredClone( container.model.get( 'styles' ) ) ?? {};
+		const currentStyle = structuredClone( container.model.get( 'styles' ) ) ?? {};
 
-		const oldBindSetting = container.settings.get( bind );
 		let style = {};
 
 		if ( ! styleDefID ) {
+			// Create a new style definition for the first time
 			style = $e.internal( 'document/atomic-widgets/create-style', {
 				container,
 				bind,
 			} );
 
 			styleDefID = style.id;
-		} else if ( oldStyles[ styleDefID ] ) {
-			style = oldStyles[ styleDefID ];
+		} else if ( ! currentStyle[ styleDefID ] ) {
+			// Create a new style definition with the given ID
+			// used when the style is deleted and then re-applied (i.e. history undo/redo)
+			style = $e.internal( 'document/atomic-widgets/create-style', {
+				container,
+				styleDefID,
+				bind,
+			} );
 		} else {
-			throw new Error( 'Style Def not found' );
+			// Use the existing style definition
+			style = currentStyle[ styleDefID ];
 		}
 
-		if ( ! this.variantExists( style, meta ) ) {
+		if ( ! getVariantByMeta( style.variants, meta ) ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
 				styleDefID,
@@ -124,27 +147,49 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		$e.internal( 'document/atomic-widgets/update-props', {
-			container,
-			styleDefID,
-			bind,
-			meta,
-			props,
-		} );
+		const nonEmptyValues = Object.values( props ).filter( ( value ) => value !== undefined );
+		if ( 0 === nonEmptyValues.length ) {
+			// Doesn't have any props to use for this variant
+			$e.internal( 'document/atomic-widgets/delete-variant', {
+				container,
+				styleDefID,
+				meta,
+			} );
+
+			const newStyles = container.model.get( 'styles' );
+			const newVariants = newStyles[ styleDefID ].variants;
+
+			if ( 0 === newVariants.length ) {
+				// After deleting the variant, there are no variants left
+				$e.internal( 'document/atomic-widgets/delete-style', {
+					container,
+					styleDefID,
+					bind,
+				} );
+			}
+		} else {
+			// Has valid props in the current variant
+			$e.internal( 'document/atomic-widgets/update-props', {
+				container,
+				styleDefID,
+				bind,
+				meta,
+				props,
+			} );
+		}
 
 		if ( this.isHistoryActive() ) {
-			const newStyles = container.model.get( 'styles' );
-			const newBindSetting = container.settings.get( bind );
+			const oldStyleDef = currentStyle[ styleDefID ];
+			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 
-			const oldSettings = {
-				[ bind ]: oldBindSetting ?? null,
-			};
-
-			const newSettings = {
-				[ bind ]: newBindSetting,
-			};
-
-			this.addToHistory( container, oldSettings, newSettings, oldStyles, newStyles );
+			this.addToHistory(
+				container,
+				bind,
+				styleDefID,
+				meta,
+				props,
+				oldProps,
+			);
 		}
 	}
 }
