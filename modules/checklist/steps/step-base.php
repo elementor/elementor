@@ -11,6 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
+	const TIER_CORE = 'core';
+	const TIER_ESSENTIAL = 'essential';
+	const TIER_ADVANCED = 'advanced';
+	const TIER_EXPERT = 'expert';
+	const TIER_AGENCY = 'agency';
+
+	private $is_locked = false;
 
 	/**
 	 * @var string
@@ -139,6 +146,30 @@ abstract class Step_Base {
 	 */
 	public function is_immutable_completed() : bool {
 		return $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ];
+	}
+
+	/**
+	 * Returns the required license to be able to complete the step
+	 *
+	 * @return string
+	 */
+	public function get_license() : string {
+		return self::TIER_CORE;
+	}
+
+	public function get_is_locked() : bool {
+		return $this->is_locked;
+	}
+
+	public function set_is_locked( $is_locked ) : void {
+		$this->is_locked = $is_locked;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_promotion_link() : string {
+		return '';
 	}
 
 	/**

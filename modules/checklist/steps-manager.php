@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Create_Pages;
+use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
+	private array $steps_config = [];
 
 	private Checklist_Module_Interface $module;
 
@@ -33,9 +35,9 @@ class Steps_Manager {
 			$is_marked_as_completed = $instance->is_marked_as_completed();
 
 			$step = [
-				'should_allow_undo' => $is_marked_as_completed,
+				'is_marked_completed' => $is_marked_as_completed && ! $instance->is_absolute_completed(),
 				'is_completed' => $instance->is_immutable_completed() || $instance->is_marked_as_completed() || $instance->is_absolute_completed(),
-				'config' => $this->get_step_config( $step_id ),
+				'config' => $this->steps_config[ $step_id ],
 			];
 
 			$formatted_steps[] = $step;
@@ -116,6 +118,9 @@ class Steps_Manager {
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
 				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
+				'required_license' => $step_instance->get_license(),
+				'is_locked' => $step_instance->get_is_locked(),
+				'promotion_url' => $step_instance->get_promotion_link(),
 			]
 			: [];
 	}
@@ -131,6 +136,7 @@ class Steps_Manager {
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
 				$this->step_instances[ $step_id ] = $step_instance;
+				$this->steps_config[ $step_id ] = $this->get_step_config( $step_id );
 			}
 		}
 	}
@@ -159,6 +165,6 @@ class Steps_Manager {
 	 * @return array
 	 */
 	private static function get_step_ids() : array {
-		return [ Create_Pages::STEP_ID ];
+		return [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 	}
 }
