@@ -38,7 +38,7 @@ class Test_Prop_Types_Registry extends Elementor_Test_Base {
 		$this->assertInstanceOf( String_Type::class, $registry->get( 'string' ) );
 	}
 
-	public function test__is_serializable() {
+	public function test_get_all__is_serializable() {
 		// Arrange.
 		$registry = new Prop_Types_Registry();
 
@@ -67,17 +67,17 @@ class Test_Prop_Types_Registry extends Elementor_Test_Base {
 		} );
 
 		// Act.
-		$serialized = json_encode( $registry );
+		$serialized = json_encode( $registry->get_all() );
 
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
 			"type-1": {
 				"type": "type-1",
-				"dynamicCategories": [ "category-1", "category-2" ]
+				"dynamic_categories": [ "category-1", "category-2" ]
 			},
 			"type-2": {
 				"type": "type-2",
-				"dynamicCategories": [ "category-3" ]
+				"dynamic_categories": [ "category-3" ]
 			}
 		}', $serialized );
 	}

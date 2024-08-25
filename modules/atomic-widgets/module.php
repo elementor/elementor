@@ -29,10 +29,7 @@ class Module extends BaseModule {
 		'editor-style',
 	];
 
-	/**
-	 * @var Prop_Types_Registry
-	 */
-	public $prop_types;
+	public Prop_Types_Registry $prop_types;
 
 	public function get_name() {
 		return 'atomic-widgets';
@@ -52,6 +49,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
 			$this->register_prop_types();
+
 			add_filter( 'elementor/editor/localize_settings', fn( array $settings ) => $this->add_prop_types_config( $settings ) );
 		}
 	}
@@ -93,7 +91,7 @@ class Module extends BaseModule {
 	}
 
 	private function add_prop_types_config( array $settings ): array {
-		$settings['atomicPropTypes'] = $this->prop_types;
+		$settings['atomicPropTypes'] = $this->prop_types->get_all();
 
 		return $settings;
 	}

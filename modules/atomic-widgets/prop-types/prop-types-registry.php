@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Prop_Types_Registry implements \JsonSerializable {
+class Prop_Types_Registry {
 
 	/**
 	 * @var array<Prop_Type>
@@ -30,7 +30,7 @@ class Prop_Types_Registry implements \JsonSerializable {
 		return $this->types[ $type ] ?? null;
 	}
 
-	public function jsonSerialize(): array {
+	public function get_all(): array {
 		return $this->types;
 	}
 }

@@ -22,7 +22,7 @@ abstract class Prop_Type implements \JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'type' => $this->get_type(),
-			'dynamicCategories' => $this->get_dynamic_categories(),
+			'dynamic_categories' => $this->get_dynamic_categories(),
 		];
 	}
 }

@@ -92,6 +92,14 @@ class Atomic_Prop implements JsonSerializable {
 		}
 
 		$prop_type->validate( $value );
+
+		$this->validate_constraints( $value );
+	}
+
+	private function validate_constraints( $value ) {
+		foreach ( $this->get_constraints() as $constraint ) {
+			$constraint->validate( $value );
+		}
 	}
 
 	private function is_primitive(): bool {
