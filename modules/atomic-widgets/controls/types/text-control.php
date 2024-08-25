@@ -7,22 +7,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Attachment_Control extends Atomic_Control_Base {
-	private array $media_types;
+class Text_Control extends Atomic_Control_Base {
+	private ?string $placeholder = null;
 
 	public function get_type(): string {
-		return 'attachment';
+		return 'text';
 	}
 
-	public function set_media_types( array $media_types ): self {
-		$this->media_types = $media_types;
+	public function set_placeholder( string $placeholder ): self {
+		$this->placeholder = $placeholder;
 
 		return $this;
 	}
 
 	public function get_props(): array {
 		return [
-			'mediaTypes' => $this->media_types,
+			'placeholder' => $this->placeholder,
 		];
 	}
 }

@@ -287,6 +287,25 @@ abstract class Module extends Base_Object {
 	}
 
 	/**
+	 * Get Frontend File URL
+	 *
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 *
+	 * @since 3.24.0
+	 *
+	 * @access public
+	 *
+	 * @param string $file_name
+	 * @param boolean $has_custom_breakpoints
+	 *
+	 * @return string frontend file URL
+	 */
+	public function get_frontend_file_url( $file_name, $has_custom_breakpoints ) {
+		return Plugin::$instance->frontend->get_frontend_file_url( $file_name, $has_custom_breakpoints );
+	}
+
+	/**
 	 * Get assets base url
 	 *
 	 * @since 2.6.0

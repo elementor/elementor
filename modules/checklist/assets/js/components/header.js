@@ -1,9 +1,11 @@
 import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import Progress from './progress';
+import PropTypes from 'prop-types';
 
-const Header = () => {
+const Header = ( { steps } ) => {
 	const closeChecklist = () => {
-		$e.run( 'checklist/toggle' );
+		$e.run( 'checklist/toggle-popup' );
 	};
 
 	return (
@@ -24,8 +26,9 @@ const Header = () => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<CloseButton onClick={ closeChecklist } />
+					<CloseButton onClick={ closeChecklist } className="e-checklist-close" />
 				</Toolbar>
+				<Progress steps={ steps } />
 			</AppBar>
 			<Divider />
 		</>
@@ -33,3 +36,7 @@ const Header = () => {
 };
 
 export default Header;
+
+Header.propTypes = {
+	steps: PropTypes.array.isRequired,
+};
