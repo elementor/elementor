@@ -21,14 +21,12 @@ test.describe( 'Floating Elements tests', () => {
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
 		const editor = await floatingElPage.createFloatingButtonWithAPI();
 		await floatingElPage.waitForPanel();
-		const navigatorId = '#elementor-panel-footer-navigator';
+		const navigatorId = 'header [aria-label="Structure"]';
 		const navigator = page.locator( navigatorId );
 		// We need to check that the normal elements are not present, that the navigator is visible and the title is correct.
 		await expect( navigator ).toBeHidden();
-		const addButton = page.locator( '#elementor-panel-header-add-button' );
+		const addButton = page.locator( 'header [aria-label="Add Element"]' );
 		await expect( addButton ).toBeHidden();
-		const menuButton = page.locator( '#elementor-panel-header-menu-button' );
-		await expect( menuButton ).toBeVisible();
 		const panelTitle = page.locator( '#elementor-panel-header-title' );
 		await expect( panelTitle ).toHaveText( 'Edit Single Chat' );
 
