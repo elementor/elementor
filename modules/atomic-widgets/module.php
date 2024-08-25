@@ -41,7 +41,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
-			add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->add_css( $post, $element ), 10, 2 );
+			add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->parse_atomic_widget_css( $post, $element ), 10, 2 );
 		}
 	}
 
@@ -80,13 +80,7 @@ class Module extends BaseModule {
 		);
 	}
 
-	/**
-	 * Add the CSS for the element.
-	 *
-	 * @param Post $post
-	 * @param Element_Base $element
-	 */
-	private function add_css( Post $post, Element_Base $element ) {
+	private function parse_atomic_widget_css( Post $post, Element_Base $element ) {
 		if ( ! ( $element instanceof Atomic_Widget_Base ) || Post::class !== get_class( $post ) ) {
 			return;
 		}
