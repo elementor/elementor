@@ -344,6 +344,7 @@ class Manager extends Base_Object {
 				esc_html__( 'Learn more', 'elementor' )
 			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
+			static::TYPE_HIDDEN => true,
 			'generator_tag' => true,
 		] );
 
