@@ -8,7 +8,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
-	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
+	// { pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
