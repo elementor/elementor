@@ -47,12 +47,12 @@ const ChecklistCardContent = ( props ) => {
 
 				{ ( ! isCompleted || isMarkedCompleted ) && ! isLocked
 					? <Button
-						size="small"
-						color="secondary"
-						variant="text"
-						className="mark-as-done"
-						disabled={ isCompleted }
-						onClick={ toggleMarkDone }
+							size="small"
+							color="secondary"
+							variant="text"
+							className="mark-as-done"
+							disabled={ isCompleted }
+							onClick={ toggleMarkDone }
 					>
 						{ isMarkedCompleted ? __( 'Mark as undone', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
 					</Button>
