@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Schema;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use JsonSerializable;
 
 class Atomic_Prop implements JsonSerializable {
@@ -83,30 +84,22 @@ class Atomic_Prop implements JsonSerializable {
 		return $this->constraints;
 	}
 
-	public function validate( $value ) {
-		switch ( $this->get_type() ) {
-			case static::TYPE_STRING:
-				return is_string( $value );
+	public function validate( $value ): void {
+		$prop_type = AtomicWidgetsModule::instance()->prop_types->get( $this->get_type() );
 
-			case static::TYPE_NUMBER:
-				return is_numeric( $value );
-
-			case static::TYPE_BOOLEAN:
-				return is_bool( $value );
-
-			default:
-				// TODO: Use a shared `is_transformable` function.
-				// TODO: Check the `$value['value']` validity against the relevant transformer.
-				return $this->is_transformable_of_type( $this->get_type(), $value );
+		if ( ! $prop_type ) {
+			throw new \Exception( "Prop type `{$this->get_type()}` is not registered." );
 		}
+
+		$prop_type->validate( $value );
+
+		$this->validate_constraints( $value );
 	}
 
-	private function is_transformable_of_type( string $type, $value ): bool {
-		return (
-			! empty( $value['$$type'] ) &&
-			$value['$$type'] === $type &&
-			isset( $value['value'] )
-		);
+	private function validate_constraints( $value ) {
+		foreach ( $this->get_constraints() as $constraint ) {
+			$constraint->validate( $value );
+		}
 	}
 
 	private function is_primitive(): bool {
