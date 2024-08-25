@@ -48,6 +48,8 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
+			( new Compatibility() )->register_hooks();
+
 			$this->register_prop_types();
 
 			add_filter( 'elementor/editor/localize_settings', fn( array $settings ) => $this->add_prop_types_config( $settings ) );
