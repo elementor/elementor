@@ -125,7 +125,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			editor = await wpAdmin.openNewPage(),
 			checklistHelper = new ChecklistHelper( page, wpAdmin ),
 			steps = checklistHelper.getSteps(),
-			progressToCompare = Math.round( steps.filter( ( { isCompleted } ) => isCompleted ).length * 100 / steps.length ),
+			progressToCompare = Math.round( steps.filter( ( { is_completed: isCompleted } ) => isCompleted ).length * 100 / steps.length ),
 			progressTextToCompare = `${ progressToCompare }%`,
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			pageProgress = editor.page.locator( selectors.progressBarPercentage );
