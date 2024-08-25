@@ -15,6 +15,19 @@ class Test_Compatibility extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/editor/localize_settings' );
 	}
 
+	public function test_add_atomic_dynamic_tags_settings__returns_the_original_settings_when_there_are_no_tags() {
+		// Arrange.
+		( new Compatibility() )->register_hooks();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [
+			'existing-setting' => 'original-value',
+		] );
+
+		// Assert.
+		$this->assertEquals( [ 'existing-setting' => 'original-value' ], $settings );
+	}
+
 	public function test_add_atomic_dynamic_tags_settings__returns_the_atomic_dynamic_tags() {
 		// Arrange.
 		$tags = [
