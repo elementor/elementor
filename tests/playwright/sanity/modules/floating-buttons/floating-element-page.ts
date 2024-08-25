@@ -1,5 +1,6 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
-import type {APIRequestContext} from "@playwright/test";
+import type { APIRequestContext } from '@playwright/test';
+import EditorPage from "../../../pages/editor-page";
 export default class FloatingElementPage extends WpAdminPage {
 	async goToFloatingButtonsEmptyPage() {
 		await this.page.goto(
@@ -46,11 +47,10 @@ export default class FloatingElementPage extends WpAdminPage {
 					_wp_page_template: 'elementor_canvas',
 					_elementor_version: '3.24',
 					_elementor_data: '[{"id":"2238e76a","elType":"container","settings":[],"elements":[{"id":"7e8dd931","elType":"widget","settings":{"content_width":"full","top_bar_title":"Dorian Hayes","top_bar_subtitle":"Store Manager","top_bar_image":{"id":"105","url":"http:\\/\\/elementor.local\\/wp-content\\/uploads\\/2024\\/07\\/law-showcase-2-cover.jpg"},"message_bubble_name":"Dorian","message_bubble_body":"Hey, how can I help you today?","send_button_text":"Click to start chat","_background_image":{"url":"","id":"","size":""},"_background_video_fallback":{"url":"","id":"","size":""},"_background_slideshow_gallery":[],"_background_hover_image":{"url":"","id":"","size":""},"_background_hover_video_fallback":{"url":"","id":"","size":""},"_background_hover_slideshow_gallery":[],"_mask_image":{"url":"","id":"","size":""},"chat_aria_label":"Floating Element"},"elements":[],"widgetType":"contact-buttons"}],"isInner":false}]',
-					_elementor_page_assets: 'a:1:{s:6:"styles";a:2:{i:0;s:12:"e-animations";i:1;s:23:"widget-floating-buttons";}}',
 					_elementor_controls_usage: 'a:2:{s:15:"contact-buttons";a:3:{s:5:"count";i:1;s:15:"control_percent";i:1;s:8:"controls";a:1:{s:7:"content";a:2:{s:15:"top_bar_section";a:2:{s:13:"top_bar_title";i:1;s:13:"top_bar_image";i:1;}s:22:"message_bubble_section";a:1:{s:19:"message_bubble_name";i:1;}}}}s:9:"container";a:3:{s:5:"count";i:1;s:15:"control_percent";i:0;s:8:"controls";a:0:{}}}',
 				},
 			},
-			postId = await this.apiRequests.create( request, 'e-floating-buttons', postDataInitial ),
+			postId = await this.apiRequests.createWithREST( request, 'e-floating-buttons', postDataInitial ),
 			postDataUpdated = {
 				title: `Playwright Test Page #${ postId }`,
 			};
@@ -58,6 +58,6 @@ export default class FloatingElementPage extends WpAdminPage {
 		await this.apiRequests.create( request, `e-floating-buttons/${ postId }`, postDataUpdated );
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
-		return postId;
+		return new EditorPage( this.page, this.testInfo, postId );
 	}
 }

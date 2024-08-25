@@ -90,19 +90,28 @@ class Module extends BaseModule {
 		});
 
 		add_action('init', function(){
-			error_log('init');
-			register_meta(
-				'post',
+			$metafields = [
 				'_elementor_floating_elements_type',
-				array(
-					'single'       => true,
-					'type'         => 'string',
-					'show_in_rest' => true,
-					'auth_callback' => function() {
+				'_elementor_edit_mode',
+				'_elementor_template_type',
+				'_wp_page_template',
+				'_elementor_version',
+				'_elementor_data',
+				'_elementor_page_assets',
+				'_elementor_controls_usage',
+			];
+
+			foreach ( $metafields as $metafield ) {
+				register_post_meta( '', $metafield, [
+					'show_in_rest'      => true,
+					'type'              => 'string',
+					'single'            => true,
+					'sanitize_callback' => 'sanitize_text_field',
+					'auth_callback'     => function () {
 						return current_user_can( 'edit_posts' );
-					}
-				)
-			);
+					},
+				] );
+			}
 		});
 		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
@@ -449,7 +458,7 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
-			'capability_type' => 'page',
+			'capability_type' => 'post',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'show_in_rest' => true,
 			'supports' => [

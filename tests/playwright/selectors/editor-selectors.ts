@@ -9,6 +9,7 @@ const EditorSelectors = {
 	pageTitle: '.entry-title >> nth=0',
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
+	addNewSection: '#elementor-add-new-section',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -220,6 +221,11 @@ const EditorSelectors = {
 	},
 	dialog: {
 		lightBox: '.elementor-lightbox',
+	},
+	floatingElements: {
+		floatingButtons: {
+			widgetCore: '[data-widget_type="contact-buttons.default"]',
+		},
 	},
 };
 
