@@ -13,9 +13,9 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.id }` }>
+			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.config.id }` }>
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
-				<ListItemText primary={ step.title } primaryTypographyProps={ { variant: 'body2' } } />
+				<ListItemText primary={ step.config.title } primaryTypographyProps={ { variant: 'body2' } } />
 				<ChevronDownIcon sx={ { ...chevronStyle, transition: '300ms' } } />
 			</ListItemButton>
 			<Collapse in={ index === expandedIndex } >
