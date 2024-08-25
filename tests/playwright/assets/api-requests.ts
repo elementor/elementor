@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
-import {Image, Post, PostForREST, WpPage} from '../types/types';
+import { Image, Post, PostForREST, WpPage } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
