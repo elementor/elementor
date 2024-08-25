@@ -45,6 +45,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {
 				const source = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
+				const returnTo = e.newURL.includes( 'return-to' ) ? e.newURL.split( 'return-to-' )[ 1 ] : '';
 				window.location.hash = '';
 
 				setTimeout( () => {
@@ -61,6 +62,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 									unmount();
 									rootElement.remove();
 								} }
+								newHashOnConnect={ returnTo }
 								source={ source }
 							/>
 						</LayoutAppWrapper>, rootElement );
