@@ -70,7 +70,7 @@ export type PostForREST = {
 	date?: string,
 	date_gmt?: string,
 	slug?: string,
-	status?: 'publish' | 'future' | 'draft' | 'pending' | 'private',
+	status?: string,
 	password?: string,
 	title?: string,
 	content?: string,
@@ -80,7 +80,7 @@ export type PostForREST = {
 	comment_status?: 'open' | 'closed',
 	ping_status?: 'open' | 'closed',
 	format?: 'standard' | 'aside' | 'chat' | 'gallery' | 'link' | 'image' | 'quote' | 'status' | 'video' | 'audio',
-	meta?: string,
+	meta?: object,
 	sticky?: boolean,
 	template?: string,
 	tags?: number

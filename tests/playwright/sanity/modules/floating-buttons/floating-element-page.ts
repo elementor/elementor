@@ -1,6 +1,6 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
 import type { APIRequestContext } from '@playwright/test';
-import EditorPage from "../../../pages/editor-page";
+import EditorPage from '../../../pages/editor-page';
 export default class FloatingElementPage extends WpAdminPage {
 	async goToFloatingButtonsEmptyPage() {
 		await this.page.goto(
@@ -26,6 +26,7 @@ export default class FloatingElementPage extends WpAdminPage {
 		const request: APIRequestContext = this.page.context().request,
 			postDataInitial = {
 				title: 'Playwright Test Floating Element - Uninitialized',
+				status: 'publish',
 				content: '<button aria-controls="e-contact-buttons__content-wrapper" aria-label="Close Floating Element" type="button">\n' +
 					'\t\t\t</button>\n' +
 					'\t\t\t\t<img width="300" height="200" src="http://elementor.local/wp-content/uploads/2024/07/law-showcase-2-cover-300x200.jpg" alt="" decoding="async" srcset="http://elementor.local/wp-content/uploads/2024/07/law-showcase-2-cover-300x200.jpg 300w, http://elementor.local/wp-content/uploads/2024/07/law-showcase-2-cover-1024x683.jpg 1024w, http://elementor.local/wp-content/uploads/2024/07/law-showcase-2-cover-768x512.jpg 768w, http://elementor.local/wp-content/uploads/2024/07/law-showcase-2-cover.jpg 1530w" sizes="(max-width: 300px) 100vw, 300px" />\t\t\t\n' +

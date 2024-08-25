@@ -222,11 +222,6 @@ const EditorSelectors = {
 	dialog: {
 		lightBox: '.elementor-lightbox',
 	},
-	floatingElements: {
-		floatingButtons: {
-			widgetCore: '[data-widget_type="contact-buttons.default"]',
-		},
-	},
 };
 
 export default EditorSelectors;

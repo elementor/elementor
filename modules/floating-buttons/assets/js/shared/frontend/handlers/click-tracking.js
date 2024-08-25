@@ -66,7 +66,7 @@ export default class ClickTrackingHandler extends Base {
 
 		this.clicks.push( documentId );
 
-		if ( this.clicks.length >= 10 ) {
+		if ( this.clicks.length >= 2 ) {
 			this.sendClicks();
 		}
 	}

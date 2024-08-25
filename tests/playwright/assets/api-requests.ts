@@ -34,7 +34,7 @@ export default class ApiRequests {
 	}
 
 	public async createWithREST( request: APIRequestContext, entity: string, data: PostForREST ) {
-		const response = await request.post( `${ this.baseUrl }/wp-json/wp/v2/${ entity }`, {
+		const response = await request.post( `${ this.baseUrl }/wp-json/wp/v2/${ entity }?playwright_testing=true`, {
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},

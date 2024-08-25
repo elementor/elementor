@@ -4,10 +4,20 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Floating Elements tests', () => {
-	test( 'Verify editor behavior by creating post through API', async ( {
-		page,
-		apiRequests,
-	}, testInfo ) => {
+	test.afterEach( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
+		await floatingElPage.deleteAllFloatingButtons();
+		await page.close();
+	} );
+
+	test( 'Verify editor behavior by creating post through API', async (
+		{
+			browser,
+			page,
+			apiRequests,
+		}, testInfo ) => {
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
 		const editor = await floatingElPage.createFloatingButtonWithAPI();
 		await floatingElPage.waitForPanel();
@@ -64,14 +74,54 @@ test.describe( 'Floating Elements tests', () => {
 		const libraryModal = page.locator( '#elementor-template-library-modal' );
 		await expect( libraryModal ).toBeVisible();
 
-		const closeIcon = page.locator( '.elementor-templates-modal__header__close i' );
-		// Expect the title of closeIcon to be "Go To Dashboard"
-		await expect( closeIcon ).toHaveAttribute( 'title', 'Go To Dashboard' );
-		await closeIcon.click();
+		await floatingElPage.goToFloatingButtonsPage();
+		const floatingElementTitle = page.locator( '.wp-list-table tbody tr td.page-title a.row-title' );
+		await expect( floatingElementTitle ).toHaveText( `Playwright Test Page #${ editor.postId }` );
+		await floatingElementTitle.hover();
+		const setAsEntireSite = page.locator( '.row-actions .set_as_entire_site' );
+		await expect( setAsEntireSite ).toBeVisible();
+		await setAsEntireSite.click();
 		await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
+
+		const context = await browser.newContext();
+		const newPage = await context.newPage();
+		await newPage.goto( 'https://example.com' );
+		await newPage.goto( '/' );
+		const floatingElement = newPage.locator( '.e-contact-buttons' );
+		await expect( floatingElement ).toBeVisible();
+		const button = floatingElement.locator( '.e-contact-buttons__chat-button' );
+		await expect( button ).toBeVisible();
+		await button.click();
+		const cta = floatingElement.locator( '.e-contact-buttons__send-button' );
+		await expect( cta ).toBeVisible();
+		const [ tabOpenedByButton ] = await Promise.all( [
+			context.waitForEvent( 'page' ),
+			// Perform the action that triggers the new tab, e.g., clicking a link
+			cta.click(),
+		] );
+
+		expect( tabOpenedByButton ).not.toBeNull();
+		await tabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+
+		const [ secondtTabOpenedByButton ] = await Promise.all( [
+			context.waitForEvent( 'page' ),
+			// Perform the action that triggers the new tab, e.g., clicking a link
+			cta.click(),
+		] );
+
+		expect( secondtTabOpenedByButton ).not.toBeNull();
+		await secondtTabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+
+		await tabOpenedByButton.close();
+		await secondtTabOpenedByButton.close();
+		await newPage.close();
+
+		await floatingElPage.goToFloatingButtonsPage();
+		const columnClickTracking = page.locator( '.wp-list-table tbody tr td.column-click_tracking' );
+		await expect( columnClickTracking ).toHaveText( '2' );
 	} );
 
-	test.skip( 'Verify admin page behavior', async ( {
+	test( 'Verify admin page behavior', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {
