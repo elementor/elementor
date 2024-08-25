@@ -135,31 +135,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
-	public function test_get_atomic_settings__returns_null_for_transformable_setting_when_transformer_does_not_exist() {
-		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'transformer_does_not_exist' => Atomic_Prop::make()
-						->type( 'non_existing_type' )
-						->default( [] ),
-				],
-				'settings' => [
-					'transformer_does_not_exist' => [
-						'$$type' => 'non_existing_type',
-						'value' => [],
-					],
-				],
-			],
-		);
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertNull( $settings[ 'transformer_does_not_exist' ] );
-	}
-
 	public function test_get_atomic_settings__skip_the_value_transformation_when_it_is_not_transformable() {
 		// Arrange.
 		$widget = $this->make_mock_widget(
@@ -211,6 +186,23 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget::get_props_schema();
 	}
 
+	public function test_get_props_schema__throws_for_non_existing_prop_type() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop' => Atomic_Prop::make()
+					->type( 'non-existing-type' ),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Prop type `non-existing-type` for prop `prop` does not exist' );
+
+		// Act.
+		$widget::get_props_schema();
+	}
+
 	public function test_get_props_schema__throws_for_atomic_prop_without_type() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -239,7 +231,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop is not of type `string`' );
+		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop is invalid' );
+		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
 
 		// Act.
 		$widget::get_props_schema();
@@ -268,7 +261,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	public function test_get_props_schema__is_serializable() {
-		// Act.
+		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => Atomic_Prop::make()
@@ -286,15 +279,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					->boolean()
 					->default( true ),
 
-				'transformable_prop' => Atomic_Prop::make()
-					->type( 'transformable' )
-					->default( [
-						'key' => 'value',
-					] ),
+				'image_prop' => Atomic_Prop::make()
+					->type( 'image' )
+					->default( [ 'url' => 'https://images.com/image.png' ] ),
 			],
 			'settings' => [],
 		] );
 
+		// Act.
 		$serialized = json_encode( $widget::get_props_schema() );
 
 		// Assert.
@@ -316,10 +308,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				"constraints": [],
 				"default": true
 			},
-			"transformable_prop": {
-				"type": "transformable",
+			"image_prop": {
+				"type": "image",
 				"constraints": [],
-				"default": { "$$type": "transformable", "value": { "key": "value" } }
+				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } }
 			}
 		}', $serialized );
 	}
