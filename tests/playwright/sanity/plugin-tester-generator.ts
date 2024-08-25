@@ -7,7 +7,8 @@ const pluginList = [
 	'essential-addons-for-elementor-lite',
 	'jetsticky-for-elementor',
 	'jetgridbuilder',
-	'the-plus-addons-for-elementor-page-builder',
+	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
+	// 'the-plus-addons-for-elementor-page-builder',
 	'stratum',
 	'bdthemes-prime-slider-lite',
 	'wunderwp',
