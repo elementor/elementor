@@ -97,8 +97,6 @@ class Style_Render {
 	}
 
 	private function transform_value( $value ) {
-		// Implement the transformation logic based on the transformers map
-		// This is a placeholder and should be replaced with actual logic
 		if ( is_array( $value ) ) {
 			if (
 				isset( $value[ '$$type' ] ) &&
