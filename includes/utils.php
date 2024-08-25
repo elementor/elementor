@@ -114,6 +114,10 @@ class Utils {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
+	public static function is_elementor_debug() {
+		return defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
+	}
+
 	/**
 	 * Whether elementor test mode is enabled or not.
 	 *
@@ -881,5 +885,13 @@ class Utils {
 		$now_time = gmdate( 'U' );
 
 		return $now_time >= $sale_start_time && $now_time <= $sale_end_time;
+	}
+
+	public static function safe_throw( string $message ) {
+		if ( ! static::is_elementor_debug() ) {
+			return;
+		}
+
+		throw new \Exception( $message );
 	}
 }

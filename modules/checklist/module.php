@@ -10,6 +10,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Modules\Checklist\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,6 +41,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			return;
 		}
 
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
 		$this->enqueue_editor_scripts();

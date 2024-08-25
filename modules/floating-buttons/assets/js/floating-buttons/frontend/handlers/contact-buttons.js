@@ -1,8 +1,7 @@
 import Base from 'elementor-frontend/handlers/base';
+import ClickTrackingHandler from '../../../shared/frontend/handlers/click-tracking';
 
 export default class ContactButtonsHandler extends Base {
-	clicks = [];
-
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -12,7 +11,6 @@ export default class ContactButtonsHandler extends Base {
 				chatButton: '.e-contact-buttons__chat-button',
 				closeButton: '.e-contact-buttons__close-button',
 				messageBubbleTime: '.e-contact-buttons__message-bubble-time',
-				contactButtonCore: '.e-contact-buttons__send-button',
 			},
 			constants: {
 				entranceAnimation: 'style_chat_box_entrance_animation',
@@ -62,15 +60,8 @@ export default class ContactButtonsHandler extends Base {
 		}
 
 		if ( this.elements.contentWrapper ) {
-			this.elements.contentWrapper.addEventListener( 'click', this.onChatButtonTrackClick.bind( this ) );
 			window.addEventListener( 'keyup', this.onDocumentKeyup.bind( this ) );
 		}
-
-		window.addEventListener( 'beforeunload', () => {
-			if ( this.clicks.length > 0 ) {
-				this.sendClicks();
-			}
-		} );
 	}
 
 	contentWrapperIsHidden( hide ) {
@@ -111,55 +102,6 @@ export default class ContactButtonsHandler extends Base {
 			this.closeChatBox();
 		}
 		/* eslint-enable @wordpress/no-global-active-element */
-	}
-
-	onChatButtonTrackClick( event ) {
-		const targetElement = event.target || event.srcElement;
-		const selectors = this.getSettings( 'selectors' );
-
-		if (
-			targetElement.matches( selectors.contactButtonCore ) ||
-			targetElement.closest( selectors.contactButtonCore )
-		) {
-			this.getDocumentIdAndTrack( targetElement, selectors );
-		}
-	}
-
-	getDocumentIdAndTrack( targetElement, selectors ) {
-		let documentId = targetElement.closest( selectors.main ).dataset.documentId;
-
-		if ( ! documentId ) {
-			documentId = targetElement.closest( selectors.elementorWrapper ).dataset.elementorId;
-		}
-
-		this.trackClick( documentId );
-	}
-
-	trackClick( documentId ) {
-		if ( ! documentId ) {
-			return;
-		}
-
-		this.clicks.push( documentId );
-
-		if ( this.clicks.length >= 10 ) {
-			this.sendClicks();
-		}
-	}
-
-	sendClicks() {
-		const formData = new FormData();
-		formData.append( 'action', 'elementor_send_clicks' );
-		formData.append( '_nonce', elementorFrontendConfig?.nonces?.floatingButtonsClickTracking );
-		this.clicks.forEach( ( documentId ) => formData.append( 'clicks[]', documentId ) );
-
-		fetch( elementorFrontendConfig?.urls?.ajaxurl, {
-			method: 'POST',
-			body: formData,
-		} )
-			.then( () => {
-				this.clicks = [];
-			} );
 	}
 
 	removeAnimationClasses() {
@@ -354,6 +296,8 @@ export default class ContactButtonsHandler extends Base {
 		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
 		super.onInit( ...args );
+
+		this.clickTrackingHandler = new ClickTrackingHandler( { $element: this.$element } );
 
 		if ( this.elements.messageBubbleTime ) {
 			this.initMessageBubbleTime();
