@@ -1,6 +1,7 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
 import type { APIRequestContext } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
+
 export default class FloatingElementPage extends WpAdminPage {
 	async goToFloatingButtonsEmptyPage() {
 		await this.page.goto(
