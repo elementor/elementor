@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
 use Elementor\Utils;
 use Elementor\Widget_Base;
@@ -149,24 +150,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				Utils::safe_throw( "Prop `$key` must have a type in `{$widget_name}`." );
 			}
 
-			static::validate_prop_default_value( $prop, $key );
-		}
-	}
+			$prop_type = AtomicWidgetsModule::instance()->prop_types->get( $prop->get_type() );
 
-	private static function validate_prop_default_value( Atomic_Prop $prop, string $key ) {
-		$widget_name = static::class;
+			if ( ! $prop_type ) {
+				Utils::safe_throw( "Prop type `{$prop->get_type()}` for prop `$key` does not exist in `{$widget_name}`." );
+			}
 
-		if ( ! $prop->validate( $prop->get_default() ) ) {
-			Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );
-		}
-
-		foreach ( $prop->get_constraints() as $constraint ) {
 			try {
-				$constraint->validate( $prop->get_default() );
+				$prop->validate( $prop->get_default() );
 			} catch ( \Exception $e ) {
-				Utils::safe_throw(
-					"Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}` - {$e->getMessage()}"
-				);
+				Utils::safe_throw( "Default value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
 			}
 		}
 	}
