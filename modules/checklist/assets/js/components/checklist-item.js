@@ -4,7 +4,8 @@ import { ListItemButton, ListItemIcon, ListItemText, Collapse } from '@elementor
 import { ChevronDownIcon, RadioButtonUncheckedIcon } from '@elementor/icons';
 
 function CheckListItem( props ) {
-	const { expandedIndex, setExpandedIndex, index, step } = props;
+	const { expandedIndex, setExpandedIndex, index, step } = props,
+		chevronStyle = index === expandedIndex ? { transform: 'rotate(180deg)' } : {};
 
 	const handleExpandClick = () => {
 		setExpandedIndex( index === expandedIndex ? -1 : index );
@@ -12,10 +13,10 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ handleExpandClick } >
+			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.id }` }>
 				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
-				<ListItemText id={ step.title } primary={ step.title } primaryTypographyProps={ { variant: 'body2' } } />
-				{ index === expandedIndex ? <ChevronDownIcon sx={ { transform: 'rotate(180deg)' } } /> : <ChevronDownIcon /> }
+				<ListItemText primary={ step.title } primaryTypographyProps={ { variant: 'body2' } } />
+				<ChevronDownIcon sx={ { ...chevronStyle, transition: '300ms' } } />
 			</ListItemButton>
 			<Collapse in={ index === expandedIndex } >
 				<ChecklistCardContent step={ step } />
