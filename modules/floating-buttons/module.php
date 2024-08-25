@@ -73,7 +73,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-
 		if ( isset( $_GET['playwright_testing'] ) ) {
 			add_action( 'init', function () {
 				$metafields = [
