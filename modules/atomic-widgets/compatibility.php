@@ -14,7 +14,9 @@ class Compatibility {
 	}
 
 	private function add_atomic_dynamic_tags_settings( $settings ) {
-		$settings['atomicDynamicTags'] = $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
+		if ( isset( $settings['dynamicTags']['tags'] ) ) {
+			$settings['atomicDynamicTags'] = $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
+		}
 
 		return $settings;
 	}
