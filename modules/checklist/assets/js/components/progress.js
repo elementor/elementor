@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const Progress = ( { steps } ) => {
 	const getProgressPercentage = () => {
-		return steps.filter( ( { isCompleted } ) => isCompleted ).length * 100 / steps.length;
+		return steps.filter( ( { is_completed: isCompleted } ) => isCompleted ).length * 100 / steps.length;
 	};
 
 	const progress = getProgressPercentage();
