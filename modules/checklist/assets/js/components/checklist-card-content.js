@@ -14,9 +14,7 @@ const ChecklistCardContent = ( { step } ) => {
 	} = step.config;
 
 	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
-		ctaLink = isLocked ? promotionUrl : ctaUrl,
-		{ is_marked_completed: isMarkedCompleted, is_absolute_completed: isAbsoluteCompleted, is_immutable_completed: isImmutableCompleted } = step,
-		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
+		ctaLink = isLocked ? promotionUrl : ctaUrl;
 
 	const redirectHandler = () => {
 		window.open( ctaLink, isLocked ? '_blank' : '' );
@@ -35,18 +33,6 @@ const ChecklistCardContent = ( { step } ) => {
 				</Typography>
 			</CardContent>
 			<CardActions>
-
-				{ shouldShowMarkAsDone
-					? <Button
-							size="small"
-							color="secondary"
-							variant="text"
-							className="mark-as-done"
-					>
-						{ isMarkedCompleted ? __( 'Mark as undone', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
-					</Button>
-					: null
-				}
 
 				<Button
 					color={ isLocked ? 'promotion' : 'primary' }

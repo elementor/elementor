@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private array $steps_config = [];
 
 	private Checklist_Module_Interface $module;
 
@@ -32,13 +31,12 @@ class Steps_Manager {
 
 		foreach ( $this->get_step_ids() as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
-			$instance->maybe_immutably_mark_as_completed();
+			$is_marked_as_completed = $instance->is_marked_as_completed();
 
 			$step = [
-				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed() ,
-				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_immutable_completed(),
-				Step_Base::ABSOLUTE_COMPLETION_KEY => $instance->is_absolute_completed(),
-				'config' => $this->steps_config[ $step_id ],
+				'should_allow_undo' => $is_marked_as_completed,
+				'is_completed' => $instance->is_immutable_completed() || $instance->is_marked_as_completed() || $instance->is_absolute_completed(),
+				'config' => $this->get_step_config( $step_id ),
 			];
 
 			$formatted_steps[] = $step;
@@ -91,7 +89,7 @@ class Steps_Manager {
 	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
 		foreach ( $this->step_instances as $step ) {
 			if ( $step->get_id() === $step_id ) {
-				$step->maybe_immutably_mark_as_completed();
+				$step->maybe_mark_as_completed();
 
 				return;
 			}
@@ -115,6 +113,7 @@ class Steps_Manager {
 				'description' => $step_instance->get_description(),
 				'learn_more_text' => $step_instance->get_learn_more_text(),
 				'learn_more_url' => $step_instance->get_learn_more_url(),
+				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
@@ -136,7 +135,6 @@ class Steps_Manager {
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
 				$this->step_instances[ $step_id ] = $step_instance;
-				$this->steps_config[ $step_id ] = $this->get_step_config( $step_id );
 			}
 		}
 	}

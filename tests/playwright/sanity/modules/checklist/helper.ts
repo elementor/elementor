@@ -81,9 +81,5 @@ export default class ChecklistHelper {
 			},
 		} ).then( ( response ) => response.json() ).then( ( json ) => json.data ) );
 	}
-
-	isStepCompleted( step: Step ) {
-		return step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed;
-	}
 }
 

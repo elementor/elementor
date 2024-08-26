@@ -13,7 +13,6 @@ export type StepConfig = {
 };
 export type Step = {
 	is_marked_completed: boolean,
-	is_absolute_completed: boolean,
-	is_immutable_completed: boolean,
+	is_completed: boolean,
 	config: StepConfig,
 };
