@@ -83,12 +83,11 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 
 		const context = await browser.newContext();
 		const newPage = await context.newPage();
-		await newPage.goto( 'https://example.com' );
 		await newPage.goto( '/' );
 		const floatingElement = newPage.locator( '.e-contact-buttons' );
 		await expect( floatingElement ).toBeVisible();
 
-		expect( await floatingElement.screenshot() ).toMatchSnapshot();
+		expect( await floatingElement.screenshot() ).toMatchSnapshot('./flo');
 
 		const button = floatingElement.locator( '.e-contact-buttons__chat-button' );
 		await expect( button ).toBeVisible();
