@@ -75,7 +75,6 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-          UPDATE_VERSIONS_SCRIPT_PATH: "./.github/scripts/update-version-elementor-php.sh"
 
       - uses: actions/upload-artifact@v4
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
