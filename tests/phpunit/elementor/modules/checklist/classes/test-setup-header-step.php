@@ -28,7 +28,7 @@ class Test_Setup_Header_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_absolute_completed() );
 
 		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
-			'get_query' => [ 'posts' => [ 1 ] ],
+			'get_query' => [ 'posts' => [1] ],
 		] );
 		$step = new Setup_Header( $this->checklist_module, $this->wordpress_adapter );
 		$step->maybe_immutably_mark_as_completed();
