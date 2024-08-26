@@ -145,7 +145,7 @@ abstract class Step_Base {
 	 * @return bool
 	 */
 	public function is_immutable_completed() : bool {
-		return $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
+		return $this->get_is_completion_immutable() && $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 	}
 
 	/**

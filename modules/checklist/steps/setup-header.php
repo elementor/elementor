@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Modules\Checklist\Module as Checklist_Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -9,7 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	private $is_locked = true;
+	public function __construct( ...$args ) {
+		call_user_func( [ parent::class, __FUNCTION__ ], ...$args );
+
+		$this->set_is_locked( true );
+	}
 
 	public function get_id() : string {
 		return self::STEP_ID;
@@ -31,7 +38,8 @@ class Setup_Header extends Step_Base {
 			],
 			'posts_per_page' => 1,
 		];
-		$headers = $this->wordpress_adapter->get_query( $args )['posts'] ?? [];
+		$query = $this->wordpress_adapter->get_query( $args );
+		$headers = $query->posts ?? [];
 
 		return count( $headers ) >= 1;
 	}
@@ -62,14 +70,6 @@ class Setup_Header extends Step_Base {
 
 	public function get_learn_more_url() : string {
 		return 'https://elementor.com/help/header-site-part/';
-	}
-
-	public function get_is_locked() : bool {
-		return $this->is_locked;
-	}
-
-	public function set_is_locked( $is_locked ) : void {
-		$this->is_locked = $is_locked;
 	}
 
 	public function get_promotion_link() : string {

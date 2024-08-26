@@ -33,9 +33,9 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	/**
 	 * Creates and returns a wp query instance.
 	 *
-	 * @return \WP_Query|array
+	 * @return \WP_Query
 	 */
-	public function get_query( $args ) {
+	public function get_query( $args ) : ?\WP_Query {
 		return new \WP_Query( $args );
 	}
 
