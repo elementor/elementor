@@ -70,5 +70,20 @@ export default class ChecklistHelper {
 	getStepButtonSelector( itemId: string ) {
 		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId }`;
 	}
+
+	getSteps() {
+		return [
+			{
+				id: 'create-pages',
+				title: 'Create your first 3 pages',
+				imagePath: 'https://assets.elementor.com/checklist/v1/images/checklist-step-3.jpg',
+				description: 'Jumpstart your creation with professional designs form the Template Library or start from scratch.',
+				learn_more_link: 'https://elementor.com/help/create-new-page/',
+				learn_more_text: 'https://elementor.com/help/create-new-page/',
+				cta_text: 'Create a new page',
+				is_completed: true,
+			},
+		];
+	}
 }
 
