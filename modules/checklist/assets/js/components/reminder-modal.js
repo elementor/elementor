@@ -1,17 +1,15 @@
-import { Button, Card, CardActions, CardContent, CardHeader, Typography } from '@elementor/ui';
+import { Button, Card, CardActions, CardContent, Typography } from '@elementor/ui';
 
-const ReminderModal = () => {
+const ReminderModal = ( { setOpen } ) => {
 	const openChecklist = () => {
-		setHasRoot(true)
-		$e.run( 'checklist/toggle-popup' );
+		setOpen( false );
 	};
 
 	const closeChecklist = () => {
-		close();
+		setOpen( false );
 	}
 
 	return (
-
 			<Card elevation={ 0 } sx={ { maxWidth: 336, backgroundColor:'common.white'} }>
 				<CardContent>
 					<Typography variant="subtitle2" color="primary.contrastText" sx={{mb: 2}}>Looking for your Launchpad Checklist?</Typography>
@@ -20,9 +18,8 @@ const ReminderModal = () => {
 					</Typography>
 				</CardContent>
 				<CardActions>
-					<Button size="small" color="secondary" onClick={ close }>Not Now</Button>
-					<Button size="small" variant="contained" sx={{ color:'primary.contrastText' }} onClick={ ()=>{
-						openChecklist()} }>Let’s do it </Button>
+					<Button size="small" color="secondary" onClick={ closeChecklist }>Not Now</Button>
+					<Button size="small" variant="contained" sx={{ color:'primary.contrastText' }} onClick={ openChecklist }>Let’s do it </Button>
 				</CardActions>
 			</Card>
 	)

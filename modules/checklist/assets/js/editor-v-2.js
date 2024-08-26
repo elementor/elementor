@@ -11,43 +11,45 @@ import { __privateListenTo as listenTo, commandEndEvent } from "@elementor/edito
 const Icon = () => {
 	const [ hasRoot, setHasRoot ] = useState(false);
 	const [ closedForFirstTime, setClosedForFirstTime ] = useState(null);
+	const [open, setOpen] = useState(!hasRoot);
 
-	const fetchStatus = async () => {
-		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user_progress`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': elementorWebCliConfig.nonce,
-			},
-		} );
-		const data = await response.json();
-		console.log(data);
-		setClosedForFirstTime(data.data.first_closed_checklist_in_editor);
-
-	};
+	// const fetchStatus = async () => {
+	// 	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user_progress`, {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'X-WP-Nonce': elementorWebCliConfig.nonce,
+	// 		},
+	// 	} );
+	// 	const data = await response.json();
+	// 	console.log(data);
+	// 	setClosedForFirstTime(data.data.first_closed_checklist_in_editor);
+	//
+	// };
 
 
 	useEffect(()=> {
 		return listenTo(commandEndEvent('checklist/toggle-popup'), (e)=>{
 			if(e.args.isOpen) {
+				console.log('listened to command')
 				setHasRoot(true)
 			} else {
+				console.log('listened to command')
 				setHasRoot( false )
 			}
-
 		})
 
 	}, [hasRoot])
 
-	useEffect( () => {
-		fetchStatus();
-	}, [] );
+	// useEffect( () => {
+	// 	fetchStatus();
+	// }, [] );
 
 	if ( hasRoot ) {
 		return (<RocketIcon />)
 	}
 	else { return (
-		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot}/> } open={ !hasRoot } disableHoverListener={ true }
+		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open } disableHoverListener={ true }
 		         componentsProps={{
 			         tooltip: {
 				         sx: {

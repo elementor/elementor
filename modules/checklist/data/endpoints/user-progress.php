@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class User_Progress extends Endpoint_Base {
 
-
-
 	protected function register () {
 		$this->register_items_route( \WP_REST_Server::EDITABLE, $args = [
 			'first_closed_checklist_in_editor' => [
@@ -21,7 +19,6 @@ class User_Progress extends Endpoint_Base {
 			],
 		] );
 	}
-
 
 	public function get_name() : string {
 		return 'user_progress';
