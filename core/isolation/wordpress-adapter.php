@@ -33,10 +33,9 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	/**
 	 * Retrieves an array of posts.
 	 *
-	 * @return \WP_Query Array of posts. Boolean false if the specified post type is not
-	 *                         hierarchical or the specified status is not supported by the post type.
+	 * @return \WP_Query|array
 	 */
-	public function get_query( $args ) : \WP_Query {
+	public function get_query( $args ) {
 		return new \WP_Query( $args );
 	}
 
