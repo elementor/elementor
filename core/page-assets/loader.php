@@ -41,21 +41,25 @@ class Loader extends Module {
 				'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [],
+				'loadInEditor' => false,
 			],
 			'e-shapes' => [
 				'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [],
+				'loadInEditor' => true,
 			],
 			'e-swiper' => [
 				'src' => $this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [ 'swiper' ],
+				'loadInEditor' => true,
 			],
 			'swiper' => [
 				'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
 				'version' => $this->getSwiperVersion(),
 				'dependencies' => [],
+				'loadInEditor' => true,
 			],
 		];
 
@@ -99,6 +103,7 @@ class Loader extends Module {
 				'src' => $this->get_css_assets_url( $style_prefix . $animation, 'assets/lib/animations/styles/' ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [],
+				'loadInEditor' => true,
 			];
 		}
 
@@ -164,7 +169,7 @@ class Loader extends Module {
 					continue;
 				}
 
-				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
+				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode && $this->load_asset_in_editor( $asset_data ) ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else {
@@ -173,6 +178,14 @@ class Loader extends Module {
 				}
 			}
 		}
+	}
+
+	private function load_asset_in_editor( $asset ) {
+		if ( ! array_key_exists( 'loadInEditor', $asset ) ) {
+			return true;
+		}
+
+		return $asset['loadInEditor'];
 	}
 
 	private function register_assets(): void {
