@@ -158,6 +158,7 @@ const externals = [
 		'@elementor/ui': 'elementorV2.ui',
 		'@elementor/icons': 'elementorV2.icons',
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
+		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 	},
