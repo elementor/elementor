@@ -41,25 +41,21 @@ class Loader extends Module {
 				'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [],
-				'load_in_editor' => false,
 			],
 			'e-shapes' => [
 				'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [],
-				'load_in_editor' => true,
 			],
 			'e-swiper' => [
 				'src' => $this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [ 'swiper' ],
-				'load_in_editor' => true,
 			],
 			'swiper' => [
 				'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
 				'version' => $this->getSwiperVersion(),
 				'dependencies' => [],
-				'load_in_editor' => true,
 			],
 		];
 
@@ -103,7 +99,6 @@ class Loader extends Module {
 				'src' => $this->get_css_assets_url( $style_prefix . $animation, 'assets/lib/animations/styles/' ),
 				'version' => ELEMENTOR_VERSION,
 				'dependencies' => [],
-				'load_in_editor' => true,
 			];
 		}
 
@@ -169,10 +164,15 @@ class Loader extends Module {
 					continue;
 				}
 
-				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode && $this->load_asset_in_editor( $asset_data ) ) {
+				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else {
+						// TODO: Remove the 'e-animations' registration in v3.26.0 [ED-15471].
+						if ( $this->skip_animations_style( $asset_name ) ) {
+							continue;
+						}
+
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
 				}
@@ -180,12 +180,11 @@ class Loader extends Module {
 		}
 	}
 
-	private function load_asset_in_editor( $asset ): bool {
-		if ( ! array_key_exists( 'load_in_editor', $asset ) ) {
-			return true;
-		}
+	// TODO: Remove the 'e-animations' registration in v3.26.0 [ED-15471].
+	private function skip_animations_style( $asset_name ) {
+		$is_preview = Plugin::$instance->preview->is_preview_mode();
 
-		return $asset['load_in_editor'];
+		return $is_preview && 'e-animations' === $asset_name;
 	}
 
 	private function register_assets(): void {
