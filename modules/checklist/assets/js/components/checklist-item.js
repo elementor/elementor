@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import ChecklistCardContent from './checklist-card-content';
 import { ListItemButton, ListItemIcon, ListItemText, Collapse } from '@elementor/ui';
 import { CheckedCircleIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
-import { isStepCompleted } from '../utils/functions';
 
 function CheckListItem( props ) {
 	const { expandedIndex, setExpandedIndex, index, step } = props,
@@ -15,7 +14,10 @@ function CheckListItem( props ) {
 	return (
 		<>
 			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.config.id }` }>
-				<ListItemIcon>{ isStepCompleted( step ) ? <CheckedCircleIcon /> : <RadioButtonUncheckedIcon /> }</ListItemIcon>
+				<ListItemIcon>{ step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed
+					? <CheckedCircleIcon />
+					: <RadioButtonUncheckedIcon />
+				}</ListItemIcon>
 				<ListItemText primary={ step.config.title } primaryTypographyProps={ { variant: 'body2' } } />
 				{ step.config.is_locked ? <UpgradeIcon color="promotion" sx={ { mr: 1 } } /> : null }
 				<ChevronDownIcon sx={ { ...chevronStyle, transition: '300ms' } } />
