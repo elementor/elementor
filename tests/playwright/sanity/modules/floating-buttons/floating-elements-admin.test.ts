@@ -87,7 +87,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const floatingElement = newPage.locator( '.e-contact-buttons' );
 		await expect( floatingElement ).toBeVisible();
 
-		expect( await floatingElement.screenshot() ).toMatchSnapshot('./flo');
+		expect( await floatingElement.screenshot() ).toMatchSnapshot();
 
 		const button = floatingElement.locator( '.e-contact-buttons__chat-button' );
 		await expect( button ).toBeVisible();
