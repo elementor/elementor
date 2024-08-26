@@ -1,3 +1,5 @@
+import { getVariantsWithoutMeta } from '../utils/get-variants';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -26,9 +28,7 @@ export class DeleteVariant extends $e.modules.editor.CommandContainerInternalBas
 
 		style = oldStyles[ styleDefID ];
 
-		style.variants = style.variants.filter( ( variant ) => {
-			return variant.meta.breakpoint !== meta.breakpoint || variant.meta.state !== meta.state;
-		} );
+		style.variants = getVariantsWithoutMeta( style.variants, meta );
 
 		const newStyles = {
 			...oldStyles,
