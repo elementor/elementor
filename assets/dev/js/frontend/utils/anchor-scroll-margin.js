@@ -9,7 +9,16 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onInit() {
-		this.initializeStickyAndAnchorTracking();
+		const waitForElements = new Promise( ( resolve ) => {
+			// Simulating an async operation
+			setTimeout( () => {
+				resolve();
+			}, 100 );
+		} );
+
+		waitForElements.then( () => {
+			this.initializeStickyAndAnchorTracking();
+		} );
 	},
 
 	initializeStickyAndAnchorTracking() {
