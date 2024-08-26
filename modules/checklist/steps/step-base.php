@@ -28,7 +28,7 @@ abstract class Step_Base {
 	const IMMUTABLE_COMPLETION_KEY = 'is_immutably_completed';
 
 	private array $user_progress;
-	protected Wordpress_Adapter_Interface $wordpress_adapter;
+	private Wordpress_Adapter_Interface $wordpress_adapter;
 	protected Checklist_Module $module;
 
 	/**
