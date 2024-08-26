@@ -57,18 +57,20 @@ module.exports = elementorModules.ViewModule.extend( {
 		const anchorList = this.filterAndSortElementsByType( elements, 'anchor' );
 
 		stickyList.forEach( ( sticky, index ) => {
-			// Define the range for the current sticky
-			const nextStickyScrollPosition = ( index + 1 < stickyList.length )
-				? stickyList[ index + 1 ].scrollPosition
-				: Infinity;
-			sticky.anchor = anchorList.filter( ( anchor ) => {
-				const withinRange = anchor.scrollPosition > sticky.scrollPosition && anchor.scrollPosition < nextStickyScrollPosition;
-				if ( withinRange ) {
-					// Set scrollMarginTop for each anchor
-					anchor.element.style.scrollMarginTop = `${ sticky.scrollMarginTop }px`;
-				}
-				return withinRange;
-			} );
+			this.defineCurrentStickyRange( sticky, index, stickyList, anchorList );
+		} );
+	},
+
+	defineCurrentStickyRange( sticky, index, stickyList, anchorList ) {
+		const nextStickyScrollPosition = ( index + 1 < stickyList.length )
+			? stickyList[ index + 1 ].scrollPosition
+			: Infinity;
+		sticky.anchor = anchorList.filter( ( anchor ) => {
+			const withinRange = anchor.scrollPosition > sticky.scrollPosition && anchor.scrollPosition < nextStickyScrollPosition;
+			if ( withinRange ) {
+				anchor.element.style.scrollMarginTop = `${ sticky.scrollMarginTop }px`;
+			}
+			return withinRange;
 		} );
 	},
 

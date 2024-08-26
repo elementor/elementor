@@ -491,7 +491,6 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_DEV,
 			static::TYPE_HIDDEN => true,
 			'default' => self::STATE_INACTIVE,
-			'generator_tag' => true,
 		] );
 	}
 
