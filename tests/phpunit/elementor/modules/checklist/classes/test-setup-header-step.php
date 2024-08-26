@@ -3,15 +3,12 @@
 namespace elementor\tests\phpunit\elementor\modules\checklist\classes;
 
 use Elementor\Modules\Checklist\Steps\Setup_Header;
-use Elementor\Modules\Checklist\Steps_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Test_Setup_Header_Step extends Step_Test_Base {
-	private Setup_Header $step;
-
 	public function test__various_cases() {
 		$steps_manager = $this->checklist_module->get_steps_manager();
 		$step = $steps_manager->get_step_by_id( Setup_Header::STEP_ID );

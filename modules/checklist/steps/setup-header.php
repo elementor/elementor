@@ -23,7 +23,7 @@ class Setup_Header extends Step_Base {
 				[
 					'key' => '_elementor_template_type',
 					'value' => 'header',
-					'compare' => '='
+					'compare' => '=',
 				],
 				[
 					'key' => '_elementor_conditions',
