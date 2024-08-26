@@ -1,34 +1,25 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-const ChecklistCardContent = ( props ) => {
+const ChecklistCardContent = ( { step } ) => {
 	const {
-			id,
-			description,
-			learn_more_url: learnMoreUrl,
-			learn_more_text: learnMoreText,
-			image_src: imageSrc,
-			is_locked: isLocked,
-			promotion_url: promotionUrl,
-			cta_text: cteText,
-			cta_url: ctaUrl,
-		} = props.step.config,
-		ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : cteText,
+		id,
+		description,
+		learn_more_url: learnMoreUrl,
+		learn_more_text: learnMoreText,
+		image_src: imageSrc,
+		is_locked: isLocked,
+		promotion_url: promotionUrl,
+		cta_url: ctaUrl,
+	} = step.config;
+
+	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
 		ctaLink = isLocked ? promotionUrl : ctaUrl,
-		isCompleted = props.step.is_completed,
-		isMarkedCompleted = props.step.is_marked_completed;
+		{ is_marked_completed: isMarkedCompleted, is_absolute_completed: isAbsoluteCompleted, is_immutable_completed: isImmutableCompleted } = step,
+		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
 
-	const redirectHandler = ( url ) => {
-		window.open( url, isLocked ? '_blank' : '' );
-	};
-
-	const toggleMarkDone = () => {
-		if ( isCompleted ) {
-			return;
-		}
-
-		// TODO: Implement call to DB
-		return isCompleted;
+	const redirectHandler = () => {
+		window.open( ctaLink, isLocked ? '_blank' : '' );
 	};
 
 	return (
@@ -45,14 +36,12 @@ const ChecklistCardContent = ( props ) => {
 			</CardContent>
 			<CardActions>
 
-				{ ( ! isCompleted || isMarkedCompleted ) && ! isLocked
+				{ shouldShowMarkAsDone
 					? <Button
 							size="small"
 							color="secondary"
 							variant="text"
 							className="mark-as-done"
-							disabled={ isCompleted }
-							onClick={ toggleMarkDone }
 					>
 						{ isMarkedCompleted ? __( 'Mark as undone', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
 					</Button>
@@ -64,7 +53,7 @@ const ChecklistCardContent = ( props ) => {
 					size="small"
 					variant="contained"
 					className="cta-button"
-					onClick={ () => redirectHandler( ctaLink ) }
+					onClick={ redirectHandler }
 				>
 					{ ctaText }
 				</Button>

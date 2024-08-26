@@ -2,11 +2,11 @@ import { Box, LinearProgress, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 const Progress = ( { steps } ) => {
-	const getProgressPercentage = () => {
-		return steps.filter( ( { is_completed: isCompleted } ) => isCompleted ).length * 100 / steps.length;
+	const isStepCompleted = ( step ) => {
+		return step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed;
 	};
 
-	const progress = getProgressPercentage();
+	const progress = steps.filter( isStepCompleted ).length * 100 / steps.length;
 
 	return (
 		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } } className={ 'e-checklist-progress-bar-wrapper' }>

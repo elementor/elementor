@@ -3,6 +3,7 @@ import { Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import topBarSelectors from '../../../selectors/top-bar-selectors';
+import { Step } from '../../../types/checklist';
 
 export default class ChecklistHelper {
 	readonly page: Page;
@@ -71,7 +72,7 @@ export default class ChecklistHelper {
 		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId }`;
 	}
 
-	getSteps() {
+	getSteps(): Promise< Step[] > {
 		return this.page.evaluate( () => fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
 			method: 'GET',
 			headers: {
@@ -79,6 +80,10 @@ export default class ChecklistHelper {
 				'X-WP-Nonce': elementorWebCliConfig.nonce,
 			},
 		} ).then( ( response ) => response.json() ).then( ( json ) => json.data ) );
+	}
+
+	isStepCompleted( step: Step ) {
+		return step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed;
 	}
 }
 

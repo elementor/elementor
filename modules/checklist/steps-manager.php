@@ -33,11 +33,11 @@ class Steps_Manager {
 		foreach ( $this->get_step_ids() as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
 			$instance->maybe_immutably_mark_as_completed();
-			$is_marked_as_completed = $instance->is_marked_as_completed();
 
 			$step = [
-				'is_marked_completed' => $is_marked_as_completed && ! $instance->is_absolute_completed(),
-				'is_completed' => $instance->is_immutable_completed() || $instance->is_marked_as_completed() || $instance->is_absolute_completed(),
+				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed() ,
+				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_immutable_completed(),
+				Step_Base::ABSOLUTE_COMPLETION_KEY => $instance->is_absolute_completed(),
 				'config' => $this->steps_config[ $step_id ],
 			];
 
@@ -118,7 +118,6 @@ class Steps_Manager {
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
-				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
 				'required_license' => $step_instance->get_license(),
 				'is_locked' => $step_instance->get_is_locked(),
 				'promotion_url' => $step_instance->get_promotion_link(),

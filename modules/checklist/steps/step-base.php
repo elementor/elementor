@@ -25,7 +25,8 @@ abstract class Step_Base {
 	 */
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
-	const IMMUTABLE_COMPLETION_KEY = 'is_immutably_completed';
+	const IMMUTABLE_COMPLETION_KEY = 'is_immutable_completed';
+	const ABSOLUTE_COMPLETION_KEY = 'is_absolute_completed';
 
 	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
@@ -126,6 +127,7 @@ abstract class Step_Base {
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
 			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
+			$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = false;
 			$this->set_step_progress();
 		}
 	}
