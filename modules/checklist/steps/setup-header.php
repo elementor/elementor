@@ -16,17 +16,24 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function is_absolute_completed() : bool {
-		$header = get_posts( [
-			'meta_key' => '_elementor_template_type',
-			'meta_value' => 'header',
+		$args = [
 			'post_type' => 'elementor_library',
-		] ) ?? [];
+			'meta_query' => [
+				'relation' => 'AND',
+				[
+					'key' => '_elementor_template_type',
+					'value' => 'header',
+					'compare' => '='
+				],
+				[
+					'key' => '_elementor_conditions',
+				],
+			],
+			'posts_per_page' => 1,
+		];
+		$headers = $this->wordpress_adapter->get_query( $args )->posts ?? [];
 
-		if ( ! count( $header ) >= 1 ) {
-			return false;
-		}
-
-		return true;
+		return count( $headers ) >= 1;
 	}
 
 	public function get_title() : string {

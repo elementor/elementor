@@ -30,6 +30,16 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return get_pages( $args );
 	}
 
+	/**
+	 * Retrieves an array of posts.
+	 *
+	 * @return \WP_Query Array of posts. Boolean false if the specified post type is not
+	 *                         hierarchical or the specified status is not supported by the post type.
+	 */
+	public function get_query( $args ) : \WP_Query {
+		return new \WP_Query( $args );
+	}
+
 	public function get_option( $option_key ) {
 		return get_option( $option_key );
 	}

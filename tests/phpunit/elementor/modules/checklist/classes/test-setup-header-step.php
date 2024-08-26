@@ -1,20 +1,20 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
+namespace elementor\tests\phpunit\elementor\modules\checklist\classes;
 
-use Elementor\Modules\Checklist\Steps\Create_Pages;
+use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Create_Pages_Step extends Step_Test_Base {
-	private Create_Pages $step;
+class Test_Setup_Header_Step extends Step_Test_Base {
+	private Setup_Header $step;
 
 	public function test__various_cases() {
 		$steps_manager = $this->checklist_module->get_steps_manager();
-		$step = $steps_manager->get_step_by_id( Create_Pages::STEP_ID );
+		$step = $steps_manager->get_step_by_id( Setup_Header::STEP_ID );
 
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
@@ -30,28 +30,28 @@ class Test_Create_Pages_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
 
-		$this->set_wordpress_adapter_mock( [ 'get_pages' ], [
-			'get_pages' => [ [], [], [] ],
+		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
+			'get_query' => [ 'posts' => [] ],
 		] );
-		$step = new Create_Pages( $this->checklist_module, $this->wordpress_adapter );
+		$step = new Setup_Header( $this->checklist_module, $this->wordpress_adapter );
 		$step->maybe_immutably_mark_as_completed();
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertTrue( $step->is_immutable_completed() );
 		$this->assertTrue( $step->is_absolute_completed() );
 
-		$this->set_wordpress_adapter_mock( [ 'get_pages' ], [
-			'get_pages' => [ [] ],
+		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
+			'get_query' => [],
 		] );
 
-		$step = new Create_Pages( $this->checklist_module, $this->wordpress_adapter );
+		$step = new Setup_Header( $this->checklist_module, $this->wordpress_adapter );
 		$this->assertFalse( $step->is_marked_as_completed() );
-		$this->assertTrue( $step->is_immutable_completed() );
+		$this->assertFalseno( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
 	}
 
 	public function setUp(): void {
-		$this->set_wordpress_adapter_mock( [ 'get_pages' ], [
-			'get_pages' => [ [] ],
+		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
+			'get_query' => [],
 		] );
 
 		parent::setUp();
