@@ -181,7 +181,7 @@ class Loader extends Module {
 	}
 
 	// TODO: Remove the 'e-animations' registration in v3.26.0 [ED-15471].
-	private function skip_animations_style( $asset_name ) {
+	private function skip_animations_style( $asset_name ): bool {
 		$is_preview = Plugin::$instance->preview->is_preview_mode();
 
 		return $is_preview && 'e-animations' === $asset_name;
