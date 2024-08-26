@@ -31,7 +31,7 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	}
 
 	/**
-	 * Retrieves an array of posts.
+	 * Creates and returns a wp query instance.
 	 *
 	 * @return \WP_Query|array
 	 */
