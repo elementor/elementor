@@ -3,7 +3,7 @@ import FloatingElementPage from './floating-element-page';
 import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-test.describe( 'Floating Elements tests', () => {
+test.describe( 'Verify floating buttons editor, admin page and front page behavior', () => {
 	test.afterEach( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -12,7 +12,7 @@ test.describe( 'Floating Elements tests', () => {
 		await page.close();
 	} );
 
-	test( 'Verify editor behavior by creating post through API', async (
+	test( 'Verify editor behavior by creating post through API and also FE behavior', async (
 		{
 			browser,
 			page,
@@ -87,6 +87,9 @@ test.describe( 'Floating Elements tests', () => {
 		await newPage.goto( '/' );
 		const floatingElement = newPage.locator( '.e-contact-buttons' );
 		await expect( floatingElement ).toBeVisible();
+
+		expect( await floatingElement.screenshot() ).toMatchSnapshot();
+
 		const button = floatingElement.locator( '.e-contact-buttons__chat-button' );
 		await expect( button ).toBeVisible();
 		await button.click();
@@ -119,7 +122,7 @@ test.describe( 'Floating Elements tests', () => {
 		await expect( columnClickTracking ).toHaveText( '2' );
 	} );
 
-	test( 'Verify admin page behavior', async ( {
+	test( 'Verify floating elements admin page behavior', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {
