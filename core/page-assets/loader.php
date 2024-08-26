@@ -180,7 +180,7 @@ class Loader extends Module {
 		}
 	}
 
-	private function load_asset_in_editor( $asset ) {
+	private function load_asset_in_editor( $asset ): bool {
 		if ( ! array_key_exists( 'load_in_editor', $asset ) ) {
 			return true;
 		}
