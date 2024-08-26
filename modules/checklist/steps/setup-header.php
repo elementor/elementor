@@ -31,7 +31,7 @@ class Setup_Header extends Step_Base {
 			],
 			'posts_per_page' => 1,
 		];
-		$headers = $this->wordpress_adapter->get_query( $args )->posts ?? [];
+		$headers = $this->wordpress_adapter->get_query( $args )[ 'posts' ] ?? [];
 
 		return count( $headers ) >= 1;
 	}
