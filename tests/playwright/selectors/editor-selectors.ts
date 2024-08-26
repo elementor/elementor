@@ -214,6 +214,21 @@ const EditorSelectors = {
 			editButton: 'button[aria-label="Edit result"]',
 		},
 	},
+	floatingElements: {
+		floatingButtons: {
+			controls: {
+				advanced: {
+					sections: [
+						'.elementor-control-advanced_layout_section',
+						'.elementor-control-advanced_responsive_section',
+						'.elementor-control-advanced_custom_controls_section',
+						'.elementor-control-section_custom_css_pro',
+						'.elementor-control-section_custom_attributes_pro',
+					],
+				},
+			},
+		},
+	},
 	contextMenu: {
 		menu: '.elementor-context-menu',
 		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',

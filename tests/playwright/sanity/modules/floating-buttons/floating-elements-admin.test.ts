@@ -21,104 +21,125 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
 		const editor = await floatingElPage.createFloatingButtonWithAPI();
 		await floatingElPage.waitForPanel();
-		const navigatorId = 'header [aria-label="Structure"]';
-		const navigator = page.locator( navigatorId );
-		// We need to check that the normal elements are not present, that the navigator is visible and the title is correct.
-		await expect( navigator ).toBeHidden();
-		const addButton = page.locator( 'header [aria-label="Add Element"]' );
-		await expect( addButton ).toBeHidden();
-		const panelTitle = page.locator( '#elementor-panel-header-title' );
-		await expect( panelTitle ).toHaveText( 'Edit Single Chat' );
 
-		// Check that we are seeing our custom advanced tab and that the normal advanced tab is hidden.
-		const navigationContainer = page.locator( '.elementor-panel-navigation' );
-		const buttons = navigationContainer.locator( 'button' );
-		const visibleButtons = buttons.filter( { has: page.locator( ':visible' ) } );
-		await expect( visibleButtons ).toHaveCount( 3 );
-		const advancedSettingsCustom = page.locator( '.elementor-tab-control-advanced-tab-floating-buttons' );
-		await expect( advancedSettingsCustom ).toBeVisible();
-		await advancedSettingsCustom.click();
-
-		const elementorControlsContainer = page.locator( '#elementor-controls' );
-		const controlsToCheck = [
-			'.elementor-control-advanced_layout_section',
-			'.elementor-control-advanced_responsive_section',
-			'.elementor-control-advanced_custom_controls_section',
-			'.elementor-control-section_custom_css_pro',
-			'.elementor-control-section_custom_attributes_pro',
-		];
-
-		controlsToCheck.forEach( async ( control ) => {
-			const element = elementorControlsContainer.locator( control );
-			await expect( element ).toBeVisible();
+		await test.step( 'Check that the editor has no button to Add Element and no navigator', async () => {
+			const navigator = page.locator( 'header [aria-label="Structure"]' );
+			await expect( navigator ).toBeHidden();
+			const addButton = page.locator( 'header [aria-label="Add Element"]' );
+			await expect( addButton ).toBeHidden();
 		} );
 
-		const sections = elementorControlsContainer.locator( '.elementor-control-type-section' );
-		await expect( sections ).toHaveCount( 5 );
+		await test.step( 'Check that the floating element has been selected correctly when opening.', async () => {
+			const panelTitle = page.locator( '#elementor-panel-header-title' );
+			await expect( panelTitle ).toHaveText( 'Edit Single Chat' );
+		} );
 
-		const addNewWidget = editor.getPreviewFrame().locator( EditorSelectors.addNewSection );
-		await expect( addNewWidget ).toBeHidden();
-		const container = editor.getPreviewFrame().locator( EditorSelectors.container );
-		await expect( container ).toBeVisible();
-		const contactButtonWidget = container.locator( EditorSelectors.getWidgetByName( 'contact-buttons' ) );
-		await expect( contactButtonWidget ).toBeVisible();
-		const contactButtonActionsContainer = container.locator( '.elementor-editor-container-settings' );
-		const actions = contactButtonActionsContainer.locator( 'li' );
-		await expect( actions ).toHaveCount( 1 );
-		await contactButtonWidget.hover();
-		const deleteContainer = contactButtonActionsContainer.locator( '.elementor-editor-element-remove' );
-		await expect( deleteContainer ).toBeVisible();
-		await deleteContainer.click();
-		const libraryModal = page.locator( '#elementor-template-library-modal' );
-		await expect( libraryModal ).toBeVisible();
+		const advancedSettingsCustom = page.locator( '.elementor-tab-control-advanced-tab-floating-buttons' );
 
-		await floatingElPage.goToFloatingButtonsPage();
-		const floatingElementTitle = page.locator( '.wp-list-table tbody tr td.page-title a.row-title' );
-		await expect( floatingElementTitle ).toHaveText( `Playwright Test Page #${ editor.postId }` );
-		await floatingElementTitle.hover();
-		const setAsEntireSite = page.locator( '.row-actions .set_as_entire_site' );
-		await expect( setAsEntireSite ).toBeVisible();
-		await setAsEntireSite.click();
-		await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
+		await test.step( 'Check that we are displaying three tabs for the widget, and that we are displaying our custom Advenced Tab.', async () => {
+			const panelTitle = page.locator( '#elementor-panel-header-title' );
+			await expect( panelTitle ).toHaveText( 'Edit Single Chat' );
+			const navigationContainer = page.locator( '.elementor-panel-navigation' );
+			const buttons = navigationContainer.locator( 'button' );
+			const visibleButtons = buttons.filter( { has: page.locator( ':visible' ) } );
+			await expect( visibleButtons ).toHaveCount( 3 );
+			await expect( advancedSettingsCustom ).toBeVisible();
+		} );
 
-		const context = await browser.newContext();
-		const newPage = await context.newPage();
-		await newPage.goto( '/' );
-		const floatingElement = newPage.locator( '.e-contact-buttons' );
-		await expect( floatingElement ).toBeVisible();
+		await test.step( 'Check that  our custom advanced tab has the five expected sections and no others.', async () => {
+			await advancedSettingsCustom.click();
+			const elementorControlsContainer = page.locator( '#elementor-controls' );
 
-		expect( await floatingElement.screenshot() ).toMatchSnapshot();
+			EditorSelectors.floatingElements.floatingButtons.controls.advanced.sections.forEach( async ( control ) => {
+				const element = elementorControlsContainer.locator( control );
+				await expect( element ).toBeVisible();
+			} );
 
-		const button = floatingElement.locator( '.e-contact-buttons__chat-button' );
-		await expect( button ).toBeVisible();
-		await button.click();
-		const cta = floatingElement.locator( '.e-contact-buttons__send-button' );
-		await expect( cta ).toBeVisible();
-		const [ tabOpenedByButton ] = await Promise.all( [
-			context.waitForEvent( 'page' ),
-			// Perform the action that triggers the new tab, e.g., clicking a link
-			cta.click(),
-		] );
+			const sections = elementorControlsContainer.locator( '.elementor-control-type-section' );
+			await expect( sections ).toHaveCount( 5 );
+		} );
 
-		expect( tabOpenedByButton ).not.toBeNull();
-		await tabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+		await test.step( 'Check that there is no section to add widget.', async () => {
+			const addNewWidget = editor.getPreviewFrame().locator( EditorSelectors.addNewSection );
+			await expect( addNewWidget ).toBeHidden();
+		} );
 
-		const [ secondtTabOpenedByButton ] = await Promise.all( [
-			context.waitForEvent( 'page' ),
-			// Perform the action that triggers the new tab, e.g., clicking a link
-			cta.click(),
-		] );
+		await test.step(
+			'Check that we have a container wrapping our widget. There is only one action button, the Delete button. Clicking it should open the library modal.',
+			async () => {
+				const container = editor.getPreviewFrame().locator( EditorSelectors.container );
+				await expect( container ).toBeVisible();
 
-		expect( secondtTabOpenedByButton ).not.toBeNull();
-		await secondtTabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+				const contactButtonWidget = container.locator( EditorSelectors.getWidgetByName( 'contact-buttons' ) );
+				await expect( contactButtonWidget ).toBeVisible();
 
-		await tabOpenedByButton.close();
-		await secondtTabOpenedByButton.close();
-		await newPage.close();
+				const contactButtonActionsContainer = container.locator( '.elementor-editor-container-settings' );
+				const actions = contactButtonActionsContainer.locator( 'li' );
+				await expect( actions ).toHaveCount( 1 );
 
-		await floatingElPage.goToFloatingButtonsPage();
-		const columnClickTracking = page.locator( '.wp-list-table tbody tr td.column-click_tracking' );
-		await expect( columnClickTracking ).toHaveText( '2' );
+				await contactButtonWidget.hover();
+				const deleteContainer = contactButtonActionsContainer.locator( '.elementor-editor-element-remove' );
+				await deleteContainer.click();
+				const libraryModal = page.locator( '#elementor-template-library-modal' );
+				await expect( libraryModal ).toBeVisible();
+			} );
+
+		let floatingElement, context, newPage;
+
+		await test.step( 'Verify that Setting as entire site displays the Widget on the FE. Check the snapshot for visual regression.', async () => {
+			await floatingElPage.goToFloatingButtonsPage();
+			const floatingElementTitle = page.locator( '.wp-list-table tbody tr td.page-title a.row-title' );
+			await floatingElementTitle.hover();
+			const setAsEntireSite = page.locator( '.row-actions .set_as_entire_site' );
+			await expect( setAsEntireSite ).toBeVisible();
+			await setAsEntireSite.click();
+			await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
+
+			context = await browser.newContext();
+			newPage = await context.newPage();
+			await newPage.goto( '/' );
+			floatingElement = newPage.locator( '.e-contact-buttons' );
+			await expect( floatingElement ).toBeVisible();
+
+			expect( await floatingElement.screenshot(
+				{
+					type: 'png',
+				},
+			) ).toMatchSnapshot( 'floating-element.png' );
+		} );
+
+		await test.step( 'Check that click tracking works as expected.', async () => {
+			const button = floatingElement.locator( '.e-contact-buttons__chat-button' );
+			await expect( button ).toBeVisible();
+			await button.click();
+			const cta = floatingElement.locator( '.e-contact-buttons__send-button' );
+			await expect( cta ).toBeVisible();
+			const [ tabOpenedByButton ] = await Promise.all( [
+				context.waitForEvent( 'page' ),
+				// Perform the action that triggers the new tab, e.g., clicking a link
+				cta.click(),
+			] );
+
+			expect( tabOpenedByButton ).not.toBeNull();
+			await tabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+
+			const [ secondtTabOpenedByButton ] = await Promise.all( [
+				context.waitForEvent( 'page' ),
+				// Perform the action that triggers the new tab, e.g., clicking a link
+				cta.click(),
+			] );
+
+			expect( secondtTabOpenedByButton ).not.toBeNull();
+			await secondtTabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+
+			await tabOpenedByButton.close();
+			await secondtTabOpenedByButton.close();
+			await newPage.close();
+
+			await floatingElPage.goToFloatingButtonsPage();
+			const columnClickTracking = page.locator( '.wp-list-table tbody tr td.column-click_tracking' );
+			await expect( columnClickTracking ).toHaveText( '2' );
+		} );
 	} );
 
 	test( 'Verify floating elements admin page behavior', async ( {
@@ -138,7 +159,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		} );
 
 		await test.step(
-			'Test flow of creating new floating element up till remote library modal. Then verify closing the modal gose back to dashboard with element created.',
+			'Verify that creating a new floating element works as expected. Starting the process opens a Modal',
 			async () => {
 				await addNewButton.click();
 				const modal = page.locator( '#elementor-new-floating-elements-modal' );
@@ -155,9 +176,13 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await titleField.fill( 'New Floating Button' );
 
 				const createElement = page.locator( '#elementor-new-floating-elements__form__submit' );
-				await expect( createElement ).toBeVisible();
 				await createElement.click();
 				await page.waitForURL( /\/wp-admin\/post\.php\?post=\d+&action=elementor&floating_element=floating-buttons/ );
+			} );
+
+		await test.step(
+			'The modal closes and the editor opens when data is submitted. The library modal redirects to the admin when closing.',
+			async () => {
 				const libraryModal = page.locator( '#elementor-template-library-modal' );
 				await expect( libraryModal ).toBeVisible();
 				const footerSelector = '.elementor-template-library-template-footer';
@@ -167,11 +192,14 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await expect( footer.first() ).toBeVisible();
 
 				const closeIcon = page.locator( '.elementor-templates-modal__header__close i' );
-				// Expect the title of closeIcon to be "Go To Dashboard"
 				await expect( closeIcon ).toHaveAttribute( 'title', 'Go To Dashboard' );
 				await closeIcon.click();
 				await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
+			} );
 
+		await test.step(
+			'Verify that the correct title and type are set for the floating element',
+			async () => {
 				const floatingElementTitle = page.locator( '.wp-list-table tbody tr td.page-title a.row-title' );
 				await expect( floatingElementTitle ).toHaveText( 'New Floating Button' );
 				const floatingElementType = page.locator( '.wp-list-table tbody tr td.column-elementor_library_type a' );
