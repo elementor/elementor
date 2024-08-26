@@ -24,20 +24,23 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public function get_atomic_controls() {
 		$controls = $this->define_atomic_controls();
+		$schema = static::get_props_schema();
 
-		return $this->get_valid_controls( $controls );
+		// Validate the schema only in the Editor.
+		static::validate_schema( $schema );
+
+		return $this->get_valid_controls( $schema, $controls );
 	}
 
-	private function get_valid_controls( array $controls ): array {
+	private function get_valid_controls( array $schema, array $controls ): array {
 		$valid_controls = [];
-		$schema = static::get_props_schema();
 
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {
 				$cloned_section = clone $control;
 
 				$cloned_section->set_items(
-					$this->get_valid_controls( $control->get_items() )
+					$this->get_valid_controls( $schema, $control->get_items() )
 				);
 
 				$valid_controls[] = $cloned_section;
@@ -129,12 +132,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $transformed_settings;
 	}
 
-	public static function get_props_schema() {
-		$schema = static::define_props_schema();
-
-		static::validate_schema( $schema );
-
-		return $schema;
+	public static function get_props_schema(): array {
+		return static::define_props_schema();
 	}
 
 	// TODO: Move to a `Schema_Validator` class?
