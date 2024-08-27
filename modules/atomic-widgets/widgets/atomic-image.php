@@ -1,12 +1,13 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Attachment_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -74,7 +75,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		];
 	}
 
-	private function get_image_size_options() {
+	private static function get_image_size_options() {
 		$wp_image_sizes = self::get_wp_image_sizes();
 
 		$image_sizes = [];
@@ -121,5 +122,48 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		// /** This filter is documented in wp-admin/includes/media.php */
 		return apply_filters( 'image_size_names_choose', $image_sizes );
+	}
+
+	protected function define_atomic_controls(): array {
+		$image_control = Image_Control::bind_to( 'image' );
+
+		$options = static::get_image_size_options();
+
+		$resolution_control = Select_Control::bind_to( 'image_size' )
+			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
+			->set_options( $options );
+
+		$content_section = Section::make()
+			->set_label( esc_html__( 'Content', 'elementor' ) )
+			->set_items( [
+				$image_control,
+				$resolution_control,
+			]);
+
+		return [
+			$content_section,
+		];
+	}
+
+	protected static function define_props_schema(): array {
+		$image_sizes = array_map(
+			fn( $size ) => $size['value'],
+			static::get_image_size_options()
+		);
+
+		return [
+			'image' => Atomic_Prop::make()
+				->type( 'image' )
+				->default( [
+					'url' => Utils::get_placeholder_image_src(),
+				] ),
+
+			'image_size' => Atomic_Prop::make()
+				->string()
+				->constraints( [
+					Enum::make( $image_sizes ),
+				] )
+				->default( 'full' ),
+		];
 	}
 }
