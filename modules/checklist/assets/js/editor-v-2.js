@@ -9,9 +9,9 @@ import { __privateListenTo as listenTo, commandEndEvent } from "@elementor/edito
 
 
 const Icon = () => {
-	const [ hasRoot, setHasRoot ] = useState(false);
-	const [ closedForFirstTime, setClosedForFirstTime ] = useState(null);
-	const [open, setOpen] = useState(true);
+	const [ hasRoot, setHasRoot ] = useState( false );
+	const [ closedForFirstTime, setClosedForFirstTime ] = useState( null );
+	const [ open, setOpen ] = useState( false );
 
 	const fetchStatus = async () => {
 		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
@@ -22,55 +22,43 @@ const Icon = () => {
 			},
 		} );
 		const data = await response.json();
-		console.log(data);
-		setClosedForFirstTime(data.data.first_closed_checklist_in_editor);
-
+		setClosedForFirstTime( data.data.first_closed_checklist_in_editor );
 	};
 
-
-	useEffect(()=> {
-		return listenTo(commandEndEvent('checklist/toggle-popup'), (e)=>{
+	useEffect( () => {
+		return listenTo( commandEndEvent ( 'checklist/toggle-popup') , ( e )=> {
 			if(e.args.isOpen) {
-				console.log('listened to command')
-				setHasRoot(true)
+				setHasRoot( true );
 			} else {
-				console.log('listened to command')
-				setHasRoot( false )
+				setHasRoot( false );
 			}
-		})
-
-	}, [hasRoot, closedForFirstTime])
+		} )
+	}, [ hasRoot ] )
 
 	useEffect( () => {
 		fetchStatus();
 	}, [] );
 
-	if ( closedForFirstTime ) {
-		console.log('closed first time')
-		console.log(open);
-		return (<RocketIcon />)
-	} else if ( hasRoot ) {
-		return (<RocketIcon />)
-		console.log('rocket root')
-	}
-	else { console.log('infotip')
-	console.log(open);
-		return (
+	useEffect(() => {
+		const handleFirstClosed = () => {
+			setOpen( true );
+		};
 
-		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open } disableHoverListener={ true }
-		//          componentsProps={ {
-		// 	         tooltip: {
-		// 		         sx: {
-		// 			         inset: '16px auto auto 0px',
-		// 					 ml: -2,
-		// 			         '& .MuiTooltip-arrow': {
-		// 				         // color: 'common.white',
-		// 				         ml: 1,
-		// 			         },
-		// 		         },
-		// 	         },
-		//          }
-		// }
+		window.addEventListener('firstClose', handleFirstClosed);
+
+		return () => {
+			window.removeEventListener('firstClose', handleFirstClosed);
+		};
+	}, [] );
+
+	 if ( hasRoot && ! closedForFirstTime) {
+		return (
+			<RocketIcon />
+		)
+	}
+	else {
+		return (
+			<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open } disableHoverListener={ true }
 		         PopperProps={ {
 			         modifiers: [
 				         {
@@ -84,9 +72,8 @@ const Icon = () => {
 		>
 			<RocketIcon />
 		</Infotip>
-	);
-	}
-
+		);
+	};
 };
 
 export const editorV2 = () => {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 
 const Header = ( { steps } ) => {
-	const [ closedForFirstTime, setClosedForFirstTime ] = useState(null);
+	const [ closedForFirstTime, setClosedForFirstTime ] = useState( null );
 	const fetchStatus = async () => {
 		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
 			method: 'GET',
@@ -15,29 +15,26 @@ const Header = ( { steps } ) => {
 			},
 		} );
 		const data = await response.json();
-		let closedForFirstTime = await data.data.first_closed_checklist_in_editor;
-		setClosedForFirstTime(closedForFirstTime);
-		console.log(closedForFirstTime);
+		setClosedForFirstTime( data.data.first_closed_checklist_in_editor );
 	};
 
-
-
-
 	useEffect( () => {
-		fetchStatus()
-
+		fetchStatus();
 	}, [] );
 
 	const closeChecklist = async() => {
+			if ( closedForFirstTime !== true ) {
+				await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': elementorWebCliConfig.nonce,
+					},
+				} );
 
-			await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce': elementorWebCliConfig.nonce,
-				},
-			} );
+				window.dispatchEvent( new CustomEvent( 'firstClose', { detail: { message: 'firstClose' } } ) );
 
+			}
 		$e.run( 'checklist/toggle-popup' );
 	};
 

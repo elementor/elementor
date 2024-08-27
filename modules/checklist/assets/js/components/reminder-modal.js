@@ -1,4 +1,6 @@
-import { ThemeProvider, Button, Card, CardActions, CardContent, Typography } from '@elementor/ui';
+import { Button, Card, CardActions, CardContent, Typography } from '@elementor/ui';
+import PropTypes from "prop-types";
+import Header from "./header";
 
 
 const ReminderModal = ( { setOpen } ) => {
@@ -12,32 +14,21 @@ const ReminderModal = ( { setOpen } ) => {
 	}
 
 	return (
-		// <ThemeProvider colorScheme="light">
 			<Card elevation={ 0 } sx={ { maxWidth: 336 } }>
 				<CardContent>
-					<Typography variant="subtitle2"
-					            // color="primary.contrastText"
-					            sx={ { mb: 2 } }>Looking for your Launchpad Checklist?</Typography>
-					<Typography variant="body2"
-					            // color="text.disabled"
-					>
-						Click the launch icon to continue setting up your site.
-					</Typography>
+					<Typography variant="subtitle2" sx={ { mb: 2 } }>Looking for your Launchpad Checklist?</Typography>
+					<Typography variant="body2">Click the launch icon to continue setting up your site.</Typography>
 				</CardContent>
 				<CardActions>
-					<Button size="small" variant="text" color="secondary"
-					    //     sx={ { color: 'text.disabled', '&:hover': {
-						// 	backgroundColor: '#F1F2F3',
-						// 	color: 'text.disabled'
-						// } } }
-					        onClick={ ( e ) => { closeChecklist( e ) } }>Not Now</Button>
-					<Button size="small" variant="contained"
-					        // sx={ { color: 'primary.contrastText' } }
-					        onClick={ openChecklist }>Let’s do it </Button>
+					<Button size="small" variant="text" color="secondary" onClick={ ( e ) => { closeChecklist( e ) } }>Not Now</Button>
+					<Button size="small" variant="contained" onClick={ openChecklist }>Let’s do it </Button>
 				</CardActions>
 			</Card>
-		// </ThemeProvider>
-	)
-}
+	);
+};
 
-export default ReminderModal
+export default ReminderModal;
+
+ReminderModal.propTypes = {
+	setOpen: PropTypes.func.isRequired,
+};
