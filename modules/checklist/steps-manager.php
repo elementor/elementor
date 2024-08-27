@@ -136,6 +136,15 @@ class Steps_Manager {
 	}
 
 	/**
+	 * Returns the steps config from source
+	 *
+	 * @return array
+	 */
+	public static function get_step_ids() : array {
+		return [ Create_Pages::STEP_ID ];
+	}
+
+	/**
 	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
 	 *
 	 * @param $step_data
@@ -151,14 +160,5 @@ class Steps_Manager {
 
 		/** @var Step_Base $step */
 		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
-	}
-
-	/**
-	 * Returns the steps config from source
-	 *
-	 * @return array
-	 */
-	private static function get_step_ids() : array {
-		return [ Create_Pages::STEP_ID ];
 	}
 }
