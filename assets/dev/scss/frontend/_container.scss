@@ -284,5 +284,9 @@
 	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: var(--flex-wrap-mobile);
+
+		.elementor-widget-archive-posts {
+			width: 100%;
+		}
 	}
 }
