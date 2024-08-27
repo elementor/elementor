@@ -285,7 +285,12 @@
 		--width: 100%;
 		--flex-wrap: var(--flex-wrap-mobile);
 
-		.elementor-widget-container {
+		.elementor-widget-archive-posts,
+		.elementor-widget-portfolio,
+		.elementor-widget-link-in-bio-var-6,
+		.elementor-widget-image-gallery,
+		.elementor-widget-gallery
+		{
 			width: 100%;
 		}
 	}
