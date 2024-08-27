@@ -1,16 +1,16 @@
 import globalHandler from './handlers/global';
 import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
-import columnHandlers from './handlers/column';
+// import columnHandlers from './handlers/column';
 
 // Section handlers.
-import HandlesPosition from './handlers/section/handles-position';
-import StretchedSection from './handlers/section/stretched-section';
-import Shapes from './handlers/section/shapes';
+// import HandlesPosition from './handlers/section/handles-position';
+// import StretchedSection from './handlers/section/stretched-section';
+// import Shapes from './handlers/section/shapes';
 
 /* global elementorFrontendConfig */
 
-module.exports = function( $ ) {
+module.exports = function() {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
@@ -43,10 +43,10 @@ module.exports = function( $ ) {
 
 	const addElementsHandlers = () => {
 		this.elementsHandlers.section = [
-			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
-			...backgroundHandlers,
-			HandlesPosition,
-			Shapes,
+			// StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
+			// ...backgroundHandlers,
+			// HandlesPosition,
+			// Shapes,
 		];
 
 		this.elementsHandlers.container = [ ...backgroundHandlers ];
@@ -56,29 +56,26 @@ module.exports = function( $ ) {
 			this.elementsHandlers.container.push( ...containerHandlers );
 		}
 
-		this.elementsHandlers.column = columnHandlers;
+		// this.elementsHandlers.column = columnHandlers;
 
-		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
-			const elementData = elementName.split( '.' );
-
+		Object.entries( this.elementsHandlers ).forEach( ( [ elementName, Handlers ] ) => {
+			const elementData = elementName?.split( '.' );
 			elementName = elementData[ 0 ];
-
 			const skin = elementData[ 1 ] || null;
-
 			this.attachHandler( elementName, Handlers, skin );
 		} );
 	};
 
-	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
+	const isClassHandler = ( Handler ) => Handler?.prototype?.getUniqueHandlerID;
 
 	const addHandlerWithHook = ( elementBaseName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
 
 		const elementName = elementBaseName + skin;
 
-		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( $element ) => {
+		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }`, ( eElement ) => {
 			if ( isClassHandler( Handler ) ) {
-				this.addHandler( Handler, { $element, elementName }, true );
+				this.addHandler( Handler, { eElement, elementName }, true );
 			} else {
 				const handlerValue = Handler();
 
@@ -88,23 +85,24 @@ module.exports = function( $ ) {
 
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
-						this.addHandler( dynamicHandler, { $element, elementName }, true );
+						this.addHandler( dynamicHandler, { eElement, elementName }, true );
 					} );
 				} else {
-					this.addHandler( handlerValue, { $element, elementName }, true );
+					this.addHandler( handlerValue, { eElement, elementName }, true );
 				}
 			}
 		} );
 	};
 
 	this.addHandler = function( HandlerClass, options ) {
-		const elementID = options.$element.data( 'model-cid' );
+		const elementID = options?.eElement?.dataset?.modelCid;
 
 		let handlerID;
 
 		// If element is in edit mode
 		if ( elementID ) {
-			handlerID = HandlerClass.prototype.getConstructorID();
+			// handlerID = HandlerClass.prototype.getConstructorID();
+			handlerID = HandlerClass.name;
 
 			if ( ! handlersInstances[ elementID ] ) {
 				handlersInstances[ elementID ] = {};
@@ -119,7 +117,7 @@ module.exports = function( $ ) {
 
 		const newHandler = new HandlerClass( options );
 
-		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.$element, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_handler_ready/${ options.elementName }`, options.eElement );
 
 		if ( elementID ) {
 			handlersInstances[ elementID ][ handlerID ] = newHandler;
@@ -131,7 +129,7 @@ module.exports = function( $ ) {
 			Handlers = [ Handlers ];
 		}
 
-		Handlers.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
+		Handlers?.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
 	};
 
 	this.getHandler = function( handlerName ) {
@@ -169,21 +167,19 @@ module.exports = function( $ ) {
 			return;
 		}
 
-		// Initializing the `$scope` as frontend jQuery instance
-		const $scope = jQuery( scope ),
-			elementType = $scope.attr( 'data-element_type' );
+		const elementType = scope?.getAttribute( 'data-element_type' );
 
 		if ( ! elementType ) {
 			return;
 		}
 
-		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
+		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', scope );
 
-		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, $scope, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, scope );
 
 		if ( 'widget' === elementType ) {
-			const widgetType = $scope.attr( 'data-widget_type' );
-			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, $scope, $ );
+			const widgetType = scope?.getAttribute( 'data-widget_type' );
+			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, scope );
 		}
 	};
 

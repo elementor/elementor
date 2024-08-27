@@ -4,27 +4,27 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	animate() {
-		const $element = this.$element,
+		const eElement = this.eElement,
 			animation = this.getAnimation();
 
 		if ( 'none' === animation ) {
-			$element.removeClass( 'elementor-invisible' );
+			eElement?.classList?.remove( 'elementor-invisible' );
 			return;
 		}
 
 		const elementSettings = this.getElementSettings(),
 			animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
 
-		$element.removeClass( animation );
+		eElement?.classList?.remove( animation );
 
 		if ( this.currentAnimation ) {
-			$element.removeClass( this.currentAnimation );
+			eElement?.classList?.remove( this.currentAnimation );
 		}
 
 		this.currentAnimation = animation;
 
 		setTimeout( () => {
-			$element.removeClass( 'elementor-invisible' ).addClass( 'animated ' + animation );
+			eElement?.classList?.remove( 'elementor-invisible' ).addClass( 'animated ' + animation );
 		}, animationDelay );
 	}
 
@@ -33,19 +33,22 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 
 	onInit( ...args ) {
+		this.isJqueryRequired = false;
+
 		super.onInit( ...args );
+
 		if ( this.getAnimation() ) {
 			const observer = elementorModules.utils.Scroll.scrollObserver( {
 				callback: ( event ) => {
 					if ( event.isInViewport ) {
 						this.animate();
 
-						observer.unobserve( this.$element[ 0 ] );
+						observer.unobserve( this.eElement );
 					}
 				},
 			} );
 
-			observer.observe( this.$element[ 0 ] );
+			observer.observe( this.eElement );
 		}
 	}
 
@@ -56,6 +59,6 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	}
 }
 
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { $element: $scope } );
+export default ( scope ) => {
+	elementorFrontend.elementsHandler.addHandler( GlobalHandler, { eElement: scope } );
 };

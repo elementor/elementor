@@ -444,6 +444,14 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+				'name' => 'e_remove_jquery',
+				'title' => esc_html__( 'Remove jQuery', 'elementor' ),
+				'tag' => esc_html__( 'Performance', 'elementor' ),
+				static::TYPE_HIDDEN => true,
+				'default' => self::STATE_INACTIVE,
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_optimized_control_loading',
 			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),

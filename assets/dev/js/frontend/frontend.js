@@ -16,12 +16,13 @@ import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
+import { isFrontend } from "../utils/is-frontend-check";
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
-export default class Frontend extends elementorModules.ViewModule {
+export default class Frontend extends elementorModules.ViewModuleFrontend {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -64,21 +65,32 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
+		const deviceModeElement = document.createElement( 'span' );
+		deviceModeElement.id = 'elementor-device-mode';
+		deviceModeElement.className = 'elementor-screen-only';
+
 		const defaultElements = {
 			window,
-			$window: jQuery( window ),
-			$document: jQuery( document ),
-			$head: jQuery( document.head ),
-			$body: jQuery( document.body ),
-			$deviceMode: jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } ),
+			document,
+			deviceMode: deviceModeElement,
 		};
-		defaultElements.$body.append( defaultElements.$deviceMode );
+
+		if ( ! isFrontend() || !! window.jQuery ) { // Update the isFrontend() function, so that we don't need the window.jQuery check.
+			defaultElements.$window = jQuery( window );
+			defaultElements.$document = jQuery( document );
+			defaultElements.$head = jQuery( document.head );
+			defaultElements.$body = jQuery( document.body );
+			defaultElements.$deviceMode = jQuery( '<span>', { id: 'elementor-device-mode', class: 'elementor-screen-only' } );
+			defaultElements.$body.append( defaultElements.$deviceMode );
+		}
+
+		defaultElements.document.body.append( defaultElements.deviceMode );
 
 		return defaultElements;
 	}
 
 	bindEvents() {
-		this.elements.$window.on( 'resize', () => this.setDeviceModeData() );
+		this.elements.window.addEventListener( 'resize', () => this.setDeviceModeData() );
 	}
 
 	/**
@@ -117,7 +129,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	getCurrentDeviceMode() {
-		return getComputedStyle( this.elements.$deviceMode[ 0 ], ':after' ).content.replace( /"/g, '' );
+		return getComputedStyle( this.elements.deviceMode, ':after' ).content.replace( /"/g, '' );
 	}
 
 	getDeviceSetting( deviceMode, settings, settingKey ) {
@@ -192,11 +204,11 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			baseVideoLoader: new BaseVideoLoader(),
-			anchors: new AnchorsModule(),
-			get lightbox() {
-				return LightboxManager.getLightbox();
-			},
-			urlActions: new URLActions(),
+			// anchors: new AnchorsModule(),
+			// get lightbox() {
+			// 	return LightboxManager.getLightbox();
+			// },
+			// urlActions: new URLActions(),
 			swiper: Swiper,
 			environment,
 			assetsLoader: new AssetsLoader(),
@@ -221,54 +233,54 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	initOnReadyElements() {
-		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
+		this.elements.wpAdminBar = this.elements.document.querySelectorAll( this.getSettings( 'selectors.adminBar' ) );
 	}
 
 	addUserAgentClasses() {
 		for ( const [ key, value ] of Object.entries( environment ) ) {
 			if ( value ) {
-				this.elements.$body.addClass( 'e--ua-' + key );
+				this.elements.document.body.classList?.add( 'e--ua-' + key );
 			}
 		}
 	}
 
 	setDeviceModeData() {
-		this.elements.$body.attr( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
+		this.elements.document.body?.setAttribute( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
 	}
 
 	addListenerOnce( listenerID, event, callback, to ) {
 		if ( ! to ) {
-			to = this.elements.$window;
+			to = this.elements.window;
 		}
 
 		if ( ! this.isEditMode() ) {
-			to.on( event, callback );
-
+			to.addEventListener( event, callback );
 			return;
 		}
 
 		this.removeListeners( listenerID, event, to );
 
-		if ( to instanceof jQuery ) {
-			const eventNS = event + '.' + listenerID;
-
+		if ( !! window.jQuery && to instanceof jQuery ) {
+			const eventNS = `${ event }.${ listenerID }`;
 			to.on( eventNS, callback );
 		} else {
 			to.on( event, callback, listenerID );
 		}
 	}
 
-	removeListeners( listenerID, event, callback, from ) {
+	removeListeners( listenerID, event, from ) {
 		if ( ! from ) {
-			from = this.elements.$window;
+			from = this.elements.window;
 		}
 
-		if ( from instanceof jQuery ) {
-			const eventNS = event + '.' + listenerID;
-
-			from.off( eventNS, callback );
+		if ( !! window.jQuery && from instanceof jQuery ) {
+			const eventNS = `${ event}.${ listenerID }`;
+			from.off( eventNS );
 		} else {
-			from.off( event, callback, listenerID );
+			if ( from._eventHandlers && from._eventHandlers[ listenerID ] ) {
+				from.removeEventListener( event, from._eventHandlers[ listenerID ] );
+				delete from._eventHandlers[ listenerID ];
+			}
 		}
 	}
 
@@ -340,7 +352,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.storage = new Storage();
 
-		this.elementsHandler = new ElementsHandler( jQuery );
+		this.elementsHandler = new ElementsHandler();
 
 		this.modulesHandlers = {};
 
@@ -355,7 +367,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		}
 
 		// Keep this line before `initOnReadyComponents` call
-		Events.dispatch( this.elements.$window, 'elementor/frontend/init' );
+		Events.dispatch( this.elements.window, 'elementor/frontend/init' );
 
 		this.initModules();
 
@@ -369,12 +381,12 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.trigger( 'components:init' );
 
-		new LightboxManager();
+		// new LightboxManager();
 	}
 }
 
 window.elementorFrontend = new Frontend();
 
 if ( ! elementorFrontend.isEditMode() ) {
-	jQuery( () => elementorFrontend.init() );
+	document.addEventListener( 'DOMContentLoaded', () => elementorFrontend.init() );
 }

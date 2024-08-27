@@ -1,6 +1,6 @@
 import Document from './document';
 
-export default class extends elementorModules.ViewModule {
+export default class extends elementorModules.ViewModuleFrontend {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -23,7 +23,7 @@ export default class extends elementorModules.ViewModule {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			$documents: jQuery( selectors.document ),
+			baseDocuments: document?.querySelectorAll( selectors.document ),
 		};
 	}
 
@@ -40,17 +40,17 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	attachDocumentsClasses() {
-		this.elements.$documents.each( ( index, document ) => this.attachDocumentClass( jQuery( document ) ) );
+		Array.from( this.elements?.baseDocuments ).forEach( ( baseDocument) => this.attachDocumentClass( baseDocument ) );
 	}
 
-	attachDocumentClass( $document ) {
-		const documentData = $document.data(),
-			documentID = documentData.elementorId,
-			documentType = documentData.elementorType,
-			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses.base;
+	attachDocumentClass( baseDocument ) {
+		const documentData = baseDocument?.dataset,
+			documentID = documentData?.elementorId,
+			documentType = documentData?.elementorType,
+			DocumentClass = this.documentClasses[ documentType ] || this.documentClasses?.base;
 
 		this.documents[ documentID ] = new DocumentClass( {
-			$element: $document,
+			eElement: baseDocument,
 			id: documentID,
 		} );
 	}

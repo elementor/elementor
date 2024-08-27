@@ -1,21 +1,25 @@
-export default class BaseLoader extends elementorModules.ViewModule {
+export default class BaseLoader extends elementorModules.ViewModuleFrontend {
 	getDefaultSettings() {
 		return {
 			isInserted: false,
 			selectors: {
-				firstScript: 'script:first',
+				firstScript: 'script:first-of-type',
 			},
 		};
 	}
 
 	getDefaultElements() {
 		return {
-			$firstScript: jQuery( this.getSettings( 'selectors.firstScript' ) ),
+			firstScript: document.querySelector( this.getSettings( 'selectors.firstScript' ) ),
 		};
 	}
 
 	insertAPI() {
-		this.elements.$firstScript.before( jQuery( '<script>', { src: this.getApiURL() } ) );
+		const firstScript = this.elements.firstScript,
+			newScript = document.createElement( 'script' );
+
+		newScript.src = this.getApiURL();
+		firstScript.parentNode?.insertBefore( newScript, firstScript );
 
 		this.setSettings( 'isInserted', true );
 	}
