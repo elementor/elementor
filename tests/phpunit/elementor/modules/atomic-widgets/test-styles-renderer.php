@@ -3,17 +3,17 @@
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Spatie\Snapshots\MatchesSnapshots;
-use Elementor\Modules\AtomicWidgets\Style\Style_Render;
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-class Test_Style_Rendering extends Elementor_Test_Base {
+class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-    public function test_basic_style() {
+    public function test_styles_renderer__basic_style() {
         // Arrange.
         $styles = [
             [
@@ -33,17 +33,16 @@ class Test_Style_Rendering extends Elementor_Test_Base {
         $transformers = [];
         $breakpoints = [];
 
-        $styleRender = new Style_Render( $styles, $transformers, $breakpoints);
+        $styleRender = new Styles_Renderer( $transformers, $breakpoints);
 
         // Act.
-        $css = $styleRender->render();
+        $css = $styleRender->render( $styles );
 
         // Assert.
-        $this->assertStringContainsString('.test-style{color:red;font-size:16px}', $css);
-		$this->assertMatchesSnapshot($css);
+		$this->assertMatchesSnapshot( $css );
     }
 
-    public function test_style_with_variants() {
+    public function test_styles_renderer__styles_with_variants() {
         // Arrange.
         $styles = [
             [
@@ -64,17 +63,16 @@ class Test_Style_Rendering extends Elementor_Test_Base {
         $transformers = [];
         $breakpoints = [];
 
-        $styleRender = new Style_Render($styles, $transformers, $breakpoints);
+        $styleRender = new Styles_Renderer( $transformers, $breakpoints );
 
         // Act.
-        $css = $styleRender->render();
+        $css = $styleRender->render( $styles );
 
         // Assert.
-        $this->assertStringContainsString('.test-style:hover{color:blue}', $css);
-		$this->assertMatchesSnapshot($css);
+		$this->assertMatchesSnapshot( $css );
     }
 
-    public function test_style_with_media_queries() {
+    public function test_styles_renderer__style_with_media_queries() {
         // Arrange.
         $styles = [
             [
@@ -100,17 +98,16 @@ class Test_Style_Rendering extends Elementor_Test_Base {
             ],
         ];
 
-        $styleRender = new Style_Render( $styles, $transformers, $breakpoints);
+        $styleRender = new Styles_Renderer( $transformers, $breakpoints );
 
         // Act.
-        $css = $styleRender->render();
+        $css = $styleRender->render( $styles );
 
         // Assert.
-        $this->assertStringContainsString('@media(max-width:768px){.test-style{color:green}}', $css);
-		$this->assertMatchesSnapshot($css);
+		$this->assertMatchesSnapshot( $css );
     }
 
-    public function test_style_with_transformers() {
+    public function test_styles_renderer__style_with_transformers() {
         // Arrange.
         $styles = [
             [
@@ -137,7 +134,7 @@ class Test_Style_Rendering extends Elementor_Test_Base {
             ],
         ];
         $transformers = [
-            'size' => function($value) {
+            'size' => function( $value ) {
 				$size = (int)$value['size'];
 				$unit = $value['unit'];
 				return $size . $unit;
@@ -145,17 +142,16 @@ class Test_Style_Rendering extends Elementor_Test_Base {
         ];
         $breakpoints = [];
 
-        $styleRender = new Style_Render( $styles, $transformers, $breakpoints);
+        $styleRender = new Styles_Renderer( $transformers, $breakpoints );
 
         // Act.
-        $css = $styleRender->render();
+        $css = $styleRender->render( $styles );
 
         // Assert.
-        $this->assertStringContainsString('.test-style{font-size:14px;text-decoration:unset}', $css);
-		$this->assertMatchesSnapshot($css);
+		$this->assertMatchesSnapshot( $css );
     }
 
-	public function test_multiple_style_definitions_and_variants() {
+	public function test_styles_renderer__multiple_style_definitions_and_variants() {
 		// Arrange.
 		$styles = [
 			[
@@ -223,7 +219,7 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 			],
 		];
 		$transformers = [
-			'size' => function($value) {
+			'size' => function( $value ) {
 				$size = (int)$value['size'];
 				$unit = $value['unit'];
 				return $size . $unit;
@@ -240,17 +236,12 @@ class Test_Style_Rendering extends Elementor_Test_Base {
 			],
 		];
 
-		$styleRender = new Style_Render( $styles, $transformers, $breakpoints);
+		$styleRender = new Styles_Renderer( $transformers, $breakpoints );
 
 		// Act.
-		$css = $styleRender->render();
+		$css = $styleRender->render( $styles );
 
 		// Assert.
-		$this->assertStringContainsString('.test-style-1{color:red}', $css);
-		$this->assertStringContainsString('@media(max-width:768px){.test-style-1{color:purple}}', $css);
-		$this->assertStringContainsString('@media(max-width:1024px){.test-style-1{font-weight:bold;color:yellow;font-size:14px}}', $css);
-		$this->assertStringContainsString('.test-style-2{color:blue}', $css);
-		$this->assertStringContainsString('@media(max-width:768px){.test-style-2{color:green;font-size:12px}}', $css);
-		$this->assertMatchesSnapshot($css);
+		$this->assertMatchesSnapshot( $css );
 	}
 }

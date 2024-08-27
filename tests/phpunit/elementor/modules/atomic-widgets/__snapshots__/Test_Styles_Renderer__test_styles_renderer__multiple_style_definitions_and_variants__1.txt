@@ -1,0 +1,1 @@
+.test-style-1{color:red}@media(max-width:768px){.test-style-1{color:purple}}@media(max-width:1024px){.test-style-1{font-weight:bold;color:yellow;font-size:14px}}.test-style-2{color:blue}@media(max-width:768px){.test-style-2{color:green;font-size:12px}}
