@@ -2,13 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-/**
- * @typedef array{
- *     type: string,
- *     width: int
- * } Breakpoint
- */
-
 class Styles_Renderer {
 
 	private array $transformers;
