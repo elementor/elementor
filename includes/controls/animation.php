@@ -59,7 +59,27 @@ class Control_Animation extends Base_Data_Control {
 	 * @return array Control type.
 	 */
 	public static function get_animations() {
-		$animations = [
+		$additional_animations = [];
+
+		/**
+		 * Entrance animations.
+		 *
+		 * Filters the animations list displayed in the animations control.
+		 *
+		 * This hook can be used to register animations in addition to the
+		 * basic Elementor animations.
+		 *
+		 * @since 2.4.0
+		 *
+		 * @param array $additional_animations Additional animations array.
+		 */
+		$additional_animations = apply_filters( 'elementor/controls/animations/additional_animations', $additional_animations );
+
+		return array_merge( static::get_default_animations(), $additional_animations );
+	}
+
+	public static function get_default_animations() {
+		return [
 			'Fading' => [
 				'fadeIn' => 'Fade In',
 				'fadeInDown' => 'Fade In Down',
@@ -113,24 +133,6 @@ class Control_Animation extends Base_Data_Control {
 				'rollIn' => 'Roll In',
 			],
 		];
-
-		$additional_animations = [];
-
-		/**
-		 * Entrance animations.
-		 *
-		 * Filters the animations list displayed in the animations control.
-		 *
-		 * This hook can be used to register animations in addition to the
-		 * basic Elementor animations.
-		 *
-		 * @since 2.4.0
-		 *
-		 * @param array $additional_animations Additional animations array.
-		 */
-		$additional_animations = apply_filters( 'elementor/controls/animations/additional_animations', $additional_animations );
-
-		return array_merge( $animations, $additional_animations );
 	}
 
 	/**
@@ -173,7 +175,7 @@ class Control_Animation extends Base_Data_Control {
 		}
 
 		return [
-			'styles' => [ 'e-animations' ],
+			'styles' => [ 'e-animation-' . $setting ],
 		];
 	}
 }
