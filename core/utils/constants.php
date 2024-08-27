@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Constants {
+abstract class Constants {
 	const ACCESS_TIER_FREE = 'free';
 	const ACCESS_TIER_ESSENTIAL = 'essential';
 	const ACCESS_TIER_ESSENTIAL_OCT_2023 = 'essential-oct2023';
