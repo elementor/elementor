@@ -9,15 +9,27 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	onInit() {
-		const waitForElements = new Promise( ( resolve ) => {
-			// Simulating an async operation
-			setTimeout( () => {
-				resolve();
-			}, 100 );
+		const that = this;
+
+		this.observeStickyElements( () => {
+			that.initializeStickyAndAnchorTracking();
+		} );
+	},
+
+	observeStickyElements( callback ) {
+		const observer = new MutationObserver( ( mutationsList ) => {
+			for ( const mutation of mutationsList ) {
+				if ( 'childList' === mutation.type || ( 'attributes' === mutation.type && mutation.target.classList.contains( 'elementor-sticky' ) ) ) {
+					callback();
+				}
+			}
 		} );
 
-		waitForElements.then( () => {
-			this.initializeStickyAndAnchorTracking();
+		observer.observe( document.body, {
+			childList: true,
+			subtree: true,
+			attributes: true,
+			attributeFilter: [ 'class', 'style' ],
 		} );
 	},
 
