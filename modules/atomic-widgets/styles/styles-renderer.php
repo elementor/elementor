@@ -163,10 +163,12 @@ class Styles_Renderer {
 	}
 
 	private function get_transformer( $type ): ?callable {
-		$transformer = $this->transformers[ $type ];
+		if ( isset( $this->transformers[ $type ] ) ) {
+			$transformer = $this->transformers[ $type ];
 
-		if ( $transformer && is_callable( $transformer ) ) {
-			return $transformer;
+			if ( $transformer && is_callable( $transformer ) ) {
+				return $transformer;
+			}
 		}
 
 		return null;
