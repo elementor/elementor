@@ -15,6 +15,7 @@ class Steps_Manager {
 	private array $step_instances = [];
 
 	private Checklist_Module_Interface $module;
+	private static $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
@@ -29,7 +30,7 @@ class Steps_Manager {
 	public function get_steps_for_frontend() : array {
 		$formatted_steps = [];
 
-		foreach ( $this->get_step_ids() as $step_id ) {
+		foreach ( self::$step_ids as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
 			$is_marked_as_completed = $instance->is_marked_as_completed();
 
@@ -130,7 +131,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	private function register_steps() : void {
-		foreach ( $this->get_step_ids() as $step_id ) {
+		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
@@ -155,14 +156,5 @@ class Steps_Manager {
 
 		/** @var Step_Base $step */
 		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
-	}
-
-	/**
-	 * Returns the steps config from source
-	 *
-	 * @return array
-	 */
-	private static function get_step_ids() : array {
-		return [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 	}
 }

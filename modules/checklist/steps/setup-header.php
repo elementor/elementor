@@ -13,7 +13,7 @@ class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
 	public function __construct( ...$args ) {
-		call_user_func( [ parent::class, __FUNCTION__ ], ...$args );
+		parent::__construct( ...$args );
 
 		$this->set_is_locked( true );
 	}
@@ -37,11 +37,15 @@ class Setup_Header extends Step_Base {
 				],
 			],
 			'posts_per_page' => 1,
+			'fields' => 'ids',
+			'no_found_rows' => true,
+			'update_post_term_cache' => false,
+			'update_post_meta_cache' => false,
 		];
 		$query = $this->wordpress_adapter->get_query( $args );
-		$headers = $query->posts ?? [];
+		$header_templates = $query->posts ?? [];
 
-		return count( $headers ) >= 1;
+		return count( $header_templates ) >= 1;
 	}
 
 	public function get_title() : string {
