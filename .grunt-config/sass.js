@@ -91,13 +91,6 @@ const sass = {
 				dest: 'assets/css/conditionals',
 				ext: '.css',
 			},
-			{
-				expand: true,
-				cwd: 'assets/dev/scss/frontend/conditionals',
-				src: 'smooth-scroll.scss',
-				dest: 'assets/css',
-				ext: '.css',
-			},
 		]
 	}
 };
