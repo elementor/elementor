@@ -38,13 +38,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		const stickyElements = this.getAllStickyElements();
 		const trackedElements = [];
 
-		if ( stickyElements.length > 0 ) {
-			this.trackStickyElements( stickyElements, trackedElements );
+		if ( ! stickyElements.length > 0 && ! anchorLinks.length > 0 ) {
+			return;
 		}
 
-		if ( anchorLinks.length > 0 ) {
-			this.trackAnchorLinks( anchorLinks, trackedElements );
-		}
+		this.trackStickyElements( stickyElements, trackedElements );
+		this.trackAnchorLinks( anchorLinks, trackedElements );
 
 		this.organizeStickyAndAnchors( trackedElements );
 	},
