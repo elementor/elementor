@@ -36,7 +36,7 @@ class Steps_Manager {
 			$instance->maybe_immutably_mark_as_completed();
 
 			$step = [
-				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed() ,
+				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed(),
 				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_immutable_completed(),
 				Step_Base::ABSOLUTE_COMPLETION_KEY => $instance->is_absolute_completed(),
 				'config' => $this->steps_config[ $step_id ],
