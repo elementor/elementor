@@ -285,9 +285,8 @@
 		--width: 100%;
 		--flex-wrap: var(--flex-wrap-mobile);
 
-
-		> .elementor-widget-archive-posts {
-			--width: 100%;
+		.elementor-widget-container {
+			width: 100%;
 		}
 	}
 }
