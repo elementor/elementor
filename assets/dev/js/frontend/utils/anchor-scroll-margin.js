@@ -38,6 +38,30 @@ module.exports = elementorModules.ViewModule.extend( {
 		const stickyElements = this.getAllStickyElements();
 		const trackedElements = [];
 
+		if ( stickyElements.length > 0 ) {
+			this.trackStickyElements( stickyElements, trackedElements );
+		}
+
+		if ( anchorLinks.length > 0 ) {
+			this.trackAnchorLinks( anchorLinks, trackedElements );
+		}
+
+		this.organizeStickyAndAnchors( trackedElements );
+	},
+
+	trackAnchorLinks( anchorLinks, trackedElements ) {
+		anchorLinks.forEach( ( element ) => {
+			const target = this.getAnchorTarget( element );
+			const scrollPosition = this.getScrollPosition( target );
+			trackedElements.push( {
+				element: target,
+				type: 'anchor',
+				scrollPosition,
+			} );
+		} );
+	},
+
+	trackStickyElements( stickyElements, trackedElements ) {
 		stickyElements.forEach( ( element ) => {
 			const { sticky_anchor_link_offset: scrollMarginTop } = this.getElementSettings( element );
 			if ( 0 === scrollMarginTop ) {
@@ -50,18 +74,6 @@ module.exports = elementorModules.ViewModule.extend( {
 				scrollPosition,
 			} );
 		} );
-
-		anchorLinks.forEach( ( element ) => {
-			const target = this.getAnchorTarget( element );
-			const scrollPosition = this.getScrollPosition( target );
-			trackedElements.push( {
-				element: target,
-				type: 'anchor',
-				scrollPosition,
-			} );
-		} );
-
-		this.organizeStickyAndAnchors( trackedElements );
 	},
 
 	organizeStickyAndAnchors( elements ) {
