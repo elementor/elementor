@@ -259,8 +259,9 @@
 	}
 }
 
-.e-con-inner:has(.e-floating-bars) {
-	padding: 0;
+.e-con:has(.e-floating-bars) > .e-con-inner {
+	padding-block-end: 0;
+	padding-block-start: 0;
 }
 
 .elementor-element:has(.e-floating-bars:is(:not(.is-sticky))) {
