@@ -42,6 +42,62 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
     }
 
+	public function test_styles_renderer__type_invalid_style() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'id', // currently only supports 'class'
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'red',
+							'fontSize' => '16px',
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+		$transformers = [];
+		$breakpoints = [];
+
+		$styleRender = new Styles_Renderer( $transformers, $breakpoints);
+
+		// Act.
+		$css = $styleRender->render( $styles );
+
+		// Assert.
+		$this->assertEmpty( $css );
+	}
+
+	public function test_styles_renderer__empty_style() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [],
+			],
+		];
+		$transformers = [];
+		$breakpoints = [];
+
+		$styleRender = new Styles_Renderer( $transformers, $breakpoints);
+
+		// Act.
+		$css = $styleRender->render( $styles );
+
+		// Assert.
+		$this->assertEmpty( $css );
+
+		// Act .
+		$css = $styleRender->render( [] );
+
+		// Assert.
+		$this->assertEmpty( $css );
+	}
+
     public function test_styles_renderer__styles_with_variants() {
         // Arrange.
         $styles = [
@@ -87,6 +143,14 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                             'breakpoint' => 'mobile',
                         ],
                     ],
+					[
+						'props' => [
+							'color' => 'blue',
+						],
+						'meta' => [
+							'breakpoint' => 'tablet', // non-existing breakpoint
+						],
+					]
                 ],
             ],
         ];
@@ -124,8 +188,20 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								]
 							],
 							'text-decoration' => [
-								'$$type' => 'text-decoration',
+								'$$type' => 'text-decoration', // non-existing transformer
 								'value' => 'underline'
+							],
+							'box-shadow' => [
+								'$$type' => 'array',
+								'value' => [
+									'x' => 0,
+									'y' => 0,
+									'blur' => 5,
+									'color' => [
+										'$$type' => 'color', // nested transformable value - evaluated within the array transformer function
+										'value' => '000000'
+									],
+								]
 							]
                         ],
                         'meta' => [],
@@ -139,6 +215,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				$unit = $value['unit'];
 				return $size . $unit;
             },
+			'color' => function( $value ) {
+				return '#' . $value;
+			},
+			'array' => function( $value, $transform ) {
+				$x = $value['x'];
+				$y = $value['y'];
+				$blur = $value['blur'];
+				$color = $transform( $value['color'] );
+
+				return $x.' '.$y.' '.$blur.' '.$transform( $color );
+			}
         ];
         $breakpoints = [];
 
