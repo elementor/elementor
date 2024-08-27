@@ -11,21 +11,21 @@ import { __privateListenTo as listenTo, commandEndEvent } from "@elementor/edito
 const Icon = () => {
 	const [ hasRoot, setHasRoot ] = useState(false);
 	const [ closedForFirstTime, setClosedForFirstTime ] = useState(null);
-	const [open, setOpen] = useState(!hasRoot);
+	const [open, setOpen] = useState(true);
 
-	// const fetchStatus = async () => {
-	// 	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user_progress`, {
-	// 		method: 'GET',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 			'X-WP-Nonce': elementorWebCliConfig.nonce,
-	// 		},
-	// 	} );
-	// 	const data = await response.json();
-	// 	console.log(data);
-	// 	setClosedForFirstTime(data.data.first_closed_checklist_in_editor);
-	//
-	// };
+	const fetchStatus = async () => {
+		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user_progress`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': elementorWebCliConfig.nonce,
+			},
+		} );
+		const data = await response.json();
+		console.log(data);
+		setClosedForFirstTime(data.data.first_closed_checklist_in_editor);
+
+	};
 
 
 	useEffect(()=> {
@@ -39,33 +39,43 @@ const Icon = () => {
 			}
 		})
 
-	}, [hasRoot])
+	}, [hasRoot, closedForFirstTime])
 
-	// useEffect( () => {
-	// 	fetchStatus();
-	// }, [] );
+	useEffect( () => {
+		fetchStatus();
+	}, [] );
 
-	if ( hasRoot ) {
+	if ( closedForFirstTime ) {
+		console.log('closed first time')
+		console.log(open);
 		return (<RocketIcon />)
+	} else if ( hasRoot ) {
+		return (<RocketIcon />)
+		console.log('rocket root')
 	}
-	else { return (
+	else { console.log('infotip')
+	console.log(open);
+		return (
+
 		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open } disableHoverListener={ true }
-		         componentsProps={{
+		         componentsProps={ {
 			         tooltip: {
 				         sx: {
+					         inset: '16px auto auto 0px',
 							 ml: -2,
-					         mt: 4,
 					         '& .MuiTooltip-arrow': {
 						         color: 'common.white',
 						         ml: 1,
 					         },
 				         },
 			         },
-		         }}
+		         }
+		}
 		>
 			<RocketIcon />
 		</Infotip>
-	);}
+	);
+	}
 
 };
 
