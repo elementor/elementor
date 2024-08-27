@@ -1,4 +1,5 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 const ChecklistCardContent = ( { step } ) => {
@@ -10,14 +11,13 @@ const ChecklistCardContent = ( { step } ) => {
 		image_src: imageSrc,
 		is_locked: isLocked,
 		promotion_url: promotionUrl,
-		cta_url: ctaUrl,
 	} = step.config;
 
 	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
-		ctaLink = isLocked ? promotionUrl : ctaUrl;
+		ctaUrl = isLocked ? promotionUrl : step.config.cta_url;
 
 	const redirectHandler = () => {
-		window.open( ctaLink, isLocked ? '_blank' : '' );
+		window.open( ctaUrl, isLocked ? '_blank' : '' );
 	};
 
 	return (
@@ -33,6 +33,17 @@ const ChecklistCardContent = ( { step } ) => {
 				</Typography>
 			</CardContent>
 			<CardActions>
+
+				{ isLocked
+					? null
+					: <Button
+							size="small"
+							color="secondary"
+							variant="text"
+							className="mark-as-done"
+						>
+							{ __( 'Mark as done', 'elementor' ) }
+						</Button> }
 
 				<Button
 					color={ isLocked ? 'promotion' : 'primary' }
