@@ -2,7 +2,7 @@ import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
 import { Paper } from '@elementor/ui';
 
-const Checklist = () => {
+const Checklist = ( { steps } ) => {
 	return (
 		<Paper elevation={ 5 } className="e-checklist-popup" sx={ {
 			position: 'fixed',
@@ -14,10 +14,14 @@ const Checklist = () => {
 			maxHeight: '645px',
 			overflowY: 'auto',
 		} }>
-			<Header />
-			<CheckListWrapper />
+			<Header steps={ steps } />
+			<CheckListWrapper steps={ steps } />
 		</Paper>
 	);
+};
+
+Checklist.propTypes = {
+	steps: PropTypes.array.isRequired,
 };
 
 export default Checklist;
