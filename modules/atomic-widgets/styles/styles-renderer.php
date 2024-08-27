@@ -30,6 +30,7 @@ class Styles_Renderer {
 	 *         meta: array<string, mixed>
 	 *     }>
 	 * }> $styles Array of style definitions.
+	 *
 	 * @return string Rendered CSS string.
 	 */
 	public function render( array $styles ): string {
@@ -68,11 +69,12 @@ class Styles_Renderer {
 			'class' => '.',
 		];
 
-		if ( isset(
-			$style_def['type'],
-			$style_def['id'],
-			$map[ $style_def['type'] ]
-		) && $style_def['id'] ) {
+		if (
+			isset( $style_def['type'] ) &&
+			isset( $style_def['id'] ) &&
+			isset( $map[ $style_def['type'] ] ) &&
+			$style_def['id']
+		) {
 			return $map[ $style_def['type'] ] . $style_def['id'];
 		}
 
@@ -134,21 +136,31 @@ class Styles_Renderer {
 	}
 
 	private function transform_value( $value ): ?string {
-		if ( ! $this->is_transformable( $value ) && is_string( $value ) ) {
+		if ( is_string( $value ) ) {
 			return $value;
+		}
+
+		if ( ! $this->is_transformable( $value ) ) {
+			return 'unset';
 		}
 
 		$transformer = $this->get_transformer( $value['$$type'] );
 
-		if ( $transformer ) {
-			$transformed = $transformer(
-				$value['value'],
-				fn ( $value ) => $this->transform_value( $value )
-			);
-			return $this->transform_value( $transformed );
+		if ( ! $transformer ) {
+			return 'unset';
 		}
 
-		return 'unset';
+		try {
+			$transformed = $transformer(
+				$value['value'],
+				fn( $value ) => $this->transform_value( $value )
+			);
+
+			return $this->transform_value( $transformed );
+
+		} catch ( \Exception $e ) {
+			return 'unset';
+		}
 	}
 
 	private function is_transformable( $value ): bool {
@@ -159,14 +171,16 @@ class Styles_Renderer {
 	}
 
 	private function get_transformer( $type ): ?callable {
-		if ( isset( $this->transformers[ $type ] ) ) {
-			$transformer = $this->transformers[ $type ];
-
-			if ( $transformer && is_callable( $transformer ) ) {
-				return $transformer;
-			}
+		if ( ! isset( $this->transformers[ $type ] ) ) {
+			return null;
 		}
 
-		return null;
+		$transformer = $this->transformers[ $type ];
+
+		if ( ! $transformer || ! is_callable( $transformer ) ) {
+			return null;
+		}
+
+		return $transformer;
 	}
 }
