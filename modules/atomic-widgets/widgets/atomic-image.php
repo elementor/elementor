@@ -48,30 +48,41 @@ class Atomic_Image extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
-					Attachment_Control::bind_to( 'image' )
-						->set_media_types( [ 'image' ] ),
+					Image_Control::bind_to( 'image' ),
 
 					Select_Control::bind_to( 'image_size' )
 						->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
-						->set_options( $this->get_image_size_options() ),
+						->set_options( static::get_image_size_options() ),
 				]),
 		];
 	}
 
 	protected static function define_props_schema(): array {
+		$image_sizes = array_map(
+			fn( $size ) => $size['value'],
+			static::get_image_size_options()
+		);
+
 		return [
-			'classes' => Atomic_Prop::make(),
+			'classes' => Atomic_Prop::make()
+				->string()
+				->default([]),
 
 			'image' => Atomic_Prop::make()
+				->type( 'image' )
 				->default( [
-					'$$type' => 'image-url',
+					'$$type' => 'image',
 					'value' => [
 						'url' => Utils::get_placeholder_image_src(),
 					],
 				] ),
 
 			'image_size' => Atomic_Prop::make()
-				->default( 'large' ),
+				->string()
+				->constraints( [
+					Enum::make( $image_sizes ),
+				] )
+				->default( 'full' ),
 		];
 	}
 
@@ -122,48 +133,5 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		// /** This filter is documented in wp-admin/includes/media.php */
 		return apply_filters( 'image_size_names_choose', $image_sizes );
-	}
-
-	protected function define_atomic_controls(): array {
-		$image_control = Image_Control::bind_to( 'image' );
-
-		$options = static::get_image_size_options();
-
-		$resolution_control = Select_Control::bind_to( 'image_size' )
-			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
-			->set_options( $options );
-
-		$content_section = Section::make()
-			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( [
-				$image_control,
-				$resolution_control,
-			]);
-
-		return [
-			$content_section,
-		];
-	}
-
-	protected static function define_props_schema(): array {
-		$image_sizes = array_map(
-			fn( $size ) => $size['value'],
-			static::get_image_size_options()
-		);
-
-		return [
-			'image' => Atomic_Prop::make()
-				->type( 'image' )
-				->default( [
-					'url' => Utils::get_placeholder_image_src(),
-				] ),
-
-			'image_size' => Atomic_Prop::make()
-				->string()
-				->constraints( [
-					Enum::make( $image_sizes ),
-				] )
-				->default( 'full' ),
-		];
 	}
 }
