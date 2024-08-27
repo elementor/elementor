@@ -14,7 +14,7 @@ const Icon = () => {
 	const [open, setOpen] = useState(true);
 
 	const fetchStatus = async () => {
-		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user_progress`, {
+		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -58,19 +58,29 @@ const Icon = () => {
 		return (
 
 		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open } disableHoverListener={ true }
-		         componentsProps={ {
-			         tooltip: {
-				         sx: {
-					         inset: '16px auto auto 0px',
-							 ml: -2,
-					         '& .MuiTooltip-arrow': {
-						         color: 'common.white',
-						         ml: 1,
+		//          componentsProps={ {
+		// 	         tooltip: {
+		// 		         sx: {
+		// 			         inset: '16px auto auto 0px',
+		// 					 ml: -2,
+		// 			         '& .MuiTooltip-arrow': {
+		// 				         // color: 'common.white',
+		// 				         ml: 1,
+		// 			         },
+		// 		         },
+		// 	         },
+		//          }
+		// }
+		         PopperProps={ {
+			         modifiers: [
+				         {
+					         name: 'offset',
+					         options: {
+						         offset: [ -20, 16 ],
 					         },
 				         },
-			         },
-		         }
-		}
+			         ],
+		         } }
 		>
 			<RocketIcon />
 		</Infotip>

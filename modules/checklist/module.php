@@ -188,4 +188,5 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	private function update_user_progress_in_db() : void {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
 	}
+
 }

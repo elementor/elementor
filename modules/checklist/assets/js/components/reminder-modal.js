@@ -12,8 +12,8 @@ const ReminderModal = ( { setOpen } ) => {
 	}
 
 	return (
-		<ThemeProvider colorScheme="light">
-			<Card elevation={ 0 } sx={ { maxWidth: 336, backgroundColor:'common.white'} }>
+		// <ThemeProvider colorScheme="light">
+			<Card elevation={ 0 } sx={ { maxWidth: 336 } }>
 				<CardContent>
 					<Typography variant="subtitle2"
 					            // color="primary.contrastText"
@@ -36,7 +36,7 @@ const ReminderModal = ( { setOpen } ) => {
 					        onClick={ openChecklist }>Let’s do it </Button>
 				</CardActions>
 			</Card>
-		</ThemeProvider>
+		// </ThemeProvider>
 	)
 }
 

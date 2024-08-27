@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 const Header = ( { steps } ) => {
 	const [ closedForFirstTime, setClosedForFirstTime ] = useState(null);
 	const fetchStatus = async () => {
-		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user_progress`, {
+		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
