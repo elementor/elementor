@@ -7,7 +7,6 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
@@ -235,6 +234,13 @@ class Module extends BaseModule {
 
 			$this->override_admin_bar_add_contact( $admin_bar );
 		}, 100 );
+	}
+
+	public function is_preview_for_document( $post_id ) {
+		$preview_id = ElementorUtils::get_super_global_value( $_GET, 'preview_id' );
+		$preview = ElementorUtils::get_super_global_value( $_GET, 'preview' );
+
+		return 'true' === $preview && (int) $post_id === (int) $preview_id;
 	}
 
 	public function handle_click_tracking() {
@@ -523,7 +529,11 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			if ( in_array( 'include/general', $conditions ) ) {
+			if (
+				in_array( 'include/general', $conditions ) &&
+				! $this->is_preview_for_document( $post_id ) &&
+				get_the_ID() !== $post_id
+			) {
 				$document = Plugin::$instance->documents->get( $post_id );
 				$document->print_content();
 			}

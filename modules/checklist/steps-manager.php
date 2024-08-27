@@ -114,6 +114,7 @@ class Steps_Manager {
 				'learn_more_url' => $step_instance->get_learn_more_url(),
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
+				'image_src' => $step_instance->get_image_src(),
 				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
 			]
 			: [];
