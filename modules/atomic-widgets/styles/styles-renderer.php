@@ -148,9 +148,10 @@ class Styles_Renderer {
 		$transformer = $this->get_transformer( $value['$$type'] );
 
 		if ( $transformer ) {
-			$transformed = $transformer( $value['value'], function( $value ) {
-				 return $this->transform_value( $value );
-			});
+			$transformed = $transformer(
+				$value['value'],
+				fn ( $value ) => $this->transform_value( $value )
+			);
 			return $this->transform_value( $transformed );
 		}
 
