@@ -4,6 +4,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
+	// Just dummy comment for commit
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
