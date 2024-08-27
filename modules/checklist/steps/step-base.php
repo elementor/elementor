@@ -11,6 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
+	const TIER_CORE = 'core';
+	const TIER_ESSENTIAL = 'essential';
+	const TIER_ADVANCED = 'advanced';
+	const TIER_EXPERT = 'expert';
+	const TIER_AGENCY = 'agency';
+
+	private $is_locked = false;
 
 	/**
 	 * @var string
@@ -18,9 +25,10 @@ abstract class Step_Base {
 	 */
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
-	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
+	const IMMUTABLE_COMPLETION_KEY = 'is_immutable_completed';
+	const ABSOLUTE_COMPLETION_KEY = 'is_absolute_completed';
 
-	protected array $user_progress;
+	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
 	protected Checklist_Module $module;
 
@@ -114,11 +122,12 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function maybe_mark_as_completed() : void {
+	public function maybe_immutably_mark_as_completed() : void {
 		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
 			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
+			$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = false;
 			$this->set_step_progress();
 		}
 	}
@@ -138,7 +147,31 @@ abstract class Step_Base {
 	 * @return bool
 	 */
 	public function is_immutable_completed() : bool {
-		return $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
+		return $this->get_is_completion_immutable() && $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
+	}
+
+	/**
+	 * Returns the required license to be able to complete the step
+	 *
+	 * @return string
+	 */
+	public function get_license() : string {
+		return self::TIER_CORE;
+	}
+
+	public function get_is_locked() : bool {
+		return $this->is_locked;
+	}
+
+	public function set_is_locked( $is_locked ) : void {
+		$this->is_locked = $is_locked;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_promotion_link() : string {
+		return '';
 	}
 
 	/**

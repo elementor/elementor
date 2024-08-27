@@ -1,8 +1,56 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-const ChecklistCardContent = ( props ) => {
-	const { description, learn_more_url: learnMoreUrl, learn_more_text: learnMoreText, cta_text: CTA, id, image_src: imageSrc } = props.step.config;
+const ChecklistCardContent = ( { step, setSteps } ) => {
+	const {
+		id,
+		description,
+		learn_more_url: learnMoreUrl,
+		learn_more_text: learnMoreText,
+		image_src: imageSrc,
+		is_locked: isLocked,
+		promotion_url: promotionUrl,
+		cta_url: ctaUrl,
+	} = step.config;
+
+	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
+		ctaLink = isLocked ? promotionUrl : ctaUrl,
+		{ is_absolute_completed: isAbsoluteCompleted, is_immutable_completed: isImmutableCompleted, is_marked_completed: isMarkedCompleted } = step,
+		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
+
+	const redirectHandler = () => {
+		window.open( ctaLink, isLocked ? '_blank' : '' );
+	};
+
+	const toggleMarkAsDone = async () => {
+		const currState = isMarkedCompleted;
+
+		try {
+			setSteps( ( steps ) => steps.map( ( iteratedStep ) => updateStepProperty( iteratedStep, 'is_marked_completed', ! currState ) ) );
+
+			await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps/${ id }`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': elementorWebCliConfig.nonce,
+				},
+				body: JSON.stringify( {
+					id,
+					is_marked_completed: ! currState,
+				} ),
+			} );
+		} catch ( e ) {
+			setSteps( ( steps ) => steps.map( ( iteratedStep ) => updateStepProperty( iteratedStep, 'is_marked_completed', currState ) ) );
+		}
+	};
+
+	const updateStepProperty = ( iteratedStep, key, value ) => {
+		if ( iteratedStep.config.id !== step.config.id ) {
+			return iteratedStep;
+		}
+
+		return { ...iteratedStep, [ key ]: value };
+	};
 
 	return (
 		<Card elevation={ 0 } square={ true } className={ `e-checklist-item-content checklist-step-${ id }` }>
@@ -17,8 +65,29 @@ const ChecklistCardContent = ( props ) => {
 				</Typography>
 			</CardContent>
 			<CardActions>
-				<Button size="small" color="secondary" variant="text" className="mark-as-done">{ __( 'Mark as done', 'elementor' ) }</Button>
-				<Button size="small" variant="contained" className="cta-button">{ CTA }</Button>
+
+				{ shouldShowMarkAsDone
+					? <Button
+							size="small"
+							color="secondary"
+							variant="text"
+							className="mark-as-done"
+							onClick={ toggleMarkAsDone }
+					>
+						{ isMarkedCompleted ? __( 'Mark as undone', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
+					</Button>
+					: null
+				}
+
+				<Button
+					color={ isLocked ? 'promotion' : 'primary' }
+					size="small"
+					variant="contained"
+					className="cta-button"
+					onClick={ redirectHandler }
+				>
+					{ ctaText }
+				</Button>
 			</CardActions>
 		</Card>
 	);
@@ -28,4 +97,5 @@ export default ChecklistCardContent;
 
 ChecklistCardContent.propTypes = {
 	step: PropTypes.object.isRequired,
+	setSteps: PropTypes.func.isRequired,
 };

@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import ChecklistCardContent from './checklist-card-content';
 import { ListItemButton, ListItemIcon, ListItemText, Collapse } from '@elementor/ui';
-import { ChevronDownIcon, RadioButtonUncheckedIcon } from '@elementor/icons';
+import { CheckedCircleIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
 
 function CheckListItem( props ) {
-	const { expandedIndex, setExpandedIndex, index, step } = props,
+	const { expandedIndex, setExpandedIndex, setSteps, index, step } = props,
 		chevronStyle = index === expandedIndex ? { transform: 'rotate(180deg)' } : {};
 
 	const handleExpandClick = () => {
@@ -14,12 +14,16 @@ function CheckListItem( props ) {
 	return (
 		<>
 			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.config.id }` }>
-				<ListItemIcon> <RadioButtonUncheckedIcon /> </ListItemIcon>
+				<ListItemIcon>{ step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed
+					? <CheckedCircleIcon />
+					: <RadioButtonUncheckedIcon />
+				}</ListItemIcon>
 				<ListItemText primary={ step.config.title } primaryTypographyProps={ { variant: 'body2' } } />
+				{ step.config.is_locked ? <UpgradeIcon color="promotion" sx={ { mr: 1 } } /> : null }
 				<ChevronDownIcon sx={ { ...chevronStyle, transition: '300ms' } } />
 			</ListItemButton>
 			<Collapse in={ index === expandedIndex } >
-				<ChecklistCardContent step={ step } />
+				<ChecklistCardContent step={ step } setSteps={ setSteps } />
 			</Collapse>
 		</>
 	);
@@ -31,5 +35,6 @@ CheckListItem.propTypes = {
 	step: PropTypes.object.isRequired,
 	expandedIndex: PropTypes.number,
 	setExpandedIndex: PropTypes.func.isRequired,
+	setSteps: PropTypes.func.isRequired,
 	index: PropTypes.number.isRequired,
 };
