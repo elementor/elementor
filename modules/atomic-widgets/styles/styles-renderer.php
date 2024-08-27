@@ -152,7 +152,7 @@ class Styles_Renderer {
 			return $this->transform_value( $transformed );
 		}
 
-		return null;
+		return 'unset';
 	}
 
 	private function is_transformable( $value ): bool {
