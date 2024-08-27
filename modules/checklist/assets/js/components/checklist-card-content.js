@@ -74,7 +74,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 							className="mark-as-done"
 							onClick={ toggleMarkAsDone }
 					>
-						{ isMarkedCompleted ? __( 'Mark as undone', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
+						{ isMarkedCompleted ? __( 'Unmark as done', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
 					</Button>
 					: null
 				}

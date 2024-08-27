@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import ChecklistCardContent from './checklist-card-content';
 import { ListItemButton, ListItemIcon, ListItemText, Collapse } from '@elementor/ui';
-import { CheckedCircleIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
+import { CircleCheckFilledIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
 
 function CheckListItem( props ) {
 	const { expandedIndex, setExpandedIndex, setSteps, index, step } = props,
@@ -15,7 +15,7 @@ function CheckListItem( props ) {
 		<>
 			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.config.id }` }>
 				<ListItemIcon>{ step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed
-					? <CheckedCircleIcon />
+					? <CircleCheckFilledIcon color="primary" />
 					: <RadioButtonUncheckedIcon />
 				}</ListItemIcon>
 				<ListItemText primary={ step.config.title } primaryTypographyProps={ { variant: 'body2' } } />
