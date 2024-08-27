@@ -37,10 +37,10 @@ const ChecklistCardContent = ( { step } ) => {
 				{ isLocked
 					? null
 					: <Button
-						size="small"
-						color="secondary"
-						variant="text"
-						className="mark-as-done"
+							size="small"
+							color="secondary"
+							variant="text"
+							className="mark-as-done"
 					>
 						{ __( 'Mark as done', 'elementor' ) }
 					</Button> }
