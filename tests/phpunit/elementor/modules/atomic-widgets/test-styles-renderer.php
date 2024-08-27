@@ -184,6 +184,55 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
     }
 
+	public function test_render__style_variants_with_breakpoint_and_state() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'green',
+						],
+						'meta' => [
+							'breakpoint' => 'mobile',
+							'state' => 'hover',
+						],
+					],
+					[
+						'props' => [
+							'color' => 'blue',
+						],
+						'meta' => [
+							'breakpoint' => 'tablet',
+							'state' => 'focus'
+						],
+					]
+				],
+			],
+		];
+		$transformers = [];
+		$breakpoints = [
+			'mobile' => [
+				'type' => 'max-width',
+				'width' => 768,
+			],
+			'tablet' => [
+				'type' => 'max-width',
+				'width' => 1024,
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
     public function test_render__style_with_non_existing_transformers() {
 		$styles = [
 			[
