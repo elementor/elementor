@@ -6,8 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\transformers\Classes_Transformer;
-use Elementor\Modules\AtomicWidgets\transformers\Image_Attachment_Transformer;
-use Elementor\Modules\AtomicWidgets\transformers\Image_Url_Transformer;
+use Elementor\Modules\AtomicWidgets\transformers\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
@@ -86,8 +85,7 @@ class Module extends BaseModule {
 
 	private function register_transformers( Collection $transformers ): Collection {
 		$transformers->offsetSet( Classes_Transformer::type(), new Classes_Transformer() );
-		$transformers->offsetSet( Image_Attachment_Transformer::type(), new Image_Attachment_Transformer() );
-		$transformers->offsetSet( Image_Url_Transformer::type(), new Image_Url_Transformer() );
+		$transformers->offsetSet( Image_Transformer::type(), new Image_Transformer() );
 
 		return $transformers;
 	}
