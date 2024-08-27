@@ -1,29 +1,27 @@
 import { Button, Card, CardActions, CardContent, Typography } from '@elementor/ui';
-import PropTypes from "prop-types";
-import Header from "./header";
-
+import PropTypes from 'prop-types';
 
 const ReminderModal = ( { setOpen } ) => {
 	const openChecklist = () => {
 		setOpen( false );
 	};
 
-	const closeChecklist = (e) => {
+	const closeChecklist = ( e ) => {
 		e.stopPropagation();
 		setOpen( false );
-	}
+	};
 
 	return (
-			<Card elevation={ 0 } sx={ { maxWidth: 336 } }>
-				<CardContent>
-					<Typography variant="subtitle2" sx={ { mb: 2 } }>Looking for your Launchpad Checklist?</Typography>
-					<Typography variant="body2">Click the launch icon to continue setting up your site.</Typography>
-				</CardContent>
-				<CardActions>
-					<Button size="small" variant="text" color="secondary" onClick={ ( e ) => { closeChecklist( e ) } }>Not Now</Button>
-					<Button size="small" variant="contained" onClick={ openChecklist }>Let’s do it </Button>
-				</CardActions>
-			</Card>
+		<Card elevation={ 0 } sx={ { maxWidth: 336 } }>
+			<CardContent>
+				<Typography variant="subtitle2" sx={ { mb: 2 } }>Looking for your Launchpad Checklist?</Typography>
+				<Typography variant="body2">Click the launch icon to continue setting up your site.</Typography>
+			</CardContent>
+			<CardActions>
+				<Button size="small" variant="text" color="secondary" onClick={ ( e ) => { closeChecklist( e ); } }>Not Now</Button>
+				<Button size="small" variant="contained" onClick={ openChecklist }>Let’s do it</Button>
+			</CardActions>
+		</Card>
 	);
 };
 

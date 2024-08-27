@@ -4,9 +4,8 @@ import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import RocketIcon from '@elementor/icons/RocketIcon';
 import ReminderModal from './components/reminder-modal';
-import { useState, useEffect } from "react";
-import { __privateListenTo as listenTo, commandEndEvent } from "@elementor/editor-v1-adapters";
-
+import { useState, useEffect } from 'react';
+import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 const Icon = () => {
 	const [ hasRoot, setHasRoot ] = useState( false );
@@ -26,14 +25,14 @@ const Icon = () => {
 	};
 
 	useEffect( () => {
-		return listenTo( commandEndEvent ( 'checklist/toggle-popup') , ( e )=> {
-			if(e.args.isOpen) {
+		return listenTo( commandEndEvent ( 'checklist/toggle-popup' ), ( e ) => {
+			if ( e.args.isOpen ) {
 				setHasRoot( true );
 			} else {
 				setHasRoot( false );
 			}
-		} )
-	}, [ hasRoot ] )
+		} );
+	}, [ hasRoot ] );
 
 	useEffect( () => {
 		fetchStatus();
@@ -46,12 +45,12 @@ const Icon = () => {
 
 		window.addEventListener('firstClose', handleFirstClosed);
 
-		return () => {
+		return ()  => {
 			window.removeEventListener('firstClose', handleFirstClosed);
 		};
 	}, [] );
 
-	 if ( hasRoot && ! closedForFirstTime) {
+	 if ( hasRoot && ! closedForFirstTime ) {
 		return (
 			<RocketIcon />
 		)
