@@ -51,11 +51,18 @@ const Icon = () => {
 	}, [] );
 
 	return hasRoot && ! closedForFirstTime ? (
-		<RocketIcon/>
+		<RocketIcon />
 	) : (
-		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen }/> }
-		         open={ open } PopperProps={ { modifiers: [ { name: 'offset', options: { offset: [ -16, 12 ] } } ] } }>
-			<RocketIcon/>
+		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen } /> } open={ open }
+		         PopperProps={ {
+					 modifiers: [
+						 { name: 'offset',
+							 options:
+								 { offset: [ -16, 12 ] }
+						 }
+					]
+		} }>
+			<RocketIcon />
 		</Infotip>
 	);
 };
