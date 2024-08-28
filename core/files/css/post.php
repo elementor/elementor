@@ -293,8 +293,8 @@ class Post extends Base {
 		 */
 		do_action( 'elementor/element/before_parse_css', $this, $element );
 
-		$this->render_element_styles( $element );
 		$this->render_element_global_styles( $element );
+		$this->render_element_styles( $element );
 
 		/**
 		 * After element parse CSS.
