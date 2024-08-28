@@ -9,10 +9,8 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	onInit() {
-		const that = this;
-
 		this.observeStickyElements( () => {
-			that.initializeStickyAndAnchorTracking();
+			this.initializeStickyAndAnchorTracking();
 		} );
 	}
 
