@@ -2,6 +2,8 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
+use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -299,12 +301,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$stylesRenderer = new Styles_Renderer( [
 			'transformers' => [
-				'size' => function( $value ) {
-					// would throw exception as $value is an integer
-					$size = (int)$value['size'];
-					$unit = $value['unit'];
-					return $size . $unit;
-				},
+				'size' => new Size_Transformer(),
 			],
 			'breakpoints' => []
 		] );
@@ -325,10 +322,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                 'variants' => [
                     [
                         'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'CF0000'
-							],
                             'font-size' => [
 								'$$type' => 'size',
 								'value' => [
@@ -337,33 +330,32 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								]
 							],
 							'box-shadow' => [
-								'$$type' => 'box-shadow',
+								'$$type' => 'array',
 								'value' => [
-									'x' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 1,
-											'unit' => 'px'
-										]
-									],
-									'y' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 1,
-											'unit' => 'px'
-										]
-									],
-									'blur' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 5,
-											'unit' => 'px'
-										]
-									],
-									'color' => [
-										'$$type' => 'color',
-										'value' => '000000'
-									],
+									'array' => [
+										[
+											'$$type' => 'size',
+											'value' => [
+												'size' => 1,
+												'unit' => 'px'
+											]
+										],
+										[
+											'$$type' => 'size',
+											'value' => [
+												'size' => 1,
+												'unit' => 'px'
+											]
+										],
+										[
+											'$$type' => 'size',
+											'value' => [
+												'size' => 5,
+												'unit' => 'px'
+											]
+										],
+										'#000000'
+									]
 								]
 							]
                         ],
@@ -375,22 +367,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
         $stylesRenderer = new Styles_Renderer( [
 			'transformers' => [
-				'size' => function( $value ) {
-					$size = (int)$value['size'];
-					$unit = $value['unit'];
-					return $size . $unit;
-				},
-				'color' => function( $value ) {
-					return '#' . $value;
-				},
-				'box-shadow' => function( $value, $transform ) {
-					$x = $transform( $value['x'] );
-					$y = $transform( $value['y'] );
-					$blur = $transform( $value['blur'] );
-					$color = $transform( $value['color'] );
-
-					return $x.' '.$y.' '.$blur.' '.$transform( $color );
-				}
+				'size' => new Size_Transformer(),
+				'array' => new Array_Transformer()
 			],
 			'breakpoints' => []
 		] );

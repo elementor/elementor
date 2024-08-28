@@ -2,15 +2,17 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
+
 class Styles_Renderer {
 
 	/**
-	 * @var array<string, callable> $transformers
+	 * @var array<string, Style_Transformer_Base> $transformers
 	 */
 	private array $transformers;
 
 	/**
-	 * @var array<int, array{type: string, width: int}> $breakpoints
+	 * @var array<string, array{type: string, width: int}> $breakpoints
 	 */
 	private array $breakpoints;
 
@@ -18,8 +20,8 @@ class Styles_Renderer {
 	 * Styles_Renderer constructor.
 	 *
 	 * @param array{
-	 *     transformers: array<string, callable>,
-	 *     breakpoints: array<int, array{type: string, width: int}>
+	 *     transformers: array<string, Style_Transformer_Base>,
+	 *     breakpoints: array<string, array{type: string, width: int}>
 	 * } $config
 	 */
 	public function __construct( array $config ) {
@@ -159,7 +161,7 @@ class Styles_Renderer {
 		}
 
 		try {
-			$transformed = $transformer(
+			$transformed = $transformer->transform(
 				$value['value'],
 				fn( $value ) => $this->transform_value( $value )
 			);
@@ -178,14 +180,14 @@ class Styles_Renderer {
 		);
 	}
 
-	private function get_transformer( $type ): ?callable {
+	private function get_transformer( $type ): ?Style_Transformer_Base {
 		if ( ! isset( $this->transformers[ $type ] ) ) {
 			return null;
 		}
 
 		$transformer = $this->transformers[ $type ];
 
-		if ( ! $transformer || ! is_callable( $transformer ) ) {
+		if ( ! $transformer instanceof Style_Transformer_Base ) {
 			return null;
 		}
 
