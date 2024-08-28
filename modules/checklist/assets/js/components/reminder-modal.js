@@ -2,9 +2,6 @@ import { Button, Card, CardActions, CardContent, Typography } from '@elementor/u
 import PropTypes from 'prop-types';
 
 const ReminderModal = ( { setOpen } ) => {
-	const openChecklist = () => {
-		setOpen( false );
-	};
 
 	const closeChecklist = ( e ) => {
 		e.stopPropagation();
@@ -18,8 +15,7 @@ const ReminderModal = ( { setOpen } ) => {
 				<Typography variant="body2">Click the launch icon to continue setting up your site.</Typography>
 			</CardContent>
 			<CardActions>
-				<Button size="small" variant="text" color="secondary" onClick={ ( e ) => { closeChecklist( e ); } }>Not Now</Button>
-				<Button size="small" variant="contained" onClick={ openChecklist }>Let’s do it</Button>
+				<Button size="small" variant="contained" onClick={ ( e ) => { closeChecklist( e ); } }>Got it</Button>
 			</CardActions>
 		</Card>
 	);

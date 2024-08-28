@@ -57,13 +57,13 @@ const Icon = () => {
 	}
 	else {
 		return (
-			<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open } disableHoverListener={ true }
+			<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open }
 		         PopperProps={ {
 			         modifiers: [
 				         {
 					         name: 'offset',
 					         options: {
-						         offset: [ -20, 16 ],
+						         offset: [ -16, 12 ],
 					         },
 				         },
 			         ],
@@ -88,6 +88,9 @@ export const editorV2 = () => {
 				onClick: () => {
 					$e.commands.run( 'checklist/toggle-popup' );
 				},
+				onFocus: () => {
+					return(null);
+				}
 			};
 		},
 	} );

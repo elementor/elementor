@@ -113,7 +113,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public function set_user_progress() : void {
-		$this->user_progress[self::FIRST_CLOSED_CHECKLIST_IN_EDITOR] = true;
+		$this->user_progress[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] = true;
 		$this->update_user_progress_in_db();
 	}
 

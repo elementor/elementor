@@ -23,29 +23,13 @@ class User_Progress extends Endpoint_Base {
 		return 'checklist';
 	}
 
-//	protected function register () {
-////		parent::register();
-////
-////
-//		$this->register_item_route();
-//		$this->register_item_route( \WP_REST_Server::EDITABLE,
-////			$args = [
-////			'first_closed_checklist_in_editor' => [
-////				'type' => 'boolean',
-////				'description' => 'if user closed the list for the first time',
-////				'required' => true,
-////		] ]
-//		);
-//
-//	}
-
 	public function get_items( $request ) {
 		return $this->get_checklist_data();
 	}
 
-	public function  create_item( $id, $request ) {
+	public function create_item( $id, $request ) {
 		$progress_data = $this->get_checklist_data();
-		if( $progress_data['data'][ 'first_closed_checklist_in_editor' ] === false ) {
+		if ( false === $progress_data[ 'data' ][ 'first_closed_checklist_in_editor' ] ) {
 			Plugin::$instance->modules_manager->get_modules( 'checklist' )->set_user_progress();
 		}
 		return [
