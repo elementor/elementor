@@ -62,7 +62,7 @@ export default class extends elementorModules.ViewModule {
 		stickyElements.forEach( ( element ) => {
 			const settings = this.getElementSettings( element );
 
-			if ( ! settings ) {
+			if ( ! settings && ! settings.sticky_anchor_link_offset ) {
 				return;
 			}
 
