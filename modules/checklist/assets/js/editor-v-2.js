@@ -55,16 +55,16 @@ const Icon = () => {
 	) : (
 		<Infotip
 			placement="bottom-start"
-			content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen }/> }
+			content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen } /> }
 			open={ open }
 			PopperProps={ {
 				modifiers: [
 					{
 						name: 'offset',
 						options:
-							{ offset: [ -16, 12 ] }
-					}
-					]
+							{ offset: [ -16, 12 ] },
+					},
+				],
 		} }>
 			<RocketIcon />
 		</Infotip>
@@ -80,7 +80,7 @@ export const editorV2 = () => {
 		useProps: () => {
 			return {
 				title: __( 'Checklist', 'elementor' ),
-				icon: () => <Icon/>,
+				icon: () => <Icon />,
 				onClick: () => {
 					$e.commands.run( 'checklist/toggle-popup' );
 				},
