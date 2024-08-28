@@ -310,12 +310,10 @@ class Post extends Base {
 	}
 
 	private function render_element_styles( Element_Base $element ) {
-		$element_settings = $element->get_settings();
-
 		$this->add_controls_stack_style_rules(
 			$element,
 			$this->get_style_controls( $element, null, $element->get_parsed_dynamic_settings() ),
-			$element_settings,
+			$element->get_settings(),
 			[ '{{ID}}', '{{WRAPPER}}' ],
 			[ $element->get_id(), $this->get_element_unique_selector( $element ) ]
 		);
