@@ -111,17 +111,6 @@
 	}
 }
 
-// Row
-// BC: Deprecated since 3.0.0 - use `.elementor-container`.
-.elementor-row {
-	width: 100%;
-	display: flex;
-
-	@media (max-width: $screen-tablet-max) {
-		flex-wrap: wrap;
-	}
-}
-
 // Widget
 .elementor-widget-wrap {
 	position: relative;
