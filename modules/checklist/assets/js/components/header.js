@@ -23,16 +23,16 @@ const Header = ( { steps } ) => {
 	}, [] );
 
 	const closeChecklist = async () => {
-			if ( closedForFirstTime !== true ) {
-				await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-WP-Nonce': elementorWebCliConfig.nonce,
-					},
-				} );
-				window.dispatchEvent( new CustomEvent( 'firstClose', { detail: { message: 'firstClose' } } ) );
-			}
+		if ( closedForFirstTime !== true ) {
+			await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': elementorWebCliConfig.nonce,
+				},
+			} );
+			window.dispatchEvent( new CustomEvent( 'firstClose', { detail: { message: 'firstClose' } } ) );
+		}
 		$e.run( 'checklist/toggle-popup' );
 	};
 
