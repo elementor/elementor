@@ -1,4 +1,5 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 const ChecklistCardContent = ( { step, setSteps } ) => {
@@ -19,7 +20,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
 
 	const redirectHandler = () => {
-		window.open( ctaLink, isLocked ? '_blank' : '' );
+		window.open( ctaUrl, isLocked ? '_blank' : '' );
 	};
 
 	const toggleMarkAsDone = async () => {

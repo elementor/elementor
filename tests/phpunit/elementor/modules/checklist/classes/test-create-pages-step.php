@@ -3,15 +3,12 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
 use Elementor\Modules\Checklist\Steps\Create_Pages;
-use Elementor\Modules\Checklist\Steps_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Test_Create_Pages_Step extends Step_Test_Base {
-	private Create_Pages $step;
-
 	public function test__various_cases() {
 		$steps_manager = $this->checklist_module->get_steps_manager();
 		$step = $steps_manager->get_step_by_id( Create_Pages::STEP_ID );

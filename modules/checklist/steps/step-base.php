@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,12 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
-	const TIER_CORE = 'core';
-	const TIER_ESSENTIAL = 'essential';
-	const TIER_ADVANCED = 'advanced';
-	const TIER_EXPERT = 'expert';
-	const TIER_AGENCY = 'agency';
-
 	private $is_locked = false;
 
 	/**
@@ -156,7 +151,7 @@ abstract class Step_Base {
 	 * @return string
 	 */
 	public function get_license() : string {
-		return self::TIER_CORE;
+		return Constants::ACCESS_TIER_FREE;
 	}
 
 	public function get_is_locked() : bool {

@@ -17,6 +17,7 @@ class Steps_Manager {
 	private static array $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	private Checklist_Module_Interface $module;
+	private static $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
@@ -31,7 +32,7 @@ class Steps_Manager {
 	public function get_steps_for_frontend() : array {
 		$formatted_steps = [];
 
-		foreach ( $this->get_step_ids() as $step_id ) {
+		foreach ( self::$step_ids as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
 			$instance->maybe_immutably_mark_as_completed();
 
@@ -116,6 +117,7 @@ class Steps_Manager {
 				'description' => $step_instance->get_description(),
 				'learn_more_text' => $step_instance->get_learn_more_text(),
 				'learn_more_url' => $step_instance->get_learn_more_url(),
+				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
@@ -132,7 +134,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	private function register_steps() : void {
-		foreach ( $this->get_step_ids() as $step_id ) {
+		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
