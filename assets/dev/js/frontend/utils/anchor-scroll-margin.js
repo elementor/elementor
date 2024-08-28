@@ -163,4 +163,4 @@ export default class extends elementorModules.ViewModule {
 	getElementSettings( element ) {
 		return JSON.parse( element.getAttribute( 'data-settings' ) );
 	}
-};
+}
