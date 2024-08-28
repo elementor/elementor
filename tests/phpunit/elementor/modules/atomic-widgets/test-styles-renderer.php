@@ -30,12 +30,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                 ],
             ],
         ];
-        $transformers = [];
-        $breakpoints = [];
 
         $stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => []
 		] );
 
         // Act.
@@ -75,12 +73,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
-		$transformers = [];
-		$breakpoints = [];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => []
 		] );
 
 		// Act.
@@ -99,12 +95,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [],
 			],
 		];
-		$transformers = [];
-		$breakpoints = [];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => []
 		] );
 
 		// Act.
@@ -138,12 +132,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                 ],
             ],
         ];
-        $transformers = [];
-        $breakpoints = [];
 
         $stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => []
 		] );
 
         // Act.
@@ -179,17 +171,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                 ],
             ],
         ];
-        $transformers = [];
-        $breakpoints = [
-            'mobile' => [
-                'type' => 'max-width',
-                'width' => 768,
-            ],
-        ];
 
         $stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => [
+				'mobile' => [
+					'type' => 'max-width',
+					'width' => 768,
+				],
+			]
 		] );
 
         // Act.
@@ -227,21 +217,19 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
-		$transformers = [];
-		$breakpoints = [
-			'mobile' => [
-				'type' => 'max-width',
-				'width' => 768,
-			],
-			'tablet' => [
-				'type' => 'max-width',
-				'width' => 1024,
-			],
-		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => [
+				'mobile' => [
+					'type' => 'max-width',
+					'width' => 768,
+				],
+				'tablet' => [
+					'type' => 'max-width',
+					'width' => 1024,
+				],
+			]
 		] );
 
 		// Act.
@@ -276,12 +264,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
-		$transformers = [];
-		$breakpoints = [];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => []
 		] );
 
 		// Act.
@@ -310,19 +296,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
-		$transformers = [
-			'size' => function( $value ) {
-				// would throw exception as $value is an integer
-				$size = (int)$value['size'];
-				$unit = $value['unit'];
-				return $size . $unit;
-			},
-		];
-		$breakpoints = [];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [
+				'size' => function( $value ) {
+					// would throw exception as $value is an integer
+					$size = (int)$value['size'];
+					$unit = $value['unit'];
+					return $size . $unit;
+				},
+			],
+			'breakpoints' => []
 		] );
 
 		// Act.
@@ -388,29 +372,27 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                 ],
             ],
         ];
-        $transformers = [
-            'size' => function( $value ) {
-				$size = (int)$value['size'];
-				$unit = $value['unit'];
-				return $size . $unit;
-            },
-			'color' => function( $value ) {
-				return '#' . $value;
-			},
-			'box-shadow' => function( $value, $transform ) {
-				$x = $transform( $value['x'] );
-				$y = $transform( $value['y'] );
-				$blur = $transform( $value['blur'] );
-				$color = $transform( $value['color'] );
-
-				return $x.' '.$y.' '.$blur.' '.$transform( $color );
-			}
-        ];
-        $breakpoints = [];
 
         $stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [
+				'size' => function( $value ) {
+					$size = (int)$value['size'];
+					$unit = $value['unit'];
+					return $size . $unit;
+				},
+				'color' => function( $value ) {
+					return '#' . $value;
+				},
+				'box-shadow' => function( $value, $transform ) {
+					$x = $transform( $value['x'] );
+					$y = $transform( $value['y'] );
+					$blur = $transform( $value['blur'] );
+					$color = $transform( $value['color'] );
+
+					return $x.' '.$y.' '.$blur.' '.$transform( $color );
+				}
+			],
+			'breakpoints' => []
 		] );
 
         // Act.
@@ -464,12 +446,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
-		$transformers = [];
-		$breakpoints = [];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints
+			'transformers' => [],
+			'breakpoints' => []
 		] );
 
 		// Act.
