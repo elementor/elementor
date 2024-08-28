@@ -25,7 +25,7 @@ const Icon = () => {
 	};
 
 	useEffect( () => {
-		return listenTo( commandEndEvent ( 'checklist/toggle-popup' ), ( e ) => {
+		return listenTo(commandEndEvent ( 'checklist/toggle-popup' ), ( e ) => {
 			if ( e.args.isOpen ) {
 				setHasRoot( true );
 			} else {
@@ -43,34 +43,22 @@ const Icon = () => {
 			setOpen( true );
 		};
 
-		window.addEventListener('firstClose', handleFirstClosed);
+		window.addEventListener( 'firstClose', handleFirstClosed );
 
-		return ()  => {
-			window.removeEventListener('firstClose', handleFirstClosed);
+		return () => {
+			window.removeEventListener( 'firstClose', handleFirstClosed );
 		};
 	}, [] );
 
-	 if ( hasRoot && ! closedForFirstTime ) {
+	 if ( hasRoot && !closedForFirstTime ) {
 		return (
 			<RocketIcon />
-		)
-	}
-	else {
+		);
+	} else {
 		return (
-			<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={setHasRoot} setOpen={setOpen} /> } open={ open }
-		         PopperProps={ {
-			         modifiers: [
-				         {
-					         name: 'offset',
-					         options: {
-						         offset: [ -16, 12 ],
-					         },
-				         },
-			         ],
-		         } }
-		>
-			<RocketIcon />
-		</Infotip>
+			<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen } /> } open={ open } PopperProps={ { modifiers: [ { name: 'offset', options: { offset: [ -16, 12 ] } } ] } }>
+				<RocketIcon />
+			</Infotip>
 		);
 	};
 };
@@ -88,9 +76,6 @@ export const editorV2 = () => {
 				onClick: () => {
 					$e.commands.run( 'checklist/toggle-popup' );
 				},
-				onFocus: () => {
-					return(null);
-				}
 			};
 		},
 	} );
