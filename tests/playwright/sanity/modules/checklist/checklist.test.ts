@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import ChecklistHelper from './helper';
+import { StepId } from '../../../types/checklist';
 
 test.describe( 'Launchpad checklist tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -23,11 +24,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.setExperiments( {
-			editor_v2: false,
-			'launchpad-checklist': false,
-		} );
-
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
@@ -59,14 +56,14 @@ test.describe( 'Launchpad checklist tests', () => {
 
 	test( 'Checklist preference switch effects', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		let checklistHelper = new ChecklistHelper( page, wpAdmin );
+		let checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			'launchpad-checklist': false,
 		} );
 
 		const editor = await wpAdmin.openNewPage();
-		checklistHelper = new ChecklistHelper( page, wpAdmin, editor );
+		checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		await test.step( 'Assert nothing is visible when experiment is off', async () => {
 			await editor.openUserPreferencesPanel();
@@ -91,7 +88,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 
 		await test.step( 'Assert no top bar icon when switch is off', async () => {
-			await checklistHelper.toggleChecklistInTheEditor( true );
+			await checklistHelper.toggleChecklist( 'editor', true );
 			await editor.page.waitForSelector( selectors.popup );
 
 			await expect( page.locator( selectors.topBarIcon ) ).toBeVisible();
@@ -121,17 +118,51 @@ test.describe( 'Launchpad checklist tests', () => {
 	test( 'Progress Bar', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
-			checklistHelper = new ChecklistHelper( page, wpAdmin ),
+			checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
 			steps = await checklistHelper.getSteps(),
 			progressToCompare = Math.round( steps.filter( checklistHelper.isStepCompleted ).length * 100 / steps.length ),
-			progressTextToCompare = `${ progressToCompare }%`,
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
-			pageProgress = editor.page.locator( selectors.progressBarPercentage );
+			pageProgress = await checklistHelper.getProgressFromPopup( 'editor' );
 
 		await rocketButton.click();
 
-		const pageProgressText = await pageProgress.textContent();
+		expect( pageProgress ).toBe( progressToCompare );
+	} );
 
-		expect( pageProgressText ).toBe( progressTextToCompare );
+	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests, request }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		// Delete all pages
+		await apiRequests.cleanUpTestPages( request );
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
+			steps = await checklistHelper.getSteps(),
+			doneStepIds: StepId[] = [];
+
+		await checklistHelper.toggleChecklist( 'editor', true );
+
+		for ( const step of steps ) {
+			if ( checklistHelper.isStepProLocked( step.config.id ) ) {
+				continue;
+			}
+
+			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) );
+
+			await checklistHelper.toggleChecklistItem( step.config.id, 'editor', true );
+			await expect( markAsButton ).toHaveText( 'Mark as done' );
+
+			await checklistHelper.toggleMarkAsDone( step.config.id, 'editor' );
+			doneStepIds.push( step.config.id );
+			await expect( markAsButton ).toHaveText( 'Unmark as done' );
+
+			expect( await checklistHelper.getProgressFromPopup( 'editor' ) )
+				.toBe( Math.round( doneStepIds.length * 100 / steps.length ) );
+		}
+
+		// Resetting for the sake of the next test
+		for ( const stepId of doneStepIds ) {
+			await checklistHelper.toggleMarkAsDone( stepId, 'editor' );
+		}
 	} );
 } );

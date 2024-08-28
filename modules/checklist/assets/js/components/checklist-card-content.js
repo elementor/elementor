@@ -11,11 +11,10 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		image_src: imageSrc,
 		is_locked: isLocked,
 		promotion_url: promotionUrl,
-		cta_url: ctaUrl,
 	} = step.config;
 
 	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
-		ctaLink = isLocked ? promotionUrl : ctaUrl,
+		ctaUrl = isLocked ? promotionUrl : step.config.cta_url,
 		{ is_absolute_completed: isAbsoluteCompleted, is_immutable_completed: isImmutableCompleted, is_marked_completed: isMarkedCompleted } = step,
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
 
@@ -72,7 +71,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 							size="small"
 							color="secondary"
 							variant="text"
-							className="mark-as-done"
+							className="mark-as-button"
 							onClick={ toggleMarkAsDone }
 					>
 						{ isMarkedCompleted ? __( 'Unmark as done', 'elementor' ) : __( 'Mark as done', 'elementor' ) }

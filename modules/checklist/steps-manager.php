@@ -17,7 +17,6 @@ class Steps_Manager {
 	private static array $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	private Checklist_Module_Interface $module;
-	private static $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;

@@ -33,6 +33,8 @@ class Steps extends Endpoint_Base {
 		} else {
 			$checklist_module->get_steps_manager()->unmark_step_as_completed( $id );
 		}
+
+		return rest_ensure_response( true );
 	}
 
 	private function get_checklist_data(): array {
