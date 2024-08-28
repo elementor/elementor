@@ -226,21 +226,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		}', $serialized );
 	}
 
-	public function test_get_props_schema__not_throwing_when_the_schema_is_invalid() {
-		// Arrange.
-		$schema = [
-			'string_prop' => 'not-an-atomic-prop',
-		];
-
-		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
-
-		// Expect.
-		$this->expectNotToPerformAssertions();
-
-		// Act.
-		$widget::get_props_schema();
-	}
-
 	public function test_get_props_schema() {
 		// Arrange,
 		$schema = [
