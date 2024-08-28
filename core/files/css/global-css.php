@@ -1,5 +1,5 @@
 <?php
-// Delete in v3.25.0
+// TODO: Delete this file in v3.26.0
 namespace Elementor\Core\Files\CSS;
 
 use Elementor\Core\Kits\Manager;
