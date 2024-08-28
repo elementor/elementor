@@ -153,13 +153,6 @@
 	display: flex;
 }
 
-// BC: Deprecated since 3.0.0 - use `.elementor-widget-wrap`.
-.elementor-column-wrap {
-	width: 100%;
-	position: relative;
-	display: flex;
-}
-
 @mixin elementor-grid-classes {
 
 	@each $sizeKey, $size in $column-sizes {
