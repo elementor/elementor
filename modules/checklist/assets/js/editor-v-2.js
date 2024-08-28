@@ -53,13 +53,17 @@ const Icon = () => {
 	return hasRoot && ! closedForFirstTime ? (
 		<RocketIcon />
 	) : (
-		<Infotip placement="bottom-start" content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen } /> } open={ open }
-		         PopperProps={ {
-					 modifiers: [
-						 { name: 'offset',
-							 options:
-								 { offset: [ -16, 12 ] }
-						 }
+		<Infotip
+			placement="bottom-start"
+			content={ <ReminderModal setHasRoot={ setHasRoot } setOpen={ setOpen }/> }
+			open={ open }
+			PopperProps={ {
+				modifiers: [
+					{
+						name: 'offset',
+						options:
+							{ offset: [ -16, 12 ] }
+					}
 					]
 		} }>
 			<RocketIcon />
@@ -76,7 +80,7 @@ export const editorV2 = () => {
 		useProps: () => {
 			return {
 				title: __( 'Checklist', 'elementor' ),
-				icon: () => <Icon />,
+				icon: () => <Icon/>,
 				onClick: () => {
 					$e.commands.run( 'checklist/toggle-popup' );
 				},
