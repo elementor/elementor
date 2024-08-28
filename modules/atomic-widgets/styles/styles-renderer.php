@@ -10,7 +10,7 @@ class Styles_Renderer {
 	private array $transformers;
 
 	/**
-	 * @var array<int, array{type: string, width: int}> $breakpoints
+	 * @var array<string, array{type: string, width: int}> $breakpoints
 	 */
 	private array $breakpoints;
 
@@ -19,7 +19,7 @@ class Styles_Renderer {
 	 *
 	 * @param array{
 	 *     transformers: array<string, callable>,
-	 *     breakpoints: array<int, array{type: string, width: int}>
+	 *     breakpoints: array<string, array{type: string, width: int}>
 	 * } $config
 	 */
 	public function __construct( array $config ) {
