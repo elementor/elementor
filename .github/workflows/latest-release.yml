@@ -61,7 +61,7 @@ jobs:
           POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
           OVERRIDE_PACKAGE_VERSION: true
       - name: Install Dependencies
-        run: npm ci
+        uses: ./.github/workflows/install-dependencies
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
