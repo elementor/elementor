@@ -71,7 +71,7 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Install Dependencies
-        run: npm ci
+        uses: ./.github/workflows/install-dependencies
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
